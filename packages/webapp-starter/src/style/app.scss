@@ -2,6 +2,8 @@
 
 @use '@material/typography/mdc-typography';
 
+
+/* #region GENERAL */
 html,
 body {
   padding: 0;
@@ -15,6 +17,9 @@ main {
 .mdc-drawer-app-content {
   height: 100%;
 }
+
+/* #endregion */
+
 
 /* #region APPLICATION SETTINGS */
 .app-small-caps {
@@ -111,7 +116,6 @@ main {
   --freon-multilinetext-component-padding: 0px 0px 0px 2px;
   --freon-multilinetext-component-margin: 4px 4px 4px 6px;
 
-
   /* Group Component */
   --freon-group-component-font-style: normal; 
   --freon-group-component-font-weight: normal;
@@ -128,6 +132,10 @@ main {
   --freon-date-component-padding: 1px 1px 1px 1px;
   --freon-date-component-margin: 0px 1px 0px 2px;
 
+  /* Switch Component */
+
+
+  
 }
 
 /* #endregion */
@@ -227,93 +235,61 @@ main {
   }
     /* #endregion */ 
   
-    /* #region Switch Component */
-  
-  .switchcomponent--inner button {
-    padding: 0.5em !important;
-    background-color: #fff !important;
-    border: 1px solid #747474 !important;
+  /* #region Switch Component */
+  .switchcomponent {
+    margin: var(--freon-boolean-margin);
+    padding: var(--freon-boolean-padding);
+    display: inline-flex;
+    width: max-content;
   }
-  
-  [role='switch'][aria-checked='true'] :first-child,
-  [role='switch'][aria-checked='false'] :last-child {
-    display: none !important;
-    color: #fff !important;
+
+  .switchcomponent button {
+    width: 2.1em;
+    height: 1.1em;
+    position: relative;
+    background: var(--freon-boolean-unselected-track, var(--mdc-theme-on-surface));
+    border: none;
   }
-  
-  .switchcomponent--inner button span {
-      user-select: none;
-      pointer-events:none;
-      padding: 0.25em;
+
+  .switchcomponent button::before { /* defines the knob */
+    content: '';
+    position: absolute;
+    width: 0.9em;
+    height: 0.9em;
+    background: var(--freon-boolean-background-color, var(--mdc-theme-background));
+    top: 0.1em;
+    right: 1.1em;
+    transition: transform 0.3s;
   }
-  
-  .switchcomponent--inner button:focus {
-      outline: var(--freon-boolean-accent-color) solid 1px;
+
+  .switchcomponent button[aria-checked='true']{
+    background-color: var(--freon-boolean-color, var(--mdc-theme-primary))
   }
-  
-  .switchcomponent--slider {
-      display: flex;
-      align-items: center;
+
+  .switchcomponent button[aria-checked='true']::before{
+    transform: translateX(1em);
+    transition: transform 0.3s;
   }
-  
-  .switchcomponent--slider button {
-      width: 2.4em;
-      height: 1.2em;
-      position: relative;
-      margin: 0 0 0 0;
-      background: #747474;
-      border: none;
+
+  .switchcomponent button:focus {
+    box-shadow: 0 0 0 1px var(--freon-boolean-focus-color, var(--mdc-theme-primary));
+    border-radius: 1.5em;
+}
+
+.switchcomponent button:hover {
+    box-shadow: 0 0 5px 2px var(--freon-boolean-hover-color, var(--mdc-theme-primary));
+    border-radius: 1.5em;
+}
+
+  .switchcomponent button {
+    border-radius: 1.5em;
   }
-  
-  .switchcomponent--slider button::before {
-      content: '';
-      position: absolute;
-      width: 0.9em;
-      height: 0.9em;
-      background: #fff;
-      top: 0.13em;
-      right: 1.4em;
-      transition: transform 0.3s;
+
+  .switchcomponent button::before {
+    border-radius: 100%;
   }
-  
-  .switchcomponent--slider button[aria-checked='true']{
-      background-color: var(--freon-boolean-accent-color)
-  }
-  
-  .switchcomponent--slider button[aria-checked='true']::before{
-      transform: translateX(1.2em);
-      transition: transform 0.3s;
-  }
-  
-  .switchcomponent--slider button:focus {
-      box-shadow: inset 0 0px 0px 1px var(--freon-boolean-focus-color);
-  }
-  
-  [role='switch'][aria-checked='true'] :first-child,
-  [role='switch'][aria-checked='false'] :last-child {
-      border-radius: 0.25em;
-      background: var(--freon-boolean-accent-color);
-      display: inline-block;
-  }
-  
-  .switchcomponent--inner button:focus {
-      border-radius: 0.1em;
-  }
-  
-  .switchcomponent--slider button {
-      border-radius: 1.5em;
-  }
-  
-  .switchcomponent--slider button::before {
-      border-radius: 100%;
-  }
-  
-  .switchcomponent--slider button:focus {
-      box-shadow: 0 0px 0px 1px var(--freon-boolean-focus-color);
-      border-radius: 1.5em;
-  }
-  
-    /* #endregion */ 
+
+  /* #endregion */ 
   
     /* #region List Group Component */
   .list-group:empty:before {

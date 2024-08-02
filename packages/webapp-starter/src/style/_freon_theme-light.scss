@@ -35,6 +35,41 @@
   @include linear-progress.buffer-color(theme.$red-100);
 }
 
+/* #region GENERAL */
+html,
+body {
+  background-color: theme.$surface;
+  color: theme.$on-surface;
+  margin: 0;
+  box-sizing: border-box;
+  --mdc-theme-primary: #{theme.$primary};
+}
+
+.mdc-drawer {
+  background-color: #e4e4e4 !important;
+}
+
+.mdc-drawer span {
+  color: black !important;
+}
+
+.mdc-drawer__title {
+  color: rgb(64, 80, 104) !important;
+}
+
+.demo-list {
+  border-left: 4px solid #245786 !important;
+}
+
+.mdc-deprecated-list-item--activated {
+  background-color: var(--mdc-theme-primary) !important;
+}
+
+.mdc-menu-surface {
+  background-color: #9d9d9d !important;
+}
+
+/* #endregion */
 
 :focus {
   outline: none;
@@ -209,7 +244,10 @@ for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/
 
   /* Boolean components */
   --freon-boolean-accent-color: #{gc.$mac-primary-900};
-  --freon-boolean-focus-color: #32cd3275;;
+  --freon-boolean-focus-color: #206C2D;
+
+  /* Switch component */
+  --freon-boolean-unselected-track: #cdcdcd;
 }
 
 .gridcellOdd {
@@ -274,30 +312,6 @@ for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/
   --freon-text-component-margin: 0px;
   --freon-text-component-padding: -1px 1px 0px 1px;
 }
-html,
-body {
-  background-color: theme.$surface;
-  color: theme.$on-surface;
-  margin: 0;
-  box-sizing: border-box;
-  --mdc-theme-primary: #{theme.$primary};
-}
-
-//.Pages\: {
-//  --freon-label-component-font-weight: bold;
-//  --freon-label-component-color: darkmagenta;
-//}
-//.Video, .Theory, .Worksheet {
-//  --freon-label-component-font-weight: bold;
-//  --freon-label-component-color: darkmagenta;
-//}
-//.Questions\:, .Score {
-//  --freon-label-component-font-weight: bold;
-//}
-//.result.of.page, .number.of.correct.answers {
-//  --freon-label-component-font-weight: bold;
-//  --freon-label-component-color: darkgreen;
-//}
 
 .app-green-font {
   color: #0c8383 !important;

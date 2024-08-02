@@ -28,6 +28,42 @@
 // linear-progress is included for the progress indicator in the EditorPart component
 @use '@material/linear-progress/index' as linear-progress;
 
+/* #region GENERAL */
+html,
+body {
+  background-color: theme.$surface;
+  color: theme.$on-surface;
+  margin: 0;
+  box-sizing: border-box;
+  --mdc-theme-primary: #{theme.$primary};
+}
+
+.mdc-drawer {
+  background-color: #212121 !important;
+}
+
+.mdc-drawer span {
+  color: white !important;
+}
+
+.mdc-drawer__title {
+  color: rgb(126, 151, 188) !important;
+}
+
+.demo-list {
+  border-left: 4px solid rgb(50, 97, 156) !important;
+}
+
+.mdc-deprecated-list-item--activated {
+  background-color: var(--mdc-theme-primary) !important;
+}
+
+.mdc-menu-surface {
+  background-color: #808080 !important;
+}
+
+/* #endregion */
+
 // my-colored-bar style is used for the progress indicator in the EditorPart component
 .my-colored-bar {
   @include linear-progress.bar-color(theme.$red-500);
@@ -108,7 +144,12 @@ for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/
 
   /* Boolean components */
   --freon-boolean-accent-color: #{gc.$mac-primary-900};
-  --freon-boolean-focus-color: #32cd3275;
+  --freon-boolean-focus-color: #206C2D;
+  --freon-boolean-hover-color: #4C5C96;
+
+  /* Switch component */
+  --freon-boolean-unselected-track: #535353;
+
 }
 .gridcellOdd {
   //--freon-gridcell-component-justify-left: right;
@@ -171,15 +212,6 @@ for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/
 .action-binary-pre-textbox, .action-binary-post-textbox, .action-exp-left-textbox, .action-exp-right-textbox {
   --freon-text-component-margin: 0px;
   --freon-text-component-padding: -1px 1px 0px 1px;
-}
-
-html,
-body {
-  background-color: theme.$surface;
-  color: theme.$on-surface;
-  margin: 0;
-  box-sizing: border-box;
-  --mdc-theme-primary: #{theme.$primary};
 }
 
 .app-green-font {
