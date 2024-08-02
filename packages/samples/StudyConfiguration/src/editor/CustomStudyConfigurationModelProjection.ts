@@ -27,11 +27,14 @@ function newGetTableRowFor_defaultImplementation(this: TaskBoxProvider): TableRo
         console.log("SHARED: Task is shared");
         if(task.referencedTask === null) {
             console.log("SHARED: referencedTask is null so task is just becoming shared");
-            let studyConfig = task.freOwner().freOwner().freOwner() as StudyConfiguration;
-            let ref = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
+            let checklist = task.freOwner() as CheckList;
+            let event = checklist.freOwner() as Event;
+            let period = event.freOwner() as Period;
+            let studyConfig = period.freOwner() as StudyConfiguration;
+            let refToTask = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
             let copyOfTask = task.copy();
-            ref.referred = copyOfTask;
-            task.referencedTask = ref;
+            refToTask.referred = copyOfTask;
+            task.referencedTask = refToTask;
             studyConfig.tasks.push(copyOfTask);
         }
         console.log("SHARED: Task description  : " + task.description.text);
@@ -53,6 +56,7 @@ function newGetTableRowFor_defaultImplementation(this: TaskBoxProvider): TableRo
                         StudyConfigurationModelEnvironment.getInstance().scoper,
                     ),
                 BoxUtil.labelBox(task.referencedTask.referred, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
+                BoxUtil.labelBox(task.referencedTask.referred, task.referencedTask.referred.description.text, "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxUtil.getBoxOrAction(task.referencedTask.referred, "description", "Description", this.mainHandler),
                 BoxUtil.booleanBox(task.referencedTask.referred, "numberedSteps", { yes: "YES", no: "NO" }, BoolDisplay.SELECT),    
             ],
@@ -153,7 +157,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 BoxUtil.listGroupBox(element, "EVENTS", 0, "group-1-line-2-item-0",
                     BoxUtil.indentBox(element, 4, true, "4",
                         BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler)
-                    ) 
+                    ), undefined, undefined, true
                 ),
             ]),
             ...(element.showActivityDetails === true? [
@@ -162,7 +166,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         BoxUtil.indentBox(element, 4, true, "13",
                             BoxUtil.verticalPartListBox(element, (element).tasks, "tasks", null, this.handler)
                         ),
-                    undefined, "app-uppercase"),
+                    undefined, "app-uppercase", true),
                     ...(element.showSystems === true? [
                     BoxUtil.emptyLineBox(element, "StudyConfiguration-empty-line-5", "h-2"),
                     BoxUtil.listGroupBox(element, "SYSTEM ACCESS DEFINITIONS", 0, "sys-defs-group",
@@ -207,8 +211,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     BoxUtil.listGroupBox(period, "EVENTS", 0, "group-1-line-2-item-0",
                         BoxUtil.indentBox(period, 4, true, "4",
                             BoxUtil.verticalPartListBox(period, period.events, "events", null, this.handler)
-                        ) 
-                    )
+                        ), 
+                        undefined, undefined, true)
                 ])
             ), "w-full", true, true
         );
@@ -273,7 +277,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     ),
                     BoxUtil.emptyLineBox(event, "Event-empty-line-11")
                 ])
-            ), "w-full", false, true
+            ), "w-full", true, true
         );
         return box;
     }

@@ -3,7 +3,7 @@
    "languages": [],
    "nodes": [
       {
-         "id": "ID-30",
+         "id": "ID-26",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -35,7 +35,7 @@
                   "key": "-default-key-Availability-patientNotAvailableDates"
                },
                "children": [
-                  "ID-31"
+                  "ID-27"
                ]
             },
             {
@@ -52,7 +52,7 @@
          "parent": null
       },
       {
-         "id": "ID-31",
+         "id": "ID-27",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -71,7 +71,7 @@
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-30"
+         "parent": "ID-26"
       }
    ]
 }

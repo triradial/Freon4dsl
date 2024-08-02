@@ -14,7 +14,7 @@ import { setUserMessage } from "../components/stores/UserMessageStore.js";
 import { modelErrors } from "../components/stores/InfoPanelStore.js";
 import { runInAction } from "mobx";
 import {WebappConfigurator} from "../WebappConfigurator.js";
-import {StudyConfigurationModel, Period, StudyConfiguration} from "@freon4dsl/samples-study-configuration";
+import {StudyConfigurationModel, Event, Task, Period, CheckList, StudyConfiguration} from "@freon4dsl/samples-study-configuration";
 
 const LOGGER = new FreLogger("EditorState").mute();
 
@@ -63,16 +63,21 @@ export class EditorState {
     async newStudyConfigurationModelUnits() {
         let newModel: StudyConfigurationModel = this.currentModel;
         // let config: StudyConfiguration = newModel.configuration;
-        this.createNewUnit("StudyConfiguration", "StudyConfiguration");
-        let studyConfigUnit = newModel.findUnit("StudyConfiguration");
-        let defaultPeriod = new Period();
-        defaultPeriod.name = "Default";
-        LOGGER.log("before push periods length:"+studyConfigUnit.periods.length);
-        studyConfigUnit.periods.push(defaultPeriod);
-        LOGGER.log("config.periods length after:"+studyConfigUnit.periods.length)
-        this.saveCurrentUnit();
         this.createNewUnit("Availability", "Availability");
-        this.saveCurrentUnit();
+        await this.saveCurrentUnit();
+        this.createNewUnit("StudyConfiguration", "StudyConfiguration");
+        const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration")
+        this.currentUnit = studyConfigUnit;
+        // let studyConfigUnit = newModel.findUnit("StudyConfiguration");
+        let defaultPeriod:Period = new Period();
+        defaultPeriod.name = "Default";
+        studyConfigUnit.showPeriods = true;
+        studyConfigUnit.periods.push(defaultPeriod);
+        studyConfigUnit.periods[0].events.push(new Event());
+        studyConfigUnit.periods[0].events[0].checkList = new CheckList();
+        studyConfigUnit.periods[0].events[0].checkList.activities.push(new Task());
+        studyConfigUnit.showPeriods = true;
+        await this.saveCurrentUnit();
 
         EditorState.getInstance().currentUnit = studyConfigUnit;        
         currentModelName.set(this.currentModel.name); //TODO: Why wasn't this in the original code?
