@@ -56,9 +56,9 @@ function newGetTableRowFor_defaultImplementation(this: TaskBoxProvider): TableRo
                         StudyConfigurationModelEnvironment.getInstance().scoper,
                     ),
                 BoxUtil.labelBox(task.referencedTask.referred, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
-                BoxUtil.labelBox(task.referencedTask.referred, task.referencedTask.referred.description.text, "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
-                BoxUtil.getBoxOrAction(task.referencedTask.referred, "description", "Description", this.mainHandler),
-                BoxUtil.booleanBox(task.referencedTask.referred, "numberedSteps", { yes: "YES", no: "NO" }, BoolDisplay.SELECT),    
+                BoxUtil.labelBox(task.referencedTask.referred, task.referencedTask.referred.description.rawText, "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
+                // BoxUtil.getBoxOrAction(task.referencedTask.referred, "description", "Description", this.mainHandler),
+                // BoxUtil.booleanBox(task.referencedTask.referred, "numberedSteps", { yes: "YES", no: "NO" }, BoolDisplay.SELECT),    
             ],
             { selectable: false })
         );
@@ -186,7 +186,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     }
 
     createDescription (desc: Description): Box {
-        return new MultiLineTextBox2(desc, "study-part-description", () => { return desc.text}, (t: string) => { desc.text = t}, undefined, "mr-2");
+        return new MultiLineTextBox2(desc, "study-part-description", () => { return desc.text}, (t: string) => { desc.text = t}, () => { return desc.rawText}, (t: string) => { desc.rawText = t}, undefined, "mr-2");
     }
 
     createPeriod (period: Period): Box {

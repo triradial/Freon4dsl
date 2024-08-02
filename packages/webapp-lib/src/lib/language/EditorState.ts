@@ -61,17 +61,14 @@ export class EditorState {
      * @param modelName
      */
     async newStudyConfigurationModelUnits() {
-        let newModel: StudyConfigurationModel = this.currentModel;
-        // let config: StudyConfiguration = newModel.configuration;
         this.createNewUnit("Availability", "Availability");
         await this.saveCurrentUnit();
+
         this.createNewUnit("StudyConfiguration", "StudyConfiguration");
+        // Initialize the StudyConfiguration with a default period, event, and task in the checklist
         const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration")
-        this.currentUnit = studyConfigUnit;
-        // let studyConfigUnit = newModel.findUnit("StudyConfiguration");
         let defaultPeriod:Period = new Period();
         defaultPeriod.name = "Default";
-        studyConfigUnit.showPeriods = true;
         studyConfigUnit.periods.push(defaultPeriod);
         studyConfigUnit.periods[0].events.push(new Event());
         studyConfigUnit.periods[0].events[0].checkList = new CheckList();
@@ -79,6 +76,7 @@ export class EditorState {
         studyConfigUnit.showPeriods = true;
         await this.saveCurrentUnit();
 
+        this.currentUnit = studyConfigUnit;
         EditorState.getInstance().currentUnit = studyConfigUnit;        
         currentModelName.set(this.currentModel.name); //TODO: Why wasn't this in the original code?
     }

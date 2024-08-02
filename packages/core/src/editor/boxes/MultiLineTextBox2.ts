@@ -10,6 +10,8 @@ export class MultiLineTextBox2 extends Box {
     placeHolder: string = "<enter>";
     $getText: () => string;
     $setText: (newValue: string) => void;
+    $getRawText: () => string;
+    $setRawText: (newRawValue: string) => void;
 
     /**
      * Run the setText() as defined by the user of this box inside a mobx action.
@@ -25,11 +27,23 @@ export class MultiLineTextBox2 extends Box {
         return this.$getText();
     }
 
-    constructor(node: FreNode, role: string, getText: () => string, setText: (text: string) => void, initializer?: Partial<MultiLineTextBox2>, cssClass?: string) {
+    setRawText(newValue: string): void {
+        LOGGER.log("setRawText to " + newValue);
+        this.$setRawText(newValue);
+        this.isDirty();
+    }
+
+    getRawText(): string {
+        return this.$getRawText();
+    }
+
+    constructor(node: FreNode, role: string, getText: () => string, setText: (text: string) => void, getRawText: () => string, setRawText: (text: string) => void, initializer?: Partial<MultiLineTextBox2>, cssClass?: string) {
         super(node, role);
         FreUtils.initializeObject(this, initializer);
         this.$getText = getText;
         this.$setText = setText;
+        this.$getRawText = getRawText;
+        this.$setRawText = setRawText;
         this.cssClass = cssClass;
     }
 

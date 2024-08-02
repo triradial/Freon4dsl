@@ -90,6 +90,7 @@ concept WorkflowBranch implements WorkflowDecision {
 
 interface NoteOrDescription {
     text: string;
+    rawText: string;
 }
 
 concept Description implements NoteOrDescription {

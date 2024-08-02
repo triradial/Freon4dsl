@@ -24,7 +24,7 @@
     export let editor: FreEditor;	
 	export let box: MultiLineTextBox2;		// the accompanying box
     export let text: string;    			// the text to be displayed, needs to be exported for to use 'bind:text' in TextDropdownComponent
-	export let isEditing: boolean = false;
+  export let isEditing: boolean = false;
 
     // Local variables
     let id: string;                         // an id for the html element
@@ -203,6 +203,12 @@
 			if (text !== box.getText()) {
 				LOGGER.log(`   text is new value`)
 				box.setText(text);
+				if (ed) {
+					box.setRawText(ed.getContent({ format: "text" }));
+				} else {
+					box.setRawText("HTML NOT AVAILABLE YET: " + text);
+				}
+
 			} else {
 				LOGGER.log("Text is unchanged: " + text)
 			}
