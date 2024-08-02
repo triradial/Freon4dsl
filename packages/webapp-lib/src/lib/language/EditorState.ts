@@ -60,6 +60,28 @@ export class EditorState {
      * Creates a new model
      * @param modelName
      */
+    async newStudyConfigurationModelUnits() {
+        let newModel: StudyConfigurationModel = this.currentModel;
+        // let config: StudyConfiguration = newModel.configuration;
+        this.createNewUnit("StudyConfiguration", "StudyConfiguration");
+        let studyConfigUnit = newModel.findUnit("StudyConfiguration");
+        let defaultPeriod = new Period();
+        defaultPeriod.name = "Default";
+        LOGGER.log("before push periods length:"+studyConfigUnit.periods.length);
+        studyConfigUnit.periods.push(defaultPeriod);
+        LOGGER.log("config.periods length after:"+studyConfigUnit.periods.length)
+        this.saveCurrentUnit();
+        this.createNewUnit("Availability", "Availability");
+        this.saveCurrentUnit();
+
+        EditorState.getInstance().currentUnit = studyConfigUnit;        
+        currentModelName.set(this.currentModel.name); //TODO: Why wasn't this in the original code?
+    }
+
+    /**
+     * Creates a new model
+     * @param modelName
+     */
     async newModel(modelName: string) {
         LOGGER.log("new model called: " + modelName);
         editorProgressShown.set(true);
@@ -68,25 +90,11 @@ export class EditorState {
         // reset all visible information on the model and unit
         this.resetGlobalVariables();
         // create a new model
-        await this.modelStore.createModel(modelName)
-        // Initialize
-        let newModel: StudyConfigurationModel = this.currentModel;
-        this.createNewUnit("Availability", "Availability");
-        this.saveCurrentUnit();
-        this.createNewUnit("StudyConfiguration", "StudyConfiguration");
-        this.saveCurrentUnit();
-        EditorState.getInstance().currentUnit = newModel.findUnit("StudyConfiguration");
-
-        let defaultPeriod = new Period("Default");
-        let config: StudyConfiguration = newModel.configuration;
-        LOGGER.log("before push periods length:"+config.periods.length);
-        config.periods.push(defaultPeriod);
-        LOGGER.log("config.periods length after:"+config.periods.length)
-
-        currentModelName.set(this.currentModel.name); //TODO: Why wasn't this in the original code?
+        await this.modelStore.createModel(modelName);
+        this.newStudyConfigurationModelUnits();
         editorProgressShown.set(false);
     }
-
+    
     /**
      * Reads the model with name 'modelName' from the server and makes this the current model.
      * The first unit in the model is shown, if present.
