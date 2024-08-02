@@ -56,11 +56,11 @@ concept CheckList {
 
 concept Task {
     name: identifier;
+    isShared: boolean;
     description: Description;
     reference referencedTask: Task;
     numberedSteps: boolean;
     showDetails: boolean;
-    isSharedTask: boolean;
     steps: Step[];
 }
 
@@ -74,7 +74,7 @@ concept Step {
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
     references: Reference[];
     people: Person[];
-    systems: SystemAccessReference[];
+    systems: SystemAccess[];
 }
 
 interface WorkflowDecision {
@@ -98,6 +98,8 @@ concept Description implements NoteOrDescription {
 
 concept SystemAccess {
     name: identifier;
+    isShared: boolean;
+    reference referencedSystemAccess: SystemAccess;
     functionName: string;
     accessedAt: AccessedAt;
     robotMappings?: RobotMapping;

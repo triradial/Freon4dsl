@@ -51,7 +51,7 @@ Step {
                 ${references}
 
             Systems Used:
-                ${systems}
+                ${systems table rows}
 
             People:
                 ${people}
@@ -60,18 +60,18 @@ Step {
 }
 
 
+//        System Name  : ${name}  Function: ${functionName}
+//       Description  : ${description}
+//        Access at ${accessedAt}
+//        The Robot should copy:
+//            ${robotMappings}
+
 SystemAccess {
-    [ 
+    table [ 
+             System    
+             ${name}
 
-        System Name  : ${name}  Function: ${functionName}
-        Description  : ${description}
-        Access at ${accessedAt}
-        The Robot should copy:
-            ${robotMappings}
-
-
-
-    ]
+        ]
 }
 
 SystemAccessReference {

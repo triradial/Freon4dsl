@@ -14,7 +14,7 @@ import { setUserMessage } from "../components/stores/UserMessageStore.js";
 import { modelErrors } from "../components/stores/InfoPanelStore.js";
 import { runInAction } from "mobx";
 import {WebappConfigurator} from "../WebappConfigurator.js";
-import {StudyConfigurationModel, Event, Task, Period, CheckList, StudyConfiguration} from "@freon4dsl/samples-study-configuration";
+import {StudyConfigurationModel, Event, Task, Period, CheckList, StudyConfiguration, Description} from "@freon4dsl/samples-study-configuration";
 
 const LOGGER = new FreLogger("EditorState").mute();
 
@@ -72,6 +72,8 @@ export class EditorState {
         studyConfigUnit.periods.push(defaultPeriod);
         studyConfigUnit.periods[0].events.push(new Event());
         studyConfigUnit.periods[0].events[0].checkList = new CheckList();
+        let defaultTask = new Task();
+        defaultTask.description = new Description();
         studyConfigUnit.periods[0].events[0].checkList.activities.push(new Task());
         studyConfigUnit.showPeriods = true;
         await this.saveCurrentUnit();
