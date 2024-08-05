@@ -1,5 +1,5 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
-import { FreError, FreErrorSeverity, FreLogger, InMemoryModel } from "@freon4dsl/core"
+import { FreError, FreErrorSeverity, FreLogger, FreUtils, InMemoryModel } from "@freon4dsl/core"
 import type { FreEnvironment, FreNode, FreModel, FreModelUnit, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
 import { get } from "svelte/store";
 import {
@@ -61,45 +61,48 @@ export class EditorState {
      * @param modelName
      */
     async newStudyConfigurationModelUnits() {
-        this.createNewUnit("Availability", "Availability");
-        await this.saveCurrentUnit();
-
-        this.createNewUnit("StudyConfiguration", "StudyConfiguration");
-        // Initialize the StudyConfiguration with a default period, event, and task in the checklist
-        const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration")
-        let defaultPeriod:Period = new Period();
-        defaultPeriod.name = "Default";
-        studyConfigUnit.periods.push(defaultPeriod);
-        studyConfigUnit.periods[0].events.push(new Event());
-        studyConfigUnit.periods[0].events[0].checkList = new CheckList();
-        let defaultTask = new Task();
-        defaultTask.description = new Description();
-        studyConfigUnit.periods[0].events[0].checkList.activities.push(new Task());
-        studyConfigUnit.showPeriods = true;
-        await this.saveCurrentUnit();
-
-        this.currentUnit = studyConfigUnit;
-        EditorState.getInstance().currentUnit = studyConfigUnit;        
-        currentModelName.set(this.currentModel.name); //TODO: Why wasn't this in the original code?
-    }
-
-    /**
-     * Creates a new model
-     * @param modelName
-     */
-    async newModel(modelName: string) {
-        LOGGER.log("new model called: " + modelName);
-        editorProgressShown.set(true);
-        // save the old current unit, if there is one
-        await this.saveCurrentUnit();
-        // reset all visible information on the model and unit
-        this.resetGlobalVariables();
-        // create a new model
-        await this.modelStore.createModel(modelName);
-        this.newStudyConfigurationModelUnits();
-        editorProgressShown.set(false);
+        try {
+            LOGGER.log("newStudyConfigurationModelUnits called");
+            this.createNewUnit("Availability", "Availability");
+            await this.saveCurrentUnit();
+    
+            this.createNewUnit("StudyConfiguration", "StudyConfiguration");
+            // Initialize the StudyConfiguration with a default period, event, and task in the checklist
+            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration");
+            studyConfigUnit.periods.push(Period.create(Period.create({$id: FreUtils.ID(), name: "Screening"})));
+            studyConfigUnit.periods[0].events.push(Event.create({$id: FreUtils.ID(), name: "Screen"}));
+            studyConfigUnit.periods[0].events[0].checkList = CheckList.create({$id: FreUtils.ID()});
+            studyConfigUnit.periods[0].events[0].checkList.activities.push(Task.create({$id: FreUtils.ID(), name: "Task 1"}));
+            studyConfigUnit.showPeriods = true;
+            await this.saveCurrentUnit();
+    
+            this.currentUnit = studyConfigUnit;
+            EditorState.getInstance().currentUnit = studyConfigUnit;        
+            currentModelName.set(this.currentModel.name); //TODO: Why wasn't this in the original code?
+        } catch (error) {
+            LOGGER.error("Error in newStudyConfigurationModelUnits: " + error);
+            LOGGER.error("Stack trace: " + error.stack);
+        }
     }
     
+    async newModel(modelName: string) {
+        try {
+            LOGGER.log("new model called: " + modelName);
+            editorProgressShown.set(true);
+            // save the old current unit, if there is one
+            await this.saveCurrentUnit();
+            // reset all visible information on the model and unit
+            this.resetGlobalVariables();
+            // create a new model
+            await this.modelStore.createModel(modelName);
+            await this.newStudyConfigurationModelUnits();
+            editorProgressShown.set(false);
+        } catch (error) {
+            LOGGER.error("Error in newModel: " + error);
+            editorProgressShown.set(false);
+        }
+    }
+
     /**
      * Reads the model with name 'modelName' from the server and makes this the current model.
      * The first unit in the model is shown, if present.

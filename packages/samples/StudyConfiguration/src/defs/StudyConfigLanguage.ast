@@ -88,22 +88,19 @@ concept WorkflowBranch implements WorkflowDecision {
     branch: FirstScheduledExpression;
 }
 
-interface NoteOrDescription {
+concept Description {
     text: string;
     rawText: string;
 }
 
-concept Description implements NoteOrDescription {
-}
-
 concept SystemAccess {
     name: identifier;
+    description: Description;
     isShared: boolean;
     reference referencedSystemAccess: SystemAccess;
     functionName: string;
     accessedAt: AccessedAt;
     robotMappings?: RobotMapping;
-    description?: Description;
 }
 
 concept SystemAccessReference {

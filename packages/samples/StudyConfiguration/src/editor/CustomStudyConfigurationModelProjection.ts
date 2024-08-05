@@ -18,6 +18,52 @@ import { SystemAccessBoxProvider } from "editor";
  * (3) if neither (1) nor (2) yields a result, the default is used.
  */
 
+function copyIntoTask(target:Task, source:Task) {
+    console.log("copyIntoTask");
+    const result = new Task();
+    if (source.name) {
+        target.name = source.name;
+    }
+    // if (source.isShared) {
+    //     target.isShared = source.isShared;
+    // }
+    if (source.numberedSteps) {
+        target.numberedSteps = source.numberedSteps;
+    }
+    if (source.showDetails) {
+        target.showDetails = source.showDetails;
+    }
+    if (source.description) {
+        target.description = source.description.copy();
+    }
+    if (source.steps) {
+        console.log("copyIntoTask # steps:" + source.steps.length);
+        source.steps.forEach((x) => target.steps.push(x.copy()));
+    }
+    if (source.referencedTask) {
+        target.referencedTask = source.referencedTask.copy();
+    }
+}
+
+function copyIntoSystemAccess(target:SystemAccess, source:SystemAccess) {
+    const result = new SystemAccess();
+    if (source.name) {
+        target.name = source.name;
+    }
+    if (source.functionName) {
+        target.functionName = source.functionName;
+    }
+    if (source.description) {
+        target.description = source.description.copy();
+    }
+    if (source.accessedAt) {
+        target.accessedAt = source.accessedAt.copy();
+    }
+    if (source.robotMappings) {
+        source.robotMappings = target.robotMappings.copy();
+    }
+}
+
 // Override of implementation for TaskBoxProvider.getTableRowFor_default
 function newGetTableRowFor_defaultTaskImplementation(this: TaskBoxProvider): TableRowBox {
     const cells: Box[] = [];
@@ -33,6 +79,7 @@ function newGetTableRowFor_defaultTaskImplementation(this: TaskBoxProvider): Tab
             let studyConfig = period.freOwner() as StudyConfiguration;
             let refToTask = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
             let copyOfTask = task.copy();
+            task.name = "Original Task";
             refToTask.referred = copyOfTask;
             task.referencedTask = refToTask;
             studyConfig.tasks.push(copyOfTask);
@@ -55,12 +102,18 @@ function newGetTableRowFor_defaultTaskImplementation(this: TaskBoxProvider): Tab
                         },
                         StudyConfigurationModelEnvironment.getInstance().scoper,
                     ),
-                BoxUtil.labelBox(task.referencedTask.referred, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
-                BoxUtil.labelBox(task.referencedTask.referred, task.referencedTask.referred.description.rawText, "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
-                ],
+                BoxUtil.labelBox(task, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
+                new LabelBox(task, "xxx-top-1-line-2-item-0", ()=> task.referencedTask.referred.description.rawText + " extra",  undefined, "app-small-caps mt-1 mr-1"),
+                BoxUtil.getBoxOrAction(task.referencedTask.referred, "description", "Description", this.mainHandler)
+            ],
             { selectable: false })
         );
     } else {
+        // task was previously shared but that just changed so copy in what was shared
+        if (task.referencedTask !== null) {
+            copyIntoTask(task, task.referencedTask.referred);
+            // task.referencedTask = null;
+        }
         innerCells.push(BoxFactory.horizontalLayout(task, "period-hlist-line-1", "","top",[
                 BoxUtil.labelBox(task, " Shared:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxUtil.switchElement(task, "isShared", ""),
@@ -110,9 +163,10 @@ function newGetTableRowFor_defaultSystemAccessImplementation(this: SystemAccessB
             studyConfig.systemAccesses.push(copyOfSystemAccess);
             console.log("SHARED: pushed system");
         }
-        if (systemAccess.referencedSystemAccess.referred.description === null) {
-            systemAccess.referencedSystemAccess.referred.description = new Description();
-        }
+        // if (systemAccess.referencedSystemAccess.referred.description === null) {
+        //     systemAccess.referencedSystemAccess.referred.description = new Description();
+        // }
+        console.log("SHARED: SystemAccess is shared");
         innerCells.push(BoxFactory.horizontalLayout(systemAccess, "period-hlist-line-1", "","top",[
                 BoxUtil.labelBox(systemAccess, " Shared:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxUtil.switchElement(systemAccess, "isShared", ""),
@@ -131,13 +185,18 @@ function newGetTableRowFor_defaultSystemAccessImplementation(this: SystemAccessB
                         },
                         StudyConfigurationModelEnvironment.getInstance().scoper,
                     ),
-                BoxUtil.labelBox(systemAccess.referencedSystemAccess.referred, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
-                BoxUtil.labelBox(systemAccess.referencedSystemAccess.referred, systemAccess.referencedSystemAccess.referred.description.rawText, "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
+                BoxUtil.labelBox(systemAccess.referencedSystemAccess.referred, " DescriptionX:", "sys-top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
+                BoxUtil.labelBox(systemAccess.referencedSystemAccess.referred.description, systemAccess.referencedSystemAccess.referred.description.rawText + " is the raw text!", "raw-sys-top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 ],
             { selectable: false })
         );
     } else {
-        console.log("SHARED: not shared yet");
+        // task was previously shared but that just changed so copy in what was shared
+        if (systemAccess.referencedSystemAccess !== null) {
+            copyIntoSystemAccess(systemAccess, systemAccess.referencedSystemAccess.referred);
+            systemAccess.referencedSystemAccess = null;
+        }      
+        console.log("SHARED: System Access not shared yet");
         innerCells.push(BoxFactory.verticalLayout(this._element as SystemAccess, "SystemAccess-overall", "", [
             BoxUtil.labelBox(systemAccess, " Shared:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
             BoxUtil.switchElement(systemAccess, "isShared", ""),
@@ -161,7 +220,7 @@ function newGetTableRowFor_defaultSystemAccessImplementation(this: SystemAccessB
                 "",
                 "center",
                 [
-                    BoxUtil.labelBox(this._element as SystemAccess, "Description  :", "top-1-line-2-item-0"),
+                    BoxUtil.labelBox(this._element as SystemAccess, "Description  :", "sysa-top-1-line-2-item-0"),
                     BoxUtil.getBoxOrAction(this._element as SystemAccess, "description", "Description", this.mainHandler),
                 ],
                 { selectable: false },

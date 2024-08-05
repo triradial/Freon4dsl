@@ -11,7 +11,7 @@ WebappConfigurator.getInstance().setEditorEnvironment(StudyConfigurationModelEnv
  */
 // import { LionWebRepositoryCommunication } from "@freon4dsl/core"
 // WebappConfigurator.getInstance().setServerCommunication(LionWebRepositoryCommunication.getInstance());
-import { ServerCommunication } from "@freon4dsl/core";
+import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 WebappConfigurator.getInstance().setServerCommunication(ServerCommunication.getInstance());
 // export const serverCommunication: IServerCommunication = MpsServerCommunication.getInstance();
 
@@ -22,7 +22,7 @@ const app = new FreonLayout({
 	target: document.body,
 });
 
-// FreLogger.unmute("EditorState");
+FreLogger.unmute("LabelComponent");
 // FreLogger.unmute("ServerCommunication");
 
 export default app;
