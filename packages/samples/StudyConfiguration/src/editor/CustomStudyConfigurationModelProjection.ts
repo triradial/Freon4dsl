@@ -103,8 +103,9 @@ function newGetTableRowFor_defaultTaskImplementation(this: TaskBoxProvider): Tab
                         StudyConfigurationModelEnvironment.getInstance().scoper,
                     ),
                 BoxUtil.labelBox(task, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
-                new LabelBox(task, "xxx-top-1-line-2-item-0", ()=> task.referencedTask.referred.description.rawText + " extra",  undefined, "app-small-caps mt-1 mr-1"),
-                BoxUtil.getBoxOrAction(task.referencedTask.referred, "description", "Description", this.mainHandler)
+                BoxFactory.label(task, "xxx-top-1-line-2-item-0", ()=> task.referencedTask.referred.description.rawText,  undefined, "app-small-caps mt-1 mr-1"),
+                // new LabelBox(task, "yyy-top-1-line-2-item-0", ()=> task.referencedTask.referred.description.rawText + " extra",  undefined, "app-small-caps mt-1 mr-1"),
+                // BoxUtil.getBoxOrAction(task.referencedTask.referred, "description", "Description", this.mainHandler)
             ],
             { selectable: false })
         );

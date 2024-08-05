@@ -22,7 +22,7 @@ const app = new FreonLayout({
 	target: document.body,
 });
 
-FreLogger.unmute("LabelComponent");
+// FreLogger.unmute("LabelComponent");
 // FreLogger.unmute("ServerCommunication");
 
 export default app;
