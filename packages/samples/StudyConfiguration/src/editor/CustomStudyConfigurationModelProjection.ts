@@ -119,7 +119,7 @@ function newGetTableRowFor_defaultTaskImplementation(this: TaskBoxProvider): Tab
                 BoxUtil.labelBox(task, " Shared:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxUtil.switchElement(task, "isShared", ""),
                 BoxUtil.textBox(task, "name"),
-                BoxUtil._labelBox(task, " Description:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" } ),
+                BoxUtil.labelBox(task, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxUtil.getBoxOrAction(task, "description", "Description", this.mainHandler),
                 BoxUtil.labelBox(task, " Expand:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxUtil.switchElement(task, "showDetails", "")],
@@ -309,7 +309,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             //     { selectable: false },
             // ), 
             BoxUtil.emptyLineBox(element, "StudyConfiguration-empty-line-1", "h-2"),
-            BoxUtil.listGroupBox(element, "Options:", "study-periods-group",
+            BoxUtil.listGroupBox(element, "Options", "study-periods-group",
                 BoxUtil.indentBox(element, 4, true, "3",
                     BoxFactory.verticalLayout(element, "StudyConfiguration-vlist-line-3", "", 
                     [
@@ -362,7 +362,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     createDescription (desc: Description): Box {
         const ph = "<" + desc.$$propertyName + ">";
-        return new MultiLineTextBox2(desc, "study-part-description", () => { return desc.text}, (t: string) => { desc.text = t}, { placeHolder: ph }, "mr-2");
+        return new MultiLineTextBox2(desc, "study-part-description", () => { return desc.text}, (t: string) => { desc.text = t}, () => { return desc.rawText}, {placeHolder: ph, cssClass:"mr-2"});
     }
 
     createPeriod (period: Period): Box {
@@ -375,13 +375,6 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         ],
                         { selectable: false }, "w-full mt-1"
                     ),
-                    // BoxFactory.horizontalLayout(period, "Period-hlist-line-1", "", "top",
-                    //     [
-                    //         BoxUtil.labelBox(period, "Date:", "top-1-line-1-item-0"),
-                    //         BoxUtil.dateBox(period, "date"),
-                    //     ],
-                    //     { selectable: false }, "w-full mt-1"
-                    // ),
                     BoxUtil.listGroupBox(period, "Events", "group-1-line-2-item-0",
                         BoxUtil.indentBox(period, 4, true, "4",
                             BoxUtil.verticalPartListBox(period, period.events, "events", null, this.handler)
@@ -455,7 +448,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         return BoxFactory.verticalLayout(schedule, "EventSchedule-overall", "", [
             BoxFactory.horizontalLayout(schedule, "EventSchedule-hlist-line-0", "", "top",
                 [
-                    BoxUtil._labelBox(schedule, "First Scheduled:", "top-1-line-0-item-0", { cssClass: "app-small-caps"} ),
+                    BoxUtil.labelBox(schedule, "First Scheduled:", "top-1-line-0-item-0", undefined, "app-small-caps" ),
                     BoxUtil.getBoxOrAction(schedule, "eventStart", "EventStart", this.handler),
                 ],
                 { selectable: false },

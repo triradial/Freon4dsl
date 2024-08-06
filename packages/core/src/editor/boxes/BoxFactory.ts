@@ -10,7 +10,6 @@ import {
     ActionBox,
     LabelBox,
     TextBox,
-    MultiLineTextBox,
     SelectOption,
     SelectBox,
     IndentBox,
@@ -34,7 +33,7 @@ type BoxCache<T extends Box> = {
 let actionCache: BoxCache<ActionBox> = {};
 let labelCache: BoxCache<LabelBox> = {};
 let textCache: BoxCache<TextBox> = {};
-let multiTextCache: BoxCache<MultiLineTextBox> = {};
+let multiTextCache: BoxCache<MultiLineTextBox2> = {};
 let boolCache: BoxCache<BooleanControlBox> = {};
 let buttonCache: BoxCache<ButtonBox> = {};
 let numberCache: BoxCache<NumberControlBox> = {};
@@ -232,17 +231,18 @@ export class BoxFactory {
         return result;
     }
 
-    static multitext(element: FreNode, role: string, getText: () => string, setText: (text: string) => void, initializer?: Partial<TextBox>, cssClass?: string): MultiLineTextBox2 {
+    static multitext(element: FreNode, role: string, getText: () => string, setText: (text: string) => void, getRawText: () => string, initializer?: Partial<MultiLineTextBox2>): MultiLineTextBox2 {
         if (cacheMultilineTextOff) {
-            return new MultiLineTextBox2(element, role, getText, setText, initializer, cssClass);
+            return new MultiLineTextBox2(element, role, getText, setText, getRawText, initializer);
         }
         // 1. Create the text box, or find the one that already exists for this element and role
-        const creator = () => new MultiLineTextBox2(element, role, getText, setText, initializer, cssClass);
-        const result: MultiLineTextBox2 = this.find<MultiLineTextBox2>(element, role, creator,multiTextCache);
+        const creator = () => new MultiLineTextBox2(element, role, getText, setText, getRawText, initializer);
+        const result: MultiLineTextBox2 = this.find<MultiLineTextBox2>(element, role, creator, multiTextCache);
 
         // 2. Apply the other arguments in case they have changed
         result.$getText = getText;
         result.$setText = setText;
+        result.$getRawText = getRawText;
         FreUtils.initializeObject(result, initializer);
         return result;
     }
@@ -316,22 +316,6 @@ export class BoxFactory {
         return result;
     }
 
-    // static listGroup(element: FreNode, role: string, getLabel: string | (() => string), childBox: Box, initializer?: Partial<ListGroupBox>, cssClass?: string, isExpanded?: boolean, hasActions?: boolean): ListGroupBox {
-    //     if (cacheListGroupOff) {
-    //         return new ListGroupBox(element, role, getLabel, childBox, initializer, cssClass, isExpanded, hasActions);
-    //     }
-    //     // 1. Create the  box, or find the one that already exists for this element and role
-    //     const creator = () => new ListGroupBox(element, role, getLabel, childBox, initializer, cssClass, isExpanded, hasActions);
-    //     const result: ListGroupBox = this.find<ListGroupBox>(element, role, creator, listGroupCache);
-
-    //     // 2. Apply the other arguments in case they have changed
-    //     result.setLabel(getLabel);
-    //     result.child = childBox;
-    //     FreUtils.initializeObject(result, initializer);
-
-    //     return result;
-    // }
-
     static listGroup(element: FreNode, role: string, getLabel: string | (() => string), childBox: Box, initializer?: Partial<ListGroupBox>): ListGroupBox {
         if (cacheListGroupOff) {
             return new ListGroupBox(element, role, getLabel, childBox, initializer);
@@ -347,22 +331,6 @@ export class BoxFactory {
 
         return result;
     }
-
-    // static itemGroup(element: FreNode, role: string, getLabel, getText: () => string, setText: (text: string) => void, childBox: Box, initializer?: Partial<ItemGroupBox>, cssClass?: string, isExpanded?: boolean, isDraggable?: boolean, hasActions?: boolean, isShareable?: boolean): ItemGroupBox {
-    //     if (cacheItemGroupOff) {
-    //         return new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer, cssClass, isExpanded, isDraggable, hasActions, isShareable);
-    //     }
-    //     // 1. Create the  box, or find the one that already exists for this element and role
-    //     const creator = () => new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer, cssClass, isExpanded, isDraggable, hasActions, isShareable);
-    //     const result: ItemGroupBox = this.find<ItemGroupBox>(element, role, creator, itemGroupCache);
-
-    //     // 2. Apply the other arguments in case they have changed
-    //     result.setLabel(getLabel);
-    //     result.child = childBox;
-    //     FreUtils.initializeObject(result, initializer);
-
-    //     return result;
-    // }
 
     static itemGroup(element: FreNode, role: string, getLabel, getText: () => string, setText: (text: string) => void, childBox: Box, initializer?: Partial<ItemGroupBox>): ItemGroupBox {
         if (cacheItemGroupOff) {
