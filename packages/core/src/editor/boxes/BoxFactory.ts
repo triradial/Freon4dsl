@@ -10,6 +10,7 @@ import {
     ActionBox,
     LabelBox,
     TextBox,
+    MultiLineTextBox,
     SelectOption,
     SelectBox,
     IndentBox,
@@ -17,6 +18,7 @@ import {
     HorizontalListBox, VerticalListBox, BoolFunctie, GridCellBox,
     HorizontalLayoutBox, VerticalLayoutBox,
     TableCellBox, OptionalBox2, LimitedControlBox, ButtonBox, DateBox, TimeBox, ItemGroupBox, ListGroupBox,
+    MultiLineTextBox2,
 } from "./internal";
 
 type RoleCache<T extends Box> = {
@@ -32,6 +34,7 @@ type BoxCache<T extends Box> = {
 let actionCache: BoxCache<ActionBox> = {};
 let labelCache: BoxCache<LabelBox> = {};
 let textCache: BoxCache<TextBox> = {};
+let multiTextCache: BoxCache<MultiLineTextBox> = {};
 let boolCache: BoxCache<BooleanControlBox> = {};
 let buttonCache: BoxCache<ButtonBox> = {};
 let numberCache: BoxCache<NumberControlBox> = {};
@@ -55,6 +58,7 @@ let dateCache: BoxCache<DateBox> = {};
 let cacheActionOff: boolean = false;
 let cacheLabelOff: boolean = false;
 let cacheTextOff: boolean = false;
+let cacheMultilineTextOff: boolean = false;
 let cacheBooleanOff: boolean = false;
 let cacheButtonOff: boolean = false;
 let cacheNumberOff: boolean = false;
@@ -81,6 +85,7 @@ export class BoxFactory {
         actionCache = {};
         labelCache = {};
         textCache = {};
+        multiTextCache = {};
         boolCache = {};
         buttonCache = {};
         numberCache = {};
@@ -106,6 +111,7 @@ export class BoxFactory {
         cacheActionOff = true;
         cacheLabelOff = true;
         cacheTextOff = true;
+        cacheMultilineTextOff = true;
         cacheBooleanOff = true;
         cacheButtonOff = true;
         cacheNumberOff = true;
@@ -127,6 +133,7 @@ export class BoxFactory {
         cacheActionOff = false;
         cacheLabelOff = false;
         cacheTextOff = false;
+        cacheMultilineTextOff = false;
         cacheBooleanOff = false;
         cacheButtonOff = false;
         cacheNumberOff = false;
@@ -225,6 +232,21 @@ export class BoxFactory {
         return result;
     }
 
+    static multitext(element: FreNode, role: string, getText: () => string, setText: (text: string) => void, initializer?: Partial<TextBox>, cssClass?: string): MultiLineTextBox2 {
+        if (cacheMultilineTextOff) {
+            return new MultiLineTextBox2(element, role, getText, setText, initializer, cssClass);
+        }
+        // 1. Create the text box, or find the one that already exists for this element and role
+        const creator = () => new MultiLineTextBox2(element, role, getText, setText, initializer, cssClass);
+        const result: MultiLineTextBox2 = this.find<MultiLineTextBox2>(element, role, creator,multiTextCache);
+
+        // 2. Apply the other arguments in case they have changed
+        result.$getText = getText;
+        result.$setText = setText;
+        FreUtils.initializeObject(result, initializer);
+        return result;
+    }
+
     static date(element: FreNode, role: string, getDate: () => string, setDate: (text: string) => void, initializer?: Partial<TextBox>, cssClass?: string): DateBox {
         if (cacheDateOff) {
             return new DateBox(element, role, getDate, setDate, initializer, cssClass);
@@ -294,29 +316,60 @@ export class BoxFactory {
         return result;
     }
 
-    static listGroup(element: FreNode, role: string, getLabel: string | (() => string), level: number, childBox: Box, initializer?: Partial<ListGroupBox>, cssClass?: string, isExpanded?: boolean): ListGroupBox {
+    // static listGroup(element: FreNode, role: string, getLabel: string | (() => string), childBox: Box, initializer?: Partial<ListGroupBox>, cssClass?: string, isExpanded?: boolean, hasActions?: boolean): ListGroupBox {
+    //     if (cacheListGroupOff) {
+    //         return new ListGroupBox(element, role, getLabel, childBox, initializer, cssClass, isExpanded, hasActions);
+    //     }
+    //     // 1. Create the  box, or find the one that already exists for this element and role
+    //     const creator = () => new ListGroupBox(element, role, getLabel, childBox, initializer, cssClass, isExpanded, hasActions);
+    //     const result: ListGroupBox = this.find<ListGroupBox>(element, role, creator, listGroupCache);
+
+    //     // 2. Apply the other arguments in case they have changed
+    //     result.setLabel(getLabel);
+    //     result.child = childBox;
+    //     FreUtils.initializeObject(result, initializer);
+
+    //     return result;
+    // }
+
+    static listGroup(element: FreNode, role: string, getLabel: string | (() => string), childBox: Box, initializer?: Partial<ListGroupBox>): ListGroupBox {
         if (cacheListGroupOff) {
-            return new ListGroupBox(element, role, getLabel, level, childBox, initializer, cssClass, isExpanded);
+            return new ListGroupBox(element, role, getLabel, childBox, initializer);
         }
         // 1. Create the  box, or find the one that already exists for this element and role
-        const creator = () => new ListGroupBox(element, role, getLabel, level, childBox, initializer, cssClass, isExpanded);
+        const creator = () => new ListGroupBox(element, role, getLabel, childBox, initializer);
         const result: ListGroupBox = this.find<ListGroupBox>(element, role, creator, listGroupCache);
 
         // 2. Apply the other arguments in case they have changed
         result.setLabel(getLabel);
-        result.setLevel(level);
         result.child = childBox;
         FreUtils.initializeObject(result, initializer);
 
         return result;
     }
 
-    static itemGroup(element: FreNode, role: string, getLabel, getText: () => string, setText: (text: string) => void, level: number, childBox: Box, initializer?: Partial<ItemGroupBox>, cssClass?: string, isExpanded?: boolean, isDraggable?: boolean): ItemGroupBox {
+    // static itemGroup(element: FreNode, role: string, getLabel, getText: () => string, setText: (text: string) => void, childBox: Box, initializer?: Partial<ItemGroupBox>, cssClass?: string, isExpanded?: boolean, isDraggable?: boolean, hasActions?: boolean, isShareable?: boolean): ItemGroupBox {
+    //     if (cacheItemGroupOff) {
+    //         return new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer, cssClass, isExpanded, isDraggable, hasActions, isShareable);
+    //     }
+    //     // 1. Create the  box, or find the one that already exists for this element and role
+    //     const creator = () => new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer, cssClass, isExpanded, isDraggable, hasActions, isShareable);
+    //     const result: ItemGroupBox = this.find<ItemGroupBox>(element, role, creator, itemGroupCache);
+
+    //     // 2. Apply the other arguments in case they have changed
+    //     result.setLabel(getLabel);
+    //     result.child = childBox;
+    //     FreUtils.initializeObject(result, initializer);
+
+    //     return result;
+    // }
+
+    static itemGroup(element: FreNode, role: string, getLabel, getText: () => string, setText: (text: string) => void, childBox: Box, initializer?: Partial<ItemGroupBox>): ItemGroupBox {
         if (cacheItemGroupOff) {
-            return new ItemGroupBox(element, role, getLabel, getText, setText, level, childBox, initializer, cssClass, isExpanded, isDraggable);
+            return new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer);
         }
         // 1. Create the  box, or find the one that already exists for this element and role
-        const creator = () => new ItemGroupBox(element, role, getLabel, getText, setText, level, childBox, initializer, cssClass, isExpanded, isDraggable);
+        const creator = () => new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer);
         const result: ItemGroupBox = this.find<ItemGroupBox>(element, role, creator, itemGroupCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -326,7 +379,7 @@ export class BoxFactory {
 
         return result;
     }
-
+    
     static indent(element: FreNode, role: string, indent: number, fullWidth: boolean = false, childBox: Box, cssClass?: string): IndentBox {
         return new IndentBox(element, role, indent, fullWidth, childBox, cssClass);
         // 1. Create the  box, or find the one that already exists for this element and role

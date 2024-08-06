@@ -21,7 +21,7 @@ export class TextBox extends Box {
      */
     deleteWhenEmptyAndErase: boolean = false;
 
-    placeHolder: string = "<enter>";
+    placeHolder: string = "";
     caretPosition: number = -1;
     $getText: () => string;
     $setText: (newValue: string) => void;

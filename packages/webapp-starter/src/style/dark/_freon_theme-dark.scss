@@ -135,10 +135,24 @@ for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/
   --freon-label-component-color: #{gc.$mac-gray-400};
   --freon-label-component-background-color: inherit;
 
-  /* Group Component */
-  --freon-group-component-color: #{gc.$mac-white};
-  --freon-group-component-background-color: #{gc.$mac-primary-900t};
- 
+  /* List Group Component */
+  --freon-list-group-component-color: #{gc.$mac-white};
+  --freon-list-group-component-background-color: #{gc.$mac-primary-900t};
+
+  --freon-list-group-component-color2: #{gc.$mac-gray-200};
+  --freon-list-group-component-background-color2: #{gc.$mac-white-5t};
+
+  --freon-list-group-line-color3: #{gc.$mac-white-20t};
+
+
+  /* Item Group Component */
+  --freon-item-group-component-color: #{gc.$mac-white};
+  --freon-item-group-component-background-color: #{gc.$mac-primary-900t};
+
+  --freon-item-group-component-color2: #{gc.$mac-gray-200};
+  --freon-item-group-component-background-color2: #{gc.$mac-white-5t};
+
+  
   /* Popup */
   --freon-popup-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5);
 

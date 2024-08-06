@@ -91,7 +91,7 @@
     //     return false;
     // }
     const mouseout = (): boolean => {
-        LOGGER.log("LIST mouse out " + box.id);
+        //LOGGER.log("LIST mouse out " + box.id);
         // Do nothing if no element is being dragged. Stops Svelte from thinking something has changed.
         if (isNullOrUndefined($draggedElem)) {
             return;

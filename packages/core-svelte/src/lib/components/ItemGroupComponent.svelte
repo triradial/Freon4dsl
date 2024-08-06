@@ -14,7 +14,7 @@
 
     import { Button } from 'flowbite-svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faGripVertical, faChevronDown, faChevronUp, faEllipsis, faXmark } from '@fortawesome/free-solid-svg-icons';
+    import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes } from '@fortawesome/free-solid-svg-icons';
 
 	// TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -49,13 +49,37 @@
     let child: Box;
     let isExpanded: boolean = false; 
     let contentStyle: string = 'display: none';
-    let isDraggable: boolean = true;	
+    let isDraggable: boolean = true;
+	let isShareable: boolean = false;
+	let hasActions: boolean = true;	
 	
 	// Note that 'from <= to' always holds.
 	let placeHolderStyle: string;
 	$: placeHolderStyle = (partOfActionBox ? "textcomponent-actionPlaceholder" : "textcomponent-placeholder");
     let boxType: BoxType = "text";          // indication how is this text component is used, determines styling
     $: boxType = !!box.parent ? (isActionBox(box?.parent) ? "action" : isSelectBox(box?.parent) ? "select" : "text") : "text";
+
+    /**
+     * When this component is mounted, the setFocus and setCaret functions are
+     * made available to the textbox, and the 'text' and 'originalText' variables
+     * are set.
+     */
+	 onMount(() => {
+        LOGGER.log("onMount" + " for element "  + box?.element?.freId() + " (" + box?.element?.freLanguageConcept() + ")");
+		if (!!box) {
+			originalText = text = box.getText();
+			placeholder = box.placeHolder;
+			isExpanded = box.isExpanded;
+			isShareable = box.isShareable;
+			hasActions = box.hasActions;
+			contentStyle = isExpanded ? 'display:block;' : 'display:none;';
+			
+			setInputWidth();
+			box.setFocus = setFocus;
+			box.setCaret = setCaret;
+			box.refreshComponent = refresh;
+		}
+    });
 
     /**
      * This function sets the focus on this element programmatically.
@@ -482,27 +506,6 @@
 		box.refreshComponent = refresh;
 	});
 
-    /**
-     * When this component is mounted, the setFocus and setCaret functions are
-     * made available to the textbox, and the 'text' and 'originalText' variables
-     * are set.
-     */
-    onMount(() => {
-        LOGGER.log("onMount" + " for element "  + box?.element?.freId() + " (" + box?.element?.freLanguageConcept() + ")");
-		if (!!box) {
-			originalText = text = box.getText();
-			placeholder = box.placeHolder;
-			isExpanded = box.$isExpanded;
-			contentStyle = isExpanded ? 'display:block;' : 'display:none;';
-			
-			setInputWidth();
-			box.setFocus = setFocus;
-			box.setCaret = setCaret;
-			box.refreshComponent = refresh;
-		}
-
-    });
-
 	/**
 	 * Sets the inputwidth to match the text inside.
 	 * Copy text from <input> into the <span> with position = absolute and takes the rendered span width.
@@ -562,10 +565,10 @@
 	{/key}
 	{#key isExpanded}
 		<Button pill={true} class="w-7 h-7 p-0" color="none" size="xs" on:click={toggleExpanded}>
-			<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faChevronUp : faChevronDown} />
+			<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
 		</Button>
 	{/key}
-    <span class="item-group-label">{label}</span>
+    <span class="item-group-label {cssClass}">{label}</span>
 	<span id="{id}" on:click={onClick} role="none" class="{cssClass}">
 		{#if isEditing}
 			<span id="{id}">
@@ -602,12 +605,21 @@
 			</span>
 		{/if}
 	</span>
+	{#if hasActions}
 	<Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
         <FontAwesomeIcon class="w-3 h-3" icon={faEllipsis} />
     </Button>
-    <Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
+	{/if}
+	{#if isShareable}
+	<Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
+        <FontAwesomeIcon class="w-3 h-3" icon={faShareNodes} />
+    </Button>
+	{/if}
+	{#if hasActions}
+	<Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
         <FontAwesomeIcon class="w-3 h-3" icon={faXmark} />
     </Button> 
+	{/if}
 </div>
 {#key contentStyle}
     <div bind:this={contentElement} style="{contentStyle}">

@@ -8,6 +8,8 @@ html,
 body {
   padding: 0;
   margin: 0;
+  height: 100%; /* Ensure the height is 100% */
+  overflow: hidden; /* Hide the scrollbar */
 }
 
 main {
@@ -20,45 +22,13 @@ main {
 
 /* #endregion */
 
-
-/* #region APPLICATION SETTINGS */
-.app-small-caps {
-  font-variant: all-small-caps !important;
-}
-
-.app-uppercase {
-  text-transform: uppercase;
-}
-
-.align-top {
-  align-items: flex-start;
-}
-
-.align-center {
-  align-items: center;
-}
-
-.align-bottom {
-  align-items: flex-end;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.w-full {
-  width: 100%;
-}
-
-/* #endregion */
-
 /* #region FREON SETTINGS */
 .editor-part {
   box-sizing: border-box;
 
   /* General */
   --freon-placeholder-font-family: "Roboto"; 
-  --freon-placeholder-font-size: 14px;
+  --freon-placeholder-font-size: 0.875rem;
   --freon-placeholder-font-style: normal;
   --freon-placeholder-font-weight: light; 
 
@@ -66,7 +36,7 @@ main {
   --freon-editor-component-margin: 1px;
   --freon-editor-component-padding: 1px;
   --freon-editor-component-font-family: "Roboto"; 
-  --freon-editor-component-font-size: 14px;
+  --freon-editor-component-font-size: 0.875rem;
   --freon-editor-component-font-style: normal;
   --freon-editor-component-font-weight: normal; 
 
@@ -89,7 +59,7 @@ main {
   --freon-verticallayout-component-margin: 0;
 
   /* Label Component */
-  --freon-label-component-font-size: 14px;
+  --freon-label-component-font-size: 0.875rem;
   --freon-label-component-font-style: normal;	
   --freon-label-component-font-weight: normal;	
   --freon-label-component-font-family: "Roboto";	
@@ -98,7 +68,7 @@ main {
   --freon-label-component-margin: 0px 0px 0px 4px;
 
   /* Text Component */
-  --freon-text-component-font-size: 14px;
+  --freon-text-component-font-size: 0.875rem;
   --freon-text-component-font-style: normal;		
   --freon-text-component-font-weight: normal;	
   --freon-text-component-font-family: "Roboto";
@@ -109,23 +79,35 @@ main {
   --freon-text-component-ro-margin: 0px 2px 0px 3px;
 
   /* MultilineText Component */
-  --freon-multilinetext-component-font-size: 14px;
+  --freon-multilinetext-component-font-size: 0.875rem;
   --freon-multilinetext-component-font-style: normal;		
   --freon-multilinetext-component-font-weight: normal;	
   --freon-multilinetext-component-font-family: "Roboto";
   --freon-multilinetext-component-padding: 0px 0px 0px 2px;
   --freon-multilinetext-component-margin: 4px 4px 4px 6px;
 
-  /* Group Component */
-  --freon-group-component-font-style: normal; 
-  --freon-group-component-font-weight: normal;
-  --freon-group-component-font-family: "Roboto";
-  --freon-group-component-font-size: 0.875rem;
-  --freon-group-component-margin: 0;
-  --freon-group-component-padding: 4px 0;
+  /* List Group Component */
+  --freon-list-group-component-font-size: 1rem;
+  --freon-list-group-component-font-style: normal; 
+  --freon-list-group-component-font-weight: normal;
+  --freon-list-group-component-font-family: "Roboto";
+  --freon-list-group-component-margin: 0;
+  --freon-list-group-component-padding: 4px 0;
+
+  --freon-list-group-component-font-size2: 0.875rem;
+
+  /* Item Group Component */
+  --freon-item-group-component-font-size: 0.875rem;
+  --freon-item-group-component-font-style: normal; 
+  --freon-item-group-component-font-weight: lighter;
+  --freon-item-group-component-font-family: "Roboto";
+  --freon-item-group-component-margin: 0;
+  --freon-item-group-component-padding: 4px 0;
+
+  --freon-item-group-component-font-size2: 0.875rem;
 
   /* Date Component */
-  --freon-date-component-font-size: 14px;
+  --freon-date-component-font-size: 0.875rem;
   --freon-date-component-font-style: normal;		
   --freon-date-component-font-weight: normal;	
   --freon-date-component-font-family: "Roboto";
@@ -291,178 +273,236 @@ main {
 
   /* #endregion */ 
   
-    /* #region List Group Component */
+  /* #region List Group Component */
   .list-group:empty:before {
-      content: attr(data-placeholdertext);
-      margin: var(--freon-group-component-margin, 1px);
-      padding: var(--freon-group-component-padding, 1px);
-      background-color: var(--freon-group-component-background-color, inherit);
+    content: attr(data-placeholdertext);
+    margin: var(--freon-list-group-component-margin, 1px);
+    padding: var(--freon-list-group-component-padding, 1px);
+    background-color: var(--freon-list-group-component-background-color, inherit);
   }
+
   .list-group {
-      display: inline-block;
+    display: flex;
+    margin: var(--freon-list-group-component-margin, 1px);
+    padding: var(--freon-list-group-component-padding, 1px);
+    align-items: center;
+  }
+
+  .list-group.type1 {
       height: 36px;
-      margin: var(--freon-group-component-margin, 1px);
-      padding: var(--freon-group-component-padding, 1px);
-      background-color: var(--freon-group-component-background-color, inherit);
+      background-color: var(--freon-list-group-component-background-color, inherit); 
+    }
+  .list-group.type2 {
+      height: 32px;
+      background-color: var(--freon-list-group-component-background-color2, inherit); 
+  }
+  .list-group.type3 {
+    height: 24px;
+    border-top: 1px solid var(--freon-list-group-line-color3);
+  }
+  .list-group.type4 {
+    height: 32px;
+    background-color: var(--freon-list-group-component-background-color2, inherit); 
   }
   .list-group-label {
-      color: var(--freon-group-component-color, inherit);
-      font-style: var(--freon-group-component-font-style, inherit);
-      font-weight: var(--freon-group-component-font-weight, normal);
-      font-size: var(--freon-group-component-font-size, inherit);
-      font-family: var(--freon-group-component-font-family, "inherit");
-      padding: var(--freon-group-component-padding, 1px);
-      margin: var(--freon-group-component-margin, 1px);
-      white-space: normal;
+    padding-right: 0.5rem;
+    white-space: normal;
   }
-    /* #endregion */ 
-  
-    /* #region Item Group Component */
-    .item-group:empty:before {
-      content: attr(data-placeholdertext) !important;
-      margin: var(--freon-group-component-margin, 1px) !important;
-      padding: var(--freon-group-component-padding, 1px) !important;
-      background-color: var(--freon-group-component-background-color, inherit) !important;
-    }
-  
-    .item-group {
-      display: inline-block !important;
-      height: 32px !important;
-      background-color: inherit !important;
-    }
-  
-    .item-group-label {
-      color: var(--freon-group-component-color, inherit) !important;
-      font-style: var(--freon-group-component-font-style, inherit) !important;
-      font-weight: var(--freon-group-component-font-weight, normal) !important;
-      font-size: var(--freon-group-component-font-size, inherit) !important;
-      font-family: var(--freon-group-component-font-family, "inherit") !important;
-      padding: var(--freon-group-component-padding, 1px) !important;
-      margin: var(--freon-group-component-margin, 1px) !important;
-      white-space: normal !important;
-    }
-    /* #endregion */ 
-  
-    /* #region Layout Component */
-  .layout-component {
-    background: transparent !important;
-    box-sizing: border-box !important;
+  .list-group-label.type1 {
+    color: var(--freon-list-group-component-color, inherit);
+    font-style: var(--freon-list-group-component-font-style, inherit);
+    font-weight: var(--freon-list-group-component-font-weight, normal);
+    font-size: var(--freon-list-group-component-font-size, inherit);
+    font-family: var(--freon-list-group-component-font-family, "inherit");
+    text-transform: uppercase;
   }
-  
-  .layout-component-horizontal {
-    white-space: nowrap !important;
-    display: flex !important;
-    padding: var(--freon-horizontallayout-component-padding, 1px) !important;
-    margin: var(--freon-horizontallayout-component-margin, 1px) !important;
+  .list-group-label.type2 {
+    color: var(--freon-list-group-component-color2, inherit);
+    font-style: var(--freon-list-group-component-font-style, inherit);
+    font-weight: var(--freon-list-group-component-font-weight, normal);
+    font-size: var(--freon-list-group-component-font-size2, inherit);
+    font-family: var(--freon-list-group-component-font-family, "inherit");
   }
-  
-  .layout-component-vertical {
-    width: 100% !important;
-    padding: var(--freon-verticallayout-component-padding, 1px) !important;
-    margin: var(--freon-verticallayout-component-margin, 1px) !important;
+  .list-group-label.type3 {
+    color: var(--freon-list-group-component-color2, inherit);
+    font-style: var(--freon-list-group-component-font-style, inherit);
+    font-weight: var(--freon-list-group-component-font-weight, normal);
+    font-size: var(--freon-list-group-component-font-size2, inherit);
+    font-family: var(--freon-list-group-component-font-family, "inherit");
   }
-    /* #endregion */
-  
-    /* #region MultlineText Component */
-   .multiline-text {
-      color: var(--freon-editor-component-color, rgb(129, 129, 129)) !important;
-      background: var(--freon-text-component-background-color, inherit) !important;
-      padding: var(--freon-multilinetext-component-padding, 1px) !important;
-      margin: var(--freon-multilinetext-component-margin, 1px) !important;
-      white-space: normal !important;
-      height: auto !important;
-      min-height: 3rem;
-    }
-  
-    .multiline-editor {
-      outline: 1px solid transparent !important;
-      outline-offset: 1px !important;
-      --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
-      --tw-ring-offset-width: 0px;
-      --tw-ring-offset-color: #fff;
-      --tw-ring-color: #32cd3275;
-      --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-      --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-      box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
-      border-color: #ffffff00;
-      margin: 4px 4px 4px 4px !important;
-    }
-  
-    .tinymce-wrapper {
-      width: 100% !important;
-      min-height: 3rem !important;
-      all: unset;
-    }
+  .list-group-label.type4 {
+    color: var(--freon-list-group-component-color2, inherit);
+    font-style: var(--freon-list-group-component-font-style, inherit);
+    font-weight: var(--freon-list-group-component-font-weight, normal);
+    font-size: var(--freon-list-group-component-font-size2, inherit);
+    font-family: var(--freon-list-group-component-font-family, "inherit");
+  }
+  /* #endregion */ 
 
-    .tinymce-wrapper > div {
-      margin-left: 0.25rem;
-      min-height: 3rem;
-    }
+  /* #region Item Group Component */
+  .item-group:empty:before {
+    content: attr(data-placeholdertext) !important;
+    margin: var(--freon-item-group-component-margin, 1px) !important;
+    padding: var(--freon-item-group-component-padding, 1px) !important;
+    background-color: var(--freon-item-group-component-background-color, inherit) !important;
+  }
+
+  .item-group {
+    display: inline-block !important; 
+    background-color: inherit !important;
+    align-items: center;
+  }
+
+  .item-group.type1 {
+    height: 32px !important;
+  }
+
+  .item-group.type2 {
+    height: 32px !important;
+  }
+
+  .item-group-label {
+    padding-right: 0.1rem;
+    white-space: normal !important;
+  }
+
+  .item-group-label.type1 {
+    color: var(--freon-item-group-component-color, inherit) !important;
+    font-style: var(--freon-item-group-component-font-style, inherit) !important;
+    font-weight: var(--freon-item-group-component-font-weight, normal) !important;
+    font-size: var(--freon-item-group-component-font-size, inherit) !important;
+    font-family: var(--freon-item-group-component-font-family, "inherit") !important;
+  }
+
+  .item-group-label.type2 {
+    color: var(--freon-item-group-component-color, inherit) !important;
+    font-style: var(--freon-item-group-component-font-style, inherit) !important;
+    font-weight: var(--freon-item-group-component-font-weight, normal) !important;
+    font-size: var(--freon-item-group-component-font-size, inherit) !important;
+    font-family: var(--freon-item-group-component-font-family, "inherit") !important;
+  }
+  /* #endregion */ 
+
+  /* #region Layout Component */
+.layout-component {
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+.layout-component-horizontal {
+  white-space: nowrap !important;
+  display: flex !important;
+  padding: var(--freon-horizontallayout-component-padding, 1px) !important;
+  margin: var(--freon-horizontallayout-component-margin, 1px) !important;
+}
+
+.layout-component-vertical {
+  width: 100% !important;
+  padding: var(--freon-verticallayout-component-padding, 1px) !important;
+  margin: var(--freon-verticallayout-component-margin, 1px) !important;
+}
+  /* #endregion */
+
+  /* #region MultlineText Component */
+  .multiline-text {
+    color: var(--freon-editor-component-color, rgb(129, 129, 129)) !important;
+    background: var(--freon-text-component-background-color, inherit) !important;
+    padding: var(--freon-multilinetext-component-padding, 1px) !important;
+    margin: var(--freon-multilinetext-component-margin, 1px) !important;
+    white-space: normal !important;
+    height: auto !important;
+    min-height: 1.5rem;
+  }
+
+  .multiline-editor {
+    outline: 1px solid transparent !important;
+    outline-offset: 1px !important;
+    --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #fff;
+    --tw-ring-color: #32cd3275;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
+    border-color: #ffffff00;
+    margin: 4px 4px 4px 4px !important;
+  }
+
+  .tinymce-wrapper {
+    width: 100% !important;
+    min-height: 3rem !important;
+    all: unset;
+  }
+
+  .tinymce-wrapper > div {
+    margin-left: 0.25rem;
+    min-height: 1.5rem;
+  }
+
+  span:has(> .tinymce-wrapper) {
+    width: 100% !important;
+  }
+  /* #endregion */ 
+
+  /* #region Date Component */
+  .datecomponent-width {
+    position: absolute !important;
+    left: -9999px !important;
+    display: inline-block !important;
+    line-height: 6px !important;
+    margin: var(--freon-text-component-margin, 1px) !important;
+    border: none !important;
+    box-sizing: border-box !important;
+    padding: var(--freon-text-component-padding, 1px) !important;
+    font-family: var(--freon-text-component-font-family, "Roboto") !important;
+    font-size: var(--freon-text-component-font-size, 14pt) !important;
+    font-weight: var(--freon-text-component-font-weight, inherit) !important;
+    font-style: var(--freon-text-component-font-style, inherit) !important;
+  }
   
-    span:has(> .tinymce-wrapper) {
-      width: 100% !important;
-    }
-    /* #endregion */ 
+  .datecomponent-inputtext {
+    color: var(--freon-text-component-color, blue) !important;
+    line-height: 6px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: var(--freon-date-component-margin, 1px) !important;
+    padding: var(--freon-date-component-padding, 1px) !important;
+    background: var(--freon-selected-background-color, rgba(211, 227, 253, 255)) !important;
+    font-family: var(--freon-date-component-font-family, "Roboto") !important;
+    font-size: var(--freon-date-component-font-size, 14pt) !important;
+    font-weight: var(--freon-date-component-font-weight, inherit) !important;
+    font-style: var(--freon-date-component-font-style, inherit) !important;
+    padding-inline: 2px !important;
+  }
   
-    /* #region Date Component */
-    .datecomponent-width {
-      position: absolute !important;
-      left: -9999px !important;
-      display: inline-block !important;
-      line-height: 6px !important;
-      margin: var(--freon-text-component-margin, 1px) !important;
-      border: none !important;
-      box-sizing: border-box !important;
-      padding: var(--freon-text-component-padding, 1px) !important;
-      font-family: var(--freon-text-component-font-family, "Roboto") !important;
-      font-size: var(--freon-text-component-font-size, 14pt) !important;
-      font-weight: var(--freon-text-component-font-weight, inherit) !important;
-      font-style: var(--freon-text-component-font-style, inherit) !important;
-    }
-    
-    .datecomponent-inputtext {
-      color: var(--freon-text-component-color, blue) !important;
-      line-height: 6px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      margin: var(--freon-date-component-margin, 1px) !important;
-      padding: var(--freon-date-component-padding, 1px) !important;
-      background: var(--freon-selected-background-color, rgba(211, 227, 253, 255)) !important;
-      font-family: var(--freon-date-component-font-family, "Roboto") !important;
-      font-size: var(--freon-date-component-font-size, 14pt) !important;
-      font-weight: var(--freon-date-component-font-weight, inherit) !important;
-      font-style: var(--freon-date-component-font-style, inherit) !important;
-      padding-inline: 2px !important;
-    }
-    
-    .datecomponent-text {
-      color: var(--freon-text-component-color, blue);
-      background: var(--freon-text-component-background-color, inherit);
-      font-family: var(--freon-text-component-font-family, "Roboto");
-      font-size: var(--freon-text-component-font-size, 14pt);
-      font-weight: var(--freon-text-component-font-weight, inherit);
-      font-style: var(--freon-text-component-font-style, inherit);
-      padding: var(--freon-text-component-padding, 1px);
-      padding-left: 2px !important;
-      margin: var(--freon-text-component-margin, 1px);
-      margin-right: 2.5px !important;
-      white-space: normal;
-      display: inline-block;
-    }
-    
-    .datecomponent-placeholder {
-      color: var(--freon-text-component-placeholder-color, blue);
-      background: var(--freon-text-component-background-color, inherit);
-      font-family: var(--freon-placeholder-font-family, "Roboto");
-      font-size: var(--freon-placeholder-font-size, 14pt);
-      font-weight: var(--freon-placeholder-font-weight, inherit);
-      font-style: var(--freon-placeholder-font-style, inherit);
-      white-space: normal;
-      display: inline-block;
-    }
-    /* #endregion */ 
+  .datecomponent-text {
+    color: var(--freon-text-component-color, blue);
+    background: var(--freon-text-component-background-color, inherit);
+    font-family: var(--freon-text-component-font-family, "Roboto");
+    font-size: var(--freon-text-component-font-size, 14pt);
+    font-weight: var(--freon-text-component-font-weight, inherit);
+    font-style: var(--freon-text-component-font-style, inherit);
+    padding: var(--freon-text-component-padding, 1px);
+    padding-left: 2px !important;
+    margin: var(--freon-text-component-margin, 1px);
+    margin-right: 2.5px !important;
+    white-space: normal;
+    display: inline-block;
+  }
   
-    /* #region Time Component */
+  .datecomponent-placeholder {
+    color: var(--freon-text-component-placeholder-color, blue);
+    background: var(--freon-text-component-background-color, inherit);
+    font-family: var(--freon-placeholder-font-family, "Roboto");
+    font-size: var(--freon-placeholder-font-size, 14pt);
+    font-weight: var(--freon-placeholder-font-weight, inherit);
+    font-style: var(--freon-placeholder-font-style, inherit);
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */ 
+
+  /* #region Time Component */
     .timecomponent-width {
       position: absolute !important;
       left: -9999px !important;
@@ -521,7 +561,7 @@ main {
     }
     /* #endregion */ 
 
-  /* #endregion */ 
+/* #endregion */ 
 
 /* #region TAILWIND LIKE */
 
@@ -593,6 +633,36 @@ main {
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
   border-color: #ffffff00;
+}
+/* #endregion */
+
+/* #region APPLICATION SETTINGS */
+.app-small-caps {
+  font-variant: all-small-caps !important;
+}
+
+.app-uppercase {
+  text-transform: uppercase;
+}
+
+.align-top {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-bottom {
+  align-items: flex-end;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.w-full {
+  width: 100%;
 }
 
 /* #endregion */

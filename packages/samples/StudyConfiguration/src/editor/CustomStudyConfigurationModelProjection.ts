@@ -119,7 +119,7 @@ function newGetTableRowFor_defaultTaskImplementation(this: TaskBoxProvider): Tab
                 BoxUtil.labelBox(task, " Shared:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxUtil.switchElement(task, "isShared", ""),
                 BoxUtil.textBox(task, "name"),
-                BoxUtil.labelBox(task, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
+                BoxUtil._labelBox(task, " Description:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" } ),
                 BoxUtil.getBoxOrAction(task, "description", "Description", this.mainHandler),
                 BoxUtil.labelBox(task, " Expand:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxUtil.switchElement(task, "showDetails", "")],
@@ -270,6 +270,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         ["Period", this.createPeriod],
         ["Event", this.createEvent],
         ["EventSchedule", this.createSchedule],
+        ["Task", this.createChecklist],
         // ["Task", this.createTask],
     ]);
 
@@ -308,88 +309,87 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             //     { selectable: false },
             // ), 
             BoxUtil.emptyLineBox(element, "StudyConfiguration-empty-line-1", "h-2"),
-            BoxUtil.listGroupBox(element, "OPTIONS:", 0, "study-periods-group",
+            BoxUtil.listGroupBox(element, "Options:", "study-periods-group",
                 BoxUtil.indentBox(element, 4, true, "3",
                     BoxFactory.verticalLayout(element, "StudyConfiguration-vlist-line-3", "", 
                     [
                         BoxUtil.emptyLineBox(element, "option-empty-line", "h-4"),
                         BoxUtil.switchElement(element, "showPeriods", "Configure by Periods/Phases"), 
-                        BoxUtil.switchElement(element, "showActivityDetails", "Show Task Details"),
+                        BoxUtil.switchElement(element, "showActivityDetails", "Show Shared Tasks"),
                         BoxUtil.switchElement(element, "showSystems", "Show Systems"),
                         BoxUtil.switchElement(element, "showScheduling", "Show Scheduling") 
                     ])
-                ), undefined, undefined, true
-            ),
+                ), 
+            {cssClass: "type1", isExpanded: true, hasActions: false} ),
             BoxUtil.emptyLineBox(element, "StudyConfiguration-empty-line-3", "h-2"),
             ...(element.showPeriods === true? [                    
-                BoxUtil.listGroupBox(element, "STUDY PERIODS", 0, "study-periods-group",
-                    BoxUtil.indentBox(element, 4, true, "9",
+                BoxUtil.listGroupBox(element, "Study Periods", "study-periods-group",
+                    BoxUtil.indentBox(element, 3, true, "9",
                         BoxUtil.verticalPartListBox(element, (element).periods, "periods", null, this.handler)
-                    ), undefined, undefined, true
-                ),
+                    ),
+                {cssClass:"type1", isExpanded:true}),
             ] : [
-                BoxUtil.listGroupBox(element, "EVENTS", 0, "group-1-line-2-item-0",
+                BoxUtil.listGroupBox(element, "Events", "group-1-line-2-item-0",
                     BoxUtil.indentBox(element, 4, true, "4",
                         BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler)
-                    ), undefined, undefined, true
-                ),
+                    ),
+                {cssClass:"type2", isExpanded:true}),
             ]),
             ...(element.showActivityDetails === true? [
                     BoxUtil.emptyLineBox(element, "StudyConfiguration-empty-line-4", "h-2"),
-                    BoxUtil.listGroupBox(element, "TASK DETAILS", 0, "task-details-group",
+                    BoxUtil.listGroupBox(element, "Shared Tasks", "task-details-group",
                         BoxUtil.indentBox(element, 4, true, "13",
                             BoxUtil.verticalPartListBox(element, (element).tasks, "tasks", null, this.handler)
-                        ),
-                    undefined, "app-uppercase", true),
+                        ), 
+                    {cssClass:"type1", isExpanded:true}),
                     ...(element.showSystems === true? [
                     BoxUtil.emptyLineBox(element, "StudyConfiguration-empty-line-5", "h-2"),
-                    BoxUtil.listGroupBox(element, "SYSTEM ACCESS DEFINITIONS", 0, "sys-defs-group",
+                    BoxUtil.listGroupBox(element, "Systems", "sys-defs-group",
                         BoxUtil.indentBox(element, 4, true, "17",
                             BoxUtil.verticalPartListBox(element, (element).systemAccesses, "systemAccesses", null,  this.handler)
-                        ),
-                    undefined, "app-uppercase"),
+                        ), 
+                    {cssClass:"type1", isExpanded:true}),
                     ] : []),
                     BoxUtil.emptyLineBox(element, "StudyConfiguration-empty-line-6", "h-2"),
-                    BoxUtil.listGroupBox(element, "STAFFING", 0, "staffing-group",
+                    BoxUtil.listGroupBox(element, "People", "staffing-group",
                         BoxUtil.indentBox(element, 4, true, "21",
                             BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler)
-                        ),
-                    undefined, "app-uppercase")
+                        ), 
+                    {cssClass:"type1", isExpanded:true})
                 ] : []),
         ]);
     }
 
     createDescription (desc: Description): Box {
-        return new MultiLineTextBox2(desc, "study-part-description", () => { return desc.text}, (t: string) => { desc.text = t}, () => { return desc.rawText}, (t: string) => { desc.rawText = t}, undefined, "mr-2");
+        const ph = "<" + desc.$$propertyName + ">";
+        return new MultiLineTextBox2(desc, "study-part-description", () => { return desc.text}, (t: string) => { desc.text = t}, { placeHolder: ph }, "mr-2");
     }
 
     createPeriod (period: Period): Box {
-        let box: Box = BoxUtil.itemGroupBox(period, "name", "Period:", 0, 
-            BoxUtil.indentBox(period, 1.5, true, "period-indent",
+        let box: Box = BoxUtil.itemGroupBox(period, "name", "Period:",
+            BoxUtil.indentBox(period, 5.5, true, "period-indent",
                 BoxFactory.verticalLayout(period, "period-detail", "", [
                     BoxFactory.horizontalLayout(period, "period-hlist-line-1", "","top",
                         [
-                            BoxUtil.labelBox(period, "Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                             BoxUtil.getBoxOrAction(period, "description", "Description", this.handler)
                         ],
                         { selectable: false }, "w-full mt-1"
                     ),
-                    BoxFactory.horizontalLayout(period, "Period-hlist-line-1", "", "top",
-                        [
-                            BoxUtil.labelBox(period, "Date:", "top-1-line-1-item-0"),
-                            BoxUtil.dateBox(period, "date"),
-                        ],
-                        { selectable: false }, "w-full mt-1"
-                    ),
-
-                    BoxUtil.listGroupBox(period, "EVENTS", 0, "group-1-line-2-item-0",
+                    // BoxFactory.horizontalLayout(period, "Period-hlist-line-1", "", "top",
+                    //     [
+                    //         BoxUtil.labelBox(period, "Date:", "top-1-line-1-item-0"),
+                    //         BoxUtil.dateBox(period, "date"),
+                    //     ],
+                    //     { selectable: false }, "w-full mt-1"
+                    // ),
+                    BoxUtil.listGroupBox(period, "Events", "group-1-line-2-item-0",
                         BoxUtil.indentBox(period, 4, true, "4",
                             BoxUtil.verticalPartListBox(period, period.events, "events", null, this.handler)
                         ), 
-                        undefined, undefined, true)
+                    {cssClass:"type2", isExpanded:true})
                 ])
-            ), "w-full", true, true
-        );
+            ), 
+        {cssClass:"w-full type1", placeHolder:"enter", isExpanded:true});
         return box;
     }
 
@@ -429,30 +429,25 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         } else {
             showScheduling = (event.freOwner() as StudyConfiguration).showScheduling;
         }
-        let box: Box = BoxUtil.itemGroupBox(event, "name", "Event:", 0,
-            BoxUtil.indentBox(event, 1.5, true, "e1",
+        let box: Box = BoxUtil.itemGroupBox(event, "name", "Event:",
+            BoxUtil.indentBox(event, 5.5, true, "e1",
                 BoxFactory.verticalLayout(event, "Event-detail", "", [
-                    BoxFactory.horizontalLayout(event, "Event-hlist-line-2", "","top",
-                        [
-                            BoxUtil.labelBox(event, "Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
-                            BoxUtil.getBoxOrAction(event, "description", "Description", this.handler)
-                        ],
-                        { selectable: false }, "w-full mt-1"
-                    ),
+                    BoxUtil.getBoxOrAction(event, "description", "Description", this.handler),
                     ...(showScheduling === true? [                    
-                        BoxUtil.labelBox(event, "Schedule:", "top-1-line-4-item-0"),
-                        BoxUtil.indentBox(event, 2, true, "e11",
-                            BoxUtil.getBoxOrAction(event, "schedule", "EventSchedule", this.handler)
-                        ),
+                        BoxUtil.listGroupBox(event, "Schedule", "schedule-item", 
+                            BoxUtil.indentBox(event, 2, true, "e11",
+                                BoxUtil.getBoxOrAction(event, "schedule", "EventSchedule", this.handler)
+                            ), 
+                        {cssClass:"type3", isExpanded:true, hasActions:false}) 
                     ] : []),
-                            BoxUtil.labelBox(event, "Checklist:", "top-1-line-9-item-0"),
+                    BoxUtil.labelBox(event, "Checklist:", "top-1-line-9-item-0"),
                         BoxUtil.indentBox(event, 2, true, "e12",
                         BoxUtil.getBoxOrAction(event, "checkList", "CheckList", this.handler)
                     ),
                     BoxUtil.emptyLineBox(event, "Event-empty-line-11")
                 ])
-            ), "w-full", true, true
-        );
+            ), 
+        {cssClass:"w-full type2", placeHolder:"enter", isShareable:true});
         return box;
     }
 
@@ -460,7 +455,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         return BoxFactory.verticalLayout(schedule, "EventSchedule-overall", "", [
             BoxFactory.horizontalLayout(schedule, "EventSchedule-hlist-line-0", "", "top",
                 [
-                    BoxUtil.labelBox(schedule, "First Scheduled:", "top-1-line-0-item-0", undefined, "app-small-caps"),
+                    BoxUtil._labelBox(schedule, "First Scheduled:", "top-1-line-0-item-0", { cssClass: "app-small-caps"} ),
                     BoxUtil.getBoxOrAction(schedule, "eventStart", "EventStart", this.handler),
                 ],
                 { selectable: false },
@@ -470,22 +465,31 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     BoxUtil.labelBox(schedule, "Then Repeats:", "top-1-line-1-item-0", undefined, "app-small-caps"),
                     BoxUtil.getBoxOrAction(schedule, "eventRepeat", "RepeatExpression", this.handler),
                 ],
-                { selectable: false },
+                {selectable: false},
             ),
             BoxFactory.horizontalLayout(schedule, "EventSchedule-hlist-line-2", "", "top",
                 [
                     BoxUtil.labelBox(schedule, "Window:", "top-1-line-2-item-0", undefined, "app-small-caps"),
                     BoxUtil.getBoxOrAction(schedule, "eventWindow", "EventWindow", this.handler),
                 ],
-                { selectable: false },
+                {selectable: false},
             ),
             BoxFactory.horizontalLayout(schedule, "EventSchedule-hlist-line-3", "", "top",
                 [
                     BoxUtil.labelBox(schedule, "Time of Day:", "top-1-line-3-item-0", undefined, "app-small-caps"),
                     BoxUtil.getBoxOrAction(schedule, "eventTimeOfDay", "EventTimeOfDay", this.handler),
                 ],
-                { selectable: false },
+                {selectable: false},
             ),
         ]);
     }
+
+    createChecklist (checklist: CheckList): Box {
+        return BoxUtil.listGroupBox(checklist, "Checklist", "checklists-group",
+            BoxUtil.indentBox(checklist, 3, true, "9",
+                BoxUtil.verticalPartListBox(checklist, (checklist).activities, "tasks", null, this.handler)
+            ),
+        {cssClass:"type3", isExpanded:true});
+    }
+
  }

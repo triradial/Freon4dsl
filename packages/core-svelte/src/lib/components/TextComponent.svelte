@@ -52,7 +52,7 @@
     id = !!box ? componentId(box) : 'text-with-unknown-box';
     let spanElement: HTMLSpanElement;       // the <span> element on the screen
     let inputElement: HTMLInputElement; 	// the <input> element on the screen
-    let placeholder: string = '<..>';       // the placeholder when value of text component is not present
+    let placeholder: string = '';       // the placeholder when value of text component is not present
     let originalText: string;               // variable to remember the text that was in the box previously
     let editStart = false;					// indicates whether we are just starting to edit, so we need to set the cursor in the <input>
     let from = -1;							// the cursor position, or when different from 'to', the start of the selected text
@@ -482,7 +482,7 @@
         }
 		// Always set the input width explicitly.
 		setInputWidth();
-		placeholder = box.placeHolder
+		placeholder = box.placeHolder;
 		box.setFocus = setFocus;
 		box.setCaret = setCaret;
 		box.refreshComponent = refresh;

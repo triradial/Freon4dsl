@@ -11,7 +11,7 @@
 
     import { Button } from 'flowbite-svelte';
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faChevronDown, faChevronUp, faPlus, faEllipsis } from '@fortawesome/free-solid-svg-icons';
+    import { faChevronDown, faChevronUp, faPlus, faEllipsis, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 
     export let box: ListGroupBox;
     export let editor: FreEditor;
@@ -27,11 +27,13 @@
     let level: number;
     let child: Box;
     let isExpanded: boolean = false; 
+    let hasActions: boolean = true;
     let contentStyle: string = 'display: none';
 
     onMount( () => {
         if (!!box) {
             isExpanded = box.isExpanded;
+            hasActions = box.hasActions;
             contentStyle = isExpanded ? 'display:block;' : 'display:none;';
              box.refreshComponent = refresh;   
         }
@@ -62,21 +64,28 @@
         isExpanded = !isExpanded;
         contentStyle = isExpanded ? 'display:block;' : 'display:none;';
     }
+
+    function addItem() {
+        box.executeAction(editor);
+    }
+
 </script>
 
 <div id="{id}" class="list-group {cssClass}" style="{style}">
     {#key isExpanded}
         <Button pill={true} class="w-7 h-7 p-0" color="none" size="xs" on:click={toggleExpanded}>
-            <FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faChevronUp : faChevronDown} />
+            <FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
         </Button>
     {/key}
-    <span class="list-group-label">{label}</span>
-    <Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
+    <span class="list-group-label {cssClass}">{label}</span>
+    {#if hasActions}
+    <Button pill={true} size="xs" class="w-7 h-7 p-0" outline on:click={addItem}>
         <FontAwesomeIcon class="w-3 h-3" icon={faPlus} />
     </Button>
     <Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
         <FontAwesomeIcon class="w-3 h-3" icon={faEllipsis} />
     </Button> 
+    {/if}
 </div>
 {#key contentStyle}
     <div bind:this={contentElement} style="{contentStyle}">

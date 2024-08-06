@@ -89,7 +89,7 @@ export class FreEditor {
         if (this.refreshComponentRootBox !== undefined && this.refreshComponentRootBox !== null) {
             this.refreshComponentRootBox("====== FROM FreEditor");
         } else {
-            LOGGER.log("No refreshComponentRootBox() for FreEditor");
+            //LOGGER.log("No refreshComponentRootBox() for FreEditor");
         }
     }
 

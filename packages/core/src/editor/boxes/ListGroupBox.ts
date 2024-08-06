@@ -1,27 +1,28 @@
 import { Box } from "./Box";
 import { FreUtils } from "../../util";
+import { BehaviorExecutionResult } from "../util";
 import { FreNode } from "../../ast";
+import { FreLogger } from "../../logging";
+import { FrePostAction } from "../actions";
+import { runInAction } from "mobx";
+import  {FreEditor } from "../FreEditor";
+
+const LOGGER: FreLogger = new FreLogger("ListGroupBox"); //.mute();
 
 export class ListGroupBox extends Box {
     readonly kind = "ListGroupBox";
     
     private $label: string = "";
-    private $level: number = 0;
     private $child: Box = null;
-    
-    constructor(node: FreNode, role: string, getLabel: string | (() => string), getLevel: number | (() => number), child: Box, initializer?: Partial<ListGroupBox>, cssClass?: string, isExpanded?: boolean) {
+
+    isExpanded: boolean = true;
+    hasActions: boolean = true;  
+
+    constructor(node: FreNode, role: string, getLabel: string | (() => string), child: Box, initializer?: Partial<ListGroupBox>) {
         super(node, role);
-        this.selectable = false; // default
         FreUtils.initializeObject(this, initializer);
         this.setLabel(getLabel);
-        this.setLevel(getLevel);
         this.child = child;
-        this.cssClass = cssClass;
-        if (isExpanded === undefined) {
-            this.isExpanded = false;
-        } else {
-            this.isExpanded = isExpanded;
-        }      
     }
 
     setLabel(getLabel: string | (() => string)) {
@@ -43,28 +44,6 @@ export class ListGroupBox extends Box {
     getLabel(): string {
         return this.$label;
     }
-  
-    setLevel(getLevel: number | (() => number)) {
-        if (typeof getLevel === "function") {
-            if (this.getLevel !== getLevel) {
-                this.getLevel = getLevel;
-                this.isDirty();
-            }
-        } else if (typeof getLevel === "number") {
-            if (this.$level !== getLevel) {
-                this.$level = getLevel;
-                this.isDirty();
-            }
-        } else {
-            throw new Error("ListGroupBox: incorrect level type");
-        }
-    }
-
-    getLevel(): number {
-        return this.$level;
-    }
-    
-    isExpanded: boolean;
 
     get child() {
         return this.$child;
@@ -91,6 +70,27 @@ export class ListGroupBox extends Box {
     get children(): ReadonlyArray<Box> {
         return [this.child];
     }  
+
+    executeAction(editor: FreEditor):BehaviorExecutionResult {
+        // find the action to use based on the boxRole
+        for (const action of editor.newFreActions) {
+            if (action.activeInBoxRoles.includes(this.role)) {
+                let postAction: FrePostAction = null;
+                runInAction(() => {
+                    const command = action.command();
+                    postAction = command.execute(this, 'no-label', editor, -1);
+                });
+                if (!!postAction) {
+                    postAction();
+                }
+                return BehaviorExecutionResult.EXECUTED;
+            }
+        }
+        // execute the action
+        // return the result
+        LOGGER.log("Executing ButtonBox Action");
+        return BehaviorExecutionResult.NULL;
+    }
 } 
     
 export function isListGroupBox(b: Box): b is ListGroupBox {

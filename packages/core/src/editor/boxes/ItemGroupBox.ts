@@ -29,8 +29,34 @@ export class ItemGroupBox extends Box {
     $label: string = "";
     $level: number = 0;
     $child: Box = null;
-    $isExpanded: boolean = false;
-    $isDraggable: boolean = true;
+
+    isExpanded: boolean = false;
+    isDraggable: boolean = true;
+    hasActions: boolean = true;
+    isShareable: boolean = false;
+
+    // constructor(node: FreNode, role: string, getLabel: string | (() => string), getText: () => string, setText: (text: string) => void, child: Box, initializer?: Partial<ItemGroupBox>, cssClass?: string, isExpanded?: boolean, isDraggable?: boolean, hasActions?: boolean, isShareable?) {
+    //     super(node, role);
+    //     FreUtils.initializeObject(this, initializer);
+    //     this.$getText = getText;
+    //     this.$setText = setText;
+    //     this.setLabel(getLabel);
+    //     this.cssClass = cssClass;
+    //     this.$child = child;
+    //     this.isExpanded = isExpanded ?? false;
+    //     this.isDraggable = isDraggable ?? true;
+    //     this.hasActions = hasActions ?? true;
+    //     this.isShareable = isShareable ?? false;
+    // }
+
+    constructor(node: FreNode, role: string, getLabel: string | (() => string), getText: () => string, setText: (text: string) => void, child: Box, initializer?: Partial<ItemGroupBox>) {
+        super(node, role);
+        FreUtils.initializeObject(this, initializer);
+        this.$getText = getText;
+        this.$setText = setText;
+        this.setLabel(getLabel);
+        this.$child = child;
+    }
 
     /**
      * Run the setText() as defined by the user of this box inside a mobx action.
@@ -79,19 +105,6 @@ export class ItemGroupBox extends Box {
     isCharAllowed: (currentText: string, key: string, index: number) => CharAllowed = () => {
         return CharAllowed.OK;
     };
-
-    constructor(node: FreNode, role: string, getLabel: string | (() => string), getText: () => string, setText: (text: string) => void, level: number, child: Box, initializer?: Partial<ItemGroupBox>, cssClass?: string, isExpanded?: boolean, isDraggable?: boolean) {
-        super(node, role);
-        FreUtils.initializeObject(this, initializer);
-        this.$getText = getText;
-        this.$setText = setText;
-        this.setLabel(getLabel);
-        this.cssClass = cssClass;
-        this.$child = child;
-        this.$level = level;
-        this.$isExpanded = isExpanded;
-        this.$isDraggable = isDraggable;
-    }
 
     public deleteWhenEmpty1(): boolean {
         return this.deleteWhenEmpty;

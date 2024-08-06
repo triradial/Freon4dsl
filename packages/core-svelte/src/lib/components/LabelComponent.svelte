@@ -20,6 +20,7 @@
     onMount( () => {
         if (!!box) {
             box.refreshComponent = refresh;
+            cssClass = box.cssClass;
         }
     });
 
