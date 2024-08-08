@@ -17,11 +17,28 @@ concept AnyDay implements EventStart {
 expression StudyStart implements EventStart {
 }
 
-interface RepeatExpression {    
+expression Previous implements EventStart {
 }
 
+interface RepeatExpression {}
+
+//limited RepeatUnit implements RepeatExpression {
 limited RepeatUnit {
     daily; weekly; monthly; forever;
+}
+
+interface RepeatUnit2 {}
+
+concept Daily implements RepeatUnit2 {}
+
+concept Weekly implements RepeatUnit2 {}
+
+concept Monthly implements RepeatUnit2 {}
+
+concept Forever implements RepeatUnit2 {}
+
+concept RepeatEvery implements RepeatUnit2 {
+    repeatEvery: Time;
 }
 
 limited TimeUnit {
@@ -33,7 +50,7 @@ limited EventState {
 }
 
 concept RepeatCondition implements RepeatExpression {
-    repeatUnit: RepeatUnit;
+    repeatUnit: RepeatUnit2;
     maxRepeats: number;
     until: FirstScheduledExpression;
 }

@@ -55,7 +55,8 @@ export function createDay1EventScheduleThatRepeats(eventName: string, numberOfRe
   let repeatCondition = new RepeatCondition("RepeatCount-" + eventName);
   repeatCondition.maxRepeats = numberOfRepeats;
   let reference = FreNodeReference.create(RepeatUnit.weekly, "RepeatUnit");
-  repeatCondition.repeatUnit = reference;
+  repeatCondition.repeatUnit = null; //reference; TODO: replace this temp hack to make things compile while evolving the language
+  throw new Error("TODO: replace this temp hack to make things compile while evolving the language");
   eventSchedule.eventRepeat = repeatCondition;
   return eventSchedule;
 }

@@ -231,18 +231,17 @@ export class BoxFactory {
         return result;
     }
 
-    static multitext(element: FreNode, role: string, getText: () => string, setText: (text: string) => void, getRawText: () => string, initializer?: Partial<MultiLineTextBox2>): MultiLineTextBox2 {
+    static multitext(element: FreNode, role: string, getText: () => string, setText: (text: string) => void, initializer?: Partial<MultiLineTextBox2>): MultiLineTextBox2 {
         if (cacheMultilineTextOff) {
-            return new MultiLineTextBox2(element, role, getText, setText, getRawText, initializer);
+            return new MultiLineTextBox2(element, role, getText, setText, initializer);
         }
         // 1. Create the text box, or find the one that already exists for this element and role
-        const creator = () => new MultiLineTextBox2(element, role, getText, setText, getRawText, initializer);
+        const creator = () => new MultiLineTextBox2(element, role, getText, setText, initializer);
         const result: MultiLineTextBox2 = this.find<MultiLineTextBox2>(element, role, creator, multiTextCache);
 
         // 2. Apply the other arguments in case they have changed
         result.$getText = getText;
         result.$setText = setText;
-        result.$getRawText = getRawText;
         FreUtils.initializeObject(result, initializer);
         return result;
     }

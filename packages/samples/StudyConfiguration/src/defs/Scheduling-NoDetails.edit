@@ -20,9 +20,35 @@ StudyStart {
     [Study Start]
 } 
 
+Previous {
+    [Previous]
+}
+
 AnyDay {
     [On Any Day]
 } 
+
+Daily {
+    [daily]
+}
+
+Weekly {
+    [weekly]
+}
+
+
+Monthly {
+    [monthly]
+}
+
+
+Forever {
+    [forever]
+}
+
+RepeatEvery {
+    [Every: ${repeatEvery}]
+}
 
 RepeatCondition {
     [

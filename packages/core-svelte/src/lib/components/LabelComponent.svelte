@@ -45,6 +45,6 @@
 </script>
 
 <span id="{id}" class="label-component {text} {cssClass}" style="{style}" bind:this={element}>
-    {text}
+    {@html text}
 </span>
 

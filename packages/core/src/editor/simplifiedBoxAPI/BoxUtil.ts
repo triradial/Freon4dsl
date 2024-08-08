@@ -104,9 +104,9 @@ export class BoxUtil {
         if (property !== undefined && property !== null && typeof property === "string") {
             const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "MultiLineTextBox2", index);
             if (isList && this.checkList(isList, index, propertyName)) {
-                result = BoxFactory.multitext( node, roleName, () => node[propertyName][index], (v: string) => runInAction( () => { (node[propertyName][index] = v); }), undefined, updatedInitializer );
+                result = BoxFactory.multitext( node, roleName, () => node[propertyName][index], (v: string) => runInAction( () => { (node[propertyName][index] = v); }), updatedInitializer );
             } else {
-                result = BoxFactory.multitext( node, roleName, () => node[propertyName], (v: string) => runInAction( () => { (node[propertyName] = v); }), undefined, updatedInitializer );
+                result = BoxFactory.multitext( node, roleName, () => node[propertyName], (v: string) => runInAction( () => { (node[propertyName] = v); }), updatedInitializer );
             }
             result.propertyName = propertyName;
             result.propertyIndex = index;

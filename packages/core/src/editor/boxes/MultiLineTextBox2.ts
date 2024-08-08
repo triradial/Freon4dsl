@@ -10,15 +10,13 @@ export class MultiLineTextBox2 extends Box {
     placeHolder: string = "<enter>";
     $getText: () => string;
     $setText: (newValue: string) => void;
-    $getRawText: () => string;
 
 
-    constructor(node: FreNode, role: string, getText: () => string, setText: (text: string) => void, getRawText: () => string, initializer?: Partial<MultiLineTextBox2>) {
+    constructor(node: FreNode, role: string, getText: () => string, setText: (text: string) => void, initializer?: Partial<MultiLineTextBox2>) {
         super(node, role);
         FreUtils.initializeObject(this, initializer);
         this.$getText = getText;
         this.$setText = setText;
-        this.$getRawText = getRawText;
     }
 
     /**
@@ -33,10 +31,6 @@ export class MultiLineTextBox2 extends Box {
 
     getText(): string {
         return this.$getText();
-    }
-
-    getRawText(): string {
-        return this.$getRawText();
     }
 
     override isEditable(): boolean {

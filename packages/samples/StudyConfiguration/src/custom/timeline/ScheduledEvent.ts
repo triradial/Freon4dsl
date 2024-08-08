@@ -115,7 +115,8 @@ export class ScheduledEvent {
 
   daysTillNextRepeat(completedEvent: EventInstance) {
     let repeatCondition = this.configuredEvent.schedule.eventRepeat as RepeatCondition;
-    let repeatUnit = repeatCondition.repeatUnit.referred;
+    let repeatUnit = null; // repeatCondition.repeatUnit.referred; TODO: replace this temp hack to make things compile while evolving the language
+    throw new Error("TODO: replace this temp hack to make things compile while evolving the language");
     let repeatDays = 0;
     switch (repeatUnit) {
       case RepeatUnit.daily:
