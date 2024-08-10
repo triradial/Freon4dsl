@@ -40,7 +40,7 @@ describe ("Access to simulation data", () => {
         // Then the generated timeline has one event on the expected event day
         let timeline = simulator.timeline;
         let expectedTimeline = new Timeline()
-        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening")
+        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening", 1)
         expectedTimeline.setCurrentDay(1);
 
         let eventFromTimeline = timeline.days[0].events[0];
@@ -66,8 +66,8 @@ describe ("Access to simulation data", () => {
 
       // Then the generated timeline has two events on the expected event days
       let expectedTimeline = new Timeline()
-      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening")
-      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 2", 7, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening")
+      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
+      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 2", 7, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
       expectedTimeline.setCurrentDay(7);
 
       expect(timeline).toEqual(expectedTimeline);  
@@ -76,7 +76,7 @@ describe ("Access to simulation data", () => {
 
     it("generates a two visit timeline for a visit 7 days after the study start day", () => {
         // GIVEN a study configuration with one period and two events
-        studyConfiguration = utils.addAPeriodAndTwoEvents(studyConfiguration, "Screening", "Visit 1", 1, "Visit 2", 7);
+        studyConfiguration = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration, "Screening", "Visit 1", 1, "Visit 2", 7);
 
         // WHEN the study is simulated and a timeline is generated
         let simulator = new Simulator(studyConfiguration);
@@ -85,8 +85,8 @@ describe ("Access to simulation data", () => {
 
         // Then the generated timeline has two events on the expected event days
         let expectedTimeline = new Timeline()
-        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening")
-        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening")
+        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
+        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
         expectedTimeline.setCurrentDay(8);
     
         expect(timeline).toEqual(expectedTimeline);  
@@ -107,9 +107,9 @@ describe ("Access to simulation data", () => {
 
       // Then the generated timeline has two events on the expected event days
       let expectedTimeline = new Timeline()
-      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening")
+      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1,7)
       expectedTimeline.days[0].events[0].state = TimelineInstanceState.Completed;
-      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment")
+      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8)
       expectedTimeline.setCurrentDay(8);
 
       // Checking the specific timeline events to be more explict about what is being tested
@@ -137,9 +137,9 @@ describe ("Access to simulation data", () => {
 
       // Then the generated timeline has two events on the expected event days
       let expectedTimeline = new Timeline()
-      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Completed, "Screening");
-      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment");
-      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 3", 15, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment");
+      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Completed, "Screening",1,7);
+      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8);
+      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 3", 15, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8);
       expectedTimeline.setCurrentDay(15);
 
       expect(expectedTimeline.days[0].events[0]).toEqual(timeline.days[0].events[0]);
@@ -163,7 +163,7 @@ describe ("Access to simulation data", () => {
 
       // Then the generated timeline has three instances of the repeating event on the expected days
       let expectedTimeline = new Timeline()
-      let eventInstance1 = addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening");
+      let eventInstance1 = addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1);
       expectedTimeline.setCompleted(eventInstance1);
       let eventInstance2 = new EventInstance(eventInstance1.scheduledEvent, 8);
       expectedTimeline.setCompleted(eventInstance2);
@@ -289,7 +289,7 @@ describe ("Access to simulation data", () => {
           };
         `
         // GIVEN a study configuration with one period and two events
-        studyConfiguration = utils.addAPeriodAndTwoEvents(studyConfiguration, "Screening", "Visit 1", 1, "Visit 2", 7);
+        studyConfiguration = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration, "Screening", "Visit 1", 1, "Visit 2", 7);
 
         // WHEN the study is simulated and a timeline picture is generated
         let simulator = new Simulator(studyConfiguration);

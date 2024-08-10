@@ -3,10 +3,10 @@ import { FreNode, FreLanguage, FreProjection, FreProjectionHandler, FreTableDefi
         Box, GridCellBox, LabelBox, IconBox, GridBox, createDefaultExpressionBox, ActionBox, HorizontalListBox, TableRowBox, HorizontalLayoutBox, MultiLineTextBox, MultiLineTextBox2, BoxFactory, BoxUtil, BoolDisplay, FreNodeReference, TableUtil} from "@freon4dsl/core";
 import { StudyConfiguration, Description, Period, Event, EventSchedule, CheckList, Task, SystemAccess, Step, TypeOfEvent } from "../language/gen";
 import { faGripVertical } from '@fortawesome/free-solid-svg-icons';
-import { StudyConfigurationModelEnvironment } from "config/gen/StudyConfigurationModelEnvironment";
+import { StudyConfigurationModelEnvironment } from "../config/gen/StudyConfigurationModelEnvironment";
 import { result } from "lodash";
 import { TaskBoxProvider } from "./gen/TaskBoxProvider";
-import { SystemAccessBoxProvider } from "editor";
+import { SystemAccessBoxProvider } from "../editor";
 
 /**
  * Class CustomStudyConfigurationModelProjection provides an entry point for the language engineer to
@@ -20,7 +20,6 @@ import { SystemAccessBoxProvider } from "editor";
 
 function copyIntoTask(target:Task, source:Task) {
     console.log("copyIntoTask");
-    const result = new Task();
     if (source.name) {
         target.name = source.name;
     }
@@ -104,9 +103,8 @@ function newGetTableRowFor_defaultTaskImplementation(this: TaskBoxProvider): Tab
                     ),
                 BoxUtil.labelBox(task, " Description:", "top-1-line-2-item-0", undefined, "app-small-caps mt-1 mr-1"),
                 BoxFactory.label(task, "xxx-top-1-line-2-item-0", ()=> task.referencedTask.referred.description.text,  undefined, "mr-1"),
-                // new LabelBox(task, "yyy-top-1-line-2-item-0", ()=> task.referencedTask.referred.description.rawText + " extra",  undefined, "app-small-caps mt-1 mr-1"),
-                // BoxUtil.getBoxOrAction(task.referencedTask.referred, "description", "Description", this.mainHandler)
-            ],
+                // BoxUtil.switchElement(task.referencedTask.referred, "showDetails", ""),
+                ],
             { selectable: false })
         );
     } else {
@@ -472,7 +470,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     BoxUtil.labelBox(schedule, "First Scheduled:", "top-1-line-0-item-0", undefined, "app-small-caps" ),
                     BoxUtil.getBoxOrAction(schedule, "eventStart", "EventStart", this.handler),
                 ],
-                { selectable: false },
+                { selectable: true },
             ),
             BoxFactory.horizontalLayout(schedule, "EventSchedule-hlist-line-1", "", "top",
                 [

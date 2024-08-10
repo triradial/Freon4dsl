@@ -1,11 +1,12 @@
 import * as Sim from "../simjs/sim.js"
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
-import {StudyConfiguration, Period, Event, EventSchedule, Day, BinaryExpression, PlusExpression, When, StartDay, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow } from "../../language/gen/index";
-import { FreNodeReference } from "@freon4dsl/core";
+import {StudyConfiguration, Period, Event, EventSchedule, Day, BinaryExpression, PlusExpression, When, StartDay, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly } from "../../language/gen/index";
+import { FreNodeReference, FreUtils } from "@freon4dsl/core";
 import { EventInstance, TimelineInstanceState, Timeline, PeriodInstance } from "../timeline/Timeline";
 import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent";
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import { SvelteComponent_1 } from "svelte";
+import { when } from "mobx";
 
 // Setup the sim.js environment and an empty StudyConfiguration.
 export function setupStudyConfiguration(): StudyConfiguration{
@@ -16,19 +17,32 @@ export function setupStudyConfiguration(): StudyConfiguration{
   return studyConfiguration;
 }
 
-// Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element defined by a binary expression. 
-export function createWhenEventSchedule(eventName: string, binaryExpression: BinaryExpression) {
-  let eventSchedule = new EventSchedule(eventName + binaryExpression.toString());
-  let whenExpression = new When(eventName + binaryExpression.toString);
-  let startWhenEventReference = new EventReference(eventName+"EventReference");
-  console.log("createWhenEventSchedule NEED TO REWRITE THIS AFTER EXPRESSION LANG UPDATES. ALL IT DOES NOW IS COMPILE! ");
-  // startWhenEventReference.$referencedEventState
-  whenExpression.startWhen = startWhenEventReference;
-  eventSchedule.eventStart = whenExpression;
+// Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
+// The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference. 
+// The EventSchedule's EventWindow, RepeatExpression, and EventTimeOfDay are empty.
+export function createWhenEventSchedule(eventName: string, eventState: EventState, operator: SimpleOperators, timeAmount: TimeAmount) {
+  let referenceToOperator = FreNodeReference.create(operator, "SimpleOperators");
+  // console.log("createWhenEventSchedule eventName: " + eventName + " eventState: " + eventState + " operator: " + operator + " timeAmount: " + timeAmount.value + " " + timeAmount.unit.name);
+  let referenceToEventState = FreNodeReference.create(eventState, "EventState");
+  const freNodeReference = FreNodeReference.create<Event>(eventName, "Event");
+  let referencedEvent = freNodeReference;
+  const startWhenEventReference = EventReference.create({'$id': FreUtils.ID(),'operator': referenceToOperator, 'timeAmount': timeAmount, 'eventState': referenceToEventState, 'event': referencedEvent}); 
+
+  const whenExpression = When.create({'$id': FreUtils.ID(), 'startWhen': startWhenEventReference});
+  const eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': whenExpression});
   return eventSchedule;
 }
 
+// Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element defined by a binary expression. 
+// export function createStudyStartExpression(eventName: string, binaryExpression: BinaryExpression) {
+//   let eventSchedule = new EventSchedule(eventName + binaryExpression.toString());
+//   eventSchedule.eventStart = binaryExpression;
+//   return eventSchedule;
+// }
+
+
 export function createEventWindow(uniquePrefix:string, daysBefore: number, daysAfter: number) {
+  //TODO: change new to create
   let eventWindow = new EventWindow("EventWindow");
   let daysBeforeDay = new Days(uniquePrefix + "DaysBefore")
   daysBeforeDay.count = 1;
@@ -42,21 +56,17 @@ export function createEventWindow(uniquePrefix:string, daysBefore: number, daysA
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'Day' DSL element starting 'startDay'. 
 export function createEventScheduleStartingOnADay(uniquePrefix: string, startDay: number) {
-  let eventSchedule = new EventSchedule(uniquePrefix + "EventSchedule");
-  let day = new Day(uniquePrefix + startDay.toString);
-  day.startDay = startDay;
-  eventSchedule.eventStart = day;
-  eventSchedule.eventWindow = createEventWindow(uniquePrefix, 1, 1);
+  let day = Day.create({'$id': FreUtils.ID(), 'startDay': startDay});
+  let eventWindow = createEventWindow(uniquePrefix, 1, 1);
+  let eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': day, 'eventWindow': eventWindow});  
   return eventSchedule;
 }
 
-export function createDay1EventScheduleThatRepeats(eventName: string, numberOfRepeats: number) {
+export function createDay1EventScheduleThatRepeatsWeekly(eventName: string, numberOfRepeats: number) {
   let eventSchedule = createEventScheduleStartingOnADay(eventName, 1);
   let repeatCondition = new RepeatCondition("RepeatCount-" + eventName);
   repeatCondition.maxRepeats = numberOfRepeats;
-  let reference = FreNodeReference.create(RepeatUnit.weekly, "RepeatUnit");
-  repeatCondition.repeatUnit = null; //reference; TODO: replace this temp hack to make things compile while evolving the language
-  throw new Error("TODO: replace this temp hack to make things compile while evolving the language");
+  repeatCondition.repeatUnit = new Weekly();
   eventSchedule.eventRepeat = repeatCondition;
   return eventSchedule;
 }
@@ -71,39 +81,39 @@ export function createEventAndAddToPeriod(period: Period, eventName: string, eve
 }
 
 /* Add a Period DSL element containing two Events to the Study Configuration:
- * - First event named 'event1Name' starts on 'event1Day'
- * - Second event named 'event2Name'  starts 'When StartDay + event2Day' .
+ * - First event named 'event1Name' is First Scheduled on 'event1Day'
+ * - Second event named 'event2Name'  is First Scheduled at 'StudyStart + event2Day' .
  * Return the updated Study Configuration.
  */
-export function addAPeriodAndTwoEvents(studyConfiguration: StudyConfiguration, periodName: string, event1Name: string, event1Day: number, event2Name: string, event2Day ): StudyConfiguration {
+export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration: StudyConfiguration, periodName: string, event1Name: string, event1Day: number, event2Name: string, event2DaysAfterStudyStart ): StudyConfiguration {
   let period = new Period(periodName);
   period.name = periodName;
 
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  let when = createWhenEventSchedule(event2Name, PlusExpression.create({left:  new StartDay(), 
-                                                                       right: NumberLiteralExpression.create({value:event2Day})}));
-  createEventAndAddToPeriod(period, event2Name, when);
+  const studyStart: StudyStart = PlusExpression.create({left:  StudyStart.create({}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
+  let eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': studyStart});
+  createEventAndAddToPeriod(period, event2Name, eventSchedule);
 
   studyConfiguration.periods.push(period);
   return studyConfiguration;
 }
 
 
-export function addEventScheduledOffCompletedEvent(studyConfiguration: StudyConfiguration, periodName: string, event1Name: string, event1Day: number, event2Name: string, event2Day: number ): StudyConfiguration {
+// Event 1 is First Scheduled on event1Day and Event 2 is First Scheduled When event1 completes + event2DaysAfterEvent1
+//
+export function addEventScheduledOffCompletedEvent(studyConfiguration: StudyConfiguration, periodName: string, event1Name: string, event1Day: number, event2Name: string, event2DaysAfterEvent1: number ): StudyConfiguration {
   let period = new Period(periodName);
   period.name = periodName;
 
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   let firstEvent = createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  let eventReference = new EventReference(event1Name);
-  let freNodeReference = FreNodeReference.create(firstEvent, "Event");
-  eventReference.event = freNodeReference;
-  let when = createWhenEventSchedule(event2Name, PlusExpression.create({left: eventReference,
-                                                                        right: NumberLiteralExpression.create({value:event2Day})}));
-
+  const timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
+  console.log("addEventScheduledOffCompletedEvent timeUnit: " + timeUnit.name);
+  const timeAmount = TimeAmount.create({'$id': FreUtils.ID(), 'value': event2DaysAfterEvent1, 'unit': timeUnit});
+  let when = createWhenEventSchedule(event2Name, EventState.completed, SimpleOperators.plus, timeAmount);
   createEventAndAddToPeriod(period, event2Name, when);
 
   studyConfiguration.periods.push(period);
@@ -117,23 +127,36 @@ export interface EventsToAdd {
   period: string;
 }
 
+/*
+  * eventsToAdd: An array of EventsToAdd objects. Each object contains the following fields:
+  * - eventName: The name of the event to add.
+  * - eventDay: The day the event is scheduled off the previous event.
+  * - period: The name of the period the event belongs to.
+  * 
+  * For each period in eventsToAdd, add a Period DSL element containing Events:
+  * - The first event of first period is First Scheduled on its eventDay.
+  * - Subsequent events are scheduled off the previous event.
+  * 
+  * Return the updated Study Configuration.
+  */
 export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyConfiguration, eventsToAdd: EventsToAdd[]  ): StudyConfiguration {
   let periodName = eventsToAdd[0].period;
   let period = new Period(periodName);
   period.name = periodName;
   // Setup the study start event
-  console.log("Adding the first event: " + eventsToAdd[0].eventName + " day: " + eventsToAdd[0].eventDay);
+  console.log("Adding the first event: " + eventsToAdd[0].eventName + " day: " + eventsToAdd[0].eventDay + " to period: " + periodName);
   let dayEventSchedule = createEventScheduleStartingOnADay(eventsToAdd[0].eventName, eventsToAdd[0].eventDay);
   let previousEvent = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule);
   studyConfiguration.periods.push(period);
 
   // Add subsequent events scheduled off the previous event
-  let firstEvent = true;
+  let timeAmount = null;
+  let isFirstEvent = true;
   eventsToAdd.forEach(eventToAdd => {
-    console.log("current period: "+ periodName + " eventToAdd: " + eventToAdd.eventName + " day: " + eventToAdd.eventDay + " period: " + eventToAdd.period);
-    if (firstEvent) { // Skip the first event as it is already added
-      firstEvent = false;
-      return;
+    console.log("current period: "+ periodName + " eventToAdd: " + eventToAdd.eventName + " day: " + eventToAdd.eventDay + " to period: " + eventToAdd.period);
+    if (isFirstEvent) { // Skip the first event as it is already added
+      isFirstEvent = false;
+      return; // return here is to break out of the forEach loop
     }
     let newPeriod = false;
     let eventReference = new EventReference(eventToAdd.eventName);
@@ -146,25 +169,36 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
     }    
     let freNodeReference = FreNodeReference.create(previousEvent, "Event");
     eventReference.event = freNodeReference;
-    let when = createWhenEventSchedule(eventToAdd.eventName, PlusExpression.create({left: eventReference,
-                                                                                   right: NumberLiteralExpression.create({value:eventToAdd.eventDay})}));
+    let timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
+    timeAmount = TimeAmount.create({'$id': FreUtils.ID(), 'value': eventToAdd.eventDay, 'unit': timeUnit});
+    console.log("addEventsScheduledOffCompletedEvents  eventToAdd: " + eventToAdd.eventName + " at " + timeAmount.value + " " + timeUnit.name + " after: " + previousEvent.name + " state: " + EventState.completed);
+    let when = createWhenEventSchedule(previousEvent.name, EventState.completed, SimpleOperators.plus, timeAmount);
     previousEvent = createEventAndAddToPeriod(period, eventToAdd.eventName, when);
     if (newPeriod) {
-      console.log("Adding the new period: " + periodName);
+      // console.log("Adding the new period: " + periodName);
       studyConfiguration.periods.push(period);
     }
   });
-  console.log("studyConfiguration # periods: " + studyConfiguration.periods.length );
-  console.log("studyConfiguration first period: " + studyConfiguration.periods[0].name + " # events:" + studyConfiguration.periods[0].events.length + " event name: " + studyConfiguration.periods[0].events[0].name);
-  console.log("studyConfiguration second period: " + studyConfiguration.periods[1].name + " # events:" + studyConfiguration.periods[0].events.length);
+  logPeriodsAndEvents("addEventsScheduledOffCompletedEvents",studyConfiguration);
   return studyConfiguration;
+}
+
+export function logPeriodsAndEvents(prefix: string, studyConfiguration: StudyConfiguration) {
+  let output = prefix + " # periods: " + studyConfiguration.periods.length + "\n";
+  studyConfiguration.periods.forEach(period => {
+    output += "Period: " + period.name + " # events: " + period.events.length + "\n";
+    period.events.forEach(event => {
+      output += "  Event: " + event.name + "\n";
+    });
+  });
+  console.log(output);
 }
 
 export function addRepeatingEvents(studyConfiguration: StudyConfiguration, periodName: string, eventsToAdd: EventsToAdd[]): StudyConfiguration {
   let period = new Period(periodName);
   period.name = periodName;
   // Setup the study start event
-  let dayEventSchedule = createDay1EventScheduleThatRepeats(eventsToAdd[0].eventName, eventsToAdd[0].repeat);
+  let dayEventSchedule = createDay1EventScheduleThatRepeatsWeekly(eventsToAdd[0].eventName, eventsToAdd[0].repeat);
   let event = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule);
   studyConfiguration.periods.push(period);
   return studyConfiguration;
@@ -176,13 +210,13 @@ export function addRepeatingEvents(studyConfiguration: StudyConfiguration, perio
  * - periodNumber: The index of the Period in the StudyConfiguration.periods array.
  *  
 */
-export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string) : EventInstance {
+export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string, dayPeriodStarted: number, dayPeriodEnded?: number) : EventInstance {
   let scheduledPeriodToAddEventTo = null;
   let currentPeriodInstance = timeline.getPeriodInstanceFor(nameOfPeriodToAddEventTo);
   if (currentPeriodInstance === undefined) { // The period is not already on the timeline, so add it
     let configuredPeriod = studyConfiguration.periods[periodNumber]; 
     scheduledPeriodToAddEventTo = new ScheduledPeriod(configuredPeriod);
-    let periodInstance = new PeriodInstance(scheduledPeriodToAddEventTo, dayEventCompleted);
+    let periodInstance = new PeriodInstance(scheduledPeriodToAddEventTo, dayPeriodStarted, dayPeriodEnded);
     periodInstance.setState(periodState);
     timeline.addEvent(periodInstance);
   } else {

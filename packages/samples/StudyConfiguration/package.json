@@ -15,7 +15,7 @@
     "generate": "bash ../../../scripts/freon-samples-dev.sh -v all -d src/defs -o src/",
     "clean-gen": "bash ../../../scripts/freon-samples-dev.sh clean-it -d src/defs -o src/",
     "clean-config": "rm */config/FreonConfiguration.ts",
-    "clean-custom": "rm */*/Custom*.ts"  
+    "clean-custom": "rm */*/Custom*.ts"
   },
   "dependencies": {
     "@freon4dsl/core": "0.7.0-beta",
@@ -32,6 +32,7 @@
     "@types/jest": "^29.5.12",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.1.5",
     "typescript": "^5.5.3"
   }
