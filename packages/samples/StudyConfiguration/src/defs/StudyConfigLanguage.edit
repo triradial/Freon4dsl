@@ -21,24 +21,30 @@ Event {
                 ${schedule}
 
             Checklist of Tasks:    ${showSequenced} Allow Sequencing
-                ${checkList }
+                ${self.checkList}
 
     ]  trigger = "Event"
 }
 
 CheckList {
     [
-    ${activities table rows}
+    ${activities vertical}
     ]
 }
 
+TaskReference {
+    [Shared task ${task} [button text="Inline" boxRole="inline-task"]]
+}
+
 Task {
-    table [
-             Tasks    
-             ${name}
-
-        ]
-
+    [
+        Task ${name} [button text="Share" boxRole="share-task"]
+            description: ${description} 
+            numbered steps ${numberedSteps switch}
+            showDetails ${showDetails switch}
+            Steps
+                ${steps}
+    ]
 }
 
 

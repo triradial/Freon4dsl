@@ -58,10 +58,18 @@ concept Event {
 
 concept CheckList {
     workflowNumber: number; // Only used by generator in MPS.
-    activities: Task[];
+    activities: AbstractTask[];
 }
 
-concept Task {
+abstract concept AbstractTask {
+    name: identifier;
+}
+
+concept TaskReference base AbstractTask {
+    reference task: Task;
+}
+
+concept Task base AbstractTask {
     name: identifier;
     isShared: boolean;
     description: Description;

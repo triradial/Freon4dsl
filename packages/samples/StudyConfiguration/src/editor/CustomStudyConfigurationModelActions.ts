@@ -9,9 +9,11 @@ import {
     FreNode,
     OptionalBox,
     FreCreateBinaryExpressionAction,
-    FreTriggerUse, isString, ActionBox
+    FreTriggerUse, isString, ActionBox, FreNodeReference, ownerOfType
 } from "@freon4dsl/core";
 import { RoleProvider } from "@freon4dsl/core";
+import { action, runInAction } from "mobx";
+import { CheckList, Event, Period, StudyConfiguration, Task, TaskReference } from "../language/gen/index";
 import { NumberLiteralExpression } from "../language/gen/NumberLiteralExpression";
 
 /**
@@ -33,9 +35,41 @@ export const MANUAL_BINARY_EXPRESSION_ACTIONS: FreCreateBinaryExpressionAction[]
 ];
 
 export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
+    FreCustomAction.create({
+        activeInBoxRoles: ["share-task"],
+        trigger: "nothing",
+        action: (box: Box, trigger: FreTriggerUse, editor: FreEditor) => {
+            const task = box.element as Task
+            console.log("SHARE TASK " + task.name)
+            const taskRef = new TaskReference();
+            taskRef.task = FreNodeReference.create<Task>(task.name, "Task")
+            let checklist = task.freOwner() as CheckList;
+            let studyConfig = ownerOfType(task, "StudyConfiguration") as StudyConfiguration
+            const taskIndex = task.freOwnerDescriptor().propertyIndex
+            runInAction( () => {
+                checklist.activities.splice(taskIndex, 1, taskRef)
+                studyConfig.tasks.push(task);
+            })
+            return taskRef
+        }
+    }),    
+    FreCustomAction.create({
+        activeInBoxRoles: ["inline-task"],
+        trigger: "nothing2",
+        action: (box: Box, trigger: FreTriggerUse, editor: FreEditor) => {
+            const taskRef = box.element as TaskReference
+            console.log("INLINE TASK " )
+            let checklist = taskRef.freOwner() as CheckList;
+            const taskIndex = taskRef.freOwnerDescriptor().propertyIndex
+            const newTask = taskRef.task.referred.copy();
+            runInAction( () => {
+                checklist.activities.splice(taskIndex, 1, newTask)
+            })
+            return newTask
+        }
+    }),
     // Add your own custom behavior here
     FreCustomAction.create({
-
         activeInBoxRoles: [
             "FreBinaryExpression-left",
             "FreBinaryExpression-right",
