@@ -6,6 +6,29 @@ import { Timeline } from "../custom/timeline/Timeline";
 
 let main: IMainInterpreter;
 
+
+function calcTimeAmount(value: number, unit: string, ): RtObject {
+    let unitAmount: number;
+    // console.log("entered calcTimeAmount");
+    // console.log("calcTimeAmount: value: " + value + ", unit: " + unit);
+    if (unit === "hours") {
+        unitAmount = 1 / 24; // Assuming 1 hour is 1/24 of a day
+    } else if (unit === "days") {
+        unitAmount = 1;
+    } else if (unit === "weeks") {
+        unitAmount = 7;
+    } else if (unit === "months") {
+        throw new RtError("evalTimeAmount: unit of months not implemented. Need to calculate the number of days in a month.");
+    } else if (unit === "forever") {
+        throw new RtError("evalTimeAmount: unit of forever not implemented. Need to use some special value or maybe forever doesn't make sense.");
+    } else {
+        throw new RtError("evalTimeAmount: unit of: " + unit + " not implemented");
+    }
+    let result = value * unitAmount;
+    // console.log("evalTimeAmount: result: " + result);
+    return new RtNumber(result);
+}
+
 /**
  * The class containing all interpreter functions written by the language engineer.
  * This class is initially empty, and will not be overwritten if it already exists.
@@ -36,16 +59,16 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalEventReference(node: language.EventReference, ctx: InterpreterContext): RtObject {
-        // console.log("entered evalEventReference");
+        console.log("entered evalEventReference");
         const timeline = ctx.find("timeline") as unknown as Timeline;
         const referencedEvent = node.$event;
         const operator = node.operator;
         const timeAmount = node.timeAmount;
         const eventState = node.eventState;
-        // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
-        // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
-        // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
-        // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
+        console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
+        console.log("evalEventReference: referencedEvent: operator: " + operator.name);
+        console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
+        console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
         let lastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
         if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
             console.log("evalEventReference: lastInstanceOfReferencedEvent is null for:" + referencedEvent.name);
@@ -73,6 +96,12 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         const left = main.evaluate(node.left, ctx) as RtNumber;
         const right = main.evaluate(node.right, ctx) as RtNumber;
         return RtBoolean.of(left.value > right.value);
+    }
+
+    evalMinusExpression(node: language.MinusExpression, ctx: InterpreterContext): RtObject {
+        const left = main.evaluate(node.left, ctx);
+        const right = main.evaluate(node.right, ctx);
+        return (left as RtNumber).minus(right as RtNumber);
     }
 
     evalNumber(node: language.NumberLiteralExpression, ctx: InterpreterContext): RtObject {
@@ -104,25 +133,13 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {
-        let unitAmount: number;
-        // console.log("entered evalTimeAmount");
-        // console.log("evalTimeAmount: value: " + node.value + ", unit: " + node.unit.name);
-        if (node.unit.name === "hours") {
-            unitAmount = 1 / 24; // Assuming 1 hour is 1/24 of a day
-        } else if (node.unit.name === "days") {
-            unitAmount = 1;
-        } else if (node.unit.name === "weeks") {
-            unitAmount = 7;
-        } else if (node.unit.name === "months") {
-            throw new RtError("evalTimeAmount: unit of months not implemented. Need to calculate the number of days in a month.");
-        } else if (node.unit.name === "forever") {
-            throw new RtError("evalTimeAmount: unit of forever not implemented. Need to use some special value or maybe forever doesn't make sense.");
-        } else {
-            throw new RtError("evalTimeAmount: unit of: " + node.unit.name + " not implemented");
-        }
-        let result = node.value * unitAmount;
-        // console.log("evalTimeAmount: result: " + result);
-        return new RtNumber(result);
+        return calcTimeAmount(node.value, node.unit.name);
+    }
+
+    evalTime(node: language.Time, ctx: InterpreterContext): RtObject {
+        //TODO: Unify TimeAmount and Time?
+        const value = Number(node.value);
+        return calcTimeAmount(value, node.unit.name);
     }
 
     evalWhen(node: language.When, ctx: InterpreterContext): RtObject {
@@ -132,12 +149,32 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
     // Copy for when the version in MainStudyConfigurationModelInterpreter is overwritten
     //
-    // evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
-    //     MainStudyConfigurationModelInterpreter.main.reset();
-    //     try {
-    //         return MainStudyConfigurationModelInterpreter.main.evaluate(node, ctx);
-    //     } catch (e: any) {
-    //         return new RtError(e.message);
-    //     }
-    // }
+//     evaluate(node: Object): RtObject {
+//         MainStudyConfigurationModelInterpreter.main.reset();
+//         simulate(node as StudyConfiguration);
+//         try {
+//             return MainStudyConfigurationModelInterpreter.main.evaluate(node, InterpreterContext.EMPTY_CONTEXT);
+//         } catch (e: any) {
+//             return new RtError(e.message);
+//         }
+//     }
+    
+//     evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
+//         MainStudyConfigurationModelInterpreter.main.reset();
+//         try {
+//             return MainStudyConfigurationModelInterpreter.main.evaluate(node, ctx);
+//         } catch (e: any) {
+//             return new RtError(e.message);
+//         }
+//     }
+// }
+
+// function simulate(studyConfiguration: StudyConfiguration) {
+//     let simulator = new Simulator(studyConfiguration);
+//     simulator.run();
+//     const timeline = simulator.getTimeline();
+//     const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+//     const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+//     TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+// }
 }

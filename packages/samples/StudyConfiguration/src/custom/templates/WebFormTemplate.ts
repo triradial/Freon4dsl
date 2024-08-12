@@ -6,18 +6,6 @@ import * as path from 'path';
 
 export class WebformTemplate {
 
-  public static loadModel(modelName: string): StudyConfiguration {
-      FreLogger.muteAllLogs();
-      const tmp = StudyConfigurationModelEnvironment.getInstance();
-      const serializer = new FreLionwebSerializer();
-      const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', 'StudyConfiguration');
-      console.log("studyFolderPath (TODO: move from tests folder):"+studyFolderPath);
-      let metaModel = JSON.parse(fs.readFileSync(`${studyFolderPath}/${modelName}.json`).toString());
-      const ts = serializer.toTypeScriptInstance(metaModel);
-      let model: StudyConfiguration = ts as StudyConfiguration;
-      return model;
-    }
-  
     public static writeWebForms(model: StudyConfiguration) {
       model.periods.forEach((period, periodNumber) => {
         // log("Period Name:" + period.name);

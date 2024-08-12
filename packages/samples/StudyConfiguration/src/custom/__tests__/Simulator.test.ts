@@ -1,9 +1,10 @@
 import * as Sim from "../simjs/sim.js"
 import { Timeline, EventInstance, PeriodInstance, TimelineInstance, TimelineInstanceState } from "../timeline/Timeline";
 import { Simulator, } from "../timeline/Simulator";
-import { StudyConfiguration, Period } from "../../language/gen/index";
+import { StudyConfiguration, Period, When } from "../../language/gen/index";
 import * as utils from "./Utils";
 import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
+import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent";
 
@@ -356,6 +357,93 @@ describe ("Access to simulation data", () => {
         // Then the generated timeline picture has two events on the expected event days
         expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
     }); 
+
+    it("generate a chart for the example study", () => {
+  
+      // HTML is split into two parts: the data and the visualization, so tests don't need to check both. The visualization is so simple that it doesn't need to be tested in multiple other tests.
+      let expectedTimelineDataAsScript = 
+        `var groups = new vis.DataSet([
+           { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+           { "content": "Visit 1", "id": "Visit 1" },{ "content": "Visit 2", "id": "Visit 2" },
+           { "content": "Any Day", "id": "AnyDay", className: 'any-day' },
+         ]);
+
+        var items = new vis.DataSet([
+          { start: new Date(2024, 0, 1), end: new Date(2024, 0, 7, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 1", content: "<b>Screening</b>", id: "Screening" },
+          { start: new Date(2024, 0, 8), end: new Date(2024, 0, 8, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 8", content: "<b>Treatment</b>", id: "Treatment" },
+          { start: new Date(2024, 0, 0), end: new Date(2024, 0, 0, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 1" },
+          { start: new Date(2024, 0, 1), end: new Date(2024, 0, 1, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "day 1", content: "&nbsp;", id: "Visit 1" },
+          { start: new Date(2024, 0, 2), end: new Date(2024, 0, 2, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 1" },
+          { start: new Date(2024, 0, 7), end: new Date(2024, 0, 7, 23, 59, 59), group: "Visit 2", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 2" },
+          { start: new Date(2024, 0, 8), end: new Date(2024, 0, 8, 23, 59, 59), group: "Visit 2", className: "treatment-visits", title: "when Visit 1 + 7", content: "&nbsp;", id: "Visit 2" },
+          { start: new Date(2024, 0, 9), end: new Date(2024, 0, 9, 23, 59, 59), group: "Visit 2", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 2" },
+          { start: new Date(2024, 0, 6), end: new Date(2024, 0, 8, 23, 59, 59), group: "AnyDay", className: "any-day", title: "Adverse Event", content: "Unscheduled Adverse Event Visit", id: "911" },
+         ])
+        `;
+        // GIVEN a study configuration loaded from a file
+        // studyConfiguration = utils.loadModel("ScheduleExample1", 'StudyConfiguration');
+        studyConfiguration = utils.loadModel("Example1", 'StudyConfiguration');
+        console.log("studyConfiguration.periods[1].events[1].name: " + studyConfiguration.periods[1].events[1].name);
+        const eventStartAsWhen = studyConfiguration.periods[1].events[1].schedule.eventStart as When;
+        console.log("studyConfiguration.periods[1].events[1].operator.name: " + eventStartAsWhen.startWhen.operator.name);
+        console.log("studyConfiguration.periods[1].events[1].schedule.startWhen.event: " + eventStartAsWhen.startWhen.event);
+        console.log("studyConfiguration.periods[1].events[1].schedule.startWhen.event.referred: " + eventStartAsWhen.startWhen.event.referred);
+        console.log("studyConfiguration.periods[1].events[1].schedule.startWhen.event.referred.name: " + eventStartAsWhen.startWhen.event.referred.name);
+        
+        throw new Error("studyConfiguration.periods[1].events[1].name: " + studyConfiguration.periods[1].events[1].name);
+  
+        // WHEN the study is simulated and a timeline picture is generated
+        let simulator = new Simulator(studyConfiguration);
+        simulator.run();
+        let timeline = simulator.timeline;
+
+        const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+        const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+        // Save full HTML of chart for viewing / debugging
+        TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+
+        const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
+        const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
+        // Then the generated timeline picture has two events on the expected event days
+        // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+    }); 
+
+    it("generates a chart for a three visit timeline for a visit that repeats twice", () => {
+      // GIVEN
+      let listOfEventsToAdd: EventsToAdd[] = [
+        { eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening"},
+      ];
+      studyConfiguration = utils.addRepeatingEvents(studyConfiguration, "Screening", listOfEventsToAdd);
+
+      // WHEN the study is simulated and a timeline is generated
+      let simulator = new Simulator(studyConfiguration);
+      simulator.run();
+      let timeline = simulator.timeline;
+
+      const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+      const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+      // Save full HTML of chart for viewing / debugging
+      TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+    });
+
+    
+    it("generates a chart for a three visit timeline for a visit that repeats twice", () => {
+      // GIVEN
+      let listOfEventsToAdd: EventsToAdd[] = [
+        { eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening"},
+      ];
+      studyConfiguration = utils.addRepeatingEvents(studyConfiguration, "Screening", listOfEventsToAdd);
+
+      // WHEN the study is simulated and a timeline is generated
+      let simulator = new Simulator(studyConfiguration);
+      simulator.run();
+      let timeline = simulator.timeline;
+
+      const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTML(timeline);
+      // Save full HTML of chart for viewing / debugging
+      TimelineTableTemplate.saveTimeline(timelineTableAsHTML);
+    });
+
 
   });
 });

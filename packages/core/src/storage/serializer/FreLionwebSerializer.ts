@@ -114,7 +114,7 @@ export class FreLionwebSerializer implements FreSerializer {
                     parsedNode.freNode[reference.featureName] = freonRef;
                 }
 
-                // LOGGER.log("REFERENCE: " + freonRef.typeName + ", ", printModel(freonRef.referred) + ", ", freonRef.name + ", " + freonRef.pathname);
+                LOGGER.log("REFERENCE: " + freonRef.typeName + ", ", printModel(freonRef.referred) + ", " + freonRef.name + ", " + freonRef.pathname);
             }
         }
     }
@@ -459,18 +459,18 @@ function propertyValueToString(value: any): string {
 }
 
 // TODO clean up this unused code
-// function printModel(element: FreNode): string {
-//     return JSON.stringify(element, skipReferences, "  " );
-// }
+function printModel(element: FreNode): string {
+    return JSON.stringify(element, skipReferences, "  " );
+}
 
-// const ownerprops = ["$$owner", "$$propertyName", "$$propertyIndex"]; // "$id"];
+const ownerprops = ["$$owner", "$$propertyName", "$$propertyIndex"]; // "$id"];
 
-// function skipReferences(key: string, value: Object) {
-//     if (ownerprops.includes(key)) {
-//         return undefined;
-//     } else if ( value instanceof FreNodeReference) {
-//         return "REF --|" ;
-//     } else {
-//         return value;
-//     }
-// }
+function skipReferences(key: string, value: Object) {
+    if (ownerprops.includes(key)) {
+        return undefined;
+    } else if ( value instanceof FreNodeReference) {
+        return "REF --|" ;
+    } else {
+        return value;
+    }
+}

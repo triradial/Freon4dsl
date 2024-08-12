@@ -42,7 +42,7 @@ export class Simulator {
     this.sim.addEntity(Scheduler, "Scheduler", this);
     // Run the simulation for the appropriate number of days
     console.log("running simulation...");
-    let results = this.sim.simulate(50); 
+    let results = this.sim.simulate(500); 
     return results;
   }
   

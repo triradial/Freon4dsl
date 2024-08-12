@@ -1,4 +1,4 @@
-import { Event, Day, RepeatCondition, RepeatUnit, Period, StudyConfiguration, When, Daily, Weekly, Monthly } from "../../language/gen/index";
+import { BinaryExpression, Event, Day, EventStart, StudyStart, RepeatCondition, RepeatUnit, Period, StudyConfiguration, When, Daily, Weekly, Monthly } from "../../language/gen/index";
 import { InterpreterContext, isRtError, RtNumber } from "@freon4dsl/core";
 import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter";
 import { EventInstance, PeriodInstance, Timeline, TimelineInstance, TimelineInstanceState } from "./Timeline";
@@ -26,8 +26,9 @@ export class ScheduledEvent {
   }
 
   day(timeline: Timeline): number {
+    console.log("ScheduledEvent.day() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay);
     let eventStart = this.configuredEvent.schedule.eventStart;
-  //   if (eventStart instanceof Day) {
+  //   if (this.isScheduledOnASpecificDay()) {
   //     console.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + (eventStart as Day).startDay);
   //   } else if (eventStart instanceof When) {
   //     console.log("ScheduledEvent.day() eventStart is a When for: " + this.getName() + " is a When with time unit: " + (eventStart as When).startWhen.timeAmount.unit.name);
@@ -64,7 +65,7 @@ export class ScheduledEvent {
       console.log("ScheduledEvent.daysToWait() for: " + this.getName() + " is to be repeated on timeline day: " + timeline.currentDay + " with scheduledDay of: " + waitInDays );
       return waitInDays;
     }
-    if (this.configuredEvent.schedule.eventStart instanceof Day) {
+    if (this.isScheduledOnASpecificDay()) {
       console.log("ScheduledEvent.daysToWait() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay + " day: " + this.day(timeline) + " result: " + this.day(timeline));
       return this.day(timeline);
     } else {
@@ -135,6 +136,26 @@ export class ScheduledEvent {
     return repeatDays;
   }
 
+  isScheduledOnASpecificDay() {
+    const eventStart = this.configuredEvent.schedule.eventStart as EventStart;
+    if (eventStart == null) {
+      console.log("isScheduledOnASpecificDay: eventStart is null for: " + this.getName());
+      return false;
+    } else if ( eventStart instanceof Day) {
+      return true;
+    } else if (eventStart instanceof StudyStart) {
+      return true;
+    } else if (eventStart.freIsExpression()) {
+      //TODO: Make this more general search of StudyStart anywhere in the expression
+      console.log("isScheduledOnASpecificDay: eventStart checking is currently limited to binary expressions starting with StudyStart!");
+      const eventStartExpression = eventStart as BinaryExpression;
+      if (eventStartExpression.left instanceof StudyStart) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /*
   * TODO: update this description...
   *
@@ -143,7 +164,7 @@ export class ScheduledEvent {
    */
   getInstanceIfEventIsReadyToSchedule(completedEvent: EventInstance, timeline: Timeline): unknown {
     let repeatingEvent = this.isRepeatingEvent();
-    if (this.configuredEvent.schedule.eventStart instanceof Day && !repeatingEvent) {
+    if (this.isScheduledOnASpecificDay() && !repeatingEvent) {
       const day = this.configuredEvent.schedule.eventStart as Day;
       console.log("getInstanceIfEventIsReady: Not ready to schedule because:" + this.getName() + " is scheduled to start on a specific day of:" + day.startDay);
       return null;

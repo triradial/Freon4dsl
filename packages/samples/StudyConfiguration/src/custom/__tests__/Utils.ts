@@ -1,12 +1,14 @@
 import * as Sim from "../simjs/sim.js"
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
-import {StudyConfiguration, Period, Event, EventSchedule, Day, BinaryExpression, PlusExpression, When, StartDay, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly } from "../../language/gen/index";
-import { FreNodeReference, FreUtils } from "@freon4dsl/core";
+import {StudyConfiguration, Period, Event, EventSchedule, Day, BinaryExpression, PlusExpression, When, StartDay, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly, StudyConfigurationModel } from "../../language/gen/index";
+import { FreLionwebSerializer, FreLogger, FreNodeReference, FreUtils } from "@freon4dsl/core";
 import { EventInstance, TimelineInstanceState, Timeline, PeriodInstance } from "../timeline/Timeline";
 import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent";
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import { SvelteComponent_1 } from "svelte";
 import { when } from "mobx";
+import * as path from 'path';
+import * as fs from 'fs';
 
 // Setup the sim.js environment and an empty StudyConfiguration.
 export function setupStudyConfiguration(): StudyConfiguration{
@@ -92,7 +94,7 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurati
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  const studyStart: StudyStart = PlusExpression.create({left:  StudyStart.create({}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
+  const studyStart = PlusExpression.create({left:  StudyStart.create({'$id': FreUtils.ID(), 'startDay': 1}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
   let eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': studyStart});
   createEventAndAddToPeriod(period, event2Name, eventSchedule);
 
@@ -228,6 +230,29 @@ export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfigura
   eventInstance.state = TimelineInstanceState.Completed;
   timeline.addEvent(eventInstance);
   return eventInstance;
+}
+
+export function loadModel(modelFolderName: string, modelName: string): StudyConfiguration {
+  // FreLogger.muteAllLogs();
+  // const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', modelFolderName);
+  console.log("__dirname:"+__dirname);
+  let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
+  const studyFolderPath: string = path.resolve(__dirname, '..','..', '..','..', '..', 'server', 'modelstore', modelFolderName);
+  console.log("studyFolderPath (TODO: move from tests folder):"+studyFolderPath);
+  const serializer = new FreLionwebSerializer();
+  let metaModel = JSON.parse(fs.readFileSync(`${studyFolderPath}/${modelName}.json`).toString());
+  const ts = serializer.toTypeScriptInstance(metaModel);
+  let modelUnit: StudyConfiguration = ts as StudyConfiguration;
+  logPeriodsAndEvents("loadModel", modelUnit);
+  const validator = studyConfigurationModelEnvironment.validator;
+  const errors = validator.validate(modelUnit);
+  return modelUnit;
+
+  // const model = StudyConfigurationModel.create({'$id': FreUtils.ID()});
+  // const sentence = fs.readFileSync(`${studyFolderPath}/${modelName}.json`).toString();
+  // const studyConfigurationUnit = StudyConfigurationModelEnvironment.getInstance().reader.readFromString(sentence, "StudyConfiguration", model) as StudyConfiguration;
+  // logPeriodsAndEvents("loadModel", studyConfigurationUnit);  
+  // return studyConfigurationUnit;
 }
 
 

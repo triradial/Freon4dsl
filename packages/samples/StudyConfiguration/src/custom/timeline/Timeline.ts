@@ -140,6 +140,11 @@ export class Timeline extends RtObject{
     return firstActivePeriodOnTimeline;
   }
 
+  getUniqueEventInstanceNames() : string[] {
+    let eventNames = this.days.flatMap(day => day.events.filter(event => event instanceof EventInstance).map(event => event.getName()));
+    return [...new Set(eventNames)];
+  }
+
 }
 
 

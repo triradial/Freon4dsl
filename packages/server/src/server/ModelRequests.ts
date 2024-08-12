@@ -1,5 +1,8 @@
 import * as fs from "fs";
 import { IRouterContext } from "koa-router";
+// import {StudyConfiguration, Simulator, TimelineScriptTemplate } from "@freon4dsl/samples-study-configuration";
+// import { FreLionwebSerializer } from "@freon4dsl/core";
+
 var path = require("path");
 
 const storeFolder = "./modelstore";
@@ -91,4 +94,17 @@ export class ModelRequests {
             console.log(e.message);
         }
     }
+
+    // public static async generateChart(modelUnitAsString: string) {
+    //     const serializer = new FreLionwebSerializer();
+    //     const ts = serializer.toTypeScriptInstance(modelUnitAsString);
+    //     let studyConfiguration: StudyConfiguration = ts as StudyConfiguration;
+      
+    //     let simulator = new Simulator(studyConfiguration);
+    //     simulator.run();
+    //     const timeline = simulator.getTimeline();
+    //     const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+    //     const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+    //     TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+    // }
 }

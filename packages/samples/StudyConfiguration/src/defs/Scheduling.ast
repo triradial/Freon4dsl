@@ -14,7 +14,7 @@ concept Day implements EventStart {
 concept AnyDay implements EventStart {
 }
 
-expression StudyStart implements EventStart {
+expression StudyStart base Day {
 }
 
 expression Previous implements EventStart {
