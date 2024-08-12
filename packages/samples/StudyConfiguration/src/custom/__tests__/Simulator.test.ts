@@ -382,18 +382,12 @@ describe ("Access to simulation data", () => {
         `;
         // GIVEN a study configuration loaded from a file
         // studyConfiguration = utils.loadModel("ScheduleExample1", 'StudyConfiguration');
-        studyConfiguration = utils.loadModel("Example1", 'StudyConfiguration');
-        console.log("studyConfiguration.periods[1].events[1].name: " + studyConfiguration.periods[1].events[1].name);
-        const eventStartAsWhen = studyConfiguration.periods[1].events[1].schedule.eventStart as When;
-        console.log("studyConfiguration.periods[1].events[1].operator.name: " + eventStartAsWhen.startWhen.operator.name);
-        console.log("studyConfiguration.periods[1].events[1].schedule.startWhen.event: " + eventStartAsWhen.startWhen.event);
-        console.log("studyConfiguration.periods[1].events[1].schedule.startWhen.event.referred: " + eventStartAsWhen.startWhen.event.referred);
-        console.log("studyConfiguration.periods[1].events[1].schedule.startWhen.event.referred.name: " + eventStartAsWhen.startWhen.event.referred.name);
-        
-        throw new Error("studyConfiguration.periods[1].events[1].name: " + studyConfiguration.periods[1].events[1].name);
+        const studyConfigurationModel = utils.setupStudyConfigurationModel()
+        const studyConfigurationUnit = utils.loadModel("Example1", 'StudyConfiguration');
+        studyConfigurationModel.addUnit(studyConfigurationUnit)
   
         // WHEN the study is simulated and a timeline picture is generated
-        let simulator = new Simulator(studyConfiguration);
+        let simulator = new Simulator(studyConfigurationUnit);
         simulator.run();
         let timeline = simulator.timeline;
 

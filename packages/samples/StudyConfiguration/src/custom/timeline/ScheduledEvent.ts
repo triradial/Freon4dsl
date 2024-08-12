@@ -53,7 +53,11 @@ export class ScheduledEvent {
       // }
     }
     // console.log("ScheduledEvent.day() for: " + this.name() + " is: " + (value as RtNumber).value);
-    return (value as RtNumber).value
+    if (value instanceof RtNumber) {
+      return (value as RtNumber).value
+    } else {
+      return undefined;
+    }
   }
 
 

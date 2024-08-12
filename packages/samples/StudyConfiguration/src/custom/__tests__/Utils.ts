@@ -13,10 +13,24 @@ import * as fs from 'fs';
 // Setup the sim.js environment and an empty StudyConfiguration.
 export function setupStudyConfiguration(): StudyConfiguration{
   new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
+  
   let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
-  let studyConfigurationModel = studyConfigurationModelEnvironment.newModel("Study1");
-  let studyConfiguration = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
-  return studyConfiguration;
+  let studyConfigurationModel = setupStudyConfigurationModel();
+  let studyConfigurationUnit = setupStudyConfigurationUnit(studyConfigurationModel);
+  return studyConfigurationUnit;
+}
+
+export function setupStudyConfigurationModel(): StudyConfigurationModel {
+  new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
+  let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
+  let studyConfigurationModel = studyConfigurationModelEnvironment.newModel("Study1") as StudyConfigurationModel;
+  return studyConfigurationModel;
+}
+
+export function setupStudyConfigurationUnit(studyConfigurationModel: StudyConfigurationModel): StudyConfiguration{
+  new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
+  let studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
+  return studyConfigurationUnit;
 }
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
@@ -233,7 +247,7 @@ export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfigura
 }
 
 export function loadModel(modelFolderName: string, modelName: string): StudyConfiguration {
-  // FreLogger.muteAllLogs();
+  FreLogger.muteAllLogs();
   // const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', modelFolderName);
   console.log("__dirname:"+__dirname);
   let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
