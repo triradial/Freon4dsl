@@ -1,5 +1,5 @@
 import { EventInstance, Timeline } from "./Timeline";
-import { Day, Period, StudyConfiguration } from "../../language/gen";
+import { BinaryExpression, Day, EventStart, Period, StudyConfiguration, StudyStart } from "../../language/gen";
 import { ScheduledEvent } from "./ScheduledEvent";
 import { ScheduledPeriod } from "./ScheduledPeriod";
 
@@ -62,11 +62,11 @@ export class ScheduledStudyConfiguration {
     return firstEventOnDay1;
   }
 
+
   getEventsOnScheduledOnASpecificDay(): ScheduledEvent[]  {
-    let firstPeriod = this.getFirstScheduledPeriod(); //TODO: check if in any period?
-    let eventsOnADayInFirstPeriod = firstPeriod.getAllScheduledEvents().filter(scheduledEvent => scheduledEvent.configuredEvent.schedule.eventStart instanceof Day);
-    console.log("getEventsOnScheduledOnASpecificDay # eventsOnADayInFirstPeriod: " + eventsOnADayInFirstPeriod.length);
-    return eventsOnADayInFirstPeriod;
+    let eventsOnADayInAnyPeriod = this.getAllEventsInSchedule().filter(scheduledEvent => scheduledEvent.isScheduledOnASpecificDay());
+    console.log("getEventsOnScheduledOnASpecificDay # eventsOnADayInFirstPeriod: " + eventsOnADayInAnyPeriod.length);
+    return eventsOnADayInAnyPeriod;
   }
 
   // anyEventsToSchedule(timeline): boolean {

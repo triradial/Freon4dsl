@@ -14,14 +14,31 @@ concept Day implements EventStart {
 concept AnyDay implements EventStart {
 }
 
-expression StudyStart implements EventStart {
+expression StudyStart base Day {
 }
 
-interface RepeatExpression {    
+expression Previous implements EventStart {
 }
 
-limited RepeatUnit {
-    daily; weekly; monthly; forever;
+interface RepeatExpression {}
+
+//limited RepeatUnit implements RepeatExpression {
+//limited RepeatUnit {
+//    daily; weekly; monthly; forever;
+//}
+
+interface RepeatUnit {}
+
+concept Daily implements RepeatUnit {}
+
+concept Weekly implements RepeatUnit {}
+
+concept Monthly implements RepeatUnit {}
+
+concept Forever implements RepeatUnit {}
+
+concept RepeatEvery implements RepeatUnit {
+    repeatEvery: Time;
 }
 
 limited TimeUnit {
@@ -43,10 +60,14 @@ concept TimeAmount   {
     unit: TimeUnit = TimeUnit:days;
 }
 
+limited SimpleOperators {
+    plus = { name:"+"} minus = { name: "-"}
+}
+
 expression EventReference base TimeExpression {
     reference event: Event;
     eventState: EventState;
-    operator: string;
+    operator: SimpleOperators;
     timeAmount: TimeAmount;
 }
 

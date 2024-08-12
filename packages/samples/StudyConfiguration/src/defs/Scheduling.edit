@@ -1,10 +1,12 @@
-editor NoDetails precedence 5
+editor default
 
 When {
-    [
-        when ${startWhen}
-    ]
+    [when ${startWhen}]
 } 
+
+TimeAmount {
+    [${value}${unit}]
+}
 
 StartDay {
     [Start Day ]
@@ -20,9 +22,35 @@ StudyStart {
     [Study Start]
 } 
 
+Previous {
+    [Previous]
+}
+
 AnyDay {
     [On Any Day]
 } 
+
+Daily {
+    [daily]
+}
+
+Weekly {
+    [weekly]
+}
+
+
+Monthly {
+    [monthly]
+}
+
+
+Forever {
+    [forever]
+}
+
+RepeatEvery {
+    [Every: ${repeatEvery}]
+}
 
 RepeatCondition {
     [

@@ -68,7 +68,11 @@ export class Timeline extends RtObject{
   getLastInstanceForThisEvent(eventToMatch: Event): EventInstance {
     let allEventInstances = this.days.flatMap(day => day.events.filter ( event => event instanceof EventInstance));
     let eventInstances = allEventInstances.filter(event => eventToMatch.name === event.getName());
-    return eventInstances[eventInstances.length - 1] as EventInstance; // TODO: sort by day and get the most recent
+    const lastInstance = eventInstances[eventInstances.length - 1] as EventInstance; // TODO: sort by day and get the most recent
+    if (!lastInstance) {
+      console.log("getLastInstanceForThisEvent no instance found for: " + eventToMatch.name);
+    }
+    return lastInstance;
   }
 
   printTimeline() {
@@ -87,13 +91,15 @@ export class Timeline extends RtObject{
       for (const event of day.events) {
         if (event instanceof(EventInstance)) {
           let eventInstance = event as EventInstance;
-          console.log("hasCompletedInstanceOf scheduledEvent: " + scheduledEvent.getName() + " event: " + eventInstance.getName() + " state: " + eventInstance.state + " day: " + day.day);
+          console.log("hasCompletedInstanceOf checking if completed instance of: " + scheduledEvent.getName() + " matches event: " + eventInstance.getName() + " in state: " + eventInstance.state + " one day: " + day.day);
           if (eventInstance.scheduledEvent.getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
+            console.log("hasCompletedInstanceOf: " + scheduledEvent.getName());
             return true; // Exit nested loops early if we find a completed instance
           }
         }
       }
-    }    
+    } 
+    console.log("hasCompletedInstanceOf did not find completed instance of: " + scheduledEvent.getName());   
     return false;
   }
 
@@ -132,6 +138,11 @@ export class Timeline extends RtObject{
       console.log("getCurrentPeriod no active period found");
     }
     return firstActivePeriodOnTimeline;
+  }
+
+  getUniqueEventInstanceNames() : string[] {
+    let eventNames = this.days.flatMap(day => day.events.filter(event => event instanceof EventInstance).map(event => event.getName()));
+    return [...new Set(eventNames)];
   }
 
 }
@@ -175,10 +186,11 @@ export class PeriodInstance extends TimelineInstance {
   scheduledPeriod: ScheduledPeriod;
 
   
-  constructor(scheduledPeriod: ScheduledPeriod, startDay: number) {
+  constructor(scheduledPeriod: ScheduledPeriod, startDay: number, endDay?: number) {
     super();
     this.scheduledPeriod = scheduledPeriod;
     this.startDay = startDay;
+    this.endDay = endDay;
     this.setState(TimelineInstanceState.Active);
   } 
 

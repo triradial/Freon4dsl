@@ -203,12 +203,6 @@
 			if (text !== box.getText()) {
 				LOGGER.log(`   text is new value`)
 				box.setText(text);
-				if (ed) {
-					box.setRawText(ed.getContent({ format: "text" }));
-				} else {
-					box.setRawText("HTML NOT AVAILABLE YET: " + text);
-				}
-
 			} else {
 				LOGGER.log("Text is unchanged: " + text)
 			}

@@ -40,8 +40,15 @@ concept Assignment {
     reference person: Person;
 }
 
+limited TypeOfEvent {
+    site; video; phone; other;
+}
+
+
 concept Event {
     name: identifier;
+    alternativeName: string;
+    typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;
     checkList: CheckList;
