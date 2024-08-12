@@ -20,7 +20,8 @@ export class ScheduledPeriod {
   }
 
   getName() {
-    return this.configuredPeriod.freId();
+    // return this.configuredPeriod.freId();
+    return this.configuredPeriod.name;
   }
 
 }

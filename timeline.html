@@ -42,24 +42,29 @@
 <script>
   var groups = new vis.DataSet([
     { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-    { "content": "Screen", "id": "Screen" },{ "content": "StudyStart", "id": "StudyStart" },{ "content": "V1", "id": "V1" },
+    { "content": "Screen", "id": "Screen" },
+      { "content": "StudyStart", "id": "StudyStart" },
+      { "content": "V1", "id": "V1" },
+      
   ]);
 
   var items = new vis.DataSet([
-    { start: new Date(2024, 0, -6), end: new Date(2024, 0, -1, 23, 59, 59), group: "Phase", className: "id-141-phase", title: "Day: -6", content: "<b>ID-141</b>", id: "ID-1410" },
-{ start: new Date(2024, 0, 0), end: new Date(2024, 0, 5, 23, 59, 59), group: "Phase", className: "id-238-phase", title: "Day: 0", content: "<b>ID-238</b>", id: "ID-2381" },
-
-    { start: new Date(2024, 0, -7), end: new Date(2024, 0, -7, 23, 59, 59), group: "Screen", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Screen2" },
-    { start: new Date(2024, 0, -6), end: new Date(2024, 0, -6, 23, 59, 59), group: "Screen", className: "treatment-visits", title: "Study Start - 7", content: "&nbsp;", id: "Screen3" },
-    { start: new Date(2024, 0, -5), end: new Date(2024, 0, -5, 23, 59, 59), group: "Screen", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Screen4" },
-    { start: new Date(2024, 0, -1), end: new Date(2024, 0, -1, 23, 59, 59), group: "StudyStart", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-StudyStart5" },
-    { start: new Date(2024, 0, 0), end: new Date(2024, 0, 0, 23, 59, 59), group: "StudyStart", className: "treatment-visits", title: "day 0", content: "&nbsp;", id: "StudyStart6" },
-    { start: new Date(2024, 0, 1), end: new Date(2024, 0, 1, 23, 59, 59), group: "StudyStart", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-StudyStart7" },
-    { start: new Date(2024, 0, 4), end: new Date(2024, 0, 4, 23, 59, 59), group: "V1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V18" },
-    { start: new Date(2024, 0, 5), end: new Date(2024, 0, 5, 23, 59, 59), group: "V1", className: "treatment-visits", title: "when StudyStart completed + 5 days", content: "&nbsp;", id: "V19" },
-    { start: new Date(2024, 0, 6), end: new Date(2024, 0, 6, 23, 59, 59), group: "V1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V110" },
+    { start: new Date(2024, 00, 01), end: new Date(2024, 00, 06, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: Mon Jan 01 2024 00:00:00 GMT-0500 (Eastern Standard Time)}", content: "<b>Screening</b>", id: "Screening0" },
+{ start: new Date(2024, 00, 07), end: new Date(2024, 00, 11, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: Sun Jan 07 2024 00:00:00 GMT-0500 (Eastern Standard Time)}", content: "<b>Treatment</b>", id: "Treatment1" },
+{ start: new Date(2024, 00, 12), end: new Date(2024, 00, 12, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: Fri Jan 12 2024 00:00:00 GMT-0500 (Eastern Standard Time)}", content: "<b>Treatment</b>", id: "Treatment2" },
     
-  ])
+      
+      { start: new Date(2024, 00, 01), end: new Date(2024, 00, 01, 23, 59, 59), group: "Screen", className: "treatment-visits", title: "Study Start - 7", content: "&nbsp;", id: "Screen3" },
+      
+  
+      
+      { start: new Date(2024, 00, 07), end: new Date(2024, 00, 07, 23, 59, 59), group: "StudyStart", className: "treatment-visits", title: "day 0", content: "&nbsp;", id: "StudyStart4" },
+      
+  
+      
+      { start: new Date(2024, 00, 12), end: new Date(2024, 00, 12, 23, 59, 59), group: "V1", className: "treatment-visits", title: "when StudyStart completed + 5 days", content: "&nbsp;", id: "V15" },
+      
+    ])
  // create visualization
   var container = document.getElementById('visualization');
   var options = {
@@ -79,10 +84,10 @@
     timeAxis: {scale: 'day', step: 1},
     showMajorLabels: false,
     orientation: 'both',
-    start: new Date(2024, 0, 1),
-    end: new Date(2024, 0, 6, 23, 59, 59),
-    min: new Date(2024, 0, 1),
-    max: new Date(2024, 0, 6, 23, 59, 59),
+    start: new Date(2024,0,1),
+    end: new Date(2024, 0, 15, 23, 59, 59),
+    min: new Date(2023, 11, 1),
+    max: new Date(2024, 0, 15, 23, 59, 59),
     margin: {
         item: {
             horizontal: 0,

@@ -20,8 +20,8 @@ export class Timeline extends RtObject{
     throw new Error('Timelines are not comparable. Method not implemented.');
   }
 
-  newEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn?: number, startDay?: number, endDay?: number) {
-    return new EventInstance(scheduledEvent, dayEventWillOccurOn, startDay, endDay);
+  newEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn?: number) {
+    return new EventInstance(scheduledEvent, dayEventWillOccurOn);
   }
 
   getEventsForDay(day: number) {
@@ -145,6 +145,10 @@ export class Timeline extends RtObject{
     return [...new Set(eventNames)];
   }
 
+  getOffsetOfFirstEventInstance() {
+    return Math.abs(this.days[0].day)
+  }
+
 }
 
 
@@ -169,6 +173,17 @@ export abstract class TimelineInstance {
     }
   }
 
+  getEndDayAsDateFrom(referenceDate: Date, timeline: Timeline) : Date {
+    const result = new Date(referenceDate);
+    const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
+    result.setDate(result.getDate() + this.getEndDay(timeline) + dayOffsetOfFirstEventInstance);
+    return result;
+  }
+
+  getEndDayStringAsDateFrom(referenceDate: Date, timeline: Timeline): string {
+    return TimelineInstance.formatDate(this.getEndDayAsDateFrom(referenceDate, timeline));
+  }
+
   setEndDay(endDay: number) {
     this.endDay = endDay;
   }
@@ -177,8 +192,34 @@ export abstract class TimelineInstance {
     return this.startDay;
   }
 
+  getStartDayAsDateFrom(referenceDate: Date, timeline: Timeline): Date {
+    const result = new Date(referenceDate);
+    const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
+        result.setDate(result.getDate() + this.getStartDay() + dayOffsetOfFirstEventInstance);
+    return result;
+  }
+
+  getStartDayStringAsDateFrom(referenceDate: Date, timeline: Timeline): string {
+    return TimelineInstance.formatDate(this.getStartDayAsDateFrom(referenceDate, timeline));
+  }
+
   abstract getName(): string;
 
+  // static formatDate(date: Date): string {
+  //   const options: Intl.DateTimeFormatOptions = {
+  //       year: 'numeric',
+  //       month: '2-digit',
+  //       day: '2-digit'
+  //   };
+  //   return date.toLocaleDateString('en-CA', options).replace(/-/g, ', ');
+  // }
+
+  static formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth()).toString().padStart(2, '0'); // getMonth() returns 0 for January
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}, ${month}, ${day}`;
+}
 }
 
 export class PeriodInstance extends TimelineInstance {
@@ -216,16 +257,17 @@ export enum TimelineInstanceState {
   */
 export class EventInstance extends TimelineInstance {
 
-  startDayOfWindow: number; // The day the window of the event was scheduled to start
-  endDayOfWindow: number;   // The day the window of the event was scheduled to end
+  // startDayOfWindow: number; // The day the window of the event was scheduled to start
+  // endDayOfWindow: number;   // The day the window of the event was scheduled to end
   scheduledEvent: ScheduledEvent; // The scheduled event that this instance was created from
   state : TimelineInstanceState = TimelineInstanceState.Ready;
 
-  constructor(scheduledEvent: ScheduledEvent, startDay?: number, startDayOfWindow?: number, endDayOfWindow?: number) {
+
+  constructor(scheduledEvent: ScheduledEvent, startDay?: number) { // , startDayOfWindow?: number, endDayOfWindow?: number) {
     super();
     this.startDay = startDay;
-    this.startDayOfWindow = startDayOfWindow !== undefined ? startDay : (startDay !== undefined ? startDay - 1 : undefined);
-    this.endDayOfWindow = endDayOfWindow !== undefined ? endDayOfWindow : (startDay !== undefined ? startDay + 1 : undefined);;
+    // this.startDayOfWindow = startDayOfWindow !== undefined ? startDay : (startDay !== undefined ? startDay - 1 : undefined);
+    // this.endDayOfWindow = endDayOfWindow !== undefined ? endDayOfWindow : (startDay !== undefined ? startDay + 1 : undefined);;
     this.scheduledEvent = scheduledEvent;
   }
 
@@ -233,12 +275,45 @@ export class EventInstance extends TimelineInstance {
     return this.scheduledEvent.getName();
   }
 
+  isStartWindowZero() {
+    const daysAfter = this.scheduledEvent.configuredEvent.schedule.eventWindow.daysAfter.count;
+    return daysAfter === 0 || daysAfter == undefined;
+  }
+
+  isEndWindowZero() {
+    const daysBefore = this.scheduledEvent.configuredEvent.schedule.eventWindow.daysBefore.count;
+    return daysBefore === 0 || daysBefore == undefined;
+  }
+
+
   getStartDayOfWindow() {
     return this.scheduledEvent.configuredEvent.schedule.eventWindow.daysBefore.count - this.startDay;
   }
 
+  getStartDayOfWindowAsDateFrom(referenceDate: Date, timeline: Timeline) {
+    const result = this.getStartDayAsDateFrom(referenceDate, timeline);
+    const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
+    result.setDate(result.getDate() - this.getStartDayOfWindow() + dayOffsetOfFirstEventInstance);
+    return result;
+  }
+
+  getStartDayOfWindowStringAsDateFrom(referenceDate: Date, timeline: Timeline) {
+    return TimelineInstance.formatDate(this.getStartDayOfWindowAsDateFrom(referenceDate, timeline));
+  }
+
   getEndDayOfWindow() {
     return this.scheduledEvent.configuredEvent.schedule.eventWindow.daysAfter.count + this.startDay;
+  }
+
+  getEndDayOfWindowAsDateFrom(referenceDate: Date, timeline: Timeline) {
+    const result = this.getStartDayAsDateFrom(referenceDate,timeline);
+    const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
+    result.setDate(result.getDate() + this.getEndDayOfWindow() + dayOffsetOfFirstEventInstance);
+    return result;
+  }
+
+  getEndDayOfWindowStringAsDateFrom(referenceDate: Date, timeline: Timeline) {
+    return TimelineInstance.formatDate(this.getEndDayOfWindowAsDateFrom(referenceDate, timeline));
   }
 
   // getEndDay() {
