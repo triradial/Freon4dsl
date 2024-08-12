@@ -276,6 +276,7 @@ export class BoxUtil {
         }
         return result;
     }
+
     /**
      * Returns a textBox that holds a property of type 'boolean'.
      * When the property is a list (the type is "boolean[]"), this method can be
@@ -539,33 +540,39 @@ export class BoxUtil {
         return BoxFactory.button(element, text, roleName);
     }
 
-    static listGroupBox(node: FreNode, label: string, uid: string, childBox: Box, initializer?: Partial<ListGroupBox>): ListGroupBox {
-        const roleName: string = RoleProvider.group(node, uid) + "-" + this.makeKeyName(label);
+    static listGroupBox(node: FreNode, roleName: string, label: string, childBox: Box, initializer?: Partial<ListGroupBox>): ListGroupBox {
+        const role = this.makeKeyName(roleName);
         const updatedInitializer = {
+            ...initializer,
             selectable: initializer?.selectable ?? true,
             isExpanded: initializer?.isExpanded ?? false,
-            hasActions: initializer?.hasActions ?? true,           
-            ...initializer
+            canAdd: initializer?.canAdd ?? false,
+            canCRUD: initializer?.canCRUD ?? false,            
         }  
-        let result: ListGroupBox = BoxFactory.listGroup(node, roleName, label, childBox, updatedInitializer );
+        let result: ListGroupBox = BoxFactory.listGroup(node, role, label, childBox, updatedInitializer );
         return result;
     }
 
-    static itemGroupBox(node: FreNode, propertyName: string, label: string, childBox: Box, initializer?: Partial<ItemGroupBox>): ItemGroupBox {
+    static itemGroupBox(node: FreNode, roleName: string, label: string, propertyName: string, childBox: Box, initializer?: Partial<ItemGroupBox>): ItemGroupBox {
         let result: ItemGroupBox = null;
+        let ph: string = BoxUtil.formatPlaceholder(initializer?.placeHolder, propertyName);
+        const role = this.makeKeyName(roleName);
         const updatedInitializer = {
+            ...initializer,
             selectable: initializer?.selectable ?? true,
             isExpanded: initializer?.isExpanded ?? false,
-            hasActions: initializer?.hasActions ?? true,
             isDraggable: initializer?.isDraggable ?? true,
-            isShareable: initializer?.isShareable ?? false,
-            placeHolder: BoxUtil.formatPlaceholder(initializer?.placeHolder, initializer?.propertyName),
-            ...initializer
+            canDelete: initializer?.canDelete ?? true,
+            canShare: initializer?.canShare ?? false,
+            canUnlink: initializer?.canUnlink ?? false,
+            canCRUD: initializer?.canCRUD ?? false,
+            canEdit: initializer?.canEdit ?? true,
+            placeHolder: ph,
         }  
         const property = node[propertyName];
         if (property !== undefined && property !== null && typeof property === "string") {
-            const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "textbox");
-            result = BoxFactory.itemGroup(node, roleName, label, () => node[propertyName], (v: string) => runInAction( () => { (node[propertyName] = v); }), childBox, updatedInitializer );
+            //const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "textbox");
+            result = BoxFactory.itemGroup(node, role, label, () => node[propertyName], (v: string) => runInAction( () => { (node[propertyName] = v); }), childBox, updatedInitializer );
             result.propertyName = propertyName;
         } else {
             FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + "\"");

@@ -14,7 +14,7 @@
 
     import { Button } from 'flowbite-svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes } from '@fortawesome/free-solid-svg-icons';
+    import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes, faSquareArrowUpRight, faLinkSlash } from '@fortawesome/free-solid-svg-icons';
 
 	// TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -45,13 +45,17 @@
     let contentElement: HTMLDivElement = null;
     	
     let label: string;
-    let level: number;
     let child: Box;
     let isExpanded: boolean = false; 
     let contentStyle: string = 'display: none';
     let isDraggable: boolean = true;
-	let isShareable: boolean = false;
-	let hasActions: boolean = true;	
+
+	let canShare: boolean = false;
+	let canDelete: boolean = false;
+	let canUnlink: boolean = false;
+	let canCRUD: boolean = false;
+	let isRequired: boolean = false;
+	let canEdit: boolean = true;
 	
 	// Note that 'from <= to' always holds.
 	let placeHolderStyle: string;
@@ -70,8 +74,12 @@
 			originalText = text = box.getText();
 			placeholder = box.placeHolder;
 			isExpanded = box.isExpanded;
-			isShareable = box.isShareable;
-			hasActions = box.hasActions;
+			canShare = box.canShare;
+			canCRUD = box.canCRUD;
+			canDelete = box.canDelete;
+			canUnlink = box.canUnlink;
+			canEdit = box.canEdit;
+			isRequired = box.isRequired;
 			contentStyle = isExpanded ? 'display:block;' : 'display:none;';
 			
 			setInputWidth();
@@ -149,18 +157,22 @@
      * and sets the selectedBox of the editor.
      */
     function startEditing(event: MouseEvent) {
-        LOGGER.log('startEditing ' + id);
-        // set the global selection
-        editor.selectElementForBox(box);
-        // set the local variables
-        isEditing = true;
-        editStart = true;
-        originalText = text;
-        let {anchorOffset, focusOffset} = document.getSelection();
-		setFromAndTo(anchorOffset, focusOffset);
+		if (canEdit) {
+			LOGGER.log('startEditing ' + id);
+			// set the global selection
+			editor.selectElementForBox(box);
+			// set the local variables
+			isEditing = true;
+			editStart = true;
+			originalText = text;
+			let {anchorOffset, focusOffset} = document.getSelection();
+			setFromAndTo(anchorOffset, focusOffset);
+		}
 	    event.preventDefault();
         event.stopPropagation();
-        dispatcher('startEditing', {content: text, caret: from}); // tell the TextDropdown that the edit has started
+		if (canEdit) {
+        	dispatcher('startEditing', {content: text, caret: from}); // tell the TextDropdown that the edit has started
+		}
     }
 
     /**
@@ -453,6 +465,11 @@
 		// If being edited, do not set the value, let the user type whatever (s)he wants
 		if (!isEditing) {
 			text = box.getText();
+			canShare = box.canShare;
+			canCRUD = box.canCRUD;
+			canDelete = box.canDelete;
+			canUnlink = box.canUnlink;
+			canEdit = box.canEdit;
 		}
 		boxType = (box.parent instanceof ActionBox ? "action" : (box.parent instanceof SelectBox ? "select" : "text"));
 		setInputWidth();
@@ -555,6 +572,14 @@
         isExpanded = !isExpanded;
 		contentStyle = isExpanded ? 'display:block;' : 'display:none;';
     }
+
+	function shareItem() {
+		box.executeAction(editor, "make-shareable"); 
+	}
+
+	function deleteItem() {
+        box.executeAction(editor, "delete");
+    }
 </script>
 
 <!-- todo there is a double selection here: two borders are showing -->
@@ -564,7 +589,7 @@
 		<FontAwesomeIcon class="w-3 h-3" style="cursor: grab;" icon={faGripVertical} />
 	{/key}
 	{#key isExpanded}
-		<Button pill={true} class="w-7 h-7 p-0" color="none" size="xs" on:click={toggleExpanded}>
+		<Button pill={true} class="w-4 h-7 p-0" color="none" size="xs" on:click={toggleExpanded}>
 			<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
 		</Button>
 	{/key}
@@ -583,7 +608,7 @@
 					draggable="true"
 					on:dragstart={onDragStart}
 					placeholder="{placeholder}"/>
-				<span class="textcomponent-inputttext textcomponent-width" bind:this={widthSpan}></span>
+				<span class="textcomponent-inputtext textcomponent-width" bind:this={widthSpan}></span>
 			</span>
 		{:else}
 			<!-- contenteditable must be true, otherwise there is no cursor position in the span after a click,
@@ -598,25 +623,30 @@
 				id="{id}-span"
 				role="none">
 				{#if !!text && text.length > 0}
-					{text}
+					{text}{#if canUnlink}<FontAwesomeIcon class="w-3 h-3" icon={faSquareArrowUpRight} />{/if}
 				{:else}
-				<span class="{placeHolderStyle}">{placeholder}</span>
+					<span class="{placeHolderStyle} {isRequired? 'required':''}">{placeholder}</span>
 				{/if}
 			</span>
 		{/if}
 	</span>
-	{#if hasActions}
-	<Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
+	{#if canCRUD}
+	<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline>
         <FontAwesomeIcon class="w-3 h-3" icon={faEllipsis} />
     </Button>
 	{/if}
-	{#if isShareable}
-	<Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
+	{#if canShare}
+	<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click="{shareItem}">
         <FontAwesomeIcon class="w-3 h-3" icon={faShareNodes} />
     </Button>
 	{/if}
-	{#if hasActions}
-	<Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
+	{#if canUnlink}
+	<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click="{shareItem}">
+        <FontAwesomeIcon class="w-3 h-3" icon={faLinkSlash} />
+    </Button>
+	{/if}
+	{#if canDelete}
+	<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={deleteItem} >
         <FontAwesomeIcon class="w-3 h-3" icon={faXmark} />
     </Button> 
 	{/if}
@@ -626,4 +656,3 @@
         <RenderComponent box={child} editor={editor}/>
     </div>
 {/key}
-

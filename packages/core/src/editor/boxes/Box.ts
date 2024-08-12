@@ -1,6 +1,10 @@
 import { FreNode } from "../../ast";
 import { isNullOrUndefined, FreUtils, FRE_BINARY_EXPRESSION_LEFT, FRE_BINARY_EXPRESSION_RIGHT } from "../../util";
 import { FreLogger } from "../../logging";
+import { BehaviorExecutionResult } from "../util";
+import { FrePostAction } from "../actions";
+import { runInAction } from "mobx";
+import  {FreEditor } from "../FreEditor";
 
 const LOGGER = new FreLogger("Box");
 
@@ -312,5 +316,21 @@ export abstract class Box {
 
     isEditable(): boolean {
         return false;
+    }
+
+    /* GM - execute actions */
+    executeAction(editor: FreEditor, trigger: string):BehaviorExecutionResult {
+        for (const action of editor.newFreActions.filter(action => action.activeInBoxRoles.includes(this.role) && action.trigger === trigger)) {
+                let postAction: FrePostAction = null;
+            runInAction(() => {
+                const command = action.command();
+                postAction = command.execute(this, trigger, editor, -1);
+            });
+            if (!!postAction) {
+                postAction();
+            }
+            return BehaviorExecutionResult.EXECUTED;
+        }
+        return BehaviorExecutionResult.NULL;
     }
 }

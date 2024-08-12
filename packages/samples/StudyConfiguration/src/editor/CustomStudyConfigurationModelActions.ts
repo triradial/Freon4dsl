@@ -7,12 +7,35 @@ import {
     FreEditor,
     FreCaret,
     FreNode,
+    FreNodeReference,
     OptionalBox,
     FreCreateBinaryExpressionAction,
-    FreTriggerUse, isString, ActionBox
+    FreTriggerUse, isString, ActionBox,
+    BoxUtil
 } from "@freon4dsl/core";
+
+import { addListElement } from '@freon4dsl/core';
+
+import {
+    NumberLiteralExpression,
+    EventSchedule,
+    Period,
+    Staffing,
+    Assignment,
+    Event,
+    CheckList,
+    Task,
+    Step,
+    Reference,
+    SystemAccess,
+    RobotMapping,
+    SourceToTargetMapping,
+    Person,
+    StudyConfiguration,
+} from "../language/gen";
+
+
 import { RoleProvider } from "@freon4dsl/core";
-import { NumberLiteralExpression } from "../language/gen/NumberLiteralExpression";
 
 /**
  * Class CustomStudyConfigurationModelActions provides an entry point for the language engineer to
@@ -33,7 +56,7 @@ export const MANUAL_BINARY_EXPRESSION_ACTIONS: FreCreateBinaryExpressionAction[]
 ];
 
 export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
-    // Add your own custom behavior here
+
     FreCustomAction.create({
 
         activeInBoxRoles: [
@@ -71,6 +94,156 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         },
         boxRoleToSelect: RoleProvider.property("NumberLiteralExpression", "value", "numberbox"),
         caretPosition: FreCaret.RIGHT_MOST
-    })
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["periods"], trigger: "add",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const studyconfig:StudyConfiguration  = box.element as StudyConfiguration;
+            const period: Period = new Period();
+            studyconfig.periods.push(period);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["period"], trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const period: Period = box.element as Period;
+            const studyconfig: StudyConfiguration = box.parent.parent.parent.element as StudyConfiguration;
+            const index = studyconfig.periods.indexOf(period);
+            studyconfig.periods.splice(index,1);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["events"], trigger: "add",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const period: Period = box.element as Period;
+            const event: Event = new Event();
+            period.events.push(event);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["event"], trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const event: Event = box.element as Event;
+            const period: Period = box.parent.parent.parent.element as Period;
+            const index = period.events.indexOf(event);
+            period.events.splice(index,1);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["tasks"], trigger: "add",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const event: Event = box.element as Event
+            const checkList: CheckList = event.checkList;
+            const task: Task = new Task();
+            checkList.tasks.push(task);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["task"], trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const task: Task = box.element as Task;
+            const checklist: CheckList = box.parent.parent.parent.element as CheckList;
+            const index = checklist.tasks.indexOf(task);
+            checklist.tasks.splice(index,1);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["steps"], trigger: "add",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const task: Task = box.element as Task;
+            const step: Step = new Step();
+            task.steps.push(step);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["step"], trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const step: Step = box.element as Step;
+            const task: Task = box.parent.parent.parent.element as Task;
+            const index = task.steps.indexOf(step);
+            task.steps.splice(index,1);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["references"], trigger: "add",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const step: Step = box.element as Step;
+            const reference: Reference = new Reference();
+            step.references.push(reference);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["reference"], trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const reference: Reference = box.element as Reference;
+            const step: Step = box.parent.parent.parent.element as Step;
+            const index = step.references.indexOf(reference);
+            step.references.splice(index,1);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["systems"], trigger: "add",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const step: Step = box.element as Step;
+            const system: SystemAccess = new SystemAccess();
+            step.systems.push(system);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["system"], trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const system: SystemAccess = box.element as SystemAccess;
+            const step: Step = box.parent.parent.parent.element as Step;
+            const index = step.systems.indexOf(system);
+            step.systems.splice(index,1);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["people"], trigger: "add",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const step: Step = box.element as Step;
+            const person: Person = new Person();
+            step.people.push(person);
+            return null;
+        },
+    }),
+    FreCustomAction.create({ activeInBoxRoles: ["person"], trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const person: Person = box.element as Person;
+            const step: Step = box.parent.parent.parent.element as Step;
+            const index = step.people.indexOf(person);
+            step.people.splice(index,1);
+            return null;
+        },
+    }),
 
+    FreCustomAction.create({ activeInBoxRoles: ["task"], trigger: "make-shareable",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const task: Task = box.element as Task;
+            makeTaskShareable(task);
+            return null;
+        },
+    }),
 ];
+
+/* #region Task functions */
+
+    function makeTaskShareable(task: Task) {
+        console.log("SHARED: referencedTask is null so task is just becoming shared");
+        // Get the study config context
+        let studyConfig = task.freOwner().freOwner().freOwner().freOwner() as StudyConfiguration;
+        // Create the shard task and wire together
+        let refToTask = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
+        let sharedTask = task.copy();
+        sharedTask.type = "S";
+        task.name = "Original Task";
+        refToTask.referred = sharedTask;
+        task.referencedTask = refToTask;
+        task.type = "R";
+        // Add to the shared tasks list
+        studyConfig.tasks.push(sharedTask);
+    }
+
+    function makeTaskUnreferenced(task: Task) {
+    }
+
+/* #endregion */

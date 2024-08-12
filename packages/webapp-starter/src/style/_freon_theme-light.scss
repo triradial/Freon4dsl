@@ -4,23 +4,12 @@
 
 // Freon Colors!!
 @use '@material/theme/index' as theme with (
-  //$primary: #80cbc4,
   $primary: #608cb6,
-  //$secondary: #ce93d8,
   $secondary: #ffcc80,
   $surface: #eeeeee,
   $background: #fff,
   $error: #B00020,
-  //$on-primary: color-palette.$orange-50,
   $on-secondary: #003669,   // a slighter darker version of 'primary'
-  //$on-surface: black,
-  //$on-error: black,
-  //accessible-ink-color,
-  //contrast,
-  //contrast-tone,
-  //luminance,
-  //text-emphasis,
-  //tone
 );
 
 // Include all the global styles that do not involve dark/light modes.
@@ -186,7 +175,6 @@ body {
   border-style: hidden;
 };
 
-
 .text-box-action {
   --freon-text-component-color: rgb(104, 104, 104);
 }
@@ -203,6 +191,10 @@ body {
 for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/css-vars */
 .editor-part {
   box-sizing: border-box;
+    /* required*/
+    --freon-error-background: #{gc.$mac-error-background};
+    --freon-error-color: #{gc.$mac-pink-900};
+    
   /* Selectable */
   --freon-selected-background-color: #{gc.$mac-gray-50t2};
   --freon-selected-outline-color: #{gc.$mac-primary-900};
@@ -242,7 +234,11 @@ for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/
   --freon-list-group-component-color2: #{gc.$mac-gray-800};
   --freon-list-group-component-background-color2: #{gc.$mac-black-5t};
 
+  --freon-list-group-component-color3: #{gc.$mac-gray-800};
   --freon-list-group-line-color3: #{gc.$mac-black-20t};
+
+  --freon-list-group-component-color4: #1191b9;
+  --freon-list-group-line-color4: #1191b9;
 
   /* Item Group Component */
   --freon-item-group-component-color: #{gc.$mac-black};

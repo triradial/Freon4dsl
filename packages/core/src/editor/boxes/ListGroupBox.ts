@@ -1,13 +1,13 @@
 import { Box } from "./Box";
 import { FreUtils } from "../../util";
-import { BehaviorExecutionResult } from "../util";
+// import { BehaviorExecutionResult } from "../util";
 import { FreNode } from "../../ast";
-import { FreLogger } from "../../logging";
-import { FrePostAction } from "../actions";
-import { runInAction } from "mobx";
-import  {FreEditor } from "../FreEditor";
+//import { FreLogger } from "../../logging";
+// import { FrePostAction } from "../actions";
+// import { runInAction } from "mobx";
+// import  {FreEditor } from "../FreEditor";
 
-const LOGGER: FreLogger = new FreLogger("ListGroupBox"); //.mute();
+//const LOGGER: FreLogger = new FreLogger("ListGroupBox"); //.mute();
 
 export class ListGroupBox extends Box {
     readonly kind = "ListGroupBox";
@@ -16,7 +16,8 @@ export class ListGroupBox extends Box {
     private $child: Box = null;
 
     isExpanded: boolean = true;
-    hasActions: boolean = true;  
+	canAdd: boolean = false;
+	canCRUD: boolean = false; 
 
     constructor(node: FreNode, role: string, getLabel: string | (() => string), child: Box, initializer?: Partial<ListGroupBox>) {
         super(node, role);
@@ -70,27 +71,6 @@ export class ListGroupBox extends Box {
     get children(): ReadonlyArray<Box> {
         return [this.child];
     }  
-
-    executeAction(editor: FreEditor):BehaviorExecutionResult {
-        // find the action to use based on the boxRole
-        for (const action of editor.newFreActions) {
-            if (action.activeInBoxRoles.includes(this.role)) {
-                let postAction: FrePostAction = null;
-                runInAction(() => {
-                    const command = action.command();
-                    postAction = command.execute(this, 'no-label', editor, -1);
-                });
-                if (!!postAction) {
-                    postAction();
-                }
-                return BehaviorExecutionResult.EXECUTED;
-            }
-        }
-        // execute the action
-        // return the result
-        LOGGER.log("Executing ButtonBox Action");
-        return BehaviorExecutionResult.NULL;
-    }
 } 
     
 export function isListGroupBox(b: Box): b is ListGroupBox {

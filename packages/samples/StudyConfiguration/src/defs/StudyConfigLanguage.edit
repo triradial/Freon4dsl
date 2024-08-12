@@ -28,35 +28,25 @@ Event {
 
 CheckList {
     [
-    ${activities table rows}
+        ${tasks}
     ]
 }
 
 Task {
-    table [
-             Tasks    
-             ${name}
-
-        ]
-
+    [
+        ${name}
+        ${description}
+    ]
 }
 
 
 Step {
     [
-            Step ${title} 
-            Description:
-            ${detailsDescription}
-
-            References:
-                ${references}
-
-            Systems Used:
-                ${systems table rows}
-
-            People:
-                ${people}
-
+        Step ${title} 
+        Description: ${detailsDescription}
+        References: ${references}
+        Systems Used: ${systems table rows}
+        People: ${people}
     ]
 }
 
@@ -103,7 +93,6 @@ Person {
 
 Staffing {
     [
-
         Roles: 
             ${roles}
         Assignments: 
@@ -115,7 +104,6 @@ Reference {
     [
         Reference Title: ${title}    Link: ${link}
         Description    : ${description}
-
     ]
 }
 

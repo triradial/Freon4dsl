@@ -93,4 +93,5 @@ packages/server/modelstore/x/AvailabilityPublic.json
 packages/server/modelstore/x/StudyConfiguration.json
 packages/server/modelstore/x/StudyConfigurationPublic.json
 
-
+#Backup
+*.bck
