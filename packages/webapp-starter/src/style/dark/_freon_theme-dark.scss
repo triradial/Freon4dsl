@@ -9,17 +9,7 @@
   $surface: color-palette.$grey-900,
   $background: #000,
   $error: #B00020,
-  //$on-primary: #ffffb0,
-  //$on-primary: purple,     // a slighter darker version of 'secondary'
-  $on-secondary: #4f709a,   // a slighter darker version of 'primary'
-  //$on-surface: black,
-  //$on-error: black,
-  //accessible-ink-color,
-  //contrast,
-  //contrast-tone,
-  //luminance,
-  //text-emphasis,
-  //tone
+  $on-secondary: #4f709a,
 );
 
 // Include all the global styles that do not involve dark/light modes.
@@ -27,6 +17,12 @@
 
 // linear-progress is included for the progress indicator in the EditorPart component
 @use '@material/linear-progress/index' as linear-progress;
+
+// my-colored-bar style is used for the progress indicator in the EditorPart component
+.my-colored-bar {
+  @include linear-progress.bar-color(theme.$red-500);
+  @include linear-progress.buffer-color(theme.$red-100);
+}
 
 /* #region GENERAL */
 html,
@@ -64,12 +60,6 @@ body {
 
 /* #endregion */
 
-// my-colored-bar style is used for the progress indicator in the EditorPart component
-.my-colored-bar {
-  @include linear-progress.bar-color(theme.$red-500);
-  @include linear-progress.buffer-color(theme.$red-100);
-}
-
 :focus {
   outline: none;
 }
@@ -87,6 +77,104 @@ body {
   --freon-colors-slider: #{theme.$on-secondary};    /* The color of the slider between the error/search pane and the editor */
 }
 
+.gridCellOr {
+  padding: 4px;
+  --freon-gridcell-component-color: blue;
+  --freon-label-component-color: blue;
+  --freon-label-component-font-style: bold;
+  --freon-label-component-font-weight: bold;
+  display: flex;
+  align-items: center;
+  border: lightgrey;
+  border-style: solid;
+  border-width: 1px;
+  --freon-gridcell-component-background-color: lightblue;
+};
+
+.or_gridcellFirst {
+  // padding: 4px;
+  border: red;
+  border-style: solid;
+  border-width: 1px;
+};
+
+.gridcell {
+  // padding: 4px;
+  border-left: lightgrey;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right: lightgrey;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-bottom: lightgrey;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+};
+
+.gridcellLast {
+  padding: 4px;
+  border-left: lightgrey;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right: lightgrey;
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-bottom: lightgrey;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.grid {
+  display: inline-grid;
+  grid-gap: 0px;
+  align-items: center;
+  align-content: center;
+  justify-items: stretch;
+  --freon-grid-component-border-color: orange;
+  --freon-grid-component-border-width: 3pt;
+  --freon-grid-component-border-style: dotted;
+}
+
+.mygrid {
+  padding: 0px;
+  grid-gap: -1px;
+  border: 2px;
+  border-style: solid;
+};
+
+.divider {
+  fill: #ff11ac;
+  color: green;
+  stroke-width: 2px;
+  stroke: blue;
+}
+
+.fraction-all {
+  --freon-horizontallist-component-align-items: center;
+}
+.fraction-exp {
+  --freon-horizontallist-component-align-items: center;
+}
+.mysvgcell {
+  //--freon-gridcell-component-background-color: #{theme.$surface};
+  display: flex;
+  // justifySelf: stretch;
+  padding: 0px;
+  grid-gap: 1px;
+  border: 0px;
+  border-style: hidden;
+};
+
+.mycell {
+  //--freon-gridcell-component-background-color: #{theme.$surface};
+  display: flex;
+  // justifySelf: stretch;
+  padding: 0px;
+  grid-gap: -1px;
+  border: 0px;
+  border-style: hidden;
+};
+
 .text-box-action {
   --freon-text-component-color: rgb(194, 194, 194);
 }
@@ -103,6 +191,10 @@ body {
 for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/css-vars */
 .editor-part {
   box-sizing: border-box;
+  /* required*/
+  --freon-error-background: #{gc.$mac-error-background};
+  --freon-error-color: #{gc.$mac-pink-900};
+
   /* Selectable */
   --freon-selected-background-color: #{gc.$mac-gray-50t};
   --freon-selected-outline-color: #{gc.$mac-primary-900};
@@ -142,8 +234,11 @@ for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/
   --freon-list-group-component-color2: #{gc.$mac-gray-200};
   --freon-list-group-component-background-color2: #{gc.$mac-white-5t};
 
+  --freon-list-group-component-color3: #{gc.$mac-gray-200};
   --freon-list-group-line-color3: #{gc.$mac-white-20t};
 
+  --freon-list-group-component-color4: #1191b9;
+  --freon-list-group-line-color4: #1191b9;
 
   /* Item Group Component */
   --freon-item-group-component-color: #{gc.$mac-white};
@@ -151,7 +246,6 @@ for CSS variables, see https://www.sass-lang.com/documentation/breaking-changes/
 
   --freon-item-group-component-color2: #{gc.$mac-gray-200};
   --freon-item-group-component-background-color2: #{gc.$mac-white-5t};
-
   
   /* Popup */
   --freon-popup-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5);

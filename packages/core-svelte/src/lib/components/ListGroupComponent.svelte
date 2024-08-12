@@ -27,15 +27,19 @@
     let level: number;
     let child: Box;
     let isExpanded: boolean = false; 
-    let hasActions: boolean = true;
+
+    let canAdd: boolean = false;
+    let canCRUD: boolean = false;
+    
     let contentStyle: string = 'display: none';
 
     onMount( () => {
         if (!!box) {
             isExpanded = box.isExpanded;
-            hasActions = box.hasActions;
+            canAdd = box.canAdd;
+            canCRUD = box.canCRUD;
             contentStyle = isExpanded ? 'display:block;' : 'display:none;';
-             box.refreshComponent = refresh;   
+            box.refreshComponent = refresh;   
         }
     });
 
@@ -66,23 +70,25 @@
     }
 
     function addItem() {
-        box.executeAction(editor);
+        box.executeAction(editor, "add");
     }
 
 </script>
 
 <div id="{id}" class="list-group {cssClass}" style="{style}">
     {#key isExpanded}
-        <Button pill={true} class="w-7 h-7 p-0" color="none" size="xs" on:click={toggleExpanded}>
-            <FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
+        <Button pill={true} class="w-4 h-7 p-0 ml-1 mr-1" color="none" size="xs" on:click={toggleExpanded}>
+            <FontAwesomeIcon class="w-3 h-3 toggle-button {cssClass}" icon={isExpanded ? faCaretDown : faCaretRight} />
         </Button>
     {/key}
     <span class="list-group-label {cssClass}">{label}</span>
-    {#if hasActions}
-    <Button pill={true} size="xs" class="w-7 h-7 p-0" outline on:click={addItem}>
+    {#if canAdd}
+    <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={addItem}>
         <FontAwesomeIcon class="w-3 h-3" icon={faPlus} />
     </Button>
-    <Button pill={true} size="xs" class="w-7 h-7 p-0" outline>
+    {/if}
+    {#if canCRUD}
+    <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline>
         <FontAwesomeIcon class="w-3 h-3" icon={faEllipsis} />
     </Button> 
     {/if}

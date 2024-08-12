@@ -27,27 +27,17 @@ export class ItemGroupBox extends Box {
     $getText: () => string;
     $setText: (newValue: string) => void;
     $label: string = "";
-    $level: number = 0;
     $child: Box = null;
 
     isExpanded: boolean = false;
     isDraggable: boolean = true;
-    hasActions: boolean = true;
-    isShareable: boolean = false;
+    isRequired: boolean = false;
 
-    // constructor(node: FreNode, role: string, getLabel: string | (() => string), getText: () => string, setText: (text: string) => void, child: Box, initializer?: Partial<ItemGroupBox>, cssClass?: string, isExpanded?: boolean, isDraggable?: boolean, hasActions?: boolean, isShareable?) {
-    //     super(node, role);
-    //     FreUtils.initializeObject(this, initializer);
-    //     this.$getText = getText;
-    //     this.$setText = setText;
-    //     this.setLabel(getLabel);
-    //     this.cssClass = cssClass;
-    //     this.$child = child;
-    //     this.isExpanded = isExpanded ?? false;
-    //     this.isDraggable = isDraggable ?? true;
-    //     this.hasActions = hasActions ?? true;
-    //     this.isShareable = isShareable ?? false;
-    // }
+	canShare: boolean = false;
+	canDelete: boolean = false;
+	canUnlink: boolean = false;
+	canCRUD: boolean = false;
+	canEdit: boolean = true;
 
     constructor(node: FreNode, role: string, getLabel: string | (() => string), getText: () => string, setText: (text: string) => void, child: Box, initializer?: Partial<ItemGroupBox>) {
         super(node, role);
@@ -147,6 +137,7 @@ export class ItemGroupBox extends Box {
     isEditable(): boolean {
         return true;
     }
+
 }
 
 export function isItemGroupBox(b: Box): b is ItemGroupBox {

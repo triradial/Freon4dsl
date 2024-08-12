@@ -11,7 +11,7 @@ export class MultiLineTextBox2 extends Box {
     $getText: () => string;
     $setText: (newValue: string) => void;
     $getRawText: () => string;
-
+    rawText: string;
 
     constructor(node: FreNode, role: string, getText: () => string, setText: (text: string) => void, getRawText: () => string, initializer?: Partial<MultiLineTextBox2>) {
         super(node, role);
@@ -36,9 +36,8 @@ export class MultiLineTextBox2 extends Box {
     }
 
     getRawText(): string {
-        return this.$getRawText();
+        return this.rawText;
     }
-
     override isEditable(): boolean {
         return true;
     }

@@ -17,6 +17,7 @@ import { FreErrorSeverity } from "../../validator";
 const LOGGER = new FreLogger("ListUtil");
 
 export enum MenuOptionsType { normal, placeholder, header }
+export { addListElement };
 
 /**
  * When the user hits 'ENTER', this action is triggered.
