@@ -112,7 +112,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectDescription (element: Description): Box {
         const ph = "<" + element.$$propertyName + ">";
-        return new MultiLineTextBox2(element, "study-part-description", () => { return element.text}, (t: string) => { element.text = t}, () => { return element.rawText}, {placeHolder: ph, cssClass:"mr-2"});
+        return new MultiLineTextBox2(element, "study-part-description", () => { return element.text}, (t: string) => { element.text = t}, {placeHolder: ph, cssClass:"mr-2"});
     }
 
     projectPeriod (element: Period): Box {
