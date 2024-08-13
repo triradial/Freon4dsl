@@ -1,31 +1,29 @@
 import * as Sim from "../simjs/sim.js"
 import { Timeline, EventInstance, PeriodInstance, TimelineInstance, TimelineInstanceState } from "../timeline/Timeline";
 import { Simulator, } from "../timeline/Simulator";
-import { StudyConfiguration, Period, When } from "../../language/gen/index";
+import { StudyConfiguration, Period, When, StudyConfigurationModel } from "../../language/gen/index";
 import * as utils from "./Utils";
 import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent";
 import { FreUtils } from "@freon4dsl/core";
+import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
 
 describe ("Access to simulation data", () => {
-  let simulator;
-  var studyConfiguration: StudyConfiguration;
-
-  // beforeAll(() => {
-  //   new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-  //   studyConfiguration = utils.setupEnvironment();
-  //   simulator = new Simulator(studyConfiguration);
-  // });
-
+  var simulator;
+  var studyConfigurationUnit: StudyConfiguration;
+  var studyConfigurationModel: StudyConfigurationModel;
+  const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
+  
   beforeEach(() => {
     new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-    studyConfiguration = utils.setupStudyConfiguration();
-    simulator = new Simulator(studyConfiguration);
+    let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
+    studyConfigurationModel = studyConfigurationModelEnvironment.newModel(modelName) as StudyConfigurationModel;
+    studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
+    simulator = new Simulator(studyConfigurationUnit);
   });
     
-
   describe("Simulation of Trial Events to Generate the Timeline", () => {
 
     it("generates a one visit timeline for a visit on day 1", () => {
@@ -33,16 +31,16 @@ describe ("Access to simulation data", () => {
         let eventSchedule = utils.createEventScheduleStartingOnADay("Visit 1", 1);
         let period = new Period("Screening");
         utils.createEventAndAddToPeriod(period, "Visit 1", eventSchedule);
-        studyConfiguration.periods.push(period);
+        studyConfigurationUnit.periods.push(period);
 
         // WHEN the study is simulated and a timeline is generated
-        let simulator = new Simulator(studyConfiguration);
+        let simulator = new Simulator(studyConfigurationUnit);
         simulator.run();
 
         // Then the generated timeline has one event on the expected event day
         let timeline = simulator.timeline;
         let expectedTimeline = new Timeline()
-        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening", 1)
+        addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening", 1)
         expectedTimeline.setCurrentDay(1);
 
         let eventFromTimeline = timeline.days[0].events[0];
@@ -55,21 +53,21 @@ describe ("Access to simulation data", () => {
     it("generates a two visit timeline with a visit on day 1 and 7", () => {
       // GIVEN a study configuration with one period and two events
       let period = Period.create({'$id': FreUtils.ID(),'name':'Screening'});
-      studyConfiguration.periods.push(period);
+      studyConfigurationUnit.periods.push(period);
       let eventSchedule = utils.createEventScheduleStartingOnADay("Visit 1", 1);
       utils.createEventAndAddToPeriod(period, "Visit 1", eventSchedule);
       eventSchedule = utils.createEventScheduleStartingOnADay("Visit 2", 7);
       utils.createEventAndAddToPeriod(period, "Visit 2", eventSchedule);
 
       // WHEN the study is simulated and a timeline is generated
-      let simulator = new Simulator(studyConfiguration);
+      let simulator = new Simulator(studyConfigurationUnit);
       simulator.run();
       let timeline = simulator.timeline;
 
       // Then the generated timeline has two events on the expected event days
       let expectedTimeline = new Timeline()
-      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
-      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 2", 7, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 2", 7, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
       expectedTimeline.setCurrentDay(7);
 
       expect(timeline).toEqual(expectedTimeline);  
@@ -78,17 +76,17 @@ describe ("Access to simulation data", () => {
 
     it("generates a two visit timeline for a visit 7 days after the study start day", () => {
         // GIVEN a study configuration with one period and two events
-        studyConfiguration = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration, "Screening", "Visit 1", 1, "Visit 2", 7);
+        studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "Visit 1", 1, "Visit 2", 7);
 
         // WHEN the study is simulated and a timeline is generated
-        let simulator = new Simulator(studyConfiguration);
+        let simulator = new Simulator(studyConfigurationUnit);
         simulator.run();
         let timeline = simulator.timeline;
 
         // Then the generated timeline has two events on the expected event days
         let expectedTimeline = new Timeline()
-        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
-        addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
+        addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
+        addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1)
         expectedTimeline.setCurrentDay(8);
     
         expect(timeline).toEqual(expectedTimeline);  
@@ -100,18 +98,18 @@ describe ("Access to simulation data", () => {
         { eventName: "Visit 1", eventDay: 1, repeat: 0, period: "Screening"},
         { eventName: "Visit 2", eventDay: 7, repeat: 0, period: "Treatment"}
       ];
-      studyConfiguration = utils.addEventsScheduledOffCompletedEvents(studyConfiguration, listOfEventsToAdd);
+      studyConfigurationUnit = utils.addEventsScheduledOffCompletedEvents(studyConfigurationUnit, listOfEventsToAdd);
 
       // WHEN the study is simulated and a timeline is generated
-      let simulator = new Simulator(studyConfiguration);
+      let simulator = new Simulator(studyConfigurationUnit);
       simulator.run();
       let timeline = simulator.timeline;
 
       // Then the generated timeline has two events on the expected event days
       let expectedTimeline = new Timeline()
-      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1,7)
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1,7)
       expectedTimeline.days[0].events[0].state = TimelineInstanceState.Completed;
-      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8)
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8)
       expectedTimeline.setCurrentDay(8);
 
       // Checking the specific timeline events to be more explict about what is being tested
@@ -130,18 +128,18 @@ describe ("Access to simulation data", () => {
         { eventName: "Visit 2", eventDay: 7, repeat: 0, period: "Treatment"},
         { eventName: "Visit 3", eventDay: 7, repeat: 0, period: "Treatment"}
       ];
-      studyConfiguration = utils.addEventsScheduledOffCompletedEvents(studyConfiguration, listOfEventsToAdd);
+      studyConfigurationUnit = utils.addEventsScheduledOffCompletedEvents(studyConfigurationUnit, listOfEventsToAdd);
 
       // WHEN the study is simulated and a timeline is generated
-      let simulator = new Simulator(studyConfiguration);
+      let simulator = new Simulator(studyConfigurationUnit);
       simulator.run();
       let timeline = simulator.timeline;
 
       // Then the generated timeline has two events on the expected event days
       let expectedTimeline = new Timeline()
-      addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Completed, "Screening",1,7);
-      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8);
-      addEventAndInstanceToTimeline(studyConfiguration, 1, "Visit 3", 15, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8);
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Completed, "Screening",1,7);
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8);
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 1, "Visit 3", 15, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Treatment",8);
       expectedTimeline.setCurrentDay(15);
 
       expect(expectedTimeline.days[0].events[0]).toEqual(timeline.days[0].events[0]);
@@ -156,16 +154,16 @@ describe ("Access to simulation data", () => {
       let listOfEventsToAdd: EventsToAdd[] = [
         { eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening"},
       ];
-      studyConfiguration = utils.addRepeatingEvents(studyConfiguration, "Screening", listOfEventsToAdd);
+      studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd);
 
       // WHEN the study is simulated and a timeline is generated
-      let simulator = new Simulator(studyConfiguration);
+      let simulator = new Simulator(studyConfigurationUnit);
       simulator.run();
       let timeline = simulator.timeline;
 
       // Then the generated timeline has three instances of the repeating event on the expected days
       let expectedTimeline = new Timeline()
-      let eventInstance1 = addEventAndInstanceToTimeline(studyConfiguration, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1);
+      let eventInstance1 = addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Scheduled, TimelineInstanceState.Active, "Screening",1);
       expectedTimeline.setCompleted(eventInstance1);
       let eventInstance2 = new EventInstance(eventInstance1.scheduledEvent, 8);
       expectedTimeline.setCompleted(eventInstance2);
@@ -180,19 +178,16 @@ describe ("Access to simulation data", () => {
       expect(expectedTimeline.days[1].events[0]).toEqual(timeline.days[1].events[0]);
       expect(timeline).toEqual(expectedTimeline);  
     });
-  });
-
-  describe("Simulation of Trial Periods to Generate the Timeline", () => {
 
     it ("can access the first instance of a period on the timeline" , () => {
       // GIVEN a study configuration with one period and one event
       let eventSchedule = utils.createEventScheduleStartingOnADay("Visit 1", 1);
       let period = Period.create({'$id': FreUtils.ID(),'name':'Screening'});
       let scheduledEvent = utils.createEventAndAddToPeriod(period, "Visit 1", eventSchedule);
-      studyConfiguration.periods.push(period);
+      studyConfigurationUnit.periods.push(period);
 
       // WHEN the study is simulated with no period is active yet and a timeline is generated
-      let simulator = new Simulator(studyConfiguration);
+      let simulator = new Simulator(studyConfigurationUnit);
       simulator.run();
 
       // Then the generated timeline has one event on the expected event day
@@ -213,10 +208,10 @@ describe ("Access to simulation data", () => {
         { eventName: "Visit 1", eventDay: 1, repeat: 0, period: "Screening"},
         { eventName: "Visit 2", eventDay: 7, repeat: 0, period: "Treatment"},
       ];
-      studyConfiguration = utils.addEventsScheduledOffCompletedEvents(studyConfiguration, listOfEventsToAdd);
+      studyConfigurationUnit = utils.addEventsScheduledOffCompletedEvents(studyConfigurationUnit, listOfEventsToAdd);
 
      // WHEN the study is simulated with no period is active yet and a timeline is generated
-      let simulator = new Simulator(studyConfiguration);
+      let simulator = new Simulator(studyConfigurationUnit);
       simulator.run();
 
       // Then the generated timeline has two periods on the expected day
@@ -235,7 +230,7 @@ describe ("Access to simulation data", () => {
  
   });
     
-  describe("Generate the Timeline", () => {
+  describe("Generation of Timeline Chart from Timeline", () => {
 
     it("generate a chart for a two visit and one period timeline for a visit 7 days after the end of the first visit", () => {
   
@@ -291,10 +286,10 @@ describe ("Access to simulation data", () => {
           };
         `
         // GIVEN a study configuration with one period and two events
-        studyConfiguration = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration, "Screening", "Visit 1", 1, "Visit 2", 7);
+        studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "Visit 1", 1, "Visit 2", 7);
 
         // WHEN the study is simulated and a timeline picture is generated
-        let simulator = new Simulator(studyConfiguration);
+        let simulator = new Simulator(studyConfigurationUnit);
         simulator.run();
         let timeline = simulator.timeline;
 
@@ -340,11 +335,11 @@ describe ("Access to simulation data", () => {
           { eventName: "Visit 1", eventDay: 1, repeat: 0, period: "Screening"},
           { eventName: "Visit 2", eventDay: 7, repeat: 0, period: "Treatment"},
         ];
-        studyConfiguration = utils.addEventsScheduledOffCompletedEvents(studyConfiguration, listOfEventsToAdd);
+        studyConfigurationUnit = utils.addEventsScheduledOffCompletedEvents(studyConfigurationUnit, listOfEventsToAdd);
   
   
         // WHEN the study is simulated and a timeline picture is generated
-        let simulator = new Simulator(studyConfiguration);
+        let simulator = new Simulator(studyConfigurationUnit);
         simulator.run();
         let timeline = simulator.timeline;
 
@@ -382,8 +377,6 @@ describe ("Access to simulation data", () => {
          ])
         `;
         // GIVEN a study configuration loaded from a file
-        // studyConfiguration = utils.loadModel("ScheduleExample1", 'StudyConfiguration');
-        const studyConfigurationModel = utils.setupStudyConfigurationModel()
         const studyConfigurationUnit = utils.loadModel("Example1", 'StudyConfiguration');
         studyConfigurationModel.addUnit(studyConfigurationUnit)
   
@@ -408,10 +401,10 @@ describe ("Access to simulation data", () => {
       let listOfEventsToAdd: EventsToAdd[] = [
         { eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening"},
       ];
-      studyConfiguration = utils.addRepeatingEvents(studyConfiguration, "Screening", listOfEventsToAdd);
+      studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd);
 
       // WHEN the study is simulated and a timeline is generated
-      let simulator = new Simulator(studyConfiguration);
+      let simulator = new Simulator(studyConfigurationUnit);
       simulator.run();
       let timeline = simulator.timeline;
 
@@ -427,10 +420,10 @@ describe ("Access to simulation data", () => {
       let listOfEventsToAdd: EventsToAdd[] = [
         { eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening"},
       ];
-      studyConfiguration = utils.addRepeatingEvents(studyConfiguration, "Screening", listOfEventsToAdd);
+      studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd);
 
       // WHEN the study is simulated and a timeline is generated
-      let simulator = new Simulator(studyConfiguration);
+      let simulator = new Simulator(studyConfigurationUnit);
       simulator.run();
       let timeline = simulator.timeline;
 

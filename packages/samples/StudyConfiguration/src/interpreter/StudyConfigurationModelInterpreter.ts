@@ -125,7 +125,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalStartDay(node: language.StartDay, ctx: InterpreterContext): RtObject {
-        return new RtNumber(1);
+        return new RtNumber(1); // TODO: Decide if the first day of the study should be 0 or 1. Maybe have it configurable?
     }
 
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {

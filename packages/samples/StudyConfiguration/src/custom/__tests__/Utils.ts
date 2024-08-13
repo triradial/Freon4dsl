@@ -1,37 +1,11 @@
-import * as Sim from "../simjs/sim.js"
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
 import {StudyConfiguration, Period, Event, EventSchedule, Day, BinaryExpression, PlusExpression, When, StartDay, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly, StudyConfigurationModel } from "../../language/gen/index";
 import { FreLionwebSerializer, FreLogger, FreNodeReference, FreUtils } from "@freon4dsl/core";
 import { EventInstance, TimelineInstanceState, Timeline, PeriodInstance } from "../timeline/Timeline";
 import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent";
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
-import { SvelteComponent_1 } from "svelte";
-import { when } from "mobx";
 import * as path from 'path';
 import * as fs from 'fs';
-
-// Setup the sim.js environment and an empty StudyConfiguration.
-export function setupStudyConfiguration(): StudyConfiguration{
-  new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-  
-  let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
-  let studyConfigurationModel = setupStudyConfigurationModel();
-  let studyConfigurationUnit = setupStudyConfigurationUnit(studyConfigurationModel);
-  return studyConfigurationUnit;
-}
-
-export function setupStudyConfigurationModel(): StudyConfigurationModel {
-  new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-  let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
-  let studyConfigurationModel = studyConfigurationModelEnvironment.newModel("Study1") as StudyConfigurationModel;
-  return studyConfigurationModel;
-}
-
-export function setupStudyConfigurationUnit(studyConfigurationModel: StudyConfigurationModel): StudyConfiguration{
-  new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-  let studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
-  return studyConfigurationUnit;
-}
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference. 
