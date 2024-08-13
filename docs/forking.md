@@ -1,4 +1,4 @@
-How to get started with the fork of Freon4-dsl
+### How to get started with the fork of Freon4-dsl
 
 To update a forked repository on GitHub, you need to fetch the changes from the original repository (upstream) and merge them into your fork. Here are the steps:
 
@@ -24,4 +24,6 @@ Merge the changes from the upstream/main into your local main branch:
 Push your updates to the forked repository on GitHub:
 
 > git push origin development
+
+### How to merge changes to the fork
 
