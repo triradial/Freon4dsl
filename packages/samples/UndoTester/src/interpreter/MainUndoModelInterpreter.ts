@@ -60,4 +60,13 @@ export class MainUndoModelInterpreter implements FreInterpreter {
             return new RtError(e.message);
         }
     }
+
+    evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
+        MainUndoModelInterpreter.main.reset();
+        try {
+            return MainUndoModelInterpreter.main.evaluate(node, ctx);
+        } catch (e: any) {
+            return new RtError(e.message);
+        }
+    }
 }

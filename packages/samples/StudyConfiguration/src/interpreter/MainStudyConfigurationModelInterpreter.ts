@@ -64,7 +64,7 @@ export class MainStudyConfigurationModelInterpreter implements FreInterpreter {
             return new RtError(e.message);
         }
     }
-    
+
     evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
         MainStudyConfigurationModelInterpreter.main.reset();
         try {
@@ -73,5 +73,4 @@ export class MainStudyConfigurationModelInterpreter implements FreInterpreter {
             return new RtError(e.message);
         }
     }
-        
 }

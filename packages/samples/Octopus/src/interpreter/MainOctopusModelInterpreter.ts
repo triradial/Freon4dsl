@@ -64,4 +64,13 @@ export class MainOctopusModelInterpreter implements FreInterpreter {
             return new RtError(e.message);
         }
     }
+
+    evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
+        MainOctopusModelInterpreter.main.reset();
+        try {
+            return MainOctopusModelInterpreter.main.evaluate(node, ctx);
+        } catch (e: any) {
+            return new RtError(e.message);
+        }
+    }
 }

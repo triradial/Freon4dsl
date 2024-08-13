@@ -194,13 +194,14 @@ export class ScheduledEvent {
     timeline.addEvent(periodInstance as TimelineInstance);
   }
 
-  // Do whatever is needed when the event is scheduled.
+  // Do whatever is needed when the event is scheduled:
+  // - create a new PeriodInstance if needed
   scheduled(scheduledStudyConfiguration: ScheduledStudyConfiguration, timeline: Timeline, daysToWait: number) {
     console.log("ScheduledEvent.scheduled() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay);
     let period = this.configuredEvent.freOwner() as unknown as Period;
     let currentPeriodInstance = timeline.getCurrentPeriod();
     if (currentPeriodInstance) {
-      if (currentPeriodInstance.getName() != period.freId()) {
+      if (currentPeriodInstance.getName() != period.name) {  // Note: the Period returned by this.configuredEvent is generated and it doesn't have the name populated because the name is the freId.
         console.log("ScheduledEvent.scheduled() names not equal so new period for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay + " currentPeriod: " + currentPeriodInstance.getName() + " period: " + period.name);
         currentPeriodInstance.setCompleted(timeline.currentDay + daysToWait - 1);
         this.addPeriodInstance(period, scheduledStudyConfiguration, timeline);

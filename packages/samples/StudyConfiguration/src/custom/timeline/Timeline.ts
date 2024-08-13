@@ -20,8 +20,8 @@ export class Timeline extends RtObject{
     throw new Error('Timelines are not comparable. Method not implemented.');
   }
 
-  newEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn?: number) {
-    return new EventInstance(scheduledEvent, dayEventWillOccurOn);
+  newEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn?: number, startDay?: number, endDay?: number) {
+    return new EventInstance(scheduledEvent, dayEventWillOccurOn, startDay, endDay);
   }
 
   getEventsForDay(day: number) {
@@ -226,7 +226,6 @@ export class PeriodInstance extends TimelineInstance {
 
   scheduledPeriod: ScheduledPeriod;
 
-  
   constructor(scheduledPeriod: ScheduledPeriod, startDay: number, endDay?: number) {
     super();
     this.scheduledPeriod = scheduledPeriod;
@@ -237,6 +236,10 @@ export class PeriodInstance extends TimelineInstance {
 
   getName() {
     return this.scheduledPeriod.getName();
+  }
+
+  getIdOfScheduledPeriod() {
+    return this.scheduledPeriod.configuredPeriod.freId();
   }
 
   setCompleted(onDay: number) {
@@ -257,17 +260,17 @@ export enum TimelineInstanceState {
   */
 export class EventInstance extends TimelineInstance {
 
-  // startDayOfWindow: number; // The day the window of the event was scheduled to start
-  // endDayOfWindow: number;   // The day the window of the event was scheduled to end
+  startDayOfWindow: number; // The day the window of the event was scheduled to start
+  endDayOfWindow: number;   // The day the window of the event was scheduled to end
   scheduledEvent: ScheduledEvent; // The scheduled event that this instance was created from
   state : TimelineInstanceState = TimelineInstanceState.Ready;
 
 
-  constructor(scheduledEvent: ScheduledEvent, startDay?: number) { // , startDayOfWindow?: number, endDayOfWindow?: number) {
+  constructor(scheduledEvent: ScheduledEvent, startDay?: number, startDayOfWindow?: number, endDayOfWindow?: number) {
     super();
     this.startDay = startDay;
-    // this.startDayOfWindow = startDayOfWindow !== undefined ? startDay : (startDay !== undefined ? startDay - 1 : undefined);
-    // this.endDayOfWindow = endDayOfWindow !== undefined ? endDayOfWindow : (startDay !== undefined ? startDay + 1 : undefined);;
+    this.startDayOfWindow = startDayOfWindow !== undefined ? startDay : (startDay !== undefined ? startDay - 1 : undefined);
+    this.endDayOfWindow = endDayOfWindow !== undefined ? endDayOfWindow : (startDay !== undefined ? startDay + 1 : undefined);;
     this.scheduledEvent = scheduledEvent;
   }
 
@@ -284,7 +287,6 @@ export class EventInstance extends TimelineInstance {
     const daysBefore = this.scheduledEvent.configuredEvent.schedule.eventWindow.daysBefore.count;
     return daysBefore === 0 || daysBefore == undefined;
   }
-
 
   getStartDayOfWindow() {
     return this.scheduledEvent.configuredEvent.schedule.eventWindow.daysBefore.count - this.startDay;
@@ -316,9 +318,6 @@ export class EventInstance extends TimelineInstance {
     return TimelineInstance.formatDate(this.getEndDayOfWindowAsDateFrom(referenceDate, timeline));
   }
 
-  // getEndDay() {
-  //   return this.startDay;
-  // }
 }
 
 /*
@@ -340,27 +339,5 @@ export class TimelineDay {
   getPeriodInstances() {
     return this.events.filter(event => event instanceof(PeriodInstance)) as PeriodInstance[];
   }}
-
-
-  // Used Period instead of Phase so delete the following...
-// /*
-//  * A PhaseOccurrence represents a phase of the study that occurred on the timeline.
-//  */
-// export class PhaseOccurrence {
-//   name: string;
-//   startDay: number;
-//   endDay: number;
-//   startEvent: EventInstance;
-
-//   constructor(name: string, startEvent: EventInstance, startDay: number, endDay: number) {
-//     this.name = name;
-//     this.startDay = startDay;
-//     this.endDay = endDay;
-//   }
-
-//   getEvents() {
-//     return this.startEvent;
-//   } 
-// }
 
 

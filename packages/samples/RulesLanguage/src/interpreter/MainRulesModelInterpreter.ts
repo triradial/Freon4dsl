@@ -60,4 +60,13 @@ export class MainRulesModelInterpreter implements FreInterpreter {
             return new RtError(e.message);
         }
     }
+
+    evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
+        MainRulesModelInterpreter.main.reset();
+        try {
+            return MainRulesModelInterpreter.main.evaluate(node, ctx);
+        } catch (e: any) {
+            return new RtError(e.message);
+        }
+    }
 }
