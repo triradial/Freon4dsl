@@ -6,6 +6,7 @@ import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent"
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import * as path from 'path';
 import * as fs from 'fs';
+import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference. 
@@ -72,7 +73,7 @@ export function createEventAndAddToPeriod(period: Period, eventName: string, eve
 
 /* Add a Period DSL element containing two Events to the Study Configuration:
  * - First event named 'event1Name' is First Scheduled on 'event1Day'
- * - Second event named 'event2Name'  is First Scheduled at 'StudyStart + event2Day' .
+ * - Second event named 'event2Name' is First Scheduled at 'StudyStart + event2Day' .
  * Return the updated Study Configuration.
  */
 export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration: StudyConfiguration, periodName: string, event1Name: string, event1Day: number, event2Name: string, event2DaysAfterStudyStart ): StudyConfiguration {
@@ -82,7 +83,7 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurati
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  const studyStart = PlusExpression.create({left:  StudyStart.create({'$id': FreUtils.ID(), 'startDay': 1}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
+  const studyStart = PlusExpression.create({left:  StudyStart.create({'$id': FreUtils.ID()}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
   let eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': studyStart});
   createEventAndAddToPeriod(period, event2Name, eventSchedule);
 
@@ -200,7 +201,7 @@ export function addRepeatingEvents(studyConfiguration: StudyConfiguration, perio
  * - periodNumber: The index of the Period in the StudyConfiguration.periods array.
  *  
 */
-export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string, dayPeriodStarted: number, dayPeriodEnded?: number) : EventInstance {
+export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string, dayPeriodStarted?: number, dayPeriodEnded?: number) : EventInstance {
   let scheduledPeriodToAddEventTo = null;
   let currentPeriodInstance = timeline.getPeriodInstanceFor(nameOfPeriodToAddEventTo);
   if (currentPeriodInstance === undefined) { // The period is not already on the timeline, so add it
@@ -211,6 +212,9 @@ export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfigura
     timeline.addEvent(periodInstance);
   } else {
     scheduledPeriodToAddEventTo = currentPeriodInstance.scheduledPeriod; // Add the new event to the period that was previously added to the timeline
+    if (periodState === TimelineInstanceState.Completed) {
+      currentPeriodInstance.setCompleted(dayPeriodEnded)
+    }
   }
   let scheduledEvent = scheduledPeriodToAddEventTo.getScheduledEvent(eventName);
   scheduledEvent.state = eventState;
@@ -242,6 +246,17 @@ export function loadModel(modelFolderName: string, modelName: string): StudyConf
   // logPeriodsAndEvents("loadModel", studyConfigurationUnit);  
   // return studyConfigurationUnit;
 }
+
+export function generateChartAndSave(timeline: Timeline): string {
+  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+  // Save full HTML of chart for viewing / debugging
+  const html = timelineDataAsScript + timelineVisualizationHTML;
+  TimelineScriptTemplate.saveTimeline(html);
+  return html;
+}
+  
+
 
 
 

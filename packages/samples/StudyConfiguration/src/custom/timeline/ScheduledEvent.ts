@@ -86,6 +86,14 @@ export class ScheduledEvent {
     this.state = state;
   }
 
+  setToCompleted() {
+    this.state = ScheduledEventState.Completed;
+  }
+
+  setToScheduled() {
+    this.state = ScheduledEventState.Scheduled;
+  } 
+
   getName(): string {
     return this.configuredEvent.name;
   }
@@ -201,7 +209,7 @@ export class ScheduledEvent {
     let period = this.configuredEvent.freOwner() as unknown as Period;
     let currentPeriodInstance = timeline.getCurrentPeriod();
     if (currentPeriodInstance) {
-      if (currentPeriodInstance.getName() != period.name) {  // Note: the Period returned by this.configuredEvent is generated and it doesn't have the name populated because the name is the freId.
+      if (currentPeriodInstance.getName() != period.name) {
         console.log("ScheduledEvent.scheduled() names not equal so new period for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay + " currentPeriod: " + currentPeriodInstance.getName() + " period: " + period.name);
         currentPeriodInstance.setCompleted(timeline.currentDay + daysToWait - 1);
         this.addPeriodInstance(period, scheduledStudyConfiguration, timeline);
@@ -209,6 +217,16 @@ export class ScheduledEvent {
     } else {
       console.log("ScheduledEvent.scheduled() no current period so new period for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay + " period: " + period.name);
       this.addPeriodInstance(period, scheduledStudyConfiguration, timeline);    }
+  }
+
+  completeCurrentPeriod(timeline: Timeline, onDay: number) {
+    console.log("ScheduledEvent.completeCurrentPeriod() for: " + this.getName() + " onDay: " + onDay);
+    let currentPeriodInstance = timeline.getCurrentPeriod();
+    if (currentPeriodInstance) {
+      currentPeriodInstance.setCompleted(onDay);
+    } else {
+      console.log("completeCurrentPeriod: no current period to complete on day: " + onDay);
+    }
   }
 
 }

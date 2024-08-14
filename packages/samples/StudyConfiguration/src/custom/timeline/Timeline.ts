@@ -42,13 +42,12 @@ export class Timeline extends RtObject{
   }
 
   // wrapper so Scheduler can set event statuses
-  setCompleted(completedEvent) {
-      completedEvent.state = TimelineInstanceState.Completed;
+  setCompleted(event) {
+    event.completed();
   }
 
   setScheduled(eventInstance) {
-    eventInstance.state = TimelineInstanceState.Scheduled;
-    eventInstance.scheduledEvent.setState(ScheduledEventState.Scheduled);
+    eventInstance.scheduled();
   }
 
   addEvent(event: TimelineInstance) {
@@ -288,6 +287,20 @@ export class EventInstance extends TimelineInstance {
     this.startDayOfWindow = startDayOfWindow !== undefined ? startDay : (startDay !== undefined ? startDay - 1 : undefined);
     this.endDayOfWindow = endDayOfWindow !== undefined ? endDayOfWindow : (startDay !== undefined ? startDay + 1 : undefined);;
     this.scheduledEvent = scheduledEvent;
+  }
+
+  completed() {
+    this.state = TimelineInstanceState.Completed;
+    this.scheduledEvent.setToCompleted();
+  }
+
+  scheduled() {
+    this.state = TimelineInstanceState.Scheduled;
+    this.scheduledEvent.setToScheduled();
+  }
+
+  completeCurrentPeriod(timeline: Timeline, onDay: number) {
+    this.scheduledEvent.completeCurrentPeriod(timeline, onDay);
   }
 
   getName() {

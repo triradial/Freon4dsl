@@ -59,7 +59,11 @@ import * as Sim from "../simjs/sim.js"
       // Schedule events that are ready as a result of the completion of the event.
       let readyScheduledEvents = this.getScheduledStudyConfiguration().getEventsReadyToBeScheduled(completedEvent, timeline);
       if (readyScheduledEvents.length === 0) {
-          console.log('No Events to Schedule');      
+          console.log('No Events to Schedule');
+          if (this.getScheduledStudyConfiguration().allEventsCompleted()) {
+            completedEvent.completeCurrentPeriod(this.getTimeline(), this.time());
+            console.log('Simulation Complete');
+          }      
       } else {
         console.log('Scheduling Next Event(s)');
         for (let scheduledEvent of readyScheduledEvents) {
