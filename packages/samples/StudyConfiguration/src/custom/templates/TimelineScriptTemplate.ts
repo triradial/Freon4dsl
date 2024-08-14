@@ -1,5 +1,5 @@
 
-import { EventInstance, Timeline, TimelineInstance } from '../timeline/Timeline';
+import { EventInstance, Timeline, TimelineEventInstance } from '../timeline/Timeline';
 import {StudyConfigurationModelModelUnitWriter} from '../../writer/gen/StudyConfigurationModelModelUnitWriter';
 import { writeFileSync } from 'fs';
 
@@ -9,7 +9,8 @@ function getUniqueNumber(): number {
   return uniqueCounter++;
 }
 
-const referenceDate = new Date(2024, 0, 1);
+// const referenceDate = new Date(2024, 0, 1);
+const referenceDate = new Date(2023, 11, 31);
 
 export class TimelineScriptTemplate {
 
@@ -25,9 +26,9 @@ export class TimelineScriptTemplate {
   var items = new vis.DataSet([
     ${timeline.getDays().map((timelineDay, counter) => timelineDay.getPeriodInstances().map ((periodInstance, index) => `{ start: new Date(${periodInstance.getStartDayAsDateString(referenceDate,timeline)}), end: new Date(${periodInstance.getEndDayStringAsDateFrom(referenceDate,timeline)}, 23, 59, 59), group: "Phase", className: "${periodInstance.getName().toLowerCase()}-phase", title: "Day: ${periodInstance.getStartDayAsDate(referenceDate,timeline)}}", content: "<b>${periodInstance.getName()}</b>", id: "${periodInstance.getName()+ getUniqueNumber()}" },`).join('')).join("\n    ")}
 
-    ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances().map((eventInstance, index) => `${!eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}
+    ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances().map((eventInstance, index) => `${eventInstance.anyDaysBefore() && index !== 0 ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}
     { start: new Date(${eventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${writer.writeToString((eventInstance as EventInstance).scheduledEvent.configuredEvent.schedule.eventStart)}", content: "&nbsp;", id: "${eventInstance.getName()+ getUniqueNumber()}" },
-    ${!eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}`).join('')).join('')}
+    ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}`).join('')).join('')}
   ])
 `
     return template;

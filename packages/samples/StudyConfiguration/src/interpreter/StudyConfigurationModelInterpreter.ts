@@ -59,16 +59,16 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalEventReference(node: language.EventReference, ctx: InterpreterContext): RtObject {
-        console.log("entered evalEventReference");
+        // console.log("entered evalEventReference");
         const timeline = ctx.find("timeline") as unknown as Timeline;
         const referencedEvent = node.$event;
         const operator = node.operator;
         const timeAmount = node.timeAmount;
         const eventState = node.eventState;
-        console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
-        console.log("evalEventReference: referencedEvent: operator: " + operator.name);
-        console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
-        console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
+        // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
+        // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
+        // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
+        // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
         let lastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
         if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
             console.log("evalEventReference: lastInstanceOfReferencedEvent is null for:" + referencedEvent.name);
@@ -144,7 +144,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalWhen(node: language.When, ctx: InterpreterContext): RtObject {
-        console.log("entered evalWhen");
+        // console.log("entered evalWhen");
         return main.evaluate(node.startWhen, ctx);
     }
 

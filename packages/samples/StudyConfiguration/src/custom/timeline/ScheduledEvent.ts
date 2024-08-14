@@ -1,7 +1,7 @@
 import { BinaryExpression, Event, Day, EventStart, StudyStart, RepeatCondition, RepeatUnit, Period, StudyConfiguration, When, Daily, Weekly, Monthly } from "../../language/gen/index";
 import { InterpreterContext, isRtError, ownerOfType, RtNumber } from "@freon4dsl/core";
 import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter";
-import { EventInstance, PeriodInstance, Timeline, TimelineInstance, TimelineInstanceState } from "./Timeline";
+import { EventInstance, PeriodInstance, Timeline, TimelineEventInstance, TimelineInstanceState } from "./Timeline";
 import { repeat } from "lodash";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration";
 import { start } from "repl";
@@ -29,7 +29,7 @@ export class ScheduledEvent {
   }
 
   day(timeline: Timeline): number {
-    console.log("ScheduledEvent.day() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay);
+    // console.log("ScheduledEvent.day() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay);
     let eventStart = this.configuredEvent.schedule.eventStart;
   //   if (this.isScheduledOnASpecificDay()) {
   //     console.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + (eventStart as Day).startDay);
@@ -180,19 +180,19 @@ export class ScheduledEvent {
    */
   getInstanceIfEventIsReadyToSchedule(completedEvent: EventInstance, timeline: Timeline): unknown {
     let repeatingEvent = this.isRepeatingEvent();
+    let scheduledDay = this.day(timeline);
     if (this.isScheduledOnASpecificDay() && !repeatingEvent) {
-      const day = this.configuredEvent.schedule.eventStart as Day;
-      console.log("getInstanceIfEventIsReady: Not ready to schedule because:" + this.getName() + " is scheduled to start on a specific day of:" + day.startDay);
+      // const day = this.configuredEvent.schedule.eventStart as Day;
+      console.log("getInstanceIfEventIsReady: Not ready to schedule because:" + this.getName() + " is scheduled to start on a specific day of:" + scheduledDay);
       return null;
     } else if (completedEvent.scheduledEvent.getName() === this.getName() && repeatingEvent && this.anyRepeatsNotCompleted(timeline)) {
-      console.log("getInstanceIfEventIsReady: " + this.getName() + " is to be repeated on timeline day: " + timeline.currentDay + " with scheduledDay of: " + this.day(timeline) );
-      return new EventInstance(this);
+      console.log("getInstanceIfEventIsReady: " + this.getName() + " is to be repeated on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
+      return new EventInstance(this, scheduledDay);
     } else {
-      let scheduledDay = this.day(timeline);
-      console.log("getInstanceIfEventIsReady scheduledDay: " + scheduledDay);
+      // console.log("getInstanceIfEventIsReady scheduledDay: " + scheduledDay);
       if (timeline.noCompletedInstanceOf(this) && scheduledDay != undefined && scheduledDay >= timeline.currentDay) {
         console.log("getInstanceIfEventIsReady: " + this.getName() + " is to be scheduled on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
-        return new EventInstance(this);
+        return new EventInstance(this, scheduledDay);
       } else {
         console.log("getInstanceIfEventIsReady: " + this.getName() + " is NOT to be scheduled on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
         return null;
@@ -203,7 +203,7 @@ export class ScheduledEvent {
   private addPeriodInstance(period: Period, scheduledStudyConfiguration: ScheduledStudyConfiguration, timeline: Timeline) {
     let periodInstance = new PeriodInstance(scheduledStudyConfiguration.getScheduledPeriod(period), this.day(timeline));
     // console.log("ScheduledEvent.addPeriodInstance() for: " + this.getName() + " periodInstance: " + periodInstance.getName() + " period: " + period.name);
-    timeline.addEvent(periodInstance as TimelineInstance);
+    timeline.addEvent(periodInstance as TimelineEventInstance);
   }
 
   // Do whatever is needed when the event is scheduled:
@@ -227,6 +227,7 @@ export class ScheduledEvent {
     console.log("ScheduledEvent.completeCurrentPeriod() for: " + this.getName() + " onDay: " + onDay);
     let currentPeriodInstance = timeline.getCurrentPeriod();
     if (currentPeriodInstance) {
+      console.log("completeCurrentPeriod: complete period: " + currentPeriodInstance.getName() + " on day: " + onDay);
       currentPeriodInstance.setCompleted(onDay);
     } else {
       console.log("completeCurrentPeriod: no current period to complete on day: " + onDay);

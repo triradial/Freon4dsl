@@ -121,7 +121,7 @@ export interface EventsToAdd {
 /*
   * eventsToAdd: An array of EventsToAdd objects. Each object contains the following fields:
   * - eventName: The name of the event to add.
-  * - eventDay: The day the event is scheduled off the previous event.
+  * - eventDay: The number of days the event is scheduled off the previous event. Note this is a confusing name!
   * - period: The name of the period the event belongs to.
   * 
   * For each period in eventsToAdd, add a Period DSL element containing Events:
@@ -162,7 +162,7 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
     eventReference.event = freNodeReference;
     let timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
     timeAmount = TimeAmount.create({'$id': FreUtils.ID(), 'value': eventToAdd.eventDay, 'unit': timeUnit});
-    console.log("addEventsScheduledOffCompletedEvents  eventToAdd: " + eventToAdd.eventName + " at " + timeAmount.value + " " + timeUnit.name + " after: " + previousEvent.name + " state: " + EventState.completed);
+    console.log("addEventsScheduledOffCompletedEvents  eventToAdd: " + eventToAdd.eventName + " at " + timeAmount.value + " " + timeUnit.name + " after: " + previousEvent.name);
     let when = createWhenEventSchedule(previousEvent.name, EventState.completed, SimpleOperators.plus, timeAmount);
     previousEvent = createEventAndAddToPeriod(period, eventToAdd.eventName, when);
     if (newPeriod) {
@@ -170,7 +170,7 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
       studyConfiguration.periods.push(period);
     }
   });
-  logPeriodsAndEvents("addEventsScheduledOffCompletedEvents",studyConfiguration);
+  // logPeriodsAndEvents("addEventsScheduledOffCompletedEvents",studyConfiguration);
   return studyConfiguration;
 }
 
@@ -198,7 +198,7 @@ export function addRepeatingEvents(studyConfiguration: StudyConfiguration, perio
 /*
  * Add to the timeline an Event and if not already there add the Period it belongs to.
  * - studyConfiguration: The StudyConfiguration containing the DSL defined Period and Event for which the scheduled Event and Period are added.
- * - periodNumber: The index of the Period in the StudyConfiguration.periods array.
+ * - periodNumber: The index of the Period in the StudyConfiguration.periods array. TODO: Change to searching by period name
  *  
 */
 export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string, dayPeriodStarted?: number, dayPeriodEnded?: number) : EventInstance {

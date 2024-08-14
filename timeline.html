@@ -42,18 +42,18 @@
 <script>
   var groups = new vis.DataSet([
     { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-    { "content": "StudyStart", "id": "StudyStart" },
+    { "content": "Visit 1", "id": "Visit 1" },
     { "content": "Visit 2", "id": "Visit 2" },
   ]);
 
   var items = new vis.DataSet([
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 08, 00, 00, 00, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: Mon Jan 01 2024 00:00:00 GMT-0500 (Eastern Standard Time)}", content: "<b>Screening</b>", id: "Screening4" },
-    
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: Mon Jan 01 2024 00:00:00 GMT-0500 (Eastern Standard Time)}", content: "<b>Screening</b>", id: "Screening0" },
+    { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: Mon Jan 08 2024 00:00:00 GMT-0500 (Eastern Standard Time)}", content: "<b>Treatment</b>", id: "Treatment1" },
 
-    { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "StudyStart", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-StudyStart5" },
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "StudyStart", className: "treatment-visits", title: "day 0", content: "&nbsp;", id: "StudyStart6" },
-    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "StudyStart", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-StudyStart7" },
-    { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "treatment-visits", title: "Study Start + 7", content: "&nbsp;", id: "Visit 28" },
+    
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "day 1", content: "&nbsp;", id: "Visit 12" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
+    { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "treatment-visits", title: "when Visit 1 completed + 7 days", content: "&nbsp;", id: "Visit 24" },
     
   ])
  // create visualization
@@ -76,9 +76,9 @@
     showMajorLabels: false,
     orientation: 'both',
     start: new Date(2024,0,1),
-    end: new Date(2024, 0, 17, 23, 59, 59),
+    end: new Date(2024, 0, 18, 23, 59, 59),
     min: new Date(2023, 11, 1),
-    max: new Date(2024, 0, 17, 23, 59, 59),
+    max: new Date(2024, 0, 18, 23, 59, 59),
     margin: {
         item: {
             horizontal: 0,

@@ -1,5 +1,5 @@
 import * as Sim from "../simjs/sim.js"
-import { Timeline, EventInstance, PeriodInstance, TimelineInstance, TimelineInstanceState } from "../timeline/Timeline";
+import { Timeline, EventInstance, PeriodInstance, TimelineEventInstance, TimelineInstanceState } from "../timeline/Timeline";
 import { Simulator, } from "../timeline/Simulator";
 import { StudyConfiguration, Period, When, StudyConfigurationModel } from "../../language/gen/index";
 import * as utils from "./Utils";
@@ -24,7 +24,7 @@ describe ("Study Simulation", () => {
     simulator = new Simulator(studyConfigurationUnit);
   });
 
-  describe("Simulation of Trial Events to Generate the Timeline", () => {
+  describe("Simulation of Trial Events to Generate the Timeline in the same period", () => {
 
     it("generates a one visit timeline for a visit on day 1", () => {
         // GIVEN a study configuration with one period and one event
@@ -36,23 +36,18 @@ describe ("Study Simulation", () => {
         // WHEN the study is simulated and a timeline is generated
         let simulator = new Simulator(studyConfigurationUnit);
         simulator.run();
+        let timeline = simulator.timeline;
+
+        // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
 
         // Then the generated timeline has one event on the expected event day
-        let timeline = simulator.timeline;
         let expectedTimeline = new Timeline()
         addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Screening", 1,1)
         expectedTimeline.setCurrentDay(1);
-
-        let eventFromTimeline = timeline.days[0].events[0];
-        let event1FromExpectedTimeline = expectedTimeline.days[0].events[0];
-        expect(eventFromTimeline).toEqual(event1FromExpectedTimeline);
-        // expect(timeline.days[0].events[1]).toEqual(expectedTimeline.days[0].events[1]);
-        // expect(timeline).toEqual(expectedTimeline);  
-
-        utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
+        expect(timeline).toEqual(expectedTimeline);  
     });
 
-    it("generates a two visit timeline with a visit on day 1 and 7", () => {
+    it("generates a two visit timeline with a visit on day 1 and 7 in the same period", () => {
       // GIVEN a study configuration with one period and two events
       let period = Period.create({'$id': FreUtils.ID(),'name':'Screening'});
       studyConfigurationUnit.periods.push(period);
@@ -72,29 +67,55 @@ describe ("Study Simulation", () => {
       addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 2", 7, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Screening",1,7)
       expectedTimeline.setCurrentDay(7);
 
+      // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
+
       expect(timeline).toEqual(expectedTimeline);  
     });
 
 
-    it("generates a two visit timeline for a visit 7 days after the study start day", () => {
+    it("generates a two visit timeline for a visit 7 days after the study start day in the same period", () => {
         // GIVEN a study configuration with one period and two events
         studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "StudyStart", 0, "Visit 2", 7);
+        console.log("studyConfigurationUnit studyStartDayNumber: " + studyConfigurationUnit.studyStartDayNumber);
 
         // WHEN the study is simulated and a timeline is generated
         let simulator = new Simulator(studyConfigurationUnit);
         simulator.run();
         let timeline = simulator.timeline;
+        console.log("studyConfigurationUnit after simulation studyStartDayNumber: " + studyConfigurationUnit.studyStartDayNumber);
 
         // Then the generated timeline has two events on the expected event days
-        let expectedTimeline = new Timeline()
+        let expectedTimeline = new Timeline();
         addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "StudyStart", 0, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Screening",0)
         // TODO: Decide whether the period completes on the day the visit completes or the day after. Currently it is the day after.
         addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 2", 7, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Screening",0,7)
         expectedTimeline.setCurrentDay(7);
 
-        utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
+        // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
 
         expect(timeline).toEqual(expectedTimeline);  
+    });
+
+    it("[Start Day of 1] generates a two visit timeline for a visit 7 days after the study start day", () => {
+      // GIVEN a study configuration with one period and two events
+      studyConfigurationUnit.studyStartDayNumber = 1;
+      studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "StudyStart", 0, "Visit 2", 7);
+
+      // WHEN the study is simulated and a timeline is generated
+      let simulator = new Simulator(studyConfigurationUnit);
+      simulator.run();
+      let timeline = simulator.timeline;
+
+      // Then the generated timeline has two events on the expected event days with the reflecting a study start day of 1
+      let expectedTimeline = new Timeline()
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "StudyStart", 0, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Screening",0)
+      // TODO: Decide whether the period completes on the day the visit completes or the day after. Currently it is the day after.
+      addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 2", 8, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Screening",0,8)
+      expectedTimeline.setCurrentDay(8);
+
+      // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
+
+      expect(timeline).toEqual(expectedTimeline);  
     });
 
     it("generates a two visit timeline for a visit in the second period 7 days after the end of the first visit", () => {
@@ -113,17 +134,12 @@ describe ("Study Simulation", () => {
       // Then the generated timeline has two events on the expected event days
       let expectedTimeline = new Timeline()
       addEventAndInstanceToTimeline(studyConfigurationUnit, 0, "Visit 1", 1, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Screening",1,7)
-      expectedTimeline.days[0].events[0].state = TimelineInstanceState.Completed;
       addEventAndInstanceToTimeline(studyConfigurationUnit, 1, "Visit 2", 8, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Treatment",8,8)
       expectedTimeline.setCurrentDay(8);
 
-      // Checking the specific timeline events to be more explict about what is being tested
-      expect(expectedTimeline.days[0].events[0]).toEqual(timeline.days[0].events[0]);
-      expect(expectedTimeline.days[0].events[1]).toEqual(timeline.days[0].events[1]);
-      expect(expectedTimeline.days[1].events[0]).toEqual(timeline.days[1].events[0]);
-      expect(expectedTimeline.days[1].events[1]).toEqual(timeline.days[1].events[1]);
-      // Add this check back if there is a chance some other detail is off
-      // expect(timeline).toEqual(expectedTimeline);  
+      // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
+
+      expect(timeline).toEqual(expectedTimeline);  
     });
 
     it("generates a three visit timeline for visits 7 days after the end of the previous visit", () => {
@@ -147,10 +163,8 @@ describe ("Study Simulation", () => {
       addEventAndInstanceToTimeline(studyConfigurationUnit, 1, "Visit 3", 15, expectedTimeline, ScheduledEventState.Completed, TimelineInstanceState.Completed, "Treatment",8,15);
       expectedTimeline.setCurrentDay(15);
 
-      expect(expectedTimeline.days[0].events[0]).toEqual(timeline.days[0].events[0]);
-      expect(expectedTimeline.days[0].events[1]).toEqual(timeline.days[0].events[1]);
-      expect(expectedTimeline.days[1].events[0]).toEqual(timeline.days[1].events[0]);
-      expect(expectedTimeline.days[1].events[1]).toEqual(timeline.days[1].events[1]);
+      // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
+
       expect(timeline).toEqual(expectedTimeline);  
     });
 
@@ -178,6 +192,8 @@ describe ("Study Simulation", () => {
       expectedTimeline.addEvent(eventInstance3);
       expectedTimeline.setCurrentDay(15);
 
+      // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
+
       expect(expectedTimeline.days[0].events[0]).toEqual(timeline.days[0].events[0]);
       expect(expectedTimeline.days[0].events[1]).toEqual(timeline.days[0].events[1]);
       expect(expectedTimeline.days[1].events[0]).toEqual(timeline.days[1].events[0]);
@@ -201,8 +217,10 @@ describe ("Study Simulation", () => {
       let scheduledPeriod = simulator.scheduledStudyConfiguration.scheduledPeriods[0];
       let periodInstance = new PeriodInstance(scheduledPeriod, 1);
       periodInstance.setCompleted(1);
-      expectedTimeline.addEvent(periodInstance as unknown as TimelineInstance);
+      expectedTimeline.addEvent(periodInstance as unknown as TimelineEventInstance);
       expectedTimeline.setCurrentDay(1);
+
+      // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
 
       expect((timeline.getPeriods()[0] as PeriodInstance).scheduledPeriod.getName()).toEqual("Screening");
       expect(expectedTimeline.getPeriods()[0]).toEqual(timeline.getPeriods()[0]); // First instance on the timeline should be the period
@@ -222,6 +240,8 @@ describe ("Study Simulation", () => {
 
       // Then the generated timeline has two periods on the expected day
       let timeline = simulator.timeline;
+
+      // utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
 
       let periodsOnTimeline = timeline.getPeriods();
       expect(periodsOnTimeline.length).toEqual(2);

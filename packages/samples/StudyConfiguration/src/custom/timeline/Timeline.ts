@@ -20,8 +20,8 @@ export class Timeline extends RtObject{
     throw new Error('Timelines are not comparable. Method not implemented.');
   }
 
-  newEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn?: number, startDay?: number, endDay?: number) {
-    return new EventInstance(scheduledEvent, dayEventWillOccurOn, startDay, endDay);
+  newEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn: number) {
+    return new EventInstance(scheduledEvent, dayEventWillOccurOn);
   }
 
   getEventsForDay(day: number) {
@@ -50,7 +50,7 @@ export class Timeline extends RtObject{
     eventInstance.scheduled();
   }
 
-  addEvent(event: TimelineInstance) {
+  addEvent(event: TimelineEventInstance) {
     let day = this.days.find(d => d.day === event.startDay);
     if (!day) {
       day = new TimelineDay(event.startDay);
@@ -144,19 +144,21 @@ export class Timeline extends RtObject{
     return [...new Set(eventNames)];
   }
 
-  
-
   getOffsetOfFirstEventInstance() {
     const lowestDayItem = this.days.reduce((minItem, currentItem) => {
       return currentItem.day < minItem.day ? currentItem : minItem;
     }, this.days[0]);
-    return Math.abs(lowestDayItem.day)
+    if (lowestDayItem.day >= 0) {
+      // Offset only comes into play when it is negative
+      return 0
+    } else {
+      return Math.abs(lowestDayItem.day);
+    }
   }
 
 }
 
-
-export abstract class TimelineInstance {
+export abstract class TimelineEventInstance {
   startDay: number;      // The day the instance occurred on
   endDay: number;        // The day the instance ended on
   state: TimelineInstanceState = TimelineInstanceState.Active;
@@ -181,11 +183,12 @@ export abstract class TimelineInstance {
     const result = new Date(referenceDate);
     const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
     result.setDate(result.getDate() + this.getEndDay(timeline) + dayOffsetOfFirstEventInstance);
+    result.setHours(23, 59, 59);
     return result;
   }
 
   getEndDayStringAsDateFrom(referenceDate: Date, timeline: Timeline): string {
-    return TimelineInstance.formatDate(this.getEndDayAsDateFrom(referenceDate, timeline));
+    return TimelineEventInstance.formatDate(this.getEndDayAsDateFrom(referenceDate, timeline));
   }
 
   setEndDay(endDay: number) {
@@ -204,13 +207,13 @@ export abstract class TimelineInstance {
   }
 
   getStartDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
-    return TimelineInstance.formatDate(this.getStartDayAsDate(fromReferenceDate, timeline));
+    return TimelineEventInstance.formatDate(this.getStartDayAsDate(fromReferenceDate, timeline));
   }
 
   getEndOfStartDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
     const endOfStartDay = this.getStartDayAsDate(fromReferenceDate, timeline)
     endOfStartDay.setHours(23, 59, 59);
-    const result = TimelineInstance.formatDate(endOfStartDay);
+    const result = TimelineEventInstance.formatDate(endOfStartDay);
     return result;
   }
 
@@ -237,7 +240,7 @@ export abstract class TimelineInstance {
   }
 }
 
-export class PeriodInstance extends TimelineInstance {
+export class PeriodInstance extends TimelineEventInstance {
 
   scheduledPeriod: ScheduledPeriod;
 
@@ -273,19 +276,15 @@ export enum TimelineInstanceState {
  /*
   * An EventInstance represents an instance of an event on a day on the timeline.
   */
-export class EventInstance extends TimelineInstance {
+export class EventInstance extends TimelineEventInstance {
 
-  startDayOfWindow: number; // The day the window of the event was scheduled to start
-  endDayOfWindow: number;   // The day the window of the event was scheduled to end
   scheduledEvent: ScheduledEvent; // The scheduled event that this instance was created from
   state : TimelineInstanceState = TimelineInstanceState.Ready;
 
 
-  constructor(scheduledEvent: ScheduledEvent, startDay?: number, startDayOfWindow?: number, endDayOfWindow?: number) {
+  constructor(scheduledEvent: ScheduledEvent, startDay: number) {
     super();
     this.startDay = startDay;
-    this.startDayOfWindow = startDayOfWindow !== undefined ? startDay : (startDay !== undefined ? startDay - 1 : undefined);
-    this.endDayOfWindow = endDayOfWindow !== undefined ? endDayOfWindow : (startDay !== undefined ? startDay + 1 : undefined);;
     this.scheduledEvent = scheduledEvent;
   }
 
@@ -309,12 +308,12 @@ export class EventInstance extends TimelineInstance {
 
   anyDaysBefore() {
     const daysBefore = this.scheduledEvent.configuredEvent.schedule.eventWindow.daysBefore.count;
-    return daysBefore === 0 || daysBefore == undefined;
+    return daysBefore !== 0 && daysBefore != undefined;
   }
 
   anyDaysAfter() {
     const daysAfter = this.scheduledEvent.configuredEvent.schedule.eventWindow.daysAfter.count;
-    return daysAfter === 0 || daysAfter == undefined;
+    return daysAfter != 0 && daysAfter != undefined;
   }
 
   // getStartDayOfWindow() {
@@ -343,7 +342,7 @@ export class EventInstance extends TimelineInstance {
   }
 
   startDayOfBeforeWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-    return TimelineInstance.formatDate(this.startDayOfBeforeWindowAsDate(fromReferenceDate, timeline));
+    return TimelineEventInstance.formatDate(this.startDayOfBeforeWindowAsDate(fromReferenceDate, timeline));
   }
 
   endDayOfBeforeWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
@@ -356,7 +355,7 @@ export class EventInstance extends TimelineInstance {
   }
 
   endDayOfBeforeWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-    return TimelineInstance.formatDate(this.endDayOfBeforeWindowAsDate(fromReferenceDate, timeline));
+    return TimelineEventInstance.formatDate(this.endDayOfBeforeWindowAsDate(fromReferenceDate, timeline));
   }
 
   startDayOfAfterWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
@@ -366,7 +365,7 @@ export class EventInstance extends TimelineInstance {
   }
 
   startDayOfAfterWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-    return TimelineInstance.formatDate(this.startDayOfAfterWindowAsDate(fromReferenceDate, timeline));
+    return TimelineEventInstance.formatDate(this.startDayOfAfterWindowAsDate(fromReferenceDate, timeline));
   }
 
   endDayOfAfterWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
@@ -379,7 +378,7 @@ export class EventInstance extends TimelineInstance {
   }
 
   endDayOfAfterWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-    return TimelineInstance.formatDate(this.endDayOfAfterWindowAsDate(fromReferenceDate, timeline));
+    return TimelineEventInstance.formatDate(this.endDayOfAfterWindowAsDate(fromReferenceDate, timeline));
   }
 
 }
@@ -389,7 +388,7 @@ export class EventInstance extends TimelineInstance {
  */
 export class TimelineDay {
   day: number;
-  events: TimelineInstance[] = [];
+  events: TimelineEventInstance[] = [];
 
   constructor(day: number) {
     this.day = day;
