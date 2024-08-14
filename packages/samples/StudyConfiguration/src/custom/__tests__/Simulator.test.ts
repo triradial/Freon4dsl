@@ -48,6 +48,8 @@ describe ("Study Simulation", () => {
         expect(eventFromTimeline).toEqual(event1FromExpectedTimeline);
         // expect(timeline.days[0].events[1]).toEqual(expectedTimeline.days[0].events[1]);
         // expect(timeline).toEqual(expectedTimeline);  
+
+        utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
     });
 
     it("generates a two visit timeline with a visit on day 1 and 7", () => {

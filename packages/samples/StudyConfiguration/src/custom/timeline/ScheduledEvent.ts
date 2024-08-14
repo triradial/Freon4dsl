@@ -1,9 +1,10 @@
 import { BinaryExpression, Event, Day, EventStart, StudyStart, RepeatCondition, RepeatUnit, Period, StudyConfiguration, When, Daily, Weekly, Monthly } from "../../language/gen/index";
-import { InterpreterContext, isRtError, RtNumber } from "@freon4dsl/core";
+import { InterpreterContext, isRtError, ownerOfType, RtNumber } from "@freon4dsl/core";
 import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter";
 import { EventInstance, PeriodInstance, Timeline, TimelineInstance, TimelineInstanceState } from "./Timeline";
 import { repeat } from "lodash";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration";
+import { start } from "repl";
 
 export enum ScheduledEventState {
   Initial,
@@ -20,9 +21,11 @@ export enum ScheduledEventState {
 export class ScheduledEvent {
   configuredEvent: Event;
   state = ScheduledEventState.Initial;
+  studyStartDayNumber: number;
 
   constructor(event: Event) {
     this.configuredEvent = event;
+    this.studyStartDayNumber = (ownerOfType(event, "StudyConfiguration") as StudyConfiguration).studyStartDayNumber;
   }
 
   day(timeline: Timeline): number {
@@ -39,6 +42,7 @@ export class ScheduledEvent {
     interpreter.setTracing(true);
     let ctx = InterpreterContext.EMPTY_CONTEXT;
     ctx.set("timeline", timeline);
+    ctx.set("studyStartDayNumber", new RtNumber(this.studyStartDayNumber));
     const value = interpreter.evaluateWithContext(eventStart,ctx);
     if (isRtError(value)) {
       throw new Error("interpreter isRtError, value: " + value.toString());
