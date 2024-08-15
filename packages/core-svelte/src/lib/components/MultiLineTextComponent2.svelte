@@ -24,7 +24,7 @@
     export let editor: FreEditor;	
 	export let box: MultiLineTextBox2;		// the accompanying box
     export let text: string;    			// the text to be displayed, needs to be exported for to use 'bind:text' in TextDropdownComponent
-  export let isEditing: boolean = false;
+  	export let isEditing: boolean = false;
 
     // Local variables
     let id: string;                         // an id for the html element
@@ -40,7 +40,7 @@
 
 	let placeholder: string = '<enter>';       // the placeholder when value of text component is not present
 	let placeHolderStyle: string;
-	$: placeHolderStyle = "textcomponent-placeholder";
+	$: placeHolderStyle = "text-component-placeholder";
 
 	let conf = {
 		plugins: 'lists searchreplace',
@@ -154,7 +154,9 @@
 		setFromAndTo(anchorOffset, focusOffset);
 	    event.preventDefault();
         event.stopPropagation();
-		setCaret();
+		if (ed) {
+			setCaret();
+		}
     }
 
     /**
@@ -257,8 +259,8 @@
 
 </script>
 
-<span id="{id}" role="none" class="{cssClass} w-full">
-	<div bind:this={editorContainer} role="none" class="multiline-editor {isEditing ? 'visible' : 'hidden'} w-full" on:keydown={onEditorContainerKeyDown}>
+<span id="{id}" role="none" class="multiline2-component {cssClass} w-full">
+	<div bind:this={editorContainer} role="none" class="multiline2-editor {isEditing ? 'visible' : 'hidden'} w-full" on:keydown={onEditorContainerKeyDown}>
 		<Editor 
 			licenseKey='gpl'
 			bind:this={editorElement}
@@ -272,7 +274,7 @@
 		/>
 	</div>
 	<span id="{id}-span"
-		class="{box.role} text-box-{boxType} multiline-text {isEditing ? 'hidden' : 'visible'}"
+		class="{box.role} text-box-{boxType} multiline2-text {isEditing ? 'hidden' : 'visible'}"
 		on:click={startEditing}
 		bind:this={spanElement}
 		contenteditable=true

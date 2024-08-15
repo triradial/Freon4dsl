@@ -59,7 +59,7 @@
 	
 	// Note that 'from <= to' always holds.
 	let placeHolderStyle: string;
-	$: placeHolderStyle = (partOfActionBox ? "textcomponent-actionPlaceholder" : "textcomponent-placeholder");
+	$: placeHolderStyle = (partOfActionBox ? "text-component-action-placeholder" : "text-component-placeholder");
     let boxType: BoxType = "text";          // indication how is this text component is used, determines styling
     $: boxType = !!box.parent ? (isActionBox(box?.parent) ? "action" : isSelectBox(box?.parent) ? "select" : "text") : "text";
 
@@ -528,7 +528,7 @@
 	 * Copy text from <input> into the <span> with position = absolute and takes the rendered span width.
 	 * See https://dev.to/matrixersp/how-to-make-an-input-field-grow-shrink-as-you-type-513l
 	 */
-	function setInputWidth() {
+	 function setInputWidth() {
 		if(!!widthSpan && !!inputElement) {
 			let value = inputElement.value;
 			if ((value !== undefined) && (value !== null) && (value.length === 0)) {
@@ -541,9 +541,6 @@
 			widthSpan.innerHTML = replaceHTML(value);
 			const width = widthSpan.offsetWidth + 2 + "px";
 			inputElement.style.width = width;
-			// LOGGER.log("setInputWidth mirror [" + value + "] input [" + inputElement.value + "] placeholder [" + placeholder + "] w: " + width + " " + widthSpan.clientWidth + " for element "  + box?.element?.freId() + " (" + box?.element?.freLanguageConcept() + ")")
-		} else {
-			// LOGGER.log("SetInputWidth do nothing for element " + box?.element?.freId() + " (" + box?.element?.freLanguageConcept() + ") " + widthSpan + "::" + inputElement + "::" + spanElement);
 		}
 	}
 
@@ -567,6 +564,12 @@
 
 	refresh();
 
+    const selectItem = (event: MouseEvent) => {
+        editor.selectElementForBox(box);
+		event.preventDefault();
+        event.stopPropagation();
+    }
+
 	function toggleExpanded() {
     	contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
         isExpanded = !isExpanded;
@@ -584,7 +587,7 @@
 
 <!-- todo there is a double selection here: two borders are showing -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-<div id="{id}-group" class="item-group {cssClass}" style="{style}">
+<div id="{id}-group" class="item-group {cssClass} w-full" style="{style}" on:click={selectItem}>
 	{#key isDraggable}
 		<FontAwesomeIcon class="w-3 h-3" style="cursor: grab;" icon={faGripVertical} />
 	{/key}
@@ -593,12 +596,12 @@
 			<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
 		</Button>
 	{/key}
-    <span class="item-group-label {cssClass}">{label}</span>
-	<span id="{id}" on:click={onClick} role="none" class="{cssClass}">
+    <span class="item-group-label">{label}</span>
+	<span id="{id}" on:click={onClick} role="none">
 		{#if isEditing}
 			<span id="{id}">
 				<input type="text"
-					class="textcomponent-inputtext"
+					class="text-component-input"
 					id="{id}-input"
 					bind:this={inputElement}
 					on:input={onInput}
@@ -608,14 +611,14 @@
 					draggable="true"
 					on:dragstart={onDragStart}
 					placeholder="{placeholder}"/>
-				<span class="textcomponent-inputtext textcomponent-width" bind:this={widthSpan}></span>
+				<span class="text-component-width" bind:this={widthSpan}></span>
 			</span>
 		{:else}
 			<!-- contenteditable must be true, otherwise there is no cursor position in the span after a click,
 				But ... this is only a problem when this component is inside a draggable element (like List or table)
 			-->
 			<!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-			<span class="{box.role} text-box-{boxType} textcomponent-text"
+			<span class="{box.role} text-box-{boxType} text-component-text"
 				on:click={startEditing}
 				bind:this={spanElement}
 				contenteditable=true

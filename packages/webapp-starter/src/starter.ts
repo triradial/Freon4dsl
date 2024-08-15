@@ -1,5 +1,6 @@
 import {FreonLayout, WebappConfigurator } from "@freon4dsl/webapp-lib";
 
+
 /**
  * The one and only reference to the actual language for which this editor runs
  */
@@ -14,6 +15,13 @@ WebappConfigurator.getInstance().setEditorEnvironment(StudyConfigurationModelEnv
 import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 WebappConfigurator.getInstance().setServerCommunication(ServerCommunication.getInstance());
 // export const serverCommunication: IServerCommunication = MpsServerCommunication.getInstance();
+
+/**
+ * Make the custom components known to Freon before starting the app!
+ */
+import {setCustomComponents} from "@freon4dsl/core-svelte";
+import DancingAstley from "./customComponents/DancingAstley.svelte";
+setCustomComponents([{component: DancingAstley, boxKind: "dancing"}])
 
 /**
  * Now start the app ...

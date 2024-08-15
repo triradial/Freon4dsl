@@ -55,7 +55,7 @@
 </script>
 
 
-<span class="switchcomponent">
+<span class="switch-component">
     <button
             id="{id}"
             bind:this={switchElement}
@@ -65,3 +65,4 @@
             on:click={handleClick}>
     </button>
 </span>
+

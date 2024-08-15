@@ -175,14 +175,15 @@
 
 <!-- on:focus is here to avoid a known bug in svelte 3.4*: "A11y: on:mouseover must be accompanied by on:focus with Svelte v3.40 #285" -->
 <!-- Likewise on:blur is needed for on:mouseout -->
-<span id="{id}" class="{cssClass}"
-    class:horizontalList="{isHorizontal}" class:verticalList="{!isHorizontal}"     
-    bind:this={htmlElement}
-    style:grid-template-columns="{!isHorizontal ? 1 : shownElements.length}"
-    style:grid-template-rows="{isHorizontal ? 1 : shownElements.length}">
+<span class="{cssClass}" class:list-component-horizontal="{isHorizontal}" class:list-component-vertical="{!isHorizontal}"
+      id="{id}"
+      bind:this={htmlElement}
+      style:grid-template-columns="{!isHorizontal ? 1 : shownElements.length}"
+      style:grid-template-rows="{isHorizontal ? 1 : shownElements.length}"
+>
     {#each shownElements as box, index (box.id)}
         <span
-                class="list-item"
+                class="list-component-item"
                 class:is-active={$activeElem?.row === index && $activeIn === id}
                 class:dragged={$draggedElem?.propertyIndex === index && $draggedFrom === id}
                 style:grid-column="{!isHorizontal ? 1 : index+1}"
@@ -218,13 +219,12 @@
         white-space: nowrap;
         display: grid;
         padding: var(--freon-horizontallist-component-padding, 1px);
-        margin: var(--freon-horizontallist-component-margin, 1px);
         background-color: var(--freon-editor-component-background-color, white);
         border-color: var(--freon-horizontallist-component-border-color, darkgreen);
         border-width: var(--freon-horizontallist-component-border-width, 0pt);
         border-style: var(--freon-horizontallist-component-border-style, solid);
+        margin: var(--freon-horizontallist-component-margin, 1px);
         box-sizing: border-box;
-        height:100%;
     }
 
     .verticalList {
@@ -232,19 +232,14 @@
         /*grid-template-columns: var(--fre-list-grid-template-columns);*/
         /*display: grid;*/
         /*background-color: var(--freon-editor-component-background-color, white);*/
-        /*padding: var(--freon-verticallist-component-padding, 1px);*/
-        /*margin: var(--freon-verticallist-component-margin, 1px);*/
+        padding: var(--freon-verticallist-component-padding, 1px);
+        margin: var(--freon-verticallist-component-margin, 1px);
         border-color: var(--freon-verticallist-component-border-color, red);
         border-width: var(--freon-verticallist-component-border-width, 0pt);
         border-style: var(--freon-verticallist-component-border-style, solid);
 
+        /*margin-top: 10px;*/
         box-sizing: border-box;
-        width:100%;
-        list-style-type: none;
-    }
-
-    .list-item {
-       margin-top: 0.5rem; 
     }
 </style>
 

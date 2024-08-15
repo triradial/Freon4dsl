@@ -17,7 +17,7 @@ import {
     HorizontalListBox, VerticalListBox, BoolFunctie, GridCellBox,
     HorizontalLayoutBox, VerticalLayoutBox,
     TableCellBox, OptionalBox2, LimitedControlBox, ButtonBox, DateBox, TimeBox, ItemGroupBox, ListGroupBox,
-    MultiLineTextBox2,
+    MultiLineTextBox2, NumberDisplay
 } from "./internal";
 
 type RoleCache<T extends Box> = {
@@ -190,7 +190,7 @@ export class BoxFactory {
             return new ActionBox(element, role, placeHolder, initializer);
         }
         // 1. Create the action box, or find the one that already exists for this element and role
-        const creator = () => new ActionBox(element, role, placeHolder, initializer);
+        const creator = () => new ActionBox(element, role, placeHolder);
         const result: ActionBox = this.find<ActionBox>(element, role, creator, actionCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -206,7 +206,7 @@ export class BoxFactory {
             return new LabelBox(element, role, getLabel, initializer, cssClass);
         }
         // 1. Create the label box, or find the one that already exists for this element and role
-        const creator = () => new LabelBox(element, role, getLabel, initializer, cssClass);
+        const creator = () => new LabelBox(element, role, getLabel);
         const result: LabelBox = this.find<LabelBox>(element, role, creator, labelCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -221,7 +221,7 @@ export class BoxFactory {
             return new TextBox(element, role, getText, setText, initializer, cssClass);
         }
         // 1. Create the text box, or find the one that already exists for this element and role
-        const creator = () => new TextBox(element, role, getText, setText, initializer, cssClass);
+        const creator = () => new TextBox(element, role, getText, setText);
         const result: TextBox = this.find<TextBox>(element, role, creator, textCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -281,7 +281,7 @@ export class BoxFactory {
             return new BooleanControlBox(element, role, getBoolean, setBoolean, initializer, cssClass);
         }
         // 1. Create the Boolean box, or find the one that already exists for this element and role
-        const creator = () => new BooleanControlBox(element, role, getBoolean, setBoolean, initializer);
+        const creator = () => new BooleanControlBox(element, role, getBoolean, setBoolean);
         const result: BooleanControlBox = this.find<BooleanControlBox>(element, role, creator, boolCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -303,15 +303,17 @@ export class BoxFactory {
             return new NumberControlBox(element, role, getNumber, setNumber, initializer);
         }
         // 1. Create the Boolean box, or find the one that already exists for this element and role
-        const creator = () => new NumberControlBox(element, role, getNumber, setNumber, initializer);
+        const creator = () => new NumberControlBox(element, role, getNumber, setNumber);
         const result: NumberControlBox = this.find<NumberControlBox>(element, role, creator, numberCache);
         // console.log(`Returning existing NumberControlBox: "` + result)
 
         // 2. Apply the other arguments in case they have changed
-        // result.$getNumber = getNumber;
-        // result.$setNumber = setNumber;
-        // FreUtils.initializeObject(result, initializer);
-
+        result.$getNumber = getNumber;
+        result.$setNumber = setNumber;
+        FreUtils.initializeObject(result, initializer);
+        if (result.showAs === NumberDisplay.SLIDER) {
+            result.completeDisplayInfo(result.getNumber());
+        }
         return result;
     }
 
@@ -347,8 +349,8 @@ export class BoxFactory {
         return result;
     }
     
-    static indent(element: FreNode, role: string, indent: number, fullWidth: boolean = false, childBox: Box, cssClass?: string): IndentBox {
-        return new IndentBox(element, role, indent, fullWidth, childBox, cssClass);
+    static indent(element: FreNode, role: string, indent: number, childBox: Box, initializer?: Partial<IndentBox>): IndentBox {
+        return new IndentBox(element, role, indent, childBox, initializer);
         // 1. Create the  box, or find the one that already exists for this element and role
         // const creator = () => new IndentBox(element, role, indent, childBox);
         // const result: IndentBox = this.find<IndentBox>(element, role, creator, indentCache);
@@ -369,11 +371,11 @@ export class BoxFactory {
     static horizontalLayout(element: FreNode, role: string,
         // @ts-ignore
         propertyName: string, 
-        alignment: string, children?: (Box | null)[], initializer?: Partial<HorizontalLayoutBox>, cssClass?: string): HorizontalLayoutBox {
+        children?: (Box | null)[], initializer?: Partial<HorizontalLayoutBox>): HorizontalLayoutBox {
         if (cacheHorizontalLayoutOff) {
-            return new HorizontalLayoutBox(element, role, alignment, children, initializer, cssClass);
+            return new HorizontalLayoutBox(element, role, children, initializer);
         }
-        const creator = () => new HorizontalLayoutBox(element, role, alignment, children, initializer, cssClass);
+        const creator = () => new HorizontalLayoutBox(element, role, children);
         const result: HorizontalLayoutBox = this.find<HorizontalLayoutBox>(element, role, creator, horizontalLayoutCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -388,11 +390,11 @@ export class BoxFactory {
     static verticalLayout(element: FreNode, role: string, 
         // @ts-ignore
         propertyName: string,
-        children?: (Box | null)[], initializer?: Partial<VerticalLayoutBox>, cssClass?: string): VerticalLayoutBox {
+        children?: (Box | null)[], initializer?: Partial<VerticalLayoutBox>): VerticalLayoutBox {
         if (cacheVerticalLayoutOff) {
-            return new VerticalLayoutBox(element, role, children, initializer, cssClass);
+            return new VerticalLayoutBox(element, role, children, initializer);
         }
-        const creator = () => new VerticalLayoutBox(element, role, children, initializer, cssClass);
+        const creator = () => new VerticalLayoutBox(element, role, children);
         const result: VerticalLayoutBox = this.find<VerticalLayoutBox>(element, role, creator, verticalLayoutCache);
         // 2. Apply the other arguments in case they have changed
         if (!equals(result.children, children)) {
@@ -406,7 +408,7 @@ export class BoxFactory {
         if (cacheHorizontalListOff) {
             return new HorizontalListBox(element, role, propertyName, children, initializer, cssClass);
         }
-        const creator = () => new HorizontalListBox(element, role, propertyName, children, initializer);
+        const creator = () => new HorizontalListBox(element, role, propertyName, children);
         const result: HorizontalListBox = this.find<HorizontalListBox>(element, role, creator, horizontalListCache);
         // 2. Apply the other arguments in case they have changed
         if (!equals(result.children, children)) {
@@ -421,7 +423,7 @@ export class BoxFactory {
         if (cacheVerticalListOff) {
             return new VerticalListBox(element, role, propertyName, children, initializer, cssClass);
         }
-        const creator = () => new VerticalListBox(element, role, propertyName, children, initializer, cssClass);
+        const creator = () => new VerticalListBox(element, role, propertyName, children);
         const result: VerticalListBox = this.find<VerticalListBox>(element, role, creator, verticalListCache);
         // 2. Apply the other arguments in case they have changed
         if (!equals(result.children, children)) {
@@ -441,16 +443,15 @@ export class BoxFactory {
             return new LimitedControlBox(element, role, getValues, setValues, possibleValues, initializer);
         }
         // 1. Create the select box, or find the one that already exists for this element and role
-        const creator = () => new LimitedControlBox(element, role, getValues, setValues, possibleValues, initializer);
+        const creator = () => new LimitedControlBox(element, role, getValues, setValues, possibleValues);
         const result: LimitedControlBox = this.find<LimitedControlBox>(element, role, creator, limitedCache);
 
         // todo see whether we need the following statements
         // 2. Apply the other arguments in case they have changed
-        // result.placeholder = placeHolder;
-        // result.getOptions = getOptions;
-        // result.getSelectedOption = getSelectedOption;
-        // result.selectOption = selectOption;
-        // FreUtils.initializeObject(result, initializer);
+        result.$getNames = getValues;
+        result.$setNames = setValues;
+        result.possibleNames = possibleValues;
+        FreUtils.initializeObject(result, initializer);
 
         return result;
     }
@@ -466,7 +467,7 @@ export class BoxFactory {
             return new SelectBox(element, role, placeHolder, getOptions, getSelectedOption, selectOption, initializer);
         }
         // 1. Create the select box, or find the one that already exists for this element and role
-        const creator = () => new SelectBox(element, role, placeHolder, getOptions, getSelectedOption, selectOption, initializer);
+        const creator = () => new SelectBox(element, role, placeHolder, getOptions, getSelectedOption, selectOption);
         const result: SelectBox = this.find<SelectBox>(element, role, creator, selectCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -522,7 +523,7 @@ export class BoxFactory {
             return new GridCellBox(element, role, row, column, box, initializer);
         }
         // 1. Create the grid cell box, or find the one that already exists for this element and role
-        const creator = () => new GridCellBox(element, role, row, column, box, initializer);
+        const creator = () => new GridCellBox(element, role, row, column, box);
         const result: GridCellBox = this.find<GridCellBox>(element, role, creator, gridcellCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -545,7 +546,7 @@ export class BoxFactory {
             return new TableCellBox(element, propertyName, propertyIndex, conceptName, role, row, column, box, initializer);
         }
         // 1. Create the table cell box, or find the one that already exists for this element and role
-        const creator = () => new TableCellBox(element, propertyName, propertyIndex, conceptName, role, row, column, box, initializer);
+        const creator = () => new TableCellBox(element, propertyName, propertyIndex, conceptName, role, row, column, box);
         const result: TableCellBox = this.find<TableCellBox>(element, role, creator, tableCellCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -554,7 +555,7 @@ export class BoxFactory {
         return result;
     }
 
-    static button(element: FreNode, text: string, roleName: string) {
+    static button(element: FreNode, text: string, roleName: string, initializer?: Partial<ButtonBox>) {
         if (cacheButtonOff) {
             return new ButtonBox(element, text, roleName);
         }
@@ -562,6 +563,8 @@ export class BoxFactory {
         const creator = () => new ButtonBox(element, text, roleName);
         const result: ButtonBox = this.find<ButtonBox>(element, roleName, creator, buttonCache);
 
+        // 2. Apply the other arguments in case they have changed
+        FreUtils.initializeObject(result, initializer)
         return result;
     }
 }

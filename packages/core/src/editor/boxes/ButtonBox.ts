@@ -11,7 +11,7 @@ const LOGGER: FreLogger = new FreLogger("ButtonBox"); //.mute();
 
 export class ButtonBox extends Box {
     readonly kind: string = "ButtonBox";
-    text: string = "BUTTON";
+    text: string = "";
 
     constructor(node: FreNode,
                 text: string,
@@ -19,8 +19,8 @@ export class ButtonBox extends Box {
                 initializer?: Partial<ButtonBox>
     ) {
         super(node, role);
-        this.text = text;
         FreUtils.initializeObject(this, initializer);
+        this.text = text;
         LOGGER.log("Creating a ButtonBox");
     }
 

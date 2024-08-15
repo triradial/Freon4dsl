@@ -65,7 +65,7 @@ export class InterpreterMainTemplate {
                     return new RtError(e.message);
                 }
             }
-                
+
             evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
                 ${Names.interpreterName(language)}.main.reset();
                 try {

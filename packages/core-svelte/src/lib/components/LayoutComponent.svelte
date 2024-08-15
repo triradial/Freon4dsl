@@ -19,7 +19,6 @@
     let element: HTMLSpanElement;
     let children: Box[];
     let isHorizontal: boolean;
-    let alignment = 'center';
     let cssClass: string = '';
 
     async function setFocus(): Promise<void> {
@@ -43,32 +42,20 @@
         id = !!box ? componentId(box) : 'layout-for-unknown-box';
         children = [...box.children];
         isHorizontal = box.getDirection() === ListDirection.HORIZONTAL;
-        alignment = box.getAlignment();
         cssClass = !!box ? box.cssClass : '';
     };
     $: { // Evaluated and re-evaluated when the box changes.
         refresh("Refresh Layout box changed " + box?.id);
     }
-    $: style = isHorizontal ? `align-items: ${getAlignment(alignment)};` : '';
-
-  
-    function getAlignment(alignment:any) {
-        switch (alignment) {
-            case 'top':
-                return 'flex-start';
-            case 'center':
-                return 'center';
-            case 'bottom':
-                return 'flex-end';
-            default:
-                return 'center';
-        }
-    }
 </script>
 
-<span id="{id}" class="layout-component {cssClass}"
-    class:layout-component-horizontal="{isHorizontal}" class:layout-component-vertical="{!isHorizontal}"
-    tabIndex={0} bind:this={element} style="{style}">
+<span class="layout-component {cssClass}"
+      id="{id}"
+      class:layout-component-horizontal="{isHorizontal}"
+      class:layout-component-vertical="{!isHorizontal}"
+      tabIndex={0}
+      bind:this={element}
+>
     {#if isHorizontal }
         {#each children as child (child.id)}
             <RenderComponent box={child} editor={editor}/>
