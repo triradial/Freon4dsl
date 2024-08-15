@@ -69,10 +69,10 @@ export class EditorState {
             this.createNewUnit("StudyConfiguration", "StudyConfiguration");
             // Initialize the StudyConfiguration with a default period, event, and task in the checklist
             const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration");
-            studyConfigUnit.periods.push(Period.create(Period.create({$id: FreUtils.ID(), name: "Screening"})));
-            studyConfigUnit.periods[0].events.push(Event.create({$id: FreUtils.ID(), name: "Screen"}));
+            studyConfigUnit.periods.push(Period.create(Period.create({name: "Screening"})));
+            studyConfigUnit.periods[0].events.push(Event.create({name: "Screen"}));
             studyConfigUnit.periods[0].events[0].checkList = CheckList.create({$id: FreUtils.ID()});
-            studyConfigUnit.periods[0].events[0].checkList.activities.push(Task.create({$id: FreUtils.ID(), name: "Task 1"}));
+            studyConfigUnit.periods[0].events[0].checkList.activities.push(Task.create({name: "Task 1"}));
             studyConfigUnit.showPeriods = true;
             await this.saveCurrentUnit();
     

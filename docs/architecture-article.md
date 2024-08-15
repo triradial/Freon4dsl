@@ -10,7 +10,7 @@ What this covers is a mix of:
 
 Talking about capital 'A' **A**rchitecture is dangerous if it doesn't incorporate the spectrum of things needed to build actual software: requirements, design, coding and even testing and teams. Taken together these are the context for the work. Without considering all of the context the result is likely pretty pictures that don't get realized, e.g., the context frequently rules-out some architectures for business or technical reasons.^Z[1] 
 
-^[1]:A specific example is that if your context isn't a $billion+ company or transitioning to deal with scaling like at a FAANG company, you should avoid things like microservice architecture. 
+^[1] A specific example is that if your context isn't a $billion+ company or transitioning to deal with scaling like at a FAANG company, you should avoid things like microservice architecture. 
 
 Basics for doing any 'architecture' work:
 - Scope - what areas of the business are covered by the architecture
