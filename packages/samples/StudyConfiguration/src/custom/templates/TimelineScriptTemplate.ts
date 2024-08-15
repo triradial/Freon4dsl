@@ -59,7 +59,6 @@ var items = new vis.DataSet([
             year:       ''
         },
     },
-    locale: 'en_US',
     timeAxis: {scale: 'day', step: 1},
     showMajorLabels: false,
     orientation: 'both',
