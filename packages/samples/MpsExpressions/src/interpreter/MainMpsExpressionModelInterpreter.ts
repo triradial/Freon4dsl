@@ -64,4 +64,13 @@ export class MainMpsExpressionModelInterpreter implements FreInterpreter {
             return new RtError(e.message);
         }
     }
+
+    evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
+        MainMpsExpressionModelInterpreter.main.reset();
+        try {
+            return MainMpsExpressionModelInterpreter.main.evaluate(node, ctx);
+        } catch (e: any) {
+            return new RtError(e.message);
+        }
+    }
 }

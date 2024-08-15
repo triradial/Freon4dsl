@@ -1,6 +1,6 @@
 import { EventInstance, Timeline } from "./Timeline";
 import { BinaryExpression, Day, EventStart, Period, StudyConfiguration, StudyStart } from "../../language/gen";
-import { ScheduledEvent } from "./ScheduledEvent";
+import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent";
 import { ScheduledPeriod } from "./ScheduledPeriod";
 
 // StudyConfigurationSchedule is a wrapper around a StudyConfiguration that manages access to instances of ScheduledPeriods and ScheduledEvents of those periods.
@@ -21,6 +21,18 @@ export class ScheduledStudyConfiguration {
     return this.scheduledPeriods.map(scheduledPeriod => scheduledPeriod.getAllScheduledEvents().flat()).flat();
   }
 
+  allEventsCompleted() {
+    this.displayAllEventsInSchedule();
+    return this.getAllEventsInSchedule().find(e => e.getState() !== ScheduledEventState.Completed) == undefined;
+  }
+
+  displayAllEventsInSchedule() {
+    const events = this.getAllEventsInSchedule()
+      .map(e => `${e.getName()} ${ScheduledEventState[e.getState()]}`)
+      .join('\n');
+      console.log("All Events In Schedule\n" + events);
+  }
+  
   getConfiguredPeriods() {
     return this.studyConfiguration.periods;
   }

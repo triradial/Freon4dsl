@@ -97,6 +97,7 @@
     "dist",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
-    "src/**/*.story.tsx"
-  ]
+    "src/**/*.story.tsx",
+    "src/__tests__/**/*"
+    ]
 }

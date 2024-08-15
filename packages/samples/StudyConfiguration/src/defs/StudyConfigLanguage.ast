@@ -11,6 +11,7 @@ modelunit StudyConfiguration {
     showSystems: boolean;
     showScheduling: boolean;
     showPeriods: boolean;
+    studyStartDayNumber: number = 0;
     periods: Period[];
     defaultPeriod: Period;
     events: Event[];
@@ -58,7 +59,15 @@ concept Event {
 
 concept CheckList {
     workflowNumber: number; // Only used by generator in MPS.
-    tasks: Task[];
+    tasks: AbstractTask[];
+}
+
+abstract concept AbstractTask {
+    name: identifier;
+}
+
+concept TaskReference base AbstractTask {
+    reference task: Task;
 }
 
 concept Task {

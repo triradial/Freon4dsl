@@ -64,4 +64,13 @@ export class MainRevenueServiceInterpreter implements FreInterpreter {
             return new RtError(e.message);
         }
     }
+
+    evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
+        MainRevenueServiceInterpreter.main.reset();
+        try {
+            return MainRevenueServiceInterpreter.main.evaluate(node, ctx);
+        } catch (e: any) {
+            return new RtError(e.message);
+        }
+    }
 }

@@ -49,6 +49,14 @@
                   "key": "-default-key-StudyConfiguration-showPeriods"
                },
                "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-studyStartDayNumber"
+               },
+               "value": "0"
             }
          ],
          "containments": [
@@ -306,111 +314,14 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": [
-                  "ID-158"
-               ]
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-143"
-      },
-      {
-         "id": "ID-158",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Task"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-name"
-               },
-               "value": "Task 1"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-isShared"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-numberedSteps"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-showDetails"
-               },
-               "value": "false"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-description"
-               },
-               "children": [
-                  "ID-159"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-steps"
+                  "key": "-default-key-CheckList-tasks"
                },
                "children": []
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-157"
-      },
-      {
-         "id": "ID-159",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-text"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-rawText"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-158"
+         "parent": "ID-143"
       },
       {
          "id": "ID-146",
@@ -527,16 +438,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -634,7 +536,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "6"
             }
          ],
          "containments": [],
@@ -784,7 +686,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-name"
                },
-               "value": "StudyStart"
+               "value": "Baseline"
             },
             {
                "property": {
@@ -883,7 +785,7 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
+                  "key": "-default-key-CheckList-tasks"
                },
                "children": []
             }
@@ -1225,7 +1127,7 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
+                  "key": "-default-key-CheckList-tasks"
                },
                "children": []
             }
@@ -1361,7 +1263,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "StudyStart",
+                     "resolveInfo": "Baseline",
                      "reference": "ID-181"
                   }
                ]
@@ -1480,7 +1382,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "2"
             }
          ],
          "containments": [],
@@ -1502,7 +1404,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "3"
             }
          ],
          "containments": [],

@@ -1,37 +1,12 @@
-import * as Sim from "../simjs/sim.js"
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
 import {StudyConfiguration, Period, Event, EventSchedule, Day, BinaryExpression, PlusExpression, When, StartDay, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly, StudyConfigurationModel } from "../../language/gen/index";
 import { FreLionwebSerializer, FreLogger, FreNodeReference, FreUtils } from "@freon4dsl/core";
 import { EventInstance, TimelineInstanceState, Timeline, PeriodInstance } from "../timeline/Timeline";
 import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent";
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
-import { SvelteComponent_1 } from "svelte";
-import { when } from "mobx";
 import * as path from 'path';
 import * as fs from 'fs';
-
-// Setup the sim.js environment and an empty StudyConfiguration.
-export function setupStudyConfiguration(): StudyConfiguration{
-  new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-  
-  let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
-  let studyConfigurationModel = setupStudyConfigurationModel();
-  let studyConfigurationUnit = setupStudyConfigurationUnit(studyConfigurationModel);
-  return studyConfigurationUnit;
-}
-
-export function setupStudyConfigurationModel(): StudyConfigurationModel {
-  new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-  let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
-  let studyConfigurationModel = studyConfigurationModelEnvironment.newModel("Study1") as StudyConfigurationModel;
-  return studyConfigurationModel;
-}
-
-export function setupStudyConfigurationUnit(studyConfigurationModel: StudyConfigurationModel): StudyConfiguration{
-  new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-  let studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
-  return studyConfigurationUnit;
-}
+import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference. 
@@ -98,7 +73,7 @@ export function createEventAndAddToPeriod(period: Period, eventName: string, eve
 
 /* Add a Period DSL element containing two Events to the Study Configuration:
  * - First event named 'event1Name' is First Scheduled on 'event1Day'
- * - Second event named 'event2Name'  is First Scheduled at 'StudyStart + event2Day' .
+ * - Second event named 'event2Name' is First Scheduled at 'StudyStart + event2Day' .
  * Return the updated Study Configuration.
  */
 export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration: StudyConfiguration, periodName: string, event1Name: string, event1Day: number, event2Name: string, event2DaysAfterStudyStart ): StudyConfiguration {
@@ -108,7 +83,7 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurati
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  const studyStart = PlusExpression.create({left:  StudyStart.create({'$id': FreUtils.ID(), 'startDay': 1}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
+  const studyStart = PlusExpression.create({left:  StudyStart.create({'$id': FreUtils.ID()}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
   let eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': studyStart});
   createEventAndAddToPeriod(period, event2Name, eventSchedule);
 
@@ -146,7 +121,7 @@ export interface EventsToAdd {
 /*
   * eventsToAdd: An array of EventsToAdd objects. Each object contains the following fields:
   * - eventName: The name of the event to add.
-  * - eventDay: The day the event is scheduled off the previous event.
+  * - eventDay: The number of days the event is scheduled off the previous event. Note this is a confusing name!
   * - period: The name of the period the event belongs to.
   * 
   * For each period in eventsToAdd, add a Period DSL element containing Events:
@@ -187,7 +162,7 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
     eventReference.event = freNodeReference;
     let timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
     timeAmount = TimeAmount.create({'$id': FreUtils.ID(), 'value': eventToAdd.eventDay, 'unit': timeUnit});
-    console.log("addEventsScheduledOffCompletedEvents  eventToAdd: " + eventToAdd.eventName + " at " + timeAmount.value + " " + timeUnit.name + " after: " + previousEvent.name + " state: " + EventState.completed);
+    console.log("addEventsScheduledOffCompletedEvents  eventToAdd: " + eventToAdd.eventName + " at " + timeAmount.value + " " + timeUnit.name + " after: " + previousEvent.name);
     let when = createWhenEventSchedule(previousEvent.name, EventState.completed, SimpleOperators.plus, timeAmount);
     previousEvent = createEventAndAddToPeriod(period, eventToAdd.eventName, when);
     if (newPeriod) {
@@ -195,7 +170,7 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
       studyConfiguration.periods.push(period);
     }
   });
-  logPeriodsAndEvents("addEventsScheduledOffCompletedEvents",studyConfiguration);
+  // logPeriodsAndEvents("addEventsScheduledOffCompletedEvents",studyConfiguration);
   return studyConfiguration;
 }
 
@@ -223,10 +198,10 @@ export function addRepeatingEvents(studyConfiguration: StudyConfiguration, perio
 /*
  * Add to the timeline an Event and if not already there add the Period it belongs to.
  * - studyConfiguration: The StudyConfiguration containing the DSL defined Period and Event for which the scheduled Event and Period are added.
- * - periodNumber: The index of the Period in the StudyConfiguration.periods array.
+ * - periodNumber: The index of the Period in the StudyConfiguration.periods array. TODO: Change to searching by period name
  *  
 */
-export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string, dayPeriodStarted: number, dayPeriodEnded?: number) : EventInstance {
+export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string, dayPeriodStarted?: number, dayPeriodEnded?: number) : EventInstance {
   let scheduledPeriodToAddEventTo = null;
   let currentPeriodInstance = timeline.getPeriodInstanceFor(nameOfPeriodToAddEventTo);
   if (currentPeriodInstance === undefined) { // The period is not already on the timeline, so add it
@@ -237,6 +212,9 @@ export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfigura
     timeline.addEvent(periodInstance);
   } else {
     scheduledPeriodToAddEventTo = currentPeriodInstance.scheduledPeriod; // Add the new event to the period that was previously added to the timeline
+    if (periodState === TimelineInstanceState.Completed) {
+      currentPeriodInstance.setCompleted(dayPeriodEnded)
+    }
   }
   let scheduledEvent = scheduledPeriodToAddEventTo.getScheduledEvent(eventName);
   scheduledEvent.state = eventState;
@@ -268,6 +246,17 @@ export function loadModel(modelFolderName: string, modelName: string): StudyConf
   // logPeriodsAndEvents("loadModel", studyConfigurationUnit);  
   // return studyConfigurationUnit;
 }
+
+export function generateChartAndSave(timeline: Timeline): string {
+  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+  // Save full HTML of chart for viewing / debugging
+  const html = timelineDataAsScript + timelineVisualizationHTML;
+  TimelineScriptTemplate.saveTimeline(html);
+  return html;
+}
+  
+
 
 
 

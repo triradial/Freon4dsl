@@ -52,6 +52,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return new RtNumber(node.startDay);
     }
 
+    evalDaily(node: language.Daily, ctx: InterpreterContext): RtObject {
+        return new RtNumber(1);
+    }
+
     evalEqualsExpression(node: language.EqualsExpression, ctx: InterpreterContext): RtObject {
         const left = main.evaluate(node.left, ctx);
         const right = main.evaluate(node.right, ctx);
@@ -59,16 +63,16 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalEventReference(node: language.EventReference, ctx: InterpreterContext): RtObject {
-        console.log("entered evalEventReference");
+        // console.log("entered evalEventReference");
         const timeline = ctx.find("timeline") as unknown as Timeline;
         const referencedEvent = node.$event;
         const operator = node.operator;
         const timeAmount = node.timeAmount;
         const eventState = node.eventState;
-        console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
-        console.log("evalEventReference: referencedEvent: operator: " + operator.name);
-        console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
-        console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
+        // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
+        // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
+        // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
+        // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
         let lastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
         if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
             console.log("evalEventReference: lastInstanceOfReferencedEvent is null for:" + referencedEvent.name);
@@ -104,6 +108,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return (left as RtNumber).minus(right as RtNumber);
     }
 
+    evalMonthly(node: language.Monthly, ctx: InterpreterContext): RtObject {
+        return new RtNumber(30);
+    }
+
     evalNumber(node: language.NumberLiteralExpression, ctx: InterpreterContext): RtObject {
         return new RtNumber(node.value);
     }
@@ -124,12 +132,18 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return (left as RtNumber).plus(right as RtNumber);
     }
 
+    evalRepeatEvery(node: language.RepeatEvery, ctx: InterpreterContext): RtObject {
+        let timeInDays = main.evaluate(node.repeatEvery, ctx) as RtNumber;
+        return timeInDays;
+    }
+
     evalStartDay(node: language.StartDay, ctx: InterpreterContext): RtObject {
-        return new RtNumber(1);
+        return this.evalStudyStart(node, ctx); // TODO: decide if keeping both this and StudyStart is a necessary convenience; they should be merged?
     }
 
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
-        return new RtNumber(1);
+        let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
+        return studyStartDayNumber;
     }
 
     evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {
@@ -142,8 +156,12 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return calcTimeAmount(value, node.unit.name);
     }
 
+    evalWeekly(node: language.Weekly, ctx: InterpreterContext): RtObject {
+        return new RtNumber(7);
+    }
+
     evalWhen(node: language.When, ctx: InterpreterContext): RtObject {
-        console.log("entered evalWhen");
+        // console.log("entered evalWhen");
         return main.evaluate(node.startWhen, ctx);
     }
 
