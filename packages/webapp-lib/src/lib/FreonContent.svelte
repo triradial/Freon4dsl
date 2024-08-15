@@ -49,9 +49,9 @@
         </Label>
         <Button slot="actions">Dismiss</Button>
     </Banner>
-    <EditorPart />
-    <!-- <SplitPane type='horizontal' pos={80}>
+    <!-- <EditorPart /> -->
+    <SplitPane type='horizontal' pos={80}>
             <EditorPart slot='a'/>
             <InfoPanel  slot='b'/> 
-    </SplitPane> -->
+    </SplitPane>
 </div>

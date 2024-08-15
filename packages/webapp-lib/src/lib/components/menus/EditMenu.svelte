@@ -71,6 +71,8 @@
 	}
 
 	const runInterpreter = () => {
+		console.log("Running Interpreter");
+		interpreterTrace.set("Running Interpreter");
 		const langEnv : FreEnvironment = WebappConfigurator.getInstance().editorEnvironment;
 		const intp = langEnv.interpreter;
 		intp.setTracing(true);
