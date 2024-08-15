@@ -399,7 +399,8 @@ describe ("Study Simulation", () => {
          ])
         `;
         // GIVEN a study configuration loaded from a file
-        const studyConfigurationUnit = utils.loadModel("Example1", 'StudyConfiguration');
+        // const studyConfigurationUnit = utils.loadModel("Example1", 'StudyConfiguration');
+        const studyConfigurationUnit = utils.loadModel("ScheduleExample1", 'StudyConfiguration');
         studyConfigurationModel.addUnit(studyConfigurationUnit)
   
         // WHEN the study is simulated and a timeline picture is generated

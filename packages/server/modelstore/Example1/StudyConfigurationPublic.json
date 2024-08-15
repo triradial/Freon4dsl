@@ -49,6 +49,14 @@
                   "key": "-default-key-StudyConfiguration-showPeriods"
                },
                "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-studyStartDayNumber"
+               },
+               "value": "0"
             }
          ],
          "containments": [
@@ -430,16 +438,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -687,7 +686,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-name"
                },
-               "value": "StudyStart"
+               "value": "Baseline"
             },
             {
                "property": {
@@ -1264,7 +1263,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "StudyStart",
+                     "resolveInfo": "Baseline",
                      "reference": "ID-181"
                   }
                ]

@@ -90,7 +90,7 @@ export class Timeline extends RtObject{
       for (const event of day.events) {
         if (event instanceof(EventInstance)) {
           let eventInstance = event as EventInstance;
-          console.log("hasCompletedInstanceOf checking if completed instance of: " + scheduledEvent.getName() + " matches event: " + eventInstance.getName() + " in state: " + eventInstance.state + " one day: " + day.day);
+          // console.log("hasCompletedInstanceOf checking if completed instance of: " + scheduledEvent.getName() + " matches event: " + eventInstance.getName() + " in state: " + eventInstance.state + " one day: " + day.day);
           if (eventInstance.scheduledEvent.getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
             console.log("hasCompletedInstanceOf: " + scheduledEvent.getName());
             return true; // Exit nested loops early if we find a completed instance
@@ -139,10 +139,26 @@ export class Timeline extends RtObject{
     return firstActivePeriodOnTimeline;
   }
 
-  getUniqueEventInstanceNames() : string[] {
-    let eventNames = this.days.flatMap(day => day.events.filter(event => event instanceof EventInstance).map(event => event.getName()));
-    return [...new Set(eventNames)];
-  }
+  // getUniqueEventInstanceNames() : string[] {
+  //   let eventNames = this.days.flatMap(day => day.events.filter(event => event instanceof EventInstance).map(event => event.getName()));
+  //   return [...new Set(eventNames)];
+  // }
+
+  getUniqueEventInstanceNames(): string[] {
+    let sortedDays = this.days.sort((a, b) => a.day - b.day);
+    let eventNames = sortedDays.flatMap(day => day.events.filter(event => event instanceof EventInstance).map(event => event.getName()));
+    let uniqueEventNames = [];
+    let seen = new Set();
+
+    for (let name of eventNames) {
+        if (!seen.has(name)) {
+            seen.add(name);
+            uniqueEventNames.push(name);
+        }
+    }
+
+    return uniqueEventNames;
+}
 
   getOffsetOfFirstEventInstance() {
     const lowestDayItem = this.days.reduce((minItem, currentItem) => {

@@ -52,6 +52,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return new RtNumber(node.startDay);
     }
 
+    evalDaily(node: language.Daily, ctx: InterpreterContext): RtObject {
+        return new RtNumber(1);
+    }
+
     evalEqualsExpression(node: language.EqualsExpression, ctx: InterpreterContext): RtObject {
         const left = main.evaluate(node.left, ctx);
         const right = main.evaluate(node.right, ctx);
@@ -104,6 +108,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return (left as RtNumber).minus(right as RtNumber);
     }
 
+    evalMonthly(node: language.Monthly, ctx: InterpreterContext): RtObject {
+        return new RtNumber(30);
+    }
+
     evalNumber(node: language.NumberLiteralExpression, ctx: InterpreterContext): RtObject {
         return new RtNumber(node.value);
     }
@@ -124,6 +132,11 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return (left as RtNumber).plus(right as RtNumber);
     }
 
+    evalRepeatEvery(node: language.RepeatEvery, ctx: InterpreterContext): RtObject {
+        let timeInDays = main.evaluate(node.repeatEvery, ctx) as RtNumber;
+        return timeInDays;
+    }
+
     evalStartDay(node: language.StartDay, ctx: InterpreterContext): RtObject {
         return this.evalStudyStart(node, ctx); // TODO: decide if keeping both this and StudyStart is a necessary convenience; they should be merged?
     }
@@ -141,6 +154,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         //TODO: Unify TimeAmount and Time?
         const value = Number(node.value);
         return calcTimeAmount(value, node.unit.name);
+    }
+
+    evalWeekly(node: language.Weekly, ctx: InterpreterContext): RtObject {
+        return new RtNumber(7);
     }
 
     evalWhen(node: language.When, ctx: InterpreterContext): RtObject {
