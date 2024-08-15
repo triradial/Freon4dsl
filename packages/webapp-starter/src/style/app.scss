@@ -1,5 +1,15 @@
 // Overall styles applied to the webapp and the editor in both light and dark mode
 
+// linear-progress is included for the progress indicator in the EditorPart component
+@use '@material/linear-progress/index' as linear-progress;
+
+// example of adding icons to a button
+
+// Don't forget to include one of these in webapp-starter/public/index.html:
+//<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/font-awesome.min.css" rel="stylesheet" >
+//<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+// , or import them here:
+//@import 'material-icons/iconfont/material-icons.scss';
 @use '@material/typography/mdc-typography';
 
 

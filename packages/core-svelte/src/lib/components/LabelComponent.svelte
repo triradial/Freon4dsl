@@ -44,7 +44,11 @@
     }
 </script>
 
-<span id="{id}" class="label-component {text} {cssClass}" style="{style}" bind:this={element}>
+<span class="label-component {text} {cssClass}"
+      style="{style}"
+      bind:this={element}
+      id="{id}"
+>
     {@html text}
 </span>
 

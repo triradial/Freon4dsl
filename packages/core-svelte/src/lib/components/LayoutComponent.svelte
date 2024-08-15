@@ -66,9 +66,13 @@
     }
 </script>
 
-<span id="{id}" class="layout-component {cssClass}"
-    class:layout-component-horizontal="{isHorizontal}" class:layout-component-vertical="{!isHorizontal}"
-    tabIndex={0} bind:this={element} style="{style}">
+<span class="layout-component {cssClass}"
+      id="{id}"
+      class:layout-component-horizontal="{isHorizontal}"
+      class:layout-component-vertical="{!isHorizontal}"
+      tabIndex={0}
+      bind:this={element}
+>
     {#if isHorizontal }
         {#each children as child (child.id)}
             <RenderComponent box={child} editor={editor}/>
