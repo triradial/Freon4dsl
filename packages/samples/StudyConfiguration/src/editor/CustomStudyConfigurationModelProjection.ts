@@ -155,7 +155,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
               {cssClass:"type3", isExpanded:true, canAdd:true})
             ],
           {cssClass:"ml-6"}),
-        {cssClass:"type2", placeHolder:"enter", isRequired:true});
+        {cssClass:"type2", placeHolder:"enter", isRequired:true, selectable: true});
       return box;
     }
 
@@ -309,6 +309,12 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     }
 
 }
+
+
+
+
+
+
 
 function copyIntoTask(target:Task, source:Task) {
     console.log("copyIntoTask");

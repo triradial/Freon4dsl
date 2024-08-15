@@ -564,6 +564,12 @@
 
 	refresh();
 
+    const selectItem = (event: MouseEvent) => {
+        editor.selectElementForBox(box);
+		event.preventDefault();
+        event.stopPropagation();
+    }
+
 	function toggleExpanded() {
     	contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
         isExpanded = !isExpanded;
@@ -581,7 +587,7 @@
 
 <!-- todo there is a double selection here: two borders are showing -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-<div id="{id}-group" class="item-group {cssClass} w-full" style="{style}">
+<div id="{id}-group" class="item-group {cssClass} w-full" style="{style}" on:click={selectItem}>
 	{#key isDraggable}
 		<FontAwesomeIcon class="w-3 h-3" style="cursor: grab;" icon={faGripVertical} />
 	{/key}
