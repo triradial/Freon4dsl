@@ -7,7 +7,6 @@ import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent";
-import { FreUtils } from "@freon4dsl/core";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
 
 describe ("Study Simulation", () => {
@@ -49,7 +48,7 @@ describe ("Study Simulation", () => {
 
     it("generates a two visit timeline with a visit on day 1 and 7 in the same period", () => {
       // GIVEN a study configuration with one period and two events
-      let period = Period.create({'$id': FreUtils.ID(),'name':'Screening'});
+      let period = Period.create({'name':'Screening'});
       studyConfigurationUnit.periods.push(period);
       let eventSchedule = utils.createEventScheduleStartingOnADay("Visit 1", 1);
       utils.createEventAndAddToPeriod(period, "Visit 1", eventSchedule);
@@ -203,7 +202,7 @@ describe ("Study Simulation", () => {
     it ("can access the first instance of a period on the timeline" , () => {
       // GIVEN a study configuration with one period and one event
       let eventSchedule = utils.createEventScheduleStartingOnADay("Visit 1", 1);
-      let period = Period.create({'$id': FreUtils.ID(),'name':'Screening'});
+      let period = Period.create({'name':'Screening'});
       let scheduledEvent = utils.createEventAndAddToPeriod(period, "Visit 1", eventSchedule);
       studyConfigurationUnit.periods.push(period);
 

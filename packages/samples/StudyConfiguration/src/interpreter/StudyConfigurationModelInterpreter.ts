@@ -4,6 +4,11 @@ import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfiguration
 import * as language from "../language/gen/index";
 import { Timeline } from "../custom/timeline/Timeline";
 
+import * as Sim from "../custom/simjs/sim.js"
+import { Simulator, } from "../custom/timeline/Simulator";
+import { StudyConfiguration, StudyConfigurationModel } from "../custom/../language/gen/index";
+import { StudyConfigurationModelEnvironment } from "../custom/../config/gen/StudyConfigurationModelEnvironment";
+
 let main: IMainInterpreter;
 
 
@@ -38,6 +43,20 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     constructor(m: IMainInterpreter) {
         super();
         main = m;
+    }
+
+    evalStudyConfiguration(node: language.StudyConfiguration, ctx: InterpreterContext): RtObject {
+        var simulator;
+        var studyConfigurationUnit: StudyConfiguration;
+        var studyConfigurationModel: StudyConfigurationModel;
+        const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
+
+        new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
+        let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
+        studyConfigurationModel = studyConfigurationModelEnvironment.newModel(modelName) as StudyConfigurationModel;
+        studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
+        simulator = new Simulator(studyConfigurationUnit);
+        return new RtNumber(1);
     }
 
     evalAndExpression(node: language.AndExpression, ctx: InterpreterContext): RtObject {

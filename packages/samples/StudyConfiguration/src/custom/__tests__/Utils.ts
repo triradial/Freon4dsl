@@ -1,6 +1,6 @@
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
-import {StudyConfiguration, Period, Event, EventSchedule, Day, BinaryExpression, PlusExpression, When, StartDay, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly, StudyConfigurationModel } from "../../language/gen/index";
-import { FreLionwebSerializer, FreLogger, FreNodeReference, FreUtils } from "@freon4dsl/core";
+import {StudyConfiguration, Period, Event, EventSchedule, Day, PlusExpression, When, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly } from "../../language/gen/index";
+import { FreLionwebSerializer, FreLogger, FreNodeReference } from "@freon4dsl/core";
 import { EventInstance, TimelineInstanceState, Timeline, PeriodInstance } from "../timeline/Timeline";
 import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent";
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
@@ -17,10 +17,10 @@ export function createWhenEventSchedule(eventName: string, eventState: EventStat
   let referenceToEventState = FreNodeReference.create(eventState, "EventState");
   const freNodeReference = FreNodeReference.create<Event>(eventName, "Event");
   let referencedEvent = freNodeReference;
-  const startWhenEventReference = EventReference.create({'$id': FreUtils.ID(),'operator': referenceToOperator, 'timeAmount': timeAmount, 'eventState': referenceToEventState, 'event': referencedEvent}); 
+  const startWhenEventReference = EventReference.create({'operator': referenceToOperator, 'timeAmount': timeAmount, 'eventState': referenceToEventState, 'event': referencedEvent}); 
 
-  const whenExpression = When.create({'$id': FreUtils.ID(), 'startWhen': startWhenEventReference});
-  const eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': whenExpression});
+  const whenExpression = When.create({ 'startWhen': startWhenEventReference});
+  const eventSchedule = EventSchedule.create({ 'eventStart': whenExpression});
   return eventSchedule;
 }
 
@@ -47,9 +47,9 @@ export function createEventWindow(uniquePrefix:string, daysBefore: number, daysA
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'Day' DSL element starting 'startDay'. 
 export function createEventScheduleStartingOnADay(uniquePrefix: string, startDay: number) {
-  let day = Day.create({'$id': FreUtils.ID(), 'startDay': startDay});
+  let day = Day.create({ 'startDay': startDay});
   let eventWindow = createEventWindow(uniquePrefix, 1, 1);
-  let eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': day, 'eventWindow': eventWindow});  
+  let eventSchedule = EventSchedule.create({ 'eventStart': day, 'eventWindow': eventWindow});  
   return eventSchedule;
 }
 
@@ -83,8 +83,8 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurati
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  const studyStart = PlusExpression.create({left:  StudyStart.create({'$id': FreUtils.ID()}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
-  let eventSchedule = EventSchedule.create({'$id': FreUtils.ID(), 'eventStart': studyStart});
+  const studyStart = PlusExpression.create({left:  StudyStart.create({}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
+  let eventSchedule = EventSchedule.create({ 'eventStart': studyStart});
   createEventAndAddToPeriod(period, event2Name, eventSchedule);
 
   studyConfiguration.periods.push(period);
@@ -103,7 +103,7 @@ export function addEventScheduledOffCompletedEvent(studyConfiguration: StudyConf
 
   const timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
   console.log("addEventScheduledOffCompletedEvent timeUnit: " + timeUnit.name);
-  const timeAmount = TimeAmount.create({'$id': FreUtils.ID(), 'value': event2DaysAfterEvent1, 'unit': timeUnit});
+  const timeAmount = TimeAmount.create({ 'value': event2DaysAfterEvent1, 'unit': timeUnit});
   let when = createWhenEventSchedule(event2Name, EventState.completed, SimpleOperators.plus, timeAmount);
   createEventAndAddToPeriod(period, event2Name, when);
 
@@ -161,7 +161,7 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
     let freNodeReference = FreNodeReference.create(previousEvent, "Event");
     eventReference.event = freNodeReference;
     let timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
-    timeAmount = TimeAmount.create({'$id': FreUtils.ID(), 'value': eventToAdd.eventDay, 'unit': timeUnit});
+    timeAmount = TimeAmount.create({ 'value': eventToAdd.eventDay, 'unit': timeUnit});
     console.log("addEventsScheduledOffCompletedEvents  eventToAdd: " + eventToAdd.eventName + " at " + timeAmount.value + " " + timeUnit.name + " after: " + previousEvent.name);
     let when = createWhenEventSchedule(previousEvent.name, EventState.completed, SimpleOperators.plus, timeAmount);
     previousEvent = createEventAndAddToPeriod(period, eventToAdd.eventName, when);
@@ -239,12 +239,6 @@ export function loadModel(modelFolderName: string, modelName: string): StudyConf
   const validator = studyConfigurationModelEnvironment.validator;
   const errors = validator.validate(modelUnit);
   return modelUnit;
-
-  // const model = StudyConfigurationModel.create({'$id': FreUtils.ID()});
-  // const sentence = fs.readFileSync(`${studyFolderPath}/${modelName}.json`).toString();
-  // const studyConfigurationUnit = StudyConfigurationModelEnvironment.getInstance().reader.readFromString(sentence, "StudyConfiguration", model) as StudyConfiguration;
-  // logPeriodsAndEvents("loadModel", studyConfigurationUnit);  
-  // return studyConfigurationUnit;
 }
 
 export function generateChartAndSave(timeline: Timeline): string {
