@@ -19,7 +19,6 @@
     let element: HTMLSpanElement;
     let children: Box[];
     let isHorizontal: boolean;
-    let alignment = 'center';
     let cssClass: string = '';
 
     async function setFocus(): Promise<void> {
@@ -43,26 +42,10 @@
         id = !!box ? componentId(box) : 'layout-for-unknown-box';
         children = [...box.children];
         isHorizontal = box.getDirection() === ListDirection.HORIZONTAL;
-        alignment = box.getAlignment();
         cssClass = !!box ? box.cssClass : '';
     };
     $: { // Evaluated and re-evaluated when the box changes.
         refresh("Refresh Layout box changed " + box?.id);
-    }
-    $: style = isHorizontal ? `align-items: ${getAlignment(alignment)};` : '';
-
-  
-    function getAlignment(alignment:any) {
-        switch (alignment) {
-            case 'top':
-                return 'flex-start';
-            case 'center':
-                return 'center';
-            case 'bottom':
-                return 'flex-end';
-            default:
-                return 'center';
-        }
     }
 </script>
 

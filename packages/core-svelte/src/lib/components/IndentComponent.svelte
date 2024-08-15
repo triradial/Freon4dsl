@@ -18,9 +18,6 @@
  
     const indentWidth: number = 8;
     let style: string = `margin-left: ${box?.indent * indentWidth}px;`;
-    if (box?.fullWidth) {
-         style = `width: 100%; ${style}`;
-    }
     let id: string = !!box ? componentId(box) : 'indent-for-unknown-box';
     let cssClass: string = '';
     let child: Box;
@@ -37,7 +34,6 @@
             LOGGER.log("REFRESH Indent for box (" + why + ") " + box?.role + " child " + box?.child?.role);
             child = box?.child;
             style = `margin-left: ${box?.indent * indentWidth}px;`
-            if (box?.fullWidth)  style = `width: 100%; ${style}`;
             cssClass = box.cssClass;
         }
     };
@@ -46,6 +42,6 @@
     }
 </script>
 
-<span id="{id}" class="{cssClass}" style="{style}">
+<span id="{id}" class="indent-component {cssClass}" style="{style}">
     <RenderComponent box={child} editor={editor}/>
 </span>

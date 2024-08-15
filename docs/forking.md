@@ -27,3 +27,9 @@ Push your updates to the forked repository on GitHub:
 
 ### How to merge changes to the fork
 
+Fetch the branches and their commits from the upstream repository:
+> git fetch upstream
+
+Merge the changes from the upstream/main into your local main branch:
+
+> git merge upstream/development

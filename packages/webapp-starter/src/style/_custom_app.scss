@@ -1,0 +1,718 @@
+/* #region FREON SETTINGS */
+// .editor-part {
+//   box-sizing: border-box;
+
+//   /* General */
+//   --freon-placeholder-font-family: "Roboto"; 
+//   --freon-placeholder-font-size: 0.875rem;
+//   --freon-placeholder-font-style: normal;
+//   --freon-placeholder-font-weight: light; 
+
+//   /* Editor Component */
+//   --freon-editor-component-margin: 1px;
+//   --freon-editor-component-padding: 1px;
+//   --freon-editor-component-font-family: "Roboto"; 
+//   --freon-editor-component-font-size: 0.875rem;
+//   --freon-editor-component-font-style: normal;
+//   --freon-editor-component-font-weight: normal; 
+
+//   /* Horizontal list - trbl */
+//   --freon-horizontallist-component-padding: 0 0 10px 0;
+//   --freon-horizontallist-component-margin: 0;
+//   --freon-horizontallist-component-align-items: top;
+
+//   /* Vertical list - trbl */
+//   --freon-verticallist-component-padding: 0 0 1px 0;
+//   --freon-verticallist-component-margin: 0px;
+
+//   /* Horizontal layout - trbl */
+//   --freon-horizontallayout-component-padding: 0 0 0 0;
+//   --freon-horizontallayout-component-margin: 0px;
+//   --freon-horizontallayout-component-align-items: top;
+
+//   /* Vertical layout - trbl */
+//   --freon-verticallayout-component-padding: 0 0 5px 0;
+//   --freon-verticallayout-component-margin: 0;
+
+//   /* Label Component */
+//   --freon-label-component-font-size: 0.875rem;
+//   --freon-label-component-font-style: normal;	
+//   --freon-label-component-font-weight: normal;	
+//   --freon-label-component-font-family: "Roboto";	
+//   --freon-label-component-font-variant: normal;
+//   --freon-label-component-padding: 0px 1px 0px 1px;
+//   --freon-label-component-margin: 0px 0px 0px 4px;
+
+//   /* Text Component */
+//   --freon-text-component-font-size: 0.875rem;
+//   --freon-text-component-font-style: normal;		
+//   --freon-text-component-font-weight: normal;	
+//   --freon-text-component-font-family: "Roboto";
+//   --freon-text-component-padding: 0px 0px 0px 2px;
+//   --freon-text-component-margin: 0px 1px 0px 3px;
+
+//   --freon-text-component-ro-padding: 0px 1px 0px 2px;
+//   --freon-text-component-ro-margin: 0px 2px 0px 3px;
+
+//   /* MultilineText Component */
+//   --freon-multilinetext-component-font-size: 0.875rem;
+//   --freon-multilinetext-component-font-style: normal;		
+//   --freon-multilinetext-component-font-weight: normal;	
+//   --freon-multilinetext-component-font-family: "Roboto";
+//   --freon-multilinetext-component-padding: 0px 0px 0px 2px;
+//   --freon-multilinetext-component-margin: 4px 4px 4px 6px;
+
+//   /* List Group Component */
+//   --freon-list-group-component-font-size: 1rem;
+//   --freon-list-group-component-font-style: normal; 
+//   --freon-list-group-component-font-weight: normal;
+//   --freon-list-group-component-font-family: "Roboto";
+//   --freon-list-group-component-margin: 0;
+//   --freon-list-group-component-padding: 4px 0;
+
+//   --freon-list-group-component-font-size: 1rem;
+//   --freon-list-group-component-font-size2: 0.875rem;
+//   --freon-list-group-component-font-size3: 0.8rem;
+//   --freon-list-group-component-font-size4: 0.8rem;
+
+//   /* Item Group Component */
+//   --freon-item-group-component-font-size: 0.875rem;
+//   --freon-item-group-component-font-style: normal; 
+//   --freon-item-group-component-font-weight: lighter;
+//   --freon-item-group-component-font-family: "Roboto";
+//   --freon-item-group-component-margin: 0;
+//   --freon-item-group-component-padding: 4px 0;
+
+//   --freon-item-group-component-font-size2: 0.875rem;
+
+//   /* Date Component */
+//   --freon-date-component-font-size: 0.875rem;
+//   --freon-date-component-font-style: normal;		
+//   --freon-date-component-font-weight: normal;	
+//   --freon-date-component-font-family: "Roboto";
+//   --freon-date-component-padding: 1px 1px 1px 1px;
+//   --freon-date-component-margin: 0px 1px 0px 2px;
+
+//   /* Switch Component */
+
+
+  
+// }
+
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%; /* Ensure the height is 100% */
+  overflow: hidden; //* Hide the scrollbar */
+}
+
+main {
+  height: calc(100vh);
+}
+
+.editor-part {
+  height: 100%;
+  box-sizing: border-box;
+  padding:  0px 0px 0px 0px !important; /* top padding is 0 because the progress indicator uses 4px height */
+}
+
+/* #endregion */
+
+/* #region FREON COMPONENTS */
+
+  .freon-component {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
+    font-family: "Arial";
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .render-component {
+    display: grid; // need to 
+  }
+
+  /* #region Label Component */
+  .label-component:empty:before {
+    content: attr(data-placeholdertext);
+    margin: 0px 0px 0px 4px;
+    padding: 0px 1px 0px 1px;
+  }
+
+  .label-component {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+    font-variant: normal;
+    margin: 0px 0px 0px 4px;
+    padding: 0px 1px 0px 1px;
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */
+
+  /* #region Text Component */
+  .text-component-width {
+    position: absolute;
+    left: -9999px;
+    display: inline-block;
+    line-height: 6px;
+    margin: 0px 1px 0px 3px;
+    padding: 0px 0px 0px 2px;
+    border: none;
+    box-sizing: border-box;
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .text-component-input {
+    border-width: 0px;
+    line-height: 6px;
+    box-sizing: border-box;
+    margin: 0px 1px 0px 3px;
+    padding: 0px 0px 0px 2px;
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+    padding-block: 0px;
+  }
+
+  .text-component-text {
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+    padding: 0px 1px 0px 2px;
+    margin: 0px 2px 0px 3px;
+    white-space: normal;
+    display: inline-block;
+  }
+
+  .text-component-placeholder {
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+    white-space: normal;
+    display: inline-block;
+  }
+
+  .text-component-actionPlaceholder {
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */
+
+  /* #region Switch Component */
+  .switch-component {
+    margin: 0;
+    padding: 4px 0;
+    display: inline-flex;
+    width: max-content;
+  }
+
+  .switch-component button {
+    width: 2.1em;
+    height: 1.1em;
+    position: relative;
+    border: none;
+  }
+
+  .switch-component button::before { /* defines the knob */
+    content: '';
+    position: absolute;
+    width: 0.9em;
+    height: 0.9em;
+    top: 0.1em;
+    right: 1.1em;
+    transition: transform 0.3s;
+  }
+
+  .switch-component button[aria-checked='true']{
+
+  }
+
+  .switch-component button[aria-checked='true']::before{
+    transform: translateX(1em);
+    transition: transform 0.3s;
+  }
+
+  .switch-component button:focus {
+    border-radius: 1.5em;
+  }
+
+  .switch-component button:hover {
+    border-radius: 1.5em;
+  }
+
+  .switch-component button {
+    border-radius: 1.5em;
+  }
+
+  .switch-component button::before {
+    border-radius: 100%;
+  }
+  /* #endregion */
+
+  /* #region List Group Component */
+  .list-group:empty:before {
+    content: attr(data-placeholdertext);
+    margin: 0px;
+    padding: 4px 0;
+  }
+
+  .list-group {
+    display: flex;
+    margin: 0px;
+    padding: 4px 0;
+    align-items: center;
+  }
+
+  .list-group .action-button {
+    display: none;
+  }
+
+  .list-group:hover .action-button {
+    display: inline-block;
+  }
+
+  .list-group.type1 {
+    height: 36px;
+  }
+  .list-group.type2 {
+    height: 32px;
+  }
+  .list-group.type3 {
+    height: 32px;
+  }
+  .list-group.type4 {
+    height: 32px;
+  }
+
+  .list-group-label {
+    padding-right: 0.5rem;
+    white-space: normal;
+  }
+
+  .list-group.type1 .list-group-label {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 1rem;
+    font-family: "Roboto";
+    text-transform: uppercase;
+  }
+
+  .list-group.type2 .list-group-label {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+    text-transform: uppercase;
+  }
+
+  .list-group.type3 .list-group-label {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.8rem;
+    font-family: "Roboto";
+    text-transform: uppercase;
+  }
+
+  .list-group.type4 .list-group-label {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.8rem;
+    font-family: "Roboto";
+    text-transform: uppercase;
+  }
+
+  .list-group.type4 .toggle-button {
+    color: inherit;
+  }
+  /* #endregion */
+
+  /* #region Item Group Component */
+  .item-group:empty:before {
+    content: attr(data-placeholdertext);
+    margin: 0px;
+    padding: 4px 0;
+  }
+
+  .item-group {
+    display: inline-block;
+    align-items: center;
+  }
+
+  .item-group .action-button {
+    display: none;
+  }
+
+  .item-group:hover .action-button {
+    display: inline-block;
+  }
+
+  .item-group .required {
+  }
+
+  .item-group.type1 {
+    height: 32px;
+  }
+
+  .item-group.type2 {
+    height: 32px;
+  }
+
+  .item-group .item-group-label {
+    padding-right: 0.1rem;
+    white-space: normal;
+  }
+
+  .item-group.type1 .item-group-label {
+    font-style: normal;
+    font-weight: lighter;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+  }
+
+  .item-group.type2 .item-group-label {
+    font-style: normal;
+    font-weight: lighter;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+  }
+  /* #endregion */
+
+  /* #region Layout Component */
+  .layout-component {
+    box-sizing: border-box;
+  }
+
+  .layout-component-horizontal {
+    white-space: nowrap;
+    display: flex;
+    padding: 0px;
+    height: 100%;
+    margin: 0px;
+  }
+
+  .layout-component-vertical {
+    display: block;
+    // width: 100%;
+    padding: 0px;
+    margin: 0px;
+  }
+  /* #endregion */
+
+  /* #region MultilineText2 Component */
+  .multiline2-component {
+    padding-right: 0.75rem;
+  }
+  .multiline2-text {
+    padding: 0px 0px 0px 2px; /* Adjusted as per variables */
+    margin: 4px 4px 4px 6px; /* Adjusted as per variables */
+    white-space: normal;
+    height: auto;
+    min-height: 1.5rem;
+  }
+  .multiline2-editor {
+    outline: 1px solid transparent;
+    outline-offset: 1px;
+    --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #fff;
+    --tw-ring-color: #32cd3275;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    margin: 4px 4px 4px 4px;
+  }
+
+  .tinymce-wrapper {
+    width: 100%;
+    min-height: 3rem;
+    all: unset;
+  }
+
+  .tinymce-wrapper > div {
+    margin-left: 0.25rem;
+    min-height: 1.5rem;
+  }
+
+  span:has(> .tinymce-wrapper) {
+    width: 100%;
+  }
+  /* #endregion */
+
+  /* #region Date Component */
+  .date-component-width {
+    position: absolute;
+    left: -9999px;
+    display: inline-block;
+    line-height: 6px;
+    margin: 0px 1px 0px 3px; /* Adjusted as per variables */
+    border: none;
+    box-sizing: border-box;
+    padding: 0px 0px 0px 2px; /* Adjusted as per variables */
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .date-component-inputtext {
+    color: blue;
+    line-height: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0px 1px 0px 2px;
+    padding: 1px;
+    background: rgba(211, 227, 253, 255);
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    padding-inline: 2px;
+  }
+
+  .date-component-text {
+    color: blue;
+    background: inherit;
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    padding: 1px;
+    padding-left: 2px;
+    margin: 0px 1px 0px 2px;
+    margin-right: 2.5px;
+    white-space: normal;
+    display: inline-block;
+  }
+
+  .date-component-placeholder {
+    color: blue;
+    background: inherit;
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */
+
+  /* #region Time Component */
+  .time-component-width {
+    position: absolute;
+    left: -9999px;
+    display: inline-block;
+    line-height: 6px;
+    margin: 0px 1px 0px 3px; /* Adjusted as per variables */
+    border: none;
+    box-sizing: border-box;
+    padding: 0px 0px 0px 2px; /* Adjusted as per variables */
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .time-component-input {
+    color: blue;
+    line-height: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0px 1px 0px 2px;
+    padding: 1px;
+    padding-inline: 2px;
+    background: rgba(211, 227, 253, 255);
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+  }
+
+  .time-component-text {
+    color: blue;
+    background: inherit;
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    padding: 1px;
+    padding-left: 2px;
+    margin: 0px 1px 0px 2px;
+    margin-right: 2.5px;
+    white-space: normal;
+    display: inline-block;
+  }
+
+  .time-component-placeholder {
+    color: blue;
+    background: inherit;
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */
+
+  /* #region Indent Component */
+  .indent-component {
+    display: block;
+  }
+  /* #endregion */  
+
+  /* #region List Component */
+  .list-component-vertical {
+    display:grid;
+    padding: 0px;
+    border-width: 0pt;
+    border-style: none;
+    margin: 0px;
+    box-sizing: none;
+  }
+  /* #endregion */
+
+  /* #region Dropdown Component */
+  .dropdown-component {
+    gap: 0px;
+  }
+  /* #endregion */
+
+  /* #region Render Component */
+  .render-component-selected {
+    outline-style:none;
+    outline-width: 0px;
+  }
+  /* #endregion */
+/* #endregion */
+
+/* #region TAILWIND LIKE */
+
+.pb-1 { padding-bottom: 0.25rem !important; }
+.pb-2 { padding-bottom: 0.5rem !important; }
+.pb-3 { padding-bottom: 0.75rem !important; }
+.pb-4 { padding-bottom: 1rem !important; }
+
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 0.75rem !important; }
+.mt-4 { margin-top: 1rem !important; }
+.mt-5 { margin-top: 1.25rem !important; }
+.mt-6 { margin-top: 1.5rem !important; }
+.mt-7 { margin-top: 1.75rem !important; }
+.mt-8 { margin-top: 2rem !important; }
+
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 0.75rem !important; }
+.mb-4 { margin-bottom: 1rem !important; }
+.mb-5 { margin-bottom: 1.25rem !important; }
+.mb-6 { margin-bottom: 1.5rem !important; }
+.mb-7 { margin-bottom: 1.75rem !important; }
+.mb-8 { margin-bottom: 2rem !important; }
+
+.mr-1 { margin-right: 0.25rem !important; }
+.mr-2 { margin-right: 0.5rem !important; } //8px
+.mr-3 { margin-right: 0.75rem !important; }
+.mr-4 { margin-right: 1rem !important; } //16px
+.mr-5 { margin-right: 1.25rem !important; }
+.mr-6 { margin-right: 1.5rem !important; } //24px
+.mr-7 { margin-right: 1.75rem !important; }
+.mr-8 { margin-right: 2rem !important; } //32px
+.mr-9 { margin-right: 2.25rem !important; }
+.mr-10 { margin-right: 2.5rem !important; } //40px
+.mr-11 { margin-right: 2.75rem !important; }
+.mr-12 { margin-right: 3rem !important; } //48px
+
+.ml-1 { margin-left: 0.25rem !important; }
+.ml-2 { margin-left: 0.5rem !important; } //8px
+.ml-3 { margin-left: 0.75rem !important; }
+.ml-4 { margin-left: 1rem !important; } //16px
+.ml-5 { margin-left: 1.25rem !important; }
+.ml-6 { margin-left: 1.5rem !important; } //24px
+.ml-7 { margin-left: 1.75rem !important; }
+.ml-8 { margin-left: 2rem !important; } //32px
+.ml-9 { margin-left: 2.25rem !important; }
+.ml-10 { margin-left: 2.5rem !important; } //40px
+.ml-11 { margin-left: 2.75rem !important; }
+.ml-12 { margin-left: 3rem !important; } //48px
+
+/* #endregion */ 
+
+/* #region TAILWIND OVERRIDES */
+
+[type='text']:focus, 
+[type='email']:focus, 
+[type='url']:focus, 
+[type='password']:focus, 
+[type='number']:focus, 
+[type='date']:focus, 
+[type='datetime-local']:focus, 
+[type='month']:focus, 
+[type='search']:focus, 
+[type='tel']:focus,
+[type='time']:focus, 
+[type='week']:focus, 
+[multiple]:focus, textarea:focus, select:focus {
+  outline: 1px solid transparent !important;
+  outline-offset: 2px !important;
+  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/) !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: #fff !important;
+  --tw-ring-color: #32cd3275 !important;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
+  border-color: #ffffff00;
+}
+/* #endregion */
+
+/* #region APPLICATION SETTINGS */
+.app-small-caps {
+  font-variant: all-small-caps !important;
+}
+
+.app-uppercase {
+  text-transform: uppercase;
+}
+
+.align-top {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-bottom {
+  align-items: flex-end;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.w-full {
+  width: 100%;
+}
+
+/* #endregion */

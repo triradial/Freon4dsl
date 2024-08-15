@@ -1,0 +1,64 @@
+--freon-error-background: #{gc.$mac-error-background};
+--freon-error-color: #{gc.$mac-pink-900};
+
+/* Selectable */
+--freon-selected-background-color: #{gc.$mac-gray-50t2};
+--freon-selected-outline-color: #{gc.$mac-primary-900};
+--freon-selected-outline-width: 0px;
+--freon-selected-outline-style: solid;
+
+/* Editor Component */
+--freon-editor-component-background-color: #{gc.$mac-gray-200}; 
+--freon-editor-component-color: #{gc.$mac-gray-900};
+
+/* Dropdown Component */
+--freon-dropdown-component-border-color: #{gc.$mac-primary-900};
+--freon-dropdown-component-background-color: #{gc.$mac-primary-300};
+--freon-dropdown-component-color: #{gc.$mac-primary-900};
+--freon-dropdownitem-component-color: #{gc.$mac-primary-900};
+--freon-dropdownitem-component-background-color: #{gc.$mac-primary-300};
+--freon-dropdownitem-component-border-color: #{gc.$mac-primary-900};
+--freon-dropdownitem-component-error-bg-color: #{gc.$mac-red-600};
+--freon-dropdownitem-component-selected-color: #{gc.$mac-gray-300};
+--freon-dropdownitem-component-selected-background-color: #{gc.$mac-gray-900};
+--freon-dropdownitem-component-hover-color: inherit;
+--freon-dropdownitem-component-hover-background-color: inherit;
+
+/* Text Component */
+--freon-text-component-color: #{gc.$mac-primary-900};
+--freon-text-component-placeholder-color: #{gc.$mac-gray-500};
+--freon-text-component-actionplaceholder-color: #{gc.$mac-gray-500};
+
+/* Label Component */
+--freon-label-component-color: #{gc.$mac-gray-900};
+--freon-label-component-background-color: inherit;
+
+/* List Group Component */
+--freon-list-group-component-color: #{gc.$mac-black};
+--freon-list-group-component-background-color: #{gc.$mac-primary-300}; 
+
+--freon-list-group-component-color2: #{gc.$mac-gray-800};
+--freon-list-group-component-background-color2: #{gc.$mac-black-5t};
+
+--freon-list-group-component-color3: #{gc.$mac-gray-800};
+--freon-list-group-line-color3: #{gc.$mac-black-20t};
+
+--freon-list-group-component-color4: #1191b9;
+--freon-list-group-line-color4: #1191b9;
+
+/* Item Group Component */
+--freon-item-group-component-color: #{gc.$mac-black};
+--freon-item-group-component-background-color: #{gc.$mac-primary-300}; 
+
+--freon-item-group-component-color2: #{gc.$mac-gray-800};
+--freon-item-group-component-background-color2: #{gc.$mac-black-5t};
+
+/* Popup */
+--freon-popup-box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5);
+
+/* Boolean components */
+--freon-boolean-accent-color: #{gc.$mac-primary-900};
+--freon-boolean-focus-color: #206C2D;
+
+/* Switch component */
+--freon-boolean-unselected-track: #cdcdcd;

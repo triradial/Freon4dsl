@@ -349,8 +349,8 @@ export class BoxFactory {
         return result;
     }
     
-    static indent(element: FreNode, role: string, indent: number, fullWidth: boolean = false, childBox: Box, initializer?: Partial<IndentBox>): IndentBox {
-        return new IndentBox(element, role, indent, fullWidth, childBox, initializer);
+    static indent(element: FreNode, role: string, indent: number, childBox: Box, initializer?: Partial<IndentBox>): IndentBox {
+        return new IndentBox(element, role, indent, childBox, initializer);
         // 1. Create the  box, or find the one that already exists for this element and role
         // const creator = () => new IndentBox(element, role, indent, childBox);
         // const result: IndentBox = this.find<IndentBox>(element, role, creator, indentCache);
@@ -371,11 +371,11 @@ export class BoxFactory {
     static horizontalLayout(element: FreNode, role: string,
         // @ts-ignore
         propertyName: string, 
-        alignment: string, children?: (Box | null)[], initializer?: Partial<HorizontalLayoutBox>): HorizontalLayoutBox {
+        children?: (Box | null)[], initializer?: Partial<HorizontalLayoutBox>): HorizontalLayoutBox {
         if (cacheHorizontalLayoutOff) {
-            return new HorizontalLayoutBox(element, role, alignment, children, initializer);
+            return new HorizontalLayoutBox(element, role, children, initializer);
         }
-        const creator = () => new HorizontalLayoutBox(element, role, alignment, children);
+        const creator = () => new HorizontalLayoutBox(element, role, children);
         const result: HorizontalLayoutBox = this.find<HorizontalLayoutBox>(element, role, creator, horizontalLayoutCache);
 
         // 2. Apply the other arguments in case they have changed
@@ -390,9 +390,9 @@ export class BoxFactory {
     static verticalLayout(element: FreNode, role: string, 
         // @ts-ignore
         propertyName: string,
-        children?: (Box | null)[], initializer?: Partial<VerticalLayoutBox>, cssClass?: string): VerticalLayoutBox {
+        children?: (Box | null)[], initializer?: Partial<VerticalLayoutBox>): VerticalLayoutBox {
         if (cacheVerticalLayoutOff) {
-            return new VerticalLayoutBox(element, role, children, initializer, cssClass);
+            return new VerticalLayoutBox(element, role, children, initializer);
         }
         const creator = () => new VerticalLayoutBox(element, role, children);
         const result: VerticalLayoutBox = this.find<VerticalLayoutBox>(element, role, creator, verticalLayoutCache);

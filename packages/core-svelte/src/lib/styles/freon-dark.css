@@ -171,7 +171,7 @@ boolean-checkbox-component {
     border-radius: 0.1em;
 }
 
-dropdown-component {
+.dropdown-component {
     border-color: whitesmoke;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5);
     background: #e5e5e5;

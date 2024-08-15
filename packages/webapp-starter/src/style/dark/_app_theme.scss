@@ -1,0 +1,52 @@
+@use 'sass:color';
+@use '@material/theme/color-palette' as theme;
+
+// Include all the global styles that do not involve dark/light modes.
+@use '../app';
+
+// linear-progress is included for the progress indicator in the EditorPart component
+@use '@material/linear-progress/index' as linear-progress;
+
+:root {
+  --mdc-theme-primary: #003f69;
+  --mdc-theme-secondary: #20945a;
+  --mdc-theme-surface: #212121;
+  --mdc-theme-background: #000000;
+  --mdc-theme-error: #B00020;
+  --mdc-theme-on-secondary: #9b9b9b;
+  --mdc-theme-on-surface: #888888;
+}
+
+// my-colored-bar style is used for the progress indicator in the EditorPart component
+.my-colored-bar {
+  @include linear-progress.bar-color(theme.$red-100);
+  @include linear-progress.buffer-color(theme.$red-500);
+}
+
+:focus {
+  outline: none;
+}
+// status-bar style is used for the StatusBar component above the editor
+.status-bar {
+  //--freon-colors-bg-status: #4f9a94;
+  --freon-colors-bg-status: #4f9a94;
+  --freon-colors-text-status: white;
+  --freon-text-style-status: italic;
+}
+
+.main-frame {
+  /* SplitPane divider */
+  --freon-colors-slider: var(--mdc-theme-on-secondary);    /* The color of the slider between the error/search pane and the editor */
+}
+
+html,
+body {
+  background-color: var(--mdc-theme-surface);
+  color: var(--mdc-theme-on-surface);
+}
+
+.freon-component {
+  background-color: #111928; // #{gc.$mac-gray-900};
+  color: #EBEEF0; // #{gc.$mac-gray-200};
+
+}

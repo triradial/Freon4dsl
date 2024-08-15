@@ -58,7 +58,6 @@ export const MANUAL_BINARY_EXPRESSION_ACTIONS: FreCreateBinaryExpressionAction[]
 export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
 
     FreCustomAction.create({
-
         activeInBoxRoles: [
             "FreBinaryExpression-left",
             "FreBinaryExpression-right",
@@ -98,7 +97,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     FreCustomAction.create({ activeInBoxRoles: ["periods"], trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const studyconfig:StudyConfiguration  = box.element as StudyConfiguration;
-            const period: Period = new Period();
+            const period: Period = Period.create({});
             studyconfig.periods.push(period);
             return null;
         },
@@ -115,7 +114,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     FreCustomAction.create({ activeInBoxRoles: ["events"], trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const period: Period = box.element as Period;
-            const event: Event = new Event();
+            const event: Event = Event.create({});
             period.events.push(event);
             return null;
         },
@@ -133,7 +132,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const event: Event = box.element as Event
             const checkList: CheckList = event.checkList;
-            const task: Task = new Task();
+            const task: Task = Task.create({});
             checkList.tasks.push(task);
             return null;
         },
@@ -150,7 +149,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     FreCustomAction.create({ activeInBoxRoles: ["steps"], trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const task: Task = box.element as Task;
-            const step: Step = new Step();
+            const step: Step = Step.create({});
             task.steps.push(step);
             return null;
         },
@@ -167,7 +166,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     FreCustomAction.create({ activeInBoxRoles: ["references"], trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const step: Step = box.element as Step;
-            const reference: Reference = new Reference();
+            const reference: Reference = Reference.create({});
             step.references.push(reference);
             return null;
         },
@@ -184,7 +183,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     FreCustomAction.create({ activeInBoxRoles: ["systems"], trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const step: Step = box.element as Step;
-            const system: SystemAccess = new SystemAccess();
+            const system: SystemAccess = SystemAccess.create({});
             step.systems.push(system);
             return null;
         },
@@ -201,7 +200,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     FreCustomAction.create({ activeInBoxRoles: ["people"], trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const step: Step = box.element as Step;
-            const person: Person = new Person();
+            const person: Person = Person.create({});
             step.people.push(person);
             return null;
         },

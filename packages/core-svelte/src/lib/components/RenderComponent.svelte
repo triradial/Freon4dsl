@@ -179,9 +179,9 @@
             <TimeComponent box={box} editor={editor} text=""/>
         {:else if isActionBox(box) || isSelectBox(box)}
             <TextDropdownComponent box={box} editor={editor}/>
-        <!-- we use box["kind"] here instead of box.kind to avoid an error from svelte check-->
+        <!-- we use box["kind"] here instead of box.kind to avoid an error from svelte check
         {:else if isCustomComponent(box["kind"])}
-            <svelte:component this={findCustomComponent(box["kind"])} box={box} />
+            <svelte:component this={findCustomComponent(box["kind"])} box={box} /> -->
         {:else}
             <p class="render-component-error">[UNKNOWN BOX TYPE: {box["kind"]}]</p>
         {/if}

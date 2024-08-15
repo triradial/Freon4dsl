@@ -183,7 +183,7 @@
 >
     {#each shownElements as box, index (box.id)}
         <span
-                class="list-item"
+                class="list-component-item"
                 class:is-active={$activeElem?.row === index && $activeIn === id}
                 class:dragged={$draggedElem?.propertyIndex === index && $draggedFrom === id}
                 style:grid-column="{!isHorizontal ? 1 : index+1}"

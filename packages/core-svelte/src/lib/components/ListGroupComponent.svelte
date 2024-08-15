@@ -78,10 +78,10 @@
 <div id="{id}" class="list-group {cssClass}" style="{style}">
     {#key isExpanded}
         <Button pill={true} class="w-4 h-7 p-0 ml-1 mr-1" color="none" size="xs" on:click={toggleExpanded}>
-            <FontAwesomeIcon class="w-3 h-3 toggle-button {cssClass}" icon={isExpanded ? faCaretDown : faCaretRight} />
+            <FontAwesomeIcon class="w-3 h-3 toggle-button" icon={isExpanded ? faCaretDown : faCaretRight} />
         </Button>
     {/key}
-    <span class="list-group-label {cssClass}">{label}</span>
+    <span class="list-group-label">{label}</span>
     {#if canAdd}
     <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={addItem}>
         <FontAwesomeIcon class="w-3 h-3" icon={faPlus} />

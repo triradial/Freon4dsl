@@ -711,7 +711,7 @@ export class BoxUtil {
             if (listJoin !== null && listJoin !== undefined) {
                 if (listJoin.type === this.separatorName) {
                     if (index < numberOfItems - 1) {
-                        return BoxFactory.horizontalLayout(element, roleName, propertyName, "top", [
+                        return BoxFactory.horizontalLayout(element, roleName, propertyName, [
                             myProvider.box,
                             BoxFactory.label(element, roleName + "list-item-label", listJoin.text)
                         ]);
@@ -719,12 +719,12 @@ export class BoxUtil {
                         return myProvider.box;
                     }
                 } else if (listJoin.type === this.terminatorName) {
-                    return BoxFactory.horizontalLayout(element, roleName, propertyName, "top", [
+                    return BoxFactory.horizontalLayout(element, roleName, propertyName, [
                         myProvider.box,
                         BoxFactory.label(element, roleName + "list-item-label", listJoin.text)
                     ]);
                 } else if (listJoin.type === this.initiatorName) {
-                    return BoxFactory.horizontalLayout(element, roleName, propertyName, "top", [
+                    return BoxFactory.horizontalLayout(element, roleName, propertyName, [
                         BoxFactory.label(element, roleName + "list-item-label", listJoin.text),
                         myProvider.box
                     ]);
@@ -795,12 +795,12 @@ export class BoxUtil {
 
     /* ELEMENTS */
     static switchElement(element: FreNode, id: string, label: string): Box {
-        return BoxFactory.horizontalLayout(element, id + 'group', "", "top",
+        return BoxFactory.horizontalLayout(element, id + 'group', "",
             [
                 this.booleanBox(element, id, { yes: "YES", no: "NO" }, BoolDisplay.SWITCH),
                 this.labelBox(element, label, id +'_label'),
             ],
-        { selectable: false, cssClass:"pb-2" } );
+        { selectable: false, cssClass:"pb-2 align-top" } );
     }
 }
 

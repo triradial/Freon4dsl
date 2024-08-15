@@ -21,7 +21,6 @@ export class IndentBox extends Box {
     }
 
     indent: number = 4;
-    fullWidth: boolean = false;
 
     constructor(node: FreNode, role: string, indent: number, child: Box, initializer?: Partial<IndentBox>) {
         super(node, role);
