@@ -14,22 +14,14 @@ Period {
 
 Event {
     [
-            Event: ${name}
-            Type: ${typeOfEvent}
-            Description: ${description}
-            Schedule: 
-                ${schedule}
-
-            Checklist of Tasks:    ${showSequenced} Allow Sequencing
-                ${checkList }
-
+        Event: ${name}
+        Type: ${typeOfEvent}
+        Description: ${description}
+        Schedule: 
+            ${schedule}
+        Checklist:
+            ${tasks}
     ]  trigger = "Event"
-}
-
-CheckList {
-    [
-        ${tasks}
-    ]
 }
 
 Task {
@@ -38,7 +30,6 @@ Task {
         ${description}
     ]
 }
-
 
 Step {
     [
@@ -50,18 +41,10 @@ Step {
     ]
 }
 
-
-//        System Name  : ${name}  Function: ${functionName}
-//       Description  : ${description}
-//        Access at ${accessedAt}
-//        The Robot should copy:
-//            ${robotMappings}
-
 SystemAccess {
     table [ 
              System    
              ${name}
-
         ]
 }
 
