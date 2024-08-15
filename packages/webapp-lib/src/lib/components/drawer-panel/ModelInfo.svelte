@@ -33,11 +33,11 @@
                                         </Item>
                                         <Item on:SMUI:action={() => (deleteUnit(index))}>
                                             <Text>Delete</Text>
-                                        </Item>
+                                        </Item> -->
                                         <Separator/>
                                         <Item on:SMUI:action={() => (exportUnit(index))}>
                                             <Text>Export</Text>
-                                        </Item> -->
+                                        </Item>
                                     </List>
                                 </Menu>
                             </div>

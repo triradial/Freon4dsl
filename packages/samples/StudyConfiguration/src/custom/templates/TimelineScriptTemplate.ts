@@ -1,7 +1,6 @@
 
 import { EventInstance, Timeline, TimelineEventInstance } from '../timeline/Timeline';
 import {StudyConfigurationModelModelUnitWriter} from '../../writer/gen/StudyConfigurationModelModelUnitWriter';
-import { writeFileSync } from 'fs';
 
 let uniqueCounter = 0;
 
@@ -76,7 +75,7 @@ var items = new vis.DataSet([
   }
 
 
-  static getTimelineHTML(timelineDataAsScript: string): string {
+  static getTimelineAsHTMLPage(timelineDataAsScript: string): string {
     return `<!DOCTYPE HTML>
 <html>
 <head>
@@ -134,20 +133,52 @@ var items = new vis.DataSet([
     `;
   }
 
-  static saveTimelineHTML(timelineDataAsHTML: string, filename: string) {
-    try {
-      writeFileSync(filename, timelineDataAsHTML);
-      console.log('File written successfully');
-    } catch (err) {
-      console.error('Error writing file:', err);
+  static getTimelineAsHTMLBlock(timelineDataAsScript: string): string {
+  return `  <style>
+    body, html {
+      font-family: arial, sans-serif;
+      font-size: 11pt;
     }
-  }
-  
-  static saveTimeline(timelineDataAsScript: string) {
-    let filename = 'timeline.html';
-    let timelineDataAsHTML = TimelineScriptTemplate.getTimelineHTML(timelineDataAsScript);
 
-    this.saveTimelineHTML(timelineDataAsHTML, filename);
-  }
+    #visualization {
+      box-sizing: border-box;
+      width: 100%;
+      height: 300px;
+    }
+    
+    .vis-item.screen  { background-color: #B0E2FF; }
+    .vis-item.v2      { background-color: #EAEAEA; }
+    .vis-item.v3 { background-color: #FA8072; }
+    .vis-item.screening-phase { background-color: #5ceb5c; }
+    .vis-item.treatment-phase { background-color: #9370ed; }
+    .vis-item.v5  { background-color: #FFFFCC; }
+    .vis-item.window  { background-color: #c3c3be; }
+    .vis-item.screening-visits  { background-color: #bceebc; }
+    .vis-item.treatment-visits  { background-color: #ccbcf4; }
+    .vis-item.any-day  { background-color: #95a89a; }
+
+    
+  </style>
+
+<script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
+<link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+<!--    -->
+<h1>
+  Study Timeline
+</h1>
+<div id="visualization"></div>
+
+<script>
+  ${timelineDataAsScript}
+
+
+  var timeline = new vis.Timeline(container);
+  timeline.setOptions(options);
+  timeline.setGroups(groups);
+  timeline.setItems(items);
+
+</script>
+
+    `;  }
 
 }

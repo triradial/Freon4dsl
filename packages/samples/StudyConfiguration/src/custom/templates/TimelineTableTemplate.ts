@@ -2,7 +2,6 @@
 import { EventInstance, Timeline } from '../timeline/Timeline';
 import { Period } from "../../language/gen/index";
 import {StudyConfigurationModelModelUnitWriter} from '../../writer/gen/StudyConfigurationModelModelUnitWriter';
-import { writeFileSync } from 'fs';
 
 export class TimelineTableTemplate {
 
@@ -46,22 +45,6 @@ export class TimelineTableTemplate {
 </body>
 </html>
 `;
-  }
-
-  static saveTimelineHTML(timelineTableAsScript: string, filename: string) {
-    try {
-      writeFileSync(filename, timelineTableAsScript);
-      console.log('File written successfully');
-    } catch (err) {
-      console.error('Error writing file:', err);
-    }
-  }
-  
-  static saveTimeline(timelineTableAsScript: string) {
-    let filename = 'timeline-table.html';
-    let timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
-
-    this.saveTimelineHTML(timelineTableAsHTML, filename);
   }
 
 }

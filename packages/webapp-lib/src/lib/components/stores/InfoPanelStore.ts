@@ -11,6 +11,7 @@ export let searchResults: Writable<FreError[]> = writable<FreError[]>([]);
 export let modelErrors: Writable<FreError[]> = writable<FreError[]>([]);
 // the trace of the last call to the interpreter
 export let interpreterTrace: Writable<string> = writable<string>("no trace");
+export let chartHTML: Writable<string> = writable<string>("<b>Initial Text as placeholder for Chart</b>");
 
 // the currently active tab and constants to indicate the tabs
 export const errorTab = 'Errors';

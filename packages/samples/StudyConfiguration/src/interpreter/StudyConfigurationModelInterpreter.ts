@@ -1,5 +1,5 @@
 // Generated my Freon once, will NEVER be overwritten.
-import { InterpreterContext, IMainInterpreter, RtObject, RtError, RtNumber, RtBoolean } from "@freon4dsl/core";
+import { InterpreterContext, IMainInterpreter, RtObject, RtError, RtNumber, RtBoolean, RtString } from "@freon4dsl/core";
 import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfigurationModelInterpreterBase";
 import * as language from "../language/gen/index";
 import { Timeline } from "../custom/timeline/Timeline";
@@ -8,6 +8,7 @@ import * as Sim from "../custom/simjs/sim.js"
 import { Simulator, } from "../custom/timeline/Simulator";
 import { StudyConfiguration, StudyConfigurationModel } from "../custom/../language/gen/index";
 import { StudyConfigurationModelEnvironment } from "../custom/../config/gen/StudyConfigurationModelEnvironment";
+import { TimelineScriptTemplate } from "custom/templates/TimelineScriptTemplate";
 
 let main: IMainInterpreter;
 
@@ -46,17 +47,27 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalStudyConfiguration(node: language.StudyConfiguration, ctx: InterpreterContext): RtObject {
-        var simulator;
-        var studyConfigurationUnit: StudyConfiguration;
-        var studyConfigurationModel: StudyConfigurationModel;
-        const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
+        try {
+            var simulator;
+            var studyConfigurationModel: StudyConfigurationModel;
+            const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
 
-        new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-        let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
-        studyConfigurationModel = studyConfigurationModelEnvironment.newModel(modelName) as StudyConfigurationModel;
-        studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
-        simulator = new Simulator(studyConfigurationUnit);
-        return new RtNumber(1);
+            new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
+            let studyConfigurationUnit = node as StudyConfiguration;
+            simulator = new Simulator(studyConfigurationUnit);
+    
+            // WHEN the study is simulated and a timeline picture is generated
+            simulator.run();
+            let timeline = simulator.timeline;
+
+            const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+            const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+            const chartHTML = TimelineScriptTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+
+            return new RtString(chartHTML);
+        } catch (e: any) {
+            return new RtString(e.message);
+        }
     }
 
     evalAndExpression(node: language.AndExpression, ctx: InterpreterContext): RtObject {

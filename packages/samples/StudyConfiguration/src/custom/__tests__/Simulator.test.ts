@@ -321,7 +321,7 @@ describe ("Study Simulation", () => {
         let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
         let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
         // Save full HTML of chart for viewing / debugging
-        TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+        utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
 
         const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
         const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
@@ -410,7 +410,7 @@ describe ("Study Simulation", () => {
         const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
         const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
         // Save full HTML of chart for viewing / debugging
-        TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+        utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
 
         const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
         const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
@@ -433,7 +433,7 @@ describe ("Study Simulation", () => {
       const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
       const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
       // Save full HTML of chart for viewing / debugging
-      TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+      utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
     });
 
     
@@ -451,7 +451,7 @@ describe ("Study Simulation", () => {
 
       const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTML(timeline);
       // Save full HTML of chart for viewing / debugging
-      TimelineTableTemplate.saveTimeline(timelineTableAsHTML);
+      utils.saveTimeline(timelineTableAsHTML);
     });
 
 

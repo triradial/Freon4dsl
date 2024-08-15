@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { FreModelUnit, FreModel, FreNode, FreLanguage, FreLogger, FreLionwebSerializer } from "@freon4dsl/core";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
 import {StudyConfiguration, WorkflowDescription, Event, Task, Description } from "../../language/gen/index";  
-import * as path from 'path';
+// import * as path from 'path';
 
 export class WebformTemplate {
 
@@ -279,23 +279,23 @@ variants: {  }`;
     }
 
     private static writeWebFormToFile(webFormYaml: string, formName: string) {
-      // log("template:" + webFormYaml);
-      const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', 'StudyConfiguration');
-      var fileName = `${studyFolderPath}/tmp/${formName}.yaml`;
-      if (fs.existsSync(fileName)) {
-        try {
-          fs.unlinkSync(fileName);
-          // log(`${fileName} has been removed`);
-        } catch (err) {
-          console.error(`Error removing file ${fileName}: ${err}`);
-        }
-      }
-      try {
-        fs.writeFileSync(fileName, webFormYaml);
-        // log(`${fileName} has been written`);
-      } catch (err) {
-        console.error('Error writing file:', err);
-      }
+      // // log("template:" + webFormYaml);
+      // const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', 'StudyConfiguration');
+      // var fileName = `${studyFolderPath}/tmp/${formName}.yaml`;
+      // if (fs.existsSync(fileName)) {
+      //   try {
+      //     fs.unlinkSync(fileName);
+      //     // log(`${fileName} has been removed`);
+      //   } catch (err) {
+      //     console.error(`Error removing file ${fileName}: ${err}`);
+      //   }
+      // }
+      // try {
+      //   fs.writeFileSync(fileName, webFormYaml);
+      //   // log(`${fileName} has been written`);
+      // } catch (err) {
+      //   console.error('Error writing file:', err);
+      // }
     }
 
 }

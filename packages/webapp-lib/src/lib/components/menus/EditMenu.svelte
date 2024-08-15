@@ -26,7 +26,7 @@
 </div>
 
 <script lang="ts">
-	import {isRtError, type FreNode, type FreEnvironment} from "@freon4dsl/core";
+	import {isRtError, type FreNode, type FreEnvironment, RtString} from "@freon4dsl/core";
 	import MenuComponentDev from '@smui/menu';
 	import Menu from '@smui/menu';
 	import { Anchor } from '@smui/menu-surface';
@@ -36,7 +36,7 @@
 		Text
 	} from '@smui/list';
 	import Button, { Label } from '@smui/button';
-	import { activeTab, interpreterTab, interpreterTrace } from "../stores/InfoPanelStore.js";
+	import { activeTab, interpreterTab, interpreterTrace, chartHTML } from "../stores/InfoPanelStore.js";
 	import { MenuItem } from "../ts-utils/MenuItem.js";
 	import {
 		findNamedDialogVisible,
@@ -71,21 +71,31 @@
 	}
 
 	const runInterpreter = () => {
-		console.log("Running Interpreter");
-		interpreterTrace.set("Running Interpreter");
+
 		const langEnv : FreEnvironment = WebappConfigurator.getInstance().editorEnvironment;
 		const intp = langEnv.interpreter;
-		intp.setTracing(true);
+		// intp.setTracing(true);
 		const node: FreNode = langEnv.editor.selectedElement;
+		chartHTML.set("<b>Running Interpreter...</b>");
 
-		const value = intp.evaluate(node);
-		if(isRtError(value)){
-			interpreterTrace.set(value.toString());
-		} else {
-			const trace = intp.getTrace().root.toStringRecursive();
-			console.log(trace);
-			interpreterTrace.set(trace);
-		}
+		const rtObject = intp.evaluate(node) as RtString;
+		// if(isRtError(value)){
+		// 	interpreterTrace.set("Interpreter Error: " + value.toString());
+		// } else {
+		// 	interpreterTrace.set("Ran Interpreter: " + value.toString());
+		// 	const trace = intp.getTrace().root.toStringRecursive();
+		// 	console.log(trace);
+		// 	interpreterTrace.set(trace);
+		// }
+		// let valueStr;
+		// if (typeof value === 'object' && value !== null) {
+		// 		valueStr = JSON.stringify(value, null, 2); // Convert object to JSON string
+		// } else if (value !== null && value !== undefined) {
+		// 		valueStr = value.toString(); // Convert other types to string
+		// } else {
+		// 		valueStr = String(value); // Handle null and undefined
+		// }		
+		chartHTML.set(rtObject.asString());
 		activeTab.set(interpreterTab);
 	}
 

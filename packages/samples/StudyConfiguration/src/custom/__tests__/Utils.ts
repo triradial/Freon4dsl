@@ -7,6 +7,7 @@ import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import * as path from 'path';
 import * as fs from 'fs';
 import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
+import { TimelineTableTemplate } from "custom/templates/TimelineTableTemplate";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference. 
@@ -241,12 +242,47 @@ export function loadModel(modelFolderName: string, modelName: string): StudyConf
   return modelUnit;
 }
 
+
+export function saveTimelineTableHTML(timelineTableAsScript: string, filename: string) {
+  try {
+    fs.writeFileSync(filename, timelineTableAsScript);
+    console.log('File written successfully');
+  } catch (err) {
+    console.error('Error writing file:', err);
+  }
+}
+
+export function saveTimelineTable(timelineTableAsScript: string) {
+  let filename = 'timeline-table.html';
+  let timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
+
+  this.saveTimelineHTML(timelineTableAsHTML, filename);
+}
+
+
+export function  saveTimelineHTML(timelineDataAsHTML: string, filename: string) {
+  try {
+    fs.writeFileSync(filename, timelineDataAsHTML);
+    console.log('File written successfully');
+  } catch (err) {
+    console.error('Error writing file:', err);
+  }
+}
+
+export function  saveTimeline(timelineDataAsScript: string) {
+  let filename = 'timeline.html';
+  let timelineDataAsHTML = TimelineScriptTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
+
+  this.saveTimelineHTML(timelineDataAsHTML, filename);
+}
+
+
 export function generateChartAndSave(timeline: Timeline): string {
   let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
   let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
   // Save full HTML of chart for viewing / debugging
   const html = timelineDataAsScript + timelineVisualizationHTML;
-  TimelineScriptTemplate.saveTimeline(html);
+  saveTimeline(html);
   return html;
 }
   

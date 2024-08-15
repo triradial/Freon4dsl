@@ -1,5 +1,7 @@
 <script>
-    import { interpreterTrace } from "../stores/InfoPanelStore.js";
+    import { chartHTML, interpreterTrace } from "../stores/InfoPanelStore.js";
+    import { onMount } from 'svelte';
+
     const tree = [
         {
             name: "This is a root node",
@@ -32,9 +34,45 @@
             ]
         }
     ];
-/* <Tree tree={tree}/>> */
+
+    let chart = 'initial chart value';
+    let container;
+
+    const unsubscribe = chartHTML.subscribe((value) => {
+        chart = value;
+        executeScripts();
+    });
+
+    function loadVisLibrary() {
+        const link = document.createElement('link');
+        link.href = 'https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js';
+        script.onload = () => {
+            executeScripts();
+        };
+        document.body.appendChild(script);
+    }
+
+    function executeScripts() {
+        if (container) {
+            const scripts = container.querySelectorAll('script');
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement('script');
+                newScript.textContent = oldScript.textContent;
+                oldScript.replaceWith(newScript);
+            });
+        }
+    }
+
+    onMount(() => {
+        loadVisLibrary();
+    });
 </script>
 
-<pre>
-    {$interpreterTrace}
-</pre>
+<div bind:this={container}>
+    {@html chart}
+</div>

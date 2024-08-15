@@ -1,5 +1,5 @@
 import typescript from '@rollup/plugin-typescript';
-import pkg from './package.json' with { type: 'json'};
+import pkg from './package.json' with { type: 'json' };
 
 const config = [
     {
@@ -14,7 +14,11 @@ const config = [
                 'agl': 'net.akehurst.language-agl-processor',
             }
         },
-        plugins: [typescript()],
+        plugins: [
+            typescript({
+                exclude: ['**/__tests__/**']
+            })
+        ],
         external: ['@freon4dsl/core', 'net.akehurst.language-agl-processor']
     }
 ];
