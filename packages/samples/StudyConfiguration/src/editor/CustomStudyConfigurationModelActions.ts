@@ -10,7 +10,7 @@ import {
     FreNodeReference,
     OptionalBox,
     FreCreateBinaryExpressionAction,
-    FreTriggerUse, isString, ActionBox,
+    FreTriggerUse, isString, ActionBox, ownerOfType,
     BoxUtil
 } from "@freon4dsl/core";
 
@@ -23,7 +23,6 @@ import {
     Staffing,
     Assignment,
     Event,
-    CheckList,
     Task,
     Step,
     Reference,
@@ -131,18 +130,17 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     FreCustomAction.create({ activeInBoxRoles: ["tasks"], trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const event: Event = box.element as Event
-            const checkList: CheckList = event.checkList;
             const task: Task = Task.create({});
-            checkList.tasks.push(task);
+            event.tasks.push(task);
             return null;
         },
     }),
     FreCustomAction.create({ activeInBoxRoles: ["task"], trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const task: Task = box.element as Task;
-            const checklist: CheckList = box.parent.parent.parent.element as CheckList;
-            const index = checklist.tasks.indexOf(task);
-            checklist.tasks.splice(index,1);
+            const event: Event = ownerOfType(task, "Event") as Event; //box.parent.parent.element as Event;
+            const index = event.freOwnerDescriptor().propertyIndex; //event.tasks.indexOf(task);
+            event.tasks.splice(index,1);
             return null;
         },
     }),
@@ -233,11 +231,11 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         // Create the shard task and wire together
         let refToTask = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
         let sharedTask = task.copy();
-        sharedTask.type = "S";
+        // sharedTask.type = "S";
         task.name = "Original Task";
         refToTask.referred = sharedTask;
-        task.referencedTask = refToTask;
-        task.type = "R";
+        //task.referencedTask = refToTask;
+        // task.type = "R";
         // Add to the shared tasks list
         studyConfig.tasks.push(sharedTask);
     }

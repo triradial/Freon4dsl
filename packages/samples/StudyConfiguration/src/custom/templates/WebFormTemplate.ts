@@ -12,7 +12,7 @@ export class WebformTemplate {
         period.events.forEach((event, eventNumber) => {
           // log("Event Name:" + event.name);
           // Get the list of tasks that go on this form
-          var tasks = event.checkList.tasks;
+          var tasks = event.tasks;
           var template = `# TASK WEBFORM - ${event.name} 
 langcode: en
 status: open
@@ -49,7 +49,7 @@ elements: |-
 ${tasks.map ((a, counter) => `<#list steps?values as step>
   step_${counter}:
     '#type': checkbox
-    '#title': 'Step ${counter} - ${a.name}'
+    '#title': 'Step ${counter} - ${(a as Task).name}'
     '#wrapper_attributes':
       class:
         - step-header
