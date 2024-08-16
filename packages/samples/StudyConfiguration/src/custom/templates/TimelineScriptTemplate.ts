@@ -143,7 +143,7 @@ var items = new vis.DataSet([
     #visualization {
       box-sizing: border-box;
       width: 100%;
-      height: 300px;
+      height: auto;
     }
     
     .vis-item.screen  { background-color: #B0E2FF; }

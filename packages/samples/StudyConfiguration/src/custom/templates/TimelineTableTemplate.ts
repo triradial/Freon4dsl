@@ -11,7 +11,7 @@ export class TimelineTableTemplate {
 <style>
 .table_component {
     overflow: auto;
-    width: 90%;
+    width: 95%;
 }
 
 .table_component table {
@@ -98,6 +98,10 @@ ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances
 </body>
 </html>
 `;
+  }
+
+  static addSomeSpace(): string {
+    return `<br><br><br>`;
   }
 
 }

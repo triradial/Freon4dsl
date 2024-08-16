@@ -66,7 +66,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             const chartHTML = TimelineScriptTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
             const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
 
-            return new RtString(chartHTML + tableHTML);
+            return new RtString(tableHTML + TimelineTableTemplate.addSomeSpace() + chartHTML);
         } catch (e: any) {
             return new RtString(e.message);
         }
