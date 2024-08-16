@@ -19,7 +19,9 @@
 		mdiWeatherSunny,
 		mdiHelp,
 		mdiChevronRight,
-		mdiChevronLeft
+		mdiChevronLeft,
+		mdiRunFast
+
 	} from "@mdi/js";
 
 	import EditMenu from "./components/menus/EditMenu.svelte";
@@ -55,6 +57,9 @@
 	import FreonContent from "./FreonContent.svelte";
 	import RenameUnitDialog from "./components/dialogs/file-dialogs/RenameUnitDialog.svelte";
 	import {WebappConfigurator} from "./WebappConfigurator.js";
+    import type { FreEnvironment, RtString } from "@freon4dsl/core";
+    import type { StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
+    import { activeTab, chartHTML, errorTab, interpreterTab } from "./components/stores/InfoPanelStore.js";
 
 	// muteLogs(); MV
 
@@ -78,6 +83,19 @@
 				?.insertAdjacentElement("afterend", themeLink);
 		// editorEnvironment.editor.theme = lightTheme ? "light" : "dark";
 	}
+
+	function runSimulation() {
+		activeTab.set(errorTab);
+		const langEnv : FreEnvironment = WebappConfigurator.getInstance().editorEnvironment;
+		const intp = langEnv.interpreter;
+		const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
+		const studyConfigurationUnit = studyConfigurationModel.configuration;
+		activeTab.set(interpreterTab);
+		chartHTML.set("<b>Running Simulation...</b>");
+		const rtObject = intp.evaluate(studyConfigurationUnit) as RtString;
+		chartHTML.set(rtObject.asString());
+	}
+
 
 	/**
 	 * This function shows a dialog before the tab or browser window is closed, asking the user for confirmation
@@ -157,6 +175,11 @@
 					<path fill="currentColor" d={mdiWeb} />
 				</Icon>
 			</IconButton> -->
+			<IconButton aria-label="Simulation" on:click={runSimulation}>
+				<Icon tag=svg viewBox="0 0 24 24">
+					<path fill="currentColor" d={mdiRunFast} />
+				</Icon>
+			</IconButton>
 			<IconButton aria-label="Help Page" on:click={() => {$helpDialogVisible = true; console.log($helpDialogVisible)}}>
 				<Icon tag=svg viewBox="0 0 24 24">
 					<path fill="currentColor" d={mdiHelp} />

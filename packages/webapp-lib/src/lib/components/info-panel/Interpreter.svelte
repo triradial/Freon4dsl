@@ -35,7 +35,7 @@
         }
     ];
 
-    let chart = 'initial chart value';
+    let chart = 'Click the button to run the simulation and see the timeline chart';
     let container;
 
     const unsubscribe = chartHTML.subscribe((value) => {

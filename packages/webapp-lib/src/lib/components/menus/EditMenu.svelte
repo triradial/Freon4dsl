@@ -36,7 +36,7 @@
 		Text
 	} from '@smui/list';
 	import Button, { Label } from '@smui/button';
-	import { activeTab, interpreterTab, interpreterTrace, chartHTML } from "../stores/InfoPanelStore.js";
+	import { activeTab, interpreterTab, interpreterTrace, chartHTML, errorTab } from "../stores/InfoPanelStore.js";
 	import { MenuItem } from "../ts-utils/MenuItem.js";
 	import {
 		findNamedDialogVisible,
@@ -44,8 +44,10 @@
 		findTextDialogVisible
 	} from "../stores/DialogStore.js";
 	import { EditorRequestsHandler } from "../../language/EditorRequestsHandler.js";
+	import {EditorState} from "../../language/EditorState.js";
 	import { setUserMessage } from "../stores/UserMessageStore.js";
 	import { WebappConfigurator } from "$lib/WebappConfigurator.js";
+    import type { StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
 
 	let menu: MenuComponentDev;
 
@@ -71,32 +73,15 @@
 	}
 
 	const runInterpreter = () => {
-
+		activeTab.set(errorTab);
 		const langEnv : FreEnvironment = WebappConfigurator.getInstance().editorEnvironment;
 		const intp = langEnv.interpreter;
-		// intp.setTracing(true);
-		const node: FreNode = langEnv.editor.selectedElement;
-		chartHTML.set("<b>Running Interpreter...</b>");
-
-		const rtObject = intp.evaluate(node) as RtString;
-		// if(isRtError(value)){
-		// 	interpreterTrace.set("Interpreter Error: " + value.toString());
-		// } else {
-		// 	interpreterTrace.set("Ran Interpreter: " + value.toString());
-		// 	const trace = intp.getTrace().root.toStringRecursive();
-		// 	console.log(trace);
-		// 	interpreterTrace.set(trace);
-		// }
-		// let valueStr;
-		// if (typeof value === 'object' && value !== null) {
-		// 		valueStr = JSON.stringify(value, null, 2); // Convert object to JSON string
-		// } else if (value !== null && value !== undefined) {
-		// 		valueStr = value.toString(); // Convert other types to string
-		// } else {
-		// 		valueStr = String(value); // Handle null and undefined
-		// }		
-		chartHTML.set(rtObject.asString());
+		const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
+		const studyConfigurationUnit = studyConfigurationModel.configuration;
 		activeTab.set(interpreterTab);
+		chartHTML.set("<b>Running Simulation...</b>");
+		const rtObject = intp.evaluate(studyConfigurationUnit) as RtString;
+		chartHTML.set(rtObject.asString());
 	}
 
 	const findStructureElement = () => {
