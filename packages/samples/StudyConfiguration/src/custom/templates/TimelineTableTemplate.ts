@@ -27,8 +27,6 @@ export class TimelineTableTemplate {
 .table_component caption {
     caption-side: top;
     text-align: left;
-    font-weight: bold;
-    font-size: larger;
 }
 
 .table_component th {
