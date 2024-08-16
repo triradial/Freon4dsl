@@ -92,8 +92,8 @@ concept EventTimeOfDay {
 }
 
 concept EventSchedule {
-    eventStart: EventStart;
+    eventStart?: EventStart;
     eventWindow: EventWindow;
-    eventRepeat: RepeatExpression;
+    eventRepeat?: RepeatExpression;
     eventTimeOfDay: EventTimeOfDay;
 }

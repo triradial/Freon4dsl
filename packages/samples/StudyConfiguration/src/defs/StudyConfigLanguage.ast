@@ -6,7 +6,7 @@ model StudyConfigurationModel {
 }
 
 modelunit StudyConfiguration {
-    name: identifier;
+    name: identifier = "Study Configuration";
     showActivityDetails: boolean;
     showSystems: boolean;
     showScheduling: boolean;
@@ -23,7 +23,7 @@ modelunit StudyConfiguration {
 concept Period {
     name: identifier;
     description: Description;
-    date: identifier;
+    // date?: identifier;
     events: Event[];
 }
 
@@ -47,7 +47,7 @@ limited TypeOfEvent {
 
 concept Event {
     name: identifier;
-    alternativeName: string;
+    alternativeName: string = " ";
     typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;
@@ -92,8 +92,8 @@ concept WorkflowBranch implements WorkflowDecision {
 }
 
 concept Description {
-    text: string;
-    rawText: string;
+    text: string = "";
+    rawText: string = "";
 }
 
 concept SystemAccess {
