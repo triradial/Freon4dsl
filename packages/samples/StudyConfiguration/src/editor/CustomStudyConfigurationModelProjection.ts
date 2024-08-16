@@ -68,7 +68,6 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             BoxFactory.verticalLayout(element, "StudyConfiguration-vlist-line-3", "", 
               [   
                 BoxUtil.emptyLineBox(element, "option-empty-line", "h-4"),
-                BoxUtil.switchElement(element, "showPeriods", "Configure by Periods/Phases"), 
                 BoxUtil.switchElement(element, "showActivityDetails", "Show Shared Tasks"),
                 BoxUtil.switchElement(element, "showSystems", "Show Systems"),
                 BoxUtil.switchElement(element, "showScheduling", "Show Scheduling") 
@@ -181,28 +180,28 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
           [
             BoxFactory.horizontalLayout(element, "schedule-event-start-group", "",
               [
-                BoxUtil.labelBox(element, "First Scheduled:", "schedule-event-start-label"),
+                BoxUtil.labelBox(element, "First scheduled:", "schedule-event-start-label"),
                 BoxUtil.getBoxOrAction(element, "eventStart", "EventStart", this.handler),
               ],
             {selectable: true, cssClass:"align-top"}),
 
             BoxFactory.horizontalLayout(element, "EventSchedule-hlist-line-1", "",
               [
-                BoxUtil.labelBox(element, "Then Repeats:", "schedule-then"),
+                BoxUtil.labelBox(element, "and then repeats:", "schedule-then"),
                 BoxUtil.getBoxOrAction(element, "eventRepeat", "RepeatExpression", this.handler),
               ],
             {selectable: true, cssClass:"align-top"}),
 
             BoxFactory.horizontalLayout(element, "EventSchedule-hlist-line-2", "",
               [
-                BoxUtil.labelBox(element, "Window:", "schedule-window"),
+                BoxUtil.labelBox(element, "with a window of:", "schedule-window"),
                 BoxUtil.getBoxOrAction(element, "eventWindow", "EventWindow", this.handler),
               ],
             {selectable: true, cssClass:"align-top"}),
 
             BoxFactory.horizontalLayout(element, "EventSchedule-hlist-line-3", "",
               [
-                BoxUtil.labelBox(element, "Time of Day:", "top-1-line-3-item-0"),
+                BoxUtil.labelBox(element, "limited to this time of day:", "top-1-line-3-item-0"),
                 BoxUtil.getBoxOrAction(element, "eventTimeOfDay", "EventTimeOfDay", this.handler),
               ],
             {selectable: true, cssClass:"align-top"}),

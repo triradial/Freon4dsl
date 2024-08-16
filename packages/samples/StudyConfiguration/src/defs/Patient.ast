@@ -1,9 +1,10 @@
 language StudyConfigurationModel
 
 modelunit Availability {
-    patientNotAvailableDates: PatientNotAvailable;
-    baselineStaff: string;
-    staffLevels: StaffLevel[];
+  name: identifier = "Availability";
+  patientNotAvailableDates: PatientNotAvailable;
+  baselineStaff: string;
+  staffLevels: StaffLevel[];
 }
 
 concept PatientNotAvailable {

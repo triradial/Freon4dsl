@@ -32,7 +32,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showSystems"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -48,7 +48,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showPeriods"
                },
-               "value": "true"
+               "value": "false"
             },
             {
                "property": {
@@ -69,16 +69,6 @@
                "children": [
                   "ID-141",
                   "ID-238"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-StudyConfiguration-defaultPeriod"
-               },
-               "children": [
-                  "ID-125"
                ]
             },
             {
@@ -185,7 +175,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-rawText"
                },
-               "value": ""
+               "value": " "
             }
          ],
          "containments": [],
@@ -207,7 +197,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-name"
                },
-               "value": "Screen"
+               "value": ""
             },
             {
                "property": {
@@ -215,7 +205,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-alternativeName"
                },
-               "value": ""
+               "value": " "
             },
             {
                "property": {
@@ -296,7 +286,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-text"
                },
-               "value": ""
+               "value": " "
             },
             {
                "property": {
@@ -304,7 +294,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-rawText"
                },
-               "value": ""
+               "value": " "
             }
          ],
          "containments": [],
@@ -563,7 +553,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Period-name"
                },
-               "value": "Treatment"
+               "value": ""
             }
          ],
          "containments": [
@@ -607,7 +597,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-text"
                },
-               "value": ""
+               "value": " "
             },
             {
                "property": {
@@ -615,7 +605,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-rawText"
                },
-               "value": ""
+               "value": " "
             }
          ],
          "containments": [],
@@ -645,7 +635,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-alternativeName"
                },
-               "value": ""
+               "value": " "
             },
             {
                "property": {
@@ -726,7 +716,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-text"
                },
-               "value": ""
+               "value": " "
             },
             {
                "property": {
@@ -734,7 +724,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-rawText"
                },
-               "value": ""
+               "value": " "
             }
          ],
          "containments": [],
@@ -954,7 +944,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-alternativeName"
                },
-               "value": ""
+               "value": " "
             },
             {
                "property": {
@@ -1035,7 +1025,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-text"
                },
-               "value": ""
+               "value": " "
             },
             {
                "property": {
@@ -1043,7 +1033,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-rawText"
                },
-               "value": ""
+               "value": " "
             }
          ],
          "containments": [],
@@ -1342,77 +1332,6 @@
          "references": [],
          "annotations": [],
          "parent": "ID-226"
-      },
-      {
-         "id": "ID-125",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Period"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-name"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-description"
-               },
-               "children": [
-                  "ID-139"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-events"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-124"
-      },
-      {
-         "id": "ID-139",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-text"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-rawText"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-125"
       },
       {
          "id": "ID-140",

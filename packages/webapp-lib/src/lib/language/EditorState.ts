@@ -71,7 +71,7 @@ export class EditorState {
             const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration");
             studyConfigUnit.periods.push(Period.create(Period.create({name: "Screening"})));
             studyConfigUnit.periods[0].events.push(Event.create({name: "Screen"}));
-            studyConfigUnit.periods[0].events[0].tasks = Task.create({name: "Task 1"});
+            studyConfigUnit.periods[0].events[0].tasks.push(Task.create({name: "Task 1"}));
             studyConfigUnit.showPeriods = true;
             await this.saveCurrentUnit();
     

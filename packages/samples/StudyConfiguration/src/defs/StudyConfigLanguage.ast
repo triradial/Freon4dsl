@@ -13,7 +13,6 @@ modelunit StudyConfiguration {
     showPeriods: boolean;
     studyStartDayNumber: number = 0;
     periods: Period[];
-    defaultPeriod: Period;
     events: Event[];
     tasks: Task[];
     systemAccesses: SystemAccess[];
@@ -21,9 +20,8 @@ modelunit StudyConfiguration {
 }
 
 concept Period {
-    name: identifier;
+    name: identifier = "Period";
     description: Description;
-    // date?: identifier;
     events: Event[];
 }
 
@@ -71,7 +69,10 @@ concept Task base AbstractTask {
     steps: Step[];
 }
 
+
+// TODO: Change title to name? 
 concept Step {
+    name: identifier = "Step";
     title: string;
     detailsDescription: Description;
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
@@ -91,9 +92,10 @@ concept WorkflowBranch implements WorkflowDecision {
     branch: FirstScheduledExpression;
 }
 
+// TODO: Customize the validator to allow these strings to be empty.
 concept Description {
-    text: string = "";
-    rawText: string = "";
+    text: string = " ";
+    rawText: string = " ";
 }
 
 concept SystemAccess {
