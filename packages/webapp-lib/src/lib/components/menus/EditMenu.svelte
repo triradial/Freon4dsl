@@ -115,7 +115,7 @@
 		{ title: 'Find Named Element', action: findNamedElement, id: 7 },
 		{ title: 'Find Structure Element', action: findStructureElement, id: 8 },
 		{ title: 'Find Text', action: findText, id: 9 },
-		{ title: 'Run Interpreter', action: runInterpreter, id: 10 },
+		{ title: 'Run Simulation', action: runInterpreter, id: 10 },
 	];
 
 	function isDisabled(id): boolean {

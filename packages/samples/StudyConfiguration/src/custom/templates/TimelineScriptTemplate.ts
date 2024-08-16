@@ -79,7 +79,7 @@ var items = new vis.DataSet([
     return `<!DOCTYPE HTML>
 <html>
 <head>
-  <title>Timeline | groups | Editable Groups</title>
+  <title>Timeline Chart</title>
 
   <style>
     body, html {

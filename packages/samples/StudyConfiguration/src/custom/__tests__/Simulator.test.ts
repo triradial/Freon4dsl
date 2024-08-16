@@ -377,7 +377,6 @@ describe ("Study Simulation", () => {
 
     it("generate a chart for the example study", () => {
   
-      // HTML is split into two parts: the data and the visualization, so tests don't need to check both. The visualization is so simple that it doesn't need to be tested in multiple other tests.
       let expectedTimelineDataAsScript = 
         `var groups = new vis.DataSet([
            { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
@@ -437,7 +436,7 @@ describe ("Study Simulation", () => {
     });
 
     
-    it("generates a chart for a three visit timeline for a visit that repeats twice", () => {
+    it("generates a table for a three visit timeline for a visit that repeats twice", () => {
       // GIVEN
       let listOfEventsToAdd: EventsToAdd[] = [
         { eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening"},
@@ -449,10 +448,56 @@ describe ("Study Simulation", () => {
       simulator.run();
       let timeline = simulator.timeline;
 
+      const expectedTimelineTableAsHTML = `<div class="table_component" role="region" tabindex="0">
+        <table>
+          <caption>Study Timeline Table</caption>
+          <thead>
+            <tr>
+              <th>Visit Name</th>
+              <th>Alternative Name</th>
+              <th>Phase</th>
+              <th>Window (-)</th>
+              <th>Date</th>
+              <th>Window (+)</th>
+            </tr>
+            </thead>
+            <tbody>
+
+        <tr>
+                <td>Visit 1</td>
+                <td> </td>
+                <td>Screening</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                </tr><tr>
+                <td>Visit 1</td>
+                <td> </td>
+                <td>Screening</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                </tr><tr>
+                <td>Visit 1</td>
+                <td> </td>
+                <td>Screening</td>
+                <td>1</td>
+                <td>1</td>
+                <td>1</td>
+                </tr>
+              </tr>
+            </tbody>
+          </table>
+        `;
       const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTML(timeline);
-      // Save full HTML of chart for viewing / debugging
-      utils.saveTimeline(timelineTableAsHTML);
-    });
+      // Save full HTML of table for viewing / debugging
+      utils.saveTimelineTable(timelineTableAsHTML);
+
+      const normalizedTimelineDataAsScript = timelineTableAsHTML.replace(/\s+/g, '');
+      const normalizedExpectedTimelineDataAsScript = expectedTimelineTableAsHTML.replace(/\s+/g, '');
+      // Then the generated timeline table has the expected data in it
+      expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+  });
 
 
   });

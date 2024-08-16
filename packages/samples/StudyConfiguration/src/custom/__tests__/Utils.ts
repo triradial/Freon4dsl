@@ -7,7 +7,7 @@ import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import * as path from 'path';
 import * as fs from 'fs';
 import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
-import { TimelineTableTemplate } from "custom/templates/TimelineTableTemplate";
+import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference. 
@@ -256,7 +256,7 @@ export function saveTimelineTable(timelineTableAsScript: string) {
   let filename = 'timeline-table.html';
   let timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
 
-  this.saveTimelineHTML(timelineTableAsHTML, filename);
+  this.saveTimelineTableHTML(timelineTableAsHTML, filename);
 }
 
 

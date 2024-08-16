@@ -11,10 +11,10 @@ export let searchResults: Writable<FreError[]> = writable<FreError[]>([]);
 export let modelErrors: Writable<FreError[]> = writable<FreError[]>([]);
 // the trace of the last call to the interpreter
 export let interpreterTrace: Writable<string> = writable<string>("no trace");
-export let chartHTML: Writable<string> = writable<string>("<b>Initial Text as placeholder for Chart</b>");
+export let chartHTML: Writable<string> = writable<string>("<b>Run the Simulation to see the Timeline Chart and Table</b>");
 
 // the currently active tab and constants to indicate the tabs
 export const errorTab = 'Errors';
 export const searchTab = 'Search';
-export const interpreterTab = 'Interpreter';
+export const interpreterTab = 'Simulation';
 export let activeTab: Writable<string> = writable<string>(errorTab);

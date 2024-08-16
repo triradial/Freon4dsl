@@ -8,7 +8,8 @@ import * as Sim from "../custom/simjs/sim.js"
 import { Simulator, } from "../custom/timeline/Simulator";
 import { StudyConfiguration, StudyConfigurationModel } from "../custom/../language/gen/index";
 import { StudyConfigurationModelEnvironment } from "../custom/../config/gen/StudyConfigurationModelEnvironment";
-import { TimelineScriptTemplate } from "custom/templates/TimelineScriptTemplate";
+import { TimelineScriptTemplate } from "../custom/templates/TimelineScriptTemplate";
+import { TimelineTableTemplate } from "custom/templates/TimelineTableTemplate";
 
 let main: IMainInterpreter;
 
@@ -63,8 +64,9 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
             const chartHTML = TimelineScriptTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+            const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
 
-            return new RtString(chartHTML);
+            return new RtString(chartHTML + tableHTML);
         } catch (e: any) {
             return new RtString(e.message);
         }
