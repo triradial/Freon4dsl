@@ -9,7 +9,7 @@ import { Simulator, } from "../custom/timeline/Simulator";
 import { StudyConfiguration, StudyConfigurationModel } from "../custom/../language/gen/index";
 import { StudyConfigurationModelEnvironment } from "../custom/../config/gen/StudyConfigurationModelEnvironment";
 import { TimelineScriptTemplate } from "../custom/templates/TimelineScriptTemplate";
-import { TimelineTableTemplate } from "custom/templates/TimelineTableTemplate";
+import { TimelineTableTemplate } from "../custom/templates/TimelineTableTemplate";
 
 let main: IMainInterpreter;
 

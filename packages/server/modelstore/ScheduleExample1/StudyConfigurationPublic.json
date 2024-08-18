@@ -49,6 +49,14 @@
                   "key": "-default-key-StudyConfiguration-showPeriods"
                },
                "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-studyStartDayNumber"
+               },
+               "value": "0"
             }
          ],
          "containments": [
@@ -61,16 +69,6 @@
                "children": [
                   "ID-56",
                   "ID-134"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-StudyConfiguration-defaultPeriod"
-               },
-               "children": [
-                  "ID-53"
                ]
             },
             {
@@ -129,14 +127,6 @@
                   "key": "-default-key-Period-name"
                },
                "value": "Screening"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-date"
-               },
-               "value": ""
             }
          ],
          "containments": [
@@ -243,11 +233,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-66"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -287,148 +275,6 @@
          ],
          "annotations": [],
          "parent": "ID-56"
-      },
-      {
-         "id": "ID-66",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": [
-                  "ID-67"
-               ]
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-58"
-      },
-      {
-         "id": "ID-67",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Task"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-name"
-               },
-               "value": "Original Task"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-isShared"
-               },
-               "value": "true"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-numberedSteps"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-showDetails"
-               },
-               "value": "false"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-description"
-               },
-               "children": [
-                  "ID-68"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-steps"
-               },
-               "children": []
-            }
-         ],
-         "references": [
-            {
-               "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-referencedTask"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "Task 1",
-                     "reference": "ID-40"
-                  }
-               ]
-            }
-         ],
-         "annotations": [],
-         "parent": "ID-66"
-      },
-      {
-         "id": "ID-68",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-text"
-               },
-               "value": "<p>ssss</p>"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-rawText"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-67"
       },
       {
          "id": "ID-60",
@@ -545,16 +391,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -752,11 +589,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-75"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -796,134 +631,6 @@
          ],
          "annotations": [],
          "parent": "ID-56"
-      },
-      {
-         "id": "ID-75",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": [
-                  "ID-76"
-               ]
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-74"
-      },
-      {
-         "id": "ID-76",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Task"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-name"
-               },
-               "value": "Task 1"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-isShared"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-numberedSteps"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-showDetails"
-               },
-               "value": "false"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-description"
-               },
-               "children": [
-                  "ID-77"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-steps"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-75"
-      },
-      {
-         "id": "ID-77",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-text"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-rawText"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-76"
       },
       {
          "id": "ID-78",
@@ -1040,16 +747,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -1247,11 +945,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-101"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -1291,134 +987,6 @@
          ],
          "annotations": [],
          "parent": "ID-56"
-      },
-      {
-         "id": "ID-101",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": [
-                  "ID-102"
-               ]
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-100"
-      },
-      {
-         "id": "ID-102",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Task"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-name"
-               },
-               "value": "Task 1"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-isShared"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-numberedSteps"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-showDetails"
-               },
-               "value": "false"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-description"
-               },
-               "children": [
-                  "ID-103"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-steps"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-101"
-      },
-      {
-         "id": "ID-103",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-text"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-rawText"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-102"
       },
       {
          "id": "ID-104",
@@ -1535,16 +1103,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -1711,14 +1270,6 @@
                   "key": "-default-key-Period-name"
                },
                "value": "Baseline"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-date"
-               },
-               "value": ""
             }
          ],
          "containments": [
@@ -1832,11 +1383,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-127"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -1876,37 +1425,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-127",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-126"
       },
       {
          "id": "ID-128",
@@ -1989,16 +1507,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -2174,11 +1683,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-137"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -2218,37 +1725,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-137",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-136"
       },
       {
          "id": "ID-138",
@@ -2618,11 +2094,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-150"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -2662,37 +2136,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-150",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-149"
       },
       {
          "id": "ID-151",
@@ -2809,16 +2252,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -3030,11 +2464,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-31"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -3074,37 +2506,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-31",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-30"
       },
       {
          "id": "ID-32",
@@ -3231,16 +2632,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -3545,11 +2937,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-48"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -3589,37 +2979,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-48",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-47"
       },
       {
          "id": "ID-49",
@@ -3736,16 +3095,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -3957,11 +3307,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-97"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -4001,37 +3349,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-97",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-96"
       },
       {
          "id": "ID-98",
@@ -4148,16 +3465,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -4369,11 +3677,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-162"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -4413,37 +3719,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-162",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-161"
       },
       {
          "id": "ID-163",
@@ -4560,16 +3835,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -4781,11 +4047,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-185"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -4825,37 +4089,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-185",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-184"
       },
       {
          "id": "ID-186",
@@ -4972,16 +4205,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -5193,11 +4417,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-207"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -5237,37 +4459,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-207",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-206"
       },
       {
          "id": "ID-208",
@@ -5384,16 +4575,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -5605,11 +4787,9 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Event-checkList"
+                  "key": "-default-key-Event-tasks"
                },
-               "children": [
-                  "ID-196"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -5649,37 +4829,6 @@
          ],
          "annotations": [],
          "parent": "ID-134"
-      },
-      {
-         "id": "ID-196",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-CheckList"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-workflowNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-CheckList-activities"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-195"
       },
       {
          "id": "ID-197",
@@ -5796,16 +4945,7 @@
             "version": "2023.1",
             "key": "-default-key-StudyStart"
          },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Day-startDay"
-               },
-               "value": "0"
-            }
-         ],
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -5972,85 +5112,6 @@
          "parent": "ID-198"
       },
       {
-         "id": "ID-53",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Period"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-name"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-date"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-description"
-               },
-               "children": [
-                  "ID-54"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-events"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-52"
-      },
-      {
-         "id": "ID-54",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-text"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-rawText"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-53"
-      },
-      {
          "id": "ID-40",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
@@ -6065,14 +5126,6 @@
                   "key": "-default-key-Task-name"
                },
                "value": "Task 1"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Task-isShared"
-               },
-               "value": "true"
             },
             {
                "property": {

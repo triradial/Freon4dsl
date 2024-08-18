@@ -74,8 +74,10 @@ EventTimeOfDay {
 
 EventWindow {
     [
+        at most ${maxDaysBefore} day(s) before
         ${daysBefore} day(s) before
         ${daysAfter}  day(s) after
+        at most ${maxDaysAfter} day(s) after
     ]
 }
 

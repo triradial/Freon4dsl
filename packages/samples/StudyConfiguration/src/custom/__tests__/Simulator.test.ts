@@ -11,13 +11,14 @@ import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfig
 
 describe ("Study Simulation", () => {
   var simulator;
+  const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
   var studyConfigurationUnit: StudyConfiguration;
   var studyConfigurationModel: StudyConfigurationModel;
   const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
   
   beforeEach(() => {
     new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-    let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
+    // const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
     studyConfigurationModel = studyConfigurationModelEnvironment.newModel(modelName) as StudyConfigurationModel;
     studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
     simulator = new Simulator(studyConfigurationUnit);
@@ -413,6 +414,29 @@ describe ("Study Simulation", () => {
 
         const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
         const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
+        // Then the generated timeline picture has two events on the expected event days
+        // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+    }); 
+
+    it("generate a chart from the text version of the study", () => {
+  
+        // GIVEN a study configuration loaded from a string
+    const configAsText = ``
+        const studyConfigurationUnit = studyConfigurationModelEnvironment.reader.readFromString(configAsText, 'StudyConfiguration', studyConfigurationModel) as StudyConfiguration;
+        studyConfigurationModel.addUnit(studyConfigurationUnit)
+  
+        // WHEN the study is simulated and a timeline picture is generated
+        let simulator = new Simulator(studyConfigurationUnit);
+        simulator.run();
+        let timeline = simulator.timeline;
+
+        const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+        const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+        // Save full HTML of chart for viewing / debugging
+        utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+
+        // const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
+        // const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
         // Then the generated timeline picture has two events on the expected event days
         // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
     }); 

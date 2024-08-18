@@ -80,8 +80,10 @@ concept Days {
 }
 
 concept EventWindow {
+    maxDaysBefore: Days;
     daysBefore: Days;
     daysAfter: Days;
+    maxDaysAfter: Days;
 }
 
 concept EventTimeOfDay {

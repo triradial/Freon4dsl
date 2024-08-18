@@ -167,7 +167,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-text"
                },
-               "value": ""
+               "value": "<p>the description</p>"
             },
             {
                "property": {
@@ -197,7 +197,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-name"
                },
-               "value": ""
+               "value": "Screening"
             },
             {
                "property": {
@@ -553,7 +553,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Period-name"
                },
-               "value": ""
+               "value": "Baseline"
             }
          ],
          "containments": [
