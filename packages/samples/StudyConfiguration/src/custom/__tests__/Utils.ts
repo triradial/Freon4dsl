@@ -1,5 +1,5 @@
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
-import {StudyConfiguration, Period, Event, EventSchedule, Day, PlusExpression, When, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly } from "../../language/gen/index";
+import {StudyConfiguration, Period, Event, EventSchedule, Day, When, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly } from "../../language/gen/index";
 import { FreLionwebSerializer, FreLogger, FreNodeReference } from "@freon4dsl/core";
 import { EventInstance, TimelineInstanceState, Timeline, PeriodInstance } from "../timeline/Timeline";
 import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent";
@@ -13,14 +13,15 @@ import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference. 
 // The EventSchedule's EventWindow, RepeatExpression, and EventTimeOfDay are empty.
 export function createWhenEventSchedule(eventName: string, eventState: EventState, operator: SimpleOperators, timeAmount: TimeAmount) {
-  let referenceToOperator = FreNodeReference.create(operator, "SimpleOperators");
+  // let referenceToOperator = FreNodeReference.create(operator, "SimpleOperators");
+  let referenceToOperator = FreNodeReference.create<SimpleOperators>("minus", "SimpleOperators")
   // console.log("createWhenEventSchedule eventName: " + eventName + " eventState: " + eventState + " operator: " + operator + " timeAmount: " + timeAmount.value + " " + timeAmount.unit.name);
   let referenceToEventState = FreNodeReference.create(eventState, "EventState");
   const freNodeReference = FreNodeReference.create<Event>(eventName, "Event");
   let referencedEvent = freNodeReference;
-  const startWhenEventReference = EventReference.create({'operator': referenceToOperator, 'timeAmount': timeAmount, 'eventState': referenceToEventState, 'event': referencedEvent}); 
+  const startWhenEventReference = EventReference.create({'eventState': referenceToEventState, 'event': referencedEvent});
 
-  const whenExpression = When.create({ 'startWhen': startWhenEventReference});
+  const whenExpression = When.create({ 'startWhen': startWhenEventReference, operator: referenceToOperator, timeAmount: timeAmount});
   const eventSchedule = EventSchedule.create({ 'eventStart': whenExpression});
   return eventSchedule;
 }
@@ -77,14 +78,17 @@ export function createEventAndAddToPeriod(period: Period, eventName: string, eve
  * - Second event named 'event2Name' is First Scheduled at 'StudyStart + event2Day' .
  * Return the updated Study Configuration.
  */
-export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration: StudyConfiguration, periodName: string, event1Name: string, event1Day: number, event2Name: string, event2DaysAfterStudyStart ): StudyConfiguration {
+export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration: StudyConfiguration, periodName: string, event1Name: string, event1Day: number, event2Name: string, event2DaysAfterStudyStart: number ): StudyConfiguration {
   let period = new Period(periodName);
   period.name = periodName;
 
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  const studyStart = PlusExpression.create({left:  StudyStart.create({}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
+  let referenceToOperator = FreNodeReference.create<SimpleOperators>("plus", "SimpleOperators")
+  let days = FreNodeReference.create<TimeUnit>("days", "TimeUnit")
+
+  const studyStart = StudyStart.create({operator: referenceToOperator, timeAmount: TimeAmount.create({value: event2DaysAfterStudyStart, unit: days})})
   let eventSchedule = EventSchedule.create({ 'eventStart': studyStart});
   createEventAndAddToPeriod(period, event2Name, eventSchedule);
 

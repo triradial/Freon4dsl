@@ -158,8 +158,8 @@ export class ScheduledEvent {
     } else if (eventStart.freIsExpression()) {
       //TODO: Make this more general search of StudyStart anywhere in the expression
       console.log("isScheduledOnASpecificDay: eventStart checking is currently limited to binary expressions starting with StudyStart!");
-      const eventStartExpression = eventStart as BinaryExpression;
-      if (eventStartExpression.left instanceof StudyStart) {
+      // const eventStartExpression = eventStart as BinaryExpression;
+      if (eventStart instanceof StudyStart) {
         return true;
       }
     }

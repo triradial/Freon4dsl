@@ -1,5 +1,6 @@
 // Generated my Freon once, will NEVER be overwritten.
 import { InterpreterContext, IMainInterpreter, RtObject, RtError, RtNumber, RtBoolean, RtString } from "@freon4dsl/core";
+import { EventStart, StudyStart } from "../language/gen/index";
 import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfigurationModelInterpreterBase";
 import * as language from "../language/gen/index";
 import { Timeline } from "../custom/timeline/Timeline";
@@ -98,8 +99,8 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         // console.log("entered evalEventReference");
         const timeline = ctx.find("timeline") as unknown as Timeline;
         const referencedEvent = node.$event;
-        const operator = node.operator;
-        const timeAmount = node.timeAmount;
+        const operator = (node.freOwner() as EventStart).operator;
+        const timeAmount = (node.freOwner() as EventStart).timeAmount;
         const eventState = node.eventState;
         // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
         // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
@@ -110,7 +111,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             console.log("evalEventReference: lastInstanceOfReferencedEvent is null for:" + referencedEvent.name);
             return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
         } else {
-            let displacementFromEvent = main.evaluate(node.timeAmount, ctx) as RtNumber;
+            let displacementFromEvent = main.evaluate((node.freOwner() as EventStart).timeAmount, ctx) as RtNumber;
             const result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
             return new RtNumber(result);
         }
@@ -170,7 +171,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalStartDay(node: language.StartDay, ctx: InterpreterContext): RtObject {
-        return this.evalStudyStart(node, ctx); // TODO: decide if keeping both this and StudyStart is a necessary convenience; they should be merged?
+        return this.evalStudyStart((node as StudyStart), ctx); // TODO: decide if keeping both this and StudyStart is a necessary convenience; they should be merged?
     }
 
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {

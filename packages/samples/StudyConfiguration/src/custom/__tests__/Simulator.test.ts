@@ -477,7 +477,7 @@ describe ("Study Simulation", () => {
             Type: site
             Description: " "
             Schedule:
-                First scheduled: Study Start - 28
+                First scheduled: Study Start - 28 days 
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   16 day(s) after
@@ -490,7 +490,7 @@ describe ("Study Simulation", () => {
             Type: site
             Description: " "
             Schedule:
-                First scheduled: Study Start - 16
+                First scheduled: Study Start - 16 days
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   14 day(s) after
@@ -503,7 +503,7 @@ describe ("Study Simulation", () => {
             Type: site
             Description: " "
             Schedule:
-                First scheduled: Study Start - 15
+                First scheduled: Study Start - 15 days
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   14 day(s) after
@@ -545,7 +545,7 @@ describe ("Study Simulation", () => {
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: Study Start + "8" weeks
+                First scheduled: Study Start + 8 weeks
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   0 day(s) after
@@ -554,11 +554,11 @@ describe ("Study Simulation", () => {
                 limited to this time of day: 0 : 0 - 0 : 0
             Checklist:
 
-            Event: V7, V10, V12
+            Event: V7
             Type: site
             Description: " "
             Schedule:
-                First scheduled: Study Start + "12" weeks
+                First scheduled: Study Start + 12 weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -573,7 +573,7 @@ describe ("Study Simulation", () => {
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: Study Start + "16" weeks
+                First scheduled: Study Start + 16 weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -586,7 +586,7 @@ describe ("Study Simulation", () => {
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: Study Start + "20" weeks
+                First scheduled: Study Start + 20 weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -599,7 +599,7 @@ describe ("Study Simulation", () => {
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: Study Start + "28" weeks
+                First scheduled: Study Start + 28 weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -612,7 +612,7 @@ describe ("Study Simulation", () => {
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: Study Start + "44" weeks
+                First scheduled: Study Start + 44 weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -625,7 +625,7 @@ describe ("Study Simulation", () => {
             Type: site
             Description: " "
             Schedule:
-                First scheduled: Study Start + "52" weeks
+                First scheduled: Study Start + 52 weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -638,7 +638,7 @@ describe ("Study Simulation", () => {
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: Study Start + "54" weeks
+                First scheduled: Study Start + 54 weeks
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   0 day(s) after
@@ -648,7 +648,7 @@ describe ("Study Simulation", () => {
             Checklist:
 
     tasks
-        Task 1
+        Task1
         "<p>ssss</p>"
     systemAccesses
 

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>Timeline | groups | Editable Groups</title>
+  <title>Timeline Chart</title>
 
   <style>
     body, html {
@@ -42,18 +42,90 @@
 <script>
   var groups = new vis.DataSet([
     { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-    { "content": "Visit 1", "id": "Visit 1" },
-    { "content": "Any Day", "id": "AnyDay", className: 'any-day' },
+    { "content": "V1", "id": "V1" },
+    { "content": "V2", "id": "V2" },
+    { "content": "V3", "id": "V3" },
+    { "content": "V4", "id": "V4" },
+    { "content": "V6", "id": "V6" },
+    { "content": "V7", "id": "V7" },
+    { "content": "V8", "id": "V8" },
+    { "content": "V9", "id": "V9" },
+    { "content": "V11", "id": "V11" },
+    { "content": "V13", "id": "V13" },
+    { "content": "V14", "id": "V14" },
+    { "content": "FU", "id": "FU" },
+    { "content": "V5", "id": "V5" },
   ]);
 
-  var items = new vis.DataSet([
-    { start: new Date(2024, 0, 1), end: new Date(2024, 0, 1, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 1", content: "<b>Screening</b>", id: "Screening" },
-    { start: new Date(2024, 0, 0), end: new Date(2024, 0, 0, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 1" },
-    { start: new Date(2024, 0, 1), end: new Date(2024, 0, 1, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "day 1", content: "&nbsp;", id: "Visit 1" },
-    { start: new Date(2024, 0, 2), end: new Date(2024, 0, 2, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 1" },
-    { start: new Date(2024, 0, 6), end: new Date(2024, 0, 1, 23, 59, 59), group: "AnyDay", className: "any-day", title: "Adverse Event", content: "Unscheduled Adverse Event Visit", id: "911" },
-  ])
- // create visualization
+var items = new vis.DataSet([
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: Mon Jan 01 2024 00:00:00 GMT+0100 (Central European Standard Time)}", content: "<b>Screening</b>", id: "Screening0" },{ start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 05, 17, 23, 59, 59, 23, 59, 59), group: "Phase", className: "baseline-phase", title: "Day: Mon Jan 01 2024 00:00:00 GMT+0100 (Central European Standard Time)}", content: "<b>Baseline</b>", id: "Baseline1" },
+    
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1", className: "treatment-visits", title: "V1: Study Start - 28 days", content: "&nbsp;", id: "V12" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V13" },
+    
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V2", className: "treatment-visits", title: "V2: Study Start - 16 days", content: "&nbsp;", id: "V24" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V2", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V25" },
+    
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V3", className: "treatment-visits", title: "V3: Study Start - 15 days", content: "&nbsp;", id: "V36" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V3", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V37" },
+    
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V4", className: "treatment-visits", title: "V4: Study Start", content: "&nbsp;", id: "V48" },
+    
+    
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V6", className: "treatment-visits", title: "V6: Study Start + 8 weeks", content: "&nbsp;", id: "V69" },
+    
+    { start: new Date(2023, 11, 27, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V7", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V710" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V7", className: "treatment-visits", title: "V7: Study Start + 12 weeks", content: "&nbsp;", id: "V711" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V7", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V712" },
+    { start: new Date(2023, 11, 27, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V8", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V813" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V8", className: "treatment-visits", title: "V8: Study Start + 16 weeks", content: "&nbsp;", id: "V814" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V8", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V815" },
+    { start: new Date(2023, 11, 27, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V9", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V916" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V9", className: "treatment-visits", title: "V9: Study Start + 20 weeks", content: "&nbsp;", id: "V917" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V9", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V918" },
+    { start: new Date(2023, 11, 27, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V11", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1119" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V11", className: "treatment-visits", title: "V11: Study Start + 28 weeks", content: "&nbsp;", id: "V1120" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V11", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1121" },
+    { start: new Date(2023, 11, 27, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V13", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1322" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V13", className: "treatment-visits", title: "V13: Study Start + 44 weeks", content: "&nbsp;", id: "V1323" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V13", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1324" },
+    { start: new Date(2023, 11, 27, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V14", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1425" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V14", className: "treatment-visits", title: "V14: Study Start + 52 weeks", content: "&nbsp;", id: "V1426" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V14", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1427" },
+    
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "FU", className: "treatment-visits", title: "FU: Study Start + 54 weeks", content: "&nbsp;", id: "FU28" },
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V529" },
+    
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V530" },
+    
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V531" },
+    
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V532" },
+    
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V533" },
+    
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V534" },
+    
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V535" },
+    
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V536" },
+    
+    
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V5", className: "treatment-visits", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V537" },
+    { start: new Date(2024, 02, 20, 00, 00, 00), end: new Date(2024, 02, 24, 23, 59, 59), group: "V7", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V738" },
+    { start: new Date(2024, 02, 25, 00, 00, 00), end: new Date(2024, 02, 25, 23, 59, 59), group: "V7", className: "treatment-visits", title: "V7: Study Start + 12 weeks", content: "&nbsp;", id: "V739" },
+    { start: new Date(2024, 02, 26, 00, 00, 00), end: new Date(2024, 02, 30, 23, 59, 59), group: "V7", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V740" },{ start: new Date(2024, 05, 12, 00, 00, 00), end: new Date(2024, 05, 16, 23, 59, 59), group: "V7", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V741" },
+    { start: new Date(2024, 05, 17, 00, 00, 00), end: new Date(2024, 05, 17, 23, 59, 59), group: "V7", className: "treatment-visits", title: "V7: Study Start + 12 weeks", content: "&nbsp;", id: "V742" },
+    { start: new Date(2024, 05, 18, 00, 00, 00), end: new Date(2024, 05, 22, 23, 59, 59), group: "V7", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V743" },
+  ]) // create visualization
   var container = document.getElementById('visualization');
   var options = {
     format: {
@@ -72,10 +144,10 @@
     timeAxis: {scale: 'day', step: 1},
     showMajorLabels: false,
     orientation: 'both',
-    start: new Date(2024, 0, 1),
-    end: new Date(2024, 0, 2, 23, 59, 59),
+    start: new Date(2024,0,1),
+    end: new Date(2024, 0, 178, 23, 59, 59),
     min: new Date(2024, 0, 1),
-    max: new Date(2024, 0, 2, 23, 59, 59),
+    max: new Date(2024, 0, 178, 23, 59, 59),
     margin: {
         item: {
             horizontal: 0,

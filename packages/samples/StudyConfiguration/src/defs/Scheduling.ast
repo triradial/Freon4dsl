@@ -3,11 +3,11 @@ language StudyConfigurationModel
 concept EventReference {
     reference event: Event;
     eventState: EventState;
-    operator: SimpleOperators;
-    timeAmount: TimeAmount;
 }
 
 interface EventStart {
+    operator?: SimpleOperators;
+    timeAmount?: TimeAmount;
 }  
 
 concept When implements EventStart {
@@ -21,10 +21,10 @@ concept Day implements EventStart {
 concept AnyDay implements EventStart {
 }
 
-expression StudyStart implements EventStart {
+concept StudyStart implements EventStart {
 }
 
-expression Previous implements EventStart {
+concept Previous implements EventStart {
 }
 
 interface RepeatExpression {}
