@@ -1,5 +1,12 @@
 language StudyConfigurationModel
 
+concept EventReference {
+    reference event: Event;
+    eventState: EventState;
+    operator: SimpleOperators;
+    timeAmount: TimeAmount;
+}
+
 interface EventStart {
 }  
 
@@ -52,7 +59,7 @@ limited EventState {
 concept RepeatCondition implements RepeatExpression {
     repeatUnit: RepeatUnit;
     maxRepeats: number;
-    until: FirstScheduledExpression;
+    until?: FirstScheduledExpression;
 }
 
 concept TimeAmount   {
@@ -62,13 +69,6 @@ concept TimeAmount   {
 
 limited SimpleOperators {
     plus = { name:"+"} minus = { name: "-"}
-}
-
-expression EventReference base TimeExpression {
-    reference event: Event;
-    eventState: EventState;
-    operator: SimpleOperators;
-    timeAmount: TimeAmount;
 }
 
 concept RepeatCount implements RepeatExpression {
@@ -97,5 +97,5 @@ concept EventSchedule {
     eventStart?: EventStart;
     eventWindow: EventWindow;
     eventRepeat?: RepeatExpression;
-    eventTimeOfDay: EventTimeOfDay;
+    eventTimeOfDay?: EventTimeOfDay;
 }

@@ -13,7 +13,7 @@ modelunit StudyConfiguration {
     showPeriods: boolean;
     studyStartDayNumber: number = 0;
     periods: Period[];
-    events: Event[];
+    // events: Event[];
     tasks: Task[];
     systemAccesses: SystemAccess[];
     staffing: Staffing;

@@ -9,7 +9,7 @@ TimeAmount {
 }
 
 StartDay {
-    [Start Day ]
+    [Start Day]
 }
 
 Day {
@@ -38,11 +38,9 @@ Weekly {
     [weekly]
 }
 
-
 Monthly {
     [monthly]
 }
-
 
 Forever {
     [forever]
@@ -83,8 +81,10 @@ EventWindow {
 
 EventSchedule {
     [
-    First Scheduled : ${eventStart}
-    Then Repeats    : ${eventRepeat}
+    First scheduled: ${eventStart}
+    with a window of: ${eventWindow}
+    and then repeats: ${eventRepeat}
+    limited to this time of day: ${eventTimeOfDay}
     ]
 } 
 

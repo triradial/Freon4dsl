@@ -185,17 +185,17 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
               ],
             {selectable: true, cssClass:"align-top"}),
 
-            BoxFactory.horizontalLayout(element, "EventSchedule-hlist-line-1", "",
-              [
-                BoxUtil.labelBox(element, "and then repeats:", "schedule-then"),
-                BoxUtil.getBoxOrAction(element, "eventRepeat", "RepeatExpression", this.handler),
-              ],
-            {selectable: true, cssClass:"align-top"}),
-
             BoxFactory.horizontalLayout(element, "EventSchedule-hlist-line-2", "",
               [
                 BoxUtil.labelBox(element, "with a window of:", "schedule-window"),
                 BoxUtil.getBoxOrAction(element, "eventWindow", "EventWindow", this.handler),
+              ],
+            {selectable: true, cssClass:"align-top"}),
+
+            BoxFactory.horizontalLayout(element, "EventSchedule-hlist-line-1", "",
+              [
+                BoxUtil.labelBox(element, "and then repeats:", "schedule-then"),
+                BoxUtil.getBoxOrAction(element, "eventRepeat", "RepeatExpression", this.handler),
               ],
             {selectable: true, cssClass:"align-top"}),
 

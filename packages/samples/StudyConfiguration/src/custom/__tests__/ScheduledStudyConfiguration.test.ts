@@ -1,27 +1,37 @@
 import { time } from "console";
-import { StudyConfiguration } from "../../language/gen";
+import { StudyConfiguration, StudyConfigurationModel } from "../../language/gen";
 import { ScheduledStudyConfiguration } from "../timeline/ScheduledStudyConfiguration";
 import { Simulator } from "../timeline/Simulator";
 import { EventInstance, TimelineInstanceState, Timeline } from "../timeline/Timeline";
 import * as utils from "./Utils";
 import { ScheduledEvent } from "../timeline/ScheduledEvent";
+import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
+
+
+// #TODO: These tests may or may not be working. They are not currently being run. They were just updated to remove compliler errors m.v. 8/30
 
 describe ("Access to simulation data", () => {
     // var simulator;
     var studyConfiguration: StudyConfiguration;
     var scheduledStudyConfiguration: ScheduledStudyConfiguration;
-  
+    const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
+    var studyConfigurationUnit: StudyConfiguration;
+    var studyConfigurationModel: StudyConfigurationModel;
+    const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
+    
   beforeEach(() => {
-    studyConfiguration = utils.setupStudyConfiguration();
-    // simulator = new Simulator(studyConfiguration);
-    utils.setupStudyConfiguration();
+    beforeEach(() => {
+      // const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
+      studyConfigurationModel = studyConfigurationModelEnvironment.newModel(modelName) as StudyConfigurationModel;
+      studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
+    });
   });
 
 
   describe ("Check for the correct Events scheduled just using 'StartDay + #'", () => {
     
       beforeEach(() => {
-        studyConfiguration = utils.addAPeriodAndTwoEvents(studyConfiguration, "Screening", "Visit 1", 1, "Visit 2", 7);
+        studyConfiguration = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfiguration, "Screening", "Visit 1", 1, "Visit 2", 7);
         scheduledStudyConfiguration = new ScheduledStudyConfiguration(studyConfiguration);
 
       });
@@ -131,7 +141,7 @@ describe ("Access to simulation data", () => {
         let timeline = new Timeline();
         timeline.setCurrentDay(1);
         let firstEvent = scheduledStudyConfiguration.getFirstStudyStartEvent() as ScheduledEvent;
-        let completedEvent = new EventInstance(firstEvent);
+        let completedEvent = new EventInstance(firstEvent,1);
         completedEvent.state = TimelineInstanceState.Completed;
         timeline.addEvent(completedEvent);
 

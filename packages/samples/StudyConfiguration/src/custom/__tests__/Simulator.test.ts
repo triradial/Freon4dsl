@@ -376,7 +376,7 @@ describe ("Study Simulation", () => {
         expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
     }); 
 
-    it("generate a chart for the example study", () => {
+    it("generate a chart for the example study 1", () => {
   
       let expectedTimelineDataAsScript = 
         `var groups = new vis.DataSet([
@@ -418,10 +418,245 @@ describe ("Study Simulation", () => {
         // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
     }); 
 
+    it("generate a chart for the example study 2", () => {
+  
+      let expectedTimelineDataAsScript = 
+        `var groups = new vis.DataSet([
+           { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+           { "content": "Visit 1", "id": "Visit 1" },{ "content": "Visit 2", "id": "Visit 2" },
+           { "content": "Any Day", "id": "AnyDay", className: 'any-day' },
+         ]);
+
+        var items = new vis.DataSet([
+          { start: new Date(2024, 0, 1), end: new Date(2024, 0, 7, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 1", content: "<b>Screening</b>", id: "Screening" },
+          { start: new Date(2024, 0, 8), end: new Date(2024, 0, 8, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 8", content: "<b>Treatment</b>", id: "Treatment" },
+          { start: new Date(2024, 0, 0), end: new Date(2024, 0, 0, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 1" },
+          { start: new Date(2024, 0, 1), end: new Date(2024, 0, 1, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "day 1", content: "&nbsp;", id: "Visit 1" },
+          { start: new Date(2024, 0, 2), end: new Date(2024, 0, 2, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 1" },
+          { start: new Date(2024, 0, 7), end: new Date(2024, 0, 7, 23, 59, 59), group: "Visit 2", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 2" },
+          { start: new Date(2024, 0, 8), end: new Date(2024, 0, 8, 23, 59, 59), group: "Visit 2", className: "treatment-visits", title: "when Visit 1 + 7", content: "&nbsp;", id: "Visit 2" },
+          { start: new Date(2024, 0, 9), end: new Date(2024, 0, 9, 23, 59, 59), group: "Visit 2", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 2" },
+          { start: new Date(2024, 0, 6), end: new Date(2024, 0, 8, 23, 59, 59), group: "AnyDay", className: "any-day", title: "Adverse Event", content: "Unscheduled Adverse Event Visit", id: "911" },
+         ])
+        `;
+        // GIVEN a study configuration loaded from a file
+        // const studyConfigurationUnit = utils.loadModel("Example1", 'StudyConfiguration');
+        const studyConfigurationUnit = utils.loadModel("ScheduleExample2", 'StudyConfiguration');
+        studyConfigurationModel.addUnit(studyConfigurationUnit)
+  
+        // WHEN the study is simulated and a timeline picture is generated
+        let simulator = new Simulator(studyConfigurationUnit);
+        simulator.run();
+        let timeline = simulator.timeline;
+
+        const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+        const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+        // Save full HTML of chart for viewing / debugging
+        utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+
+        const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
+        const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
+        // Then the generated timeline picture has two events on the expected event days
+        // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+    }); 
+
     it("generate a chart from the text version of the study", () => {
   
         // GIVEN a study configuration loaded from a string
-    const configAsText = ``
+    const configAsText = `StudyConfiguration StudyConfiguration {
+    showActivityDetails true
+    showSystems false
+    showScheduling true
+    showPeriods true
+    studyStartDayNumber 0
+    periods
+        Period: Screening
+        Description: " "
+        EVENTS
+            Event: V1
+            Type: site
+            Description: " "
+            Schedule:
+                First scheduled: Study Start - 28
+                with a window of: at most 0 day(s) before
+                                  0 day(s) before
+                                  16 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V2
+            Type: site
+            Description: " "
+            Schedule:
+                First scheduled: Study Start - 16
+                with a window of: at most 0 day(s) before
+                                  0 day(s) before
+                                  14 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V3
+            Type: site
+            Description: " "
+            Schedule:
+                First scheduled: Study Start - 15
+                with a window of: at most 0 day(s) before
+                                  0 day(s) before
+                                  14 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+        Period: Baseline
+        Description: " "
+        EVENTS
+            Event: V4
+            Type: site
+            Description: " "
+            Schedule:
+                First scheduled: Study Start
+                with a window of: at most 0 day(s) before
+                                  0 day(s) before
+                                  0 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V5
+            Type: site
+            Description: " "
+            Schedule:
+                First scheduled: when V4 completed + 4 weeks
+                with a window of: at most 0 day(s) before
+                                  0 day(s) before
+                                  0 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V6
+            Type: phone
+            Description: " "
+            Schedule:
+                First scheduled: Study Start + "8" weeks
+                with a window of: at most 0 day(s) before
+                                  0 day(s) before
+                                  0 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V7, V10, V12
+            Type: site
+            Description: " "
+            Schedule:
+                First scheduled: Study Start + "12" weeks
+                with a window of: at most 0 day(s) before
+                                  5 day(s) before
+                                  5 day(s) after
+                                  at most 0 day(s) after
+                and then repeats: frequency: Every: "12" weeks
+                                  max 2 times
+                                  until
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V8
+            Type: phone
+            Description: " "
+            Schedule:
+                First scheduled: Study Start + "16" weeks
+                with a window of: at most 0 day(s) before
+                                  5 day(s) before
+                                  5 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V9
+            Type: phone
+            Description: " "
+            Schedule:
+                First scheduled: Study Start + "20" weeks
+                with a window of: at most 0 day(s) before
+                                  5 day(s) before
+                                  5 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V11
+            Type: phone
+            Description: " "
+            Schedule:
+                First scheduled: Study Start + "28" weeks
+                with a window of: at most 0 day(s) before
+                                  5 day(s) before
+                                  5 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V13
+            Type: phone
+            Description: " "
+            Schedule:
+                First scheduled: Study Start + "44" weeks
+                with a window of: at most 0 day(s) before
+                                  5 day(s) before
+                                  5 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: V14
+            Type: site
+            Description: " "
+            Schedule:
+                First scheduled: Study Start + "52" weeks
+                with a window of: at most 0 day(s) before
+                                  5 day(s) before
+                                  5 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+            Event: FU
+            Type: phone
+            Description: " "
+            Schedule:
+                First scheduled: Study Start + "54" weeks
+                with a window of: at most 0 day(s) before
+                                  0 day(s) before
+                                  0 day(s) after
+                                  at most 0 day(s) after
+                and then repeats:
+                limited to this time of day: 0 : 0 - 0 : 0
+            Checklist:
+
+    tasks
+        Task 1
+        "<p>ssss</p>"
+    systemAccesses
+
+    staffing Roles:
+
+             Assignments:
+
+}`
         const studyConfigurationUnit = studyConfigurationModelEnvironment.reader.readFromString(configAsText, 'StudyConfiguration', studyConfigurationModel) as StudyConfiguration;
         studyConfigurationModel.addUnit(studyConfigurationUnit)
   
