@@ -96,16 +96,19 @@ body {
   /* #endregion */
 
   /* #region Text Component */
+    .text-dropdown-component .text-component-input,
     .text-component-input {
       color: #{gc.$mac-primary-200};
       background-color: #{gc.$mac-gray-900};
     }
     
+    .text-dropdown-component .text-component-text,
     .text-component-text {
       color: #{gc.$mac-primary-200};
       background-color: inherit;
     }
     
+    .text-dropdown-component .text-component-placeholder,
     .text-component-placeholder {
       color: #{gc.$mac-gray-600};
       background-color: inherit;

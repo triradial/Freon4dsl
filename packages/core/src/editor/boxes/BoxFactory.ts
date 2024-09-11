@@ -16,7 +16,7 @@ import {
     OptionalBox,
     HorizontalListBox, VerticalListBox, BoolFunctie, GridCellBox,
     HorizontalLayoutBox, VerticalLayoutBox,
-    TableCellBox, OptionalBox2, LimitedControlBox, ButtonBox, DateBox, TimeBox, ItemGroupBox, ListGroupBox,
+    TableCellBox, OptionalBox2, LimitedControlBox, ButtonBox, DateBox, TimeBox, ItemGroupBox, ItemGroupBox2, ListGroupBox,
     MultiLineTextBox2, NumberDisplay
 } from "./internal";
 
@@ -41,6 +41,7 @@ let limitedCache: BoxCache<LimitedControlBox> = {};
 let selectCache: BoxCache<SelectBox> = {};
 let listGroupCache: BoxCache<ListGroupBox> = {};
 let itemGroupCache: BoxCache<ItemGroupBox> = {};
+let itemGroupCache2: BoxCache<ItemGroupBox2> = {};
 // let indentCache: BoxCache<IndentBox> = {};
 let optionalCache: BoxCache<OptionalBox> = {};
 let optionalCache2: BoxCache<OptionalBox2> = {};
@@ -65,6 +66,7 @@ let cacheLimitedOff: boolean = false;
 let cacheSelectOff: boolean = false;
 let cacheListGroupOff: boolean = false;
 let cacheItemGroupOff: boolean = false;
+let cacheItemGroupOff2: boolean = false;
 // let cacheIndentOff: boolean = false;
 // let cacheOptionalOff: boolean = false;
 let cacheHorizontalLayoutOff: boolean = false;
@@ -92,6 +94,7 @@ export class BoxFactory {
         selectCache = {};
         listGroupCache = {};
         itemGroupCache = {};
+        itemGroupCache2 = {};
         // indentCache = {};
         optionalCache = {};
         optionalCache2 = {};
@@ -118,6 +121,7 @@ export class BoxFactory {
         cacheSelectOff = true;
         cacheListGroupOff = true;
         cacheItemGroupOff = true;
+        cacheItemGroupOff2 = true;
         // cacheIndentOff = true;
         // cacheOptionalOff = true;
         cacheHorizontalLayoutOff = true;
@@ -140,6 +144,7 @@ export class BoxFactory {
         cacheSelectOff = false;
         cacheListGroupOff = false;
         cacheItemGroupOff = false;
+        cacheItemGroupOff2 = false;
         // cacheIndentOff = false;
         // cacheOptionalOff = false;
         cacheHorizontalLayoutOff = false;
@@ -348,7 +353,28 @@ export class BoxFactory {
 
         return result;
     }
-    
+
+    static itemGroup2(element: FreNode, role: string, getLabel, 
+      getOptions: (editor: FreEditor) => SelectOption[], 
+      getSelectedOption: () => SelectOption | null,
+      selectOption: (editor: FreEditor, option: SelectOption) => BehaviorExecutionResult,
+      childBox: Box, initializer?: Partial<ItemGroupBox2>): ItemGroupBox2 {
+
+        if (cacheItemGroupOff2) {
+            return new ItemGroupBox2(element, role, getLabel, getOptions, getSelectedOption, selectOption, childBox, initializer);
+        }
+        // 1. Create the  box, or find the one that already exists for this element and role
+        const creator = () => new ItemGroupBox2(element, role, getLabel, getOptions, getSelectedOption, selectOption, childBox, initializer);
+        const result: ItemGroupBox2 = this.find<ItemGroupBox2>(element, role, creator, itemGroupCache2);
+
+        // 2. Apply the other arguments in case they have changed
+        result.setLabel(getLabel);
+        result.child = childBox;
+        FreUtils.initializeObject(result, initializer);
+
+        return result;
+    }
+
     static indent(element: FreNode, role: string, indent: number, childBox: Box, initializer?: Partial<IndentBox>): IndentBox {
         return new IndentBox(element, role, indent, childBox, initializer);
         // 1. Create the  box, or find the one that already exists for this element and role

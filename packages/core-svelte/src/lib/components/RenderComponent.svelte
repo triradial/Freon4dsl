@@ -27,7 +27,7 @@
         BoolDisplay, isBooleanControlBox,
         isNumberControlBox,
         isElementBox, isOptionalBox2, isMultiLineTextBox,
-        isLimitedControlBox, LimitedDisplay, isButtonBox, isItemGroupBox, isListGroupBox, isIconBox, isMultiLineTextBox2, isDateBox, isTimeBox
+        isLimitedControlBox, LimitedDisplay, isButtonBox, isItemGroupBox, isItemGroupBox2, isListGroupBox, isIconBox, isMultiLineTextBox2, isDateBox, isTimeBox
     } from "@freon4dsl/core";
     import MultiLineTextComponent from "./MultiLineTextComponent.svelte";
     import MultiLineTextComponent2 from "./MultiLineTextComponent2.svelte";
@@ -60,6 +60,7 @@
     import ButtonComponent from "$lib/components/ButtonComponent.svelte";
     import DateComponent from "$lib/components/DateComponent.svelte";
     import TimeComponent from "$lib/components/TimeComponent.svelte";
+    import ItemGroupComponent2 from "./ItemGroupComponent2.svelte";
 
     const LOGGER = new FreLogger("RenderComponent");
 
@@ -115,7 +116,7 @@
 -->
 {#if isElementBox(box) }
     <ElementComponent box={box} editor={editor}/>
-    {:else}
+{:else}
     {#if isListGroupBox(box)}
         <span id={id} class="render-component {className} vertical-group" bind:this={element} role="group">
             <ListGroupComponent box={box} editor={editor}/>
@@ -123,6 +124,10 @@
     {:else if isItemGroupBox(box)}
         <span id={id} class="render-component {className} vertical-group" bind:this={element} role="group">
             <ItemGroupComponent box={box} editor={editor} text="" isEditing={false} />
+        </span>
+    {:else if isItemGroupBox2(box)}
+        <span id={id} class="render-component {className} vertical-group" bind:this={element} role="group">
+            <ItemGroupComponent2 box={box} editor={editor} />
         </span>
     {:else}
        <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->

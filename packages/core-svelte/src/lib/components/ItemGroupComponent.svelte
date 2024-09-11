@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { afterUpdate, beforeUpdate, createEventDispatcher, onMount } from "svelte";
 	import { componentId, executeCustomKeyboardShortCut, setBoxSizes } from "./svelte-utils/index.js";
-	import { ActionBox, ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BACKSPACE, CONTROL, DELETE, ENTER, ESCAPE, isActionBox, isActionTextBox, isSelectBox, FreCaret, FreCaretPosition, FreEditor, FreLogger, SelectBox, FreErrorSeverity, SHIFT, TAB, ItemGroupBox, Box, isRegExp, triggerTypeToString, type FrePostAction } from "@freon4dsl/core";
+	import { ActionBox, ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BACKSPACE, CONTROL, DELETE, ENTER, ESCAPE, isActionBox, isActionTextBox, isSelectBox, FreCaret, FreCaretPosition, FreEditor, FreLogger, SelectBox, FreErrorSeverity, SHIFT, TAB, ItemGroupBox, Box, isRegExp, triggerTypeToString, type FrePostAction} from "@freon4dsl/core";
 	import { CharAllowed} from "@freon4dsl/core";
 	import RenderComponent from "./RenderComponent.svelte";
 
@@ -56,6 +56,7 @@
 	let canCRUD: boolean = false;
 	let isRequired: boolean = false;
 	let canEdit: boolean = true;
+	let canExpand: boolean = true;
 	
 	// Note that 'from <= to' always holds.
 	let placeHolderStyle: string;
@@ -586,18 +587,22 @@
 </script>
 
 <!-- todo there is a double selection here: two borders are showing -->
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-<div id="{id}-group" class="item-group {cssClass} w-full" style="{style}" on:click={selectItem}>
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events a11y-interactive-supports-focus -->
+<div id="{id}-group" class="item-group {cssClass} w-full" style="{style}" on:click={selectItem} role="button">
 	{#key isDraggable}
-		<FontAwesomeIcon class="w-3 h-3" style="cursor: grab;" icon={faGripVertical} />
+		<FontAwesomeIcon class="w-3 h-3 ml-1" style="cursor: grab;" icon={faGripVertical} />
 	{/key}
 	{#key isExpanded}
-		<Button pill={true} class="w-4 h-7 p-0" color="none" size="xs" on:click={toggleExpanded}>
-			<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
-		</Button>
+		{#if canExpand}
+			<Button pill={true} class="w-4 h-7 p-0 ml-1" color="none" size="xs" on:click={toggleExpanded}>
+				<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
+			</Button>
+		{:else}
+			<span class="w-5" />
+		{/if}
 	{/key}
-    <span class="item-group-label">{label}</span>
-	<span id="{id}" on:click={onClick} role="none">
+  <span class="item-group-label">{label}</span>
+  <span id="{id}" on:click={onClick} role="none">
 		{#if isEditing}
 			<span id="{id}">
 				<input type="text"

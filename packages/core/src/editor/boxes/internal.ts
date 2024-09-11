@@ -19,6 +19,7 @@ export * from "./LimitedControlBox";
 export * from "./GridBox";
 export * from "./ListGroupBox";
 export * from "./ItemGroupBox";
+export * from "./ItemGroupBox2";
 export * from "./IconBox";
 export * from "./IndentBox";
 export * from "./LabelBox";
