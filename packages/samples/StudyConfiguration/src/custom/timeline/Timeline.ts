@@ -4,12 +4,16 @@ import { Event } from '../../language/gen/index';
 import { ScheduledPeriod } from './ScheduledPeriod';
 import { ScheduledStudyConfiguration } from './ScheduledStudyConfiguration';
 
+// Flags to control the types of logging that will be done
+export let scheduledLogging = false;
+export let periodLogging = false;
 /*
  * A Timeline records the events and the days they occur on.
  */
 export class Timeline extends RtObject{
 
   days: TimelineDay[] = [];
+
   currentDay: number = 0;
 
   constructor() {
@@ -38,6 +42,9 @@ export class Timeline extends RtObject{
   }
 
   setCurrentDay(day: number) { 
+    if (isNaN(day)) {
+      throw new Error("Day cannot be NaN");
+    }
     this.currentDay = day;
   }
 
@@ -69,9 +76,11 @@ export class Timeline extends RtObject{
     let eventInstances = allEventInstances.filter(event => eventToMatch.name === event.getName());
     const lastInstance = eventInstances[eventInstances.length - 1] as EventInstance; // TODO: sort by day and get the most recent
     if (!lastInstance) {
-      console.log("getLastInstanceForThisEvent no instance found for: " + eventToMatch.name);
+      console.log("No instance of: '" + eventToMatch.name + "' on timeline");
+      return null;
+    } else {
+      return lastInstance;
     }
-    return lastInstance;
   }
 
   printTimeline() {
@@ -92,13 +101,13 @@ export class Timeline extends RtObject{
           let eventInstance = event as EventInstance;
           // console.log("hasCompletedInstanceOf checking if completed instance of: " + scheduledEvent.getName() + " matches event: " + eventInstance.getName() + " in state: " + eventInstance.state + " one day: " + day.day);
           if (eventInstance.scheduledEvent.getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
-            console.log("hasCompletedInstanceOf: " + scheduledEvent.getName());
+            console.log("There is a completed instance of: '" + scheduledEvent.getName() + "'" + " on day: " + day.day);
             return true; // Exit nested loops early if we find a completed instance
           }
         }
       }
     } 
-    console.log("hasCompletedInstanceOf did not find completed instance of: " + scheduledEvent.getName());   
+    console.log("There is not already a completed instance of: '" + scheduledEvent.getName() + "'");   
     return false;
   }
 
@@ -129,12 +138,14 @@ export class Timeline extends RtObject{
   }
 
   // Return the first period that is active. There should be only one.
-  getCurrentPeriod(): PeriodInstance {
+  getActivePeriod(): PeriodInstance {
     let firstActivePeriodOnTimeline = this.getPeriods().find(period => (period as PeriodInstance).getState() === TimelineInstanceState.Active) as PeriodInstance;
-    if (firstActivePeriodOnTimeline) {
-      console.log("getCurrentPeriod firstActivePeriodOnTimeline: " + firstActivePeriodOnTimeline.getName());
-    } else {
-      console.log("getCurrentPeriod no active period found");
+    if (periodLogging) {
+      if (firstActivePeriodOnTimeline) {
+        console.log("The first Active Period On the timeline is: " + firstActivePeriodOnTimeline.getName());
+      } else {
+        console.log("No active period found on the timeline");
+      }
     }
     return firstActivePeriodOnTimeline;
   }
