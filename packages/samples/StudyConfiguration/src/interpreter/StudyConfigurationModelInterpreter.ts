@@ -1,5 +1,5 @@
 // Generated my Freon once, will NEVER be overwritten.
-import { InterpreterContext, IMainInterpreter, RtObject, RtError, RtNumber, RtBoolean, RtString } from "@freon4dsl/core";
+import { InterpreterContext, IMainInterpreter, RtObject, RtError, RtNumber, RtBoolean, RtString, ownerOfType } from "@freon4dsl/core";
 import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfigurationModelInterpreterBase";
 import * as language from "../language/gen/index";
 import { Timeline } from "../custom/timeline/Timeline";
@@ -102,17 +102,19 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         const timeAmount = node.timeAmount;
         const eventState = node.eventState;
         
+        // let owningEvent = ((node.freOwner() as language.When).freOwner() as language.EventSchedule).freOwner() as language.Event;
+        let owningEvent = ownerOfType(node, "Event") as language.Event; 
         // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
         // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
         // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
         // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
         let lastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
         if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
-            console.log("The event referenced by '" + referencedEvent.name + "' is not on the timeline so the expression containing it cannot yet be evaluated" );
+            console.log("The event '" + owningEvent.name + "' reference to: '" + referencedEvent.name + "' cannot be evaluated because the referenced event is not on the timeline" );
             return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
         } else {
             if (lastInstanceOfReferencedEvent.scheduledEvent.isRepeatingEvent() && lastInstanceOfReferencedEvent.scheduledEvent.anyRepeatsNotCompleted(timeline)) {
-                console.log("'" + referencedEvent.name + "' is a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated" );
+                console.log("The event '" + owningEvent.name + "' has a reference to:'" + referencedEvent.name + "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated" );
                 return undefined; // dependency on a repeating event that hasn't completed yet
             } else {
                 let displacementFromEvent = main.evaluate(node.timeAmount, ctx) as RtNumber;

@@ -77,7 +77,7 @@ export class ScheduledEvent {
       console.log("THIS SHOULD NEVER HAPPEN! '" + this.getName() + "' is scheduled on a specific day with days to wait of:" + this.day(timeline) + " on timeline day: " + timeline.currentDay);
       return this.day(timeline);
     } else {
-      console.log("'" + this.getName() + "' is scheduled on: " + this.day(timeline) + " on timeline day: " + timeline.currentDay + " with a days to wait of: " + (this.day(timeline) - timeline.currentDay));
+      console.log("'" + this.getName() + "' is scheduled on day: " + this.day(timeline) + " on timeline day: " + timeline.currentDay + " with a days to wait of: " + (this.day(timeline) - timeline.currentDay));
       return this.day(timeline) - timeline.currentDay;
     }
   }
@@ -202,7 +202,7 @@ export class ScheduledEvent {
     if (this.isScheduledOnASpecificDay() && !repeatingEvent) {
       if (scheduledLogging) console.log("'" + this.getName() + "' is not a ready-to-schedule event because it is already scheduled to start on a specific day of: " + scheduledDay);
       return null;
-    } else if (repeatingEvent && scheduledDay != undefined && scheduledDay >= timeline.currentDay) {
+    } else if (repeatingEvent && scheduledDay != undefined) { // && scheduledDay >= timeline.currentDay) {
         if (this.notYetScheduled(timeline)) {
           console.log(" '" + this.getName() + "' is a repeating event and is to be scheduled on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
           return new EventInstance(this, scheduledDay);
@@ -223,11 +223,9 @@ export class ScheduledEvent {
           console.log(" '" + this.getName() + "' is not a ready-to-schedule event because timeline.currentDay is NaN");
         }
         if (scheduledDay == undefined) {
-          console.log(" '" + this.getName() + "' is not a ready-to-schedule event on timeline day: " + timeline.currentDay + " because its scheduledDay is not available" );
-        } else if (scheduledDay < timeline.currentDay) {
-          console.log(" '" + this.getName() + "' is not a ready-to-schedule event on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
-        } else {
-          console.log(" '" + this.getName() + "' is not a ready-to-schedule event on timeline day: " + timeline.currentDay + " there is a completed instance of this event and it's not repeating");
+          console.log(" '" + this.getName() + "' is not a ready-to-schedule event on timeline day: " + timeline.currentDay + " because its scheduled day is not available" );
+        } else  {
+          console.log(" '" + this.getName() + "' is not a ready-to-schedule event on timeline day: " + timeline.currentDay + " with scheduled day of: " + scheduledDay + " because it's completed");
         }
         return null;
       }

@@ -76,7 +76,7 @@ export class Timeline extends RtObject{
     let eventInstances = allEventInstances.filter(event => eventToMatch.name === event.getName());
     const lastInstance = eventInstances[eventInstances.length - 1] as EventInstance; // TODO: sort by day and get the most recent
     if (!lastInstance) {
-      console.log("No instance of: '" + eventToMatch.name + "' on timeline");
+      // console.log("No instance of: '" + eventToMatch.name + "' on timeline");
       return null;
     } else {
       return lastInstance;
@@ -107,7 +107,7 @@ export class Timeline extends RtObject{
         }
       }
     } 
-    console.log("There is not already a completed instance of: '" + scheduledEvent.getName() + "'");   
+    // console.log("There is not already a completed instance of: '" + scheduledEvent.getName() + "'");   
     return false;
   }
 
@@ -183,6 +183,12 @@ export class Timeline extends RtObject{
     }
   }
 
+
+  getMaxDayOnTimeline() {
+    const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
+    return this.currentDay + dayOffsetOfFirstEventInstance;
+  }
+
 }
 
 export abstract class TimelineEventInstance {
@@ -243,7 +249,6 @@ export abstract class TimelineEventInstance {
     const result = TimelineEventInstance.formatDate(endOfStartDay);
     return result;
   }
-
 
   abstract getName(): string;
 

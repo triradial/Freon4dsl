@@ -42,32 +42,18 @@
 <script>
   var groups = new vis.DataSet([
     { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-    { "content": "V1 rando", "id": "V1 rando" },
-    { "content": "V1 run in", "id": "V1 run in" },
-    { "content": "V2 rando", "id": "V2 rando" },
-    { "content": "V2 run in", "id": "V2 run in" },
-    { "content": "V3-rando", "id": "V3-rando" },
-    { "content": "V4-V7-rando", "id": "V4-V7-rando" },
+    { "content": "Visit 1", "id": "Visit 1" },
   ]);
 
 var items = new vis.DataSet([
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 28, 23, 59, 59, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: Mon Jan 01 2024 00:00:00 GMT-0500 (Eastern Standard Time)}", content: "<b>Screening</b>", id: "Screening0" },
-    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 02, 25, 23, 59, 59, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: Mon Jan 29 2024 00:00:00 GMT-0500 (Eastern Standard Time)}", content: "<b>Treatment</b>", id: "Treatment1" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 1", content: "<b>Screening</b>", id: "Screening72" },
     
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1 rando", className: "treatment-visits", title: "V1 rando: Study Start - 4 weeks", content: "&nbsp;", id: "V1 rando2" },
-    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "V1 run in", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 run in3" },
-    { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "V1 run in", className: "treatment-visits", title: "V1 run in: when V1 rando completed + 3 days", content: "&nbsp;", id: "V1 run in4" },
-    { start: new Date(2024, 00, 05, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V1 run in", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1 run in5" },
-    { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V2 rando", className: "treatment-visits", title: "V2 rando: Study Start - 2 weeks", content: "&nbsp;", id: "V2 rando6" },
-    { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V2 run in", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2 run in7" },
-    { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "V2 run in", className: "treatment-visits", title: "V2 run in: when V2 rando completed + 3 days", content: "&nbsp;", id: "V2 run in8" },
-    { start: new Date(2024, 00, 19, 00, 00, 00), end: new Date(2024, 00, 20, 23, 59, 59), group: "V2 run in", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2 run in9" },
-    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3-rando", className: "treatment-visits", title: "V3-rando: Study Start", content: "&nbsp;", id: "V3-rando10" },
-    { start: new Date(2024, 02, 16, 00, 00, 00), end: new Date(2024, 02, 17, 23, 59, 59), group: "V4-V7-rando", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7-rando11" },
-    { start: new Date(2024, 02, 18, 00, 00, 00), end: new Date(2024, 02, 18, 23, 59, 59), group: "V4-V7-rando", className: "treatment-visits", title: "V4-V7-rando: when V3-rando completed + 7 weeks", content: "&nbsp;", id: "V4-V7-rando12" },
-    { start: new Date(2024, 02, 19, 00, 00, 00), end: new Date(2024, 02, 20, 23, 59, 59), group: "V4-V7-rando", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7-rando13" },{ start: new Date(2024, 02, 23, 00, 00, 00), end: new Date(2024, 02, 24, 23, 59, 59), group: "V4-V7-rando", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7-rando14" },
-    { start: new Date(2024, 02, 25, 00, 00, 00), end: new Date(2024, 02, 25, 23, 59, 59), group: "V4-V7-rando", className: "treatment-visits", title: "V4-V7-rando: when V3-rando completed + 7 weeks", content: "&nbsp;", id: "V4-V7-rando15" },
-    { start: new Date(2024, 02, 26, 00, 00, 00), end: new Date(2024, 02, 27, 23, 59, 59), group: "V4-V7-rando", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7-rando16" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 1", content: "&nbsp;", id: "Visit 173" },
+    { start: new Date(2024, 00, 03, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 174" },
+    { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 1", content: "&nbsp;", id: "Visit 175" },
+    { start: new Date(2024, 00, 10, 00, 00, 00), end: new Date(2024, 00, 10, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 176" },
+    { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 1", content: "&nbsp;", id: "Visit 177" },
+    { start: new Date(2024, 00, 17, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 178" },
   ]) // create visualization
   var container = document.getElementById('visualization');
   var options = {
@@ -88,9 +74,9 @@ var items = new vis.DataSet([
     showMajorLabels: false,
     orientation: 'both',
     start: new Date(2024,0,1),
-    end: new Date(2024, 0, 66, 23, 59, 59),
+    end: new Date(2024, 0, 17, 23, 59, 59),
     min: new Date(2024, 0, 1),
-    max: new Date(2024, 0, 66, 23, 59, 59),
+    max: new Date(2024, 0, 17, 23, 59, 59),
     margin: {
         item: {
             horizontal: 0,

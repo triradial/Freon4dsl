@@ -84,8 +84,8 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurati
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  const studyStart = PlusExpression.create({left:  StudyStart.create({}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
-  let eventSchedule = EventSchedule.create({ 'eventStart': studyStart});
+  const studyStartPlusDays = PlusExpression.create({left:  StudyStart.create({}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
+  let eventSchedule = EventSchedule.create({ 'eventStart': studyStartPlusDays});
   createEventAndAddToPeriod(period, event2Name, eventSchedule);
 
   studyConfiguration.periods.push(period);
