@@ -285,10 +285,12 @@ main {
 
   .list-group .action-button {
     display: none;
+    margin-left: 0.2rem;
   }
 
   .list-group:hover .action-button {
     display: inline-block;
+    margin-left: 0.2rem;
   }
 
   .list-group.type1 {
@@ -354,32 +356,39 @@ main {
   }
 
   .item-group {
-    display: inline-block;
+    display: flex;
     align-items: center;
   }
 
   .item-group .action-button {
     display: none;
+    margin-left: 0.2rem;
   }
 
   .item-group:hover .action-button {
     display: inline-block;
+    margin-left: 0.2rem;
   }
 
   .item-group .required {
   }
 
   .item-group.type1 {
-    height: 32px;
+    height: 2.3rem;
   }
 
   .item-group.type2 {
-    height: 32px;
+    height: 2.3rem;
+  }
+
+  .item-group.type3 {
+    height: 2.3rem;
   }
 
   .item-group .item-group-label {
     padding-right: 0.1rem;
     white-space: normal;
+    margin-left: 0.2rem;
   }
 
   .item-group.type1 .item-group-label {

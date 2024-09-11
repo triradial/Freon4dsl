@@ -16,7 +16,7 @@ import {
     SelectOption,
     TextBox,
     VerticalListBox, 
-    MultiLineTextBox2, ItemGroupBox, ListGroupBox, DateBox, TimeBox
+    MultiLineTextBox2, ItemGroupBox, ItemGroupBox2, ListGroupBox, DateBox, TimeBox
 } from "../boxes";
 import {FreUtils} from "../../util";
 import {BehaviorExecutionResult} from "../util";
@@ -267,38 +267,16 @@ export class BoxUtil {
         }
 
         let result: SelectBox;
-        result = BoxFactory.select(
-            node,
-            roleName,
-            `<${propertyName}>`,
-            () => {
-                return scoper.getVisibleNames(node, propType)
-                    .filter(name => !!name && name !== "")
-                    .map(name => ({
-                        id: name,
-                        label: name
-                    }));
-            },
-            () => {
-                // console.log("==> get selected option for property " + propertyName + " of " + element["name"] + " is " + property.name )
-                if (!!property) {
-                    return { id: property.name, label: property.name };
-                } else {
-                    return null;
-                }
-            },
+        result = BoxFactory.select( node, roleName, `<${propertyName}>`,
+            () => { return scoper.getVisibleNames(node, propType) .filter(name => !!name && name !== "") .map(name => ({ id: name, label: name })); },
+            () => { if (!!property) { return { id: property.name, label: property.name }; } else { return null; }},
             // @ts-ignore
             (editor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
                 // L.log("==> SET selected option for property " + propertyName + " of " + element["name"] + " to " + option?.label);
-                if (!!option) {
-                    // console.log("========> set property [" + propertyName + "] of " + element["name"] + " := " + option.label);
-                    runInAction(() => {
-                        setFunc(option.label);
-                    });
-                } else {
-                    runInAction(() => {
-                        node[propertyName] = null;
-                    });
+                if (!!option) { 
+                    runInAction(() => {setFunc(option.label);});} 
+                else {
+                    runInAction(() => { node[propertyName] = null;});
                 }
                 return BehaviorExecutionResult.EXECUTED;
             },
@@ -554,6 +532,41 @@ export class BoxUtil {
         } else {
             FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + "\"");
         }
+        return result;
+    }
+
+    static itemGroupBox2(node: FreNode, roleName: string, label: string, propertyName: string, propType: string, setFunc: (selected: string) => void, scoper: FreScoper, childBox: Box, initializer?: Partial<ItemGroupBox2>): ItemGroupBox2 {
+        let result: ItemGroupBox2 = null;
+        //const propType: string = FreLanguage.getInstance().classifierProperty(node.freLanguageConcept(), propertyName)?.type;
+        let ph: string = BoxUtil.formatPlaceholder(initializer?.placeHolder, propertyName);
+        const role = this.makeKeyName(roleName);
+        const updatedInitializer = {
+            ...initializer,
+            selectable: initializer?.selectable ?? true,
+            isExpanded: initializer?.isExpanded ?? false,
+            isDraggable: initializer?.isDraggable ?? true,
+            canDelete: initializer?.canDelete ?? true,
+            canUnlink: initializer?.canUnlink ?? false,
+            canExpand: initializer?.canExpand ?? true,
+            placeHolder: ph,
+        }  
+        const property = node[propertyName];
+        result = BoxFactory.itemGroup2( node, role, label,
+            () => { return scoper.getVisibleNames(node, propType) .filter(name => !!name && name !== "") .map(name => ({ id: name, label: name })); },
+            () => { if (!!property) { return { id: property.name, label: property.name }; } else { return null; }},
+            // @ts-ignore
+            (editor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
+                if (!!option) { 
+                    runInAction(() => {setFunc(option.label);});} 
+                else {
+                    runInAction(() => { node[propertyName] = null;});
+                }
+                return BehaviorExecutionResult.EXECUTED;
+            }, childBox,
+            updatedInitializer
+        );
+        result.propertyName = propertyName;
+        //result.propertyIndex = index;
         return result;
     }
 

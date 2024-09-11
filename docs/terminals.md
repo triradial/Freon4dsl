@@ -14,11 +14,11 @@
 > cd Freon4dsl/packages/core
 > npm run build
 
-5. svelte (magenta) - updating the freon components
+5. svelte (blue) - updating the freon components
 > cd Freon4dsl/packages/core-svelte
 > npm run build
 
-6. web-lib (blue) - changing the web app layout
+6. web-lib (green) - changing the web app layout
 > cd Freon4dsl/packages/webapp-lib
 > npm run build
 

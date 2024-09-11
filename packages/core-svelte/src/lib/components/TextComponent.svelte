@@ -223,7 +223,6 @@
         // stopPropagation on an element will stop that event from happening on the parent (the entire ancestors),
         // preventDefault on an element will stop the event on the element, but it will happen on it's parent (and the ancestors too!)
         LOGGER.log("onKeyDown: [" + event.key + "] alt [" + event.altKey + "] shift [" + event.shiftKey + "] ctrl [" + event.ctrlKey + "] meta [" + event.metaKey + "]");
-
 		if (event.altKey || event.ctrlKey) {  // No shift, because that is handled as normal text
 			// first check if this event has a command defined for it
 			executeCustomKeyboardShortCut(event, 0, box, editor); // this method will stop the event from propagating, but does not prevent default!!
@@ -314,7 +313,7 @@
 						// TODO REDO
 					} else { // backspace
 						getCaretPosition(event);
-						LOGGER.log("Caret at: " + from);
+						//LOGGER.log("Caret at: " + from);
 						if (from !== 0) { // When there are still chars remaining to the left, do not let the parent handle it.
 							// Without propagation, the browser handles which char(s) to be deleted.
 							// With event.ctrlKey: delete text from caret to end => handled by browser.
@@ -370,7 +369,6 @@
 							// afterUpdate handles the dispatch of the textUpdate to the TextDropdown Component, if needed
 							if (editor.selectedBox.kind === "ActionBox") {
 								LOGGER.log(`${id}: TEXT UPDATE text '${text}' key: '${event.key}' from: ${from}`)
-
 								if (textUpdateFunction !== undefined) {
 									LOGGER.log(`${id}: TRY TO MATCH text `)
 									const executed = textUpdateFunction({content: text.concat(event.key), caret: from + 1})
@@ -385,7 +383,7 @@
 								}
 								// dispatcher('textUpdate', {content: text.concat(event.key), caret: from - 1});
 							}
-							event.stopPropagation()
+							event.stopPropagation();
 							break;
 						case CharAllowed.NOT_OK: // ignore
 							// ignore any spaces in the text TODO make this depend on textbox.spaceAllowed
@@ -558,6 +556,10 @@
 
 	function onInput(event: InputEvent & { currentTarget: HTMLInputElement }) {
 		setInputWidth();
+		/* GM - Pass the new text to textUpdateFunction */
+		const newtext = inputElement.value;
+		LOGGER.log('newtext=' + newtext);
+		textUpdateFunction({ content: newtext});
 	}
 
 	refresh();

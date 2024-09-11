@@ -25,6 +25,8 @@ import MultiLineTextComponent from '$lib/components/MultiLineTextComponent.svelt
 import MultiLineTextComponent2 from '$lib/components/MultiLineTextComponent2.svelte';
 import DateComponent from '$lib/components/DateComponent.svelte';
 import TimeComponent from '$lib/components/TimeComponent.svelte';
+import ItemGroupComponent from '$lib/components/ItemGroupComponent.svelte';
+import ItemGroupComponent2 from '$lib/components/ItemGroupComponent2.svelte';
 
 export {
     BooleanCheckboxComponent,
@@ -53,7 +55,9 @@ export {
     MultiLineTextComponent,
     MultiLineTextComponent2,
     DateComponent,
-    TimeComponent
+    TimeComponent,
+    ItemGroupComponent,
+    ItemGroupComponent2
 }
 
 export * from "$lib/components/svelte-utils/index.js";

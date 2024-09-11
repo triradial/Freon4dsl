@@ -22,6 +22,7 @@
     $: min = 100 * (buffer / size);
     $: max = 100 - min;
     $: pos = clamp(pos, min, max);
+
     let svcontainer: HTMLElement;
     let dragging = false;
 
