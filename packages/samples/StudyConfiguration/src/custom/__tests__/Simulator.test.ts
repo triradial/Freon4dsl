@@ -297,9 +297,9 @@ describe ("Study Simulation", () => {
             showMajorLabels: false,
             orientation: 'both',
             start: new Date(2024, 0, 1),
-            end: new Date(2024, 0, 9, 23, 59, 59),
+            end: new Date(2024, 0, 8, 23, 59, 59),
             min: new Date(2024, 0, 1),
-            max: new Date(2024, 0, 9, 23, 59, 59),
+            max: new Date(2024, 0, 8, 23, 59, 59),
             margin: {
                 item: {
                     horizontal: 0,
@@ -338,6 +338,7 @@ describe ("Study Simulation", () => {
         ])
         `;
         // GIVEN a study configuration with one period and two events
+        // where second visit has no window before or after
         let listOfEventsToAdd: EventsToAdd[] = [
           { eventName: "Visit 1", eventDay: 0, repeat: 0, period: "Screening"},
           { eventName: "Visit 2", eventDay: 7, repeat: 0, period: "Treatment"},
@@ -652,10 +653,10 @@ describe ("Study Simulation", () => {
         // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
     }); 
 
-    it("generates a chart for a three visit timeline for a visit that repeats twice", () => {
+    it("generates a CHART for a three visit timeline for a visit that repeats twice", () => {
       // GIVEN
       let listOfEventsToAdd: EventsToAdd[] = [
-        { eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening"},
+        { eventName: "Visit 1", eventDay: 0, repeat: 2, period: "Screening"},
       ];
       studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd);
 
@@ -668,10 +669,12 @@ describe ("Study Simulation", () => {
       const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
       // Save full HTML of chart for viewing / debugging
       utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+      // checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
+
     });
 
     
-    it("generates a table for a three visit timeline for a visit that repeats twice", () => {
+    it("generates a TABLE for a three visit timeline for a visit that repeats twice", () => {
       // GIVEN
       let listOfEventsToAdd: EventsToAdd[] = [
         { eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening"},

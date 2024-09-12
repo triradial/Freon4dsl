@@ -46,14 +46,14 @@
   ]);
 
 var items = new vis.DataSet([
-    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 1", content: "<b>Screening</b>", id: "Screening95" },
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 196" },
-    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 1", content: "&nbsp;", id: "Visit 197" },
-    { start: new Date(2024, 00, 03, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 198" },{ start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 199" },
-    { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 1", content: "&nbsp;", id: "Visit 1100" },
-    { start: new Date(2024, 00, 10, 00, 00, 00), end: new Date(2024, 00, 10, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 1101" },{ start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 1102" },
-    { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 1", content: "&nbsp;", id: "Visit 1103" },
-    { start: new Date(2024, 00, 17, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 1104" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening95" },
+    { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 196" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 197" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 198" },{ start: new Date(2024, 00, 07, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 199" },
+    { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 1100" },
+    { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 1101" },{ start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 1102" },
+    { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 1103" },
+    { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 1104" },
   ]) // create visualization
   var container = document.getElementById('visualization');
   var options = {
@@ -74,9 +74,9 @@ var items = new vis.DataSet([
     showMajorLabels: false,
     orientation: 'both',
     start: new Date(2024,0,1),
-    end: new Date(2024, 0, 17, 23, 59, 59),
+    end: new Date(2024, 0, 15, 23, 59, 59),
     min: new Date(2024, 0, 1),
-    max: new Date(2024, 0, 17, 23, 59, 59),
+    max: new Date(2024, 0, 15, 23, 59, 59),
     margin: {
         item: {
             horizontal: 0,

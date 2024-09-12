@@ -54,8 +54,8 @@ export function createEventScheduleStartingOnADay(uniquePrefix: string, startDay
   return eventSchedule;
 }
 
-export function createDay1EventScheduleThatRepeatsWeekly(eventName: string, numberOfRepeats: number) {
-  let eventSchedule = createEventScheduleStartingOnADay(eventName, 1);
+export function createDay1EventScheduleThatRepeatsWeekly(eventName: string, numberOfRepeats: number, eventDay: number) {
+  let eventSchedule = createEventScheduleStartingOnADay(eventName, eventDay);
   let repeatCondition = new RepeatCondition("RepeatCount-" + eventName);
   repeatCondition.maxRepeats = numberOfRepeats;
   repeatCondition.repeatUnit = new Weekly();
@@ -190,7 +190,7 @@ export function addRepeatingEvents(studyConfiguration: StudyConfiguration, perio
   let period = new Period(periodName);
   period.name = periodName;
   // Setup the study start event
-  let dayEventSchedule = createDay1EventScheduleThatRepeatsWeekly(eventsToAdd[0].eventName, eventsToAdd[0].repeat);
+  let dayEventSchedule = createDay1EventScheduleThatRepeatsWeekly(eventsToAdd[0].eventName, eventsToAdd[0].repeat, eventsToAdd[0].eventDay);
   let event = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule);
   studyConfiguration.periods.push(period);
   return studyConfiguration;
