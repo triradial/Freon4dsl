@@ -64,7 +64,7 @@ export class ScheduledStudyConfiguration {
   }
 
   getFirstStudyStartEvent(): ScheduledEvent | undefined {
-    let eventsOnADay = this.getEventsOnScheduledOnASpecificDay();
+    let eventsOnADay = this.getEventsScheduledOnASpecificDay();
     let firstEventOnDay1 = eventsOnADay.find(scheduledEvent => {
       if (scheduledEvent.configuredEvent.schedule.eventStart instanceof Day) {
         return (scheduledEvent.configuredEvent.schedule.eventStart as Day).startDay as number === 1;
@@ -75,10 +75,11 @@ export class ScheduledStudyConfiguration {
   }
 
 
-  getEventsOnScheduledOnASpecificDay(): ScheduledEvent[]  {
-    let eventsOnADayInAnyPeriod = this.getAllEventsInSchedule().filter(scheduledEvent => scheduledEvent.isScheduledOnASpecificDay());
-    console.log("getEventsOnScheduledOnASpecificDay # eventsOnADayInFirstPeriod: " + eventsOnADayInAnyPeriod.length);
-    return eventsOnADayInAnyPeriod;
+  getEventsScheduledOnASpecificDay(): ScheduledEvent[]  {
+    //TODO: sort in order of day so scheduling happens in order.
+    let eventsOnASpecificDayInAnyPeriod = this.getAllEventsInSchedule().filter(scheduledEvent => scheduledEvent.isScheduledOnASpecificDay());
+    console.log("There are: " + eventsOnASpecificDayInAnyPeriod.length + " events on a Specific Day across all the periods" );
+    return eventsOnASpecificDayInAnyPeriod;
   }
 
   // anyEventsToSchedule(timeline): boolean {
@@ -87,7 +88,9 @@ export class ScheduledStudyConfiguration {
   // }
 
   getEventsReadyToBeScheduled(completedEvent: EventInstance, timeline: Timeline) {
+    console.log("Searching schedule for all events ready to be scheduled");
     let readyEvents = this.getAllEventsInSchedule().filter(scheduledEvent => scheduledEvent.getInstanceIfEventIsReadyToSchedule(completedEvent, timeline));
+    console.log("There are: " + readyEvents.length + " events ready to be scheduled");
     return readyEvents;
   }
 }

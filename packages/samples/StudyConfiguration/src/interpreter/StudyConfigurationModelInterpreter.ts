@@ -101,18 +101,24 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         const operator = node.operator;
         const timeAmount = node.timeAmount;
         const eventState = node.eventState;
+        
         // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
         // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
         // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
         // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
         let lastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
         if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
-            console.log("evalEventReference: lastInstanceOfReferencedEvent is null for:" + referencedEvent.name);
+            console.log("The event referenced by '" + referencedEvent.name + "' is not on the timeline so the expression containing it cannot yet be evaluated" );
             return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
         } else {
-            let displacementFromEvent = main.evaluate(node.timeAmount, ctx) as RtNumber;
-            const result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
-            return new RtNumber(result);
+            if (lastInstanceOfReferencedEvent.scheduledEvent.isRepeatingEvent() && lastInstanceOfReferencedEvent.scheduledEvent.anyRepeatsNotCompleted(timeline)) {
+                console.log("'" + referencedEvent.name + "' is a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated" );
+                return undefined; // dependency on a repeating event that hasn't completed yet
+            } else {
+                let displacementFromEvent = main.evaluate(node.timeAmount, ctx) as RtNumber;
+                const result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
+                return new RtNumber(result);
+            }
         }
     }
 
@@ -162,6 +168,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         const left = main.evaluate(node.left, ctx);
         const right = main.evaluate(node.right, ctx);
         return (left as RtNumber).plus(right as RtNumber);
+    }
+
+    evalRepeatCount(node: language.RepeatCount, ctx: InterpreterContext): RtObject {
+        return new RtNumber(node.repeatCount)
     }
 
     evalRepeatEvery(node: language.RepeatEvery, ctx: InterpreterContext): RtObject {
