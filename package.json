@@ -14,7 +14,8 @@
     "lint": "npm run lint --workspaces --if-present",
     "setup": "npm run setup --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "prettier": "prettier --write --print-width 120 --tab-width 4 packages/*/src/**/*.ts packages/*/src/**/*.tsx packages/*/src/**/*.css"
+    "prettier": "prettier --write --print-width 120 --tab-width 4 packages/*/src/**/*.ts packages/*/src/**/*.tsx packages/*/src/**/*.css",
+    "refreshTestStudies": "node refreshTestStudies.js"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.7",
@@ -78,6 +79,7 @@
     "@tiptap/pm": "^2.5.4",
     "@tiptap/starter-kit": "^2.5.4",
     "flowbite-svelte": "^0.46.13",
+    "fs-extra": "^11.2.0",
     "tailwindcss": "^3.4.4",
     "tinymce": "^7.2.1"
   }

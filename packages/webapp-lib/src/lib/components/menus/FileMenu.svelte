@@ -108,9 +108,11 @@
 
     // save unit menuitem
     const saveUnit = () => {
-        // console.log("FileMenu.saveUnit: " + $currentUnitName);
-        EditorState.getInstance().saveStudyUnits();
-				setUserMessage(`Unit '${$currentUnitName}' saved.`);
+			// console.log("FileMenu.saveUnit: " + $currentUnitName);
+			EditorState.getInstance().saveStudyUnits();
+			const words = $currentUnitName.name.split(/(?=[A-Z])/);
+			const formattedName = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' '); // capitalize first letter of each word
+			setUserMessage(formattedName + " saved.");
     }
 
     // delete model menuitem

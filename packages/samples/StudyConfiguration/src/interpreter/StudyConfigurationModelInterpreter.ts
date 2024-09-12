@@ -10,6 +10,7 @@ import { StudyConfiguration, StudyConfigurationModel } from "../custom/../langua
 import { StudyConfigurationModelEnvironment } from "../custom/../config/gen/StudyConfigurationModelEnvironment";
 import { TimelineScriptTemplate } from "../custom/templates/TimelineScriptTemplate";
 import { TimelineTableTemplate } from "../custom/templates/TimelineTableTemplate";
+import { RtObjectScheduledEventWrapper, ScheduledEvent } from "custom/timeline/ScheduledEvent";
 
 let main: IMainInterpreter;
 
@@ -117,14 +118,25 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                 let fakeLastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
                 console.log("evalEventReference: owningEvent: " + owningEvent.name + " fake: " + fakeLastInstanceOfReferencedEvent.scheduledEvent.getName() + " last: " + lastInstanceOfReferencedEvent.scheduledEvent.getName());
             }    
-            if (lastInstanceOfReferencedEvent.scheduledEvent.isRepeatingEvent() && lastInstanceOfReferencedEvent.scheduledEvent.anyRepeatsNotCompleted(timeline)) {
-                console.log("The event '" + owningEvent.name + "' has a reference to:'" + referencedEvent.name + "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated" );
-                return undefined; // dependency on a repeating event that hasn't completed yet
-            } else {
-                let displacementFromEvent = main.evaluate(node.timeAmount, ctx) as RtNumber;
-                const result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
-                return new RtNumber(result);
+            if (lastInstanceOfReferencedEvent.scheduledEvent.isRepeatingEvent()) {
+                if (node.eventState.name === language.EventState.eachCompleted.name) { 
+                    const numberOfReferencedEventCompleted = timeline.numberCompletedInstancesOf(lastInstanceOfReferencedEvent.scheduledEvent);
+                    let owningScheduledEvent = (ctx.find("scheduledEvent") as RtObjectScheduledEventWrapper).scheduledEvent; 
+                    const numberOfThisEventCompleted = timeline.numberCompletedInstancesOf(owningScheduledEvent);
+                    if (numberOfReferencedEventCompleted <= numberOfThisEventCompleted) {
+                        console.log("The event '" + owningEvent.name + "' has a each-completed reference to:'" + referencedEvent.name + "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated" );
+                        return undefined; // dependency on a repeating event that we run in parallel with and the parallel event hasn't completed yet
+                    }
+                 } else { 
+                    if (lastInstanceOfReferencedEvent.scheduledEvent.anyRepeatsNotCompleted(timeline)) {
+                        console.log("The event '" + owningEvent.name + "' has a reference to:'" + referencedEvent.name + "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated" );
+                        return undefined; // dependency on a repeating event that hasn't completed yet
+                    }
+                }
             }
+            let displacementFromEvent = main.evaluate(node.timeAmount, ctx) as RtNumber;
+            const result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
+            return new RtNumber(result);
         }
     }
 
@@ -212,35 +224,4 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         // console.log("entered evalWhen");
         return main.evaluate(node.startWhen, ctx);
     }
-
-    // Copy for when the version in MainStudyConfigurationModelInterpreter is overwritten
-    //
-//     evaluate(node: Object): RtObject {
-//         MainStudyConfigurationModelInterpreter.main.reset();
-//         simulate(node as StudyConfiguration);
-//         try {
-//             return MainStudyConfigurationModelInterpreter.main.evaluate(node, InterpreterContext.EMPTY_CONTEXT);
-//         } catch (e: any) {
-//             return new RtError(e.message);
-//         }
-//     }
-    
-//     evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
-//         MainStudyConfigurationModelInterpreter.main.reset();
-//         try {
-//             return MainStudyConfigurationModelInterpreter.main.evaluate(node, ctx);
-//         } catch (e: any) {
-//             return new RtError(e.message);
-//         }
-//     }
-// }
-
-// function simulate(studyConfiguration: StudyConfiguration) {
-//     let simulator = new Simulator(studyConfiguration);
-//     simulator.run();
-//     const timeline = simulator.getTimeline();
-//     const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-//     const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
-//     TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
-// }
 }

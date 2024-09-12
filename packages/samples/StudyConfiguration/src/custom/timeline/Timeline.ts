@@ -10,7 +10,7 @@ export let periodLogging = false;
 /*
  * A Timeline records the events and the days they occur on.
  */
-export class Timeline extends RtObject{
+export class Timeline extends RtObject {
 
   days: TimelineDay[] = [];
 

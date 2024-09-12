@@ -205,26 +205,31 @@ export class EditorState {
      */
     async saveStudyUnits() {
         LOGGER.log("EditorState.saveCurrentUnit: " + get(currentUnitName));
+        console.log("EditorState.saveCurrentUnit: " + get(currentUnitName));
         const unit: FreModelUnit = this.langEnv.editor.rootElement as FreModelUnit;
         if (!!unit) {
             if (!!this.currentModel?.name && this.currentModel?.name?.length) {
                 if (!!unit.name && unit.name.length > 0) {
                     // await this.serverCommunication.putModelUnit(this.currentModel.name, unit.name, unit); MV
+                    LOGGER.log("saveStudyUnits saving: " + unit.name);
+                    console.log("saveStudyUnits saving: " + unit.name);
                     await this.modelStore.saveUnit(unit)
                     //TODO: find how to save these again by getting the units
                     // await this.serverCommunication.putModelUnit(this.currentModel.name, "Availability", this.currentModel.findUnit("Availability"));
-                    LOGGER.log("Unit saved: Availability");
+                    // LOGGER.log("Unit saved: Availability");
                     // await this.serverCommunication.putModelUnit(this.currentModel.name, "StudyConfiguration", this.currentModel.findUnit("StudyConfiguration") );
-                    LOGGER.log("Unit saved: StudyConfiguration");
+                    // LOGGER.log("Unit saved: StudyConfiguration");
                     currentUnitName.set({ name: unit.name, id: unit.freId() }); // just in case the user has changed the name in the editor
                     EditorState.getInstance().setUnitLists();
                 } else {
                     setUserMessage(`Unit without name cannot be saved. Please, name it and try again.`);
                 }
             } else {
+                console.log("Internal error: cannot save unit because current model is unknown.");
                 LOGGER.log("Internal error: cannot save unit because current model is unknown.");
             }
         } else {
+            console.log("No current model unit");
             LOGGER.log("No current model unit");
         }
     }

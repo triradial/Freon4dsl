@@ -1,5 +1,5 @@
 import { BinaryExpression, Event, Day, EventStart, StudyStart, RepeatCondition, RepeatUnit, Period, StudyConfiguration, When, Daily, Weekly, Monthly, RepeatEvery, RepeatCount } from "../../language/gen/index";
-import { InterpreterContext, isRtError, ownerOfType, RtNumber, RtObject } from "@freon4dsl/core";
+import { InterpreterContext, isRtError, ownerOfType, RtBoolean, RtNumber, RtObject } from "@freon4dsl/core";
 import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter";
 import { EventInstance, PeriodInstance, scheduledLogging, Timeline, TimelineEventInstance, TimelineInstanceState } from "./Timeline";
 import { repeat } from "lodash";
@@ -14,6 +14,21 @@ export enum ScheduledEventState {
   Completed
 };
 
+// A wrapper around a ScheduledEvent that allows a ScheduledEvent to be put into the interpreter context.
+//
+export class RtObjectScheduledEventWrapper extends RtObject {
+  scheduledEvent: ScheduledEvent;
+
+  equals(other: RtObject): RtBoolean {
+    throw new Error("Method not implemented.");
+  }
+  
+  constructor(public scheduledEventToWrap: ScheduledEvent) {
+    super();
+    this.scheduledEvent = scheduledEventToWrap;
+  }
+  
+}
 /*
  * A ScheduledEvent is a wrapper around an Event from the StudyConfiguration language.
  * It provides a simplified interface for the simulator and allows for the same Event to be scheduled multiple times.
@@ -34,6 +49,8 @@ export class ScheduledEvent {
     let ctx = InterpreterContext.EMPTY_CONTEXT;
     ctx.set("timeline", timeline);
     ctx.set("studyStartDayNumber", new RtNumber(this.studyStartDayNumber));
+    const rtObjectScheduledEventWrapper = new RtObjectScheduledEventWrapper(this);
+    ctx.set("scheduledEvent", rtObjectScheduledEventWrapper);
     const value = interpreter.evaluateWithContext(node,ctx);
     if (isRtError(value)) {
       const trace = interpreter.getTrace().root.toStringRecursive();
