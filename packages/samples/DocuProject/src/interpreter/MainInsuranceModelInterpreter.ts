@@ -57,12 +57,7 @@ export class MainInsuranceModelInterpreter implements FreInterpreter {
     }
 
     evaluate(node: Object): RtObject {
-        MainInsuranceModelInterpreter.main.reset();
-        try {
-            return MainInsuranceModelInterpreter.main.evaluate(node, InterpreterContext.EMPTY_CONTEXT);
-        } catch (e: any) {
-            return new RtError(e.message);
-        }
+        return this.evaluateWithContext(node, InterpreterContext.EMPTY_CONTEXT);
     }
 
     evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {

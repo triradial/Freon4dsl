@@ -16,6 +16,7 @@ export * from "./ButtonBox";
 export * from "./BooleanControlBox";
 export * from "./NumberControlBox";
 export * from "./LimitedControlBox";
+export * from "./FragmentBox";
 export * from "./GridBox";
 export * from "./ListGroupBox";
 export * from "./ItemGroupBox";
@@ -32,7 +33,6 @@ export * from "./OptionalBox2";
 export * from "./SvgBox";
 export * from "./TextBox";
 export * from "./MultiLineTextBox";
-export * from "./MultiLineTextBox2";
 export * from "./SelectBox";
 export * from "./BoxFactory";
 export * from "./GridCellBox";
@@ -40,10 +40,17 @@ export * from "./ElementBox";
 export * from "./TableBox";
 export * from "./TableCellBox";
 export * from "./TableRowBox";
-export * from "./CharAllowed";
-export * from "./DateBox";
-export * from "./TimeBox";
+export * from "./externalBoxes";
 
 // the following files contain export that do not depend on any other file
 export * from "./SelectOption";
 export * from "./ChoiceTextHelper";
+
+/** START - M+G */
+export * from "./CharAllowed";
+export * from "./MultiLineTextBox2";
+export * from "./ListGroupBox";
+export * from "./ItemGroupBox";
+export * from "./ItemGroupBox2";
+export * from "./IconBox";
+/**END - M+G */

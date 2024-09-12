@@ -68,7 +68,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
           BoxUtil.listGroupBox(element, "study-options", "Options",
             BoxFactory.verticalLayout(element, "StudyConfiguration-vlist-line-3", "", 
               [   
-                BoxUtil.emptyLineBox(element, "option-empty-line", "h-4"),
+                BoxUtil.emptyLineBox2(element, "option-empty-line", "h-4"),
                 BoxUtil.switchElement(element, "showActivityDetails", "Show Shared Tasks"),
                 BoxUtil.switchElement(element, "showSystems", "Show Systems"),
                 BoxUtil.switchElement(element, "showScheduling", "Show Scheduling") 

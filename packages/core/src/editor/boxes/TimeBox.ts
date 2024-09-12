@@ -44,12 +44,11 @@ export class TimeBox extends Box {
         return CharAllowed.OK;
     };
 
-    constructor(node: FreNode, role: string, getTime: () => string, setTime: (text: string) => void, initializer?: Partial<TimeBox>, cssClass?: string) {
+    constructor(node: FreNode, role: string, getTime: () => string, setTime: (text: string) => void, initializer?: Partial<TimeBox>) {
         super(node, role);
         FreUtils.initializeObject(this, initializer);
         this.$getTime = getTime;
         this.$setTime = setTime;
-        this.cssClass = cssClass;
     }
 
     public deleteWhenEmpty1(): boolean {

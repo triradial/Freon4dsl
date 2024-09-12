@@ -14,10 +14,11 @@
     "errors-only": "svelte-check --threshold error --tsconfig ./tsconfig.json",
     "install-local": "npm install --registry http://localhost:4873",
     "prepare-app": "npm run styles-light && npm run styles-dark",
-    "styles-light": "smui-theme compile public/site.css -i src/style/light",
-    "styles-dark": "smui-theme compile public/site-dark.css -i src/style/dark"
+    "styles-light": "smui-theme compile public/site.css -i style/light --no-cache",
+    "styles-dark": "smui-theme compile public/site-dark.css -i style/dark --no-cache"
   },
   "devDependencies": {
+    "@smui-extra/accordion": "^7.0.0",
     "@rollup/plugin-commonjs": "^25.0.8",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",

@@ -34,9 +34,9 @@
 
         LOGGER.log("drag DROPPING item [" + data.element.freId() + "] from [" + data.componentId + "] in list [" + id + "] on position [" + targetIndex + "]");
         if (data.componentId === id) { // dropping in the same list
-            moveListElement(box.element, data.element, box.propertyName, targetIndex);
+            moveListElement(box.node, data.element, box.propertyName, targetIndex);
         } else { // dropping in another list
-            dropListElement(editor, data, myMetaType, box.element, box.propertyName, targetIndex);
+            dropListElement(editor, data, myMetaType, box.node, box.propertyName, targetIndex);
         }
         // everything is done, so reset the variables
         $draggedElem = null;
@@ -63,7 +63,7 @@
         // See https://stackoverflow.com/questions/11927309/html5-dnd-datatransfer-setdata-or-getdata-not-working-in-every-browser-except-fi,
         // which explains why we cannot use event.dataTransfer.setData. We use a svelte store instead.
         // create the data to be transferred and notify the store that something is being dragged
-        $draggedElem = new ListElementInfo(shownElements[listIndex].element, id);
+        $draggedElem = new ListElementInfo(shownElements[listIndex].node, id);
         $draggedFrom = listId;
     };
     const dragleave = (event: DragEvent, index): boolean => {
@@ -156,7 +156,7 @@
     let previousBox = null;
 
     const refresh = (why?: string): void =>  {
-        LOGGER.log("REFRESH ListComponent( " + why + ") " + box?.element?.freLanguageConcept());
+        LOGGER.log("REFRESH ListComponent( " + why + ") " + box?.node?.freLanguageConcept());
         shownElements = [...box.children];
         id = !!box ? componentId(box) : 'list-for-unknown-box';
         isHorizontal = !!box ? (box.getDirection() === ListDirection.HORIZONTAL) : false;
@@ -206,41 +206,5 @@
 		</span>
     {/each}
 </span>
-
-
-<style>
-    /*.list-component {*/
-    /*    --fre-list-grid-template-columns: "";*/
-    /*    --fre-list-grid-template-rows: "";*/
-    /*}*/
-    .horizontalList {
-        /*grid-template-rows: var(--fre-list-grid-template-rows);*/
-        /*grid-template-columns: var(--fre-list-grid-template-columns);*/
-        white-space: nowrap;
-        display: grid;
-        padding: var(--freon-horizontallist-component-padding, 1px);
-        background-color: var(--freon-editor-component-background-color, white);
-        border-color: var(--freon-horizontallist-component-border-color, darkgreen);
-        border-width: var(--freon-horizontallist-component-border-width, 0pt);
-        border-style: var(--freon-horizontallist-component-border-style, solid);
-        margin: var(--freon-horizontallist-component-margin, 1px);
-        box-sizing: border-box;
-    }
-
-    .verticalList {
-        /*grid-template-rows: var(--fre-list-grid-template-rows);*/
-        /*grid-template-columns: var(--fre-list-grid-template-columns);*/
-        /*display: grid;*/
-        /*background-color: var(--freon-editor-component-background-color, white);*/
-        padding: var(--freon-verticallist-component-padding, 1px);
-        margin: var(--freon-verticallist-component-margin, 1px);
-        border-color: var(--freon-verticallist-component-border-color, red);
-        border-width: var(--freon-verticallist-component-border-width, 0pt);
-        border-style: var(--freon-verticallist-component-border-style, solid);
-
-        /*margin-top: 10px;*/
-        box-sizing: border-box;
-    }
-</style>
 
 

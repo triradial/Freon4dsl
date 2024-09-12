@@ -1,0 +1,318 @@
+//@use 'sass:color';
+@use '../_global_color' as gc;
+
+/* #region APP */
+
+// Include all the global styles that do not involve dark/light modes.
+@use '../_custom_app';
+
+:root {
+  --mdc-theme-primary: #ff5722;
+  --mdc-theme-secondary: #4caf50;
+  --mdc-theme-surface: #424242;
+  --mdc-theme-background: #303030;
+  --mdc-theme-error: #f44336;
+  --mdc-theme-on-secondary: #ffffff;
+  --mdc-theme-on-surface: #e0e0e0;
+}
+
+/* #region GENERAL */
+html,
+body {
+  background-color: var(--mdc-theme-surface);
+  color: var(--mdc-theme-on-surface);
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.mdc-drawer {
+  background-color: #212121 !important;
+}
+
+.mdc-drawer span {
+  color: white !important;
+}
+
+.mdc-drawer__title {
+  color: rgb(126, 151, 188) !important;
+}
+
+.demo-list {
+  border-left: 4px solid rgb(50, 97, 156) !important;
+}
+
+.mdc-deprecated-list-item--activated {
+  background-color: var(--mdc-theme-primary) !important;
+}
+
+.mdc-menu-surface {
+  background-color: #808080 !important;
+}
+
+/* #endregion */
+
+:focus {
+  outline: none;
+}
+
+// status-bar style is used for the StatusBar component above the editor
+.status-bar {
+  //--freon-colors-bg-status: #4f9a94;
+  --freon-colors-bg-status: #003f69;
+  --freon-colors-text-status: white;
+  --freon-text-style-status: italic;
+}
+
+.main-frame {
+  /* SplitPane divider */
+  --freon-colors-slider: var(--mdc-theme-on-secondary);    /* The color of the slider between the error/search pane and the editor */
+}
+
+.text-box-action {
+  --freon-text-component-color: rgb(194, 194, 194);
+}
+.text-box-select {
+  --freon-text-component-color: rgb(96, 196, 96);
+}
+.text-box-text {
+  --freon-text-component-color: rgb(133, 186, 255);
+}
+
+.app-green-font {
+  color: #00fcfc !important;
+}
+
+/* #region FREON COMPONENTS */
+
+  /* #region Label Component */
+  .label-component:empty:before {
+    background-color: inherit;
+  }
+
+  .label-component {
+    color: #{gc.$mac-gray-400};
+    background-color: inherit;
+  }
+  /* #endregion */
+
+  /* #region Text Component */
+    .text-dropdown-component .text-component-input,
+    .text-component-input {
+      color: #{gc.$mac-primary-200};
+      background-color: #{gc.$mac-gray-900};
+    }
+    
+    .text-dropdown-component .text-component-text,
+    .text-component-text {
+      color: #{gc.$mac-primary-200};
+      background-color: inherit;
+    }
+    
+    .text-dropdown-component .text-component-placeholder,
+    .text-component-placeholder {
+      color: #{gc.$mac-gray-500};
+      background-color: inherit;
+    }
+
+    .text-component-action-placeholder {
+      color: #{gc.$mac-gray-500};
+      background-color: inherit;
+    }
+  /* #endregion */
+
+  /* #region Switch Component */
+    .switch-component button {
+      background: #{gc.$mac-gray-800};
+    }
+
+    .switch-component button::before { /* defines the knob */
+      background-color: #{gc.$mac-gray-400};
+    }
+
+    .switch-component button[aria-checked='true']{
+      background-color: #{gc.$mac-primary-900t};
+    }
+
+    .switch-component button:focus {
+      box-shadow: 0 0 0 1px #206C2D;;
+    }
+
+    .switch-component button:hover {
+        box-shadow: 0 0 5px 2px #4C5C96;
+    }
+  /* #endregion */ 
+
+  /* #region List Group Component */
+  .list-group.type1 {
+    background-color: #{gc.$mac-primary-900t}; 
+  }
+  .list-group.type2 {
+      background-color: #{gc.$mac-white-5t}; 
+  }
+  .list-group.type3 {
+    border-bottom: 1px solid #{gc.$mac-white-20t};
+  }
+  .list-group.type4 {
+    border-bottom: 1px solid #1191b9;;
+  }
+  .list-group.type1 .list-group-label {
+    color: #{gc.$mac-white};
+  }
+  .list-group.type2 .list-group-label {
+    color: #{gc.$mac-gray-200};
+  }
+  .list-group.type3 .list-group-label {
+    color: #{gc.$mac-gray-200};
+  }
+  .list-group.type4 .list-group-label {
+    color: #1191b9;
+  }
+  .list-group.type4 .toggle-button {
+    color: #1191b9;
+  }
+  /* #endregion */
+
+  /* #region Item Group Component */
+  .item-group {
+    background-color: inherit;
+  }
+  
+  .item-group .required {
+    background-color: #{gc.$mac-error-background};
+    color: #{gc.$mac-pink-900};
+  }
+
+  .item-group.type1 {
+    background-color: inherit;
+  }
+
+  .item-group.type2 {
+    background-color: inherit;
+  }
+
+  .item-group.type1 .item-group-label {
+    color: #{gc.$mac-white};
+  }
+
+  .item-group.type2 .item-group-label {
+    color: #{gc.$mac-gray-200};
+  }
+  /* #endregion */ 
+ 
+  /* #region Layout Component */
+  .layout-component {
+    background: transparent;
+  }
+  /* #endregion */
+
+  /* #region MultlineText Component */
+  .multiline-text {
+    color: var(--freon-editor-component-color, rgb(129, 129, 129)) !important;
+    background: var(--freon-text-component-background-color, inherit) !important;
+  }
+
+  .multiline-editor {
+    outline: 1px solid transparent !important;
+    outline-offset: 1px !important;
+    --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #fff;
+    --tw-ring-color: #32cd3275;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
+    border-color: #ffffff00;
+    margin: 4px 4px 4px 4px !important;
+  }
+
+  /* #endregion */ 
+
+  /* #region Date Component */
+  .date-component-input {
+    color: #{gc.$mac-primary-200};
+    background-color: #{gc.$mac-gray-900};
+  }
+  
+  .date-component-text {
+    color: #{gc.$mac-primary-200};
+    background-color: inherit;
+  }
+  
+  .date-component-placeholder {
+    color: #{gc.$mac-gray-600};
+    background-color: inherit;
+  }
+  /* #endregion */ 
+
+  /* #region Time Component */
+    .time-component-input {
+      color: #{gc.$mac-primary-200};
+      background-color: #{gc.$mac-gray-900};
+    }
+    
+    .time-component-text {
+      color: #{gc.$mac-primary-200};
+      background-color: inherit;
+    }
+    
+    .time-component-placeholder {
+      color: #{gc.$mac-gray-600};
+      background-color:  inherit;
+    }
+    /* #endregion */ 
+
+  /* #region Dropdown Component */
+  .dropdown-component {
+    background-color: whitesmoke;
+  }
+  /* #endregion */
+
+  /* #region Context Menu */
+  .contextmenu {
+    background-color: #1F2A37;
+    border-color: #131a22;
+    box-shadow: 1.5px 1.5px 8px grey;
+  }
+  .contextmenu-button {
+    //background-color: rgb(218, 153, 164);
+    color: #C6CCE2;
+  }
+
+  .contextmenu-button:hover {
+    background-color: #374151;
+    color: #B3BBD8;
+  }
+
+  .contextmenu-hr {
+    width: 100%;
+    margin: 0;
+    color: unset !important;
+    border-top: solid 1px #C6CCE2;
+  }
+  .contextmenu-shortcut {
+    color: #A0AACF !important;
+  }
+  /* #endregion */ 
+
+  /* #region Button */
+  /* Copied from https://svelte.dev/repl/hello-world?version=4.2.18 */
+  /* Ripple effect */
+    /* Button style */
+  .button-component {
+  }
+
+  .button-component-ripple {
+    background-position: center;
+    transition: background 0.8s;
+  }
+  .button-component-ripple:hover {
+  }
+  .button-component-ripple:active {
+  }
+  .button-component-empty {
+  }
+  /* #endregion */ 
+
+  .render-component-selected {
+    background-color: #{gc.$mac-white-5t};
+  }

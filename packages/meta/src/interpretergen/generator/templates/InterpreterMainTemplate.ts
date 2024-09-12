@@ -2,7 +2,6 @@ import { FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
 import { Names } from "../../../utils/index.js";
 
 export class InterpreterMainTemplate {
-
     /**
      * The base class containing all interpreter functions that should be defined.
      * @param language
@@ -58,14 +57,9 @@ export class InterpreterMainTemplate {
             }
 
             evaluate(node: Object): RtObject {
-                ${Names.interpreterName(language)}.main.reset();
-                try {
-                    return ${Names.interpreterName(language)}.main.evaluate(node, InterpreterContext.EMPTY_CONTEXT);
-                } catch (e: any) {
-                    return new RtError(e.message);
-                }
+                return this.evaluateWithContext(node, InterpreterContext.EMPTY_CONTEXT)
             }
-
+            
             evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
                 ${Names.interpreterName(language)}.main.reset();
                 try {
@@ -78,5 +72,4 @@ export class InterpreterMainTemplate {
         }
         `;
     }
-
 }
