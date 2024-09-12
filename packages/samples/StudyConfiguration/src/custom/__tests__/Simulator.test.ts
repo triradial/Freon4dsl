@@ -9,25 +9,6 @@ import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
 
-function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScript: string, expectedTimelineVisualizationHTML: string = "", save : boolean = false ) {
-  resetTimelineScriptTemplate();
-  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
-  // Save full HTML of chart for viewing / debugging
-  if (save) utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
-
-  const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
-  const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
-  // Then the generated timeline picture has two events on the expected event days
-  expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
-
-  if (expectedTimelineVisualizationHTML.length > 0) { 
-    const normalizedTimelineVisualizationHTML = timelineVisualizationHTML.replace(/\s+/g, '');
-    const normalizedExpectedTimelineVisualizationHTML = expectedTimelineVisualizationHTML.replace(/\s+/g, '');
-    expect(normalizedTimelineVisualizationHTML).toEqual(normalizedExpectedTimelineVisualizationHTML);
-  }
-}
-
 describe ("Study Simulation", () => {
   var simulator;
   const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
@@ -288,10 +269,10 @@ describe ("Study Simulation", () => {
 
           var items = new vis.DataSet([
             { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
-            
-            { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 11" },
-            { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 12" },
-            { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "treatment-visits", title: "Visit 2: Study Start + 7", content: "&nbsp;", id: "Visit 23" },
+            { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
+            { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
+            { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
+            { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "treatment-visits", title: "Visit 2: Study Start + 7", content: "&nbsp;", id: "Visit 24" },
           ])
         `;
 
@@ -350,10 +331,10 @@ describe ("Study Simulation", () => {
         var items = new vis.DataSet([
           { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
           { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 7", content: "<b>Treatment</b>", id: "Treatment1" },
-          
-          { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
-          { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
-          { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "treatment-visits", title: "Visit 2: when Visit 1 completed + 7 days", content: "&nbsp;", id: "Visit 24" },
+          { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 12" },
+          { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 13" },
+          { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 14" },
+          { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "treatment-visits", title: "Visit 2: when Visit 1 completed + 7 days", content: "&nbsp;", id: "Visit 25" },
         ])
         `;
         // GIVEN a study configuration with one period and two events
@@ -368,7 +349,7 @@ describe ("Study Simulation", () => {
         simulator.run();
         let timeline = simulator.timeline;
 
-        checkTimelineChart(timeline, expectedTimelineDataAsScript, "", false);
+        checkTimelineChart(timeline, expectedTimelineDataAsScript, "", true);
     }); 
 
     it("generate a chart for the example study 1", () => {
@@ -756,3 +737,23 @@ describe ("Study Simulation", () => {
 
   });
 });
+
+function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScript: string, expectedTimelineVisualizationHTML: string = "", save : boolean = false ) {
+  resetTimelineScriptTemplate();
+  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+  // Save full HTML of chart for viewing / debugging
+  if (save) utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+
+  const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
+  const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
+  // Then the generated timeline picture has two events on the expected event days
+  expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+
+  if (expectedTimelineVisualizationHTML.length > 0) { 
+    const normalizedTimelineVisualizationHTML = timelineVisualizationHTML.replace(/\s+/g, '');
+    const normalizedExpectedTimelineVisualizationHTML = expectedTimelineVisualizationHTML.replace(/\s+/g, '');
+    expect(normalizedTimelineVisualizationHTML).toEqual(normalizedExpectedTimelineVisualizationHTML);
+  }
+}
+

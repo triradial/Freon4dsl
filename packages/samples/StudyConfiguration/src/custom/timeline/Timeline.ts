@@ -72,9 +72,20 @@ export class Timeline extends RtObject{
   }
 
   getLastInstanceForThisEvent(eventToMatch: Event): EventInstance {
-    let allEventInstances = this.days.flatMap(day => day.events.filter ( event => event instanceof EventInstance));
-    let eventInstances = allEventInstances.filter(event => eventToMatch.name === event.getName());
-    const lastInstance = eventInstances[eventInstances.length - 1] as EventInstance; // TODO: sort by day and get the most recent
+    // Flatten the list of events and filter for EventInstance
+    let allEventInstances = this.days.flatMap(day => 
+      day.events.filter(event => event instanceof EventInstance).map(event => ({ event, day: day.day }))
+    );
+  
+    // Filter the events to match the given event name
+    let eventInstances = allEventInstances.filter(({ event }) => eventToMatch.name === event.getName());
+  
+    // Sort the events by the day value
+    eventInstances.sort((a, b) => a.day - b.day);
+  
+    // Get the last instance from the sorted list
+    const lastInstance = eventInstances.length > 0 ? eventInstances[eventInstances.length - 1].event as EventInstance : null;
+  
     if (!lastInstance) {
       // console.log("No instance of: '" + eventToMatch.name + "' on timeline");
       return null;

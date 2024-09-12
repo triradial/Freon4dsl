@@ -113,6 +113,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             console.log("The event '" + owningEvent.name + "' reference to: '" + referencedEvent.name + "' cannot be evaluated because the referenced event is not on the timeline" );
             return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
         } else {
+            if (owningEvent.name === 'V14-V18') {
+                let fakeLastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
+                console.log("evalEventReference: owningEvent: " + owningEvent.name + " fake: " + fakeLastInstanceOfReferencedEvent.scheduledEvent.getName() + " last: " + lastInstanceOfReferencedEvent.scheduledEvent.getName());
+            }    
             if (lastInstanceOfReferencedEvent.scheduledEvent.isRepeatingEvent() && lastInstanceOfReferencedEvent.scheduledEvent.anyRepeatsNotCompleted(timeline)) {
                 console.log("The event '" + owningEvent.name + "' has a reference to:'" + referencedEvent.name + "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated" );
                 return undefined; // dependency on a repeating event that hasn't completed yet
