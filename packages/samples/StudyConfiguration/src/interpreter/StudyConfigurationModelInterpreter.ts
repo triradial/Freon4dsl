@@ -67,14 +67,15 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             const styles = `
             <style>
               .limited-width-container {
-                max-width: 85% !important;
-                width: 85% !important;
+                max-width: 100% !important;
+                width: 100% !important;
                 overflow: hidden !important;
                 box-sizing: border-box !important;
                 margin: 20px !important;
               }
             </style>
-            `;            const chartHTML = TimelineScriptTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+            `;            
+            const chartHTML = TimelineScriptTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
             const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
             const html = `${styles}<div class="limited-width-container">${tableHTML + TimelineTableTemplate.addSomeSpace() + chartHTML}</div>`;
             return new RtString(html);
