@@ -53,12 +53,7 @@ export class MainPiLanguageInterpreter implements FreInterpreter {
     }
 
     evaluate(node: Object): RtObject {
-        MainPiLanguageInterpreter.main.reset();
-        try {
-            return MainPiLanguageInterpreter.main.evaluate(node, InterpreterContext.EMPTY_CONTEXT);
-        } catch (e: any) {
-            return new RtError(e.message);
-        }
+        return this.evaluateWithContext(node, InterpreterContext.EMPTY_CONTEXT);
     }
 
     evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {

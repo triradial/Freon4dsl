@@ -51,57 +51,57 @@ getTableHeadersFor(projectionName: string): TableRowBox {
 //     const taskBoxProviderPrototype = TaskBoxProvider.prototype as any;        
 //     taskBoxProviderPrototype.getTableRowFor_default = newGetTableRowFor_defaultTaskImplementation;
 
-//     const systemAccessBoxProviderPrototype = SystemAccessBoxProvider.prototype as any;        
-//     systemAccessBoxProviderPrototype.getTableRowFor_default = newGetTableRowFor_defaultSystemAccessImplementation;
-// }
-
+    //     const systemAccessBoxProviderPrototype = SystemAccessBoxProvider.prototype as any;        
+    //     systemAccessBoxProviderPrototype.getTableRowFor_default = newGetTableRowFor_defaultSystemAccessImplementation;
+    // }
+    
 ////////////////////////////////////////////////////////////////////
 /**
-* Creates a study configuration box based on the provided element.
-* 
-* @param element - The study configuration element.
-* @returns The created study configuration box.
-*/
+ * Creates a study configuration box based on the provided element.
+ * 
+ * @param element - The study configuration element.
+ * @returns The created study configuration box.
+ */
 projectStudyConfiguration (studyconfig: StudyConfiguration): Box {
-  const element: StudyConfiguration = studyconfig;
-  return BoxFactory.verticalLayout(element, "StudyConfiguration-overall", "", [
-    BoxUtil.listGroupBox(element, "study-options", "Options",
-      BoxFactory.verticalLayout(element, "StudyConfiguration-vlist-line-3", "", 
-        [   
-          BoxUtil.emptyLineBox(element, "option-empty-line", "h-4"),
-          BoxUtil.switchElement(element, "showActivityDetails", "Show Shared Tasks"),
-          BoxUtil.switchElement(element, "showSystems", "Show Systems"),
-          BoxUtil.switchElement(element, "showScheduling", "Show Scheduling") 
-        ], 
-      {cssClass: "w-full ml-4"}),
-    {cssClass: "type1 mt-5", isExpanded: true}),
-    BoxUtil.listGroupBox(element, "periods", "Study Periods",
-      BoxUtil.verticalPartListBox(element, (element).periods, "periods", null, this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
-    {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
-    ...(element.showActivityDetails === true? 
-      [
-        BoxUtil.listGroupBox(element, "shared-tasks", "Shared Tasks",
-          BoxUtil.verticalPartListBox(element, (element).tasks, "tasks", null, this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
-        {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
-        ...(element.showSystems === true? 
-          [
-            BoxUtil.listGroupBox(element, "shared-systems", "Systems",
-              BoxUtil.verticalPartListBox(element, (element).systemAccesses, "systemAccesses", null,  this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
-            {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
-          ] 
-        : 
-          []
-        ),
-        BoxUtil.listGroupBox(element, "shared-people", "People",
-          BoxUtil.indentBox(element, 4, "21",
-            BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler),
-          ), 
-        {cssClass:"type1 mt-2", isExpanded:true, canAdd: true})
-      ] 
-    : 
-      []
-    ),
-]);
+    const element: StudyConfiguration = studyconfig;
+    return BoxFactory.verticalLayout(element, "StudyConfiguration-overall", "", [
+      BoxUtil.listGroupBox(element, "study-options", "Options",
+        BoxFactory.verticalLayout(element, "StudyConfiguration-vlist-line-3", "", 
+          [   
+            BoxUtil.emptyLineBox2(element, "option-empty-line", "h-4"),
+            BoxUtil.switchElement(element, "showActivityDetails", "Show Shared Tasks"),
+            BoxUtil.switchElement(element, "showSystems", "Show Systems"),
+            BoxUtil.switchElement(element, "showScheduling", "Show Scheduling") 
+          ], 
+        {cssClass: "w-full ml-4"}),
+      {cssClass: "type1 mt-5", isExpanded: true}),
+      BoxUtil.listGroupBox(element, "periods", "Study Periods",
+        BoxUtil.verticalPartListBox(element, (element).periods, "periods", null, this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
+      {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
+      ...(element.showActivityDetails === true? 
+        [
+          BoxUtil.listGroupBox(element, "shared-tasks", "Shared Tasks",
+            BoxUtil.verticalPartListBox(element, (element).tasks, "tasks", null, this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
+          {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
+          ...(element.showSystems === true? 
+            [
+              BoxUtil.listGroupBox(element, "shared-systems", "Systems",
+                BoxUtil.verticalPartListBox(element, (element).systemAccesses, "systemAccesses", null,  this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
+              {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
+            ] 
+          : 
+            []
+          ),
+          BoxUtil.listGroupBox(element, "shared-people", "People",
+            BoxUtil.indentBox(element, 4, "21",
+              BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler),
+            ), 
+          {cssClass:"type1 mt-2", isExpanded:true, canAdd: true})
+        ] 
+      : 
+        []
+      ),
+  ]);
 }
 
 projectDescription (description: Description): Box {

@@ -44,12 +44,11 @@ export class DateBox extends Box {
         return CharAllowed.OK;
     };
 
-    constructor(node: FreNode, role: string, getDate: () => string, setDate: (text: string) => void, initializer?: Partial<DateBox>, cssClass?: string) {
+    constructor(node: FreNode, role: string, getDate: () => string, setDate: (text: string) => void, initializer?: Partial<DateBox>) {
         super(node, role);
         FreUtils.initializeObject(this, initializer);
         this.$getDate = getDate;
         this.$setDate = setDate;
-        this.cssClass = cssClass;
     }
 
     public deleteWhenEmpty1(): boolean {

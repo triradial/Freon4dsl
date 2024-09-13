@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { isNumber } from "lodash"
+    import { isNumber } from "lodash";
 
     // This component is a combination of a TextComponent and a DropdownComponent.
     // The TextComponent is shown in non-editable state until it gets focus,
@@ -94,14 +94,14 @@
     afterUpdate( () => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
-        box.triggerKeyPressEvent = triggerKeyPressEvent
+        box.triggerKeyPressEvent = triggerKeyPressEvent;
     });
 
     onMount(() => {
         // LOGGER.log("onMount for role [" + box.role + "]");
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
-        box.triggerKeyPressEvent = triggerKeyPressEvent
+        box.triggerKeyPressEvent = triggerKeyPressEvent;
     });
     
     const triggerKeyPressEvent = (key: string) => {
@@ -109,9 +109,8 @@
         box.textHelper.setText(key)
     }
 
-    // TODO still not functioning: reference shortcuts and chars that are not valid in textComponent to drop in next action!!!
+    // TODO still not functioning: reference shortcuts and chars that are not valid in textComponent to drop in next action
 
-    
     const textUpdateFunction = (data: {content: string, caret: number}): boolean => {
         LOGGER.log(`textUpdateFunction for ${box.kind}: ` + JSON.stringify(data));
         dropdownShown = true;
@@ -249,7 +248,6 @@
             }
         });
         filteredOptions = result;
-
     }
 
     function selectLastOption() {

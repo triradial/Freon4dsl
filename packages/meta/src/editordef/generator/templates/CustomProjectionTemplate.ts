@@ -2,7 +2,6 @@ import { Names, FREON_CORE } from "../../../utils/index.js";
 import { FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
 
 export class CustomProjectionTemplate {
-
     generate(language: FreMetaLanguage): string {
         return `
             import { ${Names.FreNode}, ${Names.Box}, ${Names.FreProjectionHandler}, ${Names.FreProjection}, ${Names.FreTableDefinition} } from "${FREON_CORE}";
@@ -38,5 +37,4 @@ export class CustomProjectionTemplate {
             }
         `;
     }
-
 }
