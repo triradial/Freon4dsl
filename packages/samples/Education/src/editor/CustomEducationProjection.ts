@@ -6,7 +6,8 @@ import {
     FreTableDefinition,
     GridCellBox,
     HorizontalLayoutBox,
-    LabelBox, SvgBox, HorizontalListBox, GridBox, createDefaultExpressionBox, BoxUtil, NumberDisplay
+    LabelBox, SvgBox, HorizontalListBox, GridBox, createDefaultExpressionBox, BoxUtil, NumberDisplay,
+    FreProjectionHandler
 } from "@freon4dsl/core";
 import { FractionLiteralExpression } from "../language/gen/index";
 

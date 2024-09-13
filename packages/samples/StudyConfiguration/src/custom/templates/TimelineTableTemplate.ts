@@ -73,7 +73,7 @@ ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances
         <td>${eventInstance.scheduledEvent.configuredEvent.alternativeName}</td>
         <td>${(eventInstance.scheduledEvent.configuredEvent.freOwner() as Period).name}</td>
         <td>${eventInstance.scheduledEvent.configuredEvent.schedule.eventWindow?.daysBefore.count ?? ''}</td>
-        <td>${eventInstance?.getStartDay()+1 ?? ''}</td>
+        <td>${(eventInstance.getStartDay()+1).toString() ?? ''}</td>
         <td>${eventInstance.scheduledEvent.configuredEvent.schedule.eventWindow?.daysAfter.count ?? ''}</td>
         </tr>`).join('')).join('')}
       </tr>
