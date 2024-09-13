@@ -29,7 +29,7 @@ import * as Sim from "../simjs/sim.js"
     }
 
     scheduleEvent(schedulingMsg, scheduledEvent, timeline, daysToWait) {
-      console.log(schedulingMsg + ": '" + scheduledEvent.getName() + "' with wait of: " + daysToWait + " days");
+      console.log(schedulingMsg + ": '" + scheduledEvent.getName() + "' on day: " + timeline.currentDay + " with wait of: " + daysToWait + " days");
       let eventInstance = timeline.newEventInstance(scheduledEvent, this.time() + daysToWait);
       this.setTimer(daysToWait).done(this.eventStarted, this, [eventInstance]);
       this.setTimer(daysToWait).done(this.eventCompleted, this, [eventInstance]);

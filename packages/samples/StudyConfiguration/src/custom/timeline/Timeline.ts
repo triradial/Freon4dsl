@@ -2,15 +2,16 @@ import { RtBoolean, RtObject } from '@freon4dsl/core';
 import { ScheduledEvent, ScheduledEventState } from './ScheduledEvent';
 import { Event } from '../../language/gen/index';
 import { ScheduledPeriod } from './ScheduledPeriod';
-import { ScheduledStudyConfiguration } from './ScheduledStudyConfiguration';
 
-// Flags to control the types of logging that will be done
-export let scheduledLogging = false;
-export let periodLogging = false;
 /*
  * A Timeline records the events and the days they occur on.
  */
 export class Timeline extends RtObject {
+
+  // Flags to control the types of logging that will be done
+  scheduledLogging = false;
+  periodLogging = false;
+  completedEventLogging = false;
 
   days: TimelineDay[] = [];
 
@@ -132,7 +133,7 @@ export class Timeline extends RtObject {
         }
       }
     }
-    console.log("numberCompletedInstancesOf scheduledEvent: " + scheduledEvent.getName() + " is: " + count);    
+    if (this.completedEventLogging) console.log("numberCompletedInstancesOf scheduledEvent: " + scheduledEvent.getName() + " is: " + count);    
     return count;
   }
 
@@ -151,7 +152,7 @@ export class Timeline extends RtObject {
   // Return the first period that is active. There should be only one.
   getActivePeriod(): PeriodInstance {
     let firstActivePeriodOnTimeline = this.getPeriods().find(period => (period as PeriodInstance).getState() === TimelineInstanceState.Active) as PeriodInstance;
-    if (periodLogging) {
+    if (this.periodLogging) {
       if (firstActivePeriodOnTimeline) {
         console.log("The first Active Period On the timeline is: " + firstActivePeriodOnTimeline.getName());
       } else {

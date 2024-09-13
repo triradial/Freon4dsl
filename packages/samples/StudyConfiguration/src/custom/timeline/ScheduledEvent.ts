@@ -1,7 +1,7 @@
 import { BinaryExpression, Event, Day, EventStart, StudyStart, RepeatCondition, RepeatUnit, Period, StudyConfiguration, When, Daily, Weekly, Monthly, RepeatEvery, RepeatCount } from "../../language/gen/index";
 import { InterpreterContext, isRtError, ownerOfType, RtBoolean, RtNumber, RtObject } from "@freon4dsl/core";
 import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter";
-import { EventInstance, PeriodInstance, scheduledLogging, Timeline, TimelineEventInstance, TimelineInstanceState } from "./Timeline";
+import { EventInstance, PeriodInstance, Timeline, TimelineEventInstance, TimelineInstanceState } from "./Timeline";
 import { repeat } from "lodash";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration";
 import { start } from "repl";
@@ -94,7 +94,7 @@ export class ScheduledEvent {
       console.log("THIS SHOULD NEVER HAPPEN! '" + this.getName() + "' is scheduled on a specific day with days to wait of:" + this.day(timeline) + " on timeline day: " + timeline.currentDay);
       return this.day(timeline);
     } else {
-      console.log("'" + this.getName() + "' is scheduled on day: " + this.day(timeline) + " on timeline day: " + timeline.currentDay + " with a days to wait of: " + (this.day(timeline) - timeline.currentDay));
+      console.log("'" + this.getName() + "' is scheduled for day: " + this.day(timeline) + " on timeline day: " + timeline.currentDay + " with a days to wait of: " + (this.day(timeline) - timeline.currentDay));
       return this.day(timeline) - timeline.currentDay;
     }
   }
@@ -131,23 +131,29 @@ export class ScheduledEvent {
   anyRepeatsNotCompleted(timeline: Timeline): boolean {
     let numberCompletedInstances = timeline.numberCompletedInstancesOf(this);
     if (this.isRepeatingEvent) {
+      const numberOfRepeats = this.numberOfRepeats(timeline);
+      if (numberCompletedInstances <= numberOfRepeats) { // Less that or equal because the first instance is not counted as a repeat.
+        console.log("'" + this.getName() + "' at day: " + timeline.currentDay + " has max repeats of: " + numberOfRepeats + 1 + " and has completed: " + numberCompletedInstances);
+        return true;
+      }
+    } else {
+      console.log("'" + this.getName() + "' at day: " + timeline.currentDay + " has completed all: " + numberCompletedInstances + " repeats");
+    }
+    return false
+  }
+
+  numberOfRepeats(timeline: Timeline): number {
+    let n = 1;
+    if (this.isRepeatingEvent) {
       let eventRepeat = this.configuredEvent.schedule.eventRepeat;
       if (eventRepeat instanceof RepeatCondition) {
         let repeatCondition = eventRepeat as RepeatCondition;
-        if (numberCompletedInstances <= repeatCondition.maxRepeats) { // Less that or equal because the first instance is not counted as a repeat.
-          console.log("anyRepeatsNotCompleted: " + this.getName() + " timeline: " + timeline.currentDay + " maxRepeats: " + repeatCondition.maxRepeats + " numberCompletedInstances: " + numberCompletedInstances);
-          return true;
-        }
+        n = repeatCondition.maxRepeats;
       } else if (eventRepeat instanceof RepeatCount) {
-        let count = (eventRepeat as RepeatCount).repeatCount;
-        if (numberCompletedInstances <= count) { // Less that or equal because the first instance is not counted as a repeat.
-          console.log("anyRepeatsNotCompleted: '" + this.getName() + "' timeline: " + timeline.currentDay + " maxRepeats: " + count + " numberCompletedInstances: " + numberCompletedInstances);
-          return true;
-        }
+        n = (eventRepeat as RepeatCount).repeatCount;
       }
     }
-    console.log("anyRepeatsNotCompleted: " + this.getName() + " timeline: " + timeline.currentDay + " numberCompletedInstances: " + numberCompletedInstances + " result: false");
-    return false;
+    return n;
   }
 
   notYetScheduled(timeline): boolean {
@@ -216,22 +222,28 @@ export class ScheduledEvent {
   getInstanceIfEventIsReadyToSchedule(completedEvent: EventInstance, timeline: Timeline): unknown {
     let repeatingEvent = this.isRepeatingEvent();
     let scheduledDay = this.day(timeline);
+    if (this.getName() == "Last" && scheduledDay != undefined) {
+      console.log("getInstanceIfEventIsReady completedEvent: " + completedEvent.scheduledEvent.getName() + " timeline.currentDay: " + timeline.currentDay + " scheduledDay: " + scheduledDay);
+    }
     if (this.isScheduledOnASpecificDay() && !repeatingEvent) {
-      if (scheduledLogging) console.log("'" + this.getName() + "' is not a ready-to-schedule event because it is already scheduled to start on a specific day of: " + scheduledDay);
+      if (timeline.scheduledLogging) console.log("'" + this.getName() + "' is not a ready-to-schedule event because it is already scheduled to start on a specific day of: " + scheduledDay);
       return null;
     } else if (repeatingEvent && scheduledDay != undefined) { // && scheduledDay >= timeline.currentDay) {
         if (this.notYetScheduled(timeline)) {
-          console.log(" '" + this.getName() + "' is a repeating event and is to be scheduled on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
+          console.log(" '" + this.getName() + "' is a repeating event with " + timeline.numberCompletedInstancesOf(this) + " completed instances and is to be scheduled on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
           return new EventInstance(this, scheduledDay);
         } else if (completedEvent.scheduledEvent.getName() === this.getName() && this.anyRepeatsNotCompleted(timeline)) {
-          console.log(" '" + this.getName() + "' is to be scheduled on timeline day: " + timeline.currentDay + " with repeat on scheduledDay of: " + scheduledDay );
+          console.log(" '" + this.getName() + "' with " + timeline.numberCompletedInstancesOf(this) + " completed instances is to be scheduled on timeline day: " + timeline.currentDay + " with repeat on scheduledDay of: " + scheduledDay );
           return new EventInstance(this, scheduledDay);
         } else {
-          console.log(" '" + this.getName() + "' is a repeating event NOT to be scheduled on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
+          console.log(" '" + this.getName() + "' is a repeating event with " + timeline.numberCompletedInstancesOf(this) + " completed instances NOT to be scheduled on timeline day: " + timeline.currentDay + " with scheduledDay of: " + scheduledDay );
           return null;
         }
     } else {
       // console.log("getInstanceIfEventIsReady scheduledDay: " + scheduledDay);
+      if ([ScheduledEventState.Scheduled, ScheduledEventState.Completed].includes(this.getState())) {
+        return null;
+      }
       if (timeline.noCompletedInstanceOf(this) && scheduledDay != undefined && scheduledDay >= timeline.currentDay) {
         console.log(" '" + this.getName() + "' is to be scheduled on timeline day: " + timeline.currentDay + " because it's scheduled day of: " + scheduledDay + " is available and beyond the current day");
         return new EventInstance(this, scheduledDay);
@@ -242,7 +254,7 @@ export class ScheduledEvent {
         if (scheduledDay == undefined) {
           console.log(" '" + this.getName() + "' is not a ready-to-schedule event on timeline day: " + timeline.currentDay + " because its scheduled day is not available" );
         } else  {
-          console.log(" '" + this.getName() + "' is not a ready-to-schedule event on timeline day: " + timeline.currentDay + " with scheduled day of: " + scheduledDay + " because it's completed");
+          if (timeline.completedEventLogging) console.log(" '" + this.getName() + "' is not a ready-to-schedule event on timeline day: " + timeline.currentDay + " with scheduled day of: " + scheduledDay + " because it's completed");
         }
         return null;
       }
@@ -259,7 +271,7 @@ export class ScheduledEvent {
   // Do whatever is needed when the event is scheduled:
   // - As of now all we do is TBD
   scheduled(scheduledStudyConfiguration: ScheduledStudyConfiguration, timeline: Timeline, daysToWait: number) {
-    if (scheduledLogging) console.log("scheduled: " + this.getName() + " on timeline.currentDay: " + timeline.currentDay + " with wait of: " + daysToWait);
+    if (timeline.scheduledLogging) console.log("scheduled: " + this.getName() + " on timeline.currentDay: " + timeline.currentDay + " with wait of: " + daysToWait);
   }
 
   /* 

@@ -61,7 +61,7 @@ export class TimelineTableTemplate {
       <th>Alternative Name</th>
       <th>Phase</th>
       <th>Window (-)</th>
-      <th>Date</th>
+      <th>Day/Date</th>
       <th>Window (+)</th>
     </tr>
     </thead>
@@ -73,7 +73,7 @@ ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances
         <td>${eventInstance.scheduledEvent.configuredEvent.alternativeName}</td>
         <td>${(eventInstance.scheduledEvent.configuredEvent.freOwner() as Period).name}</td>
         <td>${eventInstance.scheduledEvent.configuredEvent.schedule.eventWindow?.daysBefore.count ?? ''}</td>
-        <td>${eventInstance.scheduledEvent?.day(timeline) ?? ''}</td>
+        <td>${eventInstance?.getStartDay()+1 ?? ''}</td>
         <td>${eventInstance.scheduledEvent.configuredEvent.schedule.eventWindow?.daysAfter.count ?? ''}</td>
         </tr>`).join('')).join('')}
       </tr>

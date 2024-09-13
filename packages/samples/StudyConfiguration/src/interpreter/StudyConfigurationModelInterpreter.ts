@@ -64,10 +64,20 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
             const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
-            const chartHTML = TimelineScriptTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+            const styles = `
+            <style>
+              .limited-width-container {
+                max-width: 85% !important;
+                width: 85% !important;
+                overflow: hidden !important;
+                box-sizing: border-box !important;
+                margin: 20px !important;
+              }
+            </style>
+            `;            const chartHTML = TimelineScriptTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
             const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
-
-            return new RtString(tableHTML + TimelineTableTemplate.addSomeSpace() + chartHTML);
+            const html = `${styles}<div class="limited-width-container">${tableHTML + TimelineTableTemplate.addSomeSpace() + chartHTML}</div>`;
+            return new RtString(html);
         } catch (e: any) {
             return new RtString(e.message);
         }
@@ -114,9 +124,9 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             console.log("The event '" + owningEvent.name + "' reference to: '" + referencedEvent.name + "' cannot be evaluated because the referenced event is not on the timeline" );
             return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
         } else {
-            if (owningEvent.name === 'V14-V18') {
+            if (owningEvent.name === 'V19-rando') {
                 let fakeLastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
-                console.log("evalEventReference: owningEvent: " + owningEvent.name + " fake: " + fakeLastInstanceOfReferencedEvent.scheduledEvent.getName() + " last: " + lastInstanceOfReferencedEvent.scheduledEvent.getName());
+                // console.log("'V19-rando' for evalEventReference: owningEvent: " + owningEvent.name + " last: " + lastInstanceOfReferencedEvent.scheduledEvent.getName());
             }    
             if (lastInstanceOfReferencedEvent.scheduledEvent.isRepeatingEvent()) {
                 if (node.eventState.name === language.EventState.eachCompleted.name) { 
@@ -124,7 +134,11 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                     let owningScheduledEvent = (ctx.find("scheduledEvent") as RtObjectScheduledEventWrapper).scheduledEvent; 
                     const numberOfThisEventCompleted = timeline.numberCompletedInstancesOf(owningScheduledEvent);
                     if (numberOfReferencedEventCompleted <= numberOfThisEventCompleted) {
-                        console.log("The event '" + owningEvent.name + "' has a each-completed reference to:'" + referencedEvent.name + "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated" );
+                        if (numberOfReferencedEventCompleted >= owningScheduledEvent.numberOfRepeats(timeline) + 1) {
+                            console.log("The event '" + owningEvent.name + "' has a each-completed reference to:'" + referencedEvent.name + "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated" );
+                        } else {
+                            console.log("The event '" + owningEvent.name + "' has a each-completed reference to:'" + referencedEvent.name + "' and the parallel repeating event is completed" );
+                        }
                         return undefined; // dependency on a repeating event that we run in parallel with and the parallel event hasn't completed yet
                     }
                  } else { 
