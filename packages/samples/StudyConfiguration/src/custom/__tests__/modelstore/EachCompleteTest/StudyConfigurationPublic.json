@@ -455,7 +455,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "2"
             }
          ],
          "containments": [],
@@ -951,7 +951,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "2"
             }
          ],
          "containments": [],
@@ -973,7 +973,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "2"
             }
          ],
          "containments": [],
@@ -1379,7 +1379,7 @@
                   "version": "2023.1",
                   "key": "-default-key-TimeAmount-value"
                },
-               "value": "3"
+               "value": "4"
             }
          ],
          "containments": [],
@@ -1491,7 +1491,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "1"
             }
          ],
          "containments": [],
@@ -1513,7 +1513,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "1"
             }
          ],
          "containments": [],
