@@ -10,7 +10,7 @@ import { MetaKey } from "./Keys";
 import { FreLogger } from "../../logging";
 import { ListElementInfo, MenuItem, FreCreatePartAction, FreEditor } from "../index";
 import { FreLanguage, FreLanguageClassifier, PropertyKind } from "../../language";
-import { FreNode } from "../../ast";
+import { FreNamedNode, FreNode } from "../../ast";
 import { runInAction } from "mobx";
 import { FreErrorSeverity } from "../../validator";
 
@@ -131,6 +131,40 @@ export function dropListElement(
     });
 }
 
+
+function incrementSequences(input: string): string {
+    // Regular expressions to match patterns like V1, V2, V3 and 4A, 4B, 4C
+    const patterns = [
+        /V(\d+)/g, // Matches V1, V2, V3, etc.
+        /(\d+)([A-Z])/g // Matches 4A, 4B, 4C, etc.
+    ];
+
+    // Function to increment numeric sequences
+    function incrementNumericSequence(match: string, p1: string): string {
+        const num = parseInt(p1, 10);
+        return match.replace(p1, (num + 1).toString());
+    }
+
+    // Function to increment alphanumeric sequences
+    function incrementAlphaNumericSequence(match: string, p1: string, p2: string): string {
+        const num = parseInt(p1, 10);
+        const char = String.fromCharCode(p2.charCodeAt(0) + 1);
+        return match.replace(p1 + p2, num + char);
+    }
+
+    // Replace all matches with incremented sequences
+    let result = input;
+    result = result.replace(patterns[0], incrementNumericSequence);
+    result = result.replace(patterns[1], incrementAlphaNumericSequence);
+
+    return result;
+}
+
+export function smartDuplicate(element: FreNode, _editor: FreEditor) {
+    const namedNode = element as FreNamedNode
+    namedNode.name = incrementSequences(namedNode.name);
+}
+
 /**
  * This function builds the MenuItems for the context menu that is coupled to a list box.
  * @param conceptName       the expected type of the elements in the list
@@ -238,10 +272,19 @@ export function getContextMenuOptions(
         "Paste after",
         "",
         // @ts-ignore
-        (element: FreNode, index: number, editor: FreEditor) =>
+        (element: FreNode, index: number, editor: FreEditor) => 
             pasteListElement(listParent, propertyName, index, editor, false),
     );
-
+    const smartDup = new MenuItem(
+        "Duplicate",
+        "",
+        // @ts-ignore
+        (element: FreNode, index: number, editor: FreEditor) => {
+            copyListElement(element, editor);
+            smartDuplicate(editor.copiedElement, editor);
+            pasteListElement(listParent, propertyName, index, editor, false);
+        }       
+    );
     // now create the whole item list
     if (optionsType === MenuOptionsType.placeholder) {
         // add lesser items for a placeholder
@@ -282,6 +325,7 @@ export function getContextMenuOptions(
             ),
             pasteBefore,
             pasteAfter,
+            smartDup,
         ];
     }
     return items;
