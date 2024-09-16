@@ -1,5 +1,5 @@
-import { FreNode } from "@freon4dsl/core";
-import { Event, When } from "../../language/gen/index";
+import { FreNamedNode, FreNode, FreNodeReference } from "@freon4dsl/core";
+import { Event, EventReference, When } from "../../language/gen/index";
 export type Constructor22 = new (...args: any[]) => {};
 
 /**
@@ -49,18 +49,20 @@ export class ExtendedEvent extends Event {
     }
 
     updateSchedule(originalEvent: Event): void {
-        const eventStart = this.schedule.eventStart;
+        let eventStart = this.schedule.eventStart;
         if (eventStart instanceof When) {
-            console.log("Updating schedule of event " + this.name + " with original event " + originalEvent.name);
-            const when = eventStart as When;
-            (this.schedule.eventStart as When).startWhen.event.referred = originalEvent;
+            let newRef  = FreNodeReference.create(originalEvent.name, "Event") as FreNodeReference<Event>;
+            (eventStart as When).startWhen.event = newRef;
         }
     }
 
-    smartUpdate(duplicatedEvent:Event): void {
-        console.log("smartUpdate of duplicating event " + duplicatedEvent.name);
-        this.name = this.incrementSequences(this.name);
-        this.updateSchedule(duplicatedEvent);
+
+    smartUpdate(originalElement:Event): void {
+        console.log("smartUpdate to duplicate event " + originalElement.name);
+        this.name = this.incrementSequences(this.name) + " (copy)";
+        this.updateSchedule(originalElement);
+        // Eventually will need to do other smart things to eliminate manual changes when duplicating.
+        // For now just update the reference to the duplicated event in the 'When'.
     }
 }
 

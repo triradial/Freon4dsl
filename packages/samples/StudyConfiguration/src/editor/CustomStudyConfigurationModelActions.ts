@@ -210,8 +210,10 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
             const period: Period = ownerOfType(event, "Period") as Period; //box.parent.parent.parent.element as Period;
             const copyOfEvent = event.copy();
             extension(ExtendedEvent, Event);
-            smartDuplicate(box.node, copyOfEvent);
-            period.events.push(copyOfEvent);
+            smartDuplicate(event, copyOfEvent);
+            const index = period.events.indexOf(event); 
+            console.log("custom action duplicate, splicing in copyOfEvent: " + copyOfEvent.name + " at index: " + index);
+            period.events.splice(index + 1, 0, copyOfEvent);
             return null;
         },
     }),
@@ -261,7 +263,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         const args = [originalElement];
         // Call methodName if it exists on the element
         if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === 'function') {
-            console.log(`Calling ${methodName} on the instance.`);
+            console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
             return (duplicatedElement as any)[methodName](...args);
         } else {
             console.log(`Method ${methodName} does not exist on the instance.`);
