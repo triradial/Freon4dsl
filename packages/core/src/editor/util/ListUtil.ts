@@ -131,38 +131,15 @@ export function dropListElement(
     });
 }
 
-
-function incrementSequences(input: string): string {
-    // Regular expressions to match patterns like V1, V2, V3 and 4A, 4B, 4C
-    const patterns = [
-        /V(\d+)/g, // Matches V1, V2, V3, etc.
-        /(\d+)([A-Z])/g // Matches 4A, 4B, 4C, etc.
-    ];
-
-    // Function to increment numeric sequences
-    function incrementNumericSequence(match: string, p1: string): string {
-        const num = parseInt(p1, 10);
-        return match.replace(p1, (num + 1).toString());
-    }
-
-    // Function to increment alphanumeric sequences
-    function incrementAlphaNumericSequence(match: string, p1: string, p2: string): string {
-        const num = parseInt(p1, 10);
-        const char = String.fromCharCode(p2.charCodeAt(0) + 1);
-        return match.replace(p1 + p2, num + char);
-    }
-
-    // Replace all matches with incremented sequences
-    let result = input;
-    result = result.replace(patterns[0], incrementNumericSequence);
-    result = result.replace(patterns[1], incrementAlphaNumericSequence);
-
-    return result;
-}
-
 export function smartDuplicate(element: FreNode, _editor: FreEditor) {
-    const namedNode = element as FreNamedNode
-    namedNode.name = incrementSequences(namedNode.name);
+    const methodName = 'smartUpdate';
+    const args = [];
+    // Call methodName if it exists on the element
+    if (methodName in element && typeof (element as any)[methodName] === 'function') {
+        return (element as any)[methodName](...args);
+    } else {
+        console.log(`Method ${methodName} does not exist on the instance.`);
+    }
 }
 
 /**
@@ -277,7 +254,7 @@ export function getContextMenuOptions(
     );
     const smartDup = new MenuItem(
         "Duplicate",
-        "",
+        "Ctrl+D",
         // @ts-ignore
         (element: FreNode, index: number, editor: FreEditor) => {
             copyListElement(element, editor);

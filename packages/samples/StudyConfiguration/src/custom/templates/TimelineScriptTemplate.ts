@@ -161,7 +161,10 @@ var items = new vis.DataSet([
     .vis-item.treatment-visits  { background-color: #ccbcf4; }
     .vis-item.any-day  { background-color: #95a89a; }
 
-    
+    .vis-item-content:after {
+      -webkit-print-color-adjust: exact;
+      color-adjust: exact;
+    }
   </style>
 
 <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
