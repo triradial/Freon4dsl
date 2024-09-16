@@ -1,5 +1,5 @@
 import { FreNode } from "@freon4dsl/core";
-import { Event } from "../../language/gen/index";
+import { Event, When } from "../../language/gen/index";
 export type Constructor22 = new (...args: any[]) => {};
 
 /**
@@ -19,9 +19,7 @@ export function extension(extension: Constructor22, original: Constructor22) {
     }
 }
 
-
 export class ExtendedEvent extends Event {
-
     // Function to increment numeric sequences
     private incrementNumericSequence(match: string, p1: string): string {
         const num = parseInt(p1, 10);
@@ -34,30 +32,38 @@ export class ExtendedEvent extends Event {
         const char = String.fromCharCode(p2.charCodeAt(0) + 1);
         return match.replace(p1 + p2, num + char);
     }
-    
+
     private incrementSequences(input: string): string {
-    // Regular expressions to match patterns like V1, V2, V3 and 4A, 4B, 4C
-    const patterns = [
-        /V(\d+)/g, // Matches V1, V2, V3, etc.
-        /(\d+)([A-Z])/g // Matches 4A, 4B, 4C, etc.
-    ];
+        // Regular expressions to match patterns like V1, V2, V3 and 4A, 4B, 4C
+        const patterns = [
+            /V(\d+)/g, // Matches V1, V2, V3, etc.
+            /(\d+)([A-Z])/g, // Matches 4A, 4B, 4C, etc.
+        ];
 
-    // Replace all matches with incremented sequences
-    let result = input;
-    result = result.replace(patterns[0], this.incrementNumericSequence);
-    result = result.replace(patterns[1], this.incrementAlphaNumericSequence);
+        // Replace all matches with incremented sequences
+        let result = input;
+        result = result.replace(patterns[0], this.incrementNumericSequence);
+        result = result.replace(patterns[1], this.incrementAlphaNumericSequence);
 
-    return result;
-  }
+        return result;
+    }
 
-  smartUpdate(): void {
-    this.name = this.incrementSequences(this.name);
+    updateSchedule(originalEvent: Event): void {
+        const eventStart = this.schedule.eventStart;
+        if (eventStart instanceof When) {
+            console.log("Updating schedule of event " + this.name + " with original event " + originalEvent.name);
+            const when = eventStart as When;
+            (this.schedule.eventStart as When).startWhen.event.referred = originalEvent;
+        }
+    }
 
-  }
-
+    smartUpdate(duplicatedEvent:Event): void {
+        console.log("smartUpdate of duplicating event " + duplicatedEvent.name);
+        this.name = this.incrementSequences(this.name);
+        this.updateSchedule(duplicatedEvent);
+    }
 }
 
 export function extendToSupportSmartDuplication(): void {
     extension(ExtendedEvent, Event);
 }
-

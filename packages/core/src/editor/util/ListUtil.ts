@@ -10,7 +10,7 @@ import { MetaKey } from "./Keys";
 import { FreLogger } from "../../logging";
 import { ListElementInfo, MenuItem, FreCreatePartAction, FreEditor } from "../index";
 import { FreLanguage, FreLanguageClassifier, PropertyKind } from "../../language";
-import { FreNamedNode, FreNode } from "../../ast";
+import { /* FreNamedNode, */ FreNode } from "../../ast";
 import { runInAction } from "mobx";
 import { FreErrorSeverity } from "../../validator";
 
@@ -131,12 +131,13 @@ export function dropListElement(
     });
 }
 
-export function smartDuplicate(element: FreNode, _editor: FreEditor) {
+export function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
     const methodName = 'smartUpdate';
-    const args = [];
+    const args = [originalElement];
     // Call methodName if it exists on the element
-    if (methodName in element && typeof (element as any)[methodName] === 'function') {
-        return (element as any)[methodName](...args);
+    if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === 'function') {
+        console.log(`Calling ${methodName} on the instance.`);
+        return (duplicatedElement as any)[methodName](...args);
     } else {
         console.log(`Method ${methodName} does not exist on the instance.`);
     }
@@ -258,7 +259,7 @@ export function getContextMenuOptions(
         // @ts-ignore
         (element: FreNode, index: number, editor: FreEditor) => {
             copyListElement(element, editor);
-            smartDuplicate(editor.copiedElement, editor);
+            smartDuplicate(element, editor.copiedElement);
             pasteListElement(listParent, propertyName, index, editor, false);
         }       
     );

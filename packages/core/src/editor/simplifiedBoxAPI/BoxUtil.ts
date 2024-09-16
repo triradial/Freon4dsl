@@ -558,6 +558,7 @@ export class BoxUtil {
             isExpanded: initializer?.isExpanded ?? false,
             isDraggable: initializer?.isDraggable ?? true,
             canDelete: initializer?.canDelete ?? true,
+            canDuplicate: initializer?.canDuplicate ?? false,
             canShare: initializer?.canShare ?? false,
             canUnlink: initializer?.canUnlink ?? false,
             canCRUD: initializer?.canCRUD ?? false,

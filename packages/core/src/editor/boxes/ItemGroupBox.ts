@@ -38,6 +38,7 @@ export class ItemGroupBox extends Box {
 	canUnlink: boolean = false;
 	canCRUD: boolean = false;
 	canEdit: boolean = true;
+    canDuplicate: boolean = false;
 
     constructor(node: FreNode, role: string, getLabel: string | (() => string), getText: () => string, setText: (text: string) => void, child: Box, initializer?: Partial<ItemGroupBox>) {
         super(node, role);

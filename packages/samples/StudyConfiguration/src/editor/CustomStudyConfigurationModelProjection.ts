@@ -174,7 +174,7 @@ let box: Box =
         {cssClass:"type3", isExpanded:true, canAdd:true})
       ],
     {cssClass:"ml-6 mb-2"}),
-  {cssClass:"type2", placeHolder:"enter", isRequired:true, selectable: true});
+  {cssClass:"type2", placeHolder:"enter", isRequired:true, selectable: true, canDuplicate: true});
 return box;
 }
 
