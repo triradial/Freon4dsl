@@ -5,6 +5,8 @@ Study 123ABC
 
 **Author:** *Mike Vogel CRC Manager*
 
+[toc]
+
 # Schedule
 
 
@@ -45,64 +47,41 @@ Study 123ABC
 
 # Checklist
 
-Task: Informed Consent
+## Task: Informed Consent
 The purpose of this task is to obtain informed consent from the patient. This will involve discussing the study with them, then an internal medical discussion to determine their eligibility to move forward.
 
-Collapse all
+### Step 1 - Obtain Informed Consent
+- [ ] Explain the study details, including purpose, procedures, risks, and benefits to the patient
+- [ ] Obtain informed consent from the patient, ensuring they understand and agree to the study terms
+- [ ] [Optional] Discuss with the patient about the possibility of using their data for future research
 
-Step 1 - Obtain Informed Consent
-Details
-Explain the study details, including purpose, procedures, risks, and benefits to the patient
-Obtain informed consent from the patient, ensuring they understand and agree to the study terms
-[Optional] Discuss with the patient about the possibility of using their data for future research
-REFERENCES
-Protocol - Consent Definition
-link
-Protocol - Inclusion/Exclusion Criteria
-link
-Consent Form
-link
-Guidance on Research Use of Data
-link
-PEOPLE
-Patricia Bellweather
-(Patient Recruiter)
-email
-pbellweather@mail.com
-phone509.555.3419
+#### REFERENCES
+- Protocol - Consent Definition
+- Protocol - Inclusion/Exclusion Criteria
+- Consent Form
+- Guidance on Research Use of Data
 
-Step 2 - Record Consent Decision
-Details
-File the signed consent form in the patients clinical study folder
-Scan the signed consent form into the EHR system
-Record the signed consent into the EDC system
-REFERENCES
-Record Keeping Guidelines
-link
-Epic EHR
-link
-linkRobot Script Available
-Medidata EDC
-link
-linkRobot Script Available
+#### PEOPLE
+- Patricia Bellweather (Patient Recruiter) email: pbellweather@mail.com phone: 509.555.3419
 
-Step 3 - Inform Internal Medical Personnel
-Details
-Email Patricia with the result of the consent
-Inform Rachel and Mark about the patient consent
-PEOPLE
-Patricia Bellweather
-(Patient Recruiter)
-email
-pbellweather@mail.com
-phone509.555.3419
-Rachel Auchliffe
-(Site Rater)
-email
-rauchliffe@mail.com
-phone957.555.2323
-Mark Davis
-(Clinical Trial Administrator)
-email
-mdavis@mail.com
+### Step 2 - Record Consent Decision
+- [ ] File the signed consent form in the patients clinical study folder
+- [ ] Scan the signed consent form into the EHR system
+- [ ] Record the signed consent into the EDC system
+
+#### REFERENCES
+
+- Record Keeping Guidelines
+- Epic EHR (Robot Script Available)
+- Medidata EDC (Robot Script Available)
+
+### Step 3 - Inform Internal Medical Personnel
+
+- [ ] Email Patricia with the result of the consent
+- [ ] Inform Rachel and Mark about the patient consent
+
+#### PEOPLE
+- Patricia Bellweather (Patient Recruiter) email: pbellweather@mail.com phone: 509.555.3419
+- Rachel Auchliff (Site Rater) email: rauchliffe@mail.com phone: 957.555.2323
+- Mark Davis (Clinical Trial Administrator) email: mdavis@mail.com
 ---
