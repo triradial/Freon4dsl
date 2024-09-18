@@ -15,7 +15,7 @@ function getUniqueNumber(): number {
 const referenceDate = new Date(2024, 0, 1);
 // const referenceDate = new Date(2023, 11, 31);
 
-export class TimelineScriptTemplate {
+export class TimelineChartTemplate {
 
   static getTimelineDataHTML(timeline: Timeline): string {
     let writer = new StudyConfigurationModelModelUnitWriter();

@@ -72,6 +72,7 @@
   ],
   "version": "0.7.0-beta",
   "dependencies": {
+    "@bscotch/utility": "^7.2.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/svelte-fontawesome": "^0.2.2",

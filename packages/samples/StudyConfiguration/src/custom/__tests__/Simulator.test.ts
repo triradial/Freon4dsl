@@ -3,12 +3,13 @@ import { Timeline, EventInstance, PeriodInstance, TimelineEventInstance, Timelin
 import { Simulator, } from "../timeline/Simulator";
 import { StudyConfiguration, Period, When, StudyConfigurationModel } from "../../language/gen/index";
 import * as utils from "./Utils";
-import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
+import { TimelineChartTemplate } from "../templates/TimelineChartTemplate";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate";
 import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
+import { nodent, undent } from "@bscotch/utility";
 
 describe ("Study Simulation", () => {
   var simulator;
@@ -385,8 +386,8 @@ describe ("Study Simulation", () => {
         simulator.run();
         let timeline = simulator.timeline;
 
-        const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-        const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
         // Save full HTML of chart for viewing / debugging
         utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
 
@@ -427,8 +428,8 @@ describe ("Study Simulation", () => {
         simulator.run();
         let timeline = simulator.timeline;
 
-        const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-        const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
         // Save full HTML of chart for viewing / debugging
         utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
 
@@ -468,8 +469,8 @@ describe ("Study Simulation", () => {
         simulator.run();
         let timeline = simulator.timeline;
 
-        const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-        const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
         // Save full HTML of chart for viewing / debugging
         utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
 
@@ -685,8 +686,8 @@ describe ("Study Simulation", () => {
         simulator.run();
         let timeline = simulator.timeline;
 
-        const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-        const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
         // Save full HTML of chart for viewing / debugging
         utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
 
@@ -708,8 +709,8 @@ describe ("Study Simulation", () => {
       simulator.run();
       let timeline = simulator.timeline;
 
-      const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-      const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+      const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+      const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
       // Save full HTML of chart for viewing / debugging
       utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
       // utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
@@ -786,7 +787,7 @@ describe ("Study Simulation", () => {
   describe("Generation of Study Checklists Document", () => {
 
     it("generate a document for a one visit,one checklist, one task study", () => {
-  
+
         // GIVEN a study configuration loaded from a file and the study is simulated
         const studyConfigurationUnit = utils.loadModel("OneVisitOneChecklist", 'StudyConfiguration');
         studyConfigurationModel.addUnit(studyConfigurationUnit)

@@ -1,6 +1,8 @@
 // For a detailed explanation regarding each configuration property, visit:
 // https://jestjs.io/docs/en/configuration.html
 
+const path = require('path');
+
 module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -81,7 +83,10 @@ module.exports = {
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
   // moduleNameMapper: {},
+
+  // TODO: determine why the moduleNameMapper is not working for @bscotch/utility
   moduleNameMapper: {
+    '^@bscotch/utility$': path.join(__dirname, '../../../node_modules/@bscotch/utility'),
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/../../__mocks__/fileMock.js",
     "\\.(css|scss)$": "identity-obj-proxy",
     "\\.svg$": "@svgr/webpack"

@@ -47,7 +47,9 @@ The timeline and visit checklists for the study.
 
 ---
 
-# ICF (1A)
+# Screening Period
+
+## ICF (1A)
 
 The purpose of this task is to obtain informed consent from the patient. This will involve discussing the study with them, then an internal medical discussion to determine their eligibility to move forward.
 
@@ -61,7 +63,7 @@ and then repeats: <choose>
 limited to this time of day: <choose>
 
 
-## Task: Informed Consent
+### Task: Informed Consent
 - [ ] Informed Consent Completed 
 
 ### Step 1 - Obtain Informed Consent
@@ -100,11 +102,11 @@ limited to this time of day: <choose>
 - Mark Davis (Clinical Trial Administrator) mdavis@mail.com
 ---
 
-# Screening (1B/1C)
+## Screening (1B/1C)
 
 - [ ] Screening (1B/1C) Completed 
 
-## Task: Patient History and Medication Review
+### Task: Patient History and Medication Review
 
 The purpose of this task is review the complete medical history for the patient, especially as it specifically relates to the patients participation in the study. It will be part of the final determination of their eligibility for the study.
 
@@ -136,28 +138,31 @@ Rachel Auchliffe (Site Rater) rauchliffe@mail.com 957.555.2323
 Dr. Emily Stanton (Chief Medical Officer) estanton@healthcare.org 908.555.4141
 Rachel Auchliffe (Site Rater) rauchliffe@mail.com 957.555.2323
 
-## Task: Patient Assessments and Procedures
+### Task: Patient Assessments and Procedures
 
-## Task: Patient Eligibility Review
+### Task: Patient Eligibility Review
 
-# BAE (2A)               
-# BAE (2B)               
-# Randomization (3A)     
-# Dose Admin (3A)        
-# Dose Admin (3B)        
-# Dose Admin (3C)        
-# Dose Admin (3D)        
-# Dose Admin (3E)        
-# PAC1 (4A)              
-# Dose admin/PAC1 (3F/4B)
-# Dose admin/PAC1 (3G/4C)
-# Dose admin/PAC1 (3G/4C)
-# Dose admin/PAC1 (3H/4D)
-# Dose Admin (3G)        
-# Dose Admin (3H)        
-# End of dose (3I)       
-# PAC2 (4C)              
-# PAC2 (4D)              
-# PAC3 (4E)              
-# PAC3 (4F)              
-# Follow up (5)           
+## BAE (2A)               
+## BAE (2B)
+
+# Treatment Period
+
+## Randomization (3A)     
+## Dose Admin (3A)        
+## Dose Admin (3B)        
+## Dose Admin (3C)        
+## Dose Admin (3D)        
+## Dose Admin (3E)        
+## PAC1 (4A)              
+## Dose admin/PAC1 (3F/4B)
+## Dose admin/PAC1 (3G/4C)
+## Dose admin/PAC1 (3G/4C)
+## Dose admin/PAC1 (3H/4D)
+## Dose Admin (3G)        
+## Dose Admin (3H)        
+## End of dose (3I)       
+## PAC2 (4C)              
+## PAC2 (4D)              
+## PAC3 (4E)              
+## PAC3 (4F)              
+## Follow up (5)           

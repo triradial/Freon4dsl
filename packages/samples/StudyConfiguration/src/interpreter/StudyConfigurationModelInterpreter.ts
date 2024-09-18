@@ -8,7 +8,7 @@ import * as Sim from "../custom/simjs/sim.js"
 import { Simulator, } from "../custom/timeline/Simulator";
 import { StudyConfiguration, StudyConfigurationModel } from "../custom/../language/gen/index";
 import { StudyConfigurationModelEnvironment } from "../custom/../config/gen/StudyConfigurationModelEnvironment";
-import { TimelineScriptTemplate } from "../custom/templates/TimelineScriptTemplate";
+import { TimelineChartTemplate } from "../custom/templates/TimelineChartTemplate";
 import { TimelineTableTemplate } from "../custom/templates/TimelineTableTemplate";
 import { RtObjectScheduledEventWrapper, ScheduledEvent } from "custom/timeline/ScheduledEvent";
 
@@ -62,8 +62,8 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             simulator.run();
             let timeline = simulator.timeline;
 
-            const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-            const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+            const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+            const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
             const styles = `
             <style>
               .limited-width-container {
@@ -75,7 +75,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
               }
             </style>
             `;            
-            const chartHTML = TimelineScriptTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+            const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
             const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
             const html = `${styles}<div class="limited-width-container">${tableHTML + TimelineTableTemplate.addSomeSpace() + chartHTML}</div>`;
             return new RtString(html);

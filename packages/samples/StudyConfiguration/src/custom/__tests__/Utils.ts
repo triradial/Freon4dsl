@@ -6,7 +6,7 @@ import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent"
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import * as path from 'path';
 import * as fs from 'fs';
-import { resetTimelineScriptTemplate, TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
+import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
@@ -261,14 +261,14 @@ export function saveToFile(stringToSave: string, filename: string) {
 
 export function saveTimeline(timelineDataAsScript: string) {
   let filename = 'timeline.html';
-  let timelineDataAsHTML = TimelineScriptTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
+  let timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
   this.saveToFile(timelineDataAsHTML, filename);
 }
 
 export function generateChartAndSave(timeline: Timeline): string {
-  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+  let timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+  let timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
   // Save full HTML of chart for viewing / debugging
   const html = timelineDataAsScript + timelineVisualizationHTML;
   saveTimeline(html);
@@ -277,8 +277,8 @@ export function generateChartAndSave(timeline: Timeline): string {
   
 export function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScript: string, expectedTimelineVisualizationHTML: string = "", save : boolean = false ) {
   resetTimelineScriptTemplate();
-  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+  let timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+  let timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
   // Save full HTML of chart for viewing / debugging
   if (save) saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
 
