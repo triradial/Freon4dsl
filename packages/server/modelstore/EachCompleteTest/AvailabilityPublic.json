@@ -44,7 +44,9 @@
                   "version": "2023.1",
                   "key": "-default-key-Availability-staffLevels"
                },
-               "children": []
+               "children": [
+                  "ID-103"
+               ]
             }
          ],
          "references": [],
@@ -66,12 +68,155 @@
                   "version": "2023.1",
                   "key": "-default-key-PatientNotAvailable-dates"
                },
-               "children": []
+               "children": [
+                  "ID-101"
+               ]
             }
          ],
          "references": [],
          "annotations": [],
          "parent": "ID-391"
+      },
+      {
+         "id": "ID-101",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-DateRange"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-DateRange-startDate"
+               },
+               "children": [
+                  "ID-102"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-392"
+      },
+      {
+         "id": "ID-102",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-StartRangeDate"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-day"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-year"
+               },
+               "value": "2025"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-101"
+      },
+      {
+         "id": "ID-103",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-StaffLevel"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StaffLevel-staffAvailable"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StaffLevel-dateOrRange"
+               },
+               "children": [
+                  "ID-104"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-391"
+      },
+      {
+         "id": "ID-104",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-DateRange"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-DateRange-startDate"
+               },
+               "children": [
+                  "ID-105"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-103"
+      },
+      {
+         "id": "ID-105",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-StartRangeDate"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-day"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-year"
+               },
+               "value": "2025"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-104"
       }
    ]
 }

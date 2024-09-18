@@ -6,7 +6,7 @@ import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent"
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import * as path from 'path';
 import * as fs from 'fs';
-import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
+import { resetTimelineScriptTemplate, TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
@@ -242,40 +242,29 @@ export function loadModel(modelFolderName: string, modelName: string): StudyConf
   return modelUnit;
 }
 
-
-export function saveTimelineTableHTML(timelineTableAsScript: string, filename: string) {
-  try {
-    fs.writeFileSync(filename, timelineTableAsScript);
-    console.log('File written successfully');
-  } catch (err) {
-    console.error('Error writing file:', err);
-  }
-}
-
 export function saveTimelineTable(timelineTableAsScript: string) {
   let filename = 'timeline-table.html';
   let timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
 
-  this.saveTimelineTableHTML(timelineTableAsHTML, filename);
+  this.saveToFile(timelineTableAsHTML, filename);
 }
 
 
-export function  saveTimelineHTML(timelineDataAsHTML: string, filename: string) {
+export function saveToFile(stringToSave: string, filename: string) {
   try {
-    fs.writeFileSync(filename, timelineDataAsHTML);
+    fs.writeFileSync(filename, stringToSave);
     console.log('File written successfully');
   } catch (err) {
     console.error('Error writing file:', err);
   }
 }
 
-export function  saveTimeline(timelineDataAsScript: string) {
+export function saveTimeline(timelineDataAsScript: string) {
   let filename = 'timeline.html';
   let timelineDataAsHTML = TimelineScriptTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
-  this.saveTimelineHTML(timelineDataAsHTML, filename);
+  this.saveToFile(timelineDataAsHTML, filename);
 }
-
 
 export function generateChartAndSave(timeline: Timeline): string {
   let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
@@ -286,6 +275,25 @@ export function generateChartAndSave(timeline: Timeline): string {
   return html;
 }
   
+export function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScript: string, expectedTimelineVisualizationHTML: string = "", save : boolean = false ) {
+  resetTimelineScriptTemplate();
+  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
+  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+  // Save full HTML of chart for viewing / debugging
+  if (save) saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+
+  const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
+  const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
+  // Then the generated timeline picture has two events on the expected event days
+  expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+
+  if (expectedTimelineVisualizationHTML.length > 0) { 
+    const normalizedTimelineVisualizationHTML = timelineVisualizationHTML.replace(/\s+/g, '');
+    const normalizedExpectedTimelineVisualizationHTML = expectedTimelineVisualizationHTML.replace(/\s+/g, '');
+    expect(normalizedTimelineVisualizationHTML).toEqual(normalizedExpectedTimelineVisualizationHTML);
+  }
+}
+
 
 
 

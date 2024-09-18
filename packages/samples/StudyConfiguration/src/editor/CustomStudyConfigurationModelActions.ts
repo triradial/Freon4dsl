@@ -35,7 +35,7 @@ import {
 
 
 import { RoleProvider } from "@freon4dsl/core";
-import { ExtendedEvent, extension } from "custom/extensions/ExtensionLib";
+import { ExtendedEvent, extension } from "../custom/extensions/ExtensionLib";
 
 /**
  * Class CustomStudyConfigurationModelActions provides an entry point for the language engineer to
@@ -260,7 +260,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
 
     function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
         const methodName = 'smartUpdate';
-        const args = [originalElement];
+        const args = [originalElement, duplicatedElement];
         // Call methodName if it exists on the element
         if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === 'function') {
             console.log(`smartDuplicate: Calling ${methodName} on the instance.`);

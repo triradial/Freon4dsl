@@ -48,7 +48,6 @@ export class TimelineTableTemplate {
   }
 
   static getTimelineTableHTML(timeline: Timeline): string {
-    let writer = new StudyConfigurationModelModelUnitWriter();
 
     var template = 
 `

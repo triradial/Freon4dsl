@@ -1,12 +1,12 @@
-import { FreNamedNode, FreNode, FreNodeReference } from "@freon4dsl/core";
-import { Event, EventReference, When } from "../../language/gen/index";
+import { FreNodeReference } from "@freon4dsl/core";
+import { Event, When } from "../../language/gen/index";
 export type Constructor22 = new (...args: any[]) => {};
 
 /**
  * Extends original with extension.
  *
- * @param extension
- * @param original
+ * @param extension - the extension class
+ * @param original - the class to be extended by 'extension'
  */
 export function extension(extension: Constructor22, original: Constructor22) {
     const extensionPrototype = extension.prototype;
@@ -19,7 +19,7 @@ export function extension(extension: Constructor22, original: Constructor22) {
     }
 }
 
-export class ExtendedEvent extends Event {
+export class ExtendedEvent {
     // Function to increment numeric sequences
     private incrementNumericSequence(match: string, p1: string): string {
         const num = parseInt(p1, 10);
@@ -48,19 +48,18 @@ export class ExtendedEvent extends Event {
         return result;
     }
 
-    updateSchedule(originalEvent: Event): void {
-        let eventStart = this.schedule.eventStart;
+    updateSchedule(originalEvent: Event, duplicatedElement: Event): void {
+        let eventStart = duplicatedElement.schedule.eventStart;
         if (eventStart instanceof When) {
             let newRef  = FreNodeReference.create(originalEvent.name, "Event") as FreNodeReference<Event>;
             (eventStart as When).startWhen.event = newRef;
         }
     }
 
-
-    smartUpdate(originalElement:Event): void {
+    smartUpdate(originalElement:Event, duplicatedElement: Event): void {
         console.log("smartUpdate to duplicate event " + originalElement.name);
-        this.name = this.incrementSequences(this.name) + " (copy)";
-        this.updateSchedule(originalElement);
+        duplicatedElement.name = this.incrementSequences(duplicatedElement.name) + " (copy)";
+        this.updateSchedule(originalElement, duplicatedElement);
         // Eventually will need to do other smart things to eliminate manual changes when duplicating.
         // For now just update the reference to the duplicated event in the 'When'.
     }

@@ -3,8 +3,9 @@ import { Timeline, EventInstance, PeriodInstance, TimelineEventInstance, Timelin
 import { Simulator, } from "../timeline/Simulator";
 import { StudyConfiguration, Period, When, StudyConfigurationModel } from "../../language/gen/index";
 import * as utils from "./Utils";
-import { resetTimelineScriptTemplate, TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
+import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
+import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate";
 import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
@@ -315,7 +316,7 @@ describe ("Study Simulation", () => {
         simulator.run();
         let timeline = simulator.timeline;
 
-        checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
+        utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
     }); 
 
     it("generate a chart for two periods", () => {
@@ -350,7 +351,7 @@ describe ("Study Simulation", () => {
         simulator.run();
         let timeline = simulator.timeline;
 
-        checkTimelineChart(timeline, expectedTimelineDataAsScript, "", true);
+        utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, "", true);
     }); 
 
     it("generate a chart for the example study 1", () => {
@@ -460,7 +461,6 @@ describe ("Study Simulation", () => {
         `;
         // GIVEN a study configuration loaded from a file
         const studyConfigurationUnit = utils.loadModel("ScheduleExample3", 'StudyConfiguration');
-        // const studyConfigurationUnit = utils.loadModel("EachCompleteTest", 'StudyConfiguration');
         studyConfigurationModel.addUnit(studyConfigurationUnit)
   
         // WHEN the study is simulated and a timeline picture is generated
@@ -712,7 +712,7 @@ describe ("Study Simulation", () => {
       const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
       // Save full HTML of chart for viewing / debugging
       utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
-      // checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
+      // utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
 
     });
 
@@ -782,24 +782,24 @@ describe ("Study Simulation", () => {
 
 
   });
+
+  describe("Generation of Study Checklists Document", () => {
+
+    it("generate a document for a one visit,one checklist, one task study", () => {
+  
+        // GIVEN a study configuration loaded from a file and the study is simulated
+        const studyConfigurationUnit = utils.loadModel("OneVisitOneChecklist", 'StudyConfiguration');
+        studyConfigurationModel.addUnit(studyConfigurationUnit)
+        let simulator = new Simulator(studyConfigurationUnit);
+        simulator.run();
+        let timeline = simulator.timeline;
+
+        // WHEN the study checklist document is generated
+        const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline);
+
+        // THEN the generated study checklist document has the expected content
+        utils.saveToFile(studyChecklistAsMarkdown, "StudyChecklistOneVisitOneChecklist.md");
+    });
+  });
 });
-
-function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScript: string, expectedTimelineVisualizationHTML: string = "", save : boolean = false ) {
-  resetTimelineScriptTemplate();
-  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
-  // Save full HTML of chart for viewing / debugging
-  if (save) utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
-
-  const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
-  const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
-  // Then the generated timeline picture has two events on the expected event days
-  expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
-
-  if (expectedTimelineVisualizationHTML.length > 0) { 
-    const normalizedTimelineVisualizationHTML = timelineVisualizationHTML.replace(/\s+/g, '');
-    const normalizedExpectedTimelineVisualizationHTML = expectedTimelineVisualizationHTML.replace(/\s+/g, '');
-    expect(normalizedTimelineVisualizationHTML).toEqual(normalizedExpectedTimelineVisualizationHTML);
-  }
-}
 
