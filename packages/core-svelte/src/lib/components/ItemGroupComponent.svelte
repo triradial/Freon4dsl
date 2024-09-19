@@ -584,10 +584,6 @@
 		box.executeAction(editor, "make-shareable"); 
 	}
 
-	function duplicateItem() {
-        box.executeAction(editor, "duplicate");
-    }
-
 	function deleteItem() {
         box.executeAction(editor, "delete");
     }

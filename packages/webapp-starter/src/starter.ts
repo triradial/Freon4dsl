@@ -10,22 +10,22 @@ import { setCustomComponents } from "@freon4dsl/core-svelte";
 // import DatePicker from "./customComponents/forDocuProject/DatePicker.svelte";
 // import {InsuranceModelEnvironment} from "@freon4dsl/samples-docuproject";
 // For ExternalTester
-// import BooleanWrapperComponent from "./customComponents/forExternalTester/BooleanWrapperComponent.svelte";
-// import NumberWrapperComponent from "./customComponents/forExternalTester/NumberWrapperComponent.svelte";
-// import StringWrapperComponent from "./customComponents/forExternalTester/StringWrapperComponent.svelte";
-// import FragmentWrapperComponent from "./customComponents/forExternalTester/FragmentWrapperComponent.svelte";
-// import ExternalStringComponent from "./customComponents/forExternalTester/ExternalStringComponent.svelte";
-// import ExternalSimpleComponent from "./customComponents/forExternalTester/ExternalSimpleComponent.svelte";
-// import ExternalRefListComponent from "./customComponents/forExternalTester/ExternalRefListComponent.svelte";
-// import ExternalRefComponent from "./customComponents/forExternalTester/ExternalRefComponent.svelte";
-// import ExternalPartListComponent from "./customComponents/forExternalTester/ExternalPartListComponent.svelte";
-// import ExternalPartComponent from "./customComponents/forExternalTester/ExternalPartComponent.svelte";
-// import ExternalNumberComponent from "./customComponents/forExternalTester/ExternalNumberComponent.svelte";
-// import ExternalBooleanComponent from "./customComponents/forExternalTester/ExternalBooleanComponent.svelte";
-// import PartWrapperComponent from "./customComponents/forExternalTester/PartWrapperComponent.svelte";
-// import PartListWrapperComponent from "./customComponents/forExternalTester/PartListWrapperComponent.svelte";
-// import RefWrapperComponent from "./customComponents/forExternalTester/RefWrapperComponent.svelte";
-// import RefListWrapperComponent from "./customComponents/forExternalTester/RefListWrapperComponent.svelte";
+import BooleanWrapperComponent from "./customComponents/forExternalTester/BooleanWrapperComponent.svelte";
+import NumberWrapperComponent from "./customComponents/forExternalTester/NumberWrapperComponent.svelte";
+import StringWrapperComponent from "./customComponents/forExternalTester/StringWrapperComponent.svelte";
+import FragmentWrapperComponent from "./customComponents/forExternalTester/FragmentWrapperComponent.svelte";
+import ExternalStringComponent from "./customComponents/forExternalTester/ExternalStringComponent.svelte";
+import ExternalSimpleComponent from "./customComponents/forExternalTester/ExternalSimpleComponent.svelte";
+import ExternalRefListComponent from "./customComponents/forExternalTester/ExternalRefListComponent.svelte";
+import ExternalRefComponent from "./customComponents/forExternalTester/ExternalRefComponent.svelte";
+import ExternalPartListComponent from "./customComponents/forExternalTester/ExternalPartListComponent.svelte";
+import ExternalPartComponent from "./customComponents/forExternalTester/ExternalPartComponent.svelte";
+import ExternalNumberComponent from "./customComponents/forExternalTester/ExternalNumberComponent.svelte";
+import ExternalBooleanComponent from "./customComponents/forExternalTester/ExternalBooleanComponent.svelte";
+import PartWrapperComponent from "./customComponents/forExternalTester/PartWrapperComponent.svelte";
+import PartListWrapperComponent from "./customComponents/forExternalTester/PartListWrapperComponent.svelte";
+import RefWrapperComponent from "./customComponents/forExternalTester/RefWrapperComponent.svelte";
+import RefListWrapperComponent from "./customComponents/forExternalTester/RefListWrapperComponent.svelte";
 // import { ExternalModelEnvironment } from "@freon4dsl/samples-external-tester";
 
 /**
