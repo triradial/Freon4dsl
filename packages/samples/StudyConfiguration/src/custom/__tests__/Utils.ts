@@ -274,6 +274,21 @@ export function generateChartAndSave(timeline: Timeline): string {
   saveTimeline(html);
   return html;
 }
+
+export function readTextFile(filePath: string): string {
+  try {
+    const absolutePath = path.resolve(filePath);
+    const fileContent = fs.readFileSync(absolutePath, 'utf-8');
+    return fileContent;
+  } catch (error) {
+    console.error(`Error reading file from path ${filePath}:`, error);
+    throw error;
+  }
+}
+
+export function readTestDataFile(fileName: string): string {
+  return readTextFile(path.resolve(__dirname, 'data', fileName));
+}
   
 export function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScript: string, expectedTimelineVisualizationHTML: string = "", save : boolean = false ) {
   resetTimelineScriptTemplate();

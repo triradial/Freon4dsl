@@ -800,6 +800,11 @@ describe ("Study Simulation", () => {
 
         // THEN the generated study checklist document has the expected content
         utils.saveToFile(studyChecklistAsMarkdown, "StudyChecklistOneVisitOneChecklist.md");
+        const expectedMarkdown = utils.readTestDataFile("StudyChecklistOneVisitOneChecklist.md");
+        const normalizedActualMarkdown = studyChecklistAsMarkdown.replace(/\s+/g, '');
+        const normalizedExpectedMarkdown = expectedMarkdown.replace(/\s+/g, '');
+        expect(normalizedActualMarkdown).toEqual(normalizedExpectedMarkdown);
+
     });
   });
 });

@@ -16,25 +16,19 @@ export class StudyChecklistDocumentTemplate {
   }
 
   static getReferencesAsMarkdown(references) {
-    let template = references.map((reference, referenceCounter) => nodent`- ${reference.title} ${reference.link}
+    let template = references.map((reference, referenceCounter) => `- ${reference.title} ${reference.link}
     `).join('');
     return template;
   }
 
   static getPeopleAsMarkdown(people) {
-    let template = people.map((person, personCounter) => nodent`- ${person.name} ${person.email} ${person.phoneNumber}
+    let template = people.map((person, personCounter) => `- ${person.name} (${person.role}) ${person.email} ${person.phoneNumber}
     `).join('');
     return template;
   }
 
   /**
-   * Build a markdown string of the form:
-   * # Period Name
-   * ## Event Name
-   * ### Checklist Name
-   * #### Step 1: Step Title
-   * Step Description
-   * Reference: Reference Title [link]
+   * Build a markdown string of the form
    * 
    * @param studyConfiguration 
    * @returns 
@@ -55,10 +49,10 @@ export class StudyChecklistDocumentTemplate {
 
                         ${step.detailsDescription.text}
 
-                        **REFERENCES**
+                        ${step.references.length > 0 ? "**REFERENCES**" : ''}
                         ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
                        
-                        **PEOPLE**
+                        ${step.people.length > 0 ? "**PEOPLE**" : ''}
                         ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
 
                         `).join('')}`;
@@ -76,8 +70,6 @@ nodent`Study 123ABC
 
 The timeline and visit checklists for the study.
 
-**Author:** *Mike Vogel CRC Manager*
-
 [toc]
 
 # Study Timeline 
@@ -86,10 +78,10 @@ ${StudyChecklistDocumentTemplate.getTimelineTablAsMarkdown(timeline)}
 
 ## Chart
 
-[View the interactive chart of the schedule](../timeline.html)
+[View the interactive chart of the schedule](./timeline.html)
 
 
-![Overview of Timeline](./example-schedule.png)
+![Overview of Timeline](./docs/example-schedule.png)
 
 ---
 
