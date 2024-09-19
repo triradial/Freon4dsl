@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
     import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
     import { Toast } from "flowbite-svelte";

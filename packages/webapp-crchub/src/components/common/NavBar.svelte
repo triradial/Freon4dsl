@@ -1,15 +1,15 @@
-<script>
+<script lang="ts">
     import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Avatar, Dropdown, DropdownItem, DropdownHeader, DropdownDivider } from 'flowbite-svelte';
     import { Alert } from 'flowbite-svelte';
-    import { isAuthenticated } from '../services/auth.js';
+    import { isAuthenticated } from '../../services/auth.js';
     import { createEventDispatcher } from 'svelte';
 
     const dispatch = createEventDispatcher();
 
-    function loadContent(event, componentName, breadcrumbItem) {
-      console.log('navbar->component:', componentName);
+    function loadContent(event: Event, contentName: string) {
+      console.log('navbar->component:', contentName);
       event.preventDefault();
-      dispatch('loadContent', { componentName, breadcrumbItem });
+      dispatch('loadContent', { contentName });
     }
 
     function signOut() {
@@ -20,9 +20,9 @@
 
 </script>
 
-<Navbar class="navbar-component">
+<Navbar class="navbar-component py-1.5">
   <NavBrand href="/">
-      <img src="/assets/images/logo_color.svg" class="me-1 h-8 sm:h-9" alt="CRCHub Logo" />
+      <img src="/assets/images/logo_color.svg" class="me-1 h-6 sm:h-8" alt="CRCHub Logo" />
       <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
         <span class="crc-logo-p1">CRC</span><span class="crc-logo-p2">Hub</span>
       </span>

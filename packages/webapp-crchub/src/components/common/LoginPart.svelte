@@ -1,18 +1,20 @@
-<script>
+<script lang="ts">
     import { Button, Checkbox, Input } from "flowbite-svelte";
-    import { authenticate, isAuthenticated, redirectUrl } from '../services/auth';
+    import { authenticate, isAuthenticated, redirectUrl } from '../../services/auth';
     import { writable } from 'svelte/store';
-    import ToastWarning from "./ToastWarning.svelte";
+    import ToastWarning from '../common/ToastWarning.svelte';
     import { navigate } from 'svelte-routing';
     
     let username = '';
     let password = '';
     let showError = writable(false);
 
-    const submitForm = async (event) => {
+    const submitForm = async (event: Event) => {
         event.preventDefault();
-        let url;
-        redirectUrl.subscribe(value => { url = value; });
+        let url: string = '/';  // Default to home page
+        const unsubscribe = redirectUrl.subscribe(value => { url = value || '/'; });
+        unsubscribe();  // Unsubscribe to avoid memory leaks
+
         const credentials = {
             username: username,
             password: password,
@@ -23,7 +25,7 @@
         } else {
             isAuthenticated.set(true);
             sessionStorage.setItem('auth', 'true');
-            navigate(url);           
+            navigate(url);
         }
     };
 

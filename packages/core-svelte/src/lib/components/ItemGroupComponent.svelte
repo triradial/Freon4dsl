@@ -14,7 +14,7 @@
 
     import { Button } from 'flowbite-svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes, faSquareArrowUpRight, faLinkSlash } from '@fortawesome/free-solid-svg-icons';
+    import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes, faSquareArrowUpRight, faLinkSlash, faClone } from '@fortawesome/free-solid-svg-icons';
 
 	// TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -584,6 +584,10 @@
 	function deleteItem() {
         box.executeAction(editor, "delete");
     }
+
+	function duplicateItem() {
+        box.executeAction(editor, "duplicate");
+    }
 </script>
 
 <!-- todo there is a double selection here: two borders are showing -->
@@ -652,6 +656,11 @@
 	<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click="{shareItem}">
         <FontAwesomeIcon class="w-3 h-3" icon={faLinkSlash} />
     </Button>
+	{/if}
+	{#if canDuplicate}
+	<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={duplicateItem} >
+        <FontAwesomeIcon class="w-3 h-3" icon={faClone} />
+    </Button> 
 	{/if}
 	{#if canDelete}
 	<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={deleteItem} >

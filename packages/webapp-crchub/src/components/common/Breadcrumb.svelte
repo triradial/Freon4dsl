@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
     import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
     //import { patients, loadPatients } from '../services/datastore.js';
 
-    export let items = [];
+    export let items: Array<{ item: string; id?: string }> = [];
 
-    let breadcrumbItems = [];
+    let breadcrumbItems: Array<{ href: string | undefined; text: string }> = [];
 
     $: {
         breadcrumbItems = [];
@@ -13,7 +13,7 @@
             let href = i < items.length - 1 ? '/' + item.item : undefined;
             let text = item.item.charAt(0).toUpperCase() + item.item.slice(1);
             if (item.id) {
-                let name ="Entity Name";
+                let name = "Entity Name";
                 //let entity = await getEntityById(item.id);
                 text = `${text}: ${name}`;
             }

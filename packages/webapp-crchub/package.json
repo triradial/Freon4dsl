@@ -1,0 +1,43 @@
+{
+    "name": "@freon4dsl/webapp-crchub",
+    "version": "0.7.0-beta",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "clean": "rm -rf node_modules/",
+        "build": "rollup -c",
+        "build-app": "rollup -c",
+        "dev": "cross-env NODE_OPTIONS='--max-old-space-size=8192' NODE_PORT=8002 rollup -c -w",
+        "start": "sirv public --port 8000",
+        "validate": "svelte-check --tsconfig ./tsconfig.json",
+        "prepare-app": "npx gulp"
+    },
+    "dependencies": {
+        "@freon4dsl/core": "0.7.0-beta",
+        "@freon4dsl/core-svelte": "0.7.0-beta"
+    },
+    "devDependencies": {
+        "@aws-amplify/backend": "^1.2.2",
+        "@aws-amplify/backend-cli": "^1.2.7",
+        "autoprefixer": "^10.4.20",
+        "aws-cdk": "^2.158.0",
+        "aws-cdk-lib": "^2.158.0",
+        "constructs": "^10.3.0",
+        "cssnano": "^7.0.6",
+        "esbuild": "^0.23.1",
+        "gulp": "^5.0.0",
+        "gulp-postcss": "^10.0.0",
+        "gulp-rename": "^2.0.0",
+        "gulp-sass": "^5.1.0",
+        "sass": "^1.78.0",
+        "tailwindcss": "^3.4.11",
+        "tsx": "^4.19.1",
+        "typescript": "^5.6.2"
+    },
+    "peerDependencies": {
+        "aws-amplify": "^6.6.2",
+        "svelte-routing": "^2.13.0",
+        "ag-grid-community": "^31.1.1",
+        "ag-grid-enterprise": "^31.1.1"
+    }
+}

@@ -1,0 +1,76 @@
+[
+    {
+      "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "name": "BE-X5",
+      "identifiers": [
+        { "type": "nct", "identifier": "NCT75521706" }
+      ],
+      "status": "Planning",
+      "title": "Effect of combination of device Megabond with varying doeses of Amoxocillin Treatment of Patients With Advanced Malignancies",
+      "phase": "III",
+      "interventions": [
+        { "type": "device", "name": "Megabond 5000" },
+        { "type": "drug", "name": "Amoxocillin" }
+      ],
+      "therapeutic-area": "Oncology",
+      "current-protocol": "v1",
+      "protocol-amendments": [
+        { "version": "v1", "date": "04-MAR-2024", "description": "initial protocol" }
+      ]
+    },
+    {
+      "id": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "name": "MK-3475-028",
+      "identifiers": [
+        { "type": "nct", "identifier": "NCT03421378" }
+      ],
+      "status": "Active",
+      "title": "An Efficacy and Safety Study of INM-176 for the Treatment of Patients With Advanced Malignancies",
+      "phase": "II",
+      "interventions": [
+        { "type": "drug", "name": "INM-176" }
+      ],
+      "therapeutic-area": "Oncology",
+      "current-protocol": "v2",
+      "protocol-amendments": [
+        { "version": "v1","date": "01-MAY-2023","description": "initial protocol" },
+        { "version": "v2","date": "24-NOV-2023","description": "updated protocol" }
+      ]
+    },
+    {
+      "id": "4b5c6d7e-8f9a-4f1b-2a3c-4e5d6e7a8e9e",
+      "name": "XL-184-001",
+      "identifiers": [
+        { "type": "nct", "identifier": "NCT44429081" }
+      ],
+      "status": "Active",
+      "title": "Effect of Different Doses of SAR110894 on Growths in Patients With Mild to Moderate Cancerous Tumors",
+      "phase": "III",
+      "interventions": [
+        { "type": "drug", "name": "SAR110894" }
+      ],
+      "therapeutic-area": "Oncology",
+      "current-protocol": "v1",
+      "protocol-amendments": [
+        { "version": "v1", "date": "01-MAY-2023", "description": "initial protocol" }
+      ]
+    },
+    {
+      "id": "5d6e7f8a-9f1e-2dae-4e5a-6f7e8c9c0a",
+      "name": "AN-PARAB-001",
+      "identifiers": [
+        { "type": "nct", "identifier": "NCT86177491" }
+      ],
+      "status": "Complete",
+      "title": "Short-term Effects on Cervical Cancerous Tumors in Patients On the Drug Fallaxin",
+      "phase": "III",
+      "interventions": [
+        { "type": "drug","name": "Fallaxin" }
+      ],
+      "therapeutic-area": "Hematology",
+      "current-protocol": "v1",
+      "protocol-amendments": [
+        { "version": "v1","date": "01-MAY-2023","description": "initial protocol" }
+      ]
+    }
+  ]
