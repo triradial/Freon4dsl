@@ -1,7 +1,8 @@
 <script lang="ts">
     import { studies, loadStudies } from "../../services/datastore";
     import { onMount } from "svelte";
-    import { createGrid, GridOptions, GridApi } from "ag-grid-community";
+    import { createGrid } from "ag-grid-community";
+    import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
 
     let gridOptions: GridOptions;

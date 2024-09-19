@@ -8,6 +8,7 @@ import sveltePreprocess from 'svelte-preprocess';
 import json from '@rollup/plugin-json';
 
 const production = !process.env.ROLLUP_WATCH;
+const dev = true;
 
 export default {
   input: 'src/main.ts',
@@ -42,8 +43,8 @@ export default {
     }),
     commonjs(),
     typescript({
-      sourceMap: !production,
-      inlineSources: !production
+      sourceMap: !production || dev,
+      inlineSources: !production || dev
     }),
 
     // If we're building for production (npm run build
