@@ -37,7 +37,7 @@
     "peerDependencies": {
         "aws-amplify": "^6.6.2",
         "svelte-routing": "^2.13.0",
-        "ag-grid-community": "^31.1.1",
-        "ag-grid-enterprise": "^31.1.1"
+        "ag-grid-community": "^32.2.0",
+        "ag-grid-enterprise": "^32.2.0"
     }
 }
