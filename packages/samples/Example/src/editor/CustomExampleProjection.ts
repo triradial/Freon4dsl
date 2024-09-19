@@ -59,7 +59,7 @@ export class CustomExampleProjection implements FreProjection {
         return BoxFactory.horizontalLayout(
             doc,
             "Documentation-hlist-line-0",
-            "", "center",
+            "", 
             [
                 BoxUtil.labelBox(doc, "doc start: ", "top-1-line-0-item-0"),
                 // BoxUtil.textBox(this._element as Documentation, "text"),
@@ -76,7 +76,7 @@ export class CustomExampleProjection implements FreProjection {
     createSumBox (sum: SumExpression): Box {
         const cells: GridCellBox[] = [
             new GridCellBox(sum, "Sum-from-cell", 3, 1,
-                new HorizontalLayoutBox(sum, "Sum-from-part", "top", [
+                new HorizontalLayoutBox(sum, "Sum-from-part", [
                     this.optionalPartBox(sum, "SumExpression-variable", "variable"),
                     new LabelBox(sum, "sum-from-equals", "="),
                     this.optionalPartBox(sum, "SumExpression-from", "from")

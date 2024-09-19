@@ -72,6 +72,9 @@ setCustomComponents([
     { component: ExternalStringComponent, knownAs: "stringReplacer" },
 ]);
 
+import { extendToSupportSmartDuplication } from "@freon4dsl/samples-study-configuration";
+extendToSupportSmartDuplication();
+
 /**
  * Now start the app ...
  */

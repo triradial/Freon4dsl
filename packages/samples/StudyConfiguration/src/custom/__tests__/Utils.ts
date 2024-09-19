@@ -6,7 +6,7 @@ import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent"
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import * as path from 'path';
 import * as fs from 'fs';
-import { TimelineScriptTemplate } from "../templates/TimelineScriptTemplate";
+import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element. 
@@ -54,8 +54,8 @@ export function createEventScheduleStartingOnADay(uniquePrefix: string, startDay
   return eventSchedule;
 }
 
-export function createDay1EventScheduleThatRepeatsWeekly(eventName: string, numberOfRepeats: number) {
-  let eventSchedule = createEventScheduleStartingOnADay(eventName, 1);
+export function createDay1EventScheduleThatRepeatsWeekly(eventName: string, numberOfRepeats: number, eventDay: number) {
+  let eventSchedule = createEventScheduleStartingOnADay(eventName, eventDay);
   let repeatCondition = new RepeatCondition("RepeatCount-" + eventName);
   repeatCondition.maxRepeats = numberOfRepeats;
   repeatCondition.repeatUnit = new Weekly();
@@ -84,8 +84,8 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurati
   let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
   createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-  const studyStart = PlusExpression.create({left:  StudyStart.create({}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
-  let eventSchedule = EventSchedule.create({ 'eventStart': studyStart});
+  const studyStartPlusDays = PlusExpression.create({left:  StudyStart.create({}), right: NumberLiteralExpression.create({value:event2DaysAfterStudyStart})})
+  let eventSchedule = EventSchedule.create({ 'eventStart': studyStartPlusDays});
   createEventAndAddToPeriod(period, event2Name, eventSchedule);
 
   studyConfiguration.periods.push(period);
@@ -190,7 +190,7 @@ export function addRepeatingEvents(studyConfiguration: StudyConfiguration, perio
   let period = new Period(periodName);
   period.name = periodName;
   // Setup the study start event
-  let dayEventSchedule = createDay1EventScheduleThatRepeatsWeekly(eventsToAdd[0].eventName, eventsToAdd[0].repeat);
+  let dayEventSchedule = createDay1EventScheduleThatRepeatsWeekly(eventsToAdd[0].eventName, eventsToAdd[0].repeat, eventsToAdd[0].eventDay);
   let event = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule);
   studyConfiguration.periods.push(period);
   return studyConfiguration;
@@ -242,50 +242,73 @@ export function loadModel(modelFolderName: string, modelName: string): StudyConf
   return modelUnit;
 }
 
-
-export function saveTimelineTableHTML(timelineTableAsScript: string, filename: string) {
-  try {
-    fs.writeFileSync(filename, timelineTableAsScript);
-    console.log('File written successfully');
-  } catch (err) {
-    console.error('Error writing file:', err);
-  }
-}
-
 export function saveTimelineTable(timelineTableAsScript: string) {
   let filename = 'timeline-table.html';
   let timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
 
-  this.saveTimelineTableHTML(timelineTableAsHTML, filename);
+  this.saveToFile(timelineTableAsHTML, filename);
 }
 
 
-export function  saveTimelineHTML(timelineDataAsHTML: string, filename: string) {
+export function saveToFile(stringToSave: string, filename: string) {
   try {
-    fs.writeFileSync(filename, timelineDataAsHTML);
+    fs.writeFileSync(filename, stringToSave);
     console.log('File written successfully');
   } catch (err) {
     console.error('Error writing file:', err);
   }
 }
 
-export function  saveTimeline(timelineDataAsScript: string) {
+export function saveTimeline(timelineDataAsScript: string) {
   let filename = 'timeline.html';
-  let timelineDataAsHTML = TimelineScriptTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
+  let timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
-  this.saveTimelineHTML(timelineDataAsHTML, filename);
+  this.saveToFile(timelineDataAsHTML, filename);
 }
 
-
 export function generateChartAndSave(timeline: Timeline): string {
-  let timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-  let timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
+  let timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+  let timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
   // Save full HTML of chart for viewing / debugging
   const html = timelineDataAsScript + timelineVisualizationHTML;
   saveTimeline(html);
   return html;
 }
+
+export function readTextFile(filePath: string): string {
+  try {
+    const absolutePath = path.resolve(filePath);
+    const fileContent = fs.readFileSync(absolutePath, 'utf-8');
+    return fileContent;
+  } catch (error) {
+    console.error(`Error reading file from path ${filePath}:`, error);
+    throw error;
+  }
+}
+
+export function readTestDataFile(fileName: string): string {
+  return readTextFile(path.resolve(__dirname, 'data', fileName));
+}
   
+export function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScript: string, expectedTimelineVisualizationHTML: string = "", save : boolean = false ) {
+  resetTimelineScriptTemplate();
+  let timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+  let timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
+  // Save full HTML of chart for viewing / debugging
+  if (save) saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
+
+  const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, '');
+  const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
+  // Then the generated timeline picture has two events on the expected event days
+  expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+
+  if (expectedTimelineVisualizationHTML.length > 0) { 
+    const normalizedTimelineVisualizationHTML = timelineVisualizationHTML.replace(/\s+/g, '');
+    const normalizedExpectedTimelineVisualizationHTML = expectedTimelineVisualizationHTML.replace(/\s+/g, '');
+    expect(normalizedTimelineVisualizationHTML).toEqual(normalizedExpectedTimelineVisualizationHTML);
+  }
+}
+
 
 
 

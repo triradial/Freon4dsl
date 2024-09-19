@@ -35,6 +35,7 @@ import {
 
 
 import { RoleProvider } from "@freon4dsl/core";
+import { ExtendedEvent, extension } from "../custom/extensions/ExtensionLib";
 
 /**
  * Class CustomStudyConfigurationModelActions provides an entry point for the language engineer to
@@ -203,6 +204,20 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
             return null;
         },
     }),
+    FreCustomAction.create({ activeInBoxRoles: ["event"], trigger: "duplicate",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const event: Event = box.node as Event;
+            const period: Period = ownerOfType(event, "Period") as Period; //box.parent.parent.parent.element as Period;
+            const copyOfEvent = event.copy();
+            extension(ExtendedEvent, Event);
+            smartDuplicate(event, copyOfEvent);
+            const index = period.events.indexOf(event); 
+            console.log("custom action duplicate, splicing in copyOfEvent: " + copyOfEvent.name + " at index: " + index);
+            period.events.splice(index + 1, 0, copyOfEvent);
+            return null;
+        },
+    }),
+
     FreCustomAction.create({ activeInBoxRoles: ["person"], trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const person: Person = box.node as Person;
@@ -242,5 +257,18 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
 
     function makeTaskUnreferenced(task: Task) {
     }
+
+    function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
+        const methodName = 'smartUpdate';
+        const args = [originalElement, duplicatedElement];
+        // Call methodName if it exists on the element
+        if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === 'function') {
+            console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
+            return (duplicatedElement as any)[methodName](...args);
+        } else {
+            console.log(`Method ${methodName} does not exist on the instance.`);
+        }
+    } 
+    
 
 /* #endregion */

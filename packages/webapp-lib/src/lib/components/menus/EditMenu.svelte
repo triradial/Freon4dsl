@@ -78,6 +78,7 @@
 		const intp = langEnv.interpreter;
 		const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
 		const studyConfigurationUnit = studyConfigurationModel.configuration;
+		EditorRequestsHandler.getInstance().validate();
 		activeTab.set(interpreterTab);
 		chartHTML.set("<b>Running Simulation...</b>");
 		const rtObject = intp.evaluate(studyConfigurationUnit) as RtString;

@@ -2,15 +2,16 @@ import { RtBoolean, RtObject } from '@freon4dsl/core';
 import { ScheduledEvent, ScheduledEventState } from './ScheduledEvent';
 import { Event } from '../../language/gen/index';
 import { ScheduledPeriod } from './ScheduledPeriod';
-import { ScheduledStudyConfiguration } from './ScheduledStudyConfiguration';
 
-// Flags to control the types of logging that will be done
-export let scheduledLogging = false;
-export let periodLogging = false;
 /*
  * A Timeline records the events and the days they occur on.
  */
-export class Timeline extends RtObject{
+export class Timeline extends RtObject {
+
+  // Flags to control the types of logging that will be done
+  scheduledLogging = false;
+  periodLogging = false;
+  completedEventLogging = false;
 
   days: TimelineDay[] = [];
 
@@ -72,11 +73,22 @@ export class Timeline extends RtObject{
   }
 
   getLastInstanceForThisEvent(eventToMatch: Event): EventInstance {
-    let allEventInstances = this.days.flatMap(day => day.events.filter ( event => event instanceof EventInstance));
-    let eventInstances = allEventInstances.filter(event => eventToMatch.name === event.getName());
-    const lastInstance = eventInstances[eventInstances.length - 1] as EventInstance; // TODO: sort by day and get the most recent
+    // Flatten the list of events and filter for EventInstance
+    let allEventInstances = this.days.flatMap(day => 
+      day.events.filter(event => event instanceof EventInstance).map(event => ({ event, day: day.day }))
+    );
+  
+    // Filter the events to match the given event name
+    let eventInstances = allEventInstances.filter(({ event }) => eventToMatch.name === event.getName());
+  
+    // Sort the events by the day value
+    eventInstances.sort((a, b) => a.day - b.day);
+  
+    // Get the last instance from the sorted list
+    const lastInstance = eventInstances.length > 0 ? eventInstances[eventInstances.length - 1].event as EventInstance : null;
+  
     if (!lastInstance) {
-      console.log("No instance of: '" + eventToMatch.name + "' on timeline");
+      // console.log("No instance of: '" + eventToMatch.name + "' on timeline");
       return null;
     } else {
       return lastInstance;
@@ -107,7 +119,7 @@ export class Timeline extends RtObject{
         }
       }
     } 
-    console.log("There is not already a completed instance of: '" + scheduledEvent.getName() + "'");   
+    // console.log("There is not already a completed instance of: '" + scheduledEvent.getName() + "'");   
     return false;
   }
 
@@ -121,7 +133,7 @@ export class Timeline extends RtObject{
         }
       }
     }
-    console.log("numberCompletedInstancesOf scheduledEvent: " + scheduledEvent.getName() + " is: " + count);    
+    if (this.completedEventLogging) console.log("numberCompletedInstancesOf scheduledEvent: " + scheduledEvent.getName() + " is: " + count);    
     return count;
   }
 
@@ -140,7 +152,7 @@ export class Timeline extends RtObject{
   // Return the first period that is active. There should be only one.
   getActivePeriod(): PeriodInstance {
     let firstActivePeriodOnTimeline = this.getPeriods().find(period => (period as PeriodInstance).getState() === TimelineInstanceState.Active) as PeriodInstance;
-    if (periodLogging) {
+    if (this.periodLogging) {
       if (firstActivePeriodOnTimeline) {
         console.log("The first Active Period On the timeline is: " + firstActivePeriodOnTimeline.getName());
       } else {
@@ -181,6 +193,12 @@ export class Timeline extends RtObject{
     } else {
       return Math.abs(lowestDayItem.day);
     }
+  }
+
+
+  getMaxDayOnTimeline() {
+    const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
+    return this.currentDay + dayOffsetOfFirstEventInstance;
   }
 
 }
@@ -243,7 +261,6 @@ export abstract class TimelineEventInstance {
     const result = TimelineEventInstance.formatDate(endOfStartDay);
     return result;
   }
-
 
   abstract getName(): string;
 

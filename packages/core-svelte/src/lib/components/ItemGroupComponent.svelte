@@ -14,7 +14,7 @@
 
     import { Button } from 'flowbite-svelte';
 	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes, faSquareArrowUpRight, faLinkSlash, faClone } from '@fortawesome/free-solid-svg-icons';
+    import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes, faSquareArrowUpRight, faLinkSlash, faAnglesDown } from '@fortawesome/free-solid-svg-icons';
 
 	// TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -57,6 +57,7 @@
 	let isRequired: boolean = false;
 	let canEdit: boolean = true;
 	let canExpand: boolean = true;
+	let canDuplicate: boolean = false;
 	
 	// Note that 'from <= to' always holds.
 	let placeHolderStyle: string;
@@ -70,7 +71,7 @@
      * are set.
      */
 	 onMount(() => {
-        LOGGER.log("onMount" + " for element "  + box?.element?.freId() + " (" + box?.element?.freLanguageConcept() + ")");
+        LOGGER.log("onMount" + " for element "  + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")");
 		if (!!box) {
 			originalText = text = box.getText();
 			placeholder = box.placeHolder;
@@ -82,6 +83,7 @@
 			canEdit = box.canEdit;
 			isRequired = box.isRequired;
 			contentStyle = isExpanded ? 'display:block;' : 'display:none;';
+			canDuplicate = box.canDuplicate;
 			
 			setInputWidth();
 			box.setFocus = setFocus;
@@ -461,7 +463,7 @@
 	}
 
 	const refresh = () => {
-		LOGGER.log("REFRESH " + box?.element?.freId() + " (" + box?.element?.freLanguageConcept() + ")")
+		LOGGER.log("REFRESH " + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")")
 		placeholder = box.placeHolder;
 		// If being edited, do not set the value, let the user type whatever (s)he wants
 		if (!isEditing) {
@@ -471,6 +473,7 @@
 			canDelete = box.canDelete;
 			canUnlink = box.canUnlink;
 			canEdit = box.canEdit;
+			canDuplicate = box.canDuplicate;
 		}
 		boxType = (box.parent instanceof ActionBox ? "action" : (box.parent instanceof SelectBox ? "select" : "text"));
 		setInputWidth();
@@ -581,6 +584,10 @@
 		box.executeAction(editor, "make-shareable"); 
 	}
 
+	function duplicateItem() {
+        box.executeAction(editor, "duplicate");
+    }
+
 	function deleteItem() {
         box.executeAction(editor, "delete");
     }
@@ -659,7 +666,7 @@
 	{/if}
 	{#if canDuplicate}
 	<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={duplicateItem} >
-        <FontAwesomeIcon class="w-3 h-3" icon={faClone} />
+        <FontAwesomeIcon class="w-3 h-3" icon={faAnglesDown} />
     </Button> 
 	{/if}
 	{#if canDelete}

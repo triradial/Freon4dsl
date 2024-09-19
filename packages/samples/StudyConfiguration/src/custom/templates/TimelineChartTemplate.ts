@@ -4,6 +4,10 @@ import {StudyConfigurationModelModelUnitWriter} from '../../writer/gen/StudyConf
 
 let uniqueCounter = 0;
 
+export function resetTimelineScriptTemplate() {
+  uniqueCounter = 0;
+}
+
 function getUniqueNumber(): number {
   return uniqueCounter++;
 }
@@ -11,7 +15,7 @@ function getUniqueNumber(): number {
 const referenceDate = new Date(2024, 0, 1);
 // const referenceDate = new Date(2023, 11, 31);
 
-export class TimelineScriptTemplate {
+export class TimelineChartTemplate {
 
   static getTimelineDataHTML(timeline: Timeline): string {
     let writer = new StudyConfigurationModelModelUnitWriter();
@@ -29,12 +33,12 @@ var items = new vis.DataSet([
         return '';
       }
       return periodInstances.map((periodInstance, index) => 
-        `{ start: new Date(${periodInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${periodInstance.getEndDayStringAsDateFrom(referenceDate, timeline)}, 23, 59, 59), group: "Phase", className: "${periodInstance.getName().toLowerCase()}-phase", title: "Day: ${periodInstance.getStartDayAsDate(referenceDate, timeline)}}", content: "<b>${periodInstance.getName()}</b>", id: "${periodInstance.getName() + getUniqueNumber()}" },`
+        `{ start: new Date(${periodInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${periodInstance.getEndDayStringAsDateFrom(referenceDate, timeline)}), group: "Phase", className: "${periodInstance.getName().toLowerCase()}-phase", title: "Day: ${periodInstance.getStartDay()}", content: "<b>${periodInstance.getName()}</b>", id: "${periodInstance.getName() + getUniqueNumber()}" },`
       ).filter(item => item !== '').join('');
     }).filter(item => item !== '').join("\n    ")}
     ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances().map((eventInstance, index) => `${eventInstance.anyDaysBefore()  ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}
     { start: new Date(${eventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as EventInstance).scheduledEvent.configuredEvent.schedule.eventStart).replace(/"/g, '')}", content: "&nbsp;", id: "${eventInstance.getName()+ getUniqueNumber()}" },
-    ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}`).filter(item => item !== '').join('\n    ')).filter(item => item !== '').join('')}
+    ${eventInstance.anyDaysAfter()  ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}`).filter(item => item !== '').join('\n    ')).filter(item => item !== '').join('')}
   ])`
     return template;
   }
@@ -62,9 +66,9 @@ var items = new vis.DataSet([
     showMajorLabels: false,
     orientation: 'both',
     start: new Date(2024,0,1),
-    end: new Date(2024, 0, ${timeline.currentDay+10}, 23, 59, 59),
+    end: new Date(2024, 0, ${timeline.getMaxDayOnTimeline()+1}, 23, 59, 59),
     min: new Date(2024, 0, 1),
-    max: new Date(2024, 0, ${timeline.currentDay+10}, 23, 59, 59),
+    max: new Date(2024, 0, ${timeline.getMaxDayOnTimeline()+1}, 23, 59, 59),
     margin: {
         item: {
             horizontal: 0,
@@ -157,7 +161,10 @@ var items = new vis.DataSet([
     .vis-item.treatment-visits  { background-color: #ccbcf4; }
     .vis-item.any-day  { background-color: #95a89a; }
 
-    
+    .vis-item-content:after {
+      -webkit-print-color-adjust: exact;
+      color-adjust: exact;
+    }
   </style>
 
 <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
