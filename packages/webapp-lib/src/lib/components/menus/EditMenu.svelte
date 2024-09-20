@@ -85,6 +85,20 @@
 		chartHTML.set(rtObject.asString());
 	}
 
+	const generateAsDocument = () => {
+		activeTab.set(errorTab);
+		const langEnv : FreEnvironment = WebappConfigurator.getInstance().editorEnvironment;
+		const intp = langEnv.interpreter;
+		const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
+		const studyConfigurationUnit = studyConfigurationModel.configuration;
+		EditorRequestsHandler.getInstance().validate();
+		activeTab.set(interpreterTab);
+		chartHTML.set("<b>Running Simulation...</b>");
+		const rtObject = intp.evaluate(studyConfigurationUnit) as RtString;
+		
+		chartHTML.set(rtObject.asString());
+	}
+
 	const findStructureElement = () => {
 		$findStructureDialogVisible = true;
 	}
@@ -117,6 +131,7 @@
 		{ title: 'Find Structure Element', action: findStructureElement, id: 8 },
 		{ title: 'Find Text', action: findText, id: 9 },
 		{ title: 'Run Simulation', action: runInterpreter, id: 10 },
+		{ title: 'Generate as Document', action: generateAsDocument, id: 11 },
 	];
 
 	function isDisabled(id): boolean {

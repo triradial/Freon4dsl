@@ -205,6 +205,29 @@ export class ServerCommunication implements IServerCommunication {
     }
 
     /**
+     * Generates a print out as a document of the unit named 'unitName' of model 'modelName' from the server,
+     * @param modelName
+     * @param unitName
+     */
+        async printModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode> {
+            LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
+            if (!!unit.name && unit.name.length > 0) {
+                const res = await this.fetchWithTimeout<Object>(`printModelUnit`, `folder=${modelName}&name=${unit.name}`);
+                if (!!res) {
+                    try {
+                        const urlOfDocument = res["$url"];
+                        return urlOfDocument;
+                    } catch (e) {
+                        LOGGER.error("printModelUnit, " + e.message);
+                        this.onError(e.message, FreErrorSeverity.NONE);
+                        console.log(e.stack);
+                    }
+                }
+            }
+            return null;
+        }
+    
+    /**
      * Loads the interface of the unit named 'unitName' of model 'modelName' from the server and calls 'loadCallBack',
      * which takes the unit as parameter.
      * @param modelName

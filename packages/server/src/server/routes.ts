@@ -81,4 +81,18 @@ router.get("/deleteModel", async (ctx: Router.IRouterContext) => {
     ctx.body = { massage: (ctx.request as any).body };
 });
 
+router.get("/printModelUnit", async (ctx: Router.IRouterContext) => {
+    const folder = ctx.query["folder"];
+    const name = ctx.query["name"];
+    console.log("printModel: " + folder + "/" + name);
+    if ((!!name || folder) && typeof name === "string" && typeof folder === "string") {
+        ModelRequests.printModelUnit(folder, name, ctx);
+        ctx.status = 201;
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.message = "Missing query parameter 'unitName' or 'folder'";
+    }
+});
+
+
 export const routes = router.routes();
