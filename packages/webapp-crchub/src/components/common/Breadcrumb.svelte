@@ -1,30 +1,17 @@
 <script lang="ts">
     import { Breadcrumb, BreadcrumbItem } from 'flowbite-svelte';
-    //import { patients, loadPatients } from '../services/datastore.js';
 
-    export let items: Array<{ item: string; id?: string }> = [];
+    export let items: Array<{ label: string; href?: string }> = [];
 
-    let breadcrumbItems: Array<{ href: string | undefined; text: string }> = [];
-
-    $: {
-        breadcrumbItems = [];
-        for (let i = 0; i < items.length; i++) {
-            let item = items[i];
-            let href = i < items.length - 1 ? '/' + item.item : undefined;
-            let text = item.item.charAt(0).toUpperCase() + item.item.slice(1);
-            if (item.id) {
-                let name = "Entity Name";
-                //let entity = await getEntityById(item.id);
-                text = `${text}: ${name}`;
-            }
-            breadcrumbItems.push({ href, text });
-        }
-    }
 </script>
 
 <Breadcrumb navClass="crc-breadcrumb" aria-label="Default breadcrumb example">
     <BreadcrumbItem href="/" home>Home</BreadcrumbItem>
-    {#each breadcrumbItems as { href, text } (href)}
-        <BreadcrumbItem {href}>{text}</BreadcrumbItem>
+    {#each items as { label, href } (href)}
+        {#if href}
+            <BreadcrumbItem {href}>{label}</BreadcrumbItem>
+        {:else}
+            <BreadcrumbItem>{label}</BreadcrumbItem>
+        {/if}
     {/each}
 </Breadcrumb>

@@ -25,10 +25,24 @@
                 filter: true,
                 resizable: true,
             },
+            autoSizeStrategy: {
+                type: 'fitCellContents'
+            },
             columnDefs: [
-                { field: "name", flex: 3 },
-                { field: "dob", flex: 8 },
-                { field: "study", flex: 2, enableRowGroup: true },
+                { 
+                    field: "name"             
+                },
+                { 
+                    field: "dob",          
+                },
+                { 
+                    field: "study", 
+                    enableRowGroup: true,
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        excelMode: 'mac',
+                    }  
+                },
             ],
             groupDisplayType: "groupRows",
             rowGroupPanelShow: "always",
@@ -44,4 +58,4 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<div id="patientGrid" class="ag-theme-quartz-dark" style="height:100%;width:100%;"></div>
+<div id="patientGrid" class="ag-theme-quartz" style="height:100%;width:100%;"></div>

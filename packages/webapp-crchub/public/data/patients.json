@@ -34,6 +34,12 @@
       "name": "John Macintosh",
       "dob": "18-Nov-1928",
       "study": "MK-3476 - Pembrolizumab vs Best Supportive Care"
+    },
+    {
+      "id": "1001-JM2",
+      "name": "Alexis Coates",
+      "dob": "01-Mar-1977",
+      "study": "MK-3476 - Pembrolizumab vs Best Supportive Care"
     }
   ]
   

@@ -4,7 +4,7 @@
 
     import NavBar from '../components/common/NavBar.svelte';
     import SideNav from '../components/common/SideNav.svelte';
-    // import Breadcrumb from '../components/common/Breadcrumb.svelte';
+    import Breadcrumb from '../components/common/Breadcrumb.svelte';
 
     import Home from '../content/Home.svelte';
     import Studies from '../content/Studies.svelte';
@@ -12,7 +12,7 @@
 
     export let contentName: string = "Home";
     let contentComponent: typeof SvelteComponent;
-    // export let breadcrumbItems = [];
+    let breadcrumbItems: { label: string; href?: string }[] = [];
   
     const dispatch = createEventDispatcher();
 
@@ -33,12 +33,19 @@
       switch(name) {
         case 'Home':
           contentComponent = Home as typeof SvelteComponent;
+          breadcrumbItems = [];
           break;
         case 'Studies':
           contentComponent = Studies as typeof SvelteComponent;
+          breadcrumbItems = [
+            { label: 'Studies' },
+          ];
           break;
         case 'Patients':
           contentComponent = Patients as typeof SvelteComponent;
+          breadcrumbItems = [
+            { label: 'Patients' },
+          ];
           break;
         default:
           contentComponent = Home as typeof SvelteComponent;
@@ -56,6 +63,7 @@
         <SideNav on:loadContent={loadContent} />
       </appnav>
       <main>
+        <Breadcrumb items={breadcrumbItems} />
         {#await contentComponent}
           <p>Loading...</p>
         {:then Component}
