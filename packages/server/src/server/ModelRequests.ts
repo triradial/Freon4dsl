@@ -2,6 +2,12 @@ import { issuestoString, LanguageRegistry, LionWebJsonChunk, LionWebValidator } 
 import * as fs from "fs";
 import { IRouterContext } from "koa-router";
 import * as path from "node:path"
+import { StudyConfiguration, StudyConfigurationModel, StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
+import { Simulator } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Simulator";
+import { StudyChecklistDocumentTemplate } from "@freon4dsl/samples-study-configuration/dist/custom/templates/StudyChecklistDocumentTemplate";
+
+import { FreLionwebSerializer } from "@freon4dsl/core";
+
 // var path = require("path");
 
 const storeFolder = "./modelstore";
@@ -45,6 +51,45 @@ export class ModelRequests {
             console.log(e.message);
         }
     }
+
+    public static saveToFile(stringToSave: string, filename: string) {
+        try {
+          fs.writeFileSync(filename, stringToSave);
+          console.log('File written successfully');
+        } catch (err) {
+          console.error('Error writing file:', err);
+        }
+      }
+      
+    public static async printModelUnit(modelName: string, name: string, ctx: IRouterContext) {
+        const folderPath = path.join(`${storeFolder}`, modelName, `${name}.json`);
+        try {
+            // this.printModelUnit()
+            let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
+            const serializer = new FreLionwebSerializer();
+            let metaModel = JSON.parse(fs.readFileSync(folderPath).toString());
+            const ts = serializer.toTypeScriptInstance(metaModel);
+            let studyConfigurationUnit: StudyConfiguration = ts as StudyConfiguration;
+            var studyConfigurationModel: StudyConfigurationModel;
+            studyConfigurationModel.addUnit(studyConfigurationUnit)
+    
+            const simulator = new Simulator(studyConfigurationUnit);
+            simulator.run();
+            let timeline = simulator.timeline;
+            const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline);
+
+            ModelRequests.saveToFile(studyChecklistAsMarkdown, "StudyOnServer.md");
+            const resultAsObj = {
+                url: "StudyOnServer.md"
+              };
+              
+            const result = JSON.stringify(resultAsObj);
+            ctx.response.body = result;
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
+
 
     public static async getUnitList(foldername: string, ctx: IRouterContext) {
         try {

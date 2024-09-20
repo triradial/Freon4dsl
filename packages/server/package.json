@@ -35,6 +35,8 @@
     "@vitest/ui": "^2.1.0"
   },
   "dependencies": {
+    "@freon4dsl/core": "0.7.0-beta",
+    "@freon4dsl/samples-study-configuration": "0.7.0-beta",
     "@types/koa": "^2.13.4",
     "@lionweb/validation": "^0.6.3",
     "koa": "2.13.1",

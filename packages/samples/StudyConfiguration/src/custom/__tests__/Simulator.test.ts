@@ -9,7 +9,6 @@ import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocum
 import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
-import { nodent, undent } from "@bscotch/utility";
 
 describe ("Study Simulation", () => {
   var simulator;
