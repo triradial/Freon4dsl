@@ -1,5 +1,5 @@
 import { nodent, undent } from "@bscotch/utility";
-import { Timeline } from "custom/timeline/Timeline";
+import { Timeline } from "../../custom/timeline/Timeline";
 import { AbstractTask, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen";
 
 export class StudyChecklistDocumentTemplate {

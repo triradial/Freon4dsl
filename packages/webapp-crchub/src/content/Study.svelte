@@ -1,11 +1,11 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import StudyList from '../components/content/StudyList.svelte';
+    import StudyCard from '../components/cards/StudyCard.svelte';
 
     onMount(async () => {
     });
 </script>
 
 <div class="crc-grid">
-  <StudyList />
+  <StudyCard />
 </div>
