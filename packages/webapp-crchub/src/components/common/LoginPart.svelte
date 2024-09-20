@@ -54,7 +54,7 @@
                     <Checkbox class="text-white-500 dark:text-white-500">Remember me</Checkbox>
                     <a href="/" class="ml-auto text-sm text-white-500 hover:underline dark:text-white-500">Forgot password?</a>
                 </div>
-                <Button type="submit" class="w-full1">Sign in</Button>
+                <Button type="submit" class="w-full">Sign in</Button>
                  <p class="text-sm font-light text-white-500 dark:text-white-500">Dont have an account yet? 
                  <a href="/" class="font-medium text-white-500 hover:underline dark:text-white-500">Sign up</a>
                 </p>

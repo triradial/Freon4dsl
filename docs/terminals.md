@@ -30,7 +30,8 @@
 > cd Freon4dsl/packages/webapp-starter
 > npm run prepare-app
 
-9. kill
-> cd Freon4dsl
-> ./stop_app.sh
-> ./stop_server.sh
+9. webapp-crchub (white) - where the app runs
+> cd Freon4dsl/packages/webapp-crchub
+> npm run build
+> npm run start
+
