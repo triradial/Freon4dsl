@@ -9,6 +9,7 @@
     import Home from '../content/Home.svelte';
     import Studies from '../content/Studies.svelte';
     import Patients from '../content/Patients.svelte';
+    import Study from '../content/Study.svelte';
 
     export let contentName: string = "Home";
     let contentComponent: typeof SvelteComponent;
@@ -45,6 +46,13 @@
           contentComponent = Patients as typeof SvelteComponent;
           breadcrumbItems = [
             { label: 'Patients' },
+          ];
+          break;
+        case 'Study':
+          contentComponent = Study as typeof SvelteComponent;
+          breadcrumbItems = [
+            { label: 'Studies', href: '/studies' },
+            { label: 'Study' },
           ];
           break;
         default:

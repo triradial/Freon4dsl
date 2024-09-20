@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Router, Route, navigate } from 'svelte-routing';
-    // import { isAuthenticated } from './services/auth.js';
+    
     import Main from './pages/Main.svelte';
     import Login from './pages/Login.svelte';
     import { onMount } from 'svelte';

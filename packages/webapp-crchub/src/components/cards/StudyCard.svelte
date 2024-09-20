@@ -8,6 +8,8 @@
     function toggleLike() {
       isLiked = !isLiked;
     }
+    export let study;
+
   </script>
   
   <Card class="max-w-sm">
@@ -26,11 +28,9 @@
                 General
               </p>
               <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                Study BE-X5
+                { study.name }
               </p>
-              <p class="text-xs text-gray-500 truncate dark:text-gray-400">
-                Effect of combination of device Megabond with varying dosses of Compound Treatment of Patients With Advanced Malignancies
-              </p>
+              <p class="text-xs text-gray-500 truncate dark:text-gray-400">{study.title}</p>
             </div>
           </div>
         </li>
@@ -41,7 +41,7 @@
                 Phase
               </p>
               <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                III
+                {study.phase}
               </p>
             </div>
           </div>

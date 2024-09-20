@@ -32,9 +32,14 @@
                 { 
                     field: "name", 
                     tooltipField: "title",
-                    cellRenderer: (params: { value: string }) => {
-                        return `<a href="${params.value}" target="_blank">${params.value}</a>`;
-                    }
+                    cellRenderer: (params: any) => {
+                        const studyId = params.data.id;
+                        const studyName = params.data.name;
+                        return `<a href="#" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent('loadContent', { 'Study' }))">${studyId}${studyName}</a>`;
+                    },
+                    // cellRenderer: (params: { data: { id: string, name: string } }) => {
+                    //     return `<a href="#" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent('loadContent', { detail: { contentName: 'Study', studyId: '${params.data.id}' } }))">${params.data.name}</a>`;
+                    // }
                 },
                 { 
                     field: "phase", 
@@ -66,7 +71,7 @@
         gridApi = createGrid(gridElement, gridOptions);
 
         function StudyRenderer(params: any) {
-            const link = `<a href="${params.value}" target="_blank">${params.value}</a>`;
+            const link = `<a href="#" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent('loadContent', { detail: { contentName: 'Study', studyId: '${params.data.id}' } }))">${params.value}</a>`;
             return link;
         }
 
