@@ -2,7 +2,9 @@
 const path = require('path');
 module.exports = {
     content: [
-    path.resolve(__dirname, '/home/gmcgibbon64/crchub-freonx1/Freon4dsl/node_modules/flowbite/**/*.js'),
+    // This line is using an absolute path to the flowbite module
+    // To use the root node_modules, you can change it to a relative path:
+    path.resolve(__dirname, '../../node_modules/flowbite/**/*.js'),
     path.resolve(__dirname, './src/**/*.{html,js,svelte,ts}')
     ],
     theme: {
@@ -25,6 +27,6 @@ module.exports = {
     },
     plugins: [
         require('@tailwindcss/forms'),
-        require('/home/gmcgibbon64/crchub-freonx1/Freon4dsl/node_modules/flowbite/plugin')
+        require('../../node_modules/flowbite/plugin')
     ]
 }

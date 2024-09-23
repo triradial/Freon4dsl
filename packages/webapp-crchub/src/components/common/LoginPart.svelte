@@ -3,7 +3,8 @@
     import { authenticate, isAuthenticated, redirectUrl } from '../../services/auth';
     import { writable } from 'svelte/store';
     import ToastWarning from '../common/ToastWarning.svelte';
-    import { navigate } from 'svelte-routing';
+    import { navigateTo } from "../../services/routeAction";
+    import { ROUTE } from "../../constants/routeConstants";
     
     let username = '';
     let password = '';
@@ -11,7 +12,7 @@
 
     const submitForm = async (event: Event) => {
         event.preventDefault();
-        let url: string = '/';  // Default to home page
+        let url: string = '/';
         const unsubscribe = redirectUrl.subscribe(value => { url = value || '/'; });
         unsubscribe();  // Unsubscribe to avoid memory leaks
 
@@ -23,9 +24,8 @@
         if (!auth) {
             showError.set(true);
         } else {
-            isAuthenticated.set(true);
             sessionStorage.setItem('auth', 'true');
-            navigate(url);
+            isAuthenticated.set(true);
         }
     };
 

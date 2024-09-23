@@ -1,96 +1,89 @@
 <script lang="ts">
-    import { Router, Route, navigate } from 'svelte-routing';
-    // import { isAuthenticated } from './services/auth.js';
-    import Main from './pages/Main.svelte';
-    import Login from './pages/Login.svelte';
-    import { onMount } from 'svelte';
-  
+    import { Router, Route, navigate } from "svelte-routing";
+    import { ROUTE, VALID_ROUTES, type ValidRoute } from "./constants/routeConstants";
+    import Main from "./pages/Main.svelte";
+    import Login from "./pages/Login.svelte";
+    import NotFound from "./pages/Uknown.svelte";
+    import { onMount } from "svelte";
+    import { isAuthenticated, redirectUrl } from "./services/auth";
+    import { currentRoute } from "./services/routeStore";
+    import { updateCurrentRoute, navigateTo } from "./services/routeAction";
+
     let auth = false;
-    const validPages = ['/', '/patients', '/studies'];
-    import { isAuthenticated, redirectUrl } from './services/auth';
 
     onMount(() => {
-        const storedAuth = sessionStorage.getItem('auth');
+        const storedAuth = sessionStorage.getItem("auth");
         if (storedAuth) {
-            auth = storedAuth === 'true';
+            auth = storedAuth === "true";
         }
 
-        isAuthenticated.subscribe(value => {
+        // window.addEventListener("navigateTo", (event: CustomEvent) => {
+        //     navigateTo(event.detail.name, event.detail.params);
+        // });
+    });
+    
+        
+    $: {
+        isAuthenticated.subscribe((value) => {
             auth = value;
-            console.log('auth:', auth);
-            sessionStorage.setItem('auth', auth.toString());
-            let currentPath = window.location.pathname;
+            console.log("auth:", auth);
+            sessionStorage.setItem("auth", auth.toString());
+            const currentPath = window.location.pathname;
+            let currentRouteName = currentPath.split('?')[0].replace(/^\//, '');
+            const currentId = (currentPath.split('?')[1]?.split('=')[1] ?? undefined);
             if (!auth) {
-                if (validPages.includes(currentPath) && currentPath !== '/login') {
+                if (VALID_ROUTES.includes(currentRouteName as ValidRoute) && currentRouteName !== ROUTE.LOGIN) {
                     redirectUrl.set(currentPath);
                 } else {
-                    redirectUrl.set('/');
+                    redirectUrl.set("/");
                 }
-                navigate('/login');
+                updateCurrentRoute(ROUTE.LOGIN);
             } else {
-                redirectUrl.subscribe(url => {
-                    if (url) {
-                        redirectUrl.set('');
-                        navigate(url);
-                    } else {
-                        if (validPages.includes(currentPath) || currentPath === '/login') {
-                            navigate(currentPath);
+                redirectUrl.subscribe((url) => {
+                    let routeName:string = "";
+                    let id:string | undefined;
+                    if (currentRouteName === ROUTE.LOGIN) {
+                        redirectUrl.set(""); 
+                        if (url) {
+                            if (url !== '/' && url !== 'undefined') {
+                                routeName = url.split('?')[0].replace(/^\//, '');
+                                if (VALID_ROUTES.includes(routeName as ValidRoute)) {
+                                    id = (url.split('?')[1]?.split('=')[1] ?? undefined);
+                                } else {
+                                    routeName = ROUTE.HOME;
+                                }
+                            } else {
+                                routeName = ROUTE.HOME;
+                            }
                         } else {
-                            navigate('/');
+                            routeName = ROUTE.LOGIN;
+                            auth = false;
                         }
+                    } else {
+                        routeName = currentRouteName;
+                        if (VALID_ROUTES.includes(routeName as ValidRoute)) {
+                            id = currentId;
+                        } else {
+                            routeName = ROUTE.HOME;
+                        }
+                    }
+
+                    if (id) {
+                        updateCurrentRoute(routeName, id);
+                    } else {
+                        updateCurrentRoute(routeName);
                     }
                 });
             }
         });
-    });
-    // isAuthenticated.subscribe(value => {
-    //     auth = value;
-    //     console.log('auth:', auth);
-    //     sessionStorage.setItem('auth', auth.toString());
-    //     let currentPath = window.location.pathname;
-    //     if (!auth) {
-    //         if (validPages.includes(currentPath) && currentPath !== '/login') {
-    //             sessionStorage.setItem('redirectUrl', currentPath);
-    //         } else {
-    //             sessionStorage.setItem('redirectUrl', '/');
-    //         }
-    //         navigate('/login');
-    //     } else {
-    //         let redirectUrl = sessionStorage.getItem('redirectUrl');
-    //         if (redirectUrl) {
-    //             sessionStorage.removeItem('redirectUrl');
-    //             navigate(redirectUrl);              
-    //         } else {
-    //             if (validPages.includes(currentPath) || currentPath === '/login') {
-    //                 navigate(currentPath);
-    //             } else {
-    //                 navigate('/');
-    //             }
-    //         }
-    //     }
-    // });
-    function handleComponentChange(componentName: string) {
-        console.log(`Component changed to: ${componentName}`);
-        // Add any additional logic you need when the component changes
     }
-  </script>
-  
-  <Router>
+
+</script>
+
+<Router>
     {#if auth}
-        <Route path="/" let:params>
-            <Main contentName="Home" on:componentChange={(e) => handleComponentChange(e.detail)} />
-        </Route>
-        <Route path="/patients" let:params>
-            <Main contentName="Patients" on:componentChange={(e) => handleComponentChange(e.detail)} />
-        </Route>
-        <Route path="/about" let:params>
-            <Main contentName="About" on:componentChange={(e) => handleComponentChange(e.detail)} />
-        </Route>
-        <Route path="/admin" let:params>
-            <Main contentName="Admin" on:componentChange={(e) => handleComponentChange(e.detail)} />
-        </Route>
+        <Route path="/*" component={Main} />
     {:else}
         <Route component={Login} />
     {/if}
-  </Router>
-  
+</Router>

@@ -14,7 +14,9 @@ export class FreEditProjectionLine extends FreMetaDefinitionElement {
     indent: number = 0; // this number is calculated by FreEditParseUtil.normalize()
 
     isEmpty(): boolean {
-        return this.items.every((i) => i instanceof FreEditParsedNewline || i instanceof FreEditParsedProjectionIndent) || (this.items as FreEditProjectionItem[]).length === 0;
+        return (
+            this.items.every((i) => i instanceof FreEditParsedNewline || i instanceof FreEditParsedProjectionIndent) || (this.items as FreEditProjectionItem[]).length === 0
+        );
     }
 
     isOptional(): boolean {

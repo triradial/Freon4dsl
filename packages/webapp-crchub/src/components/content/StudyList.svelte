@@ -4,6 +4,7 @@
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
+    import { navigateTo } from "../../services/routeAction";
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
@@ -26,36 +27,38 @@
                 resizable: true,
             },
             autoSizeStrategy: {
-                type: 'fitCellContents'
+                type: "fitCellContents",
             },
             columnDefs: [
-                { 
-                    field: "name", 
+                {
+                    field: "name",
                     tooltipField: "title",
-                    cellRenderer: (params: { value: string }) => {
-                        return `<a href="${params.value}" target="_blank">${params.value}</a>`;
-                    }
+                    cellRenderer: (params: any) => {
+                        const studyId = params.data.id;
+                        const studyName = params.data.name;
+                        return `<a href="#" data-study-id="${studyId}">${studyName}</a>`;
+                    },
                 },
-                { 
-                    field: "phase", 
-                    enableRowGroup: true, 
-                    resizable: false 
-                },
-                { 
-                    field: "status", 
+                {
+                    field: "phase",
                     enableRowGroup: true,
-                    filter: 'agSetColumnFilter',
-                    filterParams: {
-                        excelMode: 'mac',
-                    }
+                    resizable: false,
                 },
-                { 
-                    field: "therapeutic-area", 
+                {
+                    field: "status",
                     enableRowGroup: true,
-                    filter: 'agSetColumnFilter',
+                    filter: "agSetColumnFilter",
                     filterParams: {
-                        excelMode: 'mac',
-                    } 
+                        excelMode: "mac",
+                    },
+                },
+                {
+                    field: "therapeutic-area",
+                    enableRowGroup: true,
+                    filter: "agSetColumnFilter",
+                    filterParams: {
+                        excelMode: "mac",
+                    },
                 },
             ],
             groupDisplayType: "groupRows",
@@ -65,13 +68,21 @@
         const gridElement = document.querySelector("#studyGrid") as HTMLElement;
         gridApi = createGrid(gridElement, gridOptions);
 
-        function StudyRenderer(params: any) {
-            const link = `<a href="${params.value}" target="_blank">${params.value}</a>`;
-            return link;
-        }
-
+        gridElement.addEventListener("click", (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (target.tagName === "A") {
+                event.preventDefault();
+                const studyId = target.getAttribute("data-study-id");
+                if (studyId) {
+                    handleStudyClick(studyId);
+                }
+            }
+        });
     });
 
+    function handleStudyClick(studyId: string) {
+        navigateTo("study", studyId);
+    }
 </script>
 
 <svelte:head>
