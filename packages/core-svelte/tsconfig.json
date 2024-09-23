@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
 //    "strict": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
 
     // the old options, todo: see if we still need them
     "isolatedModules": true,

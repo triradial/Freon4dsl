@@ -2,7 +2,7 @@
   "extends": "../../tsconfig-base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "target": "ES2015",
+    "target": "ES2021",
     "declaration": true,
     "downlevelIteration": true,
     "declarationMap": true,
@@ -15,7 +15,7 @@
       "es6",
       "es2016.array.include"
     ],
-    "module": "ES2020",
+    "module": "ESNext",
     "moduleResolution": "node",
     "newLine": "lf",
     "noEmit": false,

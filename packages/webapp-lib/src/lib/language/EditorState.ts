@@ -75,7 +75,7 @@ export class EditorState {
     
             this.createNewUnit("StudyConfiguration", "StudyConfiguration");
             // Initialize the StudyConfiguration with a default period, event, and task in the checklist
-            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration");
+            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
             studyConfigUnit.periods.push(Period.create(Period.create({name: "Screening"})));
             studyConfigUnit.periods[0].events.push(Event.create({name: "Screen"}));
             studyConfigUnit.periods[0].events[0].tasks.push(Task.create({name: "Task 1"}));
