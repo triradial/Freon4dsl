@@ -311,12 +311,12 @@ export function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScr
 }
 
 export function createPatient(configuredEvent: Event) : PatientInfo {
-const referencedEvent = FreNodeReference.create<Event>(configuredEvent.name, "Event");
-const januaryRef = Month.January;
-let patientVisit = PatientVisit.create({"visit": referencedEvent,"actualVisitDate": VisitDate.create({"day": "1", "month": januaryRef , "year":"2024"}), "status": PatientVisitStatus.completed });
-let patient = PatientHistory.create({id:"MV","patientVisits": [patientVisit]});
-let patientInfoUnit = PatientInfo.create({"patientHistories": [patient]});
-return patientInfoUnit;
+  const referencedEvent = FreNodeReference.create<Event>(configuredEvent.name, "Event");
+  const visitDate = VisitDate.create({"day": "1", "month": Month.January , "year":"2024"});
+  let patientVisit = PatientVisit.create({"visit": referencedEvent,"actualVisitDate":visitDate, "status": "completed" });
+  let patient = PatientHistory.create({id:"MV","patientVisits": [patientVisit]});
+  let patientInfoUnit = PatientInfo.create({"patientHistories": [patient]});
+  return patientInfoUnit;
 }
 
 
