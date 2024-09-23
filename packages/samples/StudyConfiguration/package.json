@@ -9,8 +9,8 @@
   "scripts": {
     "test": "tsc && jest",
     "clean": "rm -rf node_modules/",
-    "build": "npm run generate && tsc && rollup --config",
-    "nogen": "tsc && rollup --config",
+    "build": "npm run generate && tsc && tsc-alias && rollup --config",
+    "nogen": "tsc && tsc-alias && rollup --config",
     "install-local": "npm install --registry http://localhost:4873",
     "generate": "bash ../../../scripts/freon-samples-dev.sh -v all -d src/defs -o src/",
     "clean-gen": "bash ../../../scripts/freon-samples-dev.sh clean-it -d src/defs -o src/",
