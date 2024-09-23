@@ -1,4 +1,5 @@
-import { EventInstance, Timeline } from "./Timeline";
+import { Timeline } from "./Timeline";
+import { ScheduledEventInstance } from './ScheduledEventInstance';
 import { BinaryExpression, Day, EventStart, Period, StudyConfiguration, StudyStart } from "../../language/gen";
 import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent";
 import { ScheduledPeriod } from "./ScheduledPeriod";
@@ -87,7 +88,7 @@ export class ScheduledStudyConfiguration {
   //   return firstNoScheduledEvent === undefined;
   // }
 
-  getEventsReadyToBeScheduled(completedEvent: EventInstance, timeline: Timeline) {
+  getEventsReadyToBeScheduled(completedEvent: ScheduledEventInstance, timeline: Timeline) {
     console.log("Searching schedule for all events ready to be scheduled");
     let readyEvents = this.getAllEventsInSchedule().filter(scheduledEvent => scheduledEvent.getInstanceIfEventIsReadyToSchedule(completedEvent, timeline));
     console.log("There are: " + readyEvents.length + " events ready to be scheduled");

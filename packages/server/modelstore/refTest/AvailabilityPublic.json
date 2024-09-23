@@ -66,12 +66,136 @@
                   "version": "2023.1",
                   "key": "-default-key-PatientNotAvailable-dates"
                },
-               "children": []
+               "children": [
+                  "ID-85"
+               ]
             }
          ],
          "references": [],
          "annotations": [],
          "parent": "ID-58"
+      },
+      {
+         "id": "ID-85",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-DateRange"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-DateRange-startDate"
+               },
+               "children": [
+                  "ID-86"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-DateRange-endDate"
+               },
+               "children": [
+                  "ID-87"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-59"
+      },
+      {
+         "id": "ID-86",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-StartRangeDate"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-day"
+               },
+               "value": "2"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-year"
+               },
+               "value": "2024"
+            }
+         ],
+         "containments": [],
+         "references": [
+            {
+               "reference": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-month"
+               },
+               "targets": [
+                  {
+                     "resolveInfo": "January",
+                     "reference": "ID-1"
+                  }
+               ]
+            }
+         ],
+         "annotations": [],
+         "parent": "ID-85"
+      },
+      {
+         "id": "ID-87",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-EndRangeDate"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-day"
+               },
+               "value": "5"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-year"
+               },
+               "value": "2024"
+            }
+         ],
+         "containments": [],
+         "references": [
+            {
+               "reference": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-month"
+               },
+               "targets": [
+                  {
+                     "resolveInfo": "January",
+                     "reference": "ID-1"
+                  }
+               ]
+            }
+         ],
+         "annotations": [],
+         "parent": "ID-85"
       }
    ]
 }

@@ -2,11 +2,8 @@ import { Scheduler } from "./Scheduler.js"
 import * as Sim from "../simjs/sim.js"
 import log from "../utils/SimpleLogger";
 import { Timeline } from "./Timeline";
-import { ScheduledEvent } from "./ScheduledEvent";
-import { Day } from "../../language/gen/index";
-import {StudyConfiguration, WorkflowDescription, Period, Event, EventSchedule } from "../../language/gen/index";
-import { time } from "console";
-import { ScheduledPeriod } from "./ScheduledPeriod";
+import { PatientInfo } from "../../language/gen/index";
+import {StudyConfiguration, Period, Event } from "../../language/gen/index";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration";
 
 /*
@@ -21,10 +18,12 @@ export class Simulator {
   name = "Simulator";
   studyConfiguration: StudyConfiguration;
   scheduledStudyConfiguration: ScheduledStudyConfiguration
+  patientInfo: PatientInfo;
 
-  constructor(studyConfiguration: StudyConfiguration) {
+  constructor(studyConfiguration: StudyConfiguration, patientInfo?: PatientInfo) {
     // Setup the Scheduler
     this.scheduledStudyConfiguration = new ScheduledStudyConfiguration(studyConfiguration);
+    this.patientInfo = patientInfo;
     this.timeline = new Timeline();
   }
 

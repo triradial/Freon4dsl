@@ -28,7 +28,8 @@ import * as Sim from "../simjs/sim.js"
       return this.getScheduledStudyConfiguration().getEvents();
     }
 
-    scheduleEvent(schedulingMsg, scheduledEvent, timeline, daysToWait) {
+    // Common code for scheduling events.
+    #scheduleEvent(schedulingMsg, scheduledEvent, timeline, daysToWait) {
       console.log(schedulingMsg + ": '" + scheduledEvent.getName() + "' on day: " + timeline.currentDay + " with wait of: " + daysToWait + " days");
       let eventInstance = timeline.newEventInstance(scheduledEvent, this.time() + daysToWait);
       this.setTimer(daysToWait).done(this.eventStarted, this, [eventInstance]);
@@ -44,7 +45,7 @@ import * as Sim from "../simjs/sim.js"
         let timeline = this.getTimeline();
         let daysToWait = scheduledEvent.day(timeline, this.time());
         timeline.setCurrentDay(this.time())
-        this.scheduleEvent('Scheduling Specific Day Event', scheduledEvent, timeline, daysToWait);
+        this.#scheduleEvent('Scheduling Specific Day Event', scheduledEvent, timeline, daysToWait);
       }
     }
 
@@ -81,7 +82,7 @@ import * as Sim from "../simjs/sim.js"
         console.log('Scheduling Next Event(s)');
         for (let scheduledEvent of readyScheduledEvents) {
           let daysToWait = scheduledEvent.daysToWait(completedEvent, timeline, this.time());
-          this.scheduleEvent('Scheduling Event', scheduledEvent, timeline, daysToWait);
+          this.#scheduleEvent('Scheduling Event', scheduledEvent, timeline, daysToWait);
         }
         console.log("End of Scheduling Next Event(s)");
       }

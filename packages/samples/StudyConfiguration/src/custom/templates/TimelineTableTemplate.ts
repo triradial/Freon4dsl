@@ -1,5 +1,6 @@
 
-import { EventInstance, Timeline } from '../timeline/Timeline';
+import { Timeline } from '../timeline/Timeline';
+import { ScheduledEventInstance } from '../timeline/ScheduledEventInstance';
 import { Period } from "../../language/gen/index";
 import {StudyConfigurationModelModelUnitWriter} from '../../writer/gen/StudyConfigurationModelModelUnitWriter';
 

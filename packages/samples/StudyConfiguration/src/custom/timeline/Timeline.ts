@@ -1,7 +1,9 @@
 import { RtBoolean, RtObject } from '@freon4dsl/core';
 import { ScheduledEvent, ScheduledEventState } from './ScheduledEvent';
 import { Event } from '../../language/gen/index';
-import { ScheduledPeriod } from './ScheduledPeriod';
+import { TimelineEventInstance, TimelineInstanceState } from './TimelineEventInstance';
+import { PeriodEventInstance } from './PeriodEventInstance';
+import { ScheduledEventInstance } from './ScheduledEventInstance';
 
 /*
  * A Timeline records the events and the days they occur on.
@@ -26,11 +28,11 @@ export class Timeline extends RtObject {
   }
 
   newEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn: number) {
-    return new EventInstance(scheduledEvent, dayEventWillOccurOn);
+    return new ScheduledEventInstance(scheduledEvent, dayEventWillOccurOn);
   }
 
   getEventsForDay(day: number) {
-    return this.days.find(d => d.day === day).events.map(event => {event instanceof(EventInstance)});
+    return this.days.find(d => d.day === day).events.map(event => {event instanceof(ScheduledEventInstance)});
   }
 
 
@@ -72,10 +74,10 @@ export class Timeline extends RtObject {
     return timelineDay ? timelineDay.events : [];
   }
 
-  getLastInstanceForThisEvent(eventToMatch: Event): EventInstance {
+  getLastInstanceForThisEvent(eventToMatch: Event): ScheduledEventInstance {
     // Flatten the list of events and filter for EventInstance
     let allEventInstances = this.days.flatMap(day => 
-      day.events.filter(event => event instanceof EventInstance).map(event => ({ event, day: day.day }))
+      day.events.filter(event => event instanceof ScheduledEventInstance).map(event => ({ event, day: day.day }))
     );
   
     // Filter the events to match the given event name
@@ -85,7 +87,7 @@ export class Timeline extends RtObject {
     eventInstances.sort((a, b) => a.day - b.day);
   
     // Get the last instance from the sorted list
-    const lastInstance = eventInstances.length > 0 ? eventInstances[eventInstances.length - 1].event as EventInstance : null;
+    const lastInstance = eventInstances.length > 0 ? eventInstances[eventInstances.length - 1].event as ScheduledEventInstance : null;
   
     if (!lastInstance) {
       // console.log("No instance of: '" + eventToMatch.name + "' on timeline");
@@ -109,8 +111,8 @@ export class Timeline extends RtObject {
   hasCompletedInstanceOf(scheduledEvent: ScheduledEvent) {
     for (const day of this.days) {
       for (const event of day.events) {
-        if (event instanceof(EventInstance)) {
-          let eventInstance = event as EventInstance;
+        if (event instanceof(ScheduledEventInstance)) {
+          let eventInstance = event as ScheduledEventInstance;
           // console.log("hasCompletedInstanceOf checking if completed instance of: " + scheduledEvent.getName() + " matches event: " + eventInstance.getName() + " in state: " + eventInstance.state + " one day: " + day.day);
           if (eventInstance.scheduledEvent.getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
             console.log("There is a completed instance of: '" + scheduledEvent.getName() + "'" + " on day: " + day.day);
@@ -128,7 +130,7 @@ export class Timeline extends RtObject {
     let count = 0;
     for (const day of this.days) {
       for (const event of day.events) {
-        if (event instanceof(EventInstance) && event.scheduledEvent.getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
+        if (event instanceof(ScheduledEventInstance) && event.scheduledEvent.getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
           count++;
         }
       }
@@ -142,16 +144,16 @@ export class Timeline extends RtObject {
   }
 
   getPeriods() {
-    return this.days.flatMap(day => day.events.filter(event => event instanceof PeriodInstance));
+    return this.days.flatMap(day => day.events.filter(event => event instanceof PeriodEventInstance));
   }
 
   getPeriodInstanceFor(scheduledPeriodName: string) {
-    return this.getPeriods().find(period => (period as PeriodInstance).scheduledPeriod.getName() === scheduledPeriodName) as PeriodInstance;
+    return this.getPeriods().find(period => (period as PeriodEventInstance).scheduledPeriod.getName() === scheduledPeriodName) as PeriodEventInstance;
   }
 
   // Return the first period that is active. There should be only one.
-  getActivePeriod(): PeriodInstance {
-    let firstActivePeriodOnTimeline = this.getPeriods().find(period => (period as PeriodInstance).getState() === TimelineInstanceState.Active) as PeriodInstance;
+  getActivePeriod(): PeriodEventInstance {
+    let firstActivePeriodOnTimeline = this.getPeriods().find(period => (period as PeriodEventInstance).getState() === TimelineInstanceState.Active) as PeriodEventInstance;
     if (this.periodLogging) {
       if (firstActivePeriodOnTimeline) {
         console.log("The first Active Period On the timeline is: " + firstActivePeriodOnTimeline.getName());
@@ -169,7 +171,7 @@ export class Timeline extends RtObject {
 
   getUniqueEventInstanceNames(): string[] {
     let sortedDays = this.days.sort((a, b) => a.day - b.day);
-    let eventNames = sortedDays.flatMap(day => day.events.filter(event => event instanceof EventInstance).map(event => event.getName()));
+    let eventNames = sortedDays.flatMap(day => day.events.filter(event => event instanceof ScheduledEventInstance).map(event => event.getName()));
     let uniqueEventNames = [];
     let seen = new Set();
 
@@ -195,234 +197,9 @@ export class Timeline extends RtObject {
     }
   }
 
-
   getMaxDayOnTimeline() {
     const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
     return this.currentDay + dayOffsetOfFirstEventInstance;
-  }
-
-}
-
-export abstract class TimelineEventInstance {
-  startDay: number;      // The day the instance occurred on
-  endDay: number;        // The day the instance ended on
-  state: TimelineInstanceState = TimelineInstanceState.Active;
-
-  setState(state: TimelineInstanceState) {
-    this.state = state;
-  }
-
-  getState() {
-    return this.state;
-  }
-
-  getEndDay(timeline: Timeline) {
-    if (this.endDay === undefined) {
-      return timeline.currentDay;
-    } else {  
-      return this.endDay;
-    }
-  }
-
-  getEndDayAsDateFrom(referenceDate: Date, timeline: Timeline) : Date {
-    const result = new Date(referenceDate);
-    const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
-    result.setDate(result.getDate() + this.getEndDay(timeline) + dayOffsetOfFirstEventInstance);
-    result.setHours(23, 59, 59);
-    return result;
-  }
-
-  getEndDayStringAsDateFrom(referenceDate: Date, timeline: Timeline): string {
-    return TimelineEventInstance.formatDate(this.getEndDayAsDateFrom(referenceDate, timeline));
-  }
-
-  setEndDay(endDay: number) {
-    this.endDay = endDay;
-  }
-
-  getStartDay() {
-    return this.startDay;
-  }
-
-  getStartDayAsDate(fromReferenceDate: Date, timeline: Timeline): Date {
-    const result = new Date(fromReferenceDate);
-    const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
-    result.setDate(result.getDate() + this.getStartDay() + dayOffsetOfFirstEventInstance);
-    return result;
-  }
-
-  getStartDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
-    return TimelineEventInstance.formatDate(this.getStartDayAsDate(fromReferenceDate, timeline));
-  }
-
-  getEndOfStartDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
-    const endOfStartDay = this.getStartDayAsDate(fromReferenceDate, timeline)
-    endOfStartDay.setHours(23, 59, 59);
-    const result = TimelineEventInstance.formatDate(endOfStartDay);
-    return result;
-  }
-
-  abstract getName(): string;
-
-  // static formatDate(date: Date): string {
-  //   const options: Intl.DateTimeFormatOptions = {
-  //       year: 'numeric',
-  //       month: '2-digit',
-  //       day: '2-digit'
-  //   };
-  //   return date.toLocaleDateString('en-CA', options).replace(/-/g, ', ');
-  // }
-
-  static formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = (date.getMonth()).toString().padStart(2, '0'); // getMonth() returns 0 for January
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-    return `${year}, ${month}, ${day}, ${hours}, ${minutes}, ${seconds}`;
-  }
-}
-
-export class PeriodInstance extends TimelineEventInstance {
-
-  scheduledPeriod: ScheduledPeriod;
-
-  constructor(scheduledPeriod: ScheduledPeriod, startDay: number, endDay?: number) {
-    super();
-    this.scheduledPeriod = scheduledPeriod;
-    this.startDay = startDay;
-    this.endDay = endDay;
-    this.setState(TimelineInstanceState.Active);
-  } 
-
-  getName() {
-    return this.scheduledPeriod.getName();
-  }
-
-  getIdOfScheduledPeriod() {
-    return this.scheduledPeriod.configuredPeriod.freId();
-  }
-
-  setCompleted(onDay: number) {
-    this.setState(TimelineInstanceState.Completed);
-    this.setEndDay(onDay);
-  } 
-}
-
-export enum TimelineInstanceState {
-  Ready,
-  Scheduled,
-  Active,
-  Completed
-}
-
- /*
-  * An EventInstance represents an instance of an event on a day on the timeline.
-  */
-export class EventInstance extends TimelineEventInstance {
-
-  scheduledEvent: ScheduledEvent; // The scheduled event that this instance was created from
-  state : TimelineInstanceState = TimelineInstanceState.Ready;
-
-
-  constructor(scheduledEvent: ScheduledEvent, startDay: number) {
-    super();
-    this.startDay = startDay;
-    this.scheduledEvent = scheduledEvent;
-  }
-
-  completed() {
-    this.state = TimelineInstanceState.Completed;
-    this.scheduledEvent.setToCompleted();
-  }
-
-  scheduled() {
-    this.state = TimelineInstanceState.Scheduled;
-    this.scheduledEvent.setToScheduled();
-  }
-
-  completeCurrentPeriod(timeline: Timeline, onDay: number) {
-    this.scheduledEvent.completeCurrentPeriod(timeline, onDay);
-  }
-
-  getName() {
-    return this.scheduledEvent.getName();
-  }
-
-  anyDaysBefore() {
-    const daysBefore = this.scheduledEvent.configuredEvent.schedule.eventWindow.daysBefore.count;
-    return daysBefore !== 0 && daysBefore != undefined;
-  }
-
-  anyDaysAfter() {
-    const daysAfter = this.scheduledEvent.configuredEvent.schedule.eventWindow.daysAfter.count;
-    return daysAfter != 0 && daysAfter != undefined;
-  }
-
-  // getStartDayOfWindow() {
-  //   return this.scheduledEvent.configuredEvent.schedule.eventWindow.daysBefore.count - this.startDay;
-  // }
-
-  // getStartDayOfWindowAsDateFrom(referenceDate: Date, timeline: Timeline) {
-  //   const result = this.getStartDayAsDateFrom(referenceDate, timeline);
-  //   const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
-  //   result.setDate(result.getDate() - this.getStartDayOfWindow() + dayOffsetOfFirstEventInstance);
-  //   return result;
-  // }
-
-  // getStartDayOfWindowStringAsDateFrom(referenceDate: Date, timeline: Timeline) {
-  //   return TimelineInstance.formatDate(this.getStartDayOfWindowAsDateFrom(referenceDate, timeline));
-  // }
-
-  // getEndDayOfWindow() {
-  //   return this.scheduledEvent.configuredEvent.schedule.eventWindow.daysAfter.count + this.startDay;
-  // }
-
-  startDayOfBeforeWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
-    const startDate = new Date(this.getStartDayAsDate(fromReferenceDate, timeline));
-    startDate.setDate(startDate.getDate() - this.scheduledEvent.configuredEvent.schedule.eventWindow.daysBefore.count);
-    return startDate;
-  }
-
-  startDayOfBeforeWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-    return TimelineEventInstance.formatDate(this.startDayOfBeforeWindowAsDate(fromReferenceDate, timeline));
-  }
-
-  endDayOfBeforeWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
-    const endDate = new Date(this.getStartDayAsDate(fromReferenceDate, timeline));
-    endDate.setDate(endDate.getDate() - 1);
-    endDate.setHours(23);
-    endDate.setMinutes(59);
-    endDate.setSeconds(59);
-    return endDate;
-  }
-
-  endDayOfBeforeWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-    return TimelineEventInstance.formatDate(this.endDayOfBeforeWindowAsDate(fromReferenceDate, timeline));
-  }
-
-  startDayOfAfterWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
-    const startDate = new Date(this.getStartDayAsDate(fromReferenceDate, timeline));
-    startDate.setDate(startDate.getDate() + 1);
-    return startDate;
-  }
-
-  startDayOfAfterWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-    return TimelineEventInstance.formatDate(this.startDayOfAfterWindowAsDate(fromReferenceDate, timeline));
-  }
-
-  endDayOfAfterWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
-    const endDate = new Date(this.getStartDayAsDate(fromReferenceDate, timeline));
-    endDate.setDate(endDate.getDate() + this.scheduledEvent.configuredEvent.schedule.eventWindow.daysAfter.count);
-    endDate.setHours(23);
-    endDate.setMinutes(59);
-    endDate.setSeconds(59);
-    return endDate;
-  }
-
-  endDayOfAfterWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-    return TimelineEventInstance.formatDate(this.endDayOfAfterWindowAsDate(fromReferenceDate, timeline));
   }
 
 }
@@ -438,13 +215,13 @@ export class TimelineDay {
     this.day = day;
   }
 
-  getEventInstances() : EventInstance[] {
-    let result = this.events.filter(event => event instanceof EventInstance) as EventInstance[];
+  getEventInstances() : ScheduledEventInstance[] {
+    let result = this.events.filter(event => event instanceof ScheduledEventInstance) as ScheduledEventInstance[];
     return result;
   }
 
   getPeriodInstances() {
-    return this.events.filter(event => event instanceof(PeriodInstance)) as PeriodInstance[];
+    return this.events.filter(event => event instanceof(PeriodEventInstance)) as PeriodEventInstance[];
   }}
 
 

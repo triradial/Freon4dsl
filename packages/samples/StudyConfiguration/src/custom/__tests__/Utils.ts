@@ -1,7 +1,10 @@
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
-import {StudyConfiguration, Period, Event, EventSchedule, Day, PlusExpression, When, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly } from "../../language/gen/index";
+import {StudyConfiguration, Period, Event, EventSchedule, Day, PlusExpression, When, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly, PatientVisit, PatientHistory, PatientInfo, VisitDate, Month, PatientVisitStatus, } from "../../language/gen/index";
 import { FreLionwebSerializer, FreLogger, FreNodeReference } from "@freon4dsl/core";
-import { EventInstance, TimelineInstanceState, Timeline, PeriodInstance } from "../timeline/Timeline";
+import { Timeline } from "../timeline/Timeline";
+import { ScheduledEventInstance } from '../timeline/ScheduledEventInstance';
+import { TimelineInstanceState } from '../timeline/TimelineEventInstance';
+import { PeriodEventInstance } from '../timeline/PeriodEventInstance';
 import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent";
 import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
 import * as path from 'path';
@@ -16,8 +19,7 @@ export function createWhenEventSchedule(eventName: string, eventState: EventStat
   let referenceToOperator = FreNodeReference.create(operator, "SimpleOperators");
   // console.log("createWhenEventSchedule eventName: " + eventName + " eventState: " + eventState + " operator: " + operator + " timeAmount: " + timeAmount.value + " " + timeAmount.unit.name);
   let referenceToEventState = FreNodeReference.create(eventState, "EventState");
-  const freNodeReference = FreNodeReference.create<Event>(eventName, "Event");
-  let referencedEvent = freNodeReference;
+  const referencedEvent = FreNodeReference.create<Event>(eventName, "Event");
   const startWhenEventReference = EventReference.create({'operator': referenceToOperator, 'timeAmount': timeAmount, 'eventState': referenceToEventState, 'event': referencedEvent}); 
 
   const whenExpression = When.create({ 'startWhen': startWhenEventReference});
@@ -44,7 +46,6 @@ export function createEventWindow(uniquePrefix:string, daysBefore: number, daysA
   eventWindow.daysAfter = daysAfterDay;
   return eventWindow;
 }
-
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'Day' DSL element starting 'startDay'. 
 export function createEventScheduleStartingOnADay(uniquePrefix: string, startDay: number) {
@@ -202,13 +203,13 @@ export function addRepeatingEvents(studyConfiguration: StudyConfiguration, perio
  * - periodNumber: The index of the Period in the StudyConfiguration.periods array. TODO: Change to searching by period name
  *  
 */
-export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string, dayPeriodStarted?: number, dayPeriodEnded?: number) : EventInstance {
+export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfiguration, periodNumber: number, eventName: string, dayEventCompleted: number, timeline: Timeline, eventState: ScheduledEventState, periodState: TimelineInstanceState, nameOfPeriodToAddEventTo: string, dayPeriodStarted?: number, dayPeriodEnded?: number) : ScheduledEventInstance {
   let scheduledPeriodToAddEventTo = null;
   let currentPeriodInstance = timeline.getPeriodInstanceFor(nameOfPeriodToAddEventTo);
   if (currentPeriodInstance === undefined) { // The period is not already on the timeline, so add it
     let configuredPeriod = studyConfiguration.periods[periodNumber]; 
     scheduledPeriodToAddEventTo = new ScheduledPeriod(configuredPeriod);
-    let periodInstance = new PeriodInstance(scheduledPeriodToAddEventTo, dayPeriodStarted, dayPeriodEnded);
+    let periodInstance = new PeriodEventInstance(scheduledPeriodToAddEventTo, dayPeriodStarted, dayPeriodEnded);
     periodInstance.setState(periodState);
     timeline.addEvent(periodInstance);
   } else {
@@ -219,7 +220,7 @@ export function addEventAndInstanceToTimeline(studyConfiguration: StudyConfigura
   }
   let scheduledEvent = scheduledPeriodToAddEventTo.getScheduledEvent(eventName);
   scheduledEvent.state = eventState;
-  let eventInstance = new EventInstance(scheduledEvent, dayEventCompleted);
+  let eventInstance = new ScheduledEventInstance(scheduledEvent, dayEventCompleted);
   eventInstance.state = TimelineInstanceState.Completed;
   timeline.addEvent(eventInstance);
   return eventInstance;
@@ -309,6 +310,14 @@ export function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScr
   }
 }
 
+export function createPatient(configuredEvent: Event) : PatientInfo {
+const referencedEvent = FreNodeReference.create<Event>(configuredEvent.name, "Event");
+const januaryRef = Month.January;
+let patientVisit = PatientVisit.create({"visit": referencedEvent,"actualVisitDate": VisitDate.create({"day": "1", "month": januaryRef , "year":"2024"}), "status": PatientVisitStatus.completed });
+let patient = PatientHistory.create({id:"MV","patientVisits": [patientVisit]});
+let patientInfoUnit = PatientInfo.create({"patientHistories": [patient]});
+return patientInfoUnit;
+}
 
 
 

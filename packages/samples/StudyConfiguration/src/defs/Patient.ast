@@ -1,10 +1,30 @@
 language StudyConfigurationModel
 
-modelunit Availability {
-  name: identifier = "Availability";
-  patientNotAvailableDates: PatientNotAvailable;
+modelunit Availability { //TODO: rename and remodel to cover just staff
+  name: identifier;
+  patientNotAvailableDates: PatientNotAvailable; // TODO: move to Patients. Kept to not impact the UI for now.
   baselineStaff: string;
   staffLevels: StaffLevel[];
+}
+
+modelunit PatientInfo {
+  patientHistories: PatientHistory[];
+}
+
+concept PatientHistory {
+  id: string; // initials or whatever the specific study uses to identify the patient in a secure way; No sharing patients across studies
+  patientVisits: PatientVisit[];
+  patientNotAvailableDates: PatientNotAvailable; //TODO: remove from Availability
+}
+
+limited PatientVisitStatus {
+  completed; missed; canceled;
+}
+
+concept PatientVisit {
+  reference visit: Event;
+  actualVisitDate: VisitDate;
+  status: PatientVisitStatus = PatientVisitStatus:completed;
 }
 
 concept PatientNotAvailable {
@@ -30,6 +50,13 @@ concept Date {
   month: Month;
   year: string = "2025";
 }
+
+concept VisitDate {
+  day: string;
+  month: Month;
+  year: string = "2025";
+}
+
 
 concept EndRangeDate base Date {}
 concept StartRangeDate base Date {}

@@ -1,6 +1,7 @@
 
-import { EventInstance, Timeline, TimelineEventInstance } from '../timeline/Timeline';
-import {StudyConfigurationModelModelUnitWriter} from '../../writer/gen/StudyConfigurationModelModelUnitWriter';
+import { Timeline } from 'custom/timeline/Timeline';
+import { ScheduledEventInstance } from 'custom/timeline/ScheduledEventInstance';
+import { StudyConfigurationModelModelUnitWriter } from '../../writer/gen/StudyConfigurationModelModelUnitWriter';
 
 let uniqueCounter = 0;
 
@@ -37,7 +38,7 @@ var items = new vis.DataSet([
       ).filter(item => item !== '').join('');
     }).filter(item => item !== '').join("\n    ")}
     ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances().map((eventInstance, index) => `${eventInstance.anyDaysBefore()  ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}
-    { start: new Date(${eventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as EventInstance).scheduledEvent.configuredEvent.schedule.eventStart).replace(/"/g, '')}", content: "&nbsp;", id: "${eventInstance.getName()+ getUniqueNumber()}" },
+    { start: new Date(${eventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).scheduledEvent.configuredEvent.schedule.eventStart).replace(/"/g, '')}", content: "&nbsp;", id: "${eventInstance.getName()+ getUniqueNumber()}" },
     ${eventInstance.anyDaysAfter()  ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}`).filter(item => item !== '').join('\n    ')).filter(item => item !== '').join('')}
   ])`
     return template;
