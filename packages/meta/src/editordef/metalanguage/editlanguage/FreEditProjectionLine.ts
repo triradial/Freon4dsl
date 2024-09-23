@@ -16,7 +16,8 @@ export class FreEditProjectionLine extends FreMetaDefinitionElement {
     isEmpty(): boolean {
         return (
             this.items.every((i) => i instanceof FreEditParsedNewline || i instanceof FreEditParsedProjectionIndent) 
-            // || this.items.length === 0
+            // ||
+            // this.items.length === 0
         );
     }
 
