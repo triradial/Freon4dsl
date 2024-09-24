@@ -39,18 +39,18 @@ export function createEventWindow(uniquePrefix:string, daysBefore: number, daysA
   //TODO: change new to create
   let eventWindow = new EventWindow("EventWindow");
   let daysBeforeDay = new Days(uniquePrefix + "DaysBefore")
-  daysBeforeDay.count = 1;
+  daysBeforeDay.count = daysBefore;
   let daysAfterDay = new Days(uniquePrefix + "DaysAfter")
-  daysAfterDay.count = 1;
+  daysAfterDay.count = daysAfter;
   eventWindow.daysBefore = daysBeforeDay;
   eventWindow.daysAfter = daysAfterDay;
   return eventWindow;
 }
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'Day' DSL element starting 'startDay'. 
-export function createEventScheduleStartingOnADay(uniquePrefix: string, startDay: number) {
+export function createEventScheduleStartingOnADay(uniquePrefix: string, startDay: number, daysBefore: number = 1, daysAfter: number = 1) {
   let day = Day.create({ 'startDay': startDay});
-  let eventWindow = createEventWindow(uniquePrefix, 1, 1);
+  let eventWindow = createEventWindow(uniquePrefix, daysBefore, daysAfter);
   let eventSchedule = EventSchedule.create({ 'eventStart': day, 'eventWindow': eventWindow});  
   return eventSchedule;
 }
@@ -264,7 +264,7 @@ export function saveTimeline(timelineDataAsScript: string) {
   let filename = 'timeline.html';
   let timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
-  this.saveToFile(timelineDataAsHTML, filename);
+  saveToFile(timelineDataAsHTML, filename);
 }
 
 export function generateChartAndSave(timeline: Timeline): string {
@@ -310,10 +310,11 @@ export function checkTimelineChart(timeline: Timeline, expectedTimelineDataAsScr
   }
 }
 
-export function createPatient(configuredEvent: Event) : PatientInfo {
-  const referencedEvent = FreNodeReference.create<Event>(configuredEvent.name, "Event");
-  const visitDate = VisitDate.create({"day": "1", "month": Month.January , "year":"2024"});
-  let patientVisit = PatientVisit.create({"visit": referencedEvent,"actualVisitDate":visitDate, "status": "completed" });
+export function createCompletedPatientVisit(configuredVisit: Event) : PatientInfo {
+  const referencedEvent = FreNodeReference.create<Event>(configuredVisit.name, "Event");
+  const visitDate = VisitDate.create({"day": "1", "month": FreNodeReference.create<Month>(Month.January, "Month") , "year":"2024"});
+  const completedVisitStatus = FreNodeReference.create<PatientVisitStatus>(PatientVisitStatus.completed, "completed");
+  let patientVisit = PatientVisit.create({"visit": referencedEvent,"actualVisitDate": visitDate, "status": completedVisitStatus });
   let patient = PatientHistory.create({id:"MV","patientVisits": [patientVisit]});
   let patientInfoUnit = PatientInfo.create({"patientHistories": [patient]});
   return patientInfoUnit;
