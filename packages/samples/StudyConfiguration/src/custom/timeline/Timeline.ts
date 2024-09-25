@@ -233,10 +233,18 @@ export class Timeline extends RtObject {
         December: 11,
     };
 
+    dateStringsToDate(day: string, month: string, year: string) {
+        const monthNumber = this.monthMap[month];
+        return new Date(parseInt(year), monthNumber, parseInt(day));
+    }
+
     addPatientVisits(patientVisits: PatientVisit[]) {
         patientVisits.forEach((patientVisit) => {
-            const month = this.monthMap[patientVisit.actualVisitDate.month.name];
-            const actualVisitDateAsDate = new Date(parseInt(patientVisit.actualVisitDate.year), month, parseInt(patientVisit.actualVisitDate.day));
+            const actualVisitDateAsDate = this.dateStringsToDate(
+                patientVisit.actualVisitDate.day,
+                patientVisit.actualVisitDate.month.name,
+                patientVisit.actualVisitDate.year,
+            );
             // Get the time in milliseconds
             const time1 = this.getReferenceDate().getTime();
             const time2 = actualVisitDateAsDate.getTime();
@@ -244,6 +252,10 @@ export class Timeline extends RtObject {
             const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
             this.addEvent(new PatientEventInstance(diffInDays, diffInDays));
         });
+    }
+
+    anyPatientEventInstances(): boolean {
+        return this.days.some((day) => day.events.some((event) => event instanceof PatientEventInstance));
     }
 }
 

@@ -28,7 +28,11 @@ export class Simulator {
     }
 
     getCompletedPatientVisits(): PatientVisit[] {
-        return this.completedPatientVisits.patientVisits;
+        if (this.completedPatientVisits == undefined) {
+            return [];
+        } else {
+            return this.completedPatientVisits.patientVisits;
+        }
     }
 
     getTimeline() {

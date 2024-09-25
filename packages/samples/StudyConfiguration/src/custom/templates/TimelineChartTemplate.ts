@@ -26,7 +26,7 @@ export class TimelineChartTemplate {
         .getUniqueEventInstanceNames()
         .map((uniqueEventName) => `{ "content": "${uniqueEventName}", "id": "${uniqueEventName}" },`)
         .join("\n    ")}
-    { "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },
+    ${timeline.anyPatientEventInstances() ? `{ "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },` : ""}
   ]);
 
 var items = new vis.DataSet([
