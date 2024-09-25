@@ -81,6 +81,7 @@
     "packages/meta",
     "packages/webapp-lib",
     "packages/samples/StudyConfiguration",
+    "packages/samples/SamplesExternalTester",
     "packages/webapp-starter",
     "packages/webapp-crchub",
     "packages/server",

@@ -4,7 +4,7 @@ import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance";
 import { PeriodEventInstance } from "../timeline/PeriodEventInstance";
 import { TimelineEventInstance, TimelineInstanceState } from "../timeline/TimelineEventInstance";
 import { Simulator } from "../timeline/Simulator";
-import { StudyConfiguration, Period, Event, StudyConfigurationModel } from "../../language/gen/index";
+import { StudyConfiguration, Period, Event, StudyConfigurationModel, PatientInfo } from "../../language/gen/index";
 import * as utils from "./Utils";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
@@ -534,7 +534,7 @@ describe("Study Simulation", () => {
         `;
             // GIVEN a study configuration loaded from a file
             // const studyConfigurationUnit = utils.loadModel("Example1", 'StudyConfiguration');
-            const studyConfigurationUnit = utils.loadModel("ScheduleExample1", "StudyConfiguration");
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample1", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
 
             // WHEN the study is simulated and a timeline picture is generated
@@ -651,8 +651,7 @@ var items = new vis.DataSet([
     { start: new Date(2024, 09, 18, 00, 00, 00), end: new Date(2024, 09, 19, 23, 59, 59), group: "V19-run in", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19-run in106" },
   ])`;
             // GIVEN a study configuration loaded from a file
-            const studyConfigurationUnit = utils.loadModel("ScheduleExample2", "StudyConfiguration");
-            // const studyConfigurationUnit = utils.loadModel("EachCompleteTest", 'StudyConfiguration');
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
 
             // WHEN the study is simulated and a timeline picture is generated
@@ -747,7 +746,7 @@ var items = new vis.DataSet([
               ])`;
             // GIVEN a study configuration loaded from a file
 
-            const studyConfigurationUnit = utils.loadModel("ScheduleExample3", "StudyConfiguration");
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample3", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
 
             // WHEN the study is simulated and a timeline picture is generated
@@ -927,12 +926,13 @@ var items = new vis.DataSet([
     { start: new Date(2024, 09, 18, 00, 00, 00), end: new Date(2024, 09, 19, 23, 59, 59), group: "V19-run in", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19-run in106" },
   ])`;
             // GIVEN a study configuration loaded from a file
-            const studyConfigurationUnit = utils.loadModel("ScheduleExample2", "StudyConfiguration");
-            // const studyConfigurationUnit = utils.loadModel("EachCompleteTest", 'StudyConfiguration');
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
+            const patientInfoUnit = utils.loadModelUnit("ScheduleExample2", "Availability") as PatientInfo;
+            studyConfigurationModel.addUnit(patientInfoUnit);
 
             // WHEN the study is simulated and a timeline picture is generated
-            let simulator = new Simulator(studyConfigurationUnit);
+            let simulator = new Simulator(studyConfigurationUnit, patientInfoUnit.patientHistories[0]);
             simulator.run();
             let timeline = simulator.timeline;
 
@@ -1261,7 +1261,7 @@ var items = new vis.DataSet([
     describe("Generation of Study Checklists Document", () => {
         it("generate a document for a one visit,one checklist, one task study", () => {
             // GIVEN a study configuration loaded from a file and the study is simulated
-            const studyConfigurationUnit = utils.loadModel("OneVisitOneChecklist", "StudyConfiguration");
+            const studyConfigurationUnit = utils.loadModelUnit("OneVisitOneChecklist", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
             let simulator = new Simulator(studyConfigurationUnit);
             simulator.run();

@@ -1,7 +1,7 @@
 <script lang="ts">
-    import {afterUpdate, onMount} from "svelte";
-    import {ExternalPartBox, FreEditor, FreNode} from "@freon4dsl/core";
-    import {BB} from "@freon4dsl/samples-external-tester";
+    import { afterUpdate, onMount } from "svelte";
+    import { ExternalPartBox, FreEditor, FreNode } from "@freon4dsl/core";
+    import { BB } from "@freon4dsl/samples-external-tester";
     export let box: ExternalPartBox;
     export let editor: FreEditor;
 
@@ -20,7 +20,8 @@
             // in this case we are showing its 'name' and 'numberProp'
             nameOfValue = value.name;
             numberOfValue = value.numberProp.toString();
-        } else { // the default
+        } else {
+            // the default
             value = null;
             nameOfValue = "<unknown>";
             numberOfValue = "0";
@@ -40,7 +41,7 @@
         // new state to the box. If you want to change it to a completely different (new?) part,
         // you should use:
         // box.setPropertyValue(otherValue);
-    }
+    };
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
@@ -64,5 +65,6 @@
 </script>
 
 <div class="replacer">
-    The replacer is showing the name <input bind:value={nameOfValue} bind:this={inputElement} on:change={onChange}/> and numberProp: <input bind:value={numberOfValue} on:change={onChange}/>
+    The replacer is showing the name <input bind:value={nameOfValue} bind:this={inputElement} on:change={onChange} /> and numberProp:
+    <input bind:value={numberOfValue} on:change={onChange} />
 </div>

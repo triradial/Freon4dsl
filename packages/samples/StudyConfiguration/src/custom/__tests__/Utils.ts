@@ -26,7 +26,7 @@ import {
     Month,
     PatientVisitStatus,
 } from "../../language/gen/index";
-import { FreLionwebSerializer, FreLogger, FreNodeReference } from "@freon4dsl/core";
+import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
 import { Timeline } from "../timeline/Timeline";
 import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance";
 import { TimelineInstanceState } from "../timeline/TimelineEventInstance";
@@ -296,7 +296,7 @@ export function addEventAndInstanceToTimeline(
     return eventInstance;
 }
 
-export function loadModel(modelFolderName: string, modelName: string): StudyConfiguration {
+export function loadModelUnit(modelFolderName: string, modelUnitName: string): FreModelUnit {
     FreLogger.muteAllLogs();
     // const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', modelFolderName);
     console.log("__dirname:" + __dirname);
@@ -304,7 +304,7 @@ export function loadModel(modelFolderName: string, modelName: string): StudyConf
     const studyFolderPath: string = path.resolve(__dirname, "..", "..", "..", "..", "..", "server", "modelstore", modelFolderName);
     console.log("studyFolderPath (TODO: move from tests folder):" + studyFolderPath);
     const serializer = new FreLionwebSerializer();
-    let metaModel = JSON.parse(fs.readFileSync(`${studyFolderPath}/${modelName}.json`).toString());
+    let metaModel = JSON.parse(fs.readFileSync(`${studyFolderPath}/${modelUnitName}.json`).toString());
     const ts = serializer.toTypeScriptInstance(metaModel);
     let modelUnit: StudyConfiguration = ts as StudyConfiguration;
     logPeriodsAndEvents("loadModel", modelUnit);

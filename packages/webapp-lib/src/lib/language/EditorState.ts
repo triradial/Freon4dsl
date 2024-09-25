@@ -1,27 +1,13 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
-import { BoxFactory, FreError, FreErrorSeverity, FreLogger, InMemoryModel, FreUtils } from "@freon4dsl/core"
-import type {
-    FreEnvironment,
-    FreNode,
-    FreModel,
-    FreModelUnit,
-    FreOwnerDescriptor,
-    IServerCommunication,
-} from "@freon4dsl/core";
+import { BoxFactory, FreError, FreErrorSeverity, FreLogger, InMemoryModel, FreUtils } from "@freon4dsl/core";
+import type { FreEnvironment, FreNode, FreModel, FreModelUnit, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
 import { get } from "svelte/store";
-import {
-    currentModelName,
-    currentUnitName,
-    editorProgressShown,
-    noUnitAvailable,
-    units,
-    unitNames,
-} from "../components/stores/ModelStore.js";
+import { currentModelName, currentUnitName, editorProgressShown, noUnitAvailable, units, unitNames } from "../components/stores/ModelStore.js";
 import { setUserMessage } from "../components/stores/UserMessageStore.js";
 import { modelErrors } from "../components/stores/InfoPanelStore.js";
 import { runInAction } from "mobx";
 import { WebappConfigurator } from "../WebappConfigurator.js";
-import {StudyConfigurationModel, Event, Task, Period, StudyConfiguration, Description} from "@freon4dsl/samples-study-configuration";
+import { StudyConfigurationModel, Event, Task, Period, StudyConfiguration, Description } from "@freon4dsl/samples-study-configuration";
 
 const LOGGER = new FreLogger("EditorState").mute();
 
@@ -72,25 +58,28 @@ export class EditorState {
             LOGGER.log("newStudyConfigurationModelUnits called");
             this.createNewUnit("Availability", "Availability");
             await this.saveCurrentUnit();
-    
+
+            this.createNewUnit("PatientInfo", "Patients");
+            await this.saveCurrentUnit();
+
             this.createNewUnit("StudyConfiguration", "StudyConfiguration");
             // Initialize the StudyConfiguration with a default period, event, and task in the checklist
             const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration");
-            studyConfigUnit.periods.push(Period.create(Period.create({name: "Screening"})));
-            studyConfigUnit.periods[0].events.push(Event.create({name: "Screen"}));
-            studyConfigUnit.periods[0].events[0].tasks.push(Task.create({name: "Task 1"}));
+            studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
+            studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
+            studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
             studyConfigUnit.showPeriods = true;
             await this.saveCurrentUnit();
-    
+
             this.currentUnit = studyConfigUnit;
-            EditorState.getInstance().currentUnit = studyConfigUnit;        
+            EditorState.getInstance().currentUnit = studyConfigUnit;
             currentModelName.set(this.currentModel.name); //TODO: Why wasn't this in the original code?
         } catch (error) {
             LOGGER.error("Error in newStudyConfigurationModelUnits: " + error);
             LOGGER.error("Stack trace: " + error.stack);
         }
     }
-    
+
     async newModel(modelName: string) {
         try {
             LOGGER.log("new model called: " + modelName);
@@ -135,8 +124,8 @@ export class EditorState {
                     first = false;
                 }
             }
-            BoxFactory.clearCaches()
-            this.langEnv.projectionHandler.clear()
+            BoxFactory.clearCaches();
+            this.langEnv.projectionHandler.clear();
             EditorState.getInstance().showUnitAndErrors(this.currentUnit);
         } else {
             editorProgressShown.set(false);
@@ -221,7 +210,7 @@ export class EditorState {
                     // await this.serverCommunication.putModelUnit(this.currentModel.name, unit.name, unit); MV
                     LOGGER.log("saveStudyUnits saving: " + unit.name);
                     console.log("saveStudyUnits saving: " + unit.name);
-                    await this.modelStore.saveUnit(unit)
+                    await this.modelStore.saveUnit(unit);
                     //TODO: find how to save these again by getting the units
                     // await this.serverCommunication.putModelUnit(this.currentModel.name, "Availability", this.currentModel.findUnit("Availability"));
                     // LOGGER.log("Unit saved: Availability");
@@ -334,23 +323,17 @@ export class EditorState {
     }
 
     private makeUnitName(fileName: string): string {
-        const nameExist: boolean = !!this.currentModel
-            .getUnits()
-            .find((existing: FreModelUnit) => existing.name === fileName);
+        const nameExist: boolean = !!this.currentModel.getUnits().find((existing: FreModelUnit) => existing.name === fileName);
         if (nameExist) {
             setUserMessage(`Unit named '${fileName}' already exists, adding number.`, FreErrorSeverity.Error);
             // find the existing names that start with the file name
-            const unitsWithSimiliarName = this.currentModel
-                .getUnits()
-                .filter((existing: FreModelUnit) => existing.name.startsWith(fileName));
+            const unitsWithSimiliarName = this.currentModel.getUnits().filter((existing: FreModelUnit) => existing.name.startsWith(fileName));
             if (unitsWithSimiliarName.length > 1) {
                 // there are already numbered units
                 // find the biggest number that is in use after the filename, e.g. Home12, Home3 => 12
                 let biggestNr: number = 1;
                 // find the characters in each of the existing names that come after the file name
-                const trailingParts: string[] = unitsWithSimiliarName.map((existing: FreModelUnit) =>
-                    existing.name.slice(fileName.length),
-                );
+                const trailingParts: string[] = unitsWithSimiliarName.map((existing: FreModelUnit) => existing.name.slice(fileName.length));
                 trailingParts.forEach((trailing) => {
                     const nextNumber: number = Number.parseInt(trailing, 10);
                     if (!isNaN(nextNumber) && nextNumber >= biggestNr) {
@@ -414,12 +397,7 @@ export class EditorState {
                 if (e instanceof Error) {
                     LOGGER.log(e.message);
                     modelErrors.set([
-                        new FreError(
-                            "Problem reading model unit: '" + e.message + "'",
-                            this.currentUnit,
-                            this.currentUnit.name,
-                            FreErrorSeverity.Error,
-                        ),
+                        new FreError("Problem reading model unit: '" + e.message + "'", this.currentUnit, this.currentUnit.name, FreErrorSeverity.Error),
                     ]);
                 }
             }
@@ -442,9 +420,7 @@ export class EditorState {
                     runInAction(() => (owner[desc.propertyName] = null));
                 }
             } else {
-                console.error(
-                    "deleting of " + tobeDeleted.freId() + " not succeeded, because owner descriptor is empty.",
-                );
+                console.error("deleting of " + tobeDeleted.freId() + " not succeeded, because owner descriptor is empty.");
             }
         }
     }

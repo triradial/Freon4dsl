@@ -1,9 +1,9 @@
 <script lang="ts">
-    import {afterUpdate, onMount} from "svelte";
-    import {Box, ExternalRefListBox, FreEditor, FreNodeReference} from "@freon4dsl/core";
-    import {CC} from "@freon4dsl/samples-external-tester";
-    import {RenderComponent} from "@freon4dsl/core-svelte";
-    import {runInAction} from "mobx";
+    import { afterUpdate, onMount } from "svelte";
+    import { Box, ExternalRefListBox, FreEditor, FreNodeReference } from "@freon4dsl/core";
+    import { CC } from "@freon4dsl/samples-external-tester";
+    import { RenderComponent } from "@freon4dsl/core-svelte";
+    import { runInAction } from "mobx";
     export let box: ExternalRefListBox;
     export let editor: FreEditor;
 
@@ -29,7 +29,7 @@
             value.push(newRef);
             // or use: box.getPropertyValue().push(newRef);
         });
-    }
+    };
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
@@ -60,7 +60,7 @@
     The replacer is showing a list of references, each in their native boxes.
     <ol>
         {#each box.children as childBox}
-            <li><RenderComponent box={childBox} editor={editor} /></li>
+            <li><RenderComponent box={childBox} {editor} /></li>
         {/each}
     </ol>
     <button on:click={addChild} bind:this={button}>Add reference</button>
