@@ -1,3 +1,4 @@
+import { PatientVisit } from "../../language/gen/PatientVisit";
 import * as Sim from "../simjs/sim.js"
 
 
@@ -26,6 +27,10 @@ import * as Sim from "../simjs/sim.js"
 
     getEvents() {
       return this.getScheduledStudyConfiguration().getEvents();
+    }
+
+    getCompletedPatientVisits() {
+      return this.simulation.getCompletedPatientVisits();
     }
 
     // Common code for scheduling events.
@@ -76,6 +81,7 @@ import * as Sim from "../simjs/sim.js"
           console.log('No Events to Schedule');
           if (this.getScheduledStudyConfiguration().allEventsCompleted()) {
             completedEvent.completeCurrentPeriod(this.getTimeline(), this.time());
+            timeline.addPatientVisits(this.getCompletedPatientVisits());
             console.log('Simulation Complete');
           }      
       } else {

@@ -62,41 +62,6 @@ describe("Study Simulation", () => {
             expect(timeline).toEqual(expectedTimeline);
         });
 
-        it("generates a one visit timeline for a visit on day 1 that patient completed", () => {
-            // GIVEN a study configuration with one period and one event and a patient that completed the event
-            const eventName = "Visit 1";
-            let eventSchedule = utils.createEventScheduleStartingOnADay(eventName, 0, 0);
-            let period = new Period("Screening");
-            utils.createEventAndAddToPeriod(period, eventName, eventSchedule);
-            studyConfigurationUnit.periods.push(period);
-            const visitToComplete = studyConfigurationUnit.periods[0].events[0];
-            const patientInfoUnit = utils.createCompletedPatientVisit(visitToComplete);
-
-            // WHEN the study is simulated and a timeline is generated
-            let simulator = new Simulator(studyConfigurationUnit, patientInfoUnit);
-            simulator.run();
-            let timeline = simulator.timeline;
-
-            utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
-
-            // Then the generated timeline has one event on the expected event day
-            let expectedTimeline = new Timeline();
-            addEventAndInstanceToTimeline(
-                studyConfigurationUnit,
-                0,
-                "Visit 1",
-                0,
-                expectedTimeline,
-                ScheduledEventState.Completed,
-                TimelineInstanceState.Completed,
-                "Screening",
-                0,
-                0,
-            );
-            expectedTimeline.setCurrentDay(0);
-            expect(timeline).toEqual(expectedTimeline);
-        });
-
         it("generates a two visit timeline with a visit on day 0 and 7 in the same period", () => {
             // GIVEN a study configuration with one period and two events
             let period = Period.create({ name: "Screening" });
@@ -804,6 +769,29 @@ var items = new vis.DataSet([
             const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, "");
             // Then the generated timeline picture has two events on the expected event days
             expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+        });
+
+        it("generates a chart for one visit timeline for a visit on day 1 that patient completed", () => {
+            const expectedTimelineDataAsScript = ``;
+            const expectedTimelineVisualizationHTML = ``;
+            // GIVEN a study configuration with one period and one event and a patient that completed the event
+            const eventName = "Visit 1";
+            let eventSchedule = utils.createEventScheduleStartingOnADay(eventName, 0, 0);
+            let period = new Period("Screening");
+            utils.createEventAndAddToPeriod(period, eventName, eventSchedule);
+            studyConfigurationUnit.periods.push(period);
+            const visitToComplete = studyConfigurationUnit.periods[0].events[0];
+            const patientInfoUnit = utils.createCompletedPatientVisit(visitToComplete);
+
+            // WHEN the study is simulated and a timeline is generated
+            let simulator = new Simulator(studyConfigurationUnit, patientInfoUnit.patientHistories[0]);
+            simulator.run();
+            let timeline = simulator.timeline;
+
+            utils.generateChartAndSave(timeline); // Save full HTML of chart for viewing / debugging
+
+            // Then the generated timeline has one event on the expected event day and the corresponding patient visit completion
+            utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
         });
 
         it.skip("generate a chart from the text version of the study", () => {
