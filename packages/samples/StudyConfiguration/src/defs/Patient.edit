@@ -2,10 +2,6 @@ editor default
 
 Availability {
   [
-    PATIENT
-      Patient Not Available Dates or Date Ranges:
-        ${patientNotAvailableDates}
-    
     STAFFING
       Number of CRCs Normally Available: ${baselineStaff}
 

@@ -1,8 +1,7 @@
 language StudyConfigurationModel
 
 modelunit Availability { //TODO: rename and remodel to cover just staff
-  name: identifier;
-  patientNotAvailableDates: PatientNotAvailable; // TODO: move to Patients. Kept to not impact the UI for now.
+  name: identifier = "Availability";
   baselineStaff: string;
   staffLevels: StaffLevel[];
 }
@@ -15,7 +14,7 @@ modelunit PatientInfo {
 concept PatientHistory {
   id: string; // initials or whatever the specific study uses to identify the patient in a secure way; No sharing patients across studies
   patientVisits: PatientVisit[];
-  patientNotAvailableDates: PatientNotAvailable; //TODO: remove from Availability
+  patientNotAvailableDates: PatientNotAvailable;
 }
 
 limited PatientVisitStatus {
