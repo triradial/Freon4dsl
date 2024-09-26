@@ -59,7 +59,7 @@ export class EditorState {
             this.createNewUnit("Availability", "Availability");
             await this.saveCurrentUnit();
 
-            this.createNewUnit("PatientInfo", "Patients");
+            this.createNewUnit("PatientInfo", "PatientInfo");
             await this.saveCurrentUnit();
 
             this.createNewUnit("StudyConfiguration", "StudyConfiguration");
@@ -104,6 +104,7 @@ export class EditorState {
      * @param modelName
      */
     async openModel(modelName: string) {
+        // FreLogger.unmuteAllLogs();
         LOGGER.log("EditorState.openmodel(" + modelName + ")");
         editorProgressShown.set(true);
         this.resetGlobalVariables();
@@ -112,7 +113,7 @@ export class EditorState {
         // create new model instance in memory and set its name
         await this.modelStore.openModel(modelName);
         const unitIdentifiers = this.modelStore.getUnitIdentifiers();
-        LOGGER.log("unit identifiers: " + JSON.stringify(unitIdentifiers));
+        console.log("unit identifiers: " + JSON.stringify(unitIdentifiers));
         if (!!unitIdentifiers && unitIdentifiers.length > 0) {
             // load the first unit completely and show it
             let first: boolean = true;

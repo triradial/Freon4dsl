@@ -8,6 +8,7 @@ modelunit Availability { //TODO: rename and remodel to cover just staff
 }
 
 modelunit PatientInfo {
+  name: identifier = "PatientInfo";
   patientHistories: PatientHistory[];
 }
 
