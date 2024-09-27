@@ -26,7 +26,7 @@ export class Timeline extends RtObject {
         this.referenceDate = referenceDate;
     }
 
-    getReferenceDate() {
+    getReferenceDate(): Date {
         return this.referenceDate;
     }
 
@@ -34,16 +34,16 @@ export class Timeline extends RtObject {
         throw new Error("Timelines are not comparable. Method not implemented.");
     }
 
-    newEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn: number) {
+    newScheduledEventInstance(scheduledEvent: ScheduledEvent, dayEventWillOccurOn: number) {
         return new ScheduledEventInstance(scheduledEvent, dayEventWillOccurOn);
     }
 
-    getEventsForDay(day: number) {
-        return this.days
-            .find((d) => d.day === day)
-            .events.map((event) => {
-                event instanceof ScheduledEventInstance;
-            });
+    getScheduledEventInstancessForDay(day: number): ScheduledEventInstance[] {
+        const dayObj = this.days.find((d) => d.day === day);
+        if (!dayObj) {
+            return [];
+        }
+        return dayObj.events.filter((event) => event instanceof ScheduledEventInstance).map((event) => event as ScheduledEventInstance);
     }
 
     getDays() {
@@ -84,7 +84,7 @@ export class Timeline extends RtObject {
         return timelineDay ? timelineDay.events : [];
     }
 
-    getLastInstanceForThisEvent(eventToMatch: Event): ScheduledEventInstance {
+    getLastScheduledEventInstanceForThisEventsName(eventToMatch: Event): ScheduledEventInstance {
         // Flatten the list of events and filter for EventInstance
         let allEventInstances = this.days.flatMap((day) =>
             day.events.filter((event) => event instanceof ScheduledEventInstance).map((event) => ({ event, day: day.day })),
@@ -124,7 +124,7 @@ export class Timeline extends RtObject {
                 if (event instanceof ScheduledEventInstance) {
                     let eventInstance = event as ScheduledEventInstance;
                     // console.log("hasCompletedInstanceOf checking if completed instance of: " + scheduledEvent.getName() + " matches event: " + eventInstance.getName() + " in state: " + eventInstance.state + " one day: " + day.day);
-                    if (eventInstance.scheduledEvent.getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
+                    if (eventInstance.getScheduledEvent().getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
                         console.log("There is a completed instance of: '" + scheduledEvent.getName() + "'" + " on day: " + day.day);
                         return true; // Exit nested loops early if we find a completed instance
                     }
@@ -142,7 +142,7 @@ export class Timeline extends RtObject {
             for (const event of day.events) {
                 if (
                     event instanceof ScheduledEventInstance &&
-                    event.scheduledEvent.getName() === scheduledEvent.getName() &&
+                    event.getScheduledEvent().getName() === scheduledEvent.getName() &&
                     event.state === TimelineInstanceState.Completed
                 ) {
                     count++;
@@ -159,6 +159,18 @@ export class Timeline extends RtObject {
 
     getPeriods() {
         return this.days.flatMap((day) => day.events.filter((event) => event instanceof PeriodEventInstance));
+    }
+
+    getScheduleEventInstancesOrderByDay() {
+        const result = this.days
+            .flatMap((day) => day.events.filter((event) => event instanceof ScheduledEventInstance).map((event) => ({ event, day: day.day })))
+            .sort((a, b) => {
+                // console.log(`Comparing: ${a.event.getName()} day: ${a.day} and ${b.event.getName()} day: ${b.day}`);
+                return a.day - b.day;
+            })
+            .map(({ event }) => event);
+        // console.log("Ordered events: " + result.map((event) => event.getName()));
+        return result;
     }
 
     getPeriodInstanceFor(scheduledPeriodName: string) {
@@ -218,6 +230,11 @@ export class Timeline extends RtObject {
         return this.currentDay + dayOffsetOfFirstEventInstance;
     }
 
+    getMonthName(monthNumber: number): string {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        return monthNames[monthNumber];
+    }
+
     monthMap: { [key: string]: number } = {
         January: 0,
         February: 1,
@@ -245,12 +262,21 @@ export class Timeline extends RtObject {
                 patientVisit.actualVisitDate.month.name,
                 patientVisit.actualVisitDate.year,
             );
+            console.log(
+                "patientVisit.actualVisitDate: " +
+                    patientVisit.actualVisitDate.day +
+                    "/" +
+                    patientVisit.actualVisitDate.month.name +
+                    "/" +
+                    patientVisit.actualVisitDate.year,
+            );
+            console.log("actualVisitDateAsDate: " + actualVisitDateAsDate);
             // Get the time in milliseconds
             const time1 = this.getReferenceDate().getTime();
             const time2 = actualVisitDateAsDate.getTime();
             const diffInMilliseconds = time2 - time1;
             const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
-            this.addEvent(new PatientEventInstance(diffInDays, diffInDays));
+            this.addEvent(new PatientEventInstance(patientVisit.visit.name, diffInDays, diffInDays));
         });
     }
 

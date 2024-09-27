@@ -36,7 +36,7 @@ import * as Sim from "../simjs/sim.js"
     // Common code for scheduling events.
     #scheduleEvent(schedulingMsg, scheduledEvent, timeline, daysToWait) {
       console.log(schedulingMsg + ": '" + scheduledEvent.getName() + "' on day: " + timeline.currentDay + " with wait of: " + daysToWait + " days");
-      let eventInstance = timeline.newEventInstance(scheduledEvent, this.time() + daysToWait);
+      let eventInstance = timeline.newScheduledEventInstance(scheduledEvent, this.time() + daysToWait);
       this.setTimer(daysToWait).done(this.eventStarted, this, [eventInstance]);
       this.setTimer(daysToWait).done(this.eventCompleted, this, [eventInstance]);
       timeline.setScheduled(eventInstance);
@@ -57,13 +57,13 @@ import * as Sim from "../simjs/sim.js"
     eventStarted(startedEvent) {
       //TODO: change so timeline.addEvent only adds if not already there
       let timeline = this.getTimeline();
-      let currentDay = startedEvent.scheduledEvent.day(timeline) - 1 + this.getScheduledStudyConfiguration().studyConfiguration.studyStartDayNumber;
+      let currentDay = startedEvent.getScheduledEvent().day(timeline) - 1 + this.getScheduledStudyConfiguration().studyConfiguration.studyStartDayNumber;
       if (isNaN(currentDay)) {
         console.log("Error: Event:'" + startedEvent.getName() + "' has no current day");
       }
       timeline.setCurrentDay(currentDay);
       console.log("Started Event:'" + startedEvent.getName() + "' at time: " + this.time());
-      startedEvent.scheduledEvent.started(this.getScheduledStudyConfiguration(), timeline, this.time());
+      startedEvent.getScheduledEvent().started(this.getScheduledStudyConfiguration(), timeline, this.time());
     }
 
     eventCompleted(completedEvent) {
@@ -81,7 +81,10 @@ import * as Sim from "../simjs/sim.js"
           console.log('No Events to Schedule');
           if (this.getScheduledStudyConfiguration().allEventsCompleted()) {
             completedEvent.completeCurrentPeriod(this.getTimeline(), this.time());
-            timeline.addPatientVisits(this.getCompletedPatientVisits());
+            if (!!this.getCompletedPatientVisits()) {
+              console.log('Adding Patient Visits to Timeline');
+              timeline.addPatientVisits(this.getCompletedPatientVisits());
+            }
             console.log('Simulation Complete');
           }      
       } else {

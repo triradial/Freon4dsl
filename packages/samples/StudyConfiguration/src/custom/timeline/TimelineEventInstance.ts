@@ -51,10 +51,10 @@ export abstract class TimelineEventInstance {
     getStartDayAsDate(fromReferenceDate: Date, timeline: Timeline): Date {
         const result = new Date(fromReferenceDate);
         const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
-        console.log(
-            "result.getDate:" + result.getDate().toString() + " getStartDay:" + this.getStartDay() + " dayOffsetOfFirstEventInstance:",
-            dayOffsetOfFirstEventInstance,
-        );
+        // console.log(
+        //     "result.getDate:" + result.getDate().toString() + " getStartDay:" + this.getStartDay() + " dayOffsetOfFirstEventInstance:",
+        //     dayOffsetOfFirstEventInstance,
+        // );
         result.setDate(result.getDate() + this.getStartDay() + dayOffsetOfFirstEventInstance);
         return result;
     }

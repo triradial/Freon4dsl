@@ -1,14 +1,11 @@
-
-import { Timeline } from '../timeline/Timeline';
-import { ScheduledEventInstance } from '../timeline/ScheduledEventInstance';
+import { Timeline } from "../timeline/Timeline";
+import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance";
 import { Period } from "../../language/gen/index";
-import {StudyConfigurationModelModelUnitWriter} from '../../writer/gen/StudyConfigurationModelModelUnitWriter';
+import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter";
 
 export class TimelineTableTemplate {
-
-  static getTimelineTableHTMLStyles(): string {
-    var template = 
-`
+    static getTimelineTableHTMLStyles(): string {
+        var template = `
 <style>
 .table_component {
     overflow: auto;
@@ -44,14 +41,12 @@ export class TimelineTableTemplate {
     padding: 5px;
 }
 </style>
-`
-    return template;
-  }
+`;
+        return template;
+    }
 
-  static getTimelineTableHTML(timeline: Timeline): string {
-
-    var template = 
-`
+    static getTimelineTableHTML(timeline: Timeline): string {
+        var template = `
 <div class="table_component" role="region" tabindex="0">
 <table>
   <caption>Study Timeline Table</caption>
@@ -67,28 +62,38 @@ export class TimelineTableTemplate {
     </thead>
     <tbody>
 
-${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances().map ((eventInstance, index) => 
-        `<tr>
+${timeline
+    .getDays()
+    .map((timelineDay, counter) =>
+        timelineDay
+            .getEventInstances()
+            .map(
+                (eventInstance, index) =>
+                    `<tr>
         <td>${eventInstance.getName()}</td>
-        <td>${eventInstance.scheduledEvent.configuredEvent.alternativeName}</td>
-        <td>${(eventInstance.scheduledEvent.configuredEvent.freOwner() as Period).name}</td>
-        <td>${eventInstance.scheduledEvent.configuredEvent.schedule.eventWindow?.daysBefore.count ?? ''}</td>
-        <td>${(eventInstance.getStartDay()+1).toString() ?? ''}</td>
-        <td>${eventInstance.scheduledEvent.configuredEvent.schedule.eventWindow?.daysAfter.count ?? ''}</td>
-        </tr>`).join('')).join('')}
+        <td>${eventInstance.getScheduledEvent().configuredEvent.alternativeName}</td>
+        <td>${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name}</td>
+        <td>${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""}</td>
+        <td>${(eventInstance.getStartDay() + 1).toString() ?? ""}</td>
+        <td>${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""}</td>
+        </tr>`,
+            )
+            .join(""),
+    )
+    .join("")}
       </tr>
     </tbody>
   </table>
-`
-    return template;
-  }
+`;
+        return template;
+    }
 
-  static getTimeLineTableAndStyles(timeline: Timeline): string {
-    return TimelineTableTemplate.getTimelineTableHTMLStyles() + TimelineTableTemplate.getTimelineTableHTML(timeline);
-  }
+    static getTimeLineTableAndStyles(timeline: Timeline): string {
+        return TimelineTableTemplate.getTimelineTableHTMLStyles() + TimelineTableTemplate.getTimelineTableHTML(timeline);
+    }
 
-  static getTimelineTableHTMLPage(timelineTableAsScript: string): string {
-    return `<!DOCTYPE HTML>
+    static getTimelineTableHTMLPage(timelineTableAsScript: string): string {
+        return `<!DOCTYPE HTML>
 <html>
 <head>
 </head>
@@ -98,10 +103,9 @@ ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances
 </body>
 </html>
 `;
-  }
+    }
 
-  static addSomeSpace(): string {
-    return `<br><br><br>`;
-  }
-
+    static addSomeSpace(): string {
+        return `<br><br><br>`;
+    }
 }

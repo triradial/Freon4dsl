@@ -307,7 +307,9 @@ export function loadModelUnit(modelFolderName: string, modelUnitName: string): F
     let metaModel = JSON.parse(fs.readFileSync(`${studyFolderPath}/${modelUnitName}.json`).toString());
     const ts = serializer.toTypeScriptInstance(metaModel);
     let modelUnit: StudyConfiguration = ts as StudyConfiguration;
-    logPeriodsAndEvents("loadModel", modelUnit);
+    if (modelUnit instanceof StudyConfiguration) {
+        logPeriodsAndEvents("loadModel", modelUnit);
+    }
     const validator = studyConfigurationModelEnvironment.validator;
     const errors = validator.validate(modelUnit);
     return modelUnit;
@@ -390,11 +392,48 @@ export function checkTimelineChart(
     }
 }
 
-export function createACompletedPatientVisit(configuredVisit: Event, day: string, month: string, year: string): PatientInfo {
-    const referencedEvent = FreNodeReference.create<Event>(configuredVisit.name, "Event");
-    const visitDate = VisitDate.create({ day: day, month: FreNodeReference.create<Month>(Month.January, "Month"), year: year });
+function getMonthFromString(month: string): Month {
+    switch (month.toLowerCase()) {
+        case "january":
+            return Month.January;
+        case "february":
+            return Month.February;
+        case "march":
+            return Month.March;
+        case "april":
+            return Month.April;
+        case "may":
+            return Month.May;
+        case "june":
+            return Month.June;
+        case "july":
+            return Month.July;
+        case "august":
+            return Month.August;
+        case "september":
+            return Month.September;
+        case "october":
+            return Month.October;
+        case "november":
+            return Month.November;
+        case "december":
+            return Month.December;
+        default:
+            throw new Error(`Invalid month: ${month}`);
+    }
+}
+
+export function createACompletedPatientVisit(visitName: string, day: string, month: string, year: string): PatientVisit {
+    console.log("createACompletedPatientVisit visitName: " + visitName + " day: " + day + " month: " + month + " year: " + year);
+    const referencedEvent = FreNodeReference.create<Event>(visitName, "Event");
+    const visitDate = VisitDate.create({ day: day, month: FreNodeReference.create<Month>(getMonthFromString(month), "Month"), year: year });
     const completedVisitStatus = FreNodeReference.create<PatientVisitStatus>(PatientVisitStatus.completed, "completed");
     let patientVisit = PatientVisit.create({ visit: referencedEvent, actualVisitDate: visitDate, status: completedVisitStatus });
+    return patientVisit;
+}
+
+export function createPatientInfoWithACompletedVisit(visitName: string, day: string, month: string, year: string): PatientInfo {
+    const patientVisit = createACompletedPatientVisit(visitName, day, month, year);
     let patient = PatientHistory.create({ id: "MV", patientVisits: [patientVisit] });
     let patientInfoUnit = PatientInfo.create({ patientHistories: [patient] });
     return patientInfoUnit;
