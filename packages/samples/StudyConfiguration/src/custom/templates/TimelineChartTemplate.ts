@@ -73,7 +73,7 @@ var items = new vis.DataSet([
                 .getPatientEventInstances()
                 .map(
                     (patientEventInstance, index) =>
-                        `{ start: new Date(${patientEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "Patient", className: "patient", title: "Patient visit:${patientEventInstance.getName()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                        `{ start: new Date(${patientEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "Patient visit:${patientEventInstance.getName()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
                 )
                 .filter((item) => item !== "")
                 .join("\n    "),
@@ -143,7 +143,9 @@ var items = new vis.DataSet([
     .vis-item.screening-visits  { background-color: #bceebc; }
     .vis-item.treatment-visits  { background-color: #ccbcf4; }
     .vis-item.patient  { background-color: #95a89a; }
-    .vis-item.any-day  { background-color: #95a89a; }
+    .vis-item.out-of-window { background-color: orange; }
+    .vis-item.visit-not-found { background-color: red; }
+    .vis-item.in-window { background-color: yellow; }
 
     
   </style>

@@ -423,17 +423,22 @@ function getMonthFromString(month: string): Month {
     }
 }
 
-export function createACompletedPatientVisit(visitName: string, day: string, month: string, year: string): PatientVisit {
-    console.log("createACompletedPatientVisit visitName: " + visitName + " day: " + day + " month: " + month + " year: " + year);
+export function createACompletedPatientVisit(visitName: string, day: string, month: string, year: string, visitInstanceNumber: number): PatientVisit {
+    // console.log("createACompletedPatientVisit visitName: " + visitName + " day: " + day + " month: " + month + " year: " + year);
     const referencedEvent = FreNodeReference.create<Event>(visitName, "Event");
     const visitDate = VisitDate.create({ day: day, month: FreNodeReference.create<Month>(getMonthFromString(month), "Month"), year: year });
     const completedVisitStatus = FreNodeReference.create<PatientVisitStatus>(PatientVisitStatus.completed, "completed");
-    let patientVisit = PatientVisit.create({ visit: referencedEvent, actualVisitDate: visitDate, status: completedVisitStatus });
+    let patientVisit = PatientVisit.create({
+        visit: referencedEvent,
+        actualVisitDate: visitDate,
+        status: completedVisitStatus,
+        visitInstanceNumber: visitInstanceNumber,
+    });
     return patientVisit;
 }
 
-export function createPatientInfoWithACompletedVisit(visitName: string, day: string, month: string, year: string): PatientInfo {
-    const patientVisit = createACompletedPatientVisit(visitName, day, month, year);
+export function createPatientInfoWithACompletedVisit(visitName: string, day: string, month: string, year: string, visitInstanceNumber: number): PatientInfo {
+    const patientVisit = createACompletedPatientVisit(visitName, day, month, year, visitInstanceNumber);
     let patient = PatientHistory.create({ id: "MV", patientVisits: [patientVisit] });
     let patientInfoUnit = PatientInfo.create({ patientHistories: [patient] });
     return patientInfoUnit;

@@ -46,6 +46,17 @@ export class Timeline extends RtObject {
         return dayObj.events.filter((event) => event instanceof ScheduledEventInstance).map((event) => event as ScheduledEventInstance);
     }
 
+    getScheduledEventInstance(name: string, instanceNumber: number): ScheduledEventInstance {
+        if (instanceNumber > 1) {
+            console.log("Instance number: " + instanceNumber + " of: " + name);
+        }
+        return this.days
+            .flatMap((day) => day.events.filter((event) => event instanceof ScheduledEventInstance))
+            .find((event) => {
+                return event.getName() === name && event.getInstanceNumber() === instanceNumber;
+            }) as ScheduledEventInstance;
+    }
+
     getDays() {
         return this.days;
     }
@@ -115,6 +126,29 @@ export class Timeline extends RtObject {
                 console.log("Event: " + event.getName() + " day: " + event.startDay + " status: " + event.getState());
             });
         });
+    }
+
+    printTimelineOfScheduledEventInstances() {
+        let output = "Scheduled Event Instances on Timeline:\n";
+        this.days.forEach((day) => {
+            output += "Day: " + day.day + "\n";
+            day.events.forEach((event) => {
+                if (event instanceof ScheduledEventInstance) {
+                    let scheduledEventInstance = event as ScheduledEventInstance;
+                    output +=
+                        "Event: " +
+                        scheduledEventInstance.getName() +
+                        " instance: " +
+                        scheduledEventInstance.getInstanceNumber() +
+                        " day: " +
+                        scheduledEventInstance.startDay +
+                        " status: " +
+                        scheduledEventInstance.getState() +
+                        "\n";
+                }
+            });
+        });
+        console.log(output);
     }
 
     // Return true if the event has already been completed on a previous day at least once
@@ -268,7 +302,7 @@ export class Timeline extends RtObject {
             const time2 = actualVisitDateAsDate.getTime();
             const diffInMilliseconds = time2 - time1;
             const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
-            this.addEvent(new PatientEventInstance(patientVisit.visit.name, dayOnTimeline));
+            this.addEvent(new PatientEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
         });
     }
 

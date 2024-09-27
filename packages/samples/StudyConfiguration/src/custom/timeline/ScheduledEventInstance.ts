@@ -9,15 +9,31 @@ import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventIns
 export class ScheduledEventInstance extends TimelineEventInstance {
     scheduledEvent: ScheduledEvent; // The scheduled event that this instance was created from
     state: TimelineInstanceState = TimelineInstanceState.Ready;
+    instanceNumber: number;
 
-    constructor(scheduledEvent: ScheduledEvent, startDay: number) {
+    constructor(scheduledEvent: ScheduledEvent, startDay: number, instanceNumber: number = 1) {
+        if (instanceNumber > 1)
+            console.log("creating ScheduledEventInstance: " + scheduledEvent.getName() + " instance:" + instanceNumber + " startDay:" + startDay);
         super();
         this.startDay = startDay;
         this.scheduledEvent = scheduledEvent;
+        this.instanceNumber = instanceNumber;
     }
 
     getScheduledEvent() {
         return this.scheduledEvent;
+    }
+
+    getInstanceNumber() {
+        return this.instanceNumber;
+    }
+
+    getStartDayOfWindow() {
+        return this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count;
+    }
+
+    getEndDayOfWindow() {
+        return this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysAfter.count;
     }
 
     completed() {

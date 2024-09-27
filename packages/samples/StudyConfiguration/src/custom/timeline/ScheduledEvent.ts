@@ -166,6 +166,10 @@ export class ScheduledEvent {
         return eventRepeat instanceof RepeatCondition || eventRepeat instanceof RepeatCount;
     }
 
+    instanceNumber(timeline: Timeline): number {
+        return timeline.numberCompletedInstancesOf(this) + 1;
+    }
+
     anyRepeatsNotCompleted(timeline: Timeline): boolean {
         let numberCompletedInstances = timeline.numberCompletedInstancesOf(this);
         if (this.isRepeatingEvent) {
@@ -273,7 +277,7 @@ export class ScheduledEvent {
      * if this event has not been completed on a previous day and the timeline day is at or after the day this event is scheduled for then return a new EventInstance
      * otherwise return null.
      */
-    getInstanceIfEventIsReadyToSchedule(completedEvent: ScheduledEventInstance, timeline: Timeline): unknown {
+    getInstanceIfEventIsReadyToSchedule(completedEvent: ScheduledEventInstance, time: number, timeline: Timeline): ScheduledEventInstance {
         let repeatingEvent = this.isRepeatingEvent();
         let scheduledDay = this.day(timeline);
         if (this.isScheduledOnASpecificDay() && !repeatingEvent) {
@@ -295,8 +299,9 @@ export class ScheduledEvent {
                         " with scheduledDay of: " +
                         scheduledDay,
                 );
-                return new ScheduledEventInstance(this, scheduledDay);
+                return new ScheduledEventInstance(this, time + scheduledDay, this.instanceNumber(timeline));
             } else if (completedEvent.getScheduledEvent().getName() === this.getName() && this.anyRepeatsNotCompleted(timeline)) {
+                // TODO: determine why this is never taken
                 console.log(
                     " '" +
                         this.getName() +
@@ -307,7 +312,7 @@ export class ScheduledEvent {
                         " with repeat on scheduledDay of: " +
                         scheduledDay,
                 );
-                return new ScheduledEventInstance(this, scheduledDay);
+                return new ScheduledEventInstance(this, time + scheduledDay, this.instanceNumber(timeline));
             } else {
                 console.log(
                     " '" +

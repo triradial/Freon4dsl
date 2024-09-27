@@ -817,7 +817,7 @@ var items = new vis.DataSet([
             utils.createEventAndAddToPeriod(period, eventName, eventSchedule);
             studyConfigurationUnit.periods.push(period);
             const visitToComplete = studyConfigurationUnit.periods[0].events[0];
-            const patientInfoUnit = utils.createPatientInfoWithACompletedVisit(visitToComplete.name, "1", "January", "2024");
+            const patientInfoUnit = utils.createPatientInfoWithACompletedVisit(visitToComplete.name, "1", "January", "2024", 1);
 
             // WHEN the study is simulated and a timeline is generated
             let simulator = new Simulator(studyConfigurationUnit, patientInfoUnit.patientHistories[0]);
@@ -1294,6 +1294,7 @@ function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline
     let i = 0;
     let stopAddingVisits = false;
     const referenceDate = timeline.getReferenceDate();
+    timeline.printTimelineOfScheduledEventInstances();
     timeline.getScheduleEventInstancesOrderByDay().forEach((scheduledEventInstance) => {
         if (i++ < numberToCreate) {
             let dateOfVisit: Date = new Date();
@@ -1312,6 +1313,15 @@ function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline
                 dateOfVisit.getDate().toString(),
                 timeline.getMonthName(dateOfVisit.getMonth()),
                 dateOfVisit.getFullYear().toString(),
+                scheduledEventInstance.getInstanceNumber(),
+            );
+            console.log(
+                "Adding completed visit: " +
+                    scheduledEventInstance.getName() +
+                    " instance: " +
+                    scheduledEventInstance.getInstanceNumber() +
+                    " on " +
+                    dateOfVisit.toDateString(),
             );
             completedPatientVisits.push(patientVisit);
         }

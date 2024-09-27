@@ -23,6 +23,7 @@ limited PatientVisitStatus {
 
 concept PatientVisit {
   reference visit: Event;
+  visitInstanceNumber: number = 1;
   actualVisitDate: VisitDate;
   status: PatientVisitStatus = PatientVisitStatus:completed;
 }
