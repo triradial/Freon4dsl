@@ -255,6 +255,7 @@ export class Timeline extends RtObject {
         return new Date(parseInt(year), monthNumber, parseInt(day));
     }
 
+    // Add the patient visits that happened on specific dates to the timeline
     addPatientVisits(patientVisits: PatientVisit[]) {
         patientVisits.forEach((patientVisit) => {
             const actualVisitDateAsDate = this.dateStringsToDate(
@@ -262,21 +263,12 @@ export class Timeline extends RtObject {
                 patientVisit.actualVisitDate.month.name,
                 patientVisit.actualVisitDate.year,
             );
-            console.log(
-                "patientVisit.actualVisitDate: " +
-                    patientVisit.actualVisitDate.day +
-                    "/" +
-                    patientVisit.actualVisitDate.month.name +
-                    "/" +
-                    patientVisit.actualVisitDate.year,
-            );
-            console.log("actualVisitDateAsDate: " + actualVisitDateAsDate);
-            // Get the time in milliseconds
-            const time1 = this.getReferenceDate().getTime();
+            // Convert from the date given as when the visit happened to the day of the event on the timeline
+            const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
             const time2 = actualVisitDateAsDate.getTime();
             const diffInMilliseconds = time2 - time1;
-            const diffInDays = diffInMilliseconds / (1000 * 60 * 60 * 24);
-            this.addEvent(new PatientEventInstance(patientVisit.visit.name, diffInDays, diffInDays));
+            const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
+            this.addEvent(new PatientEventInstance(patientVisit.visit.name, dayOnTimeline));
         });
     }
 
