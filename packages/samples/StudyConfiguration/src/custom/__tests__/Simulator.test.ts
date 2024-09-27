@@ -939,6 +939,7 @@ var items = new vis.DataSet([
             let shiftsFromScheduledVisit: ShiftsFromScheduledVisit[] = [
                 { name: "V2 rando", instance: 1, shift: -1, numberFound: 0 },
                 { name: "V4-V7-rando", instance: 1, shift: -4, numberFound: 0 },
+                { name: "V4-V7-rando", instance: 2, shift: 2, numberFound: 0 },
             ];
             let completedPatientVisits: PatientVisit[] = createCompletedPatientVisits(10, timeline, shiftsFromScheduledVisit);
             timeline.addPatientVisits(completedPatientVisits);
@@ -1299,31 +1300,33 @@ function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline
         if (i++ < numberToCreate) {
             let dateOfVisit: Date = new Date();
             const startDay = scheduledEventInstance.getStartDay();
-            let shiftFromScheduledVisit = shiftsFromScheduledVisit.find((record) => record.name === scheduledEventInstance.getName());
-            if (!!shiftFromScheduledVisit) {
-                shiftFromScheduledVisit.numberFound++;
-                if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance)
-                    dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift);
-                else dateOfVisit = addDays(referenceDate, startDay);
-            } else {
-                dateOfVisit = addDays(referenceDate, startDay);
-            }
-            const patientVisit = utils.createACompletedPatientVisit(
-                scheduledEventInstance.getName(),
-                dateOfVisit.getDate().toString(),
-                timeline.getMonthName(dateOfVisit.getMonth()),
-                dateOfVisit.getFullYear().toString(),
-                scheduledEventInstance.getInstanceNumber(),
-            );
-            console.log(
-                "Adding completed visit: " +
-                    scheduledEventInstance.getName() +
-                    " instance: " +
-                    scheduledEventInstance.getInstanceNumber() +
-                    " on " +
-                    dateOfVisit.toDateString(),
-            );
-            completedPatientVisits.push(patientVisit);
+            const matchingShiftsFromScheduledVisit = shiftsFromScheduledVisit.filter((record) => record.name === scheduledEventInstance.getName());
+            matchingShiftsFromScheduledVisit.forEach((shiftFromScheduledVisit) => {
+                if (!!shiftFromScheduledVisit) {
+                    shiftFromScheduledVisit.numberFound++;
+                    if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance)
+                        dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift);
+                    else dateOfVisit = addDays(referenceDate, startDay);
+                } else {
+                    dateOfVisit = addDays(referenceDate, startDay);
+                }
+                const patientVisit = utils.createACompletedPatientVisit(
+                    scheduledEventInstance.getName(),
+                    dateOfVisit.getDate().toString(),
+                    timeline.getMonthName(dateOfVisit.getMonth()),
+                    dateOfVisit.getFullYear().toString(),
+                    scheduledEventInstance.getInstanceNumber(),
+                );
+                console.log(
+                    "Adding completed visit: " +
+                        scheduledEventInstance.getName() +
+                        " instance: " +
+                        scheduledEventInstance.getInstanceNumber() +
+                        " on " +
+                        dateOfVisit.toDateString(),
+                );
+                completedPatientVisits.push(patientVisit);
+            });
         }
     });
     return completedPatientVisits;

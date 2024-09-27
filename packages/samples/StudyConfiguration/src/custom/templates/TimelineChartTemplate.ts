@@ -73,7 +73,7 @@ var items = new vis.DataSet([
                 .getPatientEventInstances()
                 .map(
                     (patientEventInstance, index) =>
-                        `{ start: new Date(${patientEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "Patient visit:${patientEventInstance.getName()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                        `{ start: new Date(${patientEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "Patient visit:'${patientEventInstance.getName() + "'" + (patientEventInstance.getVisitInstanceNumber() > 1 ? " #" + patientEventInstance.getVisitInstanceNumber() : "")}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
                 )
                 .filter((item) => item !== "")
                 .join("\n    "),

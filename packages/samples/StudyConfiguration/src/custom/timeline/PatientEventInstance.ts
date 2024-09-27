@@ -21,6 +21,10 @@ export class PatientEventInstance extends TimelineEventInstance {
         return this.eventName;
     }
 
+    getVisitInstanceNumber() {
+        return this.visitInstanceNumber;
+    }
+
     // getIdOfScheduledPeriod() {
     //   return this.scheduledPeriod.configuredPeriod.freId();
     // }
@@ -37,16 +41,6 @@ export class PatientEventInstance extends TimelineEventInstance {
         if (scheduledEventInstance === undefined) {
             classForDisplay = "visit-not-found";
         } else {
-            if (scheduledEventInstance.getInstanceNumber() > 1 || this.visitInstanceNumber > 1) {
-                console.log(
-                    "Found a second instance: " +
-                        scheduledEventInstance.getName() +
-                        " visitInstanceNumber:" +
-                        this.visitInstanceNumber +
-                        " scheduledEventInstance.getInstanceNumber():" +
-                        scheduledEventInstance.getInstanceNumber(),
-                );
-            }
             if (
                 this.startDay < scheduledEventInstance.getStartDay() - scheduledEventInstance.getStartDayOfWindow() ||
                 this.startDay > scheduledEventInstance.getStartDay() + scheduledEventInstance.getEndDayOfWindow()
@@ -56,22 +50,22 @@ export class PatientEventInstance extends TimelineEventInstance {
                 classForDisplay = "in-window";
             }
         }
-        console.log(
-            "getClassForDisplay " +
-                scheduledEventInstance.getName() +
-                " visitInstanceNumber:" +
-                this.visitInstanceNumber +
-                " scheduled day:" +
-                scheduledEventInstance.startDay +
-                " window:" +
-                scheduledEventInstance.getStartDayOfWindow() +
-                "-" +
-                scheduledEventInstance.getEndDayOfWindow() +
-                " patient startDay " +
-                this.startDay +
-                " classForDisplay:" +
-                classForDisplay,
-        );
+        // console.log(
+        //     "getClassForDisplay " +
+        //         scheduledEventInstance.getName() +
+        //         " visitInstanceNumber:" +
+        //         this.visitInstanceNumber +
+        //         " scheduled day:" +
+        //         scheduledEventInstance.startDay +
+        //         " window:" +
+        //         scheduledEventInstance.getStartDayOfWindow() +
+        //         "-" +
+        //         scheduledEventInstance.getEndDayOfWindow() +
+        //         " patient startDay " +
+        //         this.startDay +
+        //         " classForDisplay:" +
+        //         classForDisplay,
+        // );
         return classForDisplay;
     }
 }
