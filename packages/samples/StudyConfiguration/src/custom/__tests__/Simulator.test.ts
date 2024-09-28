@@ -955,6 +955,69 @@ var items = new vis.DataSet([
             // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
 
+        it("generates a chart for a visit on day 1 showing staff level", () => {
+            const expectedTimelineDataAsScript = `  var groups = new vis.DataSet([
+                    { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+                    { "content": "Visit 1", "id": "Visit 1" },
+                    { "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },
+                ]);
+
+                var items = new vis.DataSet([
+                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Phase", className: "period-phase", title: "Day: 0", content: "<b>Period</b>", id: "Period0" },
+                    
+                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 11" },
+                    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 12" },
+                        
+                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "patient", title: "PATIENT", content: "&nbsp;", id: "Patient3" }
+
+                ]) `;
+            const expectedTimelineVisualizationHTML = `// create visualization
+                var container = document.getElementById('visualization');
+                var options = {
+                    format: {
+                        minorLabels: {
+                            millisecond:'',
+                            second:     '',
+                            minute:     '',
+                            hour:       '',
+                            weekday:    '',
+                            day:        'DDD',
+                            week:       '',
+                            month:      '',
+                            year:       ''
+                        },
+                    },
+                    timeAxis: {scale: 'day', step: 1},
+                    showMajorLabels: false,
+                    orientation: 'both',
+                    start: new Date(2024,0,1),
+                    end: new Date(2024, 0, 1, 23, 59, 59),
+                    min: new Date(2024, 0, 1),
+                    max: new Date(2024, 0, 1, 23, 59, 59),
+                    margin: {
+                        item: {
+                            horizontal: 0,
+                        },
+                    },
+                };`;
+            // GIVEN a study configuration with one period and one event and a patient that completed the event
+            const eventName = "Visit 1";
+            let eventSchedule = utils.createEventScheduleStartingOnADay(eventName, 0, 0);
+            let period = new Period("Screening");
+            utils.createEventAndAddToPeriod(period, eventName, eventSchedule);
+            studyConfigurationUnit.periods.push(period);
+            const visitToComplete = studyConfigurationUnit.periods[0].events[0];
+            const availability = utils.createAvailabilityWithACompletedVisit(visitToComplete.name, "1", "January", "2024", 1);
+
+            // WHEN the study is simulated and a timeline is generated
+            let simulator = new Simulator(studyConfigurationUnit, availability);
+            simulator.run();
+            let timeline = simulator.timeline;
+
+            // Then the generated timeline has one event on the expected event day and the corresponding staff level
+            utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
+        });
+
         it.skip("generate a chart from the text version of the study", () => {
             // GIVEN a study configuration loaded from a string
             const configAsText = `StudyConfiguration StudyConfiguration {

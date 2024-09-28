@@ -25,6 +25,10 @@ import {
     VisitDate,
     Month,
     PatientVisitStatus,
+    Availability,
+    StaffLevel,
+    DateRange,
+    StartRangeDate,
 } from "../../language/gen/index";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
 import { Timeline } from "../timeline/Timeline";
@@ -442,4 +446,13 @@ export function createPatientInfoWithACompletedVisit(visitName: string, day: str
     let patient = PatientHistory.create({ id: "MV", patientVisits: [patientVisit] });
     let patientInfoUnit = PatientInfo.create({ patientHistories: [patient] });
     return patientInfoUnit;
+}
+
+export function createAvailabilityWithACompletedVisit(visitName: string, day: string, month: string, year: string, visitInstanceNumber: number): Availability {
+    const baselineStaff = "4";
+    const dateInRange = StartRangeDate.create({ day: day, month: FreNodeReference.create<Month>(getMonthFromString(month), "Month"), year: year });
+    const staffDateOrRange = DateRange.create({ startDate: dateInRange });
+    const staffLevel = StaffLevel.create({ staffAvailable: "3", dateOrRange: staffDateOrRange });
+    const availability = Availability.create({ baselineStaff: baselineStaff, staffLevels: [staffLevel] });
+    return availability;
 }

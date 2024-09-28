@@ -46,6 +46,7 @@ limited Month {
     January; February; March; April; May; June; July; August; September; October; November; December;
 }
 
+// TODO: use a different name to avoid conflicts with TypeScript Date
 concept Date {
   day: string;
   month: Month;

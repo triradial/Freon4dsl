@@ -1,10 +1,11 @@
 import { RtBoolean, RtObject } from "@freon4dsl/core";
 import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent";
-import { Event, PatientHistory, PatientVisit } from "../../language/gen/index";
+import { Availability, Event, PatientHistory, PatientVisit } from "../../language/gen/index";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance";
 import { PeriodEventInstance } from "./PeriodEventInstance";
 import { ScheduledEventInstance } from "./ScheduledEventInstance";
 import { PatientEventInstance } from "./PatientEventInstance";
+import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance";
 
 /*
  * A Timeline records the events and the days they occur on.
@@ -17,6 +18,7 @@ export class Timeline extends RtObject {
     referenceDate = new Date(2024, 0, 1);
     days: TimelineDay[] = [];
     currentDay: number = 0;
+    availability: Availability;
 
     constructor() {
         super();
@@ -291,6 +293,7 @@ export class Timeline extends RtObject {
 
     // Add the patient visits that happened on specific dates to the timeline
     addPatientVisits(patientVisits: PatientVisit[]) {
+        console.log("Adding Patient Visits to Timeline");
         patientVisits.forEach((patientVisit) => {
             const actualVisitDateAsDate = this.dateStringsToDate(
                 patientVisit.actualVisitDate.day,
@@ -306,8 +309,51 @@ export class Timeline extends RtObject {
         });
     }
 
+    // Add the patient visits that happened on specific dates to the timeline
+    addStaffAvailability(availability: Availability) {
+        console.log("Adding Staff Availability to Timeline");
+        this.availability = availability;
+
+        availability.staffLevels.forEach((staffLevel) => {
+            const startDateAsDate = this.dateStringsToDate(
+                staffLevel.dateOrRange.startDate.day,
+                staffLevel.dateOrRange.startDate.month.name,
+                staffLevel.dateOrRange.startDate.year,
+            );
+            let endDateAsDate = undefined;
+            if (staffLevel.dateOrRange.endDate == undefined) {
+                endDateAsDate = new Date(startDateAsDate);
+            } else {
+                endDateAsDate = this.dateStringsToDate(
+                    staffLevel.dateOrRange.endDate.day,
+                    staffLevel.dateOrRange.endDate.month.name,
+                    staffLevel.dateOrRange.endDate.year,
+                );
+            }
+            let currentDate = startDateAsDate;
+            while (currentDate <= endDateAsDate) {
+                // Convert from the date given as when the visit happened to the day of the event on the timeline
+                const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
+                const time2 = startDateAsDate.getTime();
+                const diffInMilliseconds = time2 - time1;
+                const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
+                this.addEvent(new StaffAvailabilityEventInstance(Number(staffLevel.staffAvailable), dayOnTimeline));
+                // Move to the next day
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+        });
+    }
+
+    getBaselineStaff(): number {
+        return Number(this.availability.baselineStaff);
+    }
+
     anyPatientEventInstances(): boolean {
         return this.days.some((day) => day.events.some((event) => event instanceof PatientEventInstance));
+    }
+
+    anyStaffAvailabilityEventInstances(): boolean {
+        return this.days.some((day) => day.events.some((event) => event instanceof StaffAvailabilityEventInstance));
     }
 }
 
@@ -333,5 +379,9 @@ export class TimelineDay {
 
     getPatientEventInstances() {
         return this.events.filter((event) => event instanceof PatientEventInstance) as PatientEventInstance[];
+    }
+
+    getStaffAvailabilityEventInstances() {
+        return this.events.filter((event) => event instanceof StaffAvailabilityEventInstance) as StaffAvailabilityEventInstance[];
     }
 }

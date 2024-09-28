@@ -33,6 +33,10 @@ import * as Sim from "../simjs/sim.js"
       return this.simulation.getCompletedPatientVisits();
     }
 
+
+    getAvailability() {
+      return this.simulation.getAvailability();
+    }
     // Common code for scheduling events.
     #scheduleEvent(schedulingMsg, scheduledEventInstance, timeline, daysToWait) {
       console.log(schedulingMsg + ": '" + scheduledEventInstance.getName() + "' on day: " + timeline.currentDay + " with wait of: " + daysToWait + " days");
@@ -83,8 +87,8 @@ import * as Sim from "../simjs/sim.js"
             this.getTimeline().printTimelineOfScheduledEventInstances();
             completedEvent.completeCurrentPeriod(this.getTimeline(), this.time());
             if (!!this.getCompletedPatientVisits()) {
-              console.log('Adding Patient Visits to Timeline');
               timeline.addPatientVisits(this.getCompletedPatientVisits());
+              timeline.addStaffAvailability(this.getAvailability());
             }
             console.log('Simulation Complete');
           }      

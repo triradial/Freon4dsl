@@ -2,7 +2,7 @@ import { Scheduler } from "./Scheduler.js";
 import * as Sim from "../simjs/sim.js";
 import log from "../utils/SimpleLogger";
 import { Timeline } from "./Timeline";
-import { PatientHistory, PatientVisit } from "../../language/gen/index";
+import { Availability, PatientHistory, PatientVisit } from "../../language/gen/index";
 import { StudyConfiguration, Event } from "../../language/gen/index";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration";
 
@@ -19,12 +19,24 @@ export class Simulator {
     studyConfiguration: StudyConfiguration;
     scheduledStudyConfiguration: ScheduledStudyConfiguration;
     completedPatientVisits: PatientHistory;
+    availability: Availability;
 
-    constructor(studyConfiguration: StudyConfiguration, completedPatientVisits?: PatientHistory) {
+    // Allow creation without a PatientHistory or Availability
+    constructor(studyConfiguration: StudyConfiguration);
+    constructor(studyConfiguration: StudyConfiguration, availability: Availability);
+    constructor(studyConfiguration: StudyConfiguration, completedPatientVisits: PatientHistory);
+    constructor(studyConfiguration: StudyConfiguration, completedPatientVisits: PatientHistory, availability: Availability);
+    constructor(studyConfiguration: StudyConfiguration, param2?: PatientHistory | Availability, param3?: Availability) {
         // Setup the Scheduler
         this.scheduledStudyConfiguration = new ScheduledStudyConfiguration(studyConfiguration);
-        this.completedPatientVisits = completedPatientVisits;
         this.timeline = new Timeline();
+        if (param2 instanceof PatientHistory) {
+            this.completedPatientVisits = param2;
+            this.availability = param3 || new Availability();
+        } else {
+            this.completedPatientVisits = undefined;
+            this.availability = param2 || new Availability();
+        }
     }
 
     getCompletedPatientVisits(): PatientVisit[] {
@@ -33,6 +45,10 @@ export class Simulator {
         } else {
             return this.completedPatientVisits.patientVisits;
         }
+    }
+
+    getAvailability(): Availability {
+        return this.availability;
     }
 
     getTimeline() {
