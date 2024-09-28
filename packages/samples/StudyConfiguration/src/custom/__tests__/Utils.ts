@@ -448,11 +448,98 @@ export function createPatientInfoWithACompletedVisit(visitName: string, day: str
     return patientInfoUnit;
 }
 
-export function createAvailabilityWithACompletedVisit(visitName: string, day: string, month: string, year: string, visitInstanceNumber: number): Availability {
-    const baselineStaff = "4";
-    const dateInRange = StartRangeDate.create({ day: day, month: FreNodeReference.create<Month>(getMonthFromString(month), "Month"), year: year });
-    const staffDateOrRange = DateRange.create({ startDate: dateInRange });
-    const staffLevel = StaffLevel.create({ staffAvailable: "3", dateOrRange: staffDateOrRange });
-    const availability = Availability.create({ baselineStaff: baselineStaff, staffLevels: [staffLevel] });
+export type ShiftsFromScheduledVisit = { name: string; instance: number; shift: number; numberFound: number };
+
+export function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline, shiftsFromScheduledVisit: ShiftsFromScheduledVisit[]): PatientVisit[] {
+    let completedPatientVisits: PatientVisit[] = [];
+    let i = 0;
+    let stopAddingVisits = false;
+    const referenceDate = timeline.getReferenceDate();
+    timeline.printTimelineOfScheduledEventInstances();
+    timeline.getScheduleEventInstancesOrderByDay().forEach((scheduledEventInstance) => {
+        if (i++ < numberToCreate) {
+            let dateOfVisit: Date = new Date();
+            const startDay = scheduledEventInstance.getStartDay();
+            const matchingShiftsFromScheduledVisit = shiftsFromScheduledVisit.filter((record) => record.name === scheduledEventInstance.getName());
+            matchingShiftsFromScheduledVisit.forEach((shiftFromScheduledVisit) => {
+                if (!!shiftFromScheduledVisit) {
+                    shiftFromScheduledVisit.numberFound++;
+                    if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance)
+                        dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift);
+                    else dateOfVisit = addDays(referenceDate, startDay);
+                } else {
+                    dateOfVisit = addDays(referenceDate, startDay);
+                }
+                const patientVisit = createACompletedPatientVisit(
+                    scheduledEventInstance.getName(),
+                    dateOfVisit.getDate().toString(),
+                    timeline.getMonthName(dateOfVisit.getMonth()),
+                    dateOfVisit.getFullYear().toString(),
+                    scheduledEventInstance.getInstanceNumber(),
+                );
+                console.log(
+                    "Adding completed visit: " +
+                        scheduledEventInstance.getName() +
+                        " instance: " +
+                        scheduledEventInstance.getInstanceNumber() +
+                        " on " +
+                        dateOfVisit.toDateString(),
+                );
+                completedPatientVisits.push(patientVisit);
+            });
+        }
+    });
+    return completedPatientVisits;
+}
+
+function addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+function createStaffLevel(
+    staffAvailable: string,
+    startDay: string,
+    startMonth: string,
+    startYear: string,
+    endDay?: string,
+    endMonth?: string,
+    endYear?: string,
+) {
+    const startDateInRange = StartRangeDate.create({
+        day: startDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
+        year: startYear,
+    });
+    if (!endDay) {
+        endDay = startDay;
+        endMonth = startMonth;
+        endYear = startYear;
+    }
+    const endDateInRange = StartRangeDate.create({
+        day: endDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
+        year: endYear,
+    });
+    const staffDateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
+    const staffLevel = StaffLevel.create({ staffAvailable: staffAvailable, dateOrRange: staffDateOrRange });
+    return staffLevel;
+}
+
+export function createOneDayAvailability(day: string, month: string, year: string): Availability {
+    const staffLevel = createStaffLevel("3", day, month, year);
+    const availability = Availability.create({ baselineStaff: "4", staffLevels: [staffLevel] });
+    return availability;
+}
+
+export function createAvailability(): Availability {
+    let month = "January";
+    const year = "2024";
+    let staffLevels = [];
+    staffLevels.push(createStaffLevel("3", "-27", month, year, "-25", month, year));
+    staffLevels.push(createStaffLevel("2", "11", month, year));
+    staffLevels.push(createStaffLevel("2", "19", month, year));
+    const availability = Availability.create({ baselineStaff: "4", staffLevels: staffLevels });
     return availability;
 }

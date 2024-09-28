@@ -309,7 +309,14 @@ export class Timeline extends RtObject {
         });
     }
 
-    // Add the patient visits that happened on specific dates to the timeline
+    getDayOnTimeline(date: Date): number {
+        const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
+        const time2 = date.getTime();
+        const diffInMilliseconds = time2 - time1;
+        const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
+        return dayOnTimeline;
+    }
+
     addStaffAvailability(availability: Availability) {
         console.log("Adding Staff Availability to Timeline");
         this.availability = availability;
@@ -330,17 +337,15 @@ export class Timeline extends RtObject {
                     staffLevel.dateOrRange.endDate.year,
                 );
             }
-            let currentDate = startDateAsDate;
-            while (currentDate <= endDateAsDate) {
-                // Convert from the date given as when the visit happened to the day of the event on the timeline
-                const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
-                const time2 = startDateAsDate.getTime();
-                const diffInMilliseconds = time2 - time1;
-                const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
-                this.addEvent(new StaffAvailabilityEventInstance(Number(staffLevel.staffAvailable), dayOnTimeline));
-                // Move to the next day
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
+            // Convert from the date given as when the visit happened to the day of the event on the timeline
+
+            this.addEvent(
+                new StaffAvailabilityEventInstance(
+                    Number(staffLevel.staffAvailable),
+                    this.getDayOnTimeline(startDateAsDate),
+                    this.getDayOnTimeline(endDateAsDate),
+                ),
+            );
         });
     }
 

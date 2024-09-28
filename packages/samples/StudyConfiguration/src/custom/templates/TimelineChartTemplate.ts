@@ -89,7 +89,7 @@ var items = new vis.DataSet([
                 .getStaffAvailabilityEventInstances()
                 .map(
                     (staffAvailabilityEventInstance, index) =>
-                        `{ start: new Date(${staffAvailabilityEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${staffAvailabilityEventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "Staff", className: "staff", title: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", content: "&nbsp;${staffAvailabilityEventInstance.getStaffAvailable().toString()}", id: "${staffAvailabilityEventInstance.getName() + getUniqueNumber()}" },`,
+                        `{ start: new Date(${staffAvailabilityEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${staffAvailabilityEventInstance.getEndDayAsDateString(referenceDate, timeline)}), group: "Staff", className: "staff", title: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", content: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", id: "${staffAvailabilityEventInstance.getName() + getUniqueNumber()}" },`,
                 )
                 .filter((item) => item !== "")
                 .join("\n    "),

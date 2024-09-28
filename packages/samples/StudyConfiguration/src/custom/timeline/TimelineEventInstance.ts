@@ -49,18 +49,30 @@ export abstract class TimelineEventInstance {
     }
 
     getStartDayAsDate(fromReferenceDate: Date, timeline: Timeline): Date {
-        const result = new Date(fromReferenceDate);
+        return this.getDayAsDate(this.startDay, fromReferenceDate, timeline);
+    }
+
+    getDayAsDate(day: number, fromReferenceDate: Date, timeline: Timeline, toEndOfDay?: boolean): Date {
+        let result = new Date(fromReferenceDate);
         const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
         // console.log(
         //     "result.getDate:" + result.getDate().toString() + " getStartDay:" + this.getStartDay() + " dayOffsetOfFirstEventInstance:",
         //     dayOffsetOfFirstEventInstance,
         // );
-        result.setDate(result.getDate() + this.getStartDay() + dayOffsetOfFirstEventInstance);
+        result.setDate(result.getDate() + day + dayOffsetOfFirstEventInstance);
+        if (toEndOfDay) {
+            result.setHours(23, 59, 59);
+        }
         return result;
     }
 
     getStartDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
-        return TimelineEventInstance.formatDate(this.getStartDayAsDate(fromReferenceDate, timeline));
+        return TimelineEventInstance.formatDate(this.getDayAsDate(this.startDay, fromReferenceDate, timeline));
+    }
+
+    getEndDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
+        const toEndOfDay = true;
+        return TimelineEventInstance.formatDate(this.getDayAsDate(this.endDay, fromReferenceDate, timeline, toEndOfDay));
     }
 
     getEndOfStartDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
