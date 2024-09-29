@@ -2,10 +2,6 @@ editor default
 
 Availability {
   [
-    PATIENT
-      Patient Not Available Dates or Date Ranges:
-        ${patientNotAvailableDates}
-    
     STAFFING
       Number of CRCs Normally Available: ${baselineStaff}
 
@@ -39,3 +35,4 @@ EndRangeDate {
   [thru: ${month}/${day}/${year}]
   trigger = "End of Date Range"
 }
+

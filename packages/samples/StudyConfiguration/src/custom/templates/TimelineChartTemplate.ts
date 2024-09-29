@@ -1,52 +1,92 @@
-
-import { EventInstance, Timeline, TimelineEventInstance } from '../timeline/Timeline';
-import {StudyConfigurationModelModelUnitWriter} from '../../writer/gen/StudyConfigurationModelModelUnitWriter';
+import { Timeline } from "custom/timeline/Timeline";
+import { ScheduledEventInstance } from "custom/timeline/ScheduledEventInstance";
+import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter";
 
 let uniqueCounter = 0;
 
 export function resetTimelineScriptTemplate() {
-  uniqueCounter = 0;
+    uniqueCounter = 0;
 }
 
 function getUniqueNumber(): number {
-  return uniqueCounter++;
+    return uniqueCounter++;
 }
 
+// TODO: get this from the timeline instead of hardcoding it. For now the dates must match what's on the timeline.
 const referenceDate = new Date(2024, 0, 1);
 // const referenceDate = new Date(2023, 11, 31);
 
 export class TimelineChartTemplate {
+    static getTimelineDataHTML(timeline: Timeline): string {
+        let writer = new StudyConfigurationModelModelUnitWriter();
 
-  static getTimelineDataHTML(timeline: Timeline): string {
-    let writer = new StudyConfigurationModelModelUnitWriter();
-
-    var template = 
-`var groups = new vis.DataSet([
+        var template = `var groups = new vis.DataSet([
     { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-    ${timeline.getUniqueEventInstanceNames().map((uniqueEventName) => `{ "content": "${uniqueEventName}", "id": "${uniqueEventName}" },`).join('\n    ')}
+    ${timeline
+        .getUniqueEventInstanceNames()
+        .map((uniqueEventName) => `{ "content": "${uniqueEventName}", "id": "${uniqueEventName}" },`)
+        .join("\n    ")}
+    ${timeline.anyPatientEventInstances() ? `{ "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },` : ""}
   ]);
 
 var items = new vis.DataSet([
-    ${timeline.getDays().map((timelineDay, counter) => {
-      const periodInstances = timelineDay.getPeriodInstances();
-      if (periodInstances.length === 0) {
-        return '';
-      }
-      return periodInstances.map((periodInstance, index) => 
-        `{ start: new Date(${periodInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${periodInstance.getEndDayStringAsDateFrom(referenceDate, timeline)}), group: "Phase", className: "${periodInstance.getName().toLowerCase()}-phase", title: "Day: ${periodInstance.getStartDay()}", content: "<b>${periodInstance.getName()}</b>", id: "${periodInstance.getName() + getUniqueNumber()}" },`
-      ).filter(item => item !== '').join('');
-    }).filter(item => item !== '').join("\n    ")}
-    ${timeline.getDays().map((timelineDay, counter) => timelineDay.getEventInstances().map((eventInstance, index) => `${eventInstance.anyDaysBefore()  ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}
-    { start: new Date(${eventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as EventInstance).scheduledEvent.configuredEvent.schedule.eventStart).replace(/"/g, '')}", content: "&nbsp;", id: "${eventInstance.getName()+ getUniqueNumber()}" },
-    ${eventInstance.anyDaysAfter()  ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName()+ getUniqueNumber()}" },` : ''}`).filter(item => item !== '').join('\n    ')).filter(item => item !== '').join('')}
-  ])`
-    return template;
-  }
+    ${timeline
+        .getDays()
+        .map((timelineDay, counter) => {
+            const periodInstances = timelineDay.getPeriodInstances();
+            if (periodInstances.length === 0) {
+                return "";
+            }
+            return periodInstances
+                .map(
+                    (periodInstance, index) =>
+                        `{ start: new Date(${periodInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${periodInstance.getEndDayStringAsDateFrom(referenceDate, timeline)}), group: "Phase", className: "${periodInstance.getName().toLowerCase()}-phase", title: "Day: ${periodInstance.getStartDay()}", content: "<b>${periodInstance.getName()}</b>", id: "${periodInstance.getName() + getUniqueNumber()}" },`,
+                )
+                .filter((item) => item !== "")
+                .join("");
+        })
+        .filter((item) => item !== "")
+        .join("\n    ")}
+    ${timeline
+        .getDays()
+        .map((timelineDay, counter) =>
+            timelineDay
+                .getEventInstances()
+                .map(
+                    (
+                        eventInstance,
+                        index,
+                    ) => `${eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },` : ""}
+    { start: new Date(${eventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/"/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
+    ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },` : ""}`,
+                )
+                .filter((item) => item !== "")
+                .join("\n    "),
+        )
+        .filter((item) => item !== "")
+        .join("")}
+        
+    ${timeline
+        .getDays()
+        .map((timelineDay, counter) =>
+            timelineDay
+                .getPatientEventInstances()
+                .map(
+                    (patientEventInstance, index) =>
+                        `{ start: new Date(${patientEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "Patient visit:'${patientEventInstance.getName() + "'" + (patientEventInstance.getVisitInstanceNumber() > 1 ? " #" + patientEventInstance.getVisitInstanceNumber() : "")}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                )
+                .filter((item) => item !== "")
+                .join("\n    "),
+        )
+        .filter((item) => item !== "")
+        .join("")}
 
+  ])`;
+        return template;
+    }
 
-  static getTimelineVisualizationHTML(timeline: Timeline): string {
-    var template = 
-` // create visualization
+    static getTimelineVisualizationHTML(timeline: Timeline): string {
+        var template = ` // create visualization
   var container = document.getElementById('visualization');
   var options = {
     format: {
@@ -66,21 +106,20 @@ var items = new vis.DataSet([
     showMajorLabels: false,
     orientation: 'both',
     start: new Date(2024,0,1),
-    end: new Date(2024, 0, ${timeline.getMaxDayOnTimeline()+1}, 23, 59, 59),
+    end: new Date(2024, 0, ${timeline.getMaxDayOnTimeline() + 1}, 23, 59, 59),
     min: new Date(2024, 0, 1),
-    max: new Date(2024, 0, ${timeline.getMaxDayOnTimeline()+1}, 23, 59, 59),
+    max: new Date(2024, 0, ${timeline.getMaxDayOnTimeline() + 1}, 23, 59, 59),
     margin: {
         item: {
             horizontal: 0,
         },
     },
-  };`
-    return template;
-  }
+  };`;
+        return template;
+    }
 
-
-  static getTimelineAsHTMLPage(timelineDataAsScript: string): string {
-    return `<!DOCTYPE HTML>
+    static getTimelineAsHTMLPage(timelineDataAsScript: string): string {
+        return `<!DOCTYPE HTML>
 <html>
 <head>
   <title>Timeline Chart</title>
@@ -98,15 +137,15 @@ var items = new vis.DataSet([
     }
     
     .vis-item.screen  { background-color: #B0E2FF; }
-    .vis-item.v2      { background-color: #EAEAEA; }
-    .vis-item.v3 { background-color: #FA8072; }
     .vis-item.screening-phase { background-color: #5ceb5c; }
     .vis-item.treatment-phase { background-color: #9370ed; }
-    .vis-item.v5  { background-color: #FFFFCC; }
     .vis-item.window  { background-color: #c3c3be; }
     .vis-item.screening-visits  { background-color: #bceebc; }
     .vis-item.treatment-visits  { background-color: #ccbcf4; }
-    .vis-item.any-day  { background-color: #95a89a; }
+    .vis-item.patient  { background-color: #95a89a; }
+    .vis-item.out-of-window { background-color: orange; }
+    .vis-item.visit-not-found { background-color: red; }
+    .vis-item.in-window { background-color: yellow; }
 
     
   </style>
@@ -135,10 +174,10 @@ var items = new vis.DataSet([
 </html>
 
     `;
-  }
+    }
 
-  static getTimelineAsHTMLBlock(timelineDataAsScript: string): string {
-  return `  <style>
+    static getTimelineAsHTMLBlock(timelineDataAsScript: string): string {
+        return `  <style>
     body, html {
       font-family: arial, sans-serif;
       font-size: 11pt;
@@ -186,6 +225,6 @@ var items = new vis.DataSet([
 
 </script>
 
-    `;  }
-
+    `;
+    }
 }

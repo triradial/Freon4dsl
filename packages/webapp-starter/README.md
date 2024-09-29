@@ -37,13 +37,13 @@ language. For example, change the following lines ...
 add the following when you want to use the DocuProject.
 
     ```typescript
-    setCustomComponents([
-        {component: ShowAnimatedGif, knownAs: "AnimatedGif"},
-        {component: SMUI_Card_Component, knownAs: "SMUI_Card"},
-        {component: SMUI_Accordion, knownAs: "SMUI_Accordion"},
-        {component: SMUI_Dialog, knownAs: "SMUI_Dialog"},
-        {component: DatePicker, knownAs: "DatePicker"}
-    ]);
+    // setCustomComponents([
+    //     {component: ShowAnimatedGif, knownAs: "AnimatedGif"},
+    //     {component: SMUI_Card_Component, knownAs: "SMUI_Card"},
+    //     {component: SMUI_Accordion, knownAs: "SMUI_Accordion"},
+    //     {component: SMUI_Dialog, knownAs: "SMUI_Dialog"},
+    //     {component: DatePicker, knownAs: "DatePicker"}
+    // ]);
     ```
 
 ## Run build-dev or build from the top-level 

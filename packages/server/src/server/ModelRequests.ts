@@ -1,7 +1,7 @@
-import { issuestoString, LanguageRegistry, LionWebJsonChunk, LionWebValidator } from "@lionweb/validation"
+import { issuestoString, LanguageRegistry, LionWebJsonChunk, LionWebValidator } from "@lionweb/validation";
 import * as fs from "fs";
 import { IRouterContext } from "koa-router";
-import * as path from "node:path"
+import * as path from "node:path";
 // import { StudyConfiguration, StudyConfigurationModel, StudyConfigurationModelEnvironment, Simulator, StudyChecklistDocumentTemplate } from "@freon4dsl/samples-study-configuration";
 
 import { FreLionwebSerializer } from "@freon4dsl/core";
@@ -12,7 +12,7 @@ const storeFolder = "./modelstore";
 
 export class ModelRequests {
     public static validate = false;
-    
+
     public static async putModelUnit(foldername: string, name: string, ctx: IRouterContext) {
         try {
             this.checkStoreFolder();
@@ -29,19 +29,19 @@ export class ModelRequests {
     public static async getModelUnit(foldername: string, name: string, ctx: IRouterContext) {
         try {
             this.checkStoreFolder();
-            const result = fs.readFileSync(path.join(`${storeFolder}`, foldername, `${name}.json`))
+            const result = fs.readFileSync(path.join(`${storeFolder}`, foldername, `${name}.json`));
             if (ModelRequests.validate) {
-                const jsonObject = JSON.parse(result.toString())
+                const jsonObject = JSON.parse(result.toString());
                 // LOGGER.log(`jsonObject ${JSON.stringify(jsonObject)}`);
                 const chunk = jsonObject as LionWebJsonChunk;
-                const validator = new LionWebValidator(chunk, new LanguageRegistry())
-                validator.validateSyntax()
+                const validator = new LionWebValidator(chunk, new LanguageRegistry());
+                validator.validateSyntax();
                 if (validator.validationResult.hasErrors()) {
-                    console.error(issuestoString(validator.validationResult, name + ": lionweb-deserialize-syntax"))
+                    console.error(issuestoString(validator.validationResult, name + ": lionweb-deserialize-syntax"));
                 }
-                validator.validateReferences()
+                validator.validateReferences();
                 if (validator.validationResult.hasErrors()) {
-                    console.error(issuestoString(validator.validationResult, name + ": lionweb-deserialize-references"))
+                    console.error(issuestoString(validator.validationResult, name + ": lionweb-deserialize-references"));
                 }
             }
             ctx.response.body = result;
@@ -52,13 +52,13 @@ export class ModelRequests {
 
     public static saveToFile(stringToSave: string, filename: string) {
         try {
-          fs.writeFileSync(filename, stringToSave);
-          console.log('File written successfully');
+            fs.writeFileSync(filename, stringToSave);
+            console.log("File written successfully");
         } catch (err) {
-          console.error('Error writing file:', err);
+            console.error("Error writing file:", err);
         }
-      }
-      
+    }
+
     public static async printModelUnit(modelName: string, name: string, ctx: IRouterContext) {
         const folderPath = path.join(`${storeFolder}`, modelName, `${name}.json`);
         try {
@@ -70,7 +70,7 @@ export class ModelRequests {
             // let studyConfigurationUnit: StudyConfiguration = ts as StudyConfiguration;
             // var studyConfigurationModel: StudyConfigurationModel;
             // studyConfigurationModel.addUnit(studyConfigurationUnit)
-    
+
             // const simulator = new Simulator(studyConfigurationUnit);
             // simulator.run();
             // let timeline = simulator.timeline;
@@ -78,16 +78,15 @@ export class ModelRequests {
 
             // ModelRequests.saveToFile(studyChecklistAsMarkdown, "StudyOnServer.md");
             const resultAsObj = {
-                url: "StudyOnServer.md"
-              };
-              
+                url: "StudyOnServer.md",
+            };
+
             const result = JSON.stringify(resultAsObj);
             ctx.response.body = result;
         } catch (e) {
             console.log(e.message);
         }
     }
-
 
     public static async getUnitList(foldername: string, ctx: IRouterContext) {
         try {
@@ -157,7 +156,7 @@ export class ModelRequests {
     //     const serializer = new FreLionwebSerializer();
     //     const ts = serializer.toTypeScriptInstance(modelUnitAsString);
     //     let studyConfiguration: StudyConfiguration = ts as StudyConfiguration;
-      
+
     //     let simulator = new Simulator(studyConfiguration);
     //     simulator.run();
     //     const timeline = simulator.getTimeline();

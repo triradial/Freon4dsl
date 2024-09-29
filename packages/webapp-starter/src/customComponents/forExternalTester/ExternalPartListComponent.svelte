@@ -1,9 +1,9 @@
 <script lang="ts">
-    import {afterUpdate, onMount} from "svelte";
-    import {ExternalPartListBox, FreEditor, FreNode} from "@freon4dsl/core";
-    import {BB} from "@freon4dsl/samples-external-tester";
-    import {RenderComponent} from "@freon4dsl/core-svelte";
-    import {runInAction} from "mobx";
+    import { afterUpdate, onMount } from "svelte";
+    import { ExternalPartListBox, FreEditor, FreNode } from "@freon4dsl/core";
+    import { BB } from "@freon4dsl/samples-external-tester";
+    import { RenderComponent } from "@freon4dsl/core-svelte";
+    import { runInAction } from "mobx";
     export let box: ExternalPartListBox;
     export let editor: FreEditor;
 
@@ -22,13 +22,13 @@
     getValue();
 
     const addChild = () => {
-        let newBB: BB = BB.create({name: "new element", numberProp: 100, booleanProp: true});
+        let newBB: BB = BB.create({ name: "new element", numberProp: 100, booleanProp: true });
         // Note that you need to put any changes to the actual model in a 'runInAction',
         // because all elements in the model are reactive using mobx.
         runInAction(() => {
             value.push(newBB);
         });
-    }
+    };
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
@@ -59,7 +59,7 @@
     The replacer is showing a list of children, each in their native boxes.
     <ol>
         {#each box.children as childBox}
-            <li><RenderComponent box={childBox} editor={editor} /></li>
+            <li><RenderComponent box={childBox} {editor} /></li>
         {/each}
     </ol>
     <button on:click={addChild} bind:this={button}>Add child</button>

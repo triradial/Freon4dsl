@@ -68,8 +68,7 @@
                },
                "children": [
                   "ID-654",
-                  "ID-39",
-                  "ID-110"
+                  "ID-39"
                ]
             },
             {
@@ -262,7 +261,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -713,7 +712,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -1077,7 +1076,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -1224,7 +1223,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": "ID-14"
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -1455,7 +1454,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -1602,7 +1601,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": "ID-14"
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -1922,7 +1921,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -2230,7 +2229,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -2369,7 +2368,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -2382,7 +2381,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -2418,7 +2417,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -2649,7 +2648,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -2788,7 +2787,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -2801,7 +2800,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -2837,7 +2836,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -3068,7 +3067,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -3207,7 +3206,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -3220,7 +3219,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -3256,7 +3255,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -3487,7 +3486,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -3626,7 +3625,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -3639,7 +3638,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -3675,7 +3674,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -3906,7 +3905,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -4045,7 +4044,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -4058,7 +4057,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -4094,7 +4093,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -4325,7 +4324,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -4464,7 +4463,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -4477,7 +4476,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -4513,7 +4512,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -4744,7 +4743,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -4883,7 +4882,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -4896,7 +4895,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -4932,7 +4931,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -5163,7 +5162,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -5302,7 +5301,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -5315,7 +5314,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -5351,7 +5350,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -5582,7 +5581,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -5721,7 +5720,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -5734,7 +5733,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -5770,7 +5769,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -6001,7 +6000,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -6140,7 +6139,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -6153,7 +6152,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -6189,7 +6188,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -6420,7 +6419,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -6559,7 +6558,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -6572,7 +6571,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -6608,7 +6607,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -6839,7 +6838,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -6978,7 +6977,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -6991,7 +6990,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -7027,7 +7026,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -7258,7 +7257,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -7397,7 +7396,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -7410,7 +7409,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -7446,7 +7445,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -7677,7 +7676,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -7816,7 +7815,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -7829,7 +7828,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -7865,7 +7864,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -8096,7 +8095,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -8235,7 +8234,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -8248,7 +8247,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -8284,7 +8283,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": "ID-15"
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -8515,7 +8514,7 @@
                "targets": [
                   {
                      "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "reference": "ID-27"
                   }
                ]
             }
@@ -8654,7 +8653,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-17"
+                     "reference": "ID-20"
                   }
                ]
             },
@@ -8667,7 +8666,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": "ID-22"
+                     "reference": "ID-25"
                   }
                ]
             }
@@ -8703,7 +8702,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": "ID-14"
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -8852,364 +8851,6 @@
          "references": [],
          "annotations": [],
          "parent": "ID-638"
-      },
-      {
-         "id": "ID-110",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Period"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-name"
-               },
-               "value": "NewPeriod"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-description"
-               },
-               "children": [
-                  "ID-111"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Period-events"
-               },
-               "children": [
-                  "ID-112"
-               ]
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-37"
-      },
-      {
-         "id": "ID-111",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-text"
-               },
-               "value": " "
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-rawText"
-               },
-               "value": " "
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-110"
-      },
-      {
-         "id": "ID-112",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Event"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Event-name"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Event-alternativeName"
-               },
-               "value": " "
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Event-showSequenced"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Event-eventNumber"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Event-tasks"
-               },
-               "children": []
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Event-description"
-               },
-               "children": [
-                  "ID-113"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Event-schedule"
-               },
-               "children": [
-                  "ID-114"
-               ]
-            }
-         ],
-         "references": [
-            {
-               "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Event-typeOfEvent"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "site",
-                     "reference": "ID-24"
-                  }
-               ]
-            }
-         ],
-         "annotations": [],
-         "parent": "ID-110"
-      },
-      {
-         "id": "ID-113",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-text"
-               },
-               "value": " "
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Description-rawText"
-               },
-               "value": " "
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-112"
-      },
-      {
-         "id": "ID-114",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-EventSchedule"
-         },
-         "properties": [],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-EventSchedule-eventWindow"
-               },
-               "children": [
-                  "ID-115"
-               ]
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-112"
-      },
-      {
-         "id": "ID-115",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-EventWindow"
-         },
-         "properties": [],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-EventWindow-maxDaysBefore"
-               },
-               "children": [
-                  "ID-116"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-EventWindow-daysBefore"
-               },
-               "children": [
-                  "ID-117"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-EventWindow-daysAfter"
-               },
-               "children": [
-                  "ID-118"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-EventWindow-maxDaysAfter"
-               },
-               "children": [
-                  "ID-119"
-               ]
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-114"
-      },
-      {
-         "id": "ID-116",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Days"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Days-count"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-115"
-      },
-      {
-         "id": "ID-117",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Days"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Days-count"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-115"
-      },
-      {
-         "id": "ID-118",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Days"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Days-count"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-115"
-      },
-      {
-         "id": "ID-119",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Days"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Days-count"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-115"
       },
       {
          "id": "ID-38",

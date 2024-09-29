@@ -4,8 +4,8 @@ import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfiguration
 import * as language from "../language/gen/index";
 import { Timeline } from "../custom/timeline/Timeline";
 
-import * as Sim from "../custom/simjs/sim.js"
-import { Simulator, } from "../custom/timeline/Simulator";
+import * as Sim from "../custom/simjs/sim.js";
+import { Simulator } from "../custom/timeline/Simulator";
 import { StudyConfiguration, StudyConfigurationModel } from "../custom/../language/gen/index";
 import { StudyConfigurationModelEnvironment } from "../custom/../config/gen/StudyConfigurationModelEnvironment";
 import { TimelineChartTemplate } from "../custom/templates/TimelineChartTemplate";
@@ -14,8 +14,7 @@ import { RtObjectScheduledEventWrapper, ScheduledEvent } from "custom/timeline/S
 
 let main: IMainInterpreter;
 
-
-function calcTimeAmount(value: number, unit: string, ): RtObject {
+function calcTimeAmount(value: number, unit: string): RtObject {
     let unitAmount: number;
     // console.log("entered calcTimeAmount");
     // console.log("calcTimeAmount: value: " + value + ", unit: " + unit);
@@ -42,7 +41,6 @@ function calcTimeAmount(value: number, unit: string, ): RtObject {
  * This class is initially empty, and will not be overwritten if it already exists.
  */
 export class StudyConfigurationModelInterpreter extends StudyConfigurationModelInterpreterBase {
-
     constructor(m: IMainInterpreter) {
         super();
         main = m;
@@ -57,7 +55,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
             let studyConfigurationUnit = node as StudyConfiguration;
             simulator = new Simulator(studyConfigurationUnit);
-    
+
             // WHEN the study is simulated and a timeline picture is generated
             simulator.run();
             let timeline = simulator.timeline;
@@ -74,7 +72,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                 margin: 20px !important;
               }
             </style>
-            `;            
+            `;
             const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
             const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
             const html = `${styles}<div class="limited-width-container">${tableHTML + TimelineTableTemplate.addSomeSpace() + chartHTML}</div>`;
@@ -87,7 +85,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     evalAndExpression(node: language.AndExpression, ctx: InterpreterContext): RtObject {
         const left = main.evaluate(node.left, ctx) as RtBoolean;
         const right = main.evaluate(node.right, ctx) as RtBoolean;
-        return (left).and(right);
+        return left.and(right);
     }
 
     evalDay(node: language.Day, ctx: InterpreterContext): RtObject {
@@ -103,7 +101,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     evalEqualsExpression(node: language.EqualsExpression, ctx: InterpreterContext): RtObject {
         const left = main.evaluate(node.left, ctx);
         const right = main.evaluate(node.right, ctx);
-        return (left).equals(right);
+        return left.equals(right);
     }
 
     evalEventReference(node: language.EventReference, ctx: InterpreterContext): RtObject {
@@ -113,34 +111,58 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         const operator = node.operator;
         const timeAmount = node.timeAmount;
         const eventState = node.eventState;
-        
+
         // let owningEvent = ((node.freOwner() as language.When).freOwner() as language.EventSchedule).freOwner() as language.Event;
-        let owningEvent = ownerOfType(node, "Event") as language.Event; 
+        let owningEvent = ownerOfType(node, "Event") as language.Event;
         // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
         // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
         // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
         // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
-        let lastInstanceOfReferencedEvent = timeline.getLastInstanceForThisEvent(referencedEvent);
+        let lastInstanceOfReferencedEvent = timeline.getLastScheduledEventInstanceForThisEventsName(referencedEvent);
         if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
-            console.log("The event '" + owningEvent.name + "' reference to: '" + referencedEvent.name + "' cannot be evaluated because the referenced event is not on the timeline" );
+            console.log(
+                "The event '" +
+                    owningEvent.name +
+                    "' reference to: '" +
+                    referencedEvent.name +
+                    "' cannot be evaluated because the referenced event is not on the timeline",
+            );
             return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
         } else {
-            if (lastInstanceOfReferencedEvent.scheduledEvent.isRepeatingEvent()) {
-                if (node.eventState.name === language.EventState.eachCompleted.name) { 
-                    const numberOfReferencedEventCompleted = timeline.numberCompletedInstancesOf(lastInstanceOfReferencedEvent.scheduledEvent);
-                    let owningScheduledEvent = (ctx.find("scheduledEvent") as RtObjectScheduledEventWrapper).scheduledEvent; 
+            if (lastInstanceOfReferencedEvent.getScheduledEvent().isRepeatingEvent()) {
+                if (node.eventState.name === language.EventState.eachCompleted.name) {
+                    const numberOfReferencedEventCompleted = timeline.numberCompletedInstancesOf(lastInstanceOfReferencedEvent.getScheduledEvent());
+                    let owningScheduledEvent = (ctx.find("scheduledEvent") as RtObjectScheduledEventWrapper).getScheduledEvent();
                     const numberOfThisEventCompleted = timeline.numberCompletedInstancesOf(owningScheduledEvent);
                     if (numberOfReferencedEventCompleted <= numberOfThisEventCompleted) {
                         if (numberOfReferencedEventCompleted >= owningScheduledEvent.numberOfRepeats(timeline) + 1) {
-                            console.log("The event '" + owningEvent.name + "' has a each-completed reference to:'" + referencedEvent.name + "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated" );
+                            console.log(
+                                "The event '" +
+                                    owningEvent.name +
+                                    "' has a each-completed reference to:'" +
+                                    referencedEvent.name +
+                                    "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated",
+                            );
                         } else {
-                            console.log("The event '" + owningEvent.name + "' has a each-completed reference to:'" + referencedEvent.name + "' and the parallel repeating event is completed" );
+                            console.log(
+                                "The event '" +
+                                    owningEvent.name +
+                                    "' has a each-completed reference to:'" +
+                                    referencedEvent.name +
+                                    "' and the parallel repeating event is completed",
+                            );
                         }
                         return undefined; // dependency on a repeating event that we run in parallel with and the parallel event hasn't completed yet
                     }
-                 } else { 
-                    if (lastInstanceOfReferencedEvent.scheduledEvent.anyRepeatsNotCompleted(timeline)) {
-                        console.log("The event '" + owningEvent.name + "' has a reference to:'" + referencedEvent.name + "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated" );
+                } else {
+                    if (lastInstanceOfReferencedEvent.getScheduledEvent().anyRepeatsNotCompleted(timeline)) {
+                        console.log(
+                            "The event '" +
+                                owningEvent.name +
+                                "' has a reference to:'" +
+                                referencedEvent.name +
+                                "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated",
+                        );
                         return undefined; // dependency on a repeating event that hasn't completed yet
                     }
                 }
@@ -190,7 +212,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     evalOrExpression(node: language.OrExpression, ctx: InterpreterContext): RtObject {
         const left = main.evaluate(node.left, ctx) as RtBoolean;
         const right = main.evaluate(node.right, ctx) as RtBoolean;
-        return (left).or(right);
+        return left.or(right);
     }
 
     evalPlusExpression(node: language.PlusExpression, ctx: InterpreterContext): RtObject {
@@ -200,7 +222,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalRepeatCount(node: language.RepeatCount, ctx: InterpreterContext): RtObject {
-        return new RtNumber(node.repeatCount)
+        return new RtNumber(node.repeatCount);
     }
 
     evalRepeatEvery(node: language.RepeatEvery, ctx: InterpreterContext): RtObject {
