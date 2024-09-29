@@ -601,7 +601,7 @@
 	{/key}
 	{#key isExpanded}
 		{#if canExpand}
-			<Button pill={true} class="w-4 h-7 p-0 ml-1" color="none" size="xs" on:click={toggleExpanded}>
+			<Button pill={true} class="w-4 h-4 p-0 ml-1" color="none" size="xs" on:click={toggleExpanded}>
 				<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
 			</Button>
 		{:else}

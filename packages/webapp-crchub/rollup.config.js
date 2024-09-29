@@ -4,8 +4,10 @@ import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import css from 'rollup-plugin-css-only';
-import sveltePreprocess from 'svelte-preprocess';
+import { sveltePreprocess } from 'svelte-preprocess';
 import json from '@rollup/plugin-json';
+import replace from '@rollup/plugin-replace';
+import injectProcessEnv from 'rollup-plugin-inject-process-env';
 
 const production = !process.env.ROLLUP_WATCH;
 const dev = true;
@@ -22,33 +24,30 @@ export default {
     svelte({
       preprocess: sveltePreprocess({ sourceMap: !production }),
       compilerOptions: {
-        // enable run-time checks when not in production
         dev: !production
       }
     }),
-    // we'll extract any component CSS out into
-    // a separate file - better for performance
     css({ output: 'bundle.css' }),
-
     json(),
-
-    // If you have external dependencies installed from
-    // npm, you'll most likely need these plugins. In
-    // some cases you'll need additional configuration -
-    // consult the documentation for details:
-    // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
       browser: true,
-      dedupe: ['svelte']
+      dedupe: ['svelte'],
+      exportConditions: ['svelte'],
+      extensions: ['.svelte', '.mjs', '.js', '.json', '.node']
+    }),
+    replace({
+      'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
+      preventAssignment: true
     }),
     commonjs(),
     typescript({
       sourceMap: !production || dev,
       inlineSources: !production || dev
     }),
-
-    // If we're building for production (npm run build
-    // instead of npm run dev), minify
+    injectProcessEnv({
+			NODE_ENV: 'development',
+			NODE_PORT: '8001'
+		}),
     production && terser()
   ],
   watch: {

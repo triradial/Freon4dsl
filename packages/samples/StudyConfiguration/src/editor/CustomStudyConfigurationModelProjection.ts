@@ -68,13 +68,13 @@ projectStudyConfiguration (studyconfig: StudyConfiguration): Box {
       BoxUtil.listGroupBox(element, "study-options", "Options",
         BoxFactory.verticalLayout(element, "StudyConfiguration-vlist-line-3", "", 
           [   
-            BoxUtil.emptyLineBox2(element, "option-empty-line", "h-4"),
+            BoxUtil.emptyLineBox2(element, "option-empty-line", "h-2"),
             BoxUtil.switchElement(element, "showActivityDetails", "Show Shared Tasks"),
             BoxUtil.switchElement(element, "showSystems", "Show Systems"),
             BoxUtil.switchElement(element, "showScheduling", "Show Scheduling") 
           ], 
         {cssClass: "w-full ml-4"}),
-      {cssClass: "type1 mt-5", isExpanded: true}),
+      {cssClass: "type1", isExpanded: true}),
       BoxUtil.listGroupBox(element, "periods", "Study Periods",
         BoxUtil.verticalPartListBox(element, (element).periods, "periods", null, this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
       {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),

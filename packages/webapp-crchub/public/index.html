@@ -1,4 +1,13 @@
 <!DOCTYPE html>
+<script>
+    // Check for saved theme preference or default to dark theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const themeStylesheet = document.getElementById('theme-stylesheet');
+    if (themeStylesheet) {
+      themeStylesheet.href = savedTheme === 'dark' ? '/build/bundle-dark.css' : '/build/bundle-light.css';
+    }
+  </script>
+
 <html lang="en">
 <head>
     <meta charset='utf-8'>
@@ -7,8 +16,8 @@
     <title>CRCHub</title>
 
     <link rel='icon' type='image/svg' href='/assets/images/logo_grey.svg'>
-    <link rel='stylesheet' href='/build/bundle-dark.css'>
-    <link rel='stylesheet' href='/build/bundle.css'>
+    <link id="tailwind-stylesheet" rel='stylesheet' href='/build/tailwind.css'>
+    <link id="theme-stylesheet" rel='stylesheet' href='/build/bundle-dark.css'>
     <script defer src='/build/bundle.js'></script>
 </head>
 

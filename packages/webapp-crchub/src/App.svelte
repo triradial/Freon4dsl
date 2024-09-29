@@ -1,13 +1,12 @@
 <script lang="ts">
-    import { Router, Route, navigate } from "svelte-routing";
+    import { Router, Route } from "svelte-routing";
     import { ROUTE, VALID_ROUTES, type ValidRoute } from "./constants/routeConstants";
     import Main from "./pages/Main.svelte";
     import Login from "./pages/Login.svelte";
-    import NotFound from "./pages/Uknown.svelte";
     import { onMount } from "svelte";
     import { isAuthenticated, redirectUrl } from "./services/auth";
-    import { currentRoute } from "./services/routeStore";
-    import { updateCurrentRoute, navigateTo } from "./services/routeAction";
+    import { updateCurrentRoute } from "./services/routeAction";
+    import { theme } from './services/themeStore';
 
     let auth = false;
 
@@ -16,13 +15,8 @@
         if (storedAuth) {
             auth = storedAuth === "true";
         }
-
-        // window.addEventListener("navigateTo", (event: CustomEvent) => {
-        //     navigateTo(event.detail.name, event.detail.params);
-        // });
     });
-    
-        
+         
     $: {
         isAuthenticated.subscribe((value) => {
             auth = value;
@@ -79,6 +73,10 @@
     }
 
 </script>
+
+<svelte:head>
+    <link rel="stylesheet" href="/build/bundle-{$theme}.css">
+</svelte:head>
 
 <Router>
     {#if auth}

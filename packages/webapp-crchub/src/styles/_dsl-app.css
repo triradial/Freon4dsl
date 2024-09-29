@@ -1,0 +1,573 @@
+/* start DSL STYLES */
+
+main {
+  height: calc(100vh);
+}
+
+.editor-part {
+  height: 100%;
+  box-sizing: border-box;
+  padding:  0px 0px 0px 0px !important; /* top padding is 0 because the progress indicator uses 4px height */
+}
+
+/* #region FREON COMPONENTS */
+
+  .freon-component {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
+    font-family: "Arial";
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .render-component {
+    display: grid; 
+  }
+  
+  /* #region Label Component */
+  .label-component:empty:before {
+    content: attr(data-placeholdertext);
+    margin: 0px 0px 0px 4px;
+    padding: 0px 1px 0px 1px;
+  }
+
+  .label-component {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+    font-variant: normal;
+    margin: 0px 0px 0px 4px;
+    padding: 0px 1px 0px 1px;
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */
+
+  /* #region Text Component */
+  .text-component-width {
+    position: absolute;
+    left: -9999px;
+    display: inline-block;
+    margin: 0px 1px 0px 3px;
+    padding: 0px 0px 0px 2px;
+    border: none;
+    box-sizing: border-box;
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .text-component-input {
+    border-width: 0px;
+    box-sizing: border-box;
+    margin: 0px 1px 0px 3px;
+    padding: 0px 0px 0px 2px;
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+    padding-block: 0px;
+  }
+
+  .text-component-text {
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+    line-height: unset !important;
+    padding: 0px 1px 0px 2px;
+    margin: 0px 2px 0px 3px;
+    white-space: normal;
+    display: inline-block;
+  }
+
+  .text-component-placeholder {
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+    white-space: normal;
+    display: inline-block;
+  }
+
+  .text-component-actionPlaceholder {
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */
+
+  /* #region Switch Component */
+  .switch-component {
+    margin: 0;
+    padding: 4px 0;
+    display: inline-flex;
+    width: max-content;
+  }
+
+  .switch-component button {
+    width: 2.1em;
+    height: 1.1em;
+    position: relative;
+    border: none;
+  }
+
+  .switch-component button::before { /* defines the knob */
+    content: '';
+    position: absolute;
+    width: 0.9em;
+    height: 0.9em;
+    top: 0.1em;
+    right: 1.1em;
+    transition: transform 0.3s;
+  }
+
+  .switch-component button[aria-checked='true']{
+
+  }
+
+  .switch-component button[aria-checked='true']::before{
+    transform: translateX(1em);
+    transition: transform 0.3s;
+  }
+
+  .switch-component button:focus {
+    border-radius: 1.5em;
+  }
+
+  .switch-component button:hover {
+    border-radius: 1.5em;
+  }
+
+  .switch-component button {
+    border-radius: 1.5em;
+  }
+
+  .switch-component button::before {
+    border-radius: 100%;
+  }
+  /* #endregion */
+
+  /* #region List Group Component */
+  .list-group:empty:before {
+    content: attr(data-placeholdertext);
+    margin: 0px;
+    padding: 4px 0;
+  }
+
+  .list-group {
+    display: flex;
+    margin: 0px;
+    padding: 4px 0;
+    align-items: center;
+  }
+
+  .list-group .action-button {
+    display: none;
+    margin-left: 0.2rem;
+  }
+
+  .list-group:hover .action-button {
+    display: inline-block;
+    margin-left: 0.2rem;
+  }
+
+  .list-group.type1 {
+    height: 36px;
+  }
+  .list-group.type2 {
+    height: 32px;
+  }
+  .list-group.type3 {
+    height: 32px;
+  }
+  .list-group.type4 {
+    height: 32px;
+  }
+
+  .list-group-label {
+    padding-right: 0.5rem;
+    white-space: normal;
+  }
+
+  .list-group.type1 .list-group-label {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 1rem;
+    font-family: "Roboto";
+    text-transform: uppercase;
+  }
+
+  .list-group.type2 .list-group-label {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+    text-transform: uppercase;
+  }
+
+  .list-group.type3 .list-group-label {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.8rem;
+    font-family: "Roboto";
+    text-transform: uppercase;
+  }
+
+  .list-group.type4 .list-group-label {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.8rem;
+    font-family: "Roboto";
+    text-transform: uppercase;
+  }
+
+  .list-group.type4 .toggle-button {
+    color: inherit;
+  }
+  /* #endregion */
+
+  /* #region Item Group Component */
+  .item-group:empty:before {
+    content: attr(data-placeholdertext);
+    margin: 0px;
+    padding: 4px 0;
+  }
+
+  .item-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .item-group .action-button {
+    display: none;
+    margin-left: 0.2rem;
+  }
+
+  .item-group:hover .action-button {
+    display: inline-block;
+    margin-left: 0.2rem;
+  }
+
+  .item-group .required {
+  }
+
+  .item-group.type1 {
+    height: 2.3rem;
+  }
+
+  .item-group.type2 {
+    height: 2.3rem;
+  }
+
+  .item-group.type3 {
+    height: 2.3rem;
+  }
+
+  .item-group .item-group-label {
+    padding-right: 0.1rem;
+    white-space: normal;
+    margin-left: 0.2rem;
+  }
+
+  .item-group.type1 .item-group-label {
+    font-style: normal;
+    font-weight: lighter;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+  }
+
+  .item-group.type2 .item-group-label {
+    font-style: normal;
+    font-weight: lighter;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+  }
+  /* #endregion */
+
+  /* #region Layout Component */
+  .layout-component {
+    box-sizing: border-box;
+  }
+
+  .layout-component-horizontal {
+    white-space: nowrap;
+    display: flex;
+    padding: 0px;
+    height: 100%;
+    margin: 0px;
+  }
+
+  .layout-component-vertical {
+    display: block;
+    padding: 0px;
+    margin: 0px;
+  }
+  /* #endregion */
+
+  /* #region MultilineText2 Component */
+  .multiline2-component {
+    padding-right: 0.75rem;
+  }
+  .multiline2-text {
+    padding: 0px 0px 0px 2px; /* Adjusted as per variables */
+    margin: 4px 4px 4px 6px; /* Adjusted as per variables */
+    white-space: normal;
+    height: auto;
+    min-height: 1.5rem;
+  }
+  .multiline2-editor {
+    outline: 1px solid transparent;
+    outline-offset: 1px;
+    --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #fff;
+    --tw-ring-color: #32cd3275;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+    margin: 4px 4px 4px 4px;
+  }
+
+  .tinymce-wrapper {
+    width: 100%;
+    min-height: 3rem;
+    all: unset;
+  }
+
+  .tinymce-wrapper > div {
+    margin-left: 0.25rem;
+    min-height: 1.5rem;
+  }
+
+  span:has(> .tinymce-wrapper) {
+    width: 100%;
+  }
+  /* #endregion */
+
+  /* #region Date Component */
+  .date-component-width {
+    position: absolute;
+    left: -9999px;
+    display: inline-block;
+    line-height: 6px;
+    margin: 0px 1px 0px 3px; /* Adjusted as per variables */
+    border: none;
+    box-sizing: border-box;
+    padding: 0px 0px 0px 2px; /* Adjusted as per variables */
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .date-component-inputtext {
+    color: blue;
+    line-height: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0px 1px 0px 2px;
+    padding: 1px;
+    background: rgba(211, 227, 253, 255);
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    padding-inline: 2px;
+  }
+
+  .date-component-text {
+    color: blue;
+    background: inherit;
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    padding: 1px;
+    padding-left: 2px;
+    margin: 0px 1px 0px 2px;
+    margin-right: 2.5px;
+    white-space: normal;
+    display: inline-block;
+  }
+
+  .date-component-placeholder {
+    color: blue;
+    background: inherit;
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */
+
+  /* #region Time Component */
+  .time-component-width {
+    position: absolute;
+    left: -9999px;
+    display: inline-block;
+    line-height: 6px;
+    margin: 0px 1px 0px 3px; /* Adjusted as per variables */
+    border: none;
+    box-sizing: border-box;
+    padding: 0px 0px 0px 2px; /* Adjusted as per variables */
+    font-family: "Roboto";
+    font-size: 0.875rem;
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .time-component-input {
+    color: blue;
+    line-height: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0px 1px 0px 2px;
+    padding: 1px;
+    padding-inline: 2px;
+    background: rgba(211, 227, 253, 255);
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+  }
+
+  .time-component-text {
+    color: blue;
+    background: inherit;
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    padding: 1px;
+    padding-left: 2px;
+    margin: 0px 1px 0px 2px;
+    margin-right: 2.5px;
+    white-space: normal;
+    display: inline-block;
+  }
+
+  .time-component-placeholder {
+    color: blue;
+    background: inherit;
+    font-family: "Roboto";
+    font-size: 14pt;
+    font-weight: inherit;
+    font-style: inherit;
+    white-space: normal;
+    display: inline-block;
+  }
+  /* #endregion */
+
+  /* #region Indent Component */
+  .indent-component {
+    display: block;
+  }
+  /* #endregion */  
+
+  /* #region List Component */
+  .list-component-vertical {
+    display:grid;
+    padding: 0px;
+    border-width: 0pt;
+    border-style: none;
+    margin: 0px;
+    box-sizing: none;
+  }
+  /* #endregion */
+
+  /* #region Dropdown Component */
+  .dropdown-component {
+    gap: 0px;
+  }
+  /* #endregion */
+
+  /* #region Render Component */
+  .render-component-selected {
+    outline-style:none;
+    outline-width: 0px;
+  }
+  /* #endregion */
+
+  .contextmenu {
+    margin: 2px 2px 2px 2px;
+  }
+  .contextmenu-button {
+    border-radius: 2px;
+    padding: 4px !important;
+    margin: 3px 3px 0px 3px !important;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    gap: 2em;
+    place-items: center;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+  }
+
+/* #endregion */
+
+/* #region TAILWIND OVERRIDES */
+
+[type='text']:focus, 
+[type='email']:focus, 
+[type='url']:focus, 
+[type='password']:focus, 
+[type='number']:focus, 
+[type='date']:focus, 
+[type='datetime-local']:focus, 
+[type='month']:focus, 
+[type='search']:focus, 
+[type='tel']:focus,
+[type='time']:focus, 
+[type='week']:focus, 
+[multiple]:focus, textarea:focus, select:focus {
+  outline: 1px solid transparent !important;
+  outline-offset: 2px !important;
+  --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/) !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: #fff !important;
+  --tw-ring-color: #32cd3275 !important;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
+  border-color: #ffffff00;
+}
+/* #endregion */
+
+/* #region APPLICATION SETTINGS */
+.app-small-caps {
+  font-variant: all-small-caps !important;
+}
+
+.app-uppercase {
+  text-transform: uppercase;
+}
+
+.align-top {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-bottom {
+  align-items: flex-end;
+}
+/* #endregion */

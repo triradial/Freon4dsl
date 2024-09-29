@@ -5,16 +5,17 @@
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
     import { navigateTo } from "../../services/routeAction";
+    import { theme } from '../../services/themeStore';
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
     let studiesData: any[] = [];
 
-    // Subscribe to the patients store and update when it changes
     $: studiesData = $studies;
     $: if (gridApi) {
         gridApi.setGridOption("rowData", studiesData);
     }
+    $: gridTheme = $theme === 'dark' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
 
     onMount(async () => {
         await loadStudies();
@@ -53,7 +54,8 @@
                     },
                 },
                 {
-                    field: "therapeutic-area",
+                    field: "therapeuticArea",
+                    headerName: "Therapeutic Area",
                     enableRowGroup: true,
                     filter: "agSetColumnFilter",
                     filterParams: {
@@ -89,4 +91,4 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<div id="studyGrid" class="ag-theme-quartz" style="height:100%;width:100%;"></div>
+<div id="studyGrid" class={gridTheme} style="height:100%;width:100%;"></div>

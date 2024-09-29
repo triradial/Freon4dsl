@@ -1,75 +1,48 @@
 <script lang="ts">
-    import { Card, Button } from 'flowbite-svelte';
-    import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faHeart } from '@fortawesome/free-solid-svg-icons';
-  
-    let isLiked = false;
-  
-    function toggleLike() {
-      isLiked = !isLiked;
-    }
-    export let study;
+  import { Card } from 'flowbite-svelte';
+  import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+  import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
-  </script>
-  
-  <Card class="max-w-sm">
-    <div class="flex items-center justify-between mb-4">
-      <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Study</h5>
-      <Button color="light" class="p-1" on:click={toggleLike}>
-        <FontAwesomeIcon icon={faHeart} class={isLiked ? 'text-blue-700' : 'text-gray-500'} />
-      </Button>
+  export let study;
+  let isLiked = false;
+
+  function toggleLike() {
+    isLiked = !isLiked;
+  }
+</script>
+
+<Card class="crc-card-area max-w-sm h-full">
+  <div class="flex items-center justify-between mb-2">
+    <h3 class="text-base font-bold">Study</h3>
+  </div>
+  <div class="space-y-2">
+    <div>
+      <h4 class="card-label-text">Name</h4>
+      <p class="text-sm">{study.name}</p>
     </div>
-    <div class="flow-root">
-      <ul class="divide-y divide-gray-200 dark:divide-gray-700">
-        <li class="py-3 sm:py-4">
-          <div class="flex items-center space-x-4">
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                General
-              </p>
-              <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                { study.name }
-              </p>
-              <p class="text-xs text-gray-500 truncate dark:text-gray-400">{study.title}</p>
-            </div>
-          </div>
-        </li>
-        <li class="py-3 sm:py-4">
-          <div class="flex items-center space-x-4">
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                Phase
-              </p>
-              <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                {study.phase}
-              </p>
-            </div>
-          </div>
-        </li>
-        <li class="py-3 sm:py-4">
-          <div class="flex items-center space-x-4">
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                Therapeutic Area
-              </p>
-              <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                Oncology
-              </p>
-            </div>
-          </div>
-        </li>
-        <li class="py-3 sm:py-4">
-          <div class="flex items-center space-x-4">
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                Current Protocol
-              </p>
-              <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                v1
-              </p>
-            </div>
-          </div>
-        </li>
-      </ul>
+    <div>
+      <h4 class="card-label-text">Title</h4>
+      <p class="text-xs">{study.title}</p>
     </div>
-  </Card>
+    <div>
+      <h4 class="card-label-text">Phase</h4>
+      <p class="text-sm">{study.phase}</p>
+    </div>
+    <div>
+      <h4 class="card-label-text">Therapeutic Area</h4>
+      <p class="text-sm">{study.therapeuticArea}</p>
+    </div>
+    <div>
+      <h4 class="card-label-text text-gray-700">Current Protocol</h4>
+      <p class="text-sm">{study.currentProtocol}</p>
+    </div>
+  </div>
+</Card>
+
+<style>
+  :global(.card) {
+    border-radius: 0;
+    box-shadow: none;
+    border: 1px solid #e5e7eb;
+  }
+</style>
