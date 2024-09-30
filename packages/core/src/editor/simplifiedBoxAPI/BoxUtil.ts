@@ -665,7 +665,7 @@ export class BoxUtil {
                 this.booleanBox(element, id, { yes: "YES", no: "NO" }, BoolDisplay.SWITCH),
                 this.labelBox(element, label, id +'_label'),
             ],
-        { selectable: false, cssClass:"align-top" } );
+        { selectable: false, cssClass:"align-center" } );
     }
 
     static formatPlaceholder(placeholder: string | undefined, propertyname: string): string {

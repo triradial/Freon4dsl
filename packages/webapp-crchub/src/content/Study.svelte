@@ -7,6 +7,7 @@
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
     import { faUser, faSwatchbook } from '@fortawesome/free-solid-svg-icons';
     import { getStudy } from "../services/datastore";
+
     import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { EditorState } from "@freon4dsl/webapp-lib";
@@ -18,11 +19,8 @@
     let comm = EditorState.getInstance();
 
     onMount(async () => {
-        // await loadStudies();
         study = getStudy(id);
-
         comm.openModel(model);
-
     });
   
 
