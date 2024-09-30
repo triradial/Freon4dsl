@@ -17,7 +17,6 @@ export class PatientEventInstance extends TimelineEventInstance {
     }
 
     getName() {
-        // return this.scheduledPeriod.getName();
         return this.eventName;
     }
 
@@ -25,19 +24,9 @@ export class PatientEventInstance extends TimelineEventInstance {
         return this.visitInstanceNumber;
     }
 
-    // getIdOfScheduledPeriod() {
-    //   return this.scheduledPeriod.configuredPeriod.freId();
-    // }
-
-    setCompleted(onDay: number) {
-        this.setState(TimelineInstanceState.Completed);
-        this.setEndDay(onDay);
-    }
-
     getClassForDisplay(timeline: Timeline) {
-        timeline.printTimelineOfScheduledEventInstances();
         const scheduledEventInstance = timeline.getScheduledEventInstance(this.eventName, this.visitInstanceNumber);
-        let classForDisplay = "patient";
+        let classForDisplay = "on-scheduled-date";
         if (scheduledEventInstance === undefined) {
             classForDisplay = "visit-not-found";
         } else {

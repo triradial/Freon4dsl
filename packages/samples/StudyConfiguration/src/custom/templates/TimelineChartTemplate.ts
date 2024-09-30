@@ -27,6 +27,7 @@ export class TimelineChartTemplate {
         .map((uniqueEventName) => `{ "content": "${uniqueEventName}", "id": "${uniqueEventName}" },`)
         .join("\n    ")}
     ${timeline.anyPatientEventInstances() ? `{ "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },` : ""}
+    ${timeline.anyStaffAvailabilityEventInstances() ? `{ "content": "<b>Staff(${timeline.getBaselineStaff()})</b>", "id": "Staff", className: 'staff' },` : ""}
   ]);
 
 var items = new vis.DataSet([
@@ -74,6 +75,21 @@ var items = new vis.DataSet([
                 .map(
                     (patientEventInstance, index) =>
                         `{ start: new Date(${patientEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "Patient visit:'${patientEventInstance.getName() + "'" + (patientEventInstance.getVisitInstanceNumber() > 1 ? " #" + patientEventInstance.getVisitInstanceNumber() : "")}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                )
+                .filter((item) => item !== "")
+                .join("\n    "),
+        )
+        .filter((item) => item !== "")
+        .join("")}
+
+    ${timeline
+        .getDays()
+        .map((timelineDay, counter) =>
+            timelineDay
+                .getStaffAvailabilityEventInstances()
+                .map(
+                    (staffAvailabilityEventInstance, index) =>
+                        `{ start: new Date(${staffAvailabilityEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${staffAvailabilityEventInstance.getEndDayAsDateString(referenceDate, timeline)}), group: "Staff", className: "staff", title: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", content: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", id: "${staffAvailabilityEventInstance.getName() + getUniqueNumber()}" },`,
                 )
                 .filter((item) => item !== "")
                 .join("\n    "),
@@ -143,9 +159,20 @@ var items = new vis.DataSet([
     .vis-item.screening-visits  { background-color: #bceebc; }
     .vis-item.treatment-visits  { background-color: #ccbcf4; }
     .vis-item.patient  { background-color: #95a89a; }
+    .vis-item.on-scheduled-date  { background-color: #000000; }
+    .vis-item.staff  { background-color: #d0e14f; }
     .vis-item.out-of-window { background-color: orange; }
     .vis-item.visit-not-found { background-color: red; }
-    .vis-item.in-window { background-color: yellow; }
+    .vis-item.in-window {
+      background-image: repeating-linear-gradient(
+        45deg,
+        black,
+        black 5px,
+        white 2px,
+        white 7px
+      );
+    }
+
 
     
   </style>

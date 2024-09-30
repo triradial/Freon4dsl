@@ -25,6 +25,10 @@ import {
     VisitDate,
     Month,
     PatientVisitStatus,
+    Availability,
+    StaffLevel,
+    DateRange,
+    StartRangeDate,
 } from "../../language/gen/index";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
 import { Timeline } from "../timeline/Timeline";
@@ -442,4 +446,119 @@ export function createPatientInfoWithACompletedVisit(visitName: string, day: str
     let patient = PatientHistory.create({ id: "MV", patientVisits: [patientVisit] });
     let patientInfoUnit = PatientInfo.create({ patientHistories: [patient] });
     return patientInfoUnit;
+}
+
+export type ShiftsFromScheduledVisit = { name: string; instance: number; shift: number; numberFound: number; foundThisInstance: boolean };
+
+/*
+    * In this example  there are shifts for different instances of V4-V7-rando.
+    let shiftsFromScheduledVisit: utils.ShiftsFromScheduledVisit[] = [
+        { name: "V2 rando", instance: 1, shift: -1, numberFound: 0 },
+        { name: "V4-V7-rando", instance: 1, shift: -4, numberFound: 0 },
+        { name: "V4-V7-rando", instance: 2, shift: 2, numberFound: 0 },
+    ];
+
+    When each of "V4-V7-rando" is matched the numberFound is incremented. When the numberFound matches the instance number the shift is applied.
+    Having numberFound in the list of shifts passed in is a hack to have a place to track the number of times a visit is matched. 
+    There should be only one numberFound counter for each named visit to be shifted. The logic below increments the numberFound for each matching shift for the same visit
+*/
+
+export function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline, shiftsFromScheduledVisit: ShiftsFromScheduledVisit[]): PatientVisit[] {
+    let completedPatientVisits: PatientVisit[] = [];
+    let i = 0;
+    let stopAddingVisits = false;
+    const referenceDate = timeline.getReferenceDate();
+    timeline.printTimelineOfScheduledEventInstances();
+    timeline.getScheduleEventInstancesOrderByDay().forEach((scheduledEventInstance) => {
+        if (i++ < numberToCreate) {
+            let dateOfVisit: Date = new Date();
+            const startDay = scheduledEventInstance.getStartDay();
+            let foundAMatch = false;
+            // There can be multiple shifts for the same ScheduledEventInstance (a visit), each with a different instance number to shift. Need to search to find the shift for the instance number, if any.
+            let shiftsForVisitInstance = shiftsFromScheduledVisit.filter((record) => record.name === scheduledEventInstance.getName());
+            if (shiftsForVisitInstance.length > 0) {
+                shiftsForVisitInstance.forEach((shiftFromScheduledVisit) => {
+                    shiftFromScheduledVisit.numberFound++; // This is the hack where the number of times a visit is matched is tracked for each shift of the same visit rather than just one counter.
+                    if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance && shiftFromScheduledVisit.foundThisInstance === false) {
+                        // if this matches then this is the instance to shift
+                        dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift);
+                        shiftFromScheduledVisit.foundThisInstance = true;
+                        foundAMatch = true;
+                    }
+                });
+            }
+            if (!foundAMatch) {
+                dateOfVisit = addDays(referenceDate, startDay); // No shifts for this Visit
+            }
+            const patientVisit = createACompletedPatientVisit(
+                scheduledEventInstance.getName(),
+                dateOfVisit.getDate().toString(),
+                timeline.getMonthName(dateOfVisit.getMonth()),
+                dateOfVisit.getFullYear().toString(),
+                scheduledEventInstance.getInstanceNumber(),
+            );
+            console.log(
+                "Adding completed visit: " +
+                    scheduledEventInstance.getName() +
+                    " instance: " +
+                    scheduledEventInstance.getInstanceNumber() +
+                    " on " +
+                    dateOfVisit.toDateString(),
+            );
+            completedPatientVisits.push(patientVisit);
+        }
+    });
+    return completedPatientVisits;
+}
+
+function addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+function createStaffLevel(
+    staffAvailable: string,
+    startDay: string,
+    startMonth: string,
+    startYear: string,
+    endDay?: string,
+    endMonth?: string,
+    endYear?: string,
+) {
+    const startDateInRange = StartRangeDate.create({
+        day: startDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
+        year: startYear,
+    });
+    if (!endDay) {
+        endDay = startDay;
+        endMonth = startMonth;
+        endYear = startYear;
+    }
+    const endDateInRange = StartRangeDate.create({
+        day: endDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
+        year: endYear,
+    });
+    const staffDateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
+    const staffLevel = StaffLevel.create({ staffAvailable: staffAvailable, dateOrRange: staffDateOrRange });
+    return staffLevel;
+}
+
+export function createOneDayAvailability(day: string, month: string, year: string): Availability {
+    const staffLevel = createStaffLevel("3", day, month, year);
+    const availability = Availability.create({ baselineStaff: "4", staffLevels: [staffLevel] });
+    return availability;
+}
+
+export function createAvailability(): Availability {
+    let month = "January";
+    const year = "2024";
+    let staffLevels = [];
+    staffLevels.push(createStaffLevel("3", "-27", month, year, "-25", month, year));
+    staffLevels.push(createStaffLevel("2", "11", month, year));
+    staffLevels.push(createStaffLevel("2", "19", month, year));
+    const availability = Availability.create({ baselineStaff: "4", staffLevels: staffLevels });
+    return availability;
 }

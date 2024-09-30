@@ -22,9 +22,20 @@
     .vis-item.screening-visits  { background-color: #bceebc; }
     .vis-item.treatment-visits  { background-color: #ccbcf4; }
     .vis-item.patient  { background-color: #95a89a; }
+    .vis-item.on-scheduled-date  { background-color: #000000; }
+    .vis-item.staff  { background-color: #d0e14f; }
     .vis-item.out-of-window { background-color: orange; }
     .vis-item.visit-not-found { background-color: red; }
-    .vis-item.in-window { background-color: yellow; }
+    .vis-item.in-window {
+      background-image: repeating-linear-gradient(
+        45deg,
+        black,
+        black 5px,
+        white 2px,
+        white 7px
+      );
+    }
+
 
     
   </style>
@@ -56,6 +67,7 @@
     { "content": "V19-rando", "id": "V19-rando" },
     { "content": "V19-run in", "id": "V19-run in" },
     { "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },
+    { "content": "<b>Staff(4)</b>", "id": "Staff", className: 'staff' },
   ]);
 
 var items = new vis.DataSet([
@@ -137,8 +149,9 @@ var items = new vis.DataSet([
     { start: new Date(2024, 09, 17, 00, 00, 00), end: new Date(2024, 09, 17, 23, 59, 59), group: "V19-run in", className: "treatment-visits", title: "V19-run in: when V19-rando completed + 3 days", content: "&nbsp;", id: "V19-run in105" },
     { start: new Date(2024, 09, 18, 00, 00, 00), end: new Date(2024, 09, 19, 23, 59, 59), group: "V19-run in", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19-run in106" },
         
-    { start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Patient", className: "out-of-window", title: "Patient visit:'V2 rando'", content: "&nbsp;", id: "V2 rando107" },{ start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient", className: "out-of-window", title: "Patient visit:'V4-V7-rando'", content: "&nbsp;", id: "V4-V7-rando108" },{ start: new Date(2024, 01, 05, 00, 00, 00), end: new Date(2024, 01, 05, 23, 59, 59), group: "Patient", className: "patient", title: "Patient visit:'V4-V7-rando'", content: "&nbsp;", id: "V4-V7-rando109" },{ start: new Date(2024, 01, 12, 00, 00, 00), end: new Date(2024, 01, 12, 23, 59, 59), group: "Patient", className: "patient", title: "Patient visit:'V4-V7-rando' #2", content: "&nbsp;", id: "V4-V7-rando110" },{ start: new Date(2024, 01, 14, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "Patient", className: "in-window", title: "Patient visit:'V4-V7-rando' #2", content: "&nbsp;", id: "V4-V7-rando111" },{ start: new Date(2024, 01, 19, 00, 00, 00), end: new Date(2024, 01, 19, 23, 59, 59), group: "Patient", className: "patient", title: "Patient visit:'V4-V7-rando' #3", content: "&nbsp;", id: "V4-V7-rando112" },
-    { start: new Date(2024, 01, 19, 00, 00, 00), end: new Date(2024, 01, 19, 23, 59, 59), group: "Patient", className: "patient", title: "Patient visit:'V4-V7-rando' #3", content: "&nbsp;", id: "V4-V7-rando113" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:'V1 rando'", content: "&nbsp;", id: "V1 rando107" },{ start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:'V1 run in'", content: "&nbsp;", id: "V1 run in108" },{ start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Patient", className: "out-of-window", title: "Patient visit:'V2 rando'", content: "&nbsp;", id: "V2 rando109" },{ start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:'V2 run in'", content: "&nbsp;", id: "V2 run in110" },{ start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:'V3-rando'", content: "&nbsp;", id: "V3-rando111" },{ start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient", className: "out-of-window", title: "Patient visit:'V4-V7-rando'", content: "&nbsp;", id: "V4-V7-rando112" },{ start: new Date(2024, 01, 08, 00, 00, 00), end: new Date(2024, 01, 08, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:'V4-V7 run in'", content: "&nbsp;", id: "V4-V7 run in113" },{ start: new Date(2024, 01, 14, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "Patient", className: "in-window", title: "Patient visit:'V4-V7-rando' #2", content: "&nbsp;", id: "V4-V7-rando114" },{ start: new Date(2024, 01, 15, 00, 00, 00), end: new Date(2024, 01, 15, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:'V4-V7 run in' #2", content: "&nbsp;", id: "V4-V7 run in115" },{ start: new Date(2024, 01, 19, 00, 00, 00), end: new Date(2024, 01, 19, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:'V4-V7-rando' #3", content: "&nbsp;", id: "V4-V7-rando116" },
+
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "Staff", className: "staff", title: "3", content: "3", id: "3117" },{ start: new Date(2024, 01, 08, 00, 00, 00), end: new Date(2024, 01, 08, 23, 59, 59), group: "Staff", className: "staff", title: "2", content: "2", id: "2118" },{ start: new Date(2024, 01, 16, 00, 00, 00), end: new Date(2024, 01, 16, 23, 59, 59), group: "Staff", className: "staff", title: "2", content: "2", id: "2119" },
 
   ]) // create visualization
   var container = document.getElementById('visualization');
