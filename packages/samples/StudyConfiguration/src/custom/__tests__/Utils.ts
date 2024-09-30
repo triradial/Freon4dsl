@@ -448,7 +448,20 @@ export function createPatientInfoWithACompletedVisit(visitName: string, day: str
     return patientInfoUnit;
 }
 
-export type ShiftsFromScheduledVisit = { name: string; instance: number; shift: number; numberFound: number };
+export type ShiftsFromScheduledVisit = { name: string; instance: number; shift: number; numberFound: number; foundThisInstance: boolean };
+
+/*
+    * In this example  there are shifts for different instances of V4-V7-rando.
+    let shiftsFromScheduledVisit: utils.ShiftsFromScheduledVisit[] = [
+        { name: "V2 rando", instance: 1, shift: -1, numberFound: 0 },
+        { name: "V4-V7-rando", instance: 1, shift: -4, numberFound: 0 },
+        { name: "V4-V7-rando", instance: 2, shift: 2, numberFound: 0 },
+    ];
+
+    When each of "V4-V7-rando" is matched the numberFound is incremented. When the numberFound matches the instance number the shift is applied.
+    Having numberFound in the list of shifts passed in is a hack to have a place to track the number of times a visit is matched. 
+    There should be only one numberFound counter for each named visit to be shifted. The logic below increments the numberFound for each matching shift for the same visit
+*/
 
 export function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline, shiftsFromScheduledVisit: ShiftsFromScheduledVisit[]): PatientVisit[] {
     let completedPatientVisits: PatientVisit[] = [];
@@ -460,33 +473,39 @@ export function createCompletedPatientVisits(numberToCreate: number, timeline: T
         if (i++ < numberToCreate) {
             let dateOfVisit: Date = new Date();
             const startDay = scheduledEventInstance.getStartDay();
-            const matchingShiftsFromScheduledVisit = shiftsFromScheduledVisit.filter((record) => record.name === scheduledEventInstance.getName());
-            matchingShiftsFromScheduledVisit.forEach((shiftFromScheduledVisit) => {
-                if (!!shiftFromScheduledVisit) {
-                    shiftFromScheduledVisit.numberFound++;
-                    if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance)
+            let foundAMatch = false;
+            // There can be multiple shifts for the same ScheduledEventInstance (a visit), each with a different instance number to shift. Need to search to find the shift for the instance number, if any.
+            let shiftsForVisitInstance = shiftsFromScheduledVisit.filter((record) => record.name === scheduledEventInstance.getName());
+            if (shiftsForVisitInstance.length > 0) {
+                shiftsForVisitInstance.forEach((shiftFromScheduledVisit) => {
+                    shiftFromScheduledVisit.numberFound++; // This is the hack where the number of times a visit is matched is tracked for each shift of the same visit rather than just one counter.
+                    if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance && shiftFromScheduledVisit.foundThisInstance === false) {
+                        // if this matches then this is the instance to shift
                         dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift);
-                    else dateOfVisit = addDays(referenceDate, startDay);
-                } else {
-                    dateOfVisit = addDays(referenceDate, startDay);
-                }
-                const patientVisit = createACompletedPatientVisit(
-                    scheduledEventInstance.getName(),
-                    dateOfVisit.getDate().toString(),
-                    timeline.getMonthName(dateOfVisit.getMonth()),
-                    dateOfVisit.getFullYear().toString(),
-                    scheduledEventInstance.getInstanceNumber(),
-                );
-                console.log(
-                    "Adding completed visit: " +
-                        scheduledEventInstance.getName() +
-                        " instance: " +
-                        scheduledEventInstance.getInstanceNumber() +
-                        " on " +
-                        dateOfVisit.toDateString(),
-                );
-                completedPatientVisits.push(patientVisit);
-            });
+                        shiftFromScheduledVisit.foundThisInstance = true;
+                        foundAMatch = true;
+                    }
+                });
+            }
+            if (!foundAMatch) {
+                dateOfVisit = addDays(referenceDate, startDay); // No shifts for this Visit
+            }
+            const patientVisit = createACompletedPatientVisit(
+                scheduledEventInstance.getName(),
+                dateOfVisit.getDate().toString(),
+                timeline.getMonthName(dateOfVisit.getMonth()),
+                dateOfVisit.getFullYear().toString(),
+                scheduledEventInstance.getInstanceNumber(),
+            );
+            console.log(
+                "Adding completed visit: " +
+                    scheduledEventInstance.getName() +
+                    " instance: " +
+                    scheduledEventInstance.getInstanceNumber() +
+                    " on " +
+                    dateOfVisit.toDateString(),
+            );
+            completedPatientVisits.push(patientVisit);
         }
     });
     return completedPatientVisits;

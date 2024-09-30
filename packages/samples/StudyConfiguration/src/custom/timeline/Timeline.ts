@@ -49,9 +49,6 @@ export class Timeline extends RtObject {
     }
 
     getScheduledEventInstance(name: string, instanceNumber: number): ScheduledEventInstance {
-        if (instanceNumber > 1) {
-            console.log("Instance number: " + instanceNumber + " of: " + name);
-        }
         return this.days
             .flatMap((day) => day.events.filter((event) => event instanceof ScheduledEventInstance))
             .find((event) => {
@@ -133,7 +130,6 @@ export class Timeline extends RtObject {
     printTimelineOfScheduledEventInstances() {
         let output = "Scheduled Event Instances on Timeline:\n";
         this.days.forEach((day) => {
-            output += "Day: " + day.day + "\n";
             day.events.forEach((event) => {
                 if (event instanceof ScheduledEventInstance) {
                     let scheduledEventInstance = event as ScheduledEventInstance;

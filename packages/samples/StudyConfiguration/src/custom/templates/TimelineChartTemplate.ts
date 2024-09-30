@@ -159,10 +159,20 @@ var items = new vis.DataSet([
     .vis-item.screening-visits  { background-color: #bceebc; }
     .vis-item.treatment-visits  { background-color: #ccbcf4; }
     .vis-item.patient  { background-color: #95a89a; }
+    .vis-item.on-scheduled-date  { background-color: #000000; }
     .vis-item.staff  { background-color: #d0e14f; }
     .vis-item.out-of-window { background-color: orange; }
     .vis-item.visit-not-found { background-color: red; }
-    .vis-item.in-window { background-color: yellow; }
+    .vis-item.in-window {
+      background-image: repeating-linear-gradient(
+        45deg,
+        black,
+        black 5px,
+        white 2px,
+        white 7px
+      );
+    }
+
 
     
   </style>

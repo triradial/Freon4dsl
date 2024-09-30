@@ -26,7 +26,7 @@ export class PatientEventInstance extends TimelineEventInstance {
 
     getClassForDisplay(timeline: Timeline) {
         const scheduledEventInstance = timeline.getScheduledEventInstance(this.eventName, this.visitInstanceNumber);
-        let classForDisplay = "patient";
+        let classForDisplay = "on-scheduled-date";
         if (scheduledEventInstance === undefined) {
             classForDisplay = "visit-not-found";
         } else {
