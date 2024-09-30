@@ -1,13 +1,17 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 
-interface Patient {
+export interface Patient {
     id: string;
+    patientNumber: string;
+    displayName: string;
     name: string;
     dob: string;
+    gender: string;
+    studyId: string;
     study: string;
 }
 
-interface Study {
+export interface Study {
     id: string;
     name: string;
     identifiers: Array<{ type: string; identifier: string }>;
@@ -24,7 +28,7 @@ interface Study {
     }>;
 }  
 
-interface User {
+export interface User {
     id: string;
     name: string;
 }
@@ -35,7 +39,15 @@ export const users = writable<User[]>([]);
 
 let usersLoaded = false;
 
-export async function loadStudies(): Promise<boolean> {
+export async function initializeDatastore(): Promise<void> {
+  await Promise.all([
+    loadStudies(),
+    loadPatients(),
+    loadUsers()
+  ]);
+}
+
+async function loadStudies(): Promise<boolean> {
   try {
     const resp = await fetch('data/studies.json');
     const data = await resp.json();
@@ -47,7 +59,7 @@ export async function loadStudies(): Promise<boolean> {
   }
 }
 
-export async function loadPatients(): Promise<boolean> {
+async function loadPatients(): Promise<boolean> {
   try {
     const resp = await fetch('data/patients.json');
     const data = await resp.json();
@@ -70,3 +82,17 @@ export async function loadUsers(): Promise<boolean> {
     return false;
   }
 }
+
+export function getStudyPatients(studyId: string): Patient[] {
+    const filteredPatients = get(patients).filter((patient: Patient) => patient.studyId === studyId);
+    return filteredPatients;
+}
+
+export function getStudy(studyId: string): Study | undefined {
+  return get(studies).find((study: Study) => study.id === studyId);
+}
+
+export function getPatient(patientId: string): Patient | undefined {
+  return get(patients).find((patient: Patient) => patient.id === patientId);
+}
+

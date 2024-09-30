@@ -569,7 +569,7 @@
 
 <!-- todo there is a double selection here: two borders are showing -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-<span id="{id}" on:click={onClick} role="none" class="{cssClass}">
+<span id="{id}" on:click={onClick} role="none" class="{cssClass} text-component-parent">
 	{#if isEditing}
 		<span class="text-component-input">
 			<input type="text"

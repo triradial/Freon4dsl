@@ -54,16 +54,16 @@
     </NavUl>
     <div class="grow" />
     <div class="flex items-center gap-2 mr-2">
-        <Button pill={true} outline={true} class="!p-2 w-2 !px-4" size="md" on:click={themeToggle}>
+        <Button pill={true} outline={true} class="navbar-button" size="md" on:click={themeToggle}>
             {#key icon}
                 <FontAwesomeIcon icon={icon} />
             {/key}
         </Button>
     </div>
     <div class="flex items-center md:order-2">
-        <Avatar id="avatar-menu" border size="sm" class="cursor-pointer">MV</Avatar>
+        <Avatar id="avatar" border size="sm" class="cursor-pointer">MV</Avatar>
     </div>
-    <Dropdown placement="bottom" triggeredBy="#avatar-menu">
+    <Dropdown class="avatar-menu" placement="bottom" triggeredBy="#avatar">
         <DropdownHeader>
             <span class="block text-sm">Mike Vogel</span>
             <span class="block truncate text-sm font-medium">mike.vogel@triradial.com</span>

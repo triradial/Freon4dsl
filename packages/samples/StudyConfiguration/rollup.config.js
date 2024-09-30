@@ -19,7 +19,11 @@ const config = [
                 exclude: ['**/__tests__/**']
             })
         ],
-        external: ['@freon4dsl/core', 'net.akehurst.language-agl-processor']
+        external: [
+            '@freon4dsl/core', 
+            'net.akehurst.language-agl-processor',
+            '@bscotch/utility'
+        ]
     }
 ];
 

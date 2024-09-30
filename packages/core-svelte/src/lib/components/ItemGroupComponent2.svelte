@@ -454,11 +454,11 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events a11y-interactive-supports-focus -->
 <div id="{id}-group" class="item-group {cssClass} w-full" style="{style}" on:click={selectItem} role="button">
 	{#key isDraggable}
-		<FontAwesomeIcon class="w-3 h-3 ml-1" style="cursor: grab;" icon={faGripVertical} />
+		<FontAwesomeIcon class="w-3 h-3 ml-1 drag-button" style="cursor: grab;" icon={faGripVertical} />
 	{/key}
 	{#key isExpanded}
 		{#if canExpand}
-			<Button pill={true} class="w-4 h-7 p-0 ml-1" color="none" size="xs" on:click={toggleExpanded}>
+			<Button pill={true} class="w-4 h-7 p-0 ml-1 toggle-button" color="none" size="xs" on:click={toggleExpanded}>
 				<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
 			</Button>
 		{:else}

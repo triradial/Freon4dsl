@@ -1,5 +1,5 @@
 export { StudyConfigurationModelEnvironment } from "./config/gen/StudyConfigurationModelEnvironment";
-export { StudyConfigurationModel, StudyConfiguration, Period, Task, Event, Description } from "./language/gen";
+export { Period, Task, Event, Description, StudyConfiguration, StudyConfigurationModel } from "./language/gen";
 export {extendToSupportSmartDuplication} from "./custom/extensions/ExtensionLib";
 export { Simulator } from "./custom/timeline/Simulator";
 export { TimelineTableTemplate } from "./custom/templates/TimelineTableTemplate";

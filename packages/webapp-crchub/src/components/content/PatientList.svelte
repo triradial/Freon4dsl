@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { patients, loadPatients } from "../../services/datastore";
+    import { getStudyPatients } from "../../services/datastore";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
@@ -7,19 +7,19 @@
     import { navigateTo } from "../../services/routeAction";
     import { theme } from '../../services/themeStore';
 
+    export let studyId: string;
+
     let gridOptions: GridOptions;
     let gridApi: GridApi;
     let patientsData: any[] = [];
 
-    $: patientsData = $patients;
+    $: patientsData = getStudyPatients(studyId);
     $: if (gridApi) {
         gridApi.setGridOption("rowData", patientsData);
     }
     $: gridTheme = $theme === 'dark' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
 
     onMount(async () => {
-        await loadPatients();
-
         gridOptions = {
             rowData: patientsData,
             defaultColDef: {
@@ -32,10 +32,41 @@
             },
             columnDefs: [
                 { 
-                    field: "name"             
+                    field: "patientNumber",
+                    headerName: "Number",
+                    cellRenderer: (params: any) => {
+                        const patientId = params.data.id;
+                        const patientNumber = params.data.patientNumber;
+                        return `<a href="#" data-patient-id="${patientId}">${patientNumber}</a>`;
+                    },
+                    filter: "agSetColumnFilter",
+                    filterParams: {
+                        excelMode: "mac",
+                    },            
                 },
                 { 
-                    field: "dob",          
+                    field: "displayName",
+                    headerName: "Name",
+                    filter: "agSetColumnFilter",
+                    filterParams: {
+                        excelMode: "mac",
+                    },
+                },
+                { 
+                    field: "dob",   
+                    headerName: "DOB",
+                    filter: "agSetColumnFilter",
+                    filterParams: {
+                        excelMode: "mac",
+                    },
+                },
+                { 
+                    field: "gender", 
+                    enableRowGroup: true,
+                    filter: "agSetColumnFilter",
+                    filterParams: {
+                        excelMode: "mac",
+                    },         
                 }
             ],
             groupDisplayType: "groupRows",
@@ -44,8 +75,21 @@
 
         const gridElement = document.querySelector("#patientGrid") as HTMLElement;
         gridApi = createGrid(gridElement, gridOptions);
-
+        
+        gridElement.addEventListener("click", (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (target.tagName === "A") {
+                event.preventDefault();
+                const patientId = target.getAttribute("data-patient-id");
+                if (patientId) {
+                    handlePatientClick(patientId);
+                }
+            }
+        });
     });
+    function handlePatientClick(patientId: string) {
+        navigateTo("patient", patientId);
+    }
 </script>
 
 <svelte:head>

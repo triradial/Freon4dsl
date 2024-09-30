@@ -10,7 +10,7 @@ main {
   padding:  0px 0px 0px 0px !important; /* top padding is 0 because the progress indicator uses 4px height */
 }
 
-/* #region FREON COMPONENTS */
+/* #region General Component */
 
   .freon-component {
     height: 100%;
@@ -28,6 +28,7 @@ main {
   .render-component {
     display: grid; 
   }
+  /* #endregion */
   
   /* #region Label Component */
   .label-component:empty:before {
@@ -39,7 +40,7 @@ main {
   .label-component {
     font-style: normal;
     font-weight: normal;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-family: "Roboto";
     font-variant: normal;
     margin: 0px 0px 0px 4px;
@@ -50,6 +51,12 @@ main {
   /* #endregion */
 
   /* #region Text Component */
+  .text-component-parent{
+    height: 24px;
+    display: flex;
+    align-items: center;
+  }
+
   .text-component-width {
     position: absolute;
     left: -9999px;
@@ -59,7 +66,7 @@ main {
     border: none;
     box-sizing: border-box;
     font-family: "Roboto";
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: normal;
     font-style: normal;
   }
@@ -70,27 +77,29 @@ main {
     margin: 0px 1px 0px 3px;
     padding: 0px 0px 0px 2px;
     font-family: "Roboto";
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: normal;
     font-style: normal;
     padding-block: 0px;
+    height: 24px;
   }
 
   .text-component-text {
     font-family: "Roboto";
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: normal;
     font-style: normal;
     line-height: unset !important;
-    padding: 0px 1px 0px 2px;
+    padding: 3px 1px 0px 2px;
     margin: 0px 2px 0px 3px;
     white-space: normal;
     display: inline-block;
+    height: 24px;
   }
 
   .text-component-placeholder {
     font-family: "Roboto";
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: normal;
     font-style: normal;
     white-space: normal;
@@ -99,7 +108,7 @@ main {
 
   .text-component-actionPlaceholder {
     font-family: "Roboto";
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: normal;
     font-style: normal;
     white-space: normal;
@@ -113,6 +122,8 @@ main {
     padding: 4px 0;
     display: inline-flex;
     width: max-content;
+    height: 18px;
+    margin-bottom: 0.25rem;
   }
 
   .switch-component button {
@@ -161,25 +172,31 @@ main {
   /* #region List Group Component */
   .list-group:empty:before {
     content: attr(data-placeholdertext);
-    margin: 0px;
-    padding: 4px 0;
+    margin: 0;
+    padding: 0.5rem 0;
   }
 
   .list-group {
     display: flex;
-    margin: 0px;
-    padding: 4px 0;
+    margin: 0;
+    padding: 0.5rem 0;
     align-items: center;
   }
 
   .list-group .action-button {
     display: none;
     margin-left: 0.2rem;
+    margin-top: 0.4rem;
   }
 
   .list-group:hover .action-button {
     display: inline-block;
     margin-left: 0.2rem;
+    margin-top: 0.4rem;
+  }
+
+  .list-group .toggle-button {
+    margin-top: 0.3rem;
   }
 
   .list-group.type1 {
@@ -197,39 +214,28 @@ main {
 
   .list-group-label {
     padding-right: 0.5rem;
+    padding-top:0.2rem;
     white-space: normal;
+    font-style: normal;
+    font-weight: normal;
+    font-family: "Roboto";
+    text-transform: uppercase;
   }
 
   .list-group.type1 .list-group-label {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 1rem;
-    font-family: "Roboto";
-    text-transform: uppercase;
+    font-size: 0.875rem;
   }
 
   .list-group.type2 .list-group-label {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 0.875rem;
-    font-family: "Roboto";
-    text-transform: uppercase;
+    font-size: 0.75rem;
   }
 
   .list-group.type3 .list-group-label {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 0.8rem;
-    font-family: "Roboto";
-    text-transform: uppercase;
+    font-size: 0.7rem;
   }
 
   .list-group.type4 .list-group-label {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 0.8rem;
-    font-family: "Roboto";
-    text-transform: uppercase;
+    font-size: 0.7rem;
   }
 
   .list-group.type4 .toggle-button {
@@ -240,8 +246,8 @@ main {
   /* #region Item Group Component */
   .item-group:empty:before {
     content: attr(data-placeholdertext);
-    margin: 0px;
-    padding: 4px 0;
+    margin: 0;
+    padding: 0.25rem 0;
   }
 
   .item-group {
@@ -252,11 +258,17 @@ main {
   .item-group .action-button {
     display: none;
     margin-left: 0.2rem;
+    margin-top: 0.25rem;
   }
 
   .item-group:hover .action-button {
     display: inline-block;
     margin-left: 0.2rem;
+    margin-top: 0.25rem;
+  }
+
+  .item-group .toggle-button {
+    margin-top: 0.3rem;
   }
 
   .item-group .required {
@@ -274,24 +286,20 @@ main {
     height: 2.3rem;
   }
 
-  .item-group .item-group-label {
+  .item-group-label {
     padding-right: 0.1rem;
     white-space: normal;
     margin-left: 0.2rem;
-  }
-
-  .item-group.type1 .item-group-label {
     font-style: normal;
     font-weight: lighter;
-    font-size: 0.875rem;
     font-family: "Roboto";
   }
 
-  .item-group.type2 .item-group-label {
-    font-style: normal;
-    font-weight: lighter;
-    font-size: 0.875rem;
-    font-family: "Roboto";
+  .item-group.type1 .item-group-label,
+  .item-group.type2 .item-group-label,
+  .item-group.type3 .item-group-label,
+  .item-group.type4 .item-group-label {
+    font-size: 0.75rem;
   }
   /* #endregion */
 
