@@ -12,26 +12,10 @@
     import Studies from "../content/Studies.svelte";
     import Patients from "../content/Patients.svelte";
     import Study from "../content/Study.svelte";
-
-    // export let contentName: string = "Home";
+    import Availability from "../content/Availability.svelte";
 
     let contentComponent: typeof SvelteComponent;
     let breadcrumbItems: { label: string; href?: string }[] = [];
-
-    // const dispatch = createEventDispatcher();
-
-    // onMount(async () => {
-    //   setContent("Home");
-    // });
-
-    // function loadContent(event: Event) {
-    //   if (event instanceof CustomEvent) {
-    //     let { contentName } = event.detail;
-    //     setContent(contentName);
-    //   } else {
-    //     console.error('Unexpected event type');
-    //   }
-    // }
 
     onMount(() => {
         setContent($currentRoute);
@@ -47,6 +31,10 @@
             case ROUTE.STUDIES:
                 contentComponent = Studies as typeof SvelteComponent;
                 breadcrumbItems = [{ label: LABEL.STUDIES }];
+                break;
+            case ROUTE.AVAILABILITY:
+                contentComponent = Availability as typeof SvelteComponent;
+                breadcrumbItems = [{ label: LABEL.AVAILABILITY }];
                 break;
             case ROUTE.PATIENTS:
                 contentComponent = Patients as typeof SvelteComponent;
@@ -66,7 +54,6 @@
         setContent($currentRoute);
         console.log("Current route changed:", $currentRoute);
     }
-
 </script>
 
 <div id="app-container">
@@ -74,15 +61,19 @@
         <NavBar />
     </appbar>
     <div id="content-container">
-        <appnav id="appnav-component">
+        <!-- <appnav id="appnav-component">
             <SideNav />
-        </appnav>
+        </appnav> -->
         <main>
             <Breadcrumb items={breadcrumbItems} />
             {#await contentComponent}
                 <p>Loading...</p>
             {:then Component}
-                <svelte:component this={contentComponent} />
+                {#if $currentRoute.params?.id}
+                    <svelte:component this={Component} id={$currentRoute.params.id} />
+                {:else}
+                    <svelte:component this={Component} />
+                {/if}
             {:catch error}
                 <p>Error loading content: {error.message}</p>
             {/await}

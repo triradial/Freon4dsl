@@ -12,9 +12,9 @@
         { "type": "device", "name": "Megabond 5000" },
         { "type": "drug", "name": "Amoxocillin" }
       ],
-      "therapeutic-area": "Oncology",
-      "current-protocol": "v1",
-      "protocol-amendments": [
+      "therapeuticArea": "Oncology",
+      "currentProtocol": "v1",
+      "protocolAmendments": [
         { "version": "v1", "date": "04-MAR-2024", "description": "initial protocol" }
       ]
     },
@@ -30,9 +30,9 @@
       "interventions": [
         { "type": "drug", "name": "INM-176" }
       ],
-      "therapeutic-area": "Oncology",
-      "current-protocol": "v2",
-      "protocol-amendments": [
+      "therapeuticArea": "Oncology",
+      "currentProtocol": "v2",
+      "protocolAmendments": [
         { "version": "v1","date": "01-MAY-2023","description": "initial protocol" },
         { "version": "v2","date": "24-NOV-2023","description": "updated protocol" }
       ]
@@ -49,9 +49,9 @@
       "interventions": [
         { "type": "drug", "name": "SAR110894" }
       ],
-      "therapeutic-area": "Oncology",
-      "current-protocol": "v1",
-      "protocol-amendments": [
+      "therapeuticArea": "Oncology",
+      "currentProtocol": "v1",
+      "protocolAmendments": [
         { "version": "v1", "date": "01-MAY-2023", "description": "initial protocol" }
       ]
     },
@@ -67,9 +67,9 @@
       "interventions": [
         { "type": "drug","name": "Fallaxin" }
       ],
-      "therapeutic-area": "Hematology",
-      "current-protocol": "v1",
-      "protocol-amendments": [
+      "therapeuticArea": "Hematology",
+      "currentProtocol": "v1",
+      "protocolAmendments": [
         { "version": "v1","date": "01-MAY-2023","description": "initial protocol" }
       ]
     }

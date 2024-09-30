@@ -3,7 +3,8 @@
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
     import { faHome, faMicroscope, faHospitalUser } from '@fortawesome/free-solid-svg-icons';
     import { navigateTo } from '../../services/routeAction';
-    import { ROUTE } from '../../constants/routeConstants';      
+    import { ROUTE } from '../../constants/routeConstants';   
+    import { LABEL } from '../../constants/labelConstants';
 
     let activeClass = 'flex items-center p-2 text-base font-normal hover:bg-primary-100';
     let nonActiveClass = 'flex items-center p-2 text-base font-normal hover:bg-primary-900';
@@ -21,17 +22,17 @@
 <Sidebar {asideClass} {activeClass} {nonActiveClass} >
     <SidebarWrapper divClass="overflow-y-auto rounded-none">
       <SidebarGroup>
-        <SidebarItem label="Home" {spanClass} on:click={(event) => loadContent(event, ROUTE.HOME)}>
+        <SidebarItem label={LABEL.HOME} {spanClass} on:click={(event) => loadContent(event, ROUTE.HOME)}>
             <svelte:fragment slot="icon">
                 <FontAwesomeIcon icon={faHome} class="w-4 h-4" />
             </svelte:fragment>
         </SidebarItem>
-        <SidebarItem label="Studies" {spanClass} on:click={(event) => loadContent(event, ROUTE.STUDIES)}>
+        <SidebarItem label={LABEL.STUDIES} {spanClass} on:click={(event) => loadContent(event, ROUTE.STUDIES)}>
           <svelte:fragment slot="icon">
             <FontAwesomeIcon icon={faMicroscope} class="w-4 h-4" />
           </svelte:fragment>
         </SidebarItem>
-          <SidebarItem label="Patients" {spanClass} on:click={(event) => loadContent(event, ROUTE.PATIENTS)}>
+          <SidebarItem label={LABEL.PATIENTS} {spanClass} on:click={(event) => loadContent(event, ROUTE.PATIENTS)}>
             <svelte:fragment slot="icon">
                 <FontAwesomeIcon icon={faHospitalUser} class="w-4 h-4" />
             </svelte:fragment>

@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+@import 'tailwind';
+@import 'flowbite';
+@import 'dsl-dark';
+@import 'dsl-app';
 @import 'custom-dark';
 @import 'custom-app';

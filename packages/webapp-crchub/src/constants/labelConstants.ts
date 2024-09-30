@@ -3,5 +3,6 @@ export const LABEL = {
     PATIENTS: 'Patients',
     STUDIES: 'Studies',
     STUDY: 'Study',
-    PATIENT: 'Patient'
+    PATIENT: 'Patient',
+    AVAILABILITY: 'Availability'
   } as const;
