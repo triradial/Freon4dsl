@@ -14,8 +14,13 @@ export class Timeline extends RtObject {
     // Flags to control the types of logging that will be done
     scheduledLogging = false;
     periodLogging = false;
+
+    // timeline options
+    organizeByStudyDay = true; // Organize the timeline by study day vs a specific reference date
+    referenceDate = new Date(2024, 0, 1); // The reference date for the timeline. Used when organizeByStudyDay is true
     completedEventLogging = false;
-    referenceDate = new Date(2024, 0, 1);
+
+    // timeline data
     days: TimelineDay[] = [];
     currentDay: number = 0;
     availability: Availability;
@@ -30,6 +35,32 @@ export class Timeline extends RtObject {
 
     getReferenceDate(): Date {
         return this.referenceDate;
+    }
+
+    organizedByStudyDay() {
+        this.organizeByStudyDay = true;
+    }
+
+    organizedByReferenceDate() {
+        this.organizeByStudyDay = false;
+    }
+
+    getReferenceDateAsDateString(): string {
+        const referenceDate = this.getReferenceDate();
+        const year = referenceDate.getFullYear();
+        const month = referenceDate.getMonth();
+        const day = referenceDate.getDate();
+
+        return `new Date(${year}, ${month}, ${day})`;
+    }
+
+    getEndOfTimeline(): string {
+        const referenceDate = this.getReferenceDate();
+        const year = referenceDate.getFullYear();
+        const month = referenceDate.getMonth();
+        const day = referenceDate.getDate() + this.getMaxDayOnTimeline() + 1;
+
+        return `new Date(${year}, ${month}, ${day})`;
     }
 
     equals(other: RtObject): RtBoolean {
@@ -355,6 +386,81 @@ export class Timeline extends RtObject {
 
     anyStaffAvailabilityEventInstances(): boolean {
         return this.days.some((day) => day.events.some((event) => event instanceof StaffAvailabilityEventInstance));
+    }
+
+    getOptions(timeline: Timeline): string {
+        let result = undefined;
+        if (this.organizeByStudyDay) {
+            result = `  var options = {
+                format: {
+                    minorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'DDD',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    },
+                },
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: false,
+                orientation: 'both',
+                start: ${timeline.getReferenceDateAsDateString()},
+                end: ${timeline.getEndOfTimeline()},
+                min: ${timeline.getReferenceDateAsDateString()},
+                max: ${timeline.getEndOfTimeline()},
+                margin: {
+                    item: {
+                        horizontal: 0,
+                    },
+                },
+            };
+            `;
+        } else {
+            result = `          var options = {
+                format: {
+                    minorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'D',
+                        week:       '',
+                        month:      'MM',
+                        year:       'YYYY'
+                    },
+                    majorLabels: {
+                        millisecond:'HH:mm:ss',
+                        second:     'D MMMM HH:mm',
+                        minute:     'ddd D MMMM',
+                        hour:       'ddd D MMMM',
+                        weekday:    'MMMM YYYY',
+                        day:        'MMMM YYYY',
+                        week:       'MMMM YYYY',
+                        month:      'YYYY',
+                        year:       ''
+                    }
+                },
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: true,
+                orientation: 'both',
+                start: ${timeline.getReferenceDateAsDateString()},
+                end: ${timeline.getEndOfTimeline()},
+                min: ${timeline.getReferenceDateAsDateString()},
+                max: ${timeline.getEndOfTimeline()},
+                margin: {
+                    item: {
+                        horizontal: 0,
+                    },
+                },
+            };
+            `;
+        }
+        return result;
     }
 }
 

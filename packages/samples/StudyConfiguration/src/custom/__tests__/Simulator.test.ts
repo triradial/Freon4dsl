@@ -1134,6 +1134,8 @@ var items = new vis.DataSet([
             ];
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(10, timeline, shiftsFromScheduledVisit);
             timeline.addPatientVisits(completedPatientVisits);
+            timeline.setReferenceDate(new Date(2024, 8, 30));
+            timeline.organizedByReferenceDate();
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);

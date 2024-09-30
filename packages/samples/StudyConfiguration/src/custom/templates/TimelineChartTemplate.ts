@@ -12,10 +12,6 @@ function getUniqueNumber(): number {
     return uniqueCounter++;
 }
 
-// TODO: get this from the timeline instead of hardcoding it. For now the dates must match what's on the timeline.
-const referenceDate = new Date(2024, 0, 1);
-// const referenceDate = new Date(2023, 11, 31);
-
 export class TimelineChartTemplate {
     static getTimelineDataHTML(timeline: Timeline): string {
         let writer = new StudyConfigurationModelModelUnitWriter();
@@ -41,7 +37,7 @@ var items = new vis.DataSet([
             return periodInstances
                 .map(
                     (periodInstance, index) =>
-                        `{ start: new Date(${periodInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${periodInstance.getEndDayStringAsDateFrom(referenceDate, timeline)}), group: "Phase", className: "${periodInstance.getName().toLowerCase()}-phase", title: "Day: ${periodInstance.getStartDay()}", content: "<b>${periodInstance.getName()}</b>", id: "${periodInstance.getName() + getUniqueNumber()}" },`,
+                        `{ start: new Date(${periodInstance.getStartDayAsDateString(timeline)}), end: new Date(${periodInstance.getEndDayStringAsDateFrom(timeline)}), group: "Phase", className: "${periodInstance.getName().toLowerCase()}-phase", title: "Day: ${periodInstance.getStartDay()}", content: "<b>${periodInstance.getName()}</b>", id: "${periodInstance.getName() + getUniqueNumber()}" },`,
                 )
                 .filter((item) => item !== "")
                 .join("");
@@ -57,9 +53,9 @@ var items = new vis.DataSet([
                     (
                         eventInstance,
                         index,
-                    ) => `${eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },` : ""}
-    { start: new Date(${eventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/"/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
-    ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(referenceDate, timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(referenceDate, timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },` : ""}`,
+                    ) => `${eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },` : ""}
+    { start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/"/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
+    ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },` : ""}`,
                 )
                 .filter((item) => item !== "")
                 .join("\n    "),
@@ -74,7 +70,7 @@ var items = new vis.DataSet([
                 .getPatientEventInstances()
                 .map(
                     (patientEventInstance, index) =>
-                        `{ start: new Date(${patientEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(referenceDate, timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "Patient visit:'${patientEventInstance.getName() + "'" + (patientEventInstance.getVisitInstanceNumber() > 1 ? " #" + patientEventInstance.getVisitInstanceNumber() : "")}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                        `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "Patient visit:'${patientEventInstance.getName() + "'" + (patientEventInstance.getVisitInstanceNumber() > 1 ? " #" + patientEventInstance.getVisitInstanceNumber() : "")}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
                 )
                 .filter((item) => item !== "")
                 .join("\n    "),
@@ -89,7 +85,7 @@ var items = new vis.DataSet([
                 .getStaffAvailabilityEventInstances()
                 .map(
                     (staffAvailabilityEventInstance, index) =>
-                        `{ start: new Date(${staffAvailabilityEventInstance.getStartDayAsDateString(referenceDate, timeline)}), end: new Date(${staffAvailabilityEventInstance.getEndDayAsDateString(referenceDate, timeline)}), group: "Staff", className: "staff", title: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", content: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", id: "${staffAvailabilityEventInstance.getName() + getUniqueNumber()}" },`,
+                        `{ start: new Date(${staffAvailabilityEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${staffAvailabilityEventInstance.getEndDayAsDateString(timeline)}), group: "Staff", className: "staff", title: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", content: "${staffAvailabilityEventInstance.getStaffAvailable().toString()}", id: "${staffAvailabilityEventInstance.getName() + getUniqueNumber()}" },`,
                 )
                 .filter((item) => item !== "")
                 .join("\n    "),
@@ -104,33 +100,8 @@ var items = new vis.DataSet([
     static getTimelineVisualizationHTML(timeline: Timeline): string {
         var template = ` // create visualization
   var container = document.getElementById('visualization');
-  var options = {
-    format: {
-        minorLabels: {
-            millisecond:'',
-            second:     '',
-            minute:     '',
-            hour:       '',
-            weekday:    '',
-            day:        'DDD',
-            week:       '',
-            month:      '',
-            year:       ''
-        },
-    },
-    timeAxis: {scale: 'day', step: 1},
-    showMajorLabels: false,
-    orientation: 'both',
-    start: new Date(2024,0,1),
-    end: new Date(2024, 0, ${timeline.getMaxDayOnTimeline() + 1}, 23, 59, 59),
-    min: new Date(2024, 0, 1),
-    max: new Date(2024, 0, ${timeline.getMaxDayOnTimeline() + 1}, 23, 59, 59),
-    margin: {
-        item: {
-            horizontal: 0,
-        },
-    },
-  };`;
+    ${timeline.getOptions(timeline)}
+  `;
         return template;
     }
 
