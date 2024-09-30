@@ -341,6 +341,13 @@ appnav a:hover {
 .navbar-commands a:hover {
   text-decoration: underline !important;
 }
+
+.navbar-button {
+  padding: 0 !important;
+  border-width: 2px !important;
+  height: 2.25rem !important;
+  width: 2.25rem !important;
+}
 /* #endregion */
 
 /* #region Container */

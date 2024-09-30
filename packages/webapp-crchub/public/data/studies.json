@@ -57,15 +57,33 @@
     },
     {
       "id": "5d6e7f8a-9f1e-2dae-4e5a-6f7e8c9c0a",
-      "name": "AN-PARAB-001",
+      "name": "AX-3476-001",
       "identifiers": [
         { "type": "nct", "identifier": "NCT86177491" }
       ],
-      "status": "Complete",
+      "status": "Active",
       "title": "Short-term Effects on Cervical Cancerous Tumors in Patients On the Drug Fallaxin",
       "phase": "III",
       "interventions": [
         { "type": "drug","name": "Fallaxin" }
+      ],
+      "therapeuticArea": "Hematology",
+      "currentProtocol": "v1",
+      "protocolAmendments": [
+        { "version": "v1","date": "01-MAY-2023","description": "initial protocol" }
+      ]
+    },
+    {
+      "id": "6d6e7f8a-9f1e-2dae-4e5a-6f7e8c9c0a",
+      "name": "MK-2200-001",
+      "identifiers": [
+        { "type": "nct", "identifier": "NCT55567491" }
+      ],
+      "status": "Complete",
+      "title": "A Study of Tillocin in Patients With Advanced Solid Tumors",
+      "phase": "III",
+      "interventions": [
+        { "type": "drug","name": "Tillocin" }
       ],
       "therapeuticArea": "Hematology",
       "currentProtocol": "v1",

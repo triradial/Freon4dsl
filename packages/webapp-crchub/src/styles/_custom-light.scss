@@ -257,6 +257,14 @@ appnav a:visited {
   color: var(--navbar-text-hover) !important;
 }
 
+.navbar-component .avatar-menu button {
+  color: var(--gray-800);
+  border: 0;
+}
+.navbar-component .avatar-menu div {
+  color: var(--gray-800);
+}
+
 /* #endregion */
 
 /* #region Breadcrumb */

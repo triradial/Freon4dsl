@@ -76,17 +76,17 @@ projectStudyConfiguration (studyconfig: StudyConfiguration): Box {
         {cssClass: "w-full ml-4"}),
       {cssClass: "type1", isExpanded: true}),
       BoxUtil.listGroupBox(element, "periods", "Study Periods",
-        BoxUtil.verticalPartListBox(element, (element).periods, "periods", null, this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
+        BoxUtil.verticalPartListBox(element, (element).periods, "periods", null, this.handler, {cssClass:"ml-6 mb-2"}),
       {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
       ...(element.showActivityDetails === true? 
         [
           BoxUtil.listGroupBox(element, "shared-tasks", "Shared Tasks",
-            BoxUtil.verticalPartListBox(element, (element).tasks, "tasks", null, this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
+            BoxUtil.verticalPartListBox(element, (element).tasks, "tasks", null, this.handler, {cssClass:"ml-6 mb-2"}),
           {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
           ...(element.showSystems === true? 
             [
               BoxUtil.listGroupBox(element, "shared-systems", "Systems",
-                BoxUtil.verticalPartListBox(element, (element).systemAccesses, "systemAccesses", null,  this.handler, {cssClass:"ml-6 mt-2 mb-2"}),
+                BoxUtil.verticalPartListBox(element, (element).systemAccesses, "systemAccesses", null,  this.handler, {cssClass:"ml-6 mb-2"}),
               {cssClass:"type1 mt-2", isExpanded:true, canAdd: true}),
             ] 
           : 

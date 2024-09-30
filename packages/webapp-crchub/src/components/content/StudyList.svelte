@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { studies, loadStudies } from "../../services/datastore";
+    import { studies } from "../../services/datastore";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
@@ -12,16 +12,19 @@
     let studiesData: any[] = [];
 
     $: studiesData = $studies;
-    $: if (gridApi) {
+    $: if (gridApi && studiesData) {
         gridApi.setGridOption("rowData", studiesData);
+        resizeColumns();
     }
     $: gridTheme = $theme === 'dark' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
 
-    onMount(async () => {
-        await loadStudies();
+    function resizeColumns() {
+        gridApi.sizeColumnsToFit();
+        gridApi.autoSizeAllColumns();
+    }
 
+    onMount(async () => {
         gridOptions = {
-            rowData: studiesData,
             defaultColDef: {
                 sortable: true,
                 filter: true,
@@ -65,10 +68,17 @@
             ],
             groupDisplayType: "groupRows",
             rowGroupPanelShow: "always",
+            onGridReady: (params) => {
+                if (studiesData.length > 0) {
+                    resizeColumns();
+                }
+            },
         };
 
         const gridElement = document.querySelector("#studyGrid") as HTMLElement;
         gridApi = createGrid(gridElement, gridOptions);
+
+        // await loadStudies();
 
         gridElement.addEventListener("click", (event: MouseEvent) => {
             const target = event.target as HTMLElement;

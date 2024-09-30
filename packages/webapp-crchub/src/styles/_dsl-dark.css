@@ -143,14 +143,19 @@
     color: #1191b9;
   }
 
-  .list-group.type1 button,
-  .list-group.type2 button,
-  .list-group.type3 button,
-  .list-group.type4 button {
+  .list-group .toggle-button {
     border: none;
     color: var(--gray-200);
+    background-color: transparent;
   }
 
+  .list-group .toggle-button:hover {
+    background-color: var(--white-10t);
+  }
+
+  .list-group .toggle-button:active {
+    background-color: var(--white-20t);
+  }
 
   /* #endregion */
 
@@ -182,18 +187,23 @@
     color: var(--gray-200);
   }
 
-  .item-group.type1 svg,
-  .item-group.type2 svg,
-  .item-group.type3 svg,
-  .item-group.type4 svg {
-    color: var(--gray-200);
-  }
-  .item-group.type1 button,
-  .item-group.type2 button,
-  .item-group.type3 button,
-  .item-group.type4 button {
+  .item-group .toggle-button {
     border: none;
     color: var(--gray-200);
+    background-color: transparent;
+  }
+
+  .item-group .toggle-button:hover {
+    background-color: var(--white-10t);
+  }
+
+  .item-group .toggle-button:active {
+    background-color: var(--white-20t);
+  }
+
+  .drag-button {
+    color: var(--gray-200);
+    background-color: transparent;
   }
 
   /* #endregion */ 

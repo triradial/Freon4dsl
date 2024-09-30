@@ -1,45 +1,80 @@
 [
     {
-      "id": "1001-AT1",
+      "id": "1001af8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "patientNumber": "1001-AT1",
       "name": "Allen Turner",
+      "displayName": "Turner, Allen",
       "dob": "03-Dec-1975",
-      "study": "MK-3475 - Pembrolizumab vs Best Supportive Care"
+      "age": "48",
+      "gender": "Male",
+      "studyId": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "study": "MK-3475-028"
     },
     {
-      "id": "1001-BW",
+      "id": "1001bf8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "patientNumber": "1001-BW",
       "name": "Barbara Wycombe",
+      "displayName": "Wycombe, Barbara",
       "dob": "29-Mar-1979",
-      "study": "MK-3475 - Pembrolizumab vs Best Supportive Care"
+      "age": "44",
+      "gender": "Female",
+      "studyId": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "study": "MK-3475-028"
     },
     {
-      "id": "1001-CT1",
+      "id": "1001cf8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "patientNumber": "1001-CT1",
       "name": "Colin Tranter",
+      "displayName": "Tranter, Colin",
       "dob": "29-Aug-1981",
-      "study": "MK-3475 - Pembrolizumab vs Best Supportive Care"
+      "age": "42",
+      "gender": "Male",
+      "studyId": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "study": "MK-3475-028"
     },
     {
-      "id": "1001-GM1",
+      "id": "1001df8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "patientNumber": "1001-GM1",
       "name": "Grant Myers",
+      "displayName": "Myers, Grant",
       "dob": "17-Jun-1986",
-      "study": "MK-3475 - Pembrolizumab vs Best Supportive Care"
+      "age": "37",
+      "gender": "Male",
+      "studyId": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "study": "MK-3475-028"
     },
     {
-      "id": "1001-JM1",
+      "id": "1001ef8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "patientNumber": "1001-JM1",
       "name": "Jenny Macintosh",
+      "displayName": "Macintosh, Jenny",
       "dob": "14-Dec-1935",
-      "study": "MK-3475 - Pembrolizumab vs Best Supportive Care"
+      "age": "88",
+      "gender": "Female",
+      "studyId": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "study": "MK-3475-028"
     },
     {
-      "id": "1001-JM2",
+      "id": "a001af8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "patientNumber": "a101-JM1",
       "name": "John Macintosh",
+      "displayName": "Macintosh, John",
       "dob": "18-Nov-1928",
-      "study": "MK-3476 - Pembrolizumab vs Best Supportive Care"
+      "age": "95",
+      "gender": "Male",
+      "studyId": "5d6e7f8a-9f1e-2dae-4e5a-6f7e8c9c0a",
+      "study": "AX-3476-001"
     },
     {
-      "id": "1001-JM2",
+      "id": "a001bf8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
+      "patientNumber": "a101-AC1",
       "name": "Alexis Coates",
+      "displayName": "Coates, Alexis",
       "dob": "01-Mar-1977",
-      "study": "MK-3476 - Pembrolizumab vs Best Supportive Care"
+      "age": "46",
+      "gender": "Female",
+      "studyId": "5d6e7f8a-9f1e-2dae-4e5a-6f7e8c9c0a",
+      "study": "AX-3476-001"
     }
   ]
   
