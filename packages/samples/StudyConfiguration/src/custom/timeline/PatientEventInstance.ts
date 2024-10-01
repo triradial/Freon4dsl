@@ -69,14 +69,14 @@ export class PatientVisitEventInstance extends PatientEventInstance {
     }
 }
 
-class PatientUnAvailableEventInstance extends PatientEventInstance {
+export class PatientUnAvailableEventInstance extends PatientEventInstance {
     constructor(name: string, startDay: number, endDay?: number) {
         super(startDay, endDay);
         this.eventName = name;
     }
 
     getClassForDisplay(timeline: Timeline) {
-        let classForDisplay = "red";
+        let classForDisplay = "not-available ";
         return classForDisplay;
     }
 

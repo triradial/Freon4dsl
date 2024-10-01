@@ -14,16 +14,18 @@
                     height: 300px;
                   }
                   
+                  .not-available-row-label { color: red;}
                   .vis-item.screening-phase { background-color: #5ceb5c; }
                   .vis-item.treatment-phase { background-color: #9370ed; }
                   .vis-item.window  { background-color: #c3c3be; }
                   .vis-item.screening-visits  { background-color: #bceebc; }
                   .vis-item.treatment-visits  { background-color: #ccbcf4; }
                   .vis-item.patient  { background-color: #95a89a; }
+                  .vis-item.not-available  { background-color: red; }
                   .vis-item.on-scheduled-date  { background-color: #000000; }
                   .vis-item.staff  { background-color: #d0e14f; }
                   .vis-item.out-of-window { background-color: orange; }
-                  .vis-item.visit-not-found { background-color: red; }
+                  .vis-item.visit-not-found { background-color: blue; }
                   .vis-item.in-window {
                     background-image: repeating-linear-gradient(
                       45deg,
@@ -64,7 +66,7 @@
                 { "content": "V14-V18 run in", "id": "V14-V18 run in" },
                 { "content": "V19-rando", "id": "V19-rando" },
                 { "content": "V19-run in", "id": "V19-run in" },
-                
+                { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },
                 
                 ]);
                 
@@ -177,7 +179,8 @@
                 { start: new Date(2024, 09, 17, 00, 00, 00), end: new Date(2024, 09, 17, 23, 59, 59), group: "V19-run in", className: "treatment-visits", title: "V19-run in: when V19-rando completed + 3 days", content: "&nbsp;", id: "V19-run in105" },
                 { start: new Date(2024, 09, 18, 00, 00, 00), end: new Date(2024, 09, 19, 23, 59, 59), group: "V19-run in", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19-run in106" },
                 
-                
+                { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "Patient", className: "not-available ", title: "Patient Unavailable", content: "&nbsp;", id: "Patient Not Available107" },
+                { start: new Date(2024, 01, 29, 00, 00, 00), end: new Date(2024, 02, 04, 23, 59, 59), group: "Patient", className: "not-available ", title: "Patient Unavailable", content: "&nbsp;", id: "Patient Not Available108" },
                 
                 
                 

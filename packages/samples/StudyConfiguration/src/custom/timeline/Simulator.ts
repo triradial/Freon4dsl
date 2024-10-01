@@ -39,12 +39,16 @@ export class Simulator {
         }
     }
 
-    getCompletedPatientVisits(): PatientVisit[] {
-        if (this.patientHistory == undefined) {
-            return [];
-        } else {
-            return this.patientHistory.patientVisits;
-        }
+    // getCompletedPatientVisits(): PatientVisit[] {
+    //     if (this.patientHistory == undefined) {
+    //         return [];
+    //     } else {
+    //         return this.patientHistory.patientVisits;
+    //     }
+    // }
+
+    getPatientHistory(): PatientHistory {
+        return this.patientHistory;
     }
 
     getAvailability(): Availability {

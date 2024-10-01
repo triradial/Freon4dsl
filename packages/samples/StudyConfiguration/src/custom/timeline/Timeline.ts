@@ -4,7 +4,7 @@ import { Availability, Event, PatientHistory, PatientVisit } from "../../languag
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance";
 import { PeriodEventInstance } from "./PeriodEventInstance";
 import { ScheduledEventInstance } from "./ScheduledEventInstance";
-import { PatientVisitEventInstance } from "./PatientEventInstance";
+import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance";
 import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance";
 
 /*
@@ -328,9 +328,9 @@ export class Timeline extends RtObject {
     }
 
     // Add the patient visits that happened on specific dates to the timeline
-    addPatientVisits(patientVisits: PatientVisit[]) {
+    addPatientEvents(patientHistory: PatientHistory) {
         console.log("Adding Patient Visits to Timeline");
-        patientVisits.forEach((patientVisit) => {
+        patientHistory.patientVisits.forEach((patientVisit) => {
             const actualVisitDateAsDate = this.dateStringsToDate(
                 patientVisit.actualVisitDate.day,
                 patientVisit.actualVisitDate.month.name,
@@ -342,6 +342,26 @@ export class Timeline extends RtObject {
             const diffInMilliseconds = time2 - time1;
             const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
             this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
+        });
+        patientHistory.patientNotAvailableDates.dates.forEach((patientNotAvailableDate) => {
+            const startDateAsDate = this.dateStringsToDate(
+                patientNotAvailableDate.startDate.day,
+                patientNotAvailableDate.startDate.month.name,
+                patientNotAvailableDate.startDate.year,
+            );
+            let endDateAsDate = undefined;
+            if (patientNotAvailableDate.endDate == undefined) {
+                endDateAsDate = new Date(startDateAsDate);
+            } else {
+                endDateAsDate = this.dateStringsToDate(
+                    patientNotAvailableDate.endDate.day,
+                    patientNotAvailableDate.endDate.month.name,
+                    patientNotAvailableDate.endDate.year,
+                );
+            }
+            this.addEvent(
+                new PatientUnAvailableEventInstance("Patient Not Available", this.getDayOnTimeline(startDateAsDate), this.getDayOnTimeline(endDateAsDate)),
+            );
         });
     }
 
@@ -373,8 +393,6 @@ export class Timeline extends RtObject {
                     staffLevel.dateOrRange.endDate.year,
                 );
             }
-            // Convert from the date given as when the visit happened to the day of the event on the timeline
-
             this.addEvent(
                 new StaffAvailabilityEventInstance(
                     Number(staffLevel.staffAvailable),
@@ -390,7 +408,7 @@ export class Timeline extends RtObject {
     }
 
     anyPatientEventInstances(): boolean {
-        return this.days.some((day) => day.events.some((event) => event instanceof PatientVisitEventInstance));
+        return this.days.some((day) => day.events.some((event) => event instanceof PatientEventInstance));
     }
 
     anyStaffAvailabilityEventInstances(): boolean {
@@ -494,7 +512,7 @@ export class TimelineDay {
     }
 
     getPatientEventInstances() {
-        return this.events.filter((event) => event instanceof PatientVisitEventInstance) as PatientVisitEventInstance[];
+        return this.events.filter((event) => event instanceof PatientEventInstance) as PatientVisitEventInstance[];
     }
 
     getStaffAvailabilityEventInstances() {

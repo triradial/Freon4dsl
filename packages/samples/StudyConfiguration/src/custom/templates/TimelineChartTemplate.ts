@@ -17,13 +17,14 @@ export class TimelineChartTemplate {
     static getTimelineDataHTML(timeline: Timeline): string {
         let writer = new StudyConfigurationModelModelUnitWriter();
 
+        //TODO: determine why the not-available-row-label class doesn't change the color of the text to red or find another way to highlight the differences in the cells in the row, e.g., adding a legend or changing the row label text.
         var template = nodent`var groups = new vis.DataSet([
             { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
             ${timeline
                 .getUniqueEventInstanceNames()
                 .map((uniqueEventName) => `{ "content": "${uniqueEventName}", "id": "${uniqueEventName}" },`)
                 .join("\n")}
-            ${timeline.anyPatientEventInstances() ? `{ "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },` : ""}
+            ${timeline.anyPatientEventInstances() ? `{ "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },` : ""}
             ${timeline.anyStaffAvailabilityEventInstances() ? `{ "content": "<b>Staff(${timeline.getBaselineStaff()})</b>", "id": "Staff", className: 'staff' },` : ""}
           ]);
 
@@ -71,7 +72,7 @@ export class TimelineChartTemplate {
                         .getPatientEventInstances()
                         .map(
                             (patientEventInstance, index) =>
-                                `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "${patientEventInstance.getTitle()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                                `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndDayAsDateString(timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "${patientEventInstance.getTitle()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
                         )
                         .filter((item) => item !== "")
                         .join("\n    "),
@@ -132,16 +133,18 @@ export class TimelineChartTemplate {
             height: 300px;
           }
           
+          .not-available-row-label { color: red;}
           .vis-item.screening-phase { background-color: #5ceb5c; }
           .vis-item.treatment-phase { background-color: #9370ed; }
           .vis-item.window  { background-color: #c3c3be; }
           .vis-item.screening-visits  { background-color: #bceebc; }
           .vis-item.treatment-visits  { background-color: #ccbcf4; }
           .vis-item.patient  { background-color: #95a89a; }
+          .vis-item.not-available  { background-color: red; }
           .vis-item.on-scheduled-date  { background-color: #000000; }
           .vis-item.staff  { background-color: #d0e14f; }
           .vis-item.out-of-window { background-color: orange; }
-          .vis-item.visit-not-found { background-color: red; }
+          .vis-item.visit-not-found { background-color: blue; }
           .vis-item.in-window {
             background-image: repeating-linear-gradient(
               45deg,
