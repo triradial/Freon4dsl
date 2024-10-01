@@ -47,6 +47,22 @@ export class Simulator {
     //     }
     // }
 
+    setReferenceDate(referenceDate: Date) {
+        this.timeline.setReferenceDate(referenceDate);
+    }
+
+    getReferenceDate(): Date {
+        return this.timeline.getReferenceDate();
+    }
+
+    organizedByStudyDay() {
+        this.timeline.organizedByStudyDay();
+    }
+
+    organizedByReferenceDate() {
+        this.timeline.organizedByReferenceDate();
+    }
+
     getPatientHistory(): PatientHistory {
         return this.patientHistory;
     }

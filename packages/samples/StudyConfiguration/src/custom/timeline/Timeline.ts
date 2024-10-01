@@ -419,6 +419,7 @@ export class Timeline extends RtObject {
         let result = undefined;
         if (this.organizeByStudyDay) {
             result = `  var options = {
+                showCurrentTime: false,
                 format: {
                     minorLabels: {
                         millisecond:'',
@@ -448,6 +449,7 @@ export class Timeline extends RtObject {
             `;
         } else {
             result = `          var options = {
+                showCurrentTime: false,
                 format: {
                     minorLabels: {
                         millisecond:'',

@@ -942,6 +942,7 @@ var items = new vis.DataSet([
             simulator.run();
             let timeline = simulator.timeline;
 
+            // Adding after simulation because the timeline is used to find the visits to complete.
             let shiftsFromScheduledVisit: utils.ShiftsFromScheduledVisit[] = [
                 { name: "V2 rando", instance: 1, shift: -1, numberFound: 0, foundThisInstance: false },
                 { name: "V4-V7-rando", instance: 1, shift: -4, numberFound: 0, foundThisInstance: false },
@@ -1063,18 +1064,30 @@ var items = new vis.DataSet([
             // GIVEN a study configuration loaded from a file but patientInfo and availability are not loaded
             const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
-            let dateRangeList: DateRange[] = [];
-            let dateRange = utils.createPatientNotAvailableDateRange("1", "January", "2024", "1", "January", "2024");
-            dateRangeList.push(dateRange);
-            dateRange = utils.createPatientNotAvailableDateRange("1", "February", "2024", "5", "February", "2024");
-            dateRangeList.push(dateRange);
-            let patientNotAvailable = PatientNotAvailable.create({ dates: dateRangeList });
-            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: [], patientNotAvailableDates: patientNotAvailable });
 
             // WHEN the study is simulated and a timeline picture is generated
-            let simulator = new Simulator(studyConfigurationUnit, patientHistory);
+            let simulator = new Simulator(studyConfigurationUnit);
+            simulator.setReferenceDate(new Date(2024, 8, 30));
+            simulator.organizedByReferenceDate();
             simulator.run();
             let timeline = simulator.timeline;
+
+            let shiftsFromScheduledVisit: utils.ShiftsFromScheduledVisit[] = [
+                { name: "V2 rando", instance: 1, shift: -1, numberFound: 0, foundThisInstance: false },
+                { name: "V4-V7-rando", instance: 1, shift: -4, numberFound: 0, foundThisInstance: false },
+                { name: "V4-V7-rando", instance: 2, shift: 2, numberFound: 0, foundThisInstance: false },
+            ];
+            let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(10, timeline, shiftsFromScheduledVisit);
+            let dateRangeList: DateRange[] = [];
+            let dateRange = utils.createPatientNotAvailableDateRange("3", "November", "2024", "3", "November", "2024");
+            dateRangeList.push(dateRange);
+            dateRange = utils.createPatientNotAvailableDateRange("1", "December", "2024", "7", "December", "2024");
+            dateRangeList.push(dateRange);
+            let patientNotAvailable = PatientNotAvailable.create({ dates: dateRangeList });
+            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: patientNotAvailable });
+
+            timeline.setPatientHistory(patientHistory);
+            timeline.addPatientEvents(patientHistory);
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);

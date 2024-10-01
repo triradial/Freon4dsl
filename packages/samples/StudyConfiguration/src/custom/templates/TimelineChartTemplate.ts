@@ -94,13 +94,15 @@ export class TimelineChartTemplate {
                 )
                 .filter((item) => item !== "")
                 .join("\n")}
-
           ])`;
         return template;
     }
 
     static getTimelineVisualizationHTML(timeline: Timeline): string {
-        var template = undent` // create visualization
+        var template =
+            "\n" +
+            undent`
+          // create visualization
           var container = document.getElementById('visualization');
             ${timeline.getOptions(timeline)}
           `;
@@ -133,7 +135,7 @@ export class TimelineChartTemplate {
             height: 300px;
           }
           
-          .not-available-row-label { color: red;}
+          .not-available-row-label { font-color: red !important;}
           .vis-item.screening-phase { background-color: #5ceb5c; }
           .vis-item.treatment-phase { background-color: #9370ed; }
           .vis-item.window  { background-color: #c3c3be; }
@@ -167,7 +169,34 @@ export class TimelineChartTemplate {
       <h1>
         Study Timeline
       </h1>
-      <div id="visualization"></div>
+      <div id="visualization" style="position: unset !important; height:100%"></div>     
+        <br>
+        <p>
+          Viewing the timeline:
+        </p>
+        <ul>
+          <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline. </li>
+          <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline.</li>
+        </ul>
+        <p>
+          The meaning of the rows:
+        </p>
+        <ul>
+          <li><b>Screen, V#</b> - Names of Events/Visits:</li>
+          <ul>
+            <li><b>Gray</b> - The window before and after an Event/Visit.</li>
+            <li><b>Purple</b> - The scheduled time of an Event/Visit.</li>
+          </ul>
+          <li><b>Patient</b> - Things about the patient availability and actual events: </li>
+          <ul>
+            <li><b>Red</b> -  A date the patient is unavailable.</li>
+            <li><b>Black</b> -  A date the patient visit occurred on the scheduled date.</li>
+            <li><b>Black & White Stripes</b> -  A date the patient visit occurred in the scheduled window.</li>
+          </ul>
+            <li><b>Staff(#)</b> - '(#)' is the total amount of staff available for the study.  The number in the box is the staff on that date. The full staff is available on any date without a box with a number.</li>
+        </ul>
+
+
 
       <script>
         ${timelineDataAsScript}
@@ -179,7 +208,6 @@ export class TimelineChartTemplate {
         timeline.setItems(items);
 
       </script>
-
     `;
     }
 }
