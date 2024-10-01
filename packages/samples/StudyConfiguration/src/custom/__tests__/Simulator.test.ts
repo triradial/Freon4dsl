@@ -328,10 +328,10 @@ describe("Study Simulation", () => {
                 15,
             );
             expectedTimeline.setCompleted(eventInstance1);
-            let eventInstance2 = new ScheduledEventInstance(eventInstance1.scheduledEvent, 8);
+            let eventInstance2 = new ScheduledEventInstance(eventInstance1.scheduledEvent, 8, 2);
             expectedTimeline.setCompleted(eventInstance2);
             expectedTimeline.addEvent(eventInstance2);
-            let eventInstance3 = new ScheduledEventInstance(eventInstance1.scheduledEvent, 15);
+            let eventInstance3 = new ScheduledEventInstance(eventInstance1.scheduledEvent, 15, 3);
             expectedTimeline.setCompleted(eventInstance3);
             expectedTimeline.addEvent(eventInstance3);
             expectedTimeline.setCurrentDay(15);
@@ -778,20 +778,17 @@ var items = new vis.DataSet([
 
         it("generates a chart for a visit on day 1 that patient completed", () => {
             const expectedTimelineDataAsScript = `  var groups = new vis.DataSet([
-                    { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-                    { "content": "Visit 1", "id": "Visit 1" },
-                    { "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },
+                { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+                { "content": "Visit 1", "id": "Visit 1" },
+                { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },               
                 ]);
-
                 var items = new vis.DataSet([
-                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Phase", className: "period-phase", title: "Day: 0", content: "<b>Period</b>", id: "Period0" },
-                    
-                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 11" },
-                    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 12" },
-                        
-                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "patient", title: "PATIENT", content: "&nbsp;", id: "Patient3" }
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Phase", className: "period-phase", title: "Day: 0", content: "<b>Period</b>", id: "Period0" },
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 11" },
+                { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 12" },                
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 1'", content: "&nbsp;", id: "Visit 13" },
 
-                ]) `;
+                ])`;
             const expectedTimelineVisualizationHTML = `// create visualization
                 var container = document.getElementById('visualization');
                 var options = {
@@ -812,9 +809,9 @@ var items = new vis.DataSet([
                     showMajorLabels: false,
                     orientation: 'both',
                     start: new Date(2024,0,1),
-                    end: new Date(2024, 0, 1, 23, 59, 59),
+                    end: new Date(2024, 0, 2),
                     min: new Date(2024, 0, 1),
-                    max: new Date(2024, 0, 1, 23, 59, 59),
+                    max: new Date(2024, 0, 2),
                     margin: {
                         item: {
                             horizontal: 0,
@@ -1093,50 +1090,53 @@ var items = new vis.DataSet([
         });
 
         it("generates a chart for a visit on day 1 showing staff level", () => {
-            const expectedTimelineDataAsScript = `  var groups = new vis.DataSet([
-                    { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-                    { "content": "Visit 1", "id": "Visit 1" },
-                    { "content": "<b>Completed Visits</b>", "id": "Patient", className: 'patient' },
+            const expectedTimelineDataAsScript = `                  var groups = new vis.DataSet([
+                { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+                { "content": "Visit 1", "id": "Visit 1" },
+                
+                { "content": "<b>Staff(4)</b>", "id": "Staff", className: 'staff' },
                 ]);
-
+                
                 var items = new vis.DataSet([
-                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Phase", className: "period-phase", title: "Day: 0", content: "<b>Period</b>", id: "Period0" },
-                    
-                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 11" },
-                    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 12" },
-                        
-                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "patient", title: "PATIENT", content: "&nbsp;", id: "Patient3" }
-
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Phase", className: "period-phase", title: "Day: 0", content: "<b>Period</b>", id: "Period0" },
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "treatment-visits", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 11" },
+                { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 12" },
+                
+                
+                
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Staff", className: "staff", title: "3", content: "3", id: "33" },
+                
                 ]) `;
             const expectedTimelineVisualizationHTML = `// create visualization
                 var container = document.getElementById('visualization');
-                var options = {
-                    format: {
-                        minorLabels: {
-                            millisecond:'',
-                            second:     '',
-                            minute:     '',
-                            hour:       '',
-                            weekday:    '',
-                            day:        'DDD',
-                            week:       '',
-                            month:      '',
-                            year:       ''
-                        },
-                    },
-                    timeAxis: {scale: 'day', step: 1},
-                    showMajorLabels: false,
-                    orientation: 'both',
-                    start: new Date(2024,0,1),
-                    end: new Date(2024, 0, 1, 23, 59, 59),
-                    min: new Date(2024, 0, 1),
-                    max: new Date(2024, 0, 1, 23, 59, 59),
-                    margin: {
-                        item: {
-                            horizontal: 0,
-                        },
-                    },
-                };`;
+                    var options = {
+                                format: {
+                                    minorLabels: {
+                                        millisecond:'',
+                                        second:     '',
+                                        minute:     '',
+                                        hour:       '',
+                                        weekday:    '',
+                                        day:        'DDD',
+                                        week:       '',
+                                        month:      '',
+                                        year:       ''
+                                    },
+                                },
+                                timeAxis: {scale: 'day', step: 1},
+                                showMajorLabels: false,
+                                orientation: 'both',
+                                start: new Date(2024, 0, 1),
+                                end: new Date(2024, 0, 2),
+                                min: new Date(2024, 0, 1),
+                                max: new Date(2024, 0, 2),
+                                margin: {
+                                    item: {
+                                        horizontal: 0,
+                                    },
+                                },
+                            };
+            `;
             // GIVEN a study configuration with one period and one event and a patient that completed the event
             const eventName = "Visit 1";
             let eventSchedule = utils.createEventScheduleStartingOnADay(eventName, 0, 0);

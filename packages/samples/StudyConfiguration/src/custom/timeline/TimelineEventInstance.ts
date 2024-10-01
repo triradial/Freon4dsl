@@ -78,7 +78,13 @@ export abstract class TimelineEventInstance {
 
     getEndDayAsDateString(timeline: Timeline): string {
         const toEndOfDay = true;
-        return TimelineEventInstance.formatDate(this.getDayAsDate(this.endDay, timeline, toEndOfDay));
+        let endDayToUse = undefined;
+        if (this.endDay === undefined) {
+            endDayToUse = this.startDay;
+        } else {
+            endDayToUse = this.endDay;
+        }
+        return TimelineEventInstance.formatDate(this.getDayAsDate(endDayToUse, timeline, toEndOfDay));
     }
 
     getEndOfStartDayAsDateString(timeline: Timeline): string {

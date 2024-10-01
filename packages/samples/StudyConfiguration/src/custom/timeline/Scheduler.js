@@ -89,8 +89,11 @@ import * as Sim from "../simjs/sim.js"
             if (!!this.getPatientHistory()) {
               // TODO: consider moving this to the timeline. Question is whether the events should be added before or after the simulation is complete.
               timeline.addPatientEvents(this.getPatientHistory());
+            }
+            if (!!this.getAvailability()) {
               timeline.addStaffAvailability(this.getAvailability());
             }
+
             console.log('Simulation Complete');
           }      
       } else {
