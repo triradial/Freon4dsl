@@ -42,6 +42,9 @@
 
   --content-background: #cfd6e0;
 
+  --card-background: #ffffff;
+  --card-border-color: #bac4d1;
+
   --logo-text1: #ffffff;
   --logo-text2: #8f82a3;
   --logo-text-p1: #CECECE;
@@ -289,7 +292,18 @@ appnav a:visited {
 
 /* #endregion */
 
-/* #region AgGrid */
+/* #region Grid */
+.crc-grid-header {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  box-shadow: none;
+  border: 1px solid var(--card-border-color);
+}
+
+.crc-grid-header h3 {
+  color: var(--text-primary-500);
+}
+
 .crc-grid {
   background-color: var(--content-background);
 }
@@ -303,9 +317,18 @@ appnav a:visited {
   color: var(--text-hover);
 }
 
-/* #endregion */
+.grid-button {
+  color: var(--primary-900);
+  background-color: transparent;
+  border-color: var(--primary-900);
+  transition: color 0.3s ease;
+}
 
-/* #region AgGrid */
+.grid-button:hover {
+  color: var(--white);
+  background-color: var(--primary-900);
+}
+
 .ag-theme-quartz-dark .ag-row-group.ag-row-level-0 {
   background-color: #474747;
 }
