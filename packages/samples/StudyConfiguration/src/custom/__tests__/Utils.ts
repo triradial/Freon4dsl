@@ -453,17 +453,21 @@ export type ShiftsFromScheduledVisit = { name: string; instance: number; shift: 
 /*
     * In this example  there are shifts for different instances of V4-V7-rando.
     let shiftsFromScheduledVisit: utils.ShiftsFromScheduledVisit[] = [
-        { name: "V2 rando", instance: 1, shift: -1, numberFound: 0 },
-        { name: "V4-V7-rando", instance: 1, shift: -4, numberFound: 0 },
-        { name: "V4-V7-rando", instance: 2, shift: 2, numberFound: 0 },
+        { name: "V2 rando", instance: 1, shift: -1, numberFound: 0, foundThisInstance: false },
+        { name: "V4-V7-rando", instance: 1, shift: -4, numberFound: 0, foundThisInstance: false },
+        { name: "V4-V7-rando", instance: 2, shift: 2, numberFound: 0, foundThisInstance: false },
     ];
 
-    When each of "V4-V7-rando" is matched the numberFound is incremented. When the numberFound matches the instance number the shift is applied.
-    Having numberFound in the list of shifts passed in is a hack to have a place to track the number of times a visit is matched. 
+    When each of "V4-V7-rando" is matched the numberFound is incremented. When the numberFound matches the instance number the shift is applied and foundThisInstance set to true.
+    Having numberFound and foundThisInstance in the list of shifts passed in is a hack to have a place to track the number of times a visit is matched. 
     There should be only one numberFound counter for each named visit to be shifted. The logic below increments the numberFound for each matching shift for the same visit
 */
 
-export function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline, shiftsFromScheduledVisit: ShiftsFromScheduledVisit[]): PatientVisit[] {
+export function createCompletedPatientVisits(
+    numberToCreate: number,
+    timeline: Timeline,
+    shiftsFromScheduledVisit: ShiftsFromScheduledVisit[] = [],
+): PatientVisit[] {
     let completedPatientVisits: PatientVisit[] = [];
     let i = 0;
     let stopAddingVisits = false;
@@ -481,9 +485,9 @@ export function createCompletedPatientVisits(numberToCreate: number, timeline: T
                     shiftFromScheduledVisit.numberFound++; // This is the hack where the number of times a visit is matched is tracked for each shift of the same visit rather than just one counter.
                     if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance && shiftFromScheduledVisit.foundThisInstance === false) {
                         // if this matches then this is the instance to shift
-                        dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift);
-                        shiftFromScheduledVisit.foundThisInstance = true;
-                        foundAMatch = true;
+                        dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift); // Shift the visit
+                        shiftFromScheduledVisit.foundThisInstance = true; // Remember that this shift has been done
+                        foundAMatch = true; // Done looking for shifts for this visit
                     }
                 });
             }
@@ -544,6 +548,33 @@ function createStaffLevel(
     const staffDateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
     const staffLevel = StaffLevel.create({ staffAvailable: staffAvailable, dateOrRange: staffDateOrRange });
     return staffLevel;
+}
+
+export function createPatientNotAvailableDateRange(
+    startDay: string,
+    startMonth: string,
+    startYear: string,
+    endDay?: string,
+    endMonth?: string,
+    endYear?: string,
+) {
+    const startDateInRange = StartRangeDate.create({
+        day: startDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
+        year: startYear,
+    });
+    if (!endDay) {
+        endDay = startDay;
+        endMonth = startMonth;
+        endYear = startYear;
+    }
+    const endDateInRange = StartRangeDate.create({
+        day: endDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
+        year: endYear,
+    });
+    const dateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
+    return dateOrRange;
 }
 
 export function createOneDayAvailability(day: string, month: string, year: string): Availability {

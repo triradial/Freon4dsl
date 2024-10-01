@@ -13,6 +13,11 @@ export abstract class TimelineEventInstance {
     endDay: number; // The day the instance ended on
     state: TimelineInstanceState = TimelineInstanceState.Active;
 
+    constructor(startDay: number, endDay?: number) {
+        this.startDay = startDay;
+        this.endDay = endDay;
+    }
+
     setState(state: TimelineInstanceState) {
         this.state = state;
     }
@@ -29,16 +34,16 @@ export abstract class TimelineEventInstance {
         }
     }
 
-    getEndDayAsDateFrom(referenceDate: Date, timeline: Timeline): Date {
-        const result = new Date(referenceDate);
+    getEndDayAsDateFrom(timeline: Timeline): Date {
+        const result = new Date(timeline.getReferenceDate());
         const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
         result.setDate(result.getDate() + this.getEndDay(timeline) + dayOffsetOfFirstEventInstance);
         result.setHours(23, 59, 59);
         return result;
     }
 
-    getEndDayStringAsDateFrom(referenceDate: Date, timeline: Timeline): string {
-        return TimelineEventInstance.formatDate(this.getEndDayAsDateFrom(referenceDate, timeline));
+    getEndDayStringAsDateFrom(timeline: Timeline): string {
+        return TimelineEventInstance.formatDate(this.getEndDayAsDateFrom(timeline));
     }
 
     setEndDay(endDay: number) {
@@ -49,12 +54,8 @@ export abstract class TimelineEventInstance {
         return this.startDay;
     }
 
-    getStartDayAsDate(fromReferenceDate: Date, timeline: Timeline): Date {
-        return this.getDayAsDate(this.startDay, fromReferenceDate, timeline);
-    }
-
-    getDayAsDate(day: number, fromReferenceDate: Date, timeline: Timeline, toEndOfDay?: boolean): Date {
-        let result = new Date(fromReferenceDate);
+    getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
+        let result = new Date(timeline.getReferenceDate());
         const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
         // console.log(
         //     "result.getDate:" + result.getDate().toString() + " getStartDay:" + this.getStartDay() + " dayOffsetOfFirstEventInstance:",
@@ -67,17 +68,27 @@ export abstract class TimelineEventInstance {
         return result;
     }
 
-    getStartDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
-        return TimelineEventInstance.formatDate(this.getDayAsDate(this.startDay, fromReferenceDate, timeline));
+    getStartDayAsDate(timeline: Timeline): Date {
+        return this.getDayAsDate(this.startDay, timeline);
     }
 
-    getEndDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
+    getStartDayAsDateString(timeline: Timeline): string {
+        return TimelineEventInstance.formatDate(this.getDayAsDate(this.startDay, timeline));
+    }
+
+    getEndDayAsDateString(timeline: Timeline): string {
         const toEndOfDay = true;
-        return TimelineEventInstance.formatDate(this.getDayAsDate(this.endDay, fromReferenceDate, timeline, toEndOfDay));
+        let endDayToUse = undefined;
+        if (this.endDay === undefined) {
+            endDayToUse = this.startDay;
+        } else {
+            endDayToUse = this.endDay;
+        }
+        return TimelineEventInstance.formatDate(this.getDayAsDate(endDayToUse, timeline, toEndOfDay));
     }
 
-    getEndOfStartDayAsDateString(fromReferenceDate: Date, timeline: Timeline): string {
-        const endOfStartDay = this.getStartDayAsDate(fromReferenceDate, timeline);
+    getEndOfStartDayAsDateString(timeline: Timeline): string {
+        const endOfStartDay = this.getStartDayAsDate(timeline);
         endOfStartDay.setHours(23, 59, 59);
         const result = TimelineEventInstance.formatDate(endOfStartDay);
         return result;

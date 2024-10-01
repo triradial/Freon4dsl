@@ -5,19 +5,24 @@ import { Timeline } from "./Timeline";
 
 export class PatientEventInstance extends TimelineEventInstance {
     eventName: string;
-    visitInstanceNumber: number = 1;
-
-    constructor(name: string, visitInstanceNumber: number, startDay: number, endDay?: number) {
-        super();
-        this.startDay = startDay;
-        this.endDay = endDay;
-        this.eventName = name;
-        this.setState(TimelineInstanceState.Active);
-        this.visitInstanceNumber = visitInstanceNumber;
-    }
 
     getName() {
         return this.eventName;
+    }
+
+    getTitle() {
+        return "Patient event:" + this.getName();
+    }
+}
+
+export class PatientVisitEventInstance extends PatientEventInstance {
+    visitInstanceNumber: number = 1;
+
+    constructor(name: string, visitInstanceNumber: number, startDay: number, endDay?: number) {
+        super(startDay, endDay);
+        this.eventName = name;
+        this.setState(TimelineInstanceState.Active);
+        this.visitInstanceNumber = visitInstanceNumber;
     }
 
     getVisitInstanceNumber() {
@@ -56,5 +61,26 @@ export class PatientEventInstance extends TimelineEventInstance {
         //         classForDisplay,
         // );
         return classForDisplay;
+    }
+
+    getTitle() {
+        const visitInstanceNumber = this.getVisitInstanceNumber() > 1 ? " #" + this.getVisitInstanceNumber() : "";
+        return "Patient visit:" + this.getName() + "'" + visitInstanceNumber;
+    }
+}
+
+export class PatientUnAvailableEventInstance extends PatientEventInstance {
+    constructor(name: string, startDay: number, endDay?: number) {
+        super(startDay, endDay);
+        this.eventName = name;
+    }
+
+    getClassForDisplay(timeline: Timeline) {
+        let classForDisplay = "not-available ";
+        return classForDisplay;
+    }
+
+    getTitle() {
+        return "Patient Unavailable";
     }
 }

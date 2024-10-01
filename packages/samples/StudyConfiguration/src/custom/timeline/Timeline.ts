@@ -4,7 +4,7 @@ import { Availability, Event, PatientHistory, PatientVisit } from "../../languag
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance";
 import { PeriodEventInstance } from "./PeriodEventInstance";
 import { ScheduledEventInstance } from "./ScheduledEventInstance";
-import { PatientEventInstance } from "./PatientEventInstance";
+import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance";
 import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance";
 
 /*
@@ -14,11 +14,17 @@ export class Timeline extends RtObject {
     // Flags to control the types of logging that will be done
     scheduledLogging = false;
     periodLogging = false;
+
+    // timeline options
+    organizeByStudyDay = true; // Organize the timeline by study day vs a specific reference date
+    referenceDate = new Date(2024, 0, 1); // The reference date for the timeline. Used when organizeByStudyDay is true
     completedEventLogging = false;
-    referenceDate = new Date(2024, 0, 1);
+
+    // timeline data
     days: TimelineDay[] = [];
     currentDay: number = 0;
     availability: Availability;
+    patientHistory: PatientHistory;
 
     constructor() {
         super();
@@ -30,6 +36,40 @@ export class Timeline extends RtObject {
 
     getReferenceDate(): Date {
         return this.referenceDate;
+    }
+
+    organizedByStudyDay() {
+        this.organizeByStudyDay = true;
+    }
+
+    organizedByReferenceDate() {
+        this.organizeByStudyDay = false;
+    }
+
+    getReferenceDateAsDateString(): string {
+        const referenceDate = this.getReferenceDate();
+        const year = referenceDate.getFullYear();
+        const month = referenceDate.getMonth();
+        const day = referenceDate.getDate();
+
+        return `new Date(${year}, ${month}, ${day})`;
+    }
+
+    setPatientHistory(patientHistory: PatientHistory) {
+        this.patientHistory = patientHistory;
+    }
+
+    getPatientHistory() {
+        return this.patientHistory;
+    }
+
+    getEndOfTimeline(): string {
+        const referenceDate = this.getReferenceDate();
+        const year = referenceDate.getFullYear();
+        const month = referenceDate.getMonth();
+        const day = referenceDate.getDate() + this.getMaxDayOnTimeline() + 1;
+
+        return `new Date(${year}, ${month}, ${day})`;
     }
 
     equals(other: RtObject): RtBoolean {
@@ -288,9 +328,9 @@ export class Timeline extends RtObject {
     }
 
     // Add the patient visits that happened on specific dates to the timeline
-    addPatientVisits(patientVisits: PatientVisit[]) {
+    addPatientEvents(patientHistory: PatientHistory) {
         console.log("Adding Patient Visits to Timeline");
-        patientVisits.forEach((patientVisit) => {
+        patientHistory.patientVisits.forEach((patientVisit) => {
             const actualVisitDateAsDate = this.dateStringsToDate(
                 patientVisit.actualVisitDate.day,
                 patientVisit.actualVisitDate.month.name,
@@ -301,7 +341,27 @@ export class Timeline extends RtObject {
             const time2 = actualVisitDateAsDate.getTime();
             const diffInMilliseconds = time2 - time1;
             const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
-            this.addEvent(new PatientEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
+            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
+        });
+        patientHistory.patientNotAvailableDates.dates.forEach((patientNotAvailableDate) => {
+            const startDateAsDate = this.dateStringsToDate(
+                patientNotAvailableDate.startDate.day,
+                patientNotAvailableDate.startDate.month.name,
+                patientNotAvailableDate.startDate.year,
+            );
+            let endDateAsDate = undefined;
+            if (patientNotAvailableDate.endDate == undefined) {
+                endDateAsDate = new Date(startDateAsDate);
+            } else {
+                endDateAsDate = this.dateStringsToDate(
+                    patientNotAvailableDate.endDate.day,
+                    patientNotAvailableDate.endDate.month.name,
+                    patientNotAvailableDate.endDate.year,
+                );
+            }
+            this.addEvent(
+                new PatientUnAvailableEventInstance("Patient Not Available", this.getDayOnTimeline(startDateAsDate), this.getDayOnTimeline(endDateAsDate)),
+            );
         });
     }
 
@@ -333,8 +393,6 @@ export class Timeline extends RtObject {
                     staffLevel.dateOrRange.endDate.year,
                 );
             }
-            // Convert from the date given as when the visit happened to the day of the event on the timeline
-
             this.addEvent(
                 new StaffAvailabilityEventInstance(
                     Number(staffLevel.staffAvailable),
@@ -355,6 +413,81 @@ export class Timeline extends RtObject {
 
     anyStaffAvailabilityEventInstances(): boolean {
         return this.days.some((day) => day.events.some((event) => event instanceof StaffAvailabilityEventInstance));
+    }
+
+    getOptions(timeline: Timeline): string {
+        let result = undefined;
+        if (this.organizeByStudyDay) {
+            result = `  var options = {
+                format: {
+                    minorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'DDD',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    },
+                },
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: false,
+                orientation: 'both',
+                start: ${timeline.getReferenceDateAsDateString()},
+                end: ${timeline.getEndOfTimeline()},
+                min: ${timeline.getReferenceDateAsDateString()},
+                max: ${timeline.getEndOfTimeline()},
+                margin: {
+                    item: {
+                        horizontal: 0,
+                    },
+                },
+            };
+            `;
+        } else {
+            result = `          var options = {
+                format: {
+                    minorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'D',
+                        week:       '',
+                        month:      'MM',
+                        year:       'YYYY'
+                    },
+                    majorLabels: {
+                        millisecond:'HH:mm:ss',
+                        second:     'D MMMM HH:mm',
+                        minute:     'ddd D MMMM',
+                        hour:       'ddd D MMMM',
+                        weekday:    'MMMM YYYY',
+                        day:        'MMMM YYYY',
+                        week:       'MMMM YYYY',
+                        month:      'YYYY',
+                        year:       ''
+                    }
+                },
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: true,
+                orientation: 'both',
+                start: ${timeline.getReferenceDateAsDateString()},
+                end: ${timeline.getEndOfTimeline()},
+                min: ${timeline.getReferenceDateAsDateString()},
+                max: ${timeline.getEndOfTimeline()},
+                margin: {
+                    item: {
+                        horizontal: 0,
+                    },
+                },
+            };
+            `;
+        }
+        return result;
     }
 }
 
@@ -379,7 +512,7 @@ export class TimelineDay {
     }
 
     getPatientEventInstances() {
-        return this.events.filter((event) => event instanceof PatientEventInstance) as PatientEventInstance[];
+        return this.events.filter((event) => event instanceof PatientEventInstance) as PatientVisitEventInstance[];
     }
 
     getStaffAvailabilityEventInstances() {

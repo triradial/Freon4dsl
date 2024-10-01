@@ -14,8 +14,7 @@ export class ScheduledEventInstance extends TimelineEventInstance {
     constructor(scheduledEvent: ScheduledEvent, startDay: number, instanceNumber: number = 1) {
         if (instanceNumber > 1)
             console.log("creating ScheduledEventInstance: " + scheduledEvent.getName() + " instance:" + instanceNumber + " startDay:" + startDay);
-        super();
-        this.startDay = startDay;
+        super(startDay);
         this.scheduledEvent = scheduledEvent;
         this.instanceNumber = instanceNumber;
     }
@@ -64,33 +63,18 @@ export class ScheduledEventInstance extends TimelineEventInstance {
         return daysAfter != 0 && daysAfter != undefined;
     }
 
-    // getStartDayOfWindow() {
-    //   return this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count - this.startDay;
-    // }
-    // getStartDayOfWindowAsDateFrom(referenceDate: Date, timeline: Timeline) {
-    //   const result = this.getStartDayAsDateFrom(referenceDate, timeline);
-    //   const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
-    //   result.setDate(result.getDate() - this.getStartDayOfWindow() + dayOffsetOfFirstEventInstance);
-    //   return result;
-    // }
-    // getStartDayOfWindowStringAsDateFrom(referenceDate: Date, timeline: Timeline) {
-    //   return TimelineInstance.formatDate(this.getStartDayOfWindowAsDateFrom(referenceDate, timeline));
-    // }
-    // getEndDayOfWindow() {
-    //   return this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysAfter.count + this.startDay;
-    // }
-    startDayOfBeforeWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
-        const startDate = new Date(this.getStartDayAsDate(fromReferenceDate, timeline));
+    startDayOfBeforeWindowAsDate(timeline: Timeline) {
+        const startDate = new Date(this.getStartDayAsDate(timeline));
         startDate.setDate(startDate.getDate() - this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count);
         return startDate;
     }
 
-    startDayOfBeforeWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-        return TimelineEventInstance.formatDate(this.startDayOfBeforeWindowAsDate(fromReferenceDate, timeline));
+    startDayOfBeforeWindowAsDateString(timeline: Timeline) {
+        return TimelineEventInstance.formatDate(this.startDayOfBeforeWindowAsDate(timeline));
     }
 
-    endDayOfBeforeWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
-        const endDate = new Date(this.getStartDayAsDate(fromReferenceDate, timeline));
+    endDayOfBeforeWindowAsDate(timeline: Timeline) {
+        const endDate = new Date(this.getStartDayAsDate(timeline));
         endDate.setDate(endDate.getDate() - 1);
         endDate.setHours(23);
         endDate.setMinutes(59);
@@ -98,22 +82,22 @@ export class ScheduledEventInstance extends TimelineEventInstance {
         return endDate;
     }
 
-    endDayOfBeforeWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-        return TimelineEventInstance.formatDate(this.endDayOfBeforeWindowAsDate(fromReferenceDate, timeline));
+    endDayOfBeforeWindowAsDateString(timeline: Timeline) {
+        return TimelineEventInstance.formatDate(this.endDayOfBeforeWindowAsDate(timeline));
     }
 
-    startDayOfAfterWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
-        const startDate = new Date(this.getStartDayAsDate(fromReferenceDate, timeline));
+    startDayOfAfterWindowAsDate(timeline: Timeline) {
+        const startDate = new Date(this.getStartDayAsDate(timeline));
         startDate.setDate(startDate.getDate() + 1);
         return startDate;
     }
 
-    startDayOfAfterWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-        return TimelineEventInstance.formatDate(this.startDayOfAfterWindowAsDate(fromReferenceDate, timeline));
+    startDayOfAfterWindowAsDateString(timeline: Timeline) {
+        return TimelineEventInstance.formatDate(this.startDayOfAfterWindowAsDate(timeline));
     }
 
-    endDayOfAfterWindowAsDate(fromReferenceDate: Date, timeline: Timeline) {
-        const endDate = new Date(this.getStartDayAsDate(fromReferenceDate, timeline));
+    endDayOfAfterWindowAsDate(timeline: Timeline) {
+        const endDate = new Date(this.getStartDayAsDate(timeline));
         endDate.setDate(endDate.getDate() + this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysAfter.count);
         endDate.setHours(23);
         endDate.setMinutes(59);
@@ -121,7 +105,7 @@ export class ScheduledEventInstance extends TimelineEventInstance {
         return endDate;
     }
 
-    endDayOfAfterWindowAsDateString(fromReferenceDate: Date, timeline: Timeline) {
-        return TimelineEventInstance.formatDate(this.endDayOfAfterWindowAsDate(fromReferenceDate, timeline));
+    endDayOfAfterWindowAsDateString(timeline: Timeline) {
+        return TimelineEventInstance.formatDate(this.endDayOfAfterWindowAsDate(timeline));
     }
 }

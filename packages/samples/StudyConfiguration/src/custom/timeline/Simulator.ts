@@ -18,33 +18,37 @@ export class Simulator {
     name = "Simulator";
     studyConfiguration: StudyConfiguration;
     scheduledStudyConfiguration: ScheduledStudyConfiguration;
-    completedPatientVisits: PatientHistory;
+    patientHistory: PatientHistory;
     availability: Availability;
 
     // Allow creation without a PatientHistory or Availability
     constructor(studyConfiguration: StudyConfiguration);
     constructor(studyConfiguration: StudyConfiguration, availability: Availability);
-    constructor(studyConfiguration: StudyConfiguration, completedPatientVisits: PatientHistory);
-    constructor(studyConfiguration: StudyConfiguration, completedPatientVisits: PatientHistory, availability: Availability);
+    constructor(studyConfiguration: StudyConfiguration, patientHistory: PatientHistory);
+    constructor(studyConfiguration: StudyConfiguration, patientHistory: PatientHistory, availability: Availability);
     constructor(studyConfiguration: StudyConfiguration, param2?: PatientHistory | Availability, param3?: Availability) {
         // Setup the Scheduler
         this.scheduledStudyConfiguration = new ScheduledStudyConfiguration(studyConfiguration);
         this.timeline = new Timeline();
         if (param2 instanceof PatientHistory) {
-            this.completedPatientVisits = param2;
-            this.availability = param3 || new Availability();
+            this.patientHistory = param2;
+            this.availability = param3 || undefined;
         } else {
-            this.completedPatientVisits = undefined;
-            this.availability = param2 || new Availability();
+            this.patientHistory = undefined;
+            this.availability = param2 || undefined;
         }
     }
 
-    getCompletedPatientVisits(): PatientVisit[] {
-        if (this.completedPatientVisits == undefined) {
-            return [];
-        } else {
-            return this.completedPatientVisits.patientVisits;
-        }
+    // getCompletedPatientVisits(): PatientVisit[] {
+    //     if (this.patientHistory == undefined) {
+    //         return [];
+    //     } else {
+    //         return this.patientHistory.patientVisits;
+    //     }
+    // }
+
+    getPatientHistory(): PatientHistory {
+        return this.patientHistory;
     }
 
     getAvailability(): Availability {
