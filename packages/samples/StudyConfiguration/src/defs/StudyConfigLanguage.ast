@@ -12,6 +12,7 @@ modelunit StudyConfiguration {
     showSystems: boolean;
     showScheduling: boolean;
     showPeriods: boolean;
+    showChecklists: boolean = true;
     studyStartDayNumber: number = 0;
     periods: Period[];
     // events: Event[];

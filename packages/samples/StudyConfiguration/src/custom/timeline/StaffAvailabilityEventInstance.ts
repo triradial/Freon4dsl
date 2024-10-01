@@ -7,9 +7,7 @@ export class StaffAvailabilityEventInstance extends TimelineEventInstance {
     staffAvailable: number;
 
     constructor(staffAvailable: number, startDay: number, endDay?: number) {
-        super();
-        this.startDay = startDay;
-        this.endDay = endDay;
+        super(startDay, endDay);
         this.setState(TimelineInstanceState.Completed);
         this.staffAvailable = staffAvailable;
     }

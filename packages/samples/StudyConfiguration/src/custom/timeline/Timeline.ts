@@ -4,7 +4,7 @@ import { Availability, Event, PatientHistory, PatientVisit } from "../../languag
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance";
 import { PeriodEventInstance } from "./PeriodEventInstance";
 import { ScheduledEventInstance } from "./ScheduledEventInstance";
-import { PatientEventInstance } from "./PatientEventInstance";
+import { PatientVisitEventInstance } from "./PatientEventInstance";
 import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance";
 
 /*
@@ -24,6 +24,7 @@ export class Timeline extends RtObject {
     days: TimelineDay[] = [];
     currentDay: number = 0;
     availability: Availability;
+    patientHistory: PatientHistory;
 
     constructor() {
         super();
@@ -52,6 +53,14 @@ export class Timeline extends RtObject {
         const day = referenceDate.getDate();
 
         return `new Date(${year}, ${month}, ${day})`;
+    }
+
+    setPatientHistory(patientHistory: PatientHistory) {
+        this.patientHistory = patientHistory;
+    }
+
+    getPatientHistory() {
+        return this.patientHistory;
     }
 
     getEndOfTimeline(): string {
@@ -332,7 +341,7 @@ export class Timeline extends RtObject {
             const time2 = actualVisitDateAsDate.getTime();
             const diffInMilliseconds = time2 - time1;
             const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
-            this.addEvent(new PatientEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
+            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
         });
     }
 
@@ -381,7 +390,7 @@ export class Timeline extends RtObject {
     }
 
     anyPatientEventInstances(): boolean {
-        return this.days.some((day) => day.events.some((event) => event instanceof PatientEventInstance));
+        return this.days.some((day) => day.events.some((event) => event instanceof PatientVisitEventInstance));
     }
 
     anyStaffAvailabilityEventInstances(): boolean {
@@ -485,7 +494,7 @@ export class TimelineDay {
     }
 
     getPatientEventInstances() {
-        return this.events.filter((event) => event instanceof PatientEventInstance) as PatientEventInstance[];
+        return this.events.filter((event) => event instanceof PatientVisitEventInstance) as PatientVisitEventInstance[];
     }
 
     getStaffAvailabilityEventInstances() {

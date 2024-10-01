@@ -13,6 +13,11 @@ export abstract class TimelineEventInstance {
     endDay: number; // The day the instance ended on
     state: TimelineInstanceState = TimelineInstanceState.Active;
 
+    constructor(startDay: number, endDay?: number) {
+        this.startDay = startDay;
+        this.endDay = endDay;
+    }
+
     setState(state: TimelineInstanceState) {
         this.state = state;
     }

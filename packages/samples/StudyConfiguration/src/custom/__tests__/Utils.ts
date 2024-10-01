@@ -463,7 +463,11 @@ export type ShiftsFromScheduledVisit = { name: string; instance: number; shift: 
     There should be only one numberFound counter for each named visit to be shifted. The logic below increments the numberFound for each matching shift for the same visit
 */
 
-export function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline, shiftsFromScheduledVisit: ShiftsFromScheduledVisit[]): PatientVisit[] {
+export function createCompletedPatientVisits(
+    numberToCreate: number,
+    timeline: Timeline,
+    shiftsFromScheduledVisit: ShiftsFromScheduledVisit[] = [],
+): PatientVisit[] {
     let completedPatientVisits: PatientVisit[] = [];
     let i = 0;
     let stopAddingVisits = false;
@@ -544,6 +548,33 @@ function createStaffLevel(
     const staffDateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
     const staffLevel = StaffLevel.create({ staffAvailable: staffAvailable, dateOrRange: staffDateOrRange });
     return staffLevel;
+}
+
+export function createPatientNotAvailableDateRange(
+    startDay: string,
+    startMonth: string,
+    startYear: string,
+    endDay?: string,
+    endMonth?: string,
+    endYear?: string,
+) {
+    const startDateInRange = StartRangeDate.create({
+        day: startDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
+        year: startYear,
+    });
+    if (!endDay) {
+        endDay = startDay;
+        endMonth = startMonth;
+        endYear = startYear;
+    }
+    const endDateInRange = StartRangeDate.create({
+        day: endDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
+        year: endYear,
+    });
+    const dateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
+    return dateOrRange;
 }
 
 export function createOneDayAvailability(day: string, month: string, year: string): Availability {

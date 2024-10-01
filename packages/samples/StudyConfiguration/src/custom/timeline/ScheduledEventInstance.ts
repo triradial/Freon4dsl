@@ -14,8 +14,7 @@ export class ScheduledEventInstance extends TimelineEventInstance {
     constructor(scheduledEvent: ScheduledEvent, startDay: number, instanceNumber: number = 1) {
         if (instanceNumber > 1)
             console.log("creating ScheduledEventInstance: " + scheduledEvent.getName() + " instance:" + instanceNumber + " startDay:" + startDay);
-        super();
-        this.startDay = startDay;
+        super(startDay);
         this.scheduledEvent = scheduledEvent;
         this.instanceNumber = instanceNumber;
     }

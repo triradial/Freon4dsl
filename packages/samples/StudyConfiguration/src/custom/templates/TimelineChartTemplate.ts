@@ -71,7 +71,7 @@ export class TimelineChartTemplate {
                         .getPatientEventInstances()
                         .map(
                             (patientEventInstance, index) =>
-                                `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "Patient visit:'${patientEventInstance.getName() + "'" + (patientEventInstance.getVisitInstanceNumber() > 1 ? " #" + patientEventInstance.getVisitInstanceNumber() : "")}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                                `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndOfStartDayAsDateString(timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "${patientEventInstance.getTitle()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
                         )
                         .filter((item) => item !== "")
                         .join("\n    "),

@@ -18,32 +18,32 @@ export class Simulator {
     name = "Simulator";
     studyConfiguration: StudyConfiguration;
     scheduledStudyConfiguration: ScheduledStudyConfiguration;
-    completedPatientVisits: PatientHistory;
+    patientHistory: PatientHistory;
     availability: Availability;
 
     // Allow creation without a PatientHistory or Availability
     constructor(studyConfiguration: StudyConfiguration);
     constructor(studyConfiguration: StudyConfiguration, availability: Availability);
-    constructor(studyConfiguration: StudyConfiguration, completedPatientVisits: PatientHistory);
-    constructor(studyConfiguration: StudyConfiguration, completedPatientVisits: PatientHistory, availability: Availability);
+    constructor(studyConfiguration: StudyConfiguration, patientHistory: PatientHistory);
+    constructor(studyConfiguration: StudyConfiguration, patientHistory: PatientHistory, availability: Availability);
     constructor(studyConfiguration: StudyConfiguration, param2?: PatientHistory | Availability, param3?: Availability) {
         // Setup the Scheduler
         this.scheduledStudyConfiguration = new ScheduledStudyConfiguration(studyConfiguration);
         this.timeline = new Timeline();
         if (param2 instanceof PatientHistory) {
-            this.completedPatientVisits = param2;
+            this.patientHistory = param2;
             this.availability = param3 || new Availability();
         } else {
-            this.completedPatientVisits = undefined;
+            this.patientHistory = undefined;
             this.availability = param2 || new Availability();
         }
     }
 
     getCompletedPatientVisits(): PatientVisit[] {
-        if (this.completedPatientVisits == undefined) {
+        if (this.patientHistory == undefined) {
             return [];
         } else {
-            return this.completedPatientVisits.patientVisits;
+            return this.patientHistory.patientVisits;
         }
     }
 

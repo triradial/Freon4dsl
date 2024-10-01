@@ -87,6 +87,7 @@ import * as Sim from "../simjs/sim.js"
             this.getTimeline().printTimelineOfScheduledEventInstances();
             completedEvent.completeCurrentPeriod(this.getTimeline(), this.time());
             if (!!this.getCompletedPatientVisits()) {
+              // TODO: consider moving this to the timeline. Question is whether the events should be added before or after the simulation is complete.
               timeline.addPatientVisits(this.getCompletedPatientVisits());
               timeline.addStaffAvailability(this.getAvailability());
             }
