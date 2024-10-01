@@ -145,7 +145,15 @@ export class TimelineChartTemplate {
           .vis-item.not-available  { background-color: red; }
           .vis-item.on-scheduled-date  { background-color: #000000; }
           .vis-item.staff  { background-color: #d0e14f; }
-          .vis-item.out-of-window { background-color: orange; }
+          .vis-item.out-of-window { 
+            background-image: repeating-linear-gradient(
+              45deg,
+              orange,
+              orange 5px,
+              white 2px,
+              white 7px
+            );
+          }
           .vis-item.visit-not-found { background-color: blue; }
           .vis-item.in-window {
             background-image: repeating-linear-gradient(
@@ -169,32 +177,34 @@ export class TimelineChartTemplate {
       <h1>
         Study Timeline
       </h1>
-      <div id="visualization" style="position: unset !important; height:100%"></div>     
-        <br>
-        <p>
-          Viewing the timeline:
-        </p>
+      <div id="visualization" style="position: unset !important; height:100%"></div>  
+
+      <br>
+      <p>
+        Viewing the timeline:
+      </p>
+      <ul>
+        <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline. </li>
+        <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline.</li>
+      </ul>
+      <p>
+        The meaning of the rows:
+      </p>
+      <ul>
+        <li>Each Event/Visit is shown in a row with cells colored:</li>
         <ul>
-          <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline. </li>
-          <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline.</li>
+          <li><b>Gray</b> - for the window before and after an Event/Visit.</li>
+          <li><b>Purple</b> - The scheduled time of an Event/Visit.</li>
         </ul>
-        <p>
-          The meaning of the rows:
-        </p>
+        <li><b>Patient</b> - Things about the patient availability and actual events: </li>
         <ul>
-          <li><b>Screen, V#</b> - Names of Events/Visits:</li>
-          <ul>
-            <li><b>Gray</b> - The window before and after an Event/Visit.</li>
-            <li><b>Purple</b> - The scheduled time of an Event/Visit.</li>
-          </ul>
-          <li><b>Patient</b> - Things about the patient availability and actual events: </li>
-          <ul>
-            <li><b>Red</b> -  A date the patient is unavailable.</li>
-            <li><b>Black</b> -  A date the patient visit occurred on the scheduled date.</li>
-            <li><b>Black & White Stripes</b> -  A date the patient visit occurred in the scheduled window.</li>
-          </ul>
-            <li><b>Staff(#)</b> - '(#)' is the total amount of staff available for the study.  The number in the box is the staff on that date. The full staff is available on any date without a box with a number.</li>
+          <li><b>Red</b> -  A date the patient is unavailable.</li>
+          <li><b>Black</b> -  A date the patient visit occurred on the scheduled date.</li>
+          <li><b>Black & White Stripes</b> -  A date the patient visit occurred in the scheduled window.</li>
+          <li><b>Orange & White Stripes</b> -  A date the patient visit occurred outside the scheduled window.</li>
         </ul>
+          <li><b>Staff(#)</b> - '(#)' is the total amount of staff available for the study.  The number in the box is the staff on that date. The full staff is available on any date without a box with a number.</li>
+      </ul>
 
 
 
