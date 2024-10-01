@@ -2,7 +2,7 @@
 
 :root {
 
-  --black:#000000;
+  --black: #000000;
   --black-90t: #000000e6;
   --black-80t: #000000cc;
   --black-70t: #000000b3;
@@ -13,8 +13,8 @@
   --black-20t: #00000033;
   --black-10t: #0000001a;
   --black-5t: #0000000d;
-  
-  --white:#ffffff;
+
+  --white: #ffffff;
   --white-90t: #ffffffe6;
   --white-80t: #ffffffcc;
   --white-70t: #ffffffb3;
@@ -38,7 +38,7 @@
   --primary-100: #D9DDEB;
   --primary-50: #ECEEF5;
   --primary-50t: #eceef580;
-  
+
   --gray-900t: #11192880;
   --gray-900: #111928;
   --gray-800: #4F545C;
@@ -52,7 +52,7 @@
   --gray-50: #F8F9FA;
   --gray-50t: #f8f9fa10;
   --gray-50t2: #0000000c;
-  
+
   --blue-900: #162B4B;
   --blue-800: #1E3A5F;
   --blue-700: #385673;
@@ -63,7 +63,7 @@
   --blue-200: #D6D8DA;
   --blue-100: #E3E5E8;
   --blue-50: #F5F8FA;
-  
+
   --red-900: #772424;
   --red-800: #992D2D;
   --red-700: #BF3636;
@@ -74,7 +74,7 @@
   --red-200: #FBCBCB;
   --red-100: #FDECEC;
   --red-50: #FEF3F3;
-  
+
   --orange-900: #603A1B;
   --orange-800: #7F4D1F;
   --orange-700: #A16024;
@@ -85,7 +85,7 @@
   --orange-200: #FDD58F;
   --orange-100: #FEE6B8;
   --orange-50: #FFF4E0;
-  
+
   --yellow-900: #4B4113;
   --yellow-800: #71611D;
   --yellow-700: #998126;
@@ -96,7 +96,7 @@
   --yellow-200: #FDEA8C;
   --yellow-100: #FEF4B5;
   --yellow-50: #FFF9DB;
-  
+
   --green-900: #194D33;
   --green-800: #276641;
   --green-700: #357F4C;
@@ -107,7 +107,7 @@
   --green-200: #B1EDC6;
   --green-100: #D7F8E4;
   --green-50: #EDFFF0;
-  
+
   --teal-900: #184D47;
   --teal-800: #23685A;
   --teal-700: #2E7C6F;
@@ -118,7 +118,7 @@
   --teal-200: #BFEADA;
   --teal-100: #E6FDF8;
   --teal-50: #F0FFFF;
-  
+
   --indigo-900: #2D2F7F;
   --indigo-800: #3D4099;
   --indigo-700: #4E52B5;
@@ -129,7 +129,7 @@
   --indigo-200: #B9BADE;
   --indigo-100: #D0D1E9;
   --indigo-50: #E7E8F4;
-  
+
   --purple-900: #4E3160;
   --purple-800: #653E78;
   --purple-700: #7D4B91;
@@ -140,7 +140,7 @@
   --purple-200: #F3ADE8;
   --purple-100: #F8CEF1;
   --purple-50: #FDEFFA;
-  
+
   --pink-900: #7D2848;
   --pink-800: #9E3359;
   --pink-700: #BF3E6B;
@@ -151,7 +151,7 @@
   --pink-200: #FFB3C0;
   --pink-100: #FFCCD2;
   --pink-50: #FFE6E5;
-  
+
   --neon-blue: #1C64F2;
   --neon-green: #32CD32;
   --neon-red: #FF4500;
@@ -162,7 +162,7 @@
 /* #region Primary Text Color */
 .text-primary-50 {
   color: var(--text-primary-50);
-} 
+}
 
 .text-primary-100 {
   color: var(--text-primary-100);
@@ -323,6 +323,7 @@ appnav a:hover {
 .crc-breadcrumb ol {
   height: 1rem
 }
+
 /* #endregion */
 
 /* #region Navbar */
@@ -348,6 +349,7 @@ appnav a:hover {
   height: 2.25rem !important;
   width: 2.25rem !important;
 }
+
 /* #endregion */
 
 /* #region Container */
@@ -367,16 +369,54 @@ appnav a:hover {
   margin-top: 0.25rem !important;
 }
 
-/* #endregion */  
+/* #endregion */
 
 /* #region Grid */
+.crc-grid-header {
+  margin-bottom: 0.25rem !important;
+  padding: 0.25rem 0.25rem 0.25rem 1rem !important;
+  width: 100% !important;
+  max-width: unset !important;
+}
+
 .crc-grid {
   padding: 0 0.25rem 0.25rem 0.25rem;
   height: calc(100vh - 5.75rem);
   width: 100%;
 }
 
-.crc-content.crc-grid {
+.grid-header-button {
+  padding: 0 !important;
+  border-width: 1px !important;
+  height: 1.5rem !important;
+  width: 1.5rem !important;
+  margin: 0 0.25rem 0 0.25rem;
+}
+
+.grid-button-group {
+  display: flex;
+  flex-direction: row;
+  // align-items: center;
+  // justify-content: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.grid-button {
+  cursor: pointer;
+  padding: 5px;
+  height: 1.5rem !important;
+  width: 1.5rem !important;
+  margin: 0.5 0.25rem 0 0.25rem;
+  border-radius: 50%;
+  border-width: 1px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crc-content .crc-grid {
   padding: 0 0.25rem 0.25rem 0rem;
   height: calc(100vh - 7.75rem);
   width: 100%;
@@ -405,9 +445,9 @@ appnav a:hover {
 
 .crc-tab button {
   padding: 0.5rem 1rem !important;
-  border-left:0 !important;
-  border-right:0 !important;
-  border-top:0 !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-top: 0 !important;
 }
 
 /* #endregion */
@@ -438,6 +478,7 @@ appnav a:hover {
     max-width: none !important;
   }
 }
+
 /* #endregion */
 
 /* #region Tailwind Plus */
@@ -893,4 +934,3 @@ appnav a:hover {
   justify-content: center;
   align-items: center
 }
-

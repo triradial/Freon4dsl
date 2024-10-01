@@ -7,5 +7,5 @@
 </script>
 
 <div class="crc-grid">
-  <PatientList />
+  <PatientList studyId="123" />
 </div>

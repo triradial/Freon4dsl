@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Router, Route } from "svelte-routing";
-    import { ROUTE, VALID_ROUTES, type ValidRoute } from "./constants/routeConstants";
+    import { ROUTE, VALID_ROUTES, VALID_ROUTES_WITH_ID, type ValidRoute, type ValidRouteWithId } from "./constants/routeConstants";
     import Main from "./pages/Main.svelte";
     import Login from "./pages/Login.svelte";
     import { onMount } from "svelte";
@@ -22,12 +22,17 @@
             auth = value;
             console.log("auth:", auth);
             sessionStorage.setItem("auth", auth.toString());
-            const currentPath = window.location.pathname;
-            let currentRouteName = currentPath.split('?')[0].replace(/^\//, '');
-            const currentId = (currentPath.split('?')[1]?.split('=')[1] ?? undefined);
+
+            let currentRouteName = window.location.pathname.split('/')[1] || '';
+            let currentId = (window.location.search.split('?')[1]?.split('=')[1] ?? undefined);
+           
             if (!auth) {
                 if (VALID_ROUTES.includes(currentRouteName as ValidRoute) && currentRouteName !== ROUTE.LOGIN) {
-                    redirectUrl.set(currentPath);
+                    let currentUrl = "/" + currentRouteName;
+                    if (VALID_ROUTES_WITH_ID.includes(currentRouteName as ValidRouteWithId)) {
+                        currentUrl += "?id=" + currentId;
+                    }                
+                    redirectUrl.set(currentUrl);
                 } else {
                     redirectUrl.set("/");
                 }
