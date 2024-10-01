@@ -32,10 +32,10 @@ export class Simulator {
         this.timeline = new Timeline();
         if (param2 instanceof PatientHistory) {
             this.patientHistory = param2;
-            this.availability = param3 || new Availability();
+            this.availability = param3 || undefined;
         } else {
             this.patientHistory = undefined;
-            this.availability = param2 || new Availability();
+            this.availability = param2 || undefined;
         }
     }
 
