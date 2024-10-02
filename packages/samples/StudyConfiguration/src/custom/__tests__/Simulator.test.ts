@@ -1074,7 +1074,7 @@ var items = new vis.DataSet([
 
             let shiftsFromScheduledVisit: utils.ShiftsFromScheduledVisit[] = [
                 { name: "V2 rando", instance: 1, shift: -1, numberFound: 0, foundThisInstance: false },
-                { name: "V4-V7-rando", instance: 1, shift: -4, numberFound: 0, foundThisInstance: false },
+                { name: "V4-V7-rando", instance: 1, shift: -3, numberFound: 0, foundThisInstance: false },
                 { name: "V4-V7-rando", instance: 2, shift: 2, numberFound: 0, foundThisInstance: false },
             ];
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(10, timeline, shiftsFromScheduledVisit);
