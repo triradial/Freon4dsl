@@ -56,7 +56,7 @@ export class TimelineChartTemplate {
                                 eventInstance,
                                 index,
                             ) => nodent`${eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },` : ""}
-                                { start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "treatment-visits", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/"/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
+                                { start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "scheduled-event", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/"/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
                                 ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },` : ""}`,
                         )
                         .filter((item) => item !== "")
@@ -139,8 +139,7 @@ export class TimelineChartTemplate {
           .vis-item.screening-phase { background-color: #5ceb5c; }
           .vis-item.treatment-phase { background-color: #9370ed; }
           .vis-item.window  { background-color: #c3c3be; }
-          .vis-item.screening-visits  { background-color: #bceebc; }
-          .vis-item.treatment-visits  { background-color: #ccbcf4; }
+          .vis-item.scheduled-event { background-color: blue; }
           .vis-item.patient  { background-color: #95a89a; }
           .vis-item.not-available  { background-color: red; }
           .vis-item.on-scheduled-date  { background-color: #000000; }
@@ -179,35 +178,19 @@ export class TimelineChartTemplate {
       </h1>
       <div id="visualization" style="position: unset !important; height:100%"></div>  
 
-      <br>
-      <p>
-        Viewing the timeline:
-      </p>
-      <ul>
-        <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline. </li>
-        <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline.</li>
+      <ul style="list-style-type: none;">
+        <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline </li>
+        <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline</li>
       </ul>
-      <p>
-        The meaning of the rows:
-      </p>
-      <ul>
-        <li>Each Event/Visit is shown in a row with cells colored:</li>
-        <ul>
-          <li><b>Gray</b> - for the window before and after an Event/Visit.</li>
-          <li><b>Purple</b> - The scheduled time of an Event/Visit.</li>
-        </ul>
-        <li><b>Patient</b> - Things about the patient availability and actual events: </li>
-        <ul>
-          <li><b>Red</b> -  A date the patient is unavailable.</li>
-          <li><b>Black</b> -  A date the patient visit occurred on the scheduled date.</li>
-          <li><b>Black & White Stripes</b> -  A date the patient visit occurred in the scheduled window.</li>
-          <li><b>Orange & White Stripes</b> -  A date the patient visit occurred outside the scheduled window.</li>
-        </ul>
-          <li><b>Staff(#)</b> - '(#)' is the total amount of staff available for the study.  The number in the box is the staff on that date. The full staff is available on any date without a box with a number.</li>
+      <ul style="list-style-type: none;">
+          <li><img src="./images/blue.png" alt="Blue" style="width:16px;height:20px;"> Scheduled time of an Event/Visit</li>
+          <li><img src="./images/gray.png" alt="Gray" style="width:16px;height:20px;"> Window before and after a Scheduled Event/Visit</li>
+          <li><img src="./images/black.png" alt="Black" style="width:16px;height:20px;"> Date patient visit occurred on the scheduled date</li>
+          <li><img src="./images/black-stripe.png" alt="Black & White Stripes" style="width:16px;height:20px;"> Date patient visit occurred in the scheduled window</li>
+          <li><img src="./images/orange-stripe.png" alt="Orange & White Stripes" style="width:16px;height:20px;"> Date patient visit occurred outside the scheduled window</li>
+          <li><img src="./images/red.png" alt="Red" style="width:16px;height:20px;"> Date(s) the patient is unavailable</li>
+          <li><img src="./images/staff.png" alt="Yellow" style="width:16px;height:20px;"> Staff(#) - '(#)' is the total amount of staff available for the study. The number in the box is the staff on that date. The full staff is available on any date without a box with a number</li>
       </ul>
-
-
-
       <script>
         ${timelineDataAsScript}
 

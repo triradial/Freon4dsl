@@ -336,7 +336,7 @@ export function saveToFile(stringToSave: string, filename: string) {
 }
 
 export function saveTimeline(timelineDataAsScript: string) {
-    let filename = "timeline.html";
+    let filename = "tmp/timeline.html";
     let timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
     saveToFile(timelineDataAsHTML, filename);
