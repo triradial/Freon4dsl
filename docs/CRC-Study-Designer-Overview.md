@@ -17,25 +17,24 @@ To replace spreadsheets and other manually written documents the Designer suppor
 
 ## Create or Select the Study
 
-Clicking on the study name takes you to the pages where you can see the Study Design.
+To get started you create a study and optionally enter a few bits of information about it like the phase or theraputic area. Once created clicking on the study name takes you to the pages where you can see the Study Design.
 
 ![List of Studies](./images/list-of-studies.png)
 
 ## Define the Events
 
-The study events/visits within the periods defines the overall structure. 
+The study events/visits within the periods defines the overall structure and at least one period and visit need to be defined.
 
 ![Example Events](./images/study-design.png)
 
 The Designer makes it easy to create periods and their events [see video for details]()
 
-- Click the plus next to 'Study Periods' and enter the name
-- Click the plus next to 'Events' and enter the name
-- Click the ︾ to make a smart copy of an event. The name is automatically incremented, e.g., 'V1' becomes 'V2' and scheduling dependencies are automatically duplicated and updated.
+- Simply clicking the plus next to 'Study Periods' and entering the name creates a period. Clicking the plus next to 'Events' and entering the name creates an event.
+- The ︾ make a smart copy of an event. Smart copying automatically increments the name, e.g., 'V1' becomes 'V2' and any scheduling dependencies are automatically duplicated and updated.
 - Copy-and-Paste, Cut-and-Paste, or Drag-and-Drop one or more Events as needed
 - Undo (ctrl-Z) and Redo (ctrl-Y) works here or anywhere else in the Designer
 
-The goal is, if you know the schedule of events from the protocol, the Designer's understanding of study structure allows you to setup it faster than you could type the names into a document. 
+The goal is, if you know the schedule of events from the protocol, the Designer's understanding of study structure allows you to set it up faster than you could type the names into a document. 
 
 ## Define the Schedule
 
