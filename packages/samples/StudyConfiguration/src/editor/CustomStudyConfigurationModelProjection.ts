@@ -32,6 +32,8 @@ import {
     Reference,
     Person,
     TypeOfEvent,
+    PatientInfo,
+    PatientHistory,
 } from "../language/gen";
 import { StudyConfigurationModelEnvironment } from "../config/gen/StudyConfigurationModelEnvironment";
 import { result } from "lodash";
@@ -63,6 +65,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         ["Reference", this.projectReference],
         ["SystemAccess", this.projectSystem],
         ["Person", this.projectPerson],
+        ["PatientInfo", this.projectPatientInfo],
+        ["PatientHistory", this.projectPatientHistory],
     ]);
 
     nodeTypeToTableDefinition: Map<string, () => FreTableDefinition> = new Map<string, () => FreTableDefinition>([
@@ -531,227 +535,68 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         );
         return box;
     }
+
+    projectPatientInfo(patientInfo: PatientInfo) {
+        const element: PatientInfo = patientInfo;
+        let box = BoxUtil.listGroupBox(
+            element,
+            "patients",
+            "patients",
+            BoxUtil.verticalPartListBox(element, element.patientHistories, "patientHistories", null, this.handler, { cssClass: "ml-6 mb-2" }),
+            { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+        );
+        return box;
+    }
+
+    projectPatientHistory(patientHistory: PatientHistory) {
+        const element: PatientHistory = patientHistory;
+        let box: Box = BoxUtil.itemGroupBox(
+            element,
+            "patientHistory",
+            "Patient:",
+            "id",
+            BoxFactory.verticalLayout(
+                element,
+                "PatientHistory-overall",
+                "",
+                [
+                    BoxUtil.listGroupBox(
+                        element,
+                        "patientVisit",
+                        "Visits",
+                        BoxFactory.horizontalLayout(
+                            element,
+                            "PatientHistory-hlist-line-1",
+                            "",
+                            [BoxUtil.verticalPartListBox(element, element.patientVisits, "patientVisits", null, this.handler)],
+                            { selectable: false, cssClass: "w-full ml-8" },
+                        ),
+                        {
+                            cssClass: "type4",
+                            isExpanded: true,
+                        },
+                    ),
+                    BoxUtil.listGroupBox(
+                        element,
+                        "patientNotAvailable",
+                        "Not Available",
+                        BoxFactory.horizontalLayout(
+                            element,
+                            "PatientHistory-hlist-line-2",
+                            "",
+                            [BoxUtil.getBoxOrAction(element, "patientNotAvailableDates", "PatientNotAvailable", this.handler)],
+                            { selectable: false, cssClass: "w-full ml-8" },
+                        ),
+                        {
+                            cssClass: "type4",
+                            isExpanded: true,
+                        },
+                    ),
+                ],
+                { cssClass: "w-full ml-8" },
+            ),
+            { cssClass: "type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true },
+        );
+        return box;
+    }
 }
-
-// function copyIntoTask(target:Task, source:Task) {
-//     console.log("copyIntoTask");
-//     if (source.name) {
-//         target.name = source.name;
-//     }
-//     // if (source.isShared) {
-//     //     target.isShared = source.isShared;
-//     // }
-//     if (source.numberedSteps) {
-//         target.numberedSteps = source.numberedSteps;
-//     }
-//     if (source.showDetails) {
-//         target.showDetails = source.showDetails;
-//     }
-//     if (source.description) {
-//         target.description = source.description.copy();
-//     }
-//     if (source.steps) {
-//         console.log("copyIntoTask # steps:" + source.steps.length);
-//         source.steps.forEach((x) => target.steps.push(x.copy()));
-//     }
-//     if (source.referencedTask) {
-//         target.referencedTask = source.referencedTask.copy();
-//     }
-// }
-
-// function copyIntoSystemAccess(target:SystemAccess, source:SystemAccess) {
-//     const result = new SystemAccess();
-//     if (source.name) {
-//         target.name = source.name;
-//     }
-//     if (source.functionName) {
-//         target.functionName = source.functionName;
-//     }
-//     if (source.description) {
-//         target.description = source.description.copy();
-//     }
-//     if (source.accessedAt) {
-//         target.accessedAt = source.accessedAt.copy();
-//     }
-//     if (source.robotMappings) {
-//         source.robotMappings = target.robotMappings.copy();
-//     }
-// }
-
-// // Override of implementation for TaskBoxProvider.getTableRowFor_default
-// function newGetTableRowFor_defaultTaskImplementation(this: TaskBoxProvider): TableRowBox {
-//     const cells: Box[] = [];
-//     let task = this._element as Task;
-//     let innerCells: Box[] = [];
-
-//     //Action to share is invoked
-//     // 1)
-
-//     if (task.type === "R") {
-//         if(task.referencedTask === null) {
-//             console.log("SHARED: referencedTask is null so task is just becoming shared");
-//             let checklist = task.freOwner() as CheckList;
-//             let event = checklist.freOwner() as Event;
-//             let period = event.freOwner() as Period;
-//             let studyConfig = period.freOwner() as StudyConfiguration;
-//             let refToTask = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
-//             let copyOfTask = task.copy();
-//             task.name = "Original Task";
-//             refToTask.referred = copyOfTask;
-//             task.referencedTask = refToTask;
-//             studyConfig.tasks.push(copyOfTask);
-//         }
-//         innerCells.push(
-//           BoxFactory.horizontalLayout(task, "period-hlist-line-1", "",
-//             [
-//                 BoxUtil.labelBox(task, " Shared:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//                 BoxUtil.switchElement(task, "isShared", ""),
-//                 BoxUtil.referenceBox(task,"referencedTask",
-// (selected: string) => { (task).referencedTask = FreNodeReference.create<Task>(
-//                                 StudyConfigurationModelEnvironment.getInstance().scoper.getFromVisibleElements(task,selected,"Task") as Task,"Task");
-//                         },
-//                         StudyConfigurationModelEnvironment.getInstance().scoper,
-//                     ),
-//                 BoxUtil.labelBox(task, "Description:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//                 BoxFactory.label(task, "xxx-top-1-line-2-item-0", ()=> task.referencedTask.referred.description.text,  undefined, "mr-1"),
-//             ],
-//           { selectable: false, cssClass:"align-top" })
-//         );
-//     } else {
-//         // task was previously shared but that just changed so copy in what was shared
-//         if (task.referencedTask !== null) {
-//             copyIntoTask(task, task.referencedTask.referred);
-//             // task.referencedTask = null;
-//         }
-//         innerCells.push(
-//           BoxFactory.horizontalLayout(task, "period-hlist-line-1", "",
-//             [
-//                 BoxUtil.labelBox(task, " Shared:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//                 BoxUtil.switchElement(task, "isShared", ""),
-//                 BoxUtil.textBox(task, "name"),
-//                 BoxUtil.labelBox(task, " Description:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//                 BoxUtil.getBoxOrAction(task, "description", "Description", this.mainHandler),
-//                 BoxUtil.labelBox(task, " Expand:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//                 BoxUtil.switchElement(task, "showDetails", "")
-//             ],
-//             { selectable: true, cssClass:"align-top" })
-//         );
-//         if (task.showDetails === true) {
-//             innerCells.push(BoxFactory.verticalLayout(task, "tasks-optionally1", "", [
-//                 BoxUtil.booleanBox(task, "numberedSteps", { yes: "YES", no: "NO" }, BoolDisplay.SELECT),
-//                 BoxUtil.verticalPartListBox(task, task.steps, "steps", null, this.mainHandler)]));
-//         }
-//     }
-//     cells.push(BoxFactory.verticalLayout(task, "tasks-optionally2", "", innerCells));
-//     return TableUtil.rowBox(
-//         this._element,
-//         this._element.freOwnerDescriptor().propertyName,
-//         "Task",
-//         cells,
-//         this._element.freOwnerDescriptor().propertyIndex,
-//         true,
-//     );
-// }
-
-// // Override of implementation for SystemAccessBoxProvider.getTableRowFor_default
-// function newGetTableRowFor_defaultSystemAccessImplementation(this: SystemAccessBoxProvider): TableRowBox {
-//     const cells: Box[] = [];
-//     let systemAccess = this._element as SystemAccess;
-//     let innerCells: Box[] = [];
-
-//     console.log("SHARED: SystemAccessBoxProvider.getTableRowFor_default: systemAccess.isShared = " + systemAccess.isShared);
-//     if (systemAccess.isShared === true) {
-//         if(systemAccess.referencedSystemAccess === null) {
-//             console.log("SHARED: referencedSystemAccess is null so SystemAccess is just becoming shared");
-//             let step = systemAccess.freOwner() as Step;
-//             let task = step.freOwner() as Task;
-//             let checklist = task.freOwner() as CheckList;
-//             let event = checklist.freOwner() as Event;
-//             let period = event.freOwner() as Period;
-//             let studyConfig = period.freOwner() as StudyConfiguration;
-//             let refToSystemAccess = FreNodeReference.create(systemAccess.name, "SystemAccess") as FreNodeReference<SystemAccess>;
-//             let copyOfSystemAccess = systemAccess.copy();
-//             refToSystemAccess.referred = copyOfSystemAccess;
-//             systemAccess.referencedSystemAccess = refToSystemAccess;
-//             studyConfig.systemAccesses.push(copyOfSystemAccess);
-//             console.log("SHARED: pushed system");
-//         }
-//         // if (systemAccess.referencedSystemAccess.referred.description === null) {
-//         //     systemAccess.referencedSystemAccess.referred.description = new Description();
-//         // }
-//         console.log("SHARED: SystemAccess is shared");
-//         innerCells.push(
-//           BoxFactory.horizontalLayout(systemAccess, "period-hlist-line-1", "",
-//             [
-//                 BoxUtil.labelBox(systemAccess, " Shared:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//                 BoxUtil.switchElement(systemAccess, "isShared", ""),
-//                 BoxUtil.referenceBox(
-//                         systemAccess,
-//                         "referencedSystemAccess",
-//                         (selected: string) => {
-//                             systemAccess.referencedSystemAccess = FreNodeReference.create<SystemAccess>(
-//                                 StudyConfigurationModelEnvironment.getInstance().scoper.getFromVisibleElements(
-//                                     systemAccess,
-//                                     selected,
-//                                     "SystemAccess",
-//                                 ) as SystemAccess,
-//                                 "SystemAccess",
-//                             );
-//                         },
-//                         StudyConfigurationModelEnvironment.getInstance().scoper,
-//                     ),
-//                 BoxUtil.labelBox(systemAccess.referencedSystemAccess.referred, " DescriptionX:", "sys-top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//                 BoxUtil.labelBox(systemAccess.referencedSystemAccess.referred.description, systemAccess.referencedSystemAccess.referred.description.rawText + " is the raw text!", "raw-sys-top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//             ],
-//           { selectable: true, cssClass:"align-top" })
-//         );
-//     } else {
-//         // task was previously shared but that just changed so copy in what was shared
-//         if (systemAccess.referencedSystemAccess !== null) {
-//             copyIntoSystemAccess(systemAccess, systemAccess.referencedSystemAccess.referred);
-//             systemAccess.referencedSystemAccess = null;
-//         }
-//         console.log("SHARED: System Access not shared yet");
-//         innerCells.push(BoxFactory.verticalLayout(this._element as SystemAccess, "SystemAccess-overall", "", [
-//             BoxUtil.labelBox(systemAccess, " Shared:", "top-1-line-2-item-0", { cssClass: "app-small-caps mt-1 mr-1" }),
-//             BoxUtil.switchElement(systemAccess, "isShared", ""),
-//             BoxUtil.emptyLineBox(this._element as SystemAccess, "SystemAccess-empty-line-0"),
-//             BoxFactory.horizontalLayout(this._element as SystemAccess,"SystemAccess-hlist-line-1","",
-//               [
-//                   BoxUtil.labelBox(this._element as SystemAccess, "System Name  :", "top-1-line-1-item-0"),
-//                   BoxUtil.textBox(this._element as SystemAccess, "name"),
-//                   BoxUtil.labelBox(this._element as SystemAccess, "Function:", "top-1-line-1-item-2"),
-//                   BoxUtil.textBox(this._element as SystemAccess, "functionName"),
-//               ],
-//             { selectable: true, cssClass:"align-top" }),
-//             BoxFactory.horizontalLayout(this._element as SystemAccess,"SystemAccess-hlist-line-2","",
-//               [
-//                   BoxUtil.labelBox(this._element as SystemAccess, "Description  :", "sysa-top-1-line-2-item-0"),
-//                   BoxUtil.getBoxOrAction(this._element as SystemAccess, "description", "Description", this.mainHandler),
-//               ],
-//             { selectable: true, cssClass:"align-top" }),
-//             BoxFactory.horizontalLayout(this._element as SystemAccess,"SystemAccess-hlist-line-3","",
-//               [
-//                   BoxUtil.labelBox(this._element as SystemAccess, "Access at", "top-1-line-3-item-0"),
-//                   BoxUtil.getBoxOrAction(this._element as SystemAccess, "accessedAt", "AccessedAt", this.mainHandler),
-//               ],
-//             { selectable: true, cssClass:"align-top" }),
-//             BoxUtil.labelBox(this._element as SystemAccess, "The Robot should copy:", "top-1-line-4-item-0"),
-//             BoxUtil.indentBox(this._element as SystemAccess, 4, "5",
-//                 BoxUtil.getBoxOrAction(this._element as SystemAccess, "robotMappings", "RobotMapping", this.mainHandler),
-//             ),
-//             BoxUtil.emptyLineBox(this._element as SystemAccess, "SystemAccess-empty-line-6"),
-//             BoxUtil.emptyLineBox(this._element as SystemAccess, "SystemAccess-empty-line-7"),
-//             BoxUtil.emptyLineBox(this._element as SystemAccess, "SystemAccess-empty-line-8"),
-//         ]));
-//     }
-//     cells.push(BoxFactory.verticalLayout(systemAccess, "systemsAccess-optionally2", "", innerCells));
-//     return TableUtil.rowBox(
-//         this._element,
-//         this._element.freOwnerDescriptor().propertyName,
-//         "SystemAccess",
-//         cells,
-//         this._element.freOwnerDescriptor().propertyIndex,
-//         true,
-//     );
-// }

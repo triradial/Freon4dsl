@@ -185,9 +185,9 @@ export class TimelineChartTemplate {
       <ul style="list-style-type: none;">
           <li><img src="./images/blue.png" alt="Blue" style="width:16px;height:20px;"> Scheduled time of an Event/Visit</li>
           <li><img src="./images/gray.png" alt="Gray" style="width:16px;height:20px;"> Window before and after a Scheduled Event/Visit</li>
-          <li><img src="./images/black.png" alt="Black" style="width:16px;height:20px;"> Date patient visit occurred on the scheduled date</li>
-          <li><img src="./images/black-stripe.png" alt="Black & White Stripes" style="width:16px;height:20px;"> Date patient visit occurred in the scheduled window</li>
-          <li><img src="./images/orange-stripe.png" alt="Orange & White Stripes" style="width:16px;height:20px;"> Date patient visit occurred outside the scheduled window</li>
+          <li><img src="./images/black.png" alt="Black" style="width:16px;height:20px;"> Patient visit that occurred on the scheduled date</li>
+          <li><img src="./images/black-stripe.png" alt="Black & White Stripes" style="width:16px;height:20px;"> Patient visit that occurred within the scheduled window</li>
+          <li><img src="./images/orange-stripe.png" alt="Orange & White Stripes" style="width:16px;height:20px;"> Patient visit that occurred outside the scheduled window</li>
           <li><img src="./images/red.png" alt="Red" style="width:16px;height:20px;"> Date(s) the patient is unavailable</li>
           <li><img src="./images/staff.png" alt="Yellow" style="width:16px;height:20px;"> Staff(#) - '(#)' is the total amount of staff available for the study. The number in the box is the staff on that date. The full staff is available on any date without a box with a number</li>
       </ul>

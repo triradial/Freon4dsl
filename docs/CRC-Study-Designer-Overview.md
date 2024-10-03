@@ -2,73 +2,89 @@
 
 # Introduction
 
-The *CRC-Hub Study Designer* is an alternative to creating spreadsheets that show the study schedule and to writing checklists on paper or in a document. The CRC Study Designer is part of the CRC-Hub product. Throughout this document 'Designer' is short for ' CRC-Hub Study Designer'. To replace spreadsheets and other manually written documents the Designer supports:
-- Defining the events in a study and the details of their schedule. An event is typically a patient visit but it can be anything that needs to be done by site personnel
-- Defining the checklist of things to do for each event
+The *CRC-Hub Study Designer* is an alternative to creating spreadsheets/documents that show the study schedule and to writing checklists on paper or in a document. It is for staff at clinical trial sites that work with paper to avoid having a computer between them and the patient. The CRC-Hub Study Designer is part of the CRC-Hub product.[^1] Throughout this document, 'Designer' is short for 'CRC-Hub Study Designer'. 
+
+To replace spreadsheets and other manually written documents the Designer supports:
+- Defining the events in a study and optionally the details of their schedule. An event is typically a patient visit but it can be anything that needs to be done by site personnel
+- Defining the checklist of things to do for each event. 
 - Generating a document(s) containing the schedule and checklists that can be printed or viewed online
 
- Sites that work with paper so that they do not have a computer between them and the patient use just the Designer. This document describes that way of using the Designer. The CRC-Hub is for sites that want to be guided through the schedule of work done for a study. When used with the full CRC-Hub, the Designer generates the study specific web site and checklists. The full CRC-Hub features are not the focus here. 
+[^1]: This document describes using the Designer. The full CRC-Hub product is for sites that want to be guided on a computer, rather than paper, through the tasks done for a study. When used with the full CRC-Hub, the Designer generates the study specific web site and checklists of tasks. The full CRC-Hub features are not the focus here. 
 
 
 # Define Events and Their Schedule
 
-While each Event must be defined in order for it to have a checklist, it is optional to add details of the schedule. 
 
 ## Create or Select the Study
+
+Clicking on the study name takes you to the pages where you can see the Study Design.
 
 ![List of Studies](./images/list-of-studies.png)
 
 ## Define the Events
 
+The study events/visits within the periods defines the overall structure. 
+
 ![Example Events](./images/study-design.png)
 
-The Designer makes it easy to create events [see video for details]()
+The Designer makes it easy to create periods and their events [see video for details]()
 
 - Click the plus next to 'Study Periods' and enter the name
 - Click the plus next to 'Events' and enter the name
-- Click the ︾ to make a smart copy of an event. The name is automatically incremented, e.g., 'V1' becomes 'V2' and, as will be discussed when scheduling details are covered, things like scheduling dependencies are automatically updated.
+- Click the ︾ to make a smart copy of an event. The name is automatically incremented, e.g., 'V1' becomes 'V2' and scheduling dependencies are automatically duplicated and updated.
 - Copy-and-Paste, Cut-and-Paste, or Drag-and-Drop one or more Events as needed
-- Undo (ctrl-Z) and Redo (ctrl-Y) here or anywhere else in the Designer
+- Undo (ctrl-Z) and Redo (ctrl-Y) works here or anywhere else in the Designer
 
-The goal is, if you know the schedule of events from the protocol, it should take less time than you can type the names of the events to setup the study structure. 
+The goal is, if you know the schedule of events from the protocol, the Designer's understanding of study structure allows you to setup it faster than you could type the names into a document. 
 
 ## Define the Schedule
 
-![Example Schedule](./images/schedule.png)
-
 The Designer makes is easy to create complex schedules. In this example the 'V1 run in' visit is scheduled when 3 days after 'V1 rando' completes with a window of 2 days before or after. You are guided through schedule creation, e.g., when you get to the place showing 'when' you are given all the choices for when an event can be first scheduled and based on what you select other options are shown. It is like typing in Word or Excel if those tools *understood* clinical trials.
 
+![Example Schedule](./images/schedule.png)
 
 ## View Schedule Charts
 
+Accurately creating anything but a simple study schedule is hard because of things like dependencies between visits, repeating visits, and overlapping windows. The Designer allows you to immediately view a chart of the schedule that you can zoom and scroll through. You can seamlessly move back and forth between trying different ways to express the schedule and seeing if it's correct. The following shows a chart with repeating visits that have complex dependencies.
+
+![Schedule and Chart](./images/schedule-and-chart.png)
+
+This chart shows the entire study duration so only some of the study weeks are displayed on the axis. 
+
 ![Example Timeline Chart](./images/timeline-schedule-only.png)
+![Schedule Legend](./images/legend-just-schedule.png)
 
-The following are shown on the chart:
+<br>
+<br>
+<br>
 
-![Schedule Legend](./images/Schedule-Legend.png)
+Zooming in on the Study Timeline shows study days and study weeks.
 
-Accurately creating anything but a simple study schedule is hard because of things like dependencies between visits, repeating visits, overlapping windows. The Designer allows you to immediately view a chart of the schedule you can zoom and scroll through. You can seamlessly move back and forth between trying different ways to express the schedule and seeing if it's correct. The above shows a chart with repeating visits that have complex dependencies.
+![Schedule Zoomed](./images/timeline-schedule-only-zoomed.png)
+
 
 ## View Schedule Tables
 
+The timeline of study events can also be viewed as a table with the same seamless moving back and forth between the schedule and the table. 
+
 ![Example Timeline Table](./images/schedule-as-table.png)
 
-The timeline of study events can also be viewed as a table with the same seamless moving back and forth between the the table and the schedule. A variety of table formats can be supported, e.g., visits of different types shown in side-by-side instead of one longer table. Events can be given alternative names that automatically reflect counts of repeating visits, e.g., 'V14-V18 run in (2)' for the second occurrence of a visit in the 'V14-V18 run in'  repetitions.
+A variety of table formats can be supported, e.g., visits of different types shown side-by-side instead of one longer table. Events can be given alternative names that automatically reflect counts of repeating visits, e.g., 'V14-V18 run in (2)' for the second occurrence of a visit in the 'V14-V18 run in'  repetitions.
 
 # Define Checklists
 
-A checklist is a list of tasks to be done during a visit.
+A *checklist* defines the tasks to be done during a visit. The Designer makes it easy to create checklists of things to do at any visit/event.
 
-![Informed Consent with just Steps](./images/Informed-Consent-Just-Tasks.png)
+![Informed Consent with just Steps](./images/Informed-Consent-Just-Tasks-Schedule-Hidden.png)
 
 
-The Designer makes it easy to create checklists of things to do at any event. Checklists are shared and standardized rather than custom created in something like a spreadsheet, document, or notebook. To start, only a minimum can be captured, e.g., just a list of tasks to be done in a visit as shown above for the Informed Consent visit.
+ Checklists are shared and standardized rather than custom created in something like a spreadsheet, document, or notebook. To start, only a minimum can be captured, e.g., just a list of tasks to be done in a visit as shown above for the Informed Consent visit.
 
 ## Steps
 
 The steps that describe the details of how to do a task can be added.
 
-![Informed Consent with just Steps](./images/Informed-Consent-Just-Tasks-Schedule-Hidden.png)
+![Informed Consent with just Steps](./images/Informed-Consent-Just-Steps.png)
 
 ## Step Details
 
@@ -76,22 +92,23 @@ Details about each step can be added.
 
 ![Step Details](./images/Informed-Consent-Step-Detail.png)
 
-Details about each step, e.g., referenced documents or people to contact, can be added. This is particularly useful when the checklist is viewed online because you can click on the links to references or contacts.
+Details about each step can include things like referenced documents or people to contact. This is particularly useful when the checklist is viewed online because you can click on the links to references or contacts.
 
 ![Step with References](./images/Informed-Consent-Step-Detail.png)
 
 
 # Save or Print Study Design
 
-By the press of a button, some or all of the Schedule chart and table and the checklist are saved as a document. The document can be printed and used with printed data collection forms. 
+By the press of a button, some or all of the chart and table views of the schedule and the checklist are saved as a document. The document can be printed to support using the studies printed data collection forms. 
 
-The design as a document contains the following sections.
+The study design as a document contains the following sections.
 
 ## Table of Contents Section
 
-![TOC](./images/Doc-TOC.png)
+The printable document starts with a table-of-contents. Not all the sections in the document are populated in this example, e.g., there are no checklists for the Treatment period. There is no requirement that you fill them all. You might start with just the first few and add details as you do real visits. 
 
-Not all the sections are populated in the above example, e.g., there are no checklists for the Treatment period.
+
+![TOC](./images/Doc-TOC.png)
 
 ## Timeline Section
 
@@ -104,6 +121,7 @@ Not all the sections are populated in the above example, e.g., there are no chec
 ![Checklist](./images/Doc-Checklist.png)
 
 ## Benefits
+
 While conducting a patient visit:
 - The checklist can serve as guidance for details of things to be done in or after the visit as well as how to fill the paper or electronic data collection forms.
 - The schedule chart can be used to review the patients timeline and schedule future visits
@@ -115,9 +133,20 @@ Paper or electronic versions of checklists are particularly helpful when:
 
 # View Patient Charts
 
-The Designer also allows entry of the date each patients visit and dates when the patient isn't available. A patient chart can be generated showing this information.
+The Designer also allows entry of the dates of patients visit and dates when the patient isn't available. A patient chart can be generated showing this information.
+
+![Patient Visits](./images/patient-visits.png)
 
 ![Example Timeline Chart](./images/timeline.png)
 
+![Patient Legend](./images/legend-for-patient.png)
 
 # View Staff Availability Charts
+
+The availability of staff or other resources can be entered and included on the charts. The following shows a study schedule with staff availability. 
+
+![Available Staff](./images/available-staff.png)
+
+![Schedule with Staff Levels](./images/schedule-with-staff.png)
+
+![Staff Legend](./images/legend-staff.png)

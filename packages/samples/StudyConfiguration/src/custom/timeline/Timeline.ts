@@ -432,9 +432,21 @@ export class Timeline extends RtObject {
                         month:      '',
                         year:       ''
                     },
+                    majorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'w',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    }
+
                 },
                 timeAxis: {scale: 'day', step: 1},
-                showMajorLabels: false,
+                showMajorLabels: true,
                 orientation: 'both',
                 start: ${timeline.getReferenceDateAsDateString()},
                 end: ${timeline.getEndOfTimeline()},
@@ -446,7 +458,7 @@ export class Timeline extends RtObject {
                     },
                 },
             };
-            `;
+            configure: true`;
         } else {
             result = `          var options = {
                 showCurrentTime: false,
