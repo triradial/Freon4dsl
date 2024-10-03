@@ -99,10 +99,11 @@ export function createDay1EventScheduleThatRepeatsWeekly(eventName: string, numb
 }
 
 // Add a Event DSL element to a Period DSL element.
-export function createEventAndAddToPeriod(period: Period, eventName: string, eventSchedule: EventSchedule): Event {
-    let event = new Event(eventName);
-    event.name = eventName;
-    event.schedule = eventSchedule;
+export function createEventAndAddToPeriod(period: Period, eventName: string, eventSchedule: EventSchedule, alternativeName?: string): Event {
+    if (!alternativeName) {
+        alternativeName = "V#";
+    }
+    let event = Event.create({ name: eventName, alternativeName: alternativeName, schedule: eventSchedule });
     period.events.push(event);
     return event;
 }
@@ -249,12 +250,17 @@ export function logPeriodsAndEvents(prefix: string, studyConfiguration: StudyCon
     console.log(output);
 }
 
-export function addRepeatingEvents(studyConfiguration: StudyConfiguration, periodName: string, eventsToAdd: EventsToAdd[]): StudyConfiguration {
+export function addRepeatingEvents(
+    studyConfiguration: StudyConfiguration,
+    periodName: string,
+    eventsToAdd: EventsToAdd[],
+    alternativeName?: string,
+): StudyConfiguration {
     let period = new Period(periodName);
     period.name = periodName;
     // Setup the study start event
     let dayEventSchedule = createDay1EventScheduleThatRepeatsWeekly(eventsToAdd[0].eventName, eventsToAdd[0].repeat, eventsToAdd[0].eventDay);
-    let event = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule);
+    let event = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule, alternativeName);
     studyConfiguration.periods.push(period);
     return studyConfiguration;
 }

@@ -49,7 +49,7 @@ export class TimelineTableTemplate {
         var template = `
 <div class="table_component" role="region" tabindex="0">
 <table>
-  <caption>Study Timeline Table</caption>
+  <caption><b>Study Timeline Table</b></caption>
   <thead>
     <tr>
       <th>Visit Name</th>
@@ -71,7 +71,7 @@ ${timeline
                 (eventInstance, index) =>
                     `<tr>
         <td>${eventInstance.getName()}</td>
-        <td>${eventInstance.getScheduledEvent().configuredEvent.alternativeName}</td>
+        <td>${eventInstance.getAlternativeName()}</td>
         <td>${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name}</td>
         <td>${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""}</td>
         <td>${(eventInstance.getStartDay() + 1).toString() ?? ""}</td>
@@ -84,6 +84,7 @@ ${timeline
       </tr>
     </tbody>
   </table>
+</div>
 `;
         return template;
     }

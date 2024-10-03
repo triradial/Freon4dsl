@@ -1554,7 +1554,7 @@ var items = new vis.DataSet([
         it("generates a TABLE for a three visit timeline for a visit that repeats twice", () => {
             // GIVEN
             let listOfEventsToAdd: EventsToAdd[] = [{ eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening" }];
-            studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd);
+            studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd, "V#");
 
             // WHEN the study is simulated and a timeline is generated
             let simulator = new Simulator(studyConfigurationUnit);
@@ -1562,45 +1562,108 @@ var items = new vis.DataSet([
             let timeline = simulator.timeline;
 
             const expectedTimelineTableAsHTML = `<div class="table_component" role="region" tabindex="0">
-              <table>
+                <table>
                 <caption>Study Timeline Table</caption>
                 <thead>
-                  <tr>
+                    <tr>
                     <th>Visit Name</th>
                     <th>Alternative Name</th>
                     <th>Phase</th>
                     <th>Window (-)</th>
                     <th>Day/Date</th>
                     <th>Window (+)</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-
-              <tr>
-                      <td>Visit 1</td>
-                      <td> </td>
-                      <td>Screening</td>
-                      <td>1</td>
-                      <td>2</td>
-                      <td>1</td>
-                      </tr><tr>
-                      <td>Visit 1</td>
-                      <td> </td>
-                      <td>Screening</td>
-                      <td>1</td>
-                      <td>9</td>
-                      <td>1</td>
-                      </tr><tr>
-                      <td>Visit 1</td>
-                      <td> </td>
-                      <td>Screening</td>
-                      <td>1</td>
-                      <td>16</td>
-                      <td>1</td>
-                      </tr>
                     </tr>
-                  </tbody>
+                    </thead>
+                    <tbody>
+
+                <tr>
+                        <td>Visit 1</td>
+                        <td>V1</td>
+                        <td>Screening</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>1</td>
+                        </tr><tr>
+                        <td>Visit 1</td>
+                        <td>V2</td>
+                        <td>Screening</td>
+                        <td>1</td>
+                        <td>9</td>
+                        <td>1</td>
+                        </tr><tr>
+                        <td>Visit 1</td>
+                        <td>V3</td>
+                        <td>Screening</td>
+                        <td>1</td>
+                        <td>16</td>
+                        <td>1</td>
+                        </tr>
+                    </tr>
+                    </tbody>
                 </table>
+                </div> 
+                `;
+            const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTML(timeline);
+            // Save full HTML of table for viewing / debugging
+            utils.saveTimelineTable(timelineTableAsHTML);
+
+            const normalizedTimelineDataAsScript = timelineTableAsHTML.replace(/\s+/g, "");
+            const normalizedExpectedTimelineDataAsScript = expectedTimelineTableAsHTML.replace(/\s+/g, "");
+            // Then the generated timeline table has the expected data in it
+            expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+        });
+
+        it("generates a TABLE for a three visit timeline for a visit that repeats twice and has a special alternative name", () => {
+            // GIVEN
+            let listOfEventsToAdd: EventsToAdd[] = [{ eventName: "Visit 1", eventDay: 1, repeat: 2, period: "Screening" }];
+            studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd, "Special Alt Name");
+
+            // WHEN the study is simulated and a timeline is generated
+            let simulator = new Simulator(studyConfigurationUnit);
+            simulator.run();
+            let timeline = simulator.timeline;
+
+            const expectedTimelineTableAsHTML = `<div class="table_component" role="region" tabindex="0">
+                <table>
+                <caption>Study Timeline Table</caption>
+                <thead>
+                    <tr>
+                    <th>Visit Name</th>
+                    <th>Alternative Name</th>
+                    <th>Phase</th>
+                    <th>Window (-)</th>
+                    <th>Day/Date</th>
+                    <th>Window (+)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                <tr>
+                        <td>Visit 1</td>
+                        <td>Special Alt Name</td>
+                        <td>Screening</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>1</td>
+                        </tr><tr>
+                        <td>Visit 1</td>
+                        <td>Special Alt Name (2)</td>
+                        <td>Screening</td>
+                        <td>1</td>
+                        <td>9</td>
+                        <td>1</td>
+                        </tr><tr>
+                        <td>Visit 1</td>
+                        <td>Special Alt Name (3)</td>
+                        <td>Screening</td>
+                        <td>1</td>
+                        <td>16</td>
+                        <td>1</td>
+                        </tr>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
               `;
             const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTML(timeline);
             // Save full HTML of table for viewing / debugging
