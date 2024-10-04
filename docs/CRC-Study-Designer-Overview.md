@@ -77,7 +77,7 @@ The goal is, if you know the schedule of events from the protocol, the Designer'
 
 ## Define the Schedule
 
-The Designer makes is easy to create even complex schedules. In this example the 'V1 run in' visit is scheduled when 3 days after 'V1 rando' completes with a window of 2 days before or after. You are guided through schedule creation, e.g., when you get to the place showing 'when' you are given all the choices for when an event can be first scheduled and based on what you select other options are shown. It is like typing in Word or Excel if those tools *understood* clinical trials.
+The Designer makes is easy to create even complex schedules. In this example the `V1 run in` visit is scheduled when 3 days after `V1 rando` completes with a window of 2 days before or after. You are guided through schedule creation, e.g., when you get to the place showing 'when' you are given all the choices for when an event can be first scheduled and based on what you select other options are shown. It is like typing in Word or Excel if those tools *understood* clinical trials.
 
 ![Example Schedule](./images/schedule.png)
 
@@ -85,7 +85,7 @@ If you look closely you'll see that in the `First scheduled: when` there is a sm
 
 ## View Schedule Charts
 
-Accurately creating anything but a simple study schedule is hard because of things like dependencies between visits, repeating visits, overlapping windows, etc. The Designer allows you to immediately view a chart of the schedule that you can zoom and scroll through. You can seamlessly move back and forth between trying different ways to express the schedule and seeing if it's correct. The following shows a chart with repeating visits that have complex dependencies. You can view the chart as soon as define any scheduling and use it to help you incrementally define an accurate view of the study schedule.
+Accurately creating anything but a simple study schedule is hard because of things like dependencies between visits, repeating visits, overlapping windows, etc. The Designer allows you to write the scheduling in the words of a clinical trial. At any point you can view a timeline chart of the schedule that you can zoom and scroll through. You can seamlessly move back and forth between trying different ways to express the schedule and seeing if it's correct. The following shows a chart with repeating visits that have complex dependencies. You can view the chart as soon as define any scheduling and use it to help you incrementally define an accurate view of the study schedule.
 
 ![Schedule and Chart](./images/schedule-and-chart.png)
 
