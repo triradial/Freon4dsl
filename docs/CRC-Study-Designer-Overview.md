@@ -112,20 +112,20 @@ A variety of table formats can be supported, e.g., visits of different types sho
 
 # Define Checklists
 
-A *checklist* defines the tasks to be done during an event. The Designer makes it easy to create checklists of things to do at any event. The picture below shows the four tasks of the ICF event.
+A *checklist* defines the tasks to be done during an event. The Designer makes it easy to create checklists of things to do at any event. The picture below shows the checklist of four tasks of the `ICF (1A)` event. The reason to create a checklist in the Designer is so you can print it out and use it while with a patient conducting a visit. 
 
 ![Informed Consent with just Steps](./images/Informed-Consent-Just-Tasks-Schedule-Hidden.png)
 
 
- Checklists are shared and standardized rather than custom created in something like a spreadsheet, document, or notebook. To start, only a minimum can be defined, e.g., just a list of tasks to be done in a visit as shown above for the ICF event where there are four tasks in the checklist.
+ Checklists are shared and standardized rather than custom created in something like a spreadsheet, document, or notebook. To start, only a minimum can be defined, e.g., just a list of tasks to be done in a visit as shown above for the ICF event where there are four tasks in the checklist. Additional details can be added at any time.
 
-## Steps
+## Steps of a Task
 
 A description of the task as well as the steps that explain the details of how to do a task can be added. The description and three steps for the Informed Consent task are shown below.
 
 ![Informed Consent with just Steps](./images/Informed-Consent-Just-Steps.png)
 
-## Step Details
+## Details of a Step
 
 Each step can have additional details added as shown by the description and three bullets under the Obtain Informed Consent step.
 
