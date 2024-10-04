@@ -137,7 +137,7 @@ Details about each step can include things like referenced documents or people t
 
 # Save or Print Study Design
 
-By the press of a button, some or all of the chart and table views of the schedule and the checklist are saved as a document. The document can be printed to support using the studies printed data collection forms. 
+By the press of a button, some or all of the chart and table views of the schedule and the checklist are saved as a document. The document can be printed to support doing the work of a visit and combined with using the studies printed data collection forms. 
 
 The study design as a document contains the following sections.
 
@@ -150,24 +150,29 @@ The printable document starts with a table-of-contents. Not all the sections in 
 
 ## Timeline Section
 
+The table view and the timeline chart are the first things in the document. A separate file containing the timeline chart is also generated. It can be opened separately and all the zooming and scrolling features are supported without opening the Designer. 
+
 ![Timeline Table](./images/Doc-Timeline-Table.png)
 
 ![Timeline Chart](./images/timeline-schedule-only.png)
 
 ## Checklists Section
 
+All the checklists at whatever level of detail that was defined are printed. If scheduling was defined, a text description of the schedule of each is included. 
+
 ![Checklist](./images/Doc-Checklist.png)
 
 
 # View Patient Charts
 
-The Designer also allows entry of the dates of patients visit and dates when the patient isn't available. A patient chart can be generated showing this information.
+The Designer also allows entry of the dates of patients visit and dates when the patient isn't available. A patient chart can be generated showing this information. The following shows a few visits recorded for the `MV' patient.
 
 ![Patient Visits](./images/patient-visits.png)
 
+The timeline of the patient includes ![Patient Legend](./images/legend-for-patient.png)
+
 ![Example Timeline Chart](./images/timeline.png)
 
-![Patient Legend](./images/legend-for-patient.png)
 
 # View Staff Availability Charts
 
@@ -177,7 +182,7 @@ The availability of staff or other resources can be entered and included on the 
 
 ![Schedule with Staff Levels](./images/schedule-with-staff.png)
 
-![Staff Legend](./images/legend-staff.png)
+The staff availabilit is presented as: ![Staff Legend](./images/legend-staff.png)
 
 # Summary and Benefits
 
