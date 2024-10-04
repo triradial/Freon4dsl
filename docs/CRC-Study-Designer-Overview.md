@@ -2,7 +2,7 @@
 
 # Introduction
 
-The *CRC-Hub Study Designer* is an alternative to creating spreadsheets/documents that show the study schedule and to writing checklists on paper or in a document. It is for staff at clinical trial sites that work with paper to avoid having a computer between them and the patient. The CRC-Hub Study Designer is part of the CRC-Hub product.[^1] Throughout this document, 'Designer' is short for 'CRC-Hub Study Designer'. 
+The *CRC-Hub Study Designer* is an alternative to creating spreadsheets that show the study schedule and to writing checklists on paper or in a document. It is for staff at clinical trial sites that work with paper to avoid having a computer between them and the patient. The CRC-Hub Study Designer is part of the CRC-Hub product.[^1] Throughout this document, 'Designer' is short for 'CRC-Hub Study Designer'. 
 
 To replace spreadsheets and other manually written documents the Designer supports:
 - Defining the events in a study and optionally the details of their schedule. An event is typically a patient visit but it can be anything that needs to be done by site personnel
@@ -30,11 +30,10 @@ The study events/visits within the periods defines the overall structure and at 
 The Designer makes it easy to create periods and their events [see video for details]()
 
 - Simply clicking the plus next to 'Study Periods' and entering the name creates a period. Clicking the plus next to 'Events' and entering the name creates an event.
-- The ︾ make a smart copy of an event. Smart copying automatically increments the name, e.g., 'V1' becomes 'V2' and any scheduling dependencies are automatically duplicated and updated.
-- Copy-and-Paste, Cut-and-Paste, or Drag-and-Drop one or more Events as needed
-- Undo (ctrl-Z) and Redo (ctrl-Y) works here or anywhere else in the Designer
+- The ︾ make a smart copy of an event. Smart copying automatically increments the name, e.g., 'V1' becomes 'V2' and any scheduling dependencies are automatically duplicated and updated. The Designer has many such 'smart' actions. 
+- Copy-and-Paste, Cut-and-Paste, or Drag-and-Drop of periods, events, or any of their parts works here or anywhere else in the Designer as does Undo (ctrl-Z) and Redo (ctrl-Y) 
 
-The goal is, if you know the schedule of events from the protocol, the Designer's understanding of study structure allows you to set it up faster than you could type the names into a document. 
+The goal is, if you know the schedule of events from the protocol, the Designer's understanding of clinical trial study structure allows you to set it up faster than you could type the names into a document. 
 
 ## Define the Schedule
 
@@ -48,46 +47,41 @@ Accurately creating anything but a simple study schedule is hard because of thin
 
 ![Schedule and Chart](./images/schedule-and-chart.png)
 
-This chart shows the entire study duration so only some of the study weeks are displayed on the axis. 
-
-![Example Timeline Chart](./images/timeline-schedule-only.png)
+The chart shows:
 ![Schedule Legend](./images/legend-just-schedule.png)
 
-<br>
-<br>
-<br>
+This initial view of the schedule chart shows the entire study duration so only some of the study weeks are displayed on the axis. Zooming in on the Study Timeline allows you to see study days and study weeks.
 
-Zooming in on the Study Timeline shows study days and study weeks.
 
 ![Schedule Zoomed](./images/timeline-schedule-only-zoomed.png)
 
 
 ## View Schedule Tables
 
-The timeline of study events can also be viewed as a table with the same seamless moving back and forth between the schedule and the table. 
+The timeline of study events can also be viewed as a table similar to what might be created in Excel. The same seamless moving back and forth between the schedule and the table can be done. 
 
 ![Example Timeline Table](./images/schedule-as-table.png)
 
-A variety of table formats can be supported, e.g., visits of different types shown side-by-side instead of one longer table. Events can be given alternative names that automatically reflect counts of repeating visits, e.g., 'V14-V18 run in (2)' for the second occurrence of a visit in the 'V14-V18 run in'  repetitions.
+A variety of table formats can be supported, e.g., visits of different types shown side-by-side instead of one longer table. As shown in the table, events can be given alternative names that automatically reflect counts of repeating visits, e.g., 'V14-V18 run in (2)' for the second occurrence of a visit in the 'V14-V18 run in'  repetitions.
 
 # Define Checklists
 
-A *checklist* defines the tasks to be done during a visit. The Designer makes it easy to create checklists of things to do at any visit/event.
+A *checklist* defines the tasks to be done during an event/visit. The Designer makes it easy to create checklists of things to do at any event.
 
 ![Informed Consent with just Steps](./images/Informed-Consent-Just-Tasks-Schedule-Hidden.png)
 
 
- Checklists are shared and standardized rather than custom created in something like a spreadsheet, document, or notebook. To start, only a minimum can be captured, e.g., just a list of tasks to be done in a visit as shown above for the Informed Consent visit.
+ Checklists are shared and standardized rather than custom created in something like a spreadsheet, document, or notebook. To start, only a minimum can be defined, e.g., just a list of tasks to be done in a visit as shown above for the ICF event where there are four tasks in the checklist.
 
 ## Steps
 
-The steps that describe the details of how to do a task can be added.
+A description of the task as well as the steps that explain the details of how to do a task can be added. The description and three steps for the Informed Consent task are shown below.
 
 ![Informed Consent with just Steps](./images/Informed-Consent-Just-Steps.png)
 
 ## Step Details
 
-Details about each step can be added.
+Each step can have additional details added as shown by the description and three bullets under the Obtain Informed Consent step.
 
 ![Step Details](./images/Informed-Consent-Step-Detail.png)
 
@@ -95,6 +89,11 @@ Details about each step can include things like referenced documents or people t
 
 ![Step with References](./images/Informed-Consent-Step-Detail.png)
 
+## Summary
+
+TODO: Summarize the ideas of the study structure and scheduling...
+
+TODO: Add AI / heuristics to make quick setup of scheduling, e.g., multiselect event names and select make-repeating, make-dependent, etc. 
 
 # Save or Print Study Design
 
