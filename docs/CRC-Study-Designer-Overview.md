@@ -160,7 +160,12 @@ You can use just use paper or electronic versions of the checklist to help with:
 - Covering for someone or someone is covering for you
 - As living SOPs that can be reviewed with monitors, sponsors, or IRBs
 
-You are never locked into using the Designer. You can use it to get started and switch to your old way of working:
-- Simply copy and paste the description and table view of the schedule from the saved document into Word or Excel 
-- Simply copy and paste the checklist from the saved document into Word or Excel and manually change it
-- We're working on generating excel versions of the schedule and it's charts which you can then manually change
+You are never locked into using the Designer. We don't save any data that you can't simply copy to your own documents. You can use it to get started and switch to your old way of working easily. Simply copy and paste from the saved document into Word or Excel any of:
+- The description and table view of the schedule  
+- The checklist and all it's details
+- The patient visit history
+- The staff availability
+
+We're working on generating excel versions of the schedule and it's charts which you can then manually change. 
+
+Our mission is for you to never want to stop using the Designer. We believe the Designers built-in understanding of clinical trials makes our guided editing faster than any other way to setup things needed for your site. It's just the beginning and we're constantly adding as we learn other ways to make doing the work of the study easier.
