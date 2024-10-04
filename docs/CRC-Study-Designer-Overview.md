@@ -93,6 +93,23 @@ Details about each step can include things like referenced documents or people t
 
 TODO: Summarize the ideas of the study structure and scheduling...
 
+The Designer structure:
+- Study Structure
+  - Events (a.k.a Visits) each has:
+    - Event Schedule
+    - Checklist of Tasks and Steps for a Task
+
+The schedule and checklists are optional. 
+
+You can use just the scheduling features of the Designer to get charts and tables showing the schedule to help with:
+- Confirming understanding of the protocol
+- Showing site specific events that are not in the protocol 
+- Seeing a patients progress thru the study and what their future schedule should be
+- Superimposing staff availability onto a study schedule
+
+You can use just the checklist features of the Designer to 
+
+
 TODO: Add AI / heuristics to make quick setup of scheduling, e.g., multiselect event names and select make-repeating, make-dependent, etc. 
 
 # Save or Print Study Design
