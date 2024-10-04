@@ -1,13 +1,51 @@
 [TOC]
 
+<style>
+body {
+  counter-reset: h1;
+}
+h1::before {
+  counter-increment: h1;
+  content: counter(h1) ". ";
+}
+h1 {
+  counter-reset: h2;
+}
+h2 {
+  counter-reset: h3;
+}
+h2::before {
+  counter-increment: h2;
+  content: counter(h1) "." counter(h2) ". ";
+}
+h3::before {
+  counter-increment: h3;
+  content: counter(h1) "." counter(h2) "." counter(h3) ". ";
+}
+
+img {
+  width: 94%;
+  box-shadow: 0.3em 0.3em 0.3em #ddd;
+  margin: 3%;
+}
+
+img[src*="#smaller"] {
+   width:50%;
+  box-shadow: none;
+}
+
+</style>
+
 # Introduction
 
-The *CRC-Hub Study Designer* is an alternative to creating spreadsheets that show the study schedule and to writing checklists on paper or in a document. It is for staff at clinical trial sites that work with paper to avoid having a computer between them and the patient. The CRC-Hub Study Designer is part of the CRC-Hub product.[^1] Throughout this document, 'Designer' is short for 'CRC-Hub Study Designer'. 
+The *CRC-Hub Study Designer* is an alternative to creating spreadsheets for the study schedule and to writing checklists of things to do in a visit. It is for staff at clinical trial sites that work with paper to avoid having a computer between them and the patient. The CRC-Hub Study Designer is part of the CRC-Hub product.[^1] Throughout this document, 'Designer' is short for 'CRC-Hub Study Designer'. 
 
 To replace spreadsheets and other manually written documents the Designer supports:
 - Defining the events in a study and optionally the details of their schedule. An event is typically a patient visit but it can be anything that needs to be done by site personnel
 - Defining the checklist of things to do for each event. 
 - Generating a document(s) containing the schedule and checklists that can be printed or viewed online
+
+The following walks through defining and generating these aids for doing the work of a study.
 
 [^1]: This document describes using the Designer. The full CRC-Hub product is for sites that want to be guided on a computer, rather than paper, through the tasks done for a study. When used with the full CRC-Hub, the Designer generates the study specific web site and checklists of tasks. The full CRC-Hub features are not the focus here. 
 
@@ -23,34 +61,37 @@ To get started you create a study and optionally enter a few bits of information
 
 ## Define the Events
 
-The study events/visits within the periods defines the overall structure and at least one period and visit need to be defined.
+The study events within the periods defines the overall structure and at least one period and event need to be defined. An *Event* is typically a visit but can be any point where work needs to be done by site staff. The picture below show four events in the Screening period.
+
+> #TODO: Investigate why the empty description is shown as blank space rather than <description>. Consider an option to not show the description so there is not the blank space between the period and the Events. 
 
 ![Example Events](./images/study-design.png)
 
-The Designer makes it easy to create periods and their events [see video for details]()
+The Designer makes it easy to create periods and their events, [see this video for a live example]()
 
-- Simply clicking the plus next to 'Study Periods' and entering the name creates a period. Clicking the plus next to 'Events' and entering the name creates an event.
-- The ︾ make a smart copy of an event. Smart copying automatically increments the name, e.g., 'V1' becomes 'V2' and any scheduling dependencies are automatically duplicated and updated. The Designer has many such 'smart' actions. 
-- Copy-and-Paste, Cut-and-Paste, or Drag-and-Drop of periods, events, or any of their parts works here or anywhere else in the Designer as does Undo (ctrl-Z) and Redo (ctrl-Y) 
+- Simply clicking the plus next to STUDY PERIODS or EVENTS and entering the name creates an event.
+- The ︾ make a smart copy of the event. Smart copying automatically increments the name, e.g., 'V1' becomes 'V2' and any scheduling dependencies are automatically duplicated and updated. The Designer has many such *smart actions*. 
+- Copy-and-Paste, Cut-and-Paste, and Drag-and-Drop of periods, events, or any of their parts works here or anywhere else in the Designer as does Undo (ctrl-Z) and Redo (ctrl-Y) 
 
 The goal is, if you know the schedule of events from the protocol, the Designer's understanding of clinical trial study structure allows you to set it up faster than you could type the names into a document. 
 
 ## Define the Schedule
 
-The Designer makes is easy to create complex schedules. In this example the 'V1 run in' visit is scheduled when 3 days after 'V1 rando' completes with a window of 2 days before or after. You are guided through schedule creation, e.g., when you get to the place showing 'when' you are given all the choices for when an event can be first scheduled and based on what you select other options are shown. It is like typing in Word or Excel if those tools *understood* clinical trials.
+The Designer makes is easy to create even complex schedules. In this example the 'V1 run in' visit is scheduled when 3 days after 'V1 rando' completes with a window of 2 days before or after. You are guided through schedule creation, e.g., when you get to the place showing 'when' you are given all the choices for when an event can be first scheduled and based on what you select other options are shown. It is like typing in Word or Excel if those tools *understood* clinical trials.
 
 ![Example Schedule](./images/schedule.png)
 
+If you look closely you'll see that in the `First scheduled: when` there is a small arrow `→` next to the `V1 rando` event that `V1 run in` is dependent on. Clicking on that arrow jumps you to that Event. This is an example of the way everything in the Designer is interconnected and how it makes it simple to move within even a complex schedule.
+
 ## View Schedule Charts
 
-Accurately creating anything but a simple study schedule is hard because of things like dependencies between visits, repeating visits, and overlapping windows. The Designer allows you to immediately view a chart of the schedule that you can zoom and scroll through. You can seamlessly move back and forth between trying different ways to express the schedule and seeing if it's correct. The following shows a chart with repeating visits that have complex dependencies.
+Accurately creating anything but a simple study schedule is hard because of things like dependencies between visits, repeating visits, overlapping windows, etc. The Designer allows you to immediately view a chart of the schedule that you can zoom and scroll through. You can seamlessly move back and forth between trying different ways to express the schedule and seeing if it's correct. The following shows a chart with repeating visits that have complex dependencies. You can view the chart as soon as define any scheduling and use it to help you incrementally define an accurate view of the study schedule.
 
 ![Schedule and Chart](./images/schedule-and-chart.png)
 
-The chart shows:
-![Schedule Legend](./images/legend-just-schedule.png)
+The chart shows![Schedule Legend](./images/legend-just-schedule.png#smaller)
 
-This initial view of the schedule chart shows the entire study duration so only some of the study weeks are displayed on the axis. Zooming in on the Study Timeline allows you to see study days and study weeks.
+This initial view of the schedule chart shows the entire study duration so only some of the study weeks are displayed on the axis. Zooming in on the allows you to see study days and study weeks.
 
 
 ![Schedule Zoomed](./images/timeline-schedule-only-zoomed.png)
@@ -62,11 +103,16 @@ The timeline of study events can also be viewed as a table similar to what might
 
 ![Example Timeline Table](./images/schedule-as-table.png)
 
+Zooming in on the table...
+
+
+![Example Timeline Table](./images/schedule-table-only.png)
+
 A variety of table formats can be supported, e.g., visits of different types shown side-by-side instead of one longer table. As shown in the table, events can be given alternative names that automatically reflect counts of repeating visits, e.g., 'V14-V18 run in (2)' for the second occurrence of a visit in the 'V14-V18 run in'  repetitions.
 
 # Define Checklists
 
-A *checklist* defines the tasks to be done during an event/visit. The Designer makes it easy to create checklists of things to do at any event.
+A *checklist* defines the tasks to be done during an event. The Designer makes it easy to create checklists of things to do at any event. The picture below shows the four tasks of the ICF event.
 
 ![Informed Consent with just Steps](./images/Informed-Consent-Just-Tasks-Schedule-Hidden.png)
 
@@ -88,11 +134,6 @@ Each step can have additional details added as shown by the description and thre
 Details about each step can include things like referenced documents or people to contact. This is particularly useful when the checklist is viewed online because you can click on the links to references or contacts.
 
 ![Step with References](./images/Informed-Consent-Step-Detail.png)
-
-
-You can define scheduling or checklists or both. You can start with one and add the other later. You can start with just parts of them and expand them as you learn about the study.
-
-TODO: Add AI / heuristics to make quick setup of scheduling, e.g., multiselect event names and select make-repeating, make-dependent, etc. 
 
 # Save or Print Study Design
 
@@ -138,15 +179,13 @@ The availability of staff or other resources can be entered and included on the 
 
 ![Staff Legend](./images/legend-staff.png)
 
-## Summary and Benefits
+# Summary and Benefits
 
-The Designer structure:
-- Study Structure
-  - Events (a.k.a Visits) each has:
-    - Event Schedule
-    - Checklist of Tasks and Steps for a Task
+The Designer allows you to define the study periods and events (a.k.a visits) and for each event:
+    - The schedule
+    - A checklist of tasks and their steps
 
-The schedule and checklists are optional. 
+You can define scheduling or checklists or both. You can start with one and add the other later. You can start with just parts of them and expand them as you learn about the study.
 
 You can use just the scheduling features of the Designer to get charts and tables showing the schedule to help with:
 - Confirming understanding of the protocol
