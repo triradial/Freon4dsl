@@ -563,7 +563,9 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     BoxUtil.listGroupBox(
                         element,
                         "patientVisit",
-                        "Visits",
+                        "Completed Visits",
+                        //TODO: put a "completed visits: " label here?
+                        //TODO: decide if it's worth auto-populating all the visits without a complete date
                         BoxFactory.horizontalLayout(
                             element,
                             "PatientHistory-hlist-line-1",

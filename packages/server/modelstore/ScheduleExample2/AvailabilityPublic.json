@@ -113,6 +113,14 @@
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-default-key-Date-dateAsString"
+               },
+               "value": "2024-10-24"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-default-key-Date-day"
                },
                "value": "5"
@@ -224,6 +232,14 @@
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-default-key-Date-dateAsString"
+               },
+               "value": "2024-11-01"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-default-key-Date-day"
                },
                "value": "1"
@@ -264,6 +280,14 @@
             "key": "-default-key-EndRangeDate"
          },
          "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-dateAsString"
+               },
+               "value": "2024-11-15"
+            },
             {
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
