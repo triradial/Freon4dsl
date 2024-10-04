@@ -89,26 +89,8 @@ Details about each step can include things like referenced documents or people t
 
 ![Step with References](./images/Informed-Consent-Step-Detail.png)
 
-## Summary
 
-TODO: Summarize the ideas of the study structure and scheduling...
-
-The Designer structure:
-- Study Structure
-  - Events (a.k.a Visits) each has:
-    - Event Schedule
-    - Checklist of Tasks and Steps for a Task
-
-The schedule and checklists are optional. 
-
-You can use just the scheduling features of the Designer to get charts and tables showing the schedule to help with:
-- Confirming understanding of the protocol
-- Showing site specific events that are not in the protocol 
-- Seeing a patients progress thru the study and what their future schedule should be
-- Superimposing staff availability onto a study schedule
-
-You can use just the checklist features of the Designer to 
-
+You can define scheduling or checklists or both. You can start with one and add the other later. You can start with just parts of them and expand them as you learn about the study.
 
 TODO: Add AI / heuristics to make quick setup of scheduling, e.g., multiselect event names and select make-repeating, make-dependent, etc. 
 
@@ -135,16 +117,6 @@ The printable document starts with a table-of-contents. Not all the sections in 
 
 ![Checklist](./images/Doc-Checklist.png)
 
-## Benefits
-
-While conducting a patient visit:
-- The checklist can serve as guidance for details of things to be done in or after the visit as well as how to fill the paper or electronic data collection forms.
-- The schedule chart can be used to review the patients timeline and schedule future visits
-
-Paper or electronic versions of checklists are particularly helpful when:
-- Working on a new study
-- Covering for someone or someone is covering for you
-- As living SOPs that can be reviewed with monitors, sponsors, or IRBs
 
 # View Patient Charts
 
@@ -165,3 +137,30 @@ The availability of staff or other resources can be entered and included on the 
 ![Schedule with Staff Levels](./images/schedule-with-staff.png)
 
 ![Staff Legend](./images/legend-staff.png)
+
+## Summary and Benefits
+
+The Designer structure:
+- Study Structure
+  - Events (a.k.a Visits) each has:
+    - Event Schedule
+    - Checklist of Tasks and Steps for a Task
+
+The schedule and checklists are optional. 
+
+You can use just the scheduling features of the Designer to get charts and tables showing the schedule to help with:
+- Confirming understanding of the protocol
+- Showing site specific events that are not in the protocol 
+- Seeing a patients progress thru the study and what their future schedule should be
+- Superimposing staff availability onto a study schedule
+
+You can use just use paper or electronic versions of the checklist to help with:
+- Guidance for details of things to be done in or after the visit as well as how to fill the paper or electronic data collection forms.
+- Working on a new study
+- Covering for someone or someone is covering for you
+- As living SOPs that can be reviewed with monitors, sponsors, or IRBs
+
+You are never locked into using the Designer. You can use it to get started and switch to your old way of working:
+- Simply copy and paste the description and table view of the schedule from the saved document into Word or Excel 
+- Simply copy and paste the checklist from the saved document into Word or Excel and manually change it
+- We're working on generating excel versions of the schedule and it's charts which you can then manually change
