@@ -213,3 +213,16 @@ You are never locked into using the Designer. We don't save any data that you ca
 We're working on generating excel versions of the schedule and it's charts which you can then manually change. 
 
 Our mission is for you to never want to stop using the Designer. We believe the Designers built-in understanding of clinical trials makes our guided editing faster than any other way to setup things needed for your site. It's just the beginning and we're constantly adding as we learn other ways to make doing the work of the study easier.
+
+## Better than Excel
+
+The premise for the benefits of the Designer is that using it is better than using Excel. Excel is essentially free and understood at some level by all site staff. However using it requires creating potentially complex and fragile formulas specific to the study vs. all scheduling is written is the language of clinical trials, e.g., you basically write: visit X is first scheduled 10 days after visit Y completing with a 2 day window and then repeats 4 times. The value of everyone being able to simply read these words can't be understated. Beyond this clear textual description of the schedule the presentation as an interactive timeline chart takes schedule understandability to another level. 
+
+Combining the timeline charts with the ability to add the actual patient visits and other patient events to the timeline and have the timeline shift to reflect it goes beyond just understanding the schedule to providing the tool for patient specific scheduling of next appointments and compliance.    
+
+It isn't reasonably possible to model the details of the following kinds of schedules in Excel but it's easy in the Designer:
+- Repeating visits, especially if they have interesting dependencies, e.g., two repeating kinds of visits that depend on each other such as a run-in visit that depends on a corresponding randomization visit.
+- Unscheduled visits that shift or trigger other visits, e.g., when the patient experiences some symptom an unscheduled visit must happen and subsequent visits are shifted.
+- Phase transitions based on patient events
+- Calculated visit windows
+- TODO: what other things are difficult to model in excel

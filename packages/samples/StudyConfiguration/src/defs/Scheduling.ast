@@ -8,7 +8,7 @@ concept EventReference {
 }
 
 interface EventStart {
-}  
+}
 
 concept When implements EventStart {
     startWhen: EventReference;
