@@ -40,7 +40,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showScheduling"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -148,7 +148,8 @@
                   "ID-157",
                   "ID-300",
                   "ID-326",
-                  "ID-228"
+                  "ID-228",
+                  "ID-74"
                ]
             }
          ],
@@ -2208,6 +2209,314 @@
          "references": [],
          "annotations": [],
          "parent": "ID-231"
+      },
+      {
+         "id": "ID-74",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-Event"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Event-name"
+               },
+               "value": "Adverse Event"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Event-alternativeName"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Event-showSequenced"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Event-eventNumber"
+               },
+               "value": "0"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Event-tasks"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Event-description"
+               },
+               "children": [
+                  "ID-75"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Event-schedule"
+               },
+               "children": [
+                  "ID-76"
+               ]
+            }
+         ],
+         "references": [
+            {
+               "reference": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Event-typeOfEvent"
+               },
+               "targets": [
+                  {
+                     "resolveInfo": "site",
+                     "reference": "ID-27"
+                  }
+               ]
+            }
+         ],
+         "annotations": [],
+         "parent": "ID-153"
+      },
+      {
+         "id": "ID-75",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-74"
+      },
+      {
+         "id": "ID-76",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-EventSchedule"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventSchedule-eventStart"
+               },
+               "children": [
+                  "ID-82"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventSchedule-eventWindow"
+               },
+               "children": [
+                  "ID-77"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-74"
+      },
+      {
+         "id": "ID-82",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-AnyDay"
+         },
+         "properties": [],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-76"
+      },
+      {
+         "id": "ID-77",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-EventWindow"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-maxDaysBefore"
+               },
+               "children": [
+                  "ID-78"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-daysBefore"
+               },
+               "children": [
+                  "ID-79"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-daysAfter"
+               },
+               "children": [
+                  "ID-80"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-maxDaysAfter"
+               },
+               "children": [
+                  "ID-81"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-76"
+      },
+      {
+         "id": "ID-78",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-Days"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Days-count"
+               },
+               "value": "0"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-77"
+      },
+      {
+         "id": "ID-79",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-Days"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Days-count"
+               },
+               "value": "0"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-77"
+      },
+      {
+         "id": "ID-80",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-Days"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Days-count"
+               },
+               "value": "0"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-77"
+      },
+      {
+         "id": "ID-81",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-Days"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Days-count"
+               },
+               "value": "0"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-77"
       },
       {
          "id": "ID-298",

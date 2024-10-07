@@ -30,7 +30,7 @@ img {
 }
 
 img[src*="#smaller"] {
-   width:50%;
+  width:50%;
   box-shadow: none;
 }
 
