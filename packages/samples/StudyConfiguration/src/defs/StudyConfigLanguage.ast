@@ -10,9 +10,10 @@ modelunit StudyConfiguration {
     name: identifier = "Study Configuration";
     showActivityDetails: boolean;
     showSystems: boolean;
-    showScheduling: boolean;
+    showScheduling: boolean = true;
     showPeriods: boolean;
-    showChecklists: boolean = true;
+    showChecklists: boolean = false;
+    showDescriptions: boolean = false;
     studyStartDayNumber: number = 0;
     periods: Period[];
     // events: Event[];
@@ -42,7 +43,7 @@ concept Assignment {
 }
 
 limited TypeOfEvent {
-    site; video; phone; other;
+    site = { name:"Site Visit"} video = { name:"Video Session"} phone = { name:"Phone Call"} other = { name:"Non-Standard"}
 }
 
 concept Event {

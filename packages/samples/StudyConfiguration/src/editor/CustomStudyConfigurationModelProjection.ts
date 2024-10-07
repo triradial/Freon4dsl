@@ -17,6 +17,7 @@ import {
     BoolDisplay,
     FreNodeReference,
     TableUtil,
+    LimitedDisplay,
 } from "@freon4dsl/core";
 import {
     StudyConfiguration,
@@ -214,6 +215,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         const element: Event = event;
         const showScheduling = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showScheduling;
         const showChecklists = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showChecklists;
+        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
         let box: Box = BoxUtil.itemGroupBox(
             element,
             "event",
@@ -224,22 +226,28 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 "Event-detail",
                 "",
                 [
-                    BoxFactory.horizontalLayout(element, "EventSchedule-hlist-line-0", "", [
-                        BoxUtil.labelBox(element, "Alt-Name:", "alt-top-1-line-9-item-0"),
-                        BoxUtil.textBox(element, "alternativeName"),
-                    ]),
-                    BoxFactory.horizontalLayout(element, "TypeOfEvent-hlist-line-0", "", [
-                        BoxUtil.labelBox(element, "Type:", "typeOfEvent-kind-alt-top-1-line-9-item-0"),
-                        BoxUtil.referenceBox(
-                            element,
-                            "typeOfEvent",
-                            (selected: string) => {
-                                element.typeOfEvent = FreNodeReference.create<TypeOfEvent>(selected, "TypeOfEvent");
-                            },
-                            StudyConfigurationModelEnvironment.getInstance().scoper,
-                        ),
-                    ]),
-                    BoxUtil.getBoxOrAction(element, "description", "Description", this.handler),
+                    BoxFactory.horizontalLayout(
+                        element as Event,
+                        "Event-hlist-line-1",
+                        "",
+                        [
+                            BoxUtil.labelBox(element as Event, "This is a", "top-1-line-1-item-0"),
+                            BoxUtil.limitedBox(
+                                element as Event,
+                                "typeOfEvent",
+                                (selected: string) => {
+                                    (element as Event).typeOfEvent = FreNodeReference.create<TypeOfEvent>(selected, "TypeOfEvent");
+                                },
+                                LimitedDisplay.SELECT,
+                                StudyConfigurationModelEnvironment.getInstance().scoper,
+                            ),
+                            BoxUtil.labelBox(element as Event, "that is also referred to as", "top-1-line-1-item-2"),
+                            BoxUtil.textBox(element as Event, "alternativeName"),
+                        ],
+                        { selectable: false },
+                    ),
+
+                    ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                     ...(showScheduling === true
                         ? [
                               BoxUtil.listGroupBox(
@@ -282,7 +290,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     "schedule-event-start-group",
                     "",
                     [
-                        BoxUtil.labelBox(element, "First scheduled:", "schedule-event-start-label"),
+                        BoxUtil.labelBox(element, "It is first scheduled ", "schedule-event-start-label"),
                         BoxUtil.getBoxOrAction(element, "eventStart", "EventStart", this.handler),
                     ],
                     { selectable: true, cssClass: "align-top" },

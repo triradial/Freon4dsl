@@ -630,7 +630,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-text"
                },
-               "value": " "
+               "value": "<p>&lt;description&gt;</p>"
             },
             {
                "property": {
