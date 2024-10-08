@@ -39,6 +39,15 @@
   --breadcrumb-background: #cfd6e0;
   --breadcrumb-text: #353535;
   --breadcrumb-text-hover: var(--text-hover);
+  --breadcrumb-border: #4a5568;
+
+  --drawer-background: #cfd6e0;
+  --drawer-handle: #b6b6b6;
+  --drawer-button: #292929;
+  --drawer-content-background: #d5dee7;
+  --drawer-header-background: #a9b7c5;
+  --drawer-header-text: var(--text-primary-900);
+  --drawer-content-area: #e2e2e2;
 
   --content-background: #cfd6e0;
 
@@ -273,6 +282,7 @@ appnav a:visited {
 /* #region Breadcrumb */
 .crc-breadcrumb {
   background-color: var(--breadcrumb-background) !important;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
 }
 
 .crc-breadcrumb a {
@@ -295,9 +305,8 @@ appnav a:visited {
 /* #region Grid */
 .crc-grid-header {
   background-color: var(--card-background);
-  border-radius: 8px;
   box-shadow: none;
-  border: 1px solid var(--card-border-color);
+
 }
 
 .crc-grid-header h3 {
@@ -370,4 +379,173 @@ appnav a:visited {
 .crc-tab {
   background-color: var(--content-background);
 }
+
+.crc-tab .tab-item {
+  color: var(-black);
+  background-color: transparent;
+}
+
+.crc-tab .tab-item:hover {
+  background-color: var(--black-10t);
+}
+
+.crc-tab .tab-item:active {
+  background-color: var(--black-20t);
+}
+/* #endregion */
+
+/* #region Drawer */
+.drawer-system {
+  box-shadow: -20px 0 20px -20px rgba(0, 0, 0, 0.5);
+}
+.drawer-buttons {
+  background-color: var(--drawer-background);
+}
+.drawer-button {
+  background: none;
+  color: var(--drawer-button);
+}
+.drawer-header {
+  background-color: var(--drawer-header-background);
+  color: var(--drawer-header-text);
+}
+.drawer-header-button {
+  background: none;
+  color: var(--drawer-header-text);
+}
+.resize-handle {
+  background-color: var(--drawer-handle);
+}
+.grip-icon {
+  color: #2e2e2e;
+}
+.drawer-content-area {
+  background-color: var(--drawer-content-area);
+}
+/* #endregion */
+
+/* #region Drawer Table */
+.table_component table {
+  border: 1px solid var(--black-40t) !important;
+}
+
+.table_component caption {
+  color: var(--black-50t) !important;
+}
+
+.table_component th {
+  border: 1px solid var(--black-40t) !important;
+  background-color: var(--black-20t) !important;
+  color: var(--black-60t) !important;
+}
+
+.table_component td {
+  border: 1px solid var(--black-40t) !important;
+  color: var(--black-90t) !important;
+}
+
+.table_component tbody tr:nth-child(even) td {
+  background-color: var(--white-20t) !important;
+}
+
+.table_component tbody tr:nth-child(odd) td {
+  background-color: var(--white-50t) !important;
+}
+/* #endregion */
+
+/* #region Drawer Timeline */
+.study-timeline-title {
+  color: var(--black-50t) !important;
+}
+
+.not-available-row-label {
+  color: red !important;
+}
+
+.vis-item.screening-phase {
+  background-color: #005e4c;
+  color: white;
+}
+.vis-item.baseline-phase {
+  background-color: #895b00;
+  color: white;
+}
+.vis-item.treatment-phase {
+  background-color: #600078;
+  color: white;
+}
+
+.vis-item.window,
+.key-item .window {
+  background-color: #c3c3be;
+}
+
+.vis-item.scheduled-event,
+.key-item .scheduled-event {
+  background-color: #485bc7
+}
+
+.vis-item.patient,
+.key-item .patient {
+  background-color: #95a89a;
+}
+
+.vis-item.not-available,
+.key-item .not-available {
+  background-color: #b0395f
+}
+
+.vis-item.on-scheduled-date,
+.key-item .on-scheduled-date {
+  background-color: #000000;
+}
+
+.vis-item.staff,
+.key-item .staff {
+  background-color: #c6b603;
+}
+
+.vis-item.out-of-window,
+.key-item .out-of-window {
+  background-image: repeating-linear-gradient(45deg, rgb(189, 124, 5),rgb(189, 124, 5) 5px, white 2px, white 7px);
+}
+
+.vis-item.visit-not-found,
+.key-item .visit-not-found {
+  background-color: rgb(3, 77, 206);
+}
+
+.vis-item.in-window,
+.key-item .in-window {
+  background-image: repeating-linear-gradient(45deg, black, black 5px, white 2px, white 7px);
+}
+
+.timeline-instructions li {
+  color: var(--black-50t) !important;
+}
+
+.key-item span {
+  color: var(--black-50t) !important;
+}
+
+.vis-label, .vis-text {
+  color: var(--black-70t) !important;
+}
+
+.vis-time-axis .vis-grid.vis-minor {
+  border-color:  var(--black-10t) !important;
+}
+
+.vis-foreground .vis-group {
+  border-bottom: 1px solid  var(--black-10t) !important;
+}
+
+.vis-panel.vis-bottom, .vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right, .vis-panel.vis-top {
+  border: 1px solid  var(--black-10t) !important;
+}
+
+.vis-labelset .vis-label {
+  border-bottom: 1px solid  var(--black-10t) !important;
+}
+
 /* #endregion */

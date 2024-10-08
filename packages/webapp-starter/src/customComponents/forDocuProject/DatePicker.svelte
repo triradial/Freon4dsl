@@ -83,6 +83,7 @@
     }
     .datepicker-input {
         background-color: transparent;
+        background-color: transparent;
         border-width: 1px;
         border-color: transparent;
         color: rgb(134, 151, 189);
@@ -95,6 +96,9 @@
         padding: 0.625rem; /* 10px */
         color-scheme: dark;
     }
+.datepicker-input:hover {
+
+
     .datepicker-input:focus {
         --tw-ring-color: rgb(59 130 246);
         border-color: rgb(59 130 246);

@@ -62,20 +62,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
-            const styles = `
-            <style>
-              .limited-width-container {
-                max-width: 100% !important;
-                width: 100% !important;
-                overflow: hidden !important;
-                box-sizing: border-box !important;
-                margin: 20px !important;
-              }
-            </style>
-            `;
-            const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+            const styles = ``;
             const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
-            const html = `${styles}<div class="limited-width-container">${tableHTML + TimelineTableTemplate.addSomeSpace() + chartHTML}</div>`;
+            const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+            const html = `${styles}<div class="limited-width-container">${tableHTML + chartHTML}</div>`;
             return new RtString(html);
         } catch (e: any) {
             return new RtString(e.message);

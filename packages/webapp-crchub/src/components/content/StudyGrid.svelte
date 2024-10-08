@@ -13,17 +13,26 @@
     let gridApi: GridApi;
     let studiesData: any[] = [];
 
-    $: studiesData = $studies;
-    $: if (gridApi && studiesData) {
-        gridApi.setGridOption("rowData", studiesData);
-        resizeColumns();
+    $: {
+        studiesData = $studies;
+        updateGridData();
     }
-    $: gridTheme = $theme === 'dark' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
 
-    function resizeColumns() {
-        gridApi.sizeColumnsToFit();
-        gridApi.autoSizeAllColumns();
+    function updateGridData() {
+        if (gridApi && studiesData) {
+            gridApi.setGridOption("rowData", studiesData);
+            setTimeout(() => {
+                gridApi.sizeColumnsToFit();
+                gridApi.autoSizeAllColumns();
+            }, 100);
+        }
     }
+
+    // $: if (gridApi && studiesData) {
+    //     gridApi.setGridOption("rowData", studiesData);
+    //     resizeColumns();
+    // }
+    $: gridTheme = $theme === 'dark' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
 
     onMount(async () => {
         gridOptions = {
@@ -85,16 +94,15 @@
             rowGroupPanelShow: "always",
             onGridReady: (params) => {
                 if (studiesData.length > 0) {
-                    resizeColumns();
+                    // gridApi.setGridOption("rowData", studiesData);
+                    // resizeColumns();
+                    updateGridData();
                 }
             },
-            
         };
 
         const gridElement = document.querySelector("#studyGrid") as HTMLElement;
         gridApi = createGrid(gridElement, gridOptions);
-
-        // await loadStudies();
 
         gridElement.addEventListener("click", (event: MouseEvent) => {
             const target = event.target as HTMLElement;
@@ -152,4 +160,4 @@
 </svelte:head>
 
 <GridHeader title="Studies" />
-<div id="studyGrid" class={gridTheme} style="height:100%;width:100%;"></div>
+<div id="studyGrid" class="{gridTheme} ag-grid"></div>

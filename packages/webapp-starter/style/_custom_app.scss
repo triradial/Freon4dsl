@@ -752,3 +752,106 @@ main {
 } 
 
 /* #endregion */
+
+/* #region TABLE COMPONENT */
+
+.limited-width-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  margin: 20px !important;
+}
+
+.table_component {
+  overflow: auto;
+  width: 95%;
+}
+
+.table_component table {
+  border: 1px solid #dededf;
+  height: 100%;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 1px;
+  text-align: left;
+}
+
+.table_component caption {
+  caption-side: top;
+  text-align: left;
+}
+
+.table_component th {
+  border: 1px solid #dededf;
+  background-color: #eceff1;
+  color: #000000;
+  padding: 5px;
+}
+
+.table_component td {
+  border: 1px solid #dededf;
+  background-color: #ffffff;
+  color: #000000;
+  padding: 5px;
+}
+/* #endregion */
+
+/* #region DRAWER TIMELINE */
+
+#visualization {
+  box-sizing: border-box;
+  width: 100%;
+  height: 300px;
+}
+
+.not-available-row-label {
+  color: red !important;
+}
+
+.vis-item.screening-phase {
+  background-color: #5ceb5c;
+}
+
+.vis-item.treatment-phase {
+  background-color: #9370ed;
+}
+
+.vis-item.window {
+  background-color: #c3c3be;
+}
+
+.vis-item.scheduled-event {
+  background-color: blue;
+}
+
+.vis-item.patient {
+  background-color: #95a89a;
+}
+
+.vis-item.not-available {
+  background-color: red;
+}
+
+.vis-item.on-scheduled-date {
+  background-color: #000000;
+}
+
+.vis-item.staff {
+  background-color: #d0e14f;
+}
+
+.vis-item.out-of-window {
+  background-image: repeating-linear-gradient(45deg, orange, orange 5px, white 2px, white 7px);
+}
+
+.vis-item.visit-not-found {
+  background-color: blue;
+}
+
+.vis-item.in-window {
+  background-image: repeating-linear-gradient(45deg, black, black 5px, white 2px, white 7px);
+}
+
+/* #endregion */

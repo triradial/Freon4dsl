@@ -4,60 +4,28 @@ import { Period } from "../../language/gen/index";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter";
 
 export class TimelineTableTemplate {
-    static getTimelineTableHTMLStyles(): string {
-        var template = `
-<style>
-.table_component {
-    overflow: auto;
-    width: 95%;
-}
-
-.table_component table {
-    border: 1px solid #dededf;
-    height: 100%;
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 1px;
-    text-align: left;
-}
-
-.table_component caption {
-    caption-side: top;
-    text-align: left;
-}
-
-.table_component th {
-    border: 1px solid #dededf;
-    background-color: #eceff1;
-    color: #000000;
-    padding: 5px;
-}
-
-.table_component td {
-    border: 1px solid #dededf;
-    background-color: #ffffff;
-    color: #000000;
-    padding: 5px;
-}
-</style>
-`;
-        return template;
-    }
+    static getTimelineTableHTMLStyles(external:boolean=false): string {
+        var template = ``;
+        if (external == false) {
+            return template;
+        } else {
+            return ``;
+        }
+    }   
 
     static getTimelineTableHTML(timeline: Timeline): string {
         var template = `
 <div class="table_component" role="region" tabindex="0">
 <table>
-  <caption><b>Study Timeline Table</b></caption>
   <thead>
     <tr>
-      <th>Visit Name</th>
-      <th>Alternative Name</th>
-      <th>Phase</th>
-      <th>Window (-)</th>
-      <th>Day/Date</th>
-      <th>Window (+)</th>
+      <th class="stretch">Visit Name</th>
+      <th class="stretch">Alternative Name</th>
+      <th class="stretch">Phase</th>
+      <th class="fit">Window (-)</th>
+      <th class="fit">Day/Date</th>
+      <th class="fit">Window (+)</th>
+      <th></th>
     </tr>
     </thead>
     <tbody>
@@ -73,9 +41,10 @@ ${timeline
         <td>${eventInstance.getName()}</td>
         <td>${eventInstance.getAlternativeName()}</td>
         <td>${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name}</td>
-        <td>${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""}</td>
-        <td>${(eventInstance.getStartDay() + 1).toString() ?? ""}</td>
-        <td>${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""}</td>
+        <td class="text-center">${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""}</td>
+        <td class="text-center">${(eventInstance.getStartDay() + 1).toString() ?? ""}</td>
+        <td class="text-center">${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""}</td>
+        <td>&nbsp;</td>
         </tr>`,
             )
             .join(""),
@@ -97,6 +66,7 @@ ${timeline
         return `<!DOCTYPE HTML>
 <html>
 <head>
+    <title>Timeline Table</title>
 </head>
 <body>
   ${TimelineTableTemplate.getTimelineTableHTMLStyles()}
@@ -106,7 +76,4 @@ ${timeline
 `;
     }
 
-    static addSomeSpace(): string {
-        return `<br><br><br>`;
-    }
 }

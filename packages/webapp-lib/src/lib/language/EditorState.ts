@@ -134,6 +134,29 @@ export class EditorState {
     }
 
     /**
+     * Reads the model with name 'modelName' from the server and makes this the current model.
+     * The named model unit is shown
+     * @param modelName
+     */
+    async openUnitForModel(modelName: string, unitName: string) {
+        // FreLogger.unmuteAllLogs();
+        LOGGER.log("EditorState.openmodel(" + modelName + ")");
+        editorProgressShown.set(true);
+        this.resetGlobalVariables();
+        // save the old current unit, if there is one
+        await this.saveCurrentUnit();
+        // create new model instance in memory and set its name
+        await this.modelStore.openModel(modelName);
+        const unit = this.modelStore.getUnitByName(unitName);
+        this.currentUnit = unit;
+        BoxFactory.clearCaches();
+        this.langEnv.projectionHandler.clear();
+        EditorState.getInstance().showUnitAndErrors(this.currentUnit);
+    }
+
+
+
+    /**
      * When another model is shown in the editor this function is called.
      * It resets a series of global variables.
      * @private
