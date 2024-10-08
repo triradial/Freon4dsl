@@ -248,7 +248,7 @@ describe("Study Simulation", () => {
         it("generates a three visit timeline for visits 7 days after the end of the previous visit", () => {
             // GIVEN a study configuration with one period and two events
             let listOfEventsToAdd: EventsToAdd[] = [
-                { eventName: "Visit 1", daysToAdd: 1, repeat: 0, period: "Screening" },
+                { eventName: "Visit 1", daysToAdd: 0, repeat: 0, period: "Screening" },
                 { eventName: "Visit 2", daysToAdd: 7, repeat: 0, period: "Treatment" },
                 { eventName: "Visit 3", daysToAdd: 7, repeat: 0, period: "Treatment" },
             ];
@@ -264,38 +264,38 @@ describe("Study Simulation", () => {
                 studyConfigurationUnit,
                 0,
                 "Visit 1",
-                1,
+                0,
                 expectedTimeline,
                 ScheduledEventState.Completed,
                 TimelineInstanceState.Completed,
                 "Screening",
-                1,
-                8,
+                0,
+                6,
             );
             addEventAndInstanceToTimeline(
                 studyConfigurationUnit,
                 1,
                 "Visit 2",
-                8,
+                7,
                 expectedTimeline,
                 ScheduledEventState.Completed,
                 TimelineInstanceState.Completed,
                 "Treatment",
-                8,
+                7,
             );
             addEventAndInstanceToTimeline(
                 studyConfigurationUnit,
                 1,
                 "Visit 3",
-                15,
+                14,
                 expectedTimeline,
                 ScheduledEventState.Completed,
                 TimelineInstanceState.Completed,
                 "Treatment",
-                8,
-                15,
+                7,
+                14,
             );
-            expectedTimeline.setCurrentDay(15);
+            expectedTimeline.setCurrentDay(14);
 
             utils.generateChart(timeline, true); // Save full HTML of chart for viewing / debugging
 
@@ -478,12 +478,11 @@ describe("Study Simulation", () => {
         ]);
 
         var items = new vis.DataSet([
-          { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
-          { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 7", content: "<b>Treatment</b>", id: "Treatment1" },
-          { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 12" },
-          { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 13" },
-          { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 14" },
-          { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: when Visit 1 completed + 7 days", content: "&nbsp;", id: "Visit 25" },
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
+                { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 7", content: "<b>Treatment</b>", id: "Treatment1" },
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
+                { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
+                { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: when Visit 1 completed + 7 days", content: "&nbsp;", id: "Visit 24" },
         ])
         `;
             // GIVEN a study configuration with one period and two events
