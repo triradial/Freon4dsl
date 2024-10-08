@@ -15,7 +15,9 @@ export abstract class TimelineEventInstance {
 
     constructor(startDay: number, endDay?: number) {
         this.startDay = startDay;
-        this.endDay = endDay;
+        if (endDay !== undefined) {
+            this.endDay = endDay;
+        }
     }
 
     setState(state: TimelineInstanceState) {
@@ -27,6 +29,7 @@ export abstract class TimelineEventInstance {
     }
 
     getEndDay(timeline: Timeline) {
+        // TODO: determine if undefined should be returned by finding out when this path occurs.
         if (this.endDay === undefined) {
             return timeline.currentDay;
         } else {
@@ -47,6 +50,9 @@ export abstract class TimelineEventInstance {
     }
 
     setEndDay(endDay: number) {
+        if (endDay == 2) {
+            console.log("endDay == 2");
+        }
         this.endDay = endDay;
     }
 

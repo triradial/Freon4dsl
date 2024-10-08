@@ -53,7 +53,7 @@ limited TimeUnit {
 }
 
 limited EventState {
-    completed; eachCompleted = { name:"repetition completed"} started; scheduled; skipped;
+    completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
 }
 
 concept RepeatCondition implements RepeatExpression {
