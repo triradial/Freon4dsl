@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<!-- saved from url=(0102) -->
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>CRC-Study-Designer-Overview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/help/styles/katex.min.css">
+  <style>
+    code[class*=language-],
+    pre[class*=language-] {
+      color: #333;
+      background: 0 0;
+      font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      text-align: left;
+      white-space: pre;
+      word-spacing: normal;
+      word-break: normal;
+      word-wrap: normal;
+      line-height: 1.4;
+      -moz-tab-size: 8;
+      -o-tab-size: 8;
+      tab-size: 8;
+      -webkit-hyphens: none;
+      -moz-hyphens: none;
+      -ms-hyphens: none;
+      hyphens: none
+    }
+
+    pre[class*=language-] {
+      padding: .8em;
+      overflow: auto;
+      border-radius: 3px;
+      background: #f5f5f5
+    }
+
+    :not(pre)>code[class*=language-] {
+      padding: .1em;
+      border-radius: .3em;
+      white-space: normal;
+      background: #f5f5f5
+    }
+
+    .token.blockquote,
+    .token.comment {
+      color: #969896
+    }
+
+    .token.cdata {
+      color: #183691
+    }
+
+    .token.doctype,
+    .token.macro.property,
+    .token.punctuation,
+    .token.variable {
+      color: #333
+    }
+
+    .token.builtin,
+    .token.important,
+    .token.keyword,
+    .token.operator,
+    .token.rule {
+      color: #a71d5d
+    }
+
+    .token.attr-value,
+    .token.regex,
+    .token.string,
+    .token.url {
+      color: #183691
+    }
+
+    .token.atrule,
+    .token.boolean,
+    .token.code,
+    .token.command,
+    .token.constant,
+    .token.entity,
+    .token.number,
+    .token.property,
+    .token.symbol {
+      color: #0086b3
+    }
+
+    .token.prolog,
+    .token.selector,
+    .token.tag {
+      color: #63a35c
+    }
+
+    .token.attr-name,
+    .token.class,
+    .token.class-name,
+    .token.function,
+    .token.id,
+    .token.namespace,
+    .token.pseudo-class,
+    .token.pseudo-element,
+    .token.url-reference .token.variable {
+      color: #795da3
+    }
+
+    .token.entity {
+      cursor: help
+    }
+
+    .token.title,
+    .token.title .token.punctuation {
+      font-weight: 700;
+      color: #1d3e81
+    }
+
+    .token.list {
+      color: #ed6a43
+    }
+
+    .token.inserted {
+      background-color: #eaffea;
+      color: #55a532
+    }
+
+    .token.deleted {
+      background-color: #ffecec;
+      color: #bd2c00
+    }
+
+    .token.bold {
+      font-weight: 700
+    }
+
+    .token.italic {
+      font-style: italic
+    }
+
+    .language-json .token.property {
+      color: #183691
+    }
+
+    .language-markup .token.tag .token.punctuation {
+      color: #333
+    }
+
+    .language-css .token.function,
+    code.language-css {
+      color: #0086b3
+    }
+
+    .language-yaml .token.atrule {
+      color: #63a35c
+    }
+
+    code.language-yaml {
+      color: #183691
+    }
+
+    .language-ruby .token.function {
+      color: #333
+    }
+
+    .language-markdown .token.url {
+      color: #795da3
+    }
+
+    .language-makefile .token.symbol {
+      color: #795da3
+    }
+
+    .language-makefile .token.variable {
+      color: #183691
+    }
+
+    .language-makefile .token.builtin {
+      color: #0086b3
+    }
+
+    .language-bash .token.keyword {
+      color: #0086b3
+    }
+
+    pre[data-line] {
+      position: relative;
+      padding: 1em 0 1em 3em
+    }
+
+    pre[data-line] .line-highlight-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: transparent;
+      display: block;
+      width: 100%
+    }
+
+    pre[data-line] .line-highlight {
+      position: absolute;
+      left: 0;
+      right: 0;
+      padding: inherit 0;
+      margin-top: 1em;
+      background: hsla(24, 20%, 50%, .08);
+      background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+      pointer-events: none;
+      line-height: inherit;
+      white-space: pre
+    }
+
+    pre[data-line] .line-highlight:before,
+    pre[data-line] .line-highlight[data-end]:after {
+      content: attr(data-start);
+      position: absolute;
+      top: .4em;
+      left: .6em;
+      min-width: 1em;
+      padding: 0 .5em;
+      background-color: hsla(24, 20%, 50%, .4);
+      color: #f4f1ef;
+      font: bold 65%/1.5 sans-serif;
+      text-align: center;
+      vertical-align: .3em;
+      border-radius: 999px;
+      text-shadow: none;
+      box-shadow: 0 1px #fff
+    }
+
+    pre[data-line] .line-highlight[data-end]:after {
+      content: attr(data-end);
+      top: auto;
+      bottom: .4em
+    }
+
+    html body {
+      font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+      background-color: #fff;
+      overflow: initial;
+      box-sizing: border-box;
+      word-wrap: break-word
+    }
+
+    html body>:first-child {
+      margin-top: 0
+    }
+
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+      line-height: 1.2;
+      margin-top: 1em;
+      margin-bottom: 16px;
+      color: #000
+    }
+
+    html body h1 {
+      font-size: 2.25em;
+      font-weight: 300;
+      padding-bottom: .3em
+    }
+
+    html body h2 {
+      font-size: 1.75em;
+      font-weight: 400;
+      padding-bottom: .3em
+    }
+
+    html body h3 {
+      font-size: 1.5em;
+      font-weight: 500
+    }
+
+    html body h4 {
+      font-size: 1.25em;
+      font-weight: 600
+    }
+
+    html body h5 {
+      font-size: 1.1em;
+      font-weight: 600
+    }
+
+    html body h6 {
+      font-size: 1em;
+      font-weight: 600
+    }
+
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5 {
+      font-weight: 600
+    }
+
+    html body h5 {
+      font-size: 1em
+    }
+
+    html body h6 {
+      color: #5c5c5c
+    }
+
+    html body strong {
+      color: #000
+    }
+
+    html body del {
+      color: #5c5c5c
+    }
+
+    html body a:not([href]) {
+      color: inherit;
+      text-decoration: none
+    }
+
+    html body a {
+      color: #08c;
+      text-decoration: none
+    }
+
+    html body a:hover {
+      color: #00a3f5;
+      text-decoration: none
+    }
+
+    html body img {
+      max-width: 100%
+    }
+
+    html body>p {
+      margin-top: 0;
+      margin-bottom: 16px;
+      word-wrap: break-word
+    }
+
+    html body>ol,
+    html body>ul {
+      margin-bottom: 16px
+    }
+
+    html body ol,
+    html body ul {
+      padding-left: 2em
+    }
+
+    html body ol.no-list,
+    html body ul.no-list {
+      padding: 0;
+      list-style-type: none
+    }
+
+    html body ol ol,
+    html body ol ul,
+    html body ul ol,
+    html body ul ul {
+      margin-top: 0;
+      margin-bottom: 0
+    }
+
+    html body li {
+      margin-bottom: 0
+    }
+
+    html body li.task-list-item {
+      list-style: none
+    }
+
+    html body li>p {
+      margin-top: 0;
+      margin-bottom: 0
+    }
+
+    html body .task-list-item-checkbox {
+      margin: 0 .2em .25em -1.8em;
+      vertical-align: middle
+    }
+
+    html body .task-list-item-checkbox:hover {
+      cursor: pointer
+    }
+
+    html body blockquote {
+      margin: 16px 0;
+      font-size: inherit;
+      padding: 0 15px;
+      color: #5c5c5c;
+      background-color: #f0f0f0;
+      border-left: 4px solid #d6d6d6
+    }
+
+    html body blockquote>:first-child {
+      margin-top: 0
+    }
+
+    html body blockquote>:last-child {
+      margin-bottom: 0
+    }
+
+    html body hr {
+      height: 4px;
+      margin: 32px 0;
+      background-color: #d6d6d6;
+      border: 0 none
+    }
+
+    html body table {
+      margin: 10px 0 15px 0;
+      border-collapse: collapse;
+      border-spacing: 0;
+      display: block;
+      width: 100%;
+      overflow: auto;
+      word-break: normal;
+      word-break: keep-all
+    }
+
+    html body table th {
+      font-weight: 700;
+      color: #000
+    }
+
+    html body table td,
+    html body table th {
+      border: 1px solid #d6d6d6;
+      padding: 6px 13px
+    }
+
+    html body dl {
+      padding: 0
+    }
+
+    html body dl dt {
+      padding: 0;
+      margin-top: 16px;
+      font-size: 1em;
+      font-style: italic;
+      font-weight: 700
+    }
+
+    html body dl dd {
+      padding: 0 16px;
+      margin-bottom: 16px
+    }
+
+    html body code {
+      font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+      font-size: .85em;
+      color: #000;
+      background-color: #f0f0f0;
+      border-radius: 3px;
+      padding: .2em 0
+    }
+
+    html body code::after,
+    html body code::before {
+      letter-spacing: -.2em;
+      content: '\00a0'
+    }
+
+    html body pre>code {
+      padding: 0;
+      margin: 0;
+      word-break: normal;
+      white-space: pre;
+      background: 0 0;
+      border: 0
+    }
+
+    html body .highlight {
+      margin-bottom: 16px
+    }
+
+    html body .highlight pre,
+    html body pre {
+      padding: 1em;
+      overflow: auto;
+      line-height: 1.45;
+      border: #d6d6d6;
+      border-radius: 3px
+    }
+
+    html body .highlight pre {
+      margin-bottom: 0;
+      word-break: normal
+    }
+
+    html body pre code,
+    html body pre tt {
+      display: inline;
+      max-width: initial;
+      padding: 0;
+      margin: 0;
+      overflow: initial;
+      line-height: inherit;
+      word-wrap: normal;
+      background-color: transparent;
+      border: 0
+    }
+
+    html body pre code:after,
+    html body pre code:before,
+    html body pre tt:after,
+    html body pre tt:before {
+      content: normal
+    }
+
+    html body blockquote,
+    html body dl,
+    html body ol,
+    html body p,
+    html body pre,
+    html body ul {
+      margin-top: 0;
+      margin-bottom: 16px
+    }
+
+    html body kbd {
+      color: #000;
+      border: 1px solid #d6d6d6;
+      border-bottom: 2px solid #c7c7c7;
+      padding: 2px 4px;
+      background-color: #f0f0f0;
+      border-radius: 3px
+    }
+
+    @media print {
+      html body {
+        background-color: #fff
+      }
+
+      html body h1,
+      html body h2,
+      html body h3,
+      html body h4,
+      html body h5,
+      html body h6 {
+        color: #000;
+        page-break-after: avoid
+      }
+
+      html body blockquote {
+        color: #5c5c5c
+      }
+
+      html body pre {
+        page-break-inside: avoid
+      }
+
+      html body table {
+        display: table
+      }
+
+      html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+      }
+
+      html body code,
+      html body pre {
+        word-wrap: break-word;
+        white-space: pre
+      }
+    }
+
+    .markdown-preview {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box
+    }
+
+    .markdown-preview ul {
+      list-style: disc
+    }
+
+    .markdown-preview ul ul {
+      list-style: circle
+    }
+
+    .markdown-preview ul ul ul {
+      list-style: square
+    }
+
+    .markdown-preview ol {
+      list-style: decimal
+    }
+
+    .markdown-preview ol ol,
+    .markdown-preview ul ol {
+      list-style-type: lower-roman
+    }
+
+    .markdown-preview ol ol ol,
+    .markdown-preview ol ul ol,
+    .markdown-preview ul ol ol,
+    .markdown-preview ul ul ol {
+      list-style-type: lower-alpha
+    }
+
+    .markdown-preview .newpage,
+    .markdown-preview .pagebreak {
+      page-break-before: always
+    }
+
+    .markdown-preview pre.line-numbers {
+      position: relative;
+      padding-left: 3.8em;
+      counter-reset: linenumber
+    }
+
+    .markdown-preview pre.line-numbers>code {
+      position: relative
+    }
+
+    .markdown-preview pre.line-numbers .line-numbers-rows {
+      position: absolute;
+      pointer-events: none;
+      top: 1em;
+      font-size: 100%;
+      left: 0;
+      width: 3em;
+      letter-spacing: -1px;
+      border-right: 1px solid #999;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none
+    }
+
+    .markdown-preview pre.line-numbers .line-numbers-rows>span {
+      pointer-events: none;
+      display: block;
+      counter-increment: linenumber
+    }
+
+    .markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+      content: counter(linenumber);
+      color: #999;
+      display: block;
+      padding-right: .8em;
+      text-align: right
+    }
+
+    .markdown-preview .mathjax-exps .MathJax_Display {
+      text-align: center !important
+    }
+
+    .markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group {
+      display: none
+    }
+
+    .markdown-preview:not([data-for=preview]) .code-chunk .status {
+      display: none
+    }
+
+    .markdown-preview:not([data-for=preview]) .code-chunk .output-div {
+      margin-bottom: 16px
+    }
+
+    .markdown-preview .md-toc {
+      padding: 0
+    }
+
+    .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link {
+      display: inline;
+      padding: .25rem 0
+    }
+
+    .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,
+    .markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p {
+      display: inline
+    }
+
+    .markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link {
+      font-weight: 800
+    }
+
+    .scrollbar-style::-webkit-scrollbar {
+      width: 8px
+    }
+
+    .scrollbar-style::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background-color: transparent
+    }
+
+    .scrollbar-style::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background-color: rgba(150, 150, 150, .66);
+      border: 4px solid rgba(150, 150, 150, .66);
+      background-clip: content-box
+    }
+
+    html body[for=html-export]:not([data-presentation-mode]) {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      margin: 0;
+      padding: 0;
+      overflow: auto
+    }
+
+    html body[for=html-export]:not([data-presentation-mode]) .markdown-preview {
+      position: relative;
+      top: 0;
+      min-height: 100vh
+    }
+
+    @media screen and (min-width:914px) {
+      html body[for=html-export]:not([data-presentation-mode]) .markdown-preview {
+        padding: 2em calc(50% - 457px + 2em)
+      }
+    }
+
+    @media screen and (max-width:914px) {
+      html body[for=html-export]:not([data-presentation-mode]) .markdown-preview {
+        padding: 2em
+      }
+    }
+
+    @media screen and (max-width:450px) {
+      html body[for=html-export]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 14px !important;
+        padding: 1em
+      }
+    }
+
+    @media print {
+      html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+      }
+    }
+
+    html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn {
+      position: fixed;
+      bottom: 8px;
+      left: 8px;
+      font-size: 28px;
+      cursor: pointer;
+      color: inherit;
+      z-index: 99;
+      width: 32px;
+      text-align: center;
+      opacity: .4
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+      opacity: 1
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      padding: 32px 0 48px 0;
+      font-size: 14px;
+      box-shadow: 0 0 4px rgba(150, 150, 150, .33);
+      box-sizing: border-box;
+      overflow: auto;
+      background-color: inherit
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+      width: 8px
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+      border-radius: 10px;
+      background-color: transparent
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background-color: rgba(150, 150, 150, .66);
+      border: 4px solid rgba(150, 150, 150, .66);
+      background-clip: content-box
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+      text-decoration: none
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc {
+      padding: 0 16px
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link {
+      display: inline;
+      padding: .25rem 0
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p {
+      display: inline
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link {
+      font-weight: 800
+    }
+
+    html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+      left: 300px;
+      width: calc(100% - 300px);
+      padding: 2em calc(50% - 457px - 300px / 2);
+      margin: 0;
+      box-sizing: border-box
+    }
+
+    @media screen and (max-width:1274px) {
+      html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 2em
+      }
+    }
+
+    @media screen and (max-width:450px) {
+      html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+      }
+    }
+
+    html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview {
+      left: 50%;
+      transform: translateX(-50%)
+    }
+
+    html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+      display: none
+    }
+
+    /* Please visit the URL below for more information: */
+    /*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+  </style>
+  <!-- The content below will be included at the end of the <head> element. -->
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+      // your code here
+    });
+  </script>
+</head>
+
+<body for="html-export">
+  <div class="crossnote markdown-preview  ">
+    <div class="md-toc">
+      <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:18px">
+        <a href="#introduction" class="md-toc-link">
+          <p>Introduction</p>
+        </a>
+      </div>
+      <details style="padding:0;;padding-left:0px;" open="">
+        <summary class="md-toc-link-wrapper">
+          <a href="#define-events-and-their-schedule" class="md-toc-link">
+            <p>Define Events and Their Schedule</p>
+          </a>
+        </summary>
+        <div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#create-or-select-the-study" class="md-toc-link">
+              <p>Create or Select the Study</p>
+
+            </a>
+          </div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#define-the-events" class="md-toc-link">
+              <p>Define the Events</p>
+
+            </a>
+          </div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#define-the-schedule" class="md-toc-link">
+              <p>Define the Schedule</p>
+
+            </a>
+          </div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#view-schedule-charts" class="md-toc-link">
+              <p>View Schedule Charts</p>
+
+            </a>
+          </div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#view-schedule-tables" class="md-toc-link">
+              <p>View Schedule Tables</p>
+
+            </a>
+          </div>
+        </div>
+      </details>
+      <details style="padding:0;;padding-left:0px;" open="">
+        <summary class="md-toc-link-wrapper">
+          <a href="#define-checklists" class="md-toc-link">
+            <p>Define Checklists</p>
+          </a>
+        </summary>
+        <div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#steps-of-a-task" class="md-toc-link">
+              <p>Steps of a Task</p>
+
+            </a>
+          </div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#details-of-a-step" class="md-toc-link">
+              <p>Details of a Step</p>
+
+            </a>
+          </div>
+        </div>
+      </details>
+      <details style="padding:0;;padding-left:0px;" open="">
+        <summary class="md-toc-link-wrapper">
+          <a href="#save-or-print-study-design" class="md-toc-link">
+            <p>Save or Print Study Design</p>
+          </a>
+        </summary>
+        <div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#table-of-contents-section" class="md-toc-link">
+              <p>Table of Contents Section</p>
+
+            </a>
+          </div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#timeline-section" class="md-toc-link">
+              <p>Timeline Section</p>
+
+            </a>
+          </div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#checklists-section" class="md-toc-link">
+              <p>Checklists Section</p>
+
+            </a>
+          </div>
+        </div>
+      </details>
+      <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:18px">
+        <a href="#view-patient-charts" class="md-toc-link">
+          <p>View Patient Charts</p>
+
+        </a>
+      </div>
+      <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:18px">
+        <a href="#view-staff-availability-charts" class="md-toc-link">
+          <p>View Staff Availability Charts</p>
+
+        </a>
+      </div>
+      <details style="padding:0;;padding-left:0px;" open="">
+        <summary class="md-toc-link-wrapper">
+          <a href="#summary-and-benefits" class="md-toc-link">
+            <p>Summary and Benefits</p>
+          </a>
+        </summary>
+        <div>
+          <div class="md-toc-link-wrapper" style="padding:0;;display:list-item;list-style:square;margin-left:42px">
+            <a href="#better-than-excel" class="md-toc-link">
+              <p>Better than Excel</p>
+
+            </a>
+          </div>
+        </div>
+      </details>
+
+    </div>
+    <style>
+      body {
+        counter-reset: h1;
+      }
+
+      h1::before {
+        counter-increment: h1;
+        content: counter(h1) ". ";
+      }
+
+      h1 {
+        counter-reset: h2;
+      }
+
+      h2 {
+        counter-reset: h3;
+      }
+
+      h2::before {
+        counter-increment: h2;
+        content: counter(h1) "." counter(h2) ". ";
+      }
+
+      h3::before {
+        counter-increment: h3;
+        content: counter(h1) "." counter(h2) "." counter(h3) ". ";
+      }
+
+      img {
+        width: 94%;
+        box-shadow: 0.3em 0.3em 0.3em #ddd;
+        margin: 3%;
+      }
+
+      img[src*="#smaller"] {
+        width: 50%;
+        box-shadow: none;
+      }
+    </style>
+    <h1 id="introduction">Introduction </h1>
+    <p>The <em>CRC-Hub Study Designer</em> is an alternative to creating spreadsheets for the study schedule and to
+      writing checklists of things to do in a visit. It is for staff at clinical trial sites that work with paper to
+      avoid having a computer between them and the patient. The CRC-Hub Study Designer is part of the CRC-Hub
+      product.<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup> Throughout this document, 'Designer' is
+      short for 'CRC-Hub Study Designer'.</p>
+    <p>To replace spreadsheets and other manually written documents the Designer supports:</p>
+    <ul>
+      <li>Defining the events in a study and optionally the details of their schedule. An event is typically a patient
+        visit but it can be anything that needs to be done by site personnel</li>
+      <li>Defining the checklist of things to do for each event.</li>
+      <li>Generating a document(s) containing the schedule and checklists that can be printed or viewed online</li>
+    </ul>
+    <p>The following walks through defining and generating these aids for doing the work of a study.</p>
+    <h1 id="define-events-and-their-schedule">Define Events and Their Schedule </h1>
+    <h2 id="create-or-select-the-study">Create or Select the Study </h2>
+    <p>To get started you create a study and optionally enter a few bits of information about it like the phase or
+      theraputic area. Once created clicking on the study name takes you to the pages where you can see the Study
+      Design.</p>
+    <p><img src="assets/help/images/list-of-studies.png" alt="List of Studies"></p>
+    <h2 id="define-the-events">Define the Events </h2>
+    <p>The study events within the periods defines the overall structure and at least one period and event need to be
+      defined. An <em>Event</em> is typically a visit but can be any point where work needs to be done by site staff.
+      The picture below show four events in the Screening period.</p>
+    <blockquote>
+      <p>#TODO: Investigate why the empty description is shown as blank space rather than <description>. Consider an
+          option to not show the description so there is not the blank space between the period and the Events.
+        </description>
+      </p>
+    </blockquote>
+    <p><img src="assets/help/images/study-design.png" alt="Example Events"></p>
+    <p>The Designer makes it easy to create periods and their events, <a
+        href="file:///Users/mikevogel/projects/freon2/Freon4dsl/docs">see this video for a live example</a></p>
+    <ul>
+      <li>Simply clicking the plus next to STUDY PERIODS or EVENTS and entering the name creates an event.</li>
+      <li>The ︾ make a smart copy of the event. Smart copying automatically increments the name, e.g., 'V1' becomes 'V2'
+        and any scheduling dependencies are automatically duplicated and updated. The Designer has many such <em>smart
+          actions</em>.</li>
+      <li>Copy-and-Paste, Cut-and-Paste, and Drag-and-Drop of periods, events, or any of their parts works here or
+        anywhere else in the Designer as does Undo (ctrl-Z) and Redo (ctrl-Y)</li>
+    </ul>
+    <p>The goal is, if you know the schedule of events from the protocol, the Designer's understanding of clinical trial
+      study structure allows you to set it up faster than you could type the names into a document.</p>
+    <h2 id="define-the-schedule">Define the Schedule </h2>
+    <p>The Designer makes is easy to create even complex schedules. In this example the <code>V1 run in</code> visit is
+      scheduled when 3 days after <code>V1 rando</code> completes with a window of 2 days before or after. You are
+      guided through schedule creation, e.g., when you get to the place showing 'when' you are given all the choices for
+      when an event can be first scheduled and based on what you select other options are shown. It is like typing in
+      Word or Excel if those tools <em>understood</em> clinical trials.</p>
+    <p><img src="assets/help/images/schedule.png" alt="Example Schedule"></p>
+    <p>If you look closely you'll see that in the <code>First scheduled: when</code> there is a small arrow
+      <code>→</code> next to the <code>V1 rando</code> event that <code>V1 run in</code> is dependent on. Clicking on
+      that arrow jumps you to that Event. This is an example of the way everything in the Designer is interconnected and
+      how it makes it simple to move within even a complex schedule.</p>
+    <h2 id="view-schedule-charts">View Schedule Charts </h2>
+    <p>Accurately creating anything but a simple study schedule is hard because of things like dependencies between
+      visits, repeating visits, overlapping windows, etc. The Designer allows you to write the scheduling in the words
+      of a clinical trial. At any point you can view a timeline chart of the schedule that you can zoom and scroll
+      through. You can seamlessly move back and forth between trying different ways to express the schedule and seeing
+      if it's correct. The following shows a chart with repeating visits that have complex dependencies. You can view
+      the chart as soon as define any scheduling and use it to help you incrementally define an accurate view of the
+      study schedule.</p>
+    <p><img src="assets/help/images/schedule-and-chart.png" alt="Schedule and Chart"></p>
+    <p>The chart shows<img src="assets/help/images/legend-just-schedule.png" alt="Schedule Legend"></p>
+    <p>This initial view of the schedule chart shows the entire study duration so only some of the study weeks are
+      displayed on the axis. Zooming in on the allows you to see study days and study weeks.</p>
+    <p><img src="assets/help/images/timeline-schedule-only-zoomed.png" alt="Schedule Zoomed"></p>
+    <h2 id="view-schedule-tables">View Schedule Tables </h2>
+    <p>The timeline of study events can also be viewed as a table similar to what might be created in Excel. The same
+      seamless moving back and forth between the schedule and the table can be done.</p>
+    <p><img src="assets/help/images/schedule-as-table.png" alt="Example Timeline Table"></p>
+    <p>Zooming in on the table...</p>
+    <p><img src="assets/help/images/schedule-table-only.png" alt="Example Timeline Table"></p>
+    <p>A variety of table formats can be supported, e.g., visits of different types shown side-by-side instead of one
+      longer table. As shown in the table, events can be given alternative names that automatically reflect counts of
+      repeating visits, e.g., 'V14-V18 run in (2)' for the second occurrence of a visit in the 'V14-V18 run in'
+      repetitions.</p>
+    <h1 id="define-checklists">Define Checklists </h1>
+    <p>A <em>checklist</em> defines the tasks to be done during an event. The Designer makes it easy to create
+      checklists of things to do at any event. The picture below shows the checklist of four tasks of the
+      <code>ICF (1A)</code> event. The reason to create a checklist in the Designer is so you can print it out and use
+      it while with a patient conducting a visit.</p>
+    <p><img src="assets/help/images/Informed-Consent-Just-Tasks-Schedule-Hidden.png" alt="Informed Consent with just Steps"></p>
+    <p>Checklists are shared and standardized rather than custom created in something like a spreadsheet, document, or
+      notebook. To start, only a minimum can be defined, e.g., just a list of tasks to be done in a visit as shown above
+      for the ICF event where there are four tasks in the checklist. Additional details can be added at any time.</p>
+    <h2 id="steps-of-a-task">Steps of a Task </h2>
+    <p>A description of the task as well as the steps that explain the details of how to do a task can be added. The
+      description and three steps for the Informed Consent task are shown below.</p>
+    <p><img src="assets/help/images/Informed-Consent-Just-Steps.png" alt="Informed Consent with just Steps"></p>
+    <h2 id="details-of-a-step">Details of a Step </h2>
+    <p>Each step can have additional details added as shown by the description and three bullets under the Obtain
+      Informed Consent step.</p>
+    <p><img src="assets/help/images/Informed-Consent-Step-Detail.png" alt="Step Details"></p>
+    <p>Details about each step can include things like referenced documents or people to contact. This is particularly
+      useful when the checklist is viewed online because you can click on the links to references or contacts.</p>
+    <p><img src="assets/help/images/Informed-Consent-Step-Detail.png" alt="Step with References"></p>
+    <h1 id="save-or-print-study-design">Save or Print Study Design </h1>
+    <p>By the press of a button, some or all of the chart and table views of the schedule and the checklist are saved as
+      a document. The document can be printed to support doing the work of a visit and combined with using the studies
+      printed data collection forms.</p>
+    <p>The study design as a document contains the following sections.</p>
+    <h2 id="table-of-contents-section">Table of Contents Section </h2>
+    <p>The printable document starts with a table-of-contents. Not all the sections in the document are populated in
+      this example, e.g., there are no checklists for the Treatment period. There is no requirement that you fill them
+      all. You might start with just the first few and add details as you do real visits.</p>
+    <p><img src="assets/help/images/Doc-TOC.png" alt="TOC"></p>
+    <h2 id="timeline-section">Timeline Section </h2>
+    <p>The table view and the timeline chart are the first things in the document. A separate file containing the
+      timeline chart is also generated. It can be opened separately and all the zooming and scrolling features are
+      supported without opening the Designer.</p>
+    <p><img src="assets/help/images/Doc-Timeline-Table.png" alt="Timeline Table"></p>
+    <p><img src="assets/help/images/timeline-schedule-only.png" alt="Timeline Chart"></p>
+    <h2 id="checklists-section">Checklists Section </h2>
+    <p>All the checklists at whatever level of detail that was defined are printed. If scheduling was defined, a text
+      description of the schedule of each is included.</p>
+    <p><img src="assets/help/images/Doc-Checklist.png" alt="Checklist"></p>
+    <h1 id="view-patient-charts">View Patient Charts </h1>
+    <p>The Designer also allows entry of the dates of patients visit and dates when the patient isn't available. A
+      patient chart can be generated showing this information. The following shows a few visits recorded for the `MV'
+      patient.</p>
+    <p><img src="assets/help/images/patient-visits.png" alt="Patient Visits"></p>
+    <p>The timeline of the patient includes <img src="assets/help/images/legend-for-patient.png" alt="Patient Legend"></p>
+    <p><img src="assets/help/images/timeline.png" alt="Example Timeline Chart"></p>
+    <h1 id="view-staff-availability-charts">View Staff Availability Charts </h1>
+    <p>The availability of staff or other resources can be entered and included on the charts. The following shows a
+      study schedule with staff availability.</p>
+    <p><img src="assets/help/images/available-staff.png" alt="Available Staff"></p>
+    <p><img src="assets/help/images/schedule-with-staff.png" alt="Schedule with Staff Levels"></p>
+    <p>The staff availabilit is presented as: <img src="assets/help/images/legend-staff.png" alt="Staff Legend"></p>
+    <h1 id="summary-and-benefits">Summary and Benefits </h1>
+    <p>The Designer allows you to define the study periods and events (a.k.a visits) and for each event:<br>
+      - The schedule<br>
+      - A checklist of tasks and their steps</p>
+    <p>You can define scheduling or checklists or both. You can start with one and add the other later. You can start
+      with just parts of them and expand them as you learn about the study.</p>
+    <p>You can use just the scheduling features of the Designer to get charts and tables showing the schedule to help
+      with:</p>
+    <ul>
+      <li>Confirming understanding of the protocol</li>
+      <li>Showing site specific events that are not in the protocol</li>
+      <li>Seeing a patients progress thru the study and what their future schedule should be</li>
+      <li>Superimposing staff availability onto a study schedule</li>
+    </ul>
+    <p>You can use just use paper or electronic versions of the checklist to help with:</p>
+    <ul>
+      <li>Guidance for details of things to be done in or after the visit as well as how to fill the paper or electronic
+        data collection forms.</li>
+      <li>Working on a new study</li>
+      <li>Covering for someone or someone is covering for you</li>
+      <li>As living SOPs that can be reviewed with monitors, sponsors, or IRBs</li>
+    </ul>
+    <p>You are never locked into using the Designer. We don't save any data that you can't simply copy to your own
+      documents. You can use it to get started and switch to your old way of working easily. Simply copy and paste from
+      the saved document into Word or Excel any of:</p>
+    <ul>
+      <li>The description and table view of the schedule</li>
+      <li>The checklist and all it's details</li>
+      <li>The patient visit history</li>
+      <li>The staff availability</li>
+    </ul>
+    <p>We're working on generating excel versions of the schedule and it's charts which you can then manually change.
+    </p>
+    <p>Our mission is for you to never want to stop using the Designer. We believe the Designers built-in understanding
+      of clinical trials makes our guided editing faster than any other way to setup things needed for your site. It's
+      just the beginning and we're constantly adding as we learn other ways to make doing the work of the study easier.
+    </p>
+    <h2 id="better-than-excel">Better than Excel </h2>
+    <p>The premise for the benefits of the Designer is that using it is better than using Excel. Excel is essentially
+      free and understood at some level by all site staff. However using it requires creating potentially complex and
+      fragile formulas specific to the study vs. all scheduling is written is the language of clinical trials, e.g., you
+      basically write: visit X is first scheduled 10 days after visit Y completing with a 2 day window and then repeats
+      4 times. The value of everyone being able to simply read these words can't be understated. Beyond this clear
+      textual description of the schedule the presentation as an interactive timeline chart takes schedule
+      understandability to another level.</p>
+    <p>Combining the timeline charts with the ability to add the actual patient visits and other patient events to the
+      timeline and have the timeline shift to reflect it goes beyond just understanding the schedule to providing the
+      tool for patient specific scheduling of next appointments and compliance.</p>
+    <p>It isn't reasonably possible to model the details of the following kinds of schedules in Excel but it's easy in
+      the Designer:</p>
+    <ul>
+      <li>Repeating visits, especially if they have interesting dependencies, e.g., two repeating kinds of visits that
+        depend on each other such as a run-in visit that depends on a corresponding randomization visit.</li>
+      <li>Unscheduled visits that shift or trigger other visits, e.g., when the patient experiences some symptom an
+        unscheduled visit must happen and subsequent visits are shifted.</li>
+      <li>Phase transitions based on patient events</li>
+      <li>Calculated visit windows</li>
+      <li>TODO: what other things are difficult to model in excel</li>
+    </ul>
+    <hr class="footnotes-sep">
+    <section class="footnotes">
+      <ol class="footnotes-list">
+        <li id="fn1" class="footnote-item">
+          <p>This document describes using the Designer. The full CRC-Hub product is for sites that want to be guided on
+            a computer, rather than paper, through the tasks done for a study. When used with the full CRC-Hub, the
+            Designer generates the study specific web site and checklists of tasks. The full CRC-Hub features are not
+            the focus here. <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+        </li>
+      </ol>
+    </section>
+  </div>
+</body>
+</html>

@@ -74,7 +74,9 @@
                         <FontAwesomeIcon icon={faSwatchbook} class="w-4 h-4" />Study Design
                     </div>
                     {#if editorLoaded}
+                    <div class="crc-editor">
                         <FreonComponent editor={WebappConfigurator.getInstance().editorEnvironment.editor} />
+                    </div>
                     {:else}
                         <div class="h-full w-full">
                             <ListPlaceholder divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700" />

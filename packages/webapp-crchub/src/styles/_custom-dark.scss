@@ -212,7 +212,7 @@ button:focus {
 
 #login button:hover {
   color: white;
-  background-color: #000000; //var(--navbar-background);
+  background-color: var(--primary-900); 
   background-image: none
 }
 
@@ -431,6 +431,7 @@ appnav a:visited {
 .grip-icon {
   color: #ffffff;
 }
+.drawer-content,
 .drawer-content-area {
   background-color: var(--drawer-content-area);
 }

@@ -620,6 +620,12 @@ appnav a:hover {
   font-weight: 300;
 }
 
+.help-drawer {
+  background-color: white !important;
+  padding: 2rem;
+  margin: 1rem !important;
+}
+
 /* #endregion */
 
 /* #region Flowbite Override */
@@ -1043,6 +1049,12 @@ appnav a:hover {
 }
 
 /* #endregion */
+
+.crc-editor {
+  width: calc(100% - 2.5rem);
+  overflow-y: auto;
+  height: calc(100vh - 9.25rem);
+}
 
 // .file_selector.svelte-nvt05c {
 //   display: none
