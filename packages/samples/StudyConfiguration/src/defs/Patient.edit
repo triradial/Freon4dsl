@@ -59,7 +59,7 @@ PatientHistory {
 
 PatientVisit {
   [
-      ${visit} on  ${actualVisitDateAsString replace=DatePicker startDate="30/09/2024"}
+      '${visit}' on  ${actualVisitDateAsString replace=DatePicker startDate="30/09/2024"}
   ]
   trigger = "Visit"
 }

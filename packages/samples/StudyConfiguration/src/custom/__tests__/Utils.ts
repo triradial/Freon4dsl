@@ -189,7 +189,7 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
     period.name = periodName;
     // Setup the study start event
     console.log("Adding the first event: " + eventsToAdd[0].eventName + " day: " + eventsToAdd[0].daysToAdd + " to period: " + periodName);
-    let dayEventSchedule = createEventScheduleStartingOnADay(eventsToAdd[0].eventName, eventsToAdd[0].daysToAdd);
+    let dayEventSchedule = createEventScheduleStartingOnADay(eventsToAdd[0].eventName, eventsToAdd[0].daysToAdd, 0, 1);
     let previousEvent = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule);
     studyConfiguration.periods.push(period);
 
