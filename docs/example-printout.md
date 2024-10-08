@@ -1,9 +1,9 @@
 Study 123ABC 
 ==============
 
-The timeline and visit checklists for the study.
-
 **Author:** *Mike Vogel CRC Manager*
+
+**Date:** 09/20/2024
 
 [toc]
 

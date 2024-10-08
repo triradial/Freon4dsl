@@ -7,7 +7,7 @@ modelunit Availability { //TODO: rename and remodel to cover just staff
 }
 
 modelunit PatientInfo {
-  name: identifier = "PatientInfo";
+  name: identifier = "Patients";
   patientHistories: PatientHistory[];
 }
 
@@ -25,6 +25,7 @@ concept PatientVisit {
   reference visit: Event;
   visitInstanceNumber: number = 1;
   actualVisitDate: VisitDate;
+  actualVisitDateAsString: string;
   status: PatientVisitStatus = PatientVisitStatus:completed;
 }
 
@@ -48,6 +49,7 @@ limited Month {
 
 // TODO: use a different name to avoid conflicts with TypeScript Date
 concept Date {
+  dateAsString: string;
   day: string;
   month: Month;
   year: string = "2025";

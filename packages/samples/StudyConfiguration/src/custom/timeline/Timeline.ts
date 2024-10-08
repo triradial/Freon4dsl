@@ -120,13 +120,19 @@ export class Timeline extends RtObject {
         eventInstance.scheduled();
     }
 
+    // Only add if the event is not already on the timeline
     addEvent(event: TimelineEventInstance) {
         let day = this.days.find((d) => d.day === event.startDay);
         if (!day) {
             day = new TimelineDay(event.startDay);
             this.days.push(day);
         }
-        day.events.push(event);
+
+        // Check if the exact same instance of the event is already present
+        const eventExists = day.events.find((e) => e === event);
+        if (!eventExists) {
+            day.events.push(event);
+        }
     }
 
     getEvents(day: number) {
@@ -432,9 +438,21 @@ export class Timeline extends RtObject {
                         month:      '',
                         year:       ''
                     },
+                    majorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'w',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    }
+
                 },
                 timeAxis: {scale: 'day', step: 1},
-                showMajorLabels: false,
+                showMajorLabels: true,
                 orientation: 'both',
                 start: ${timeline.getReferenceDateAsDateString()},
                 end: ${timeline.getEndOfTimeline()},
@@ -445,8 +463,7 @@ export class Timeline extends RtObject {
                         horizontal: 0,
                     },
                 },
-            };
-            `;
+            };`;
         } else {
             result = `          var options = {
                 showCurrentTime: false,

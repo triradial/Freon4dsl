@@ -183,7 +183,6 @@ export class ScheduledEvent {
                         timeline.currentDay +
                         " has max repeats of: " +
                         numberOfRepeats +
-                        1 +
                         " and has completed: " +
                         numberCompletedInstances,
                 );
@@ -299,7 +298,22 @@ export class ScheduledEvent {
                         " with scheduledDay of: " +
                         scheduledDay,
                 );
-                return new ScheduledEventInstance(this, time + scheduledDay, this.instanceNumber(timeline));
+                let daysToWait = this.daysToWait(completedEvent, timeline, time);
+                if (daysToWait != scheduledDay) {
+                    console.log(
+                        " '" +
+                            this.getName() +
+                            "' is a repeating event with " +
+                            timeline.numberCompletedInstancesOf(this) +
+                            " completed instances and is to be scheduled on timeline day: " +
+                            timeline.currentDay +
+                            " with scheduledDay of: " +
+                            scheduledDay +
+                            " and daysToWait: " +
+                            daysToWait,
+                    );
+                }
+                return new ScheduledEventInstance(this, time + daysToWait, this.instanceNumber(timeline));
             } else if (completedEvent.getScheduledEvent().getName() === this.getName() && this.anyRepeatsNotCompleted(timeline)) {
                 // TODO: determine why this is never taken
                 console.log(
@@ -410,7 +424,7 @@ export class ScheduledEvent {
                         " current day of Schedule: " +
                         currentDayOfSchedule,
                 );
-                activePeriodInstance.setCompleted(timeline.currentDay);
+                activePeriodInstance.setCompleted(timeline.currentDay - 1); // Minus one because the period ends on the day before the day of the started event.
                 this.addPeriodInstance(period, scheduledStudyConfiguration, null, timeline);
             }
         } else {

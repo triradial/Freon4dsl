@@ -39,7 +39,7 @@ ${timeline
                 (eventInstance, index) =>
                     `<tr>
         <td>${eventInstance.getName()}</td>
-        <td>${eventInstance.getScheduledEvent().configuredEvent.alternativeName}</td>
+        <td>${eventInstance.getAlternativeName()}</td>
         <td>${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name}</td>
         <td class="text-center">${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""}</td>
         <td class="text-center">${(eventInstance.getStartDay() + 1).toString() ?? ""}</td>
@@ -53,6 +53,7 @@ ${timeline
       </tr>
     </tbody>
   </table>
+</div>
 `;
         return template;
     }

@@ -14,7 +14,8 @@ Period {
 Event {
     [
         Event: ${name}
-        Type: ${typeOfEvent}
+        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
+        Type: 
         Description: ${description}
         Schedule: 
             ${schedule}

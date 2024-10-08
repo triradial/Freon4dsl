@@ -10,8 +10,11 @@ import {
     FreNodeReference,
     OptionalBox,
     FreCreateBinaryExpressionAction,
-    FreTriggerUse, isString, ActionBox, ownerOfType,
-    BoxUtil
+    FreTriggerUse,
+    isString,
+    ActionBox,
+    ownerOfType,
+    BoxUtil,
 } from "@freon4dsl/core";
 
 // import { addListElement } from '@freon4dsl/core';
@@ -31,8 +34,9 @@ import {
     SourceToTargetMapping,
     Person,
     StudyConfiguration,
+    PatientInfo,
+    PatientHistory,
 } from "../language/gen";
-
 
 import { RoleProvider } from "@freon4dsl/core";
 import { ExtendedEvent, extension } from "../custom/extensions/ExtensionLib";
@@ -56,7 +60,6 @@ export const MANUAL_BINARY_EXPRESSION_ACTIONS: FreCreateBinaryExpressionAction[]
 ];
 
 export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
-
     FreCustomAction.create({
         activeInBoxRoles: [
             "FreBinaryExpression-left",
@@ -85,33 +88,39 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         action: (box: Box, trigger: FreTriggerUse, editor: FreEditor) => {
             const parent = box.node;
             const x = new NumberLiteralExpression();
-            if( isString(trigger) ) {
+            if (isString(trigger)) {
                 x.value = Number.parseInt(trigger.toString());
             }
             parent[(box as ActionBox).propertyName] = x;
             return x;
         },
         boxRoleToSelect: RoleProvider.property("NumberLiteralExpression", "value", "numberbox"),
-        caretPosition: FreCaret.RIGHT_MOST
+        caretPosition: FreCaret.RIGHT_MOST,
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["periods"], trigger: "add",
+    FreCustomAction.create({
+        activeInBoxRoles: ["periods"],
+        trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const studyconfig:StudyConfiguration  = box.node as StudyConfiguration;
+            const studyconfig: StudyConfiguration = box.node as StudyConfiguration;
             const period: Period = Period.create({});
             studyconfig.periods.push(period);
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["period"], trigger: "delete",
+    FreCustomAction.create({
+        activeInBoxRoles: ["period"],
+        trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const period: Period = box.node as Period;
             const studyconfig: StudyConfiguration = ownerOfType(period, "StudyConfiguration") as StudyConfiguration; //box.parent.parent.parent.element as StudyConfiguration;
             const index = period.freOwnerDescriptor().propertyIndex; //studyconfig.periods.indexOf(period);
-            studyconfig.periods.splice(index,1);
+            studyconfig.periods.splice(index, 1);
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["events"], trigger: "add",
+    FreCustomAction.create({
+        activeInBoxRoles: ["events"],
+        trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const period: Period = box.node as Period;
             const event: Event = Event.create({});
@@ -119,33 +128,41 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["event"], trigger: "delete",
+    FreCustomAction.create({
+        activeInBoxRoles: ["event"],
+        trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const event: Event = box.node as Event;
             const period: Period = ownerOfType(event, "Period") as Period; //box.parent.parent.parent.element as Period;
             const index = event.freOwnerDescriptor().propertyIndex; //period.events.indexOf(event);
-            period.events.splice(index,1);
+            period.events.splice(index, 1);
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["tasks"], trigger: "add",
+    FreCustomAction.create({
+        activeInBoxRoles: ["tasks"],
+        trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const event: Event = box.node as Event
+            const event: Event = box.node as Event;
             const task: Task = Task.create({});
             event.tasks.push(task);
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["task"], trigger: "delete",
+    FreCustomAction.create({
+        activeInBoxRoles: ["task"],
+        trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const task: Task = box.node as Task;
             const event: Event = ownerOfType(task, "Event") as Event;
-            const index = task.freOwnerDescriptor().propertyIndex; 
-            event.tasks.splice(index,1);
+            const index = task.freOwnerDescriptor().propertyIndex;
+            event.tasks.splice(index, 1);
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["steps"], trigger: "add",
+    FreCustomAction.create({
+        activeInBoxRoles: ["steps"],
+        trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const task: Task = box.node as Task;
             const step: Step = Step.create({});
@@ -153,16 +170,20 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["step"], trigger: "delete",
+    FreCustomAction.create({
+        activeInBoxRoles: ["step"],
+        trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const step: Step = box.node as Step;
             const task: Task = ownerOfType(step, "Task") as Task; //box.parent.parent.parent.element as Task;
             const index = step.freOwnerDescriptor().propertyIndex; // task.steps.indexOf(step);
-            task.steps.splice(index,1);
+            task.steps.splice(index, 1);
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["references"], trigger: "add",
+    FreCustomAction.create({
+        activeInBoxRoles: ["references"],
+        trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const step: Step = box.node as Step;
             const reference: Reference = Reference.create({});
@@ -170,16 +191,20 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["reference"], trigger: "delete",
+    FreCustomAction.create({
+        activeInBoxRoles: ["reference"],
+        trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const reference: Reference = box.node as Reference;
             const step: Step = ownerOfType(reference, "Step") as Step; //box.parent.parent.parent.element as Step;
             const index = reference.freOwnerDescriptor().propertyIndex; //step.references.indexOf(reference);
-            step.references.splice(index,1);
+            step.references.splice(index, 1);
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["systems"], trigger: "add",
+    FreCustomAction.create({
+        activeInBoxRoles: ["systems"],
+        trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const step: Step = box.node as Step;
             const system: SystemAccess = SystemAccess.create({});
@@ -187,16 +212,20 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["system"], trigger: "delete",
+    FreCustomAction.create({
+        activeInBoxRoles: ["system"],
+        trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const system: SystemAccess = box.node as SystemAccess;
             const step: Step = ownerOfType(system, "Step") as Step; //box.parent.parent.parent.element as Step;
             const index = system.freOwnerDescriptor().propertyIndex; //step.systems.indexOf(system);
-            step.systems.splice(index,1);
+            step.systems.splice(index, 1);
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["people"], trigger: "add",
+    FreCustomAction.create({
+        activeInBoxRoles: ["people"],
+        trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const step: Step = box.node as Step;
             const person: Person = Person.create({});
@@ -204,34 +233,51 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
             return null;
         },
     }),
-    FreCustomAction.create({ activeInBoxRoles: ["event"], trigger: "duplicate",
+    FreCustomAction.create({
+        activeInBoxRoles: ["event"],
+        trigger: "duplicate",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const event: Event = box.node as Event;
             const period: Period = ownerOfType(event, "Period") as Period; //box.parent.parent.parent.element as Period;
             const copyOfEvent = event.copy();
             extension(ExtendedEvent, Event);
             smartDuplicate(event, copyOfEvent);
-            const index = period.events.indexOf(event); 
+            const index = period.events.indexOf(event);
             console.log("custom action duplicate, splicing in copyOfEvent: " + copyOfEvent.name + " at index: " + index);
             period.events.splice(index + 1, 0, copyOfEvent);
             return null;
         },
     }),
 
-    FreCustomAction.create({ activeInBoxRoles: ["person"], trigger: "delete",
+    FreCustomAction.create({
+        activeInBoxRoles: ["person"],
+        trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const person: Person = box.node as Person;
             const step: Step = ownerOfType(person, "Step") as Step; //box.parent.parent.parent.element as Step;
-            const index = person.freOwnerDescriptor().propertyIndex;  //step.people.indexOf(person);
-            step.people.splice(index,1);
+            const index = person.freOwnerDescriptor().propertyIndex; //step.people.indexOf(person);
+            step.people.splice(index, 1);
             return null;
         },
     }),
 
-    FreCustomAction.create({ activeInBoxRoles: ["task"], trigger: "make-shareable",
+    FreCustomAction.create({
+        activeInBoxRoles: ["task"],
+        trigger: "make-shareable",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const task: Task = box.node as Task;
             makeTaskShareable(task);
+            return null;
+        },
+    }),
+
+    FreCustomAction.create({
+        activeInBoxRoles: ["patients"],
+        trigger: "add",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const patientInfo: PatientInfo = box.node as PatientInfo;
+            const patientHistory: PatientHistory = PatientHistory.create({});
+            patientInfo.patientHistories.push(patientHistory);
             return null;
         },
     }),
@@ -239,36 +285,34 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
 
 /* #region Task functions */
 
-    function makeTaskShareable(task: Task) {
-        console.log("SHARED: referencedTask is null so task is just becoming shared");
-        // Get the study config context
-        let studyConfig = task.freOwner().freOwner().freOwner().freOwner() as StudyConfiguration;
-        // Create the shard task and wire together
-        let refToTask = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
-        let sharedTask = task.copy();
-        // sharedTask.type = "S";
-        task.name = "Original Task";
-        refToTask.referred = sharedTask;
-        //task.referencedTask = refToTask;
-        // task.type = "R";
-        // Add to the shared tasks list
-        studyConfig.tasks.push(sharedTask);
-    }
+function makeTaskShareable(task: Task) {
+    console.log("SHARED: referencedTask is null so task is just becoming shared");
+    // Get the study config context
+    let studyConfig = task.freOwner().freOwner().freOwner().freOwner() as StudyConfiguration;
+    // Create the shard task and wire together
+    let refToTask = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
+    let sharedTask = task.copy();
+    // sharedTask.type = "S";
+    task.name = "Original Task";
+    refToTask.referred = sharedTask;
+    //task.referencedTask = refToTask;
+    // task.type = "R";
+    // Add to the shared tasks list
+    studyConfig.tasks.push(sharedTask);
+}
 
-    function makeTaskUnreferenced(task: Task) {
-    }
+function makeTaskUnreferenced(task: Task) {}
 
-    function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
-        const methodName = 'smartUpdate';
-        const args = [originalElement, duplicatedElement];
-        // Call methodName if it exists on the element
-        if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === 'function') {
-            console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
-            return (duplicatedElement as any)[methodName](...args);
-        } else {
-            console.log(`Method ${methodName} does not exist on the instance.`);
-        }
-    } 
-    
+function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
+    const methodName = "smartUpdate";
+    const args = [originalElement, duplicatedElement];
+    // Call methodName if it exists on the element
+    if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
+        console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
+        return (duplicatedElement as any)[methodName](...args);
+    } else {
+        console.log(`Method ${methodName} does not exist on the instance.`);
+    }
+}
 
 /* #endregion */

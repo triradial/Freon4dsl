@@ -99,10 +99,11 @@ export function createDay1EventScheduleThatRepeatsWeekly(eventName: string, numb
 }
 
 // Add a Event DSL element to a Period DSL element.
-export function createEventAndAddToPeriod(period: Period, eventName: string, eventSchedule: EventSchedule): Event {
-    let event = new Event(eventName);
-    event.name = eventName;
-    event.schedule = eventSchedule;
+export function createEventAndAddToPeriod(period: Period, eventName: string, eventSchedule: EventSchedule, alternativeName?: string): Event {
+    if (!alternativeName) {
+        alternativeName = "V#";
+    }
+    let event = Event.create({ name: eventName, alternativeName: alternativeName, schedule: eventSchedule });
     period.events.push(event);
     return event;
 }
@@ -165,7 +166,7 @@ export function addEventScheduledOffCompletedEvent(
 
 export interface EventsToAdd {
     eventName: string;
-    eventDay: number;
+    daysToAdd: number;
     repeat: number;
     period: string;
 }
@@ -173,7 +174,7 @@ export interface EventsToAdd {
 /*
  * eventsToAdd: An array of EventsToAdd objects. Each object contains the following fields:
  * - eventName: The name of the event to add.
- * - eventDay: The number of days the event is scheduled off the previous event. Note this is a confusing name!
+ * - daysToAdd: The number of days the event is scheduled off the previous event. Note this is a confusing name!
  * - period: The name of the period the event belongs to.
  *
  * For each period in eventsToAdd, add a Period DSL element containing Events:
@@ -187,8 +188,8 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
     let period = new Period(periodName);
     period.name = periodName;
     // Setup the study start event
-    console.log("Adding the first event: " + eventsToAdd[0].eventName + " day: " + eventsToAdd[0].eventDay + " to period: " + periodName);
-    let dayEventSchedule = createEventScheduleStartingOnADay(eventsToAdd[0].eventName, eventsToAdd[0].eventDay);
+    console.log("Adding the first event: " + eventsToAdd[0].eventName + " day: " + eventsToAdd[0].daysToAdd + " to period: " + periodName);
+    let dayEventSchedule = createEventScheduleStartingOnADay(eventsToAdd[0].eventName, eventsToAdd[0].daysToAdd);
     let previousEvent = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule);
     studyConfiguration.periods.push(period);
 
@@ -197,7 +198,7 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
     let isFirstEvent = true;
     eventsToAdd.forEach((eventToAdd) => {
         console.log(
-            "current period: " + periodName + " eventToAdd: " + eventToAdd.eventName + " day: " + eventToAdd.eventDay + " to period: " + eventToAdd.period,
+            "current period: " + periodName + " eventToAdd: " + eventToAdd.eventName + " day: " + eventToAdd.daysToAdd + " to period: " + eventToAdd.period,
         );
         if (isFirstEvent) {
             // Skip the first event as it is already added
@@ -216,7 +217,7 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
         let freNodeReference = FreNodeReference.create(previousEvent, "Event");
         eventReference.event = freNodeReference;
         let timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
-        timeAmount = TimeAmount.create({ value: eventToAdd.eventDay, unit: timeUnit });
+        timeAmount = TimeAmount.create({ value: eventToAdd.daysToAdd, unit: timeUnit });
         console.log(
             "addEventsScheduledOffCompletedEvents  eventToAdd: " +
                 eventToAdd.eventName +
@@ -249,12 +250,17 @@ export function logPeriodsAndEvents(prefix: string, studyConfiguration: StudyCon
     console.log(output);
 }
 
-export function addRepeatingEvents(studyConfiguration: StudyConfiguration, periodName: string, eventsToAdd: EventsToAdd[]): StudyConfiguration {
+export function addRepeatingEvents(
+    studyConfiguration: StudyConfiguration,
+    periodName: string,
+    eventsToAdd: EventsToAdd[],
+    alternativeName?: string,
+): StudyConfiguration {
     let period = new Period(periodName);
     period.name = periodName;
     // Setup the study start event
-    let dayEventSchedule = createDay1EventScheduleThatRepeatsWeekly(eventsToAdd[0].eventName, eventsToAdd[0].repeat, eventsToAdd[0].eventDay);
-    let event = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule);
+    let dayEventSchedule = createDay1EventScheduleThatRepeatsWeekly(eventsToAdd[0].eventName, eventsToAdd[0].repeat, eventsToAdd[0].daysToAdd);
+    let event = createEventAndAddToPeriod(period, eventsToAdd[0].eventName, dayEventSchedule, alternativeName);
     studyConfiguration.periods.push(period);
     return studyConfiguration;
 }
@@ -295,6 +301,7 @@ export function addEventAndInstanceToTimeline(
     let scheduledEvent = scheduledPeriodToAddEventTo.getScheduledEvent(eventName);
     scheduledEvent.state = eventState;
     let eventInstance = new ScheduledEventInstance(scheduledEvent, dayEventCompleted);
+    eventInstance.setEndDay(dayEventCompleted);
     eventInstance.state = TimelineInstanceState.Completed;
     timeline.addEvent(eventInstance);
     return eventInstance;

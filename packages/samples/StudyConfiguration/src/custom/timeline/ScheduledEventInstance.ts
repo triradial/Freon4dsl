@@ -19,6 +19,14 @@ export class ScheduledEventInstance extends TimelineEventInstance {
         this.instanceNumber = instanceNumber;
     }
 
+    getAlternativeName() {
+        let alternativeName = this.scheduledEvent.configuredEvent.alternativeName.trim();
+        if (!alternativeName || alternativeName.length == 0) alternativeName = this.getName();
+        if (!alternativeName.includes("#") && this.instanceNumber > 1) alternativeName = alternativeName + " (#)";
+        alternativeName = alternativeName.replace("#", this.instanceNumber.toString());
+        return alternativeName || "Name Missing";
+    }
+
     getScheduledEvent() {
         return this.scheduledEvent;
     }

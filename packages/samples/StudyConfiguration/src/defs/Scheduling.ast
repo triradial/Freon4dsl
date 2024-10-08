@@ -8,7 +8,7 @@ concept EventReference {
 }
 
 interface EventStart {
-}  
+}
 
 concept When implements EventStart {
     startWhen: EventReference;
@@ -49,7 +49,7 @@ concept RepeatEvery implements RepeatUnit {
 }
 
 limited TimeUnit {
-   hours; days; weeks; months;
+   hours; days; weeks; months;  
 }
 
 limited EventState {

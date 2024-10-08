@@ -59,25 +59,25 @@ import * as Sim from "../simjs/sim.js"
     }
 
     eventStarted(startedEvent) {
-      //TODO: change so timeline.addEvent only adds if not already there
       let timeline = this.getTimeline();
-      let currentDay = startedEvent.getScheduledEvent().day(timeline) - 1 + this.getScheduledStudyConfiguration().studyConfiguration.studyStartDayNumber;
-      if (isNaN(currentDay)) {
-        console.log("Error: Event:'" + startedEvent.getName() + "' has no current day");
-      }
-      timeline.setCurrentDay(currentDay);
+      // let currentDay = startedEvent.getScheduledEvent().day(timeline) - 1 + this.getScheduledStudyConfiguration().studyConfiguration.studyStartDayNumber;
+      // if (isNaN(currentDay)) {
+      //   console.log("Error: Event:'" + startedEvent.getName() + "' has no current day");
+      // }
+      timeline.setCurrentDay(this.time());
       console.log("Started Event:'" + startedEvent.getName() + "' at time: " + this.time());
       startedEvent.getScheduledEvent().started(this.getScheduledStudyConfiguration(), timeline, this.time());
+      timeline.addEvent(startedEvent);
     }
 
     eventCompleted(completedEvent) {
       // Complete the event
       console.log("Completed Event:'" + completedEvent.getName() + "' at time: " + this.time());
       let timeline = this.getTimeline();
-      completedEvent.startDay = this.time();
+      completedEvent.endDay = this.time();
       timeline.setCompleted(completedEvent);
       timeline.setCurrentDay(this.time())
-      timeline.addEvent(completedEvent);
+      timeline.addEvent(completedEvent); // This should not be needed because it was added in eventStarted()
 
       // Schedule events that are ready as a result of the completion of the event.
       let readyScheduledEvents = this.getScheduledStudyConfiguration().getEventsReadyToBeScheduled(completedEvent, this.time(), timeline);
