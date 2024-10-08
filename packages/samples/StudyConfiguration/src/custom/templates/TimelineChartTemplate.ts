@@ -113,93 +113,42 @@ export class TimelineChartTemplate {
         return undent`<!DOCTYPE HTML>
           <html>
           <head>
-            <title>Timeline Chart</title>
           ${TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript)}
-
           </body>
           </html>
-
               `;
     }
 
     static getTimelineAsHTMLBlock(timelineDataAsScript: string): string {
-        return undent`  <style>
-          body, html {
-            font-family: arial, sans-serif;
-            font-size: 11pt;
-          }
-
-          #visualization {
-            box-sizing: border-box;
-            width: 100%;
-            height: 300px;
-          }
-          
-          .not-available-row-label { font-color: red !important;}
-          .vis-item.screening-phase { background-color: #5ceb5c; }
-          .vis-item.treatment-phase { background-color: #9370ed; }
-          .vis-item.window  { background-color: #c3c3be; }
-          .vis-item.scheduled-event { background-color: blue; }
-          .vis-item.patient  { background-color: #95a89a; }
-          .vis-item.not-available  { background-color: red; }
-          .vis-item.on-scheduled-date  { background-color: #000000; }
-          .vis-item.staff  { background-color: #d0e14f; }
-          .vis-item.out-of-window { 
-            background-image: repeating-linear-gradient(
-              45deg,
-              orange,
-              orange 5px,
-              white 2px,
-              white 7px
-            );
-          }
-          .vis-item.visit-not-found { background-color: blue; }
-          .vis-item.in-window {
-            background-image: repeating-linear-gradient(
-              45deg,
-              black,
-              black 5px,
-              white 2px,
-              white 7px
-            );
-          }
-
-
-          
-        </style>
-
+        return undent`
+      <title>Timeline Chart</title>
       <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
       <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
-      <!--    -->
+       <!--    -->
       </head>
       <body>
-      <h1>
-        Study Timeline
-      </h1>
-      <div id="visualization" style="position: unset !important; height:100%"></div>  
-
-      <ul style="list-style-type: none;">
-        <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline </li>
-        <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline</li>
-      </ul>
-      <ul style="list-style-type: none;">
-          <li><img src="./images/blue.png" alt="Blue" style="width:16px;height:20px;"> Scheduled time of an Event/Visit</li>
-          <li><img src="./images/gray.png" alt="Gray" style="width:16px;height:20px;"> Window before and after a Scheduled Event/Visit</li>
-          <li><img src="./images/black.png" alt="Black" style="width:16px;height:20px;"> Date patient visit occurred on the scheduled date</li>
-          <li><img src="./images/black-stripe.png" alt="Black & White Stripes" style="width:16px;height:20px;"> Date patient visit occurred in the scheduled window</li>
-          <li><img src="./images/orange-stripe.png" alt="Orange & White Stripes" style="width:16px;height:20px;"> Date patient visit occurred outside the scheduled window</li>
-          <li><img src="./images/red.png" alt="Red" style="width:16px;height:20px;"> Date(s) the patient is unavailable</li>
-          <li><img src="./images/staff.png" alt="Yellow" style="width:16px;height:20px;"> Staff(#) - '(#)' is the total amount of staff available for the study. The number in the box is the staff on that date. The full staff is available on any date without a box with a number</li>
-      </ul>
+      <div id="visualization" style="position: unset !important; height:auto"></div>  
+      <div class="timeline-instructions">
+        <ul style="list-style-type: none;">
+            <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline </li>
+            <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline</li>
+        </ul>
+        <div class="timeline-key">
+            <div class="key-item"><div class="square scheduled-event"></div><span>Scheduled time of an Event/Visit</span></div>
+            <div class="key-item"><div class="square window"></div><span>Window before and after a Scheduled Event/Visit</span></div>
+            <div class="key-item"><div class="square on-scheduled-date"></div><span>Date patient visit occurred on the scheduled date</span></div>
+            <div class="key-item"><div class="square in-window"></div><span>Date patient visit occurred in the scheduled window</span></div>
+            <div class="key-item"><div class="square out-of-window"></div><span>Date patient visit occurred outside the scheduled window</span></div>
+            <div class="key-item"><div class="square not-available"></div><span>Date(s) the patient is unavailable</span></div>
+            <div class="key-item"><div class="square staff"></div><span>Staff(#) - '(#)' is the total amount of staff available for the study. The number in the box is the staff on that date. The full staff is available on any date without a box with a number</span></div>
+        </div>
+    </div>
       <script>
         ${timelineDataAsScript}
-
-
         var timeline = new vis.Timeline(container);
         timeline.setOptions(options);
         timeline.setGroups(groups);
         timeline.setItems(items);
-
       </script>
     `;
     }

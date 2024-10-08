@@ -54,6 +54,14 @@
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-showChecklists"
+               },
+               "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-studyStartDayNumber"
                },
                "value": "0"

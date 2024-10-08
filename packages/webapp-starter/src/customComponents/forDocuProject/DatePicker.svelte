@@ -81,10 +81,10 @@
         max-width: 24rem;
     }
     .datepicker-input {
-        background-color: rgb(249 250 251);
+        background-color: transparent;
         border-width: 1px;
-        border-color: rgb(209 213 219);
-        color: rgb(17 24 39);
+        border-color:transparent;
+        color: rgb(134, 151, 189);
         font-size: 0.875rem; /* 14px */
         line-height: 1.25rem; /* 20px */
         border-radius: 0.5rem; /* 8px */
@@ -92,9 +92,15 @@
         width: 100%;
         padding-inline-start: 2.5rem; /* 40px */
         padding: 0.625rem; /* 10px */
+        color-scheme: dark;
     }
+.datepicker-input:hover {
+
+
     .datepicker-input:focus {
         --tw-ring-color: rgb(59 130 246);
         border-color: rgb(59 130 246);
+        color: rgb(255, 255, 255);
+        border-width: 1px;
     }
 </style>

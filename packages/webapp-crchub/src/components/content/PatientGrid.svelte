@@ -15,15 +15,24 @@
     let gridApi: GridApi;
     let patientsData: any[] = [];
 
-    $: patientsData = getStudyPatients(studyId);
-    $: if (gridApi) {
-        gridApi.setGridOption("rowData", patientsData);
+    $: {
+        patientsData = getStudyPatients(studyId);
+        updateGridData();
     }
+    function updateGridData() {
+        if (gridApi && patientsData) {
+            gridApi.setGridOption("rowData", patientsData);
+            setTimeout(() => {
+                gridApi.sizeColumnsToFit();
+                gridApi.autoSizeAllColumns();
+            }, 100);
+        }
+    }
+
     $: gridTheme = $theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz";
 
     onMount(async () => {
         gridOptions = {
-            rowData: patientsData,
             defaultColDef: {
                 sortable: true,
                 filter: true,
@@ -86,6 +95,13 @@
             ],
             groupDisplayType: "groupRows",
             rowGroupPanelShow: "always",
+            onGridReady: (params) => {
+                if (patientsData.length > 0) {
+                    // gridApi.setGridOption("rowData", studiesData);
+                    // resizeColumns();
+                    updateGridData();
+                }
+            },
         };
 
         const gridElement = document.querySelector("#patientGrid") as HTMLElement;
@@ -146,4 +162,4 @@
 </svelte:head>
 
 <GridHeader title="Patients" />
-<div id="patientGrid" class={gridTheme} style="height:100%;width:100%;"></div>
+<div id="patientGrid" class="{gridTheme} ag-grid"></div>
