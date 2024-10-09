@@ -234,7 +234,7 @@ export class ScheduledEvent {
             let eventStart = this.configuredEvent.schedule.eventStart as EventStart;
             let repeatDays = undefined;
             if (eventStart instanceof When) {
-                repeatDays = this.interpret((eventStart as When).startWhen.timeAmount, timeline) as RtNumber;
+                repeatDays = this.interpret((eventStart as When).timeAmount, timeline) as RtNumber;
             } else {
                 repeatDays = this.interpret(eventStart, timeline) as RtNumber;
             }
@@ -259,13 +259,13 @@ export class ScheduledEvent {
             return true;
         } else if (eventStart instanceof StudyStart) {
             return true;
-        } else if (eventStart.freIsExpression()) {
-            //TODO: Make this more general search of StudyStart anywhere in the expression
-            // console.log("isScheduledOnASpecificDay: eventStart checking is currently limited to binary expressions starting with StudyStart!");
-            const eventStartExpression = eventStart as BinaryExpression;
-            if (eventStartExpression.left instanceof StudyStart) {
-                return true;
-            }
+            // } else if (eventStart.freIsExpression()) { THIS IS NO LONGER NEEDED BECAUSE EVENTSTART IS NEVER AN EXPRESSION
+            //     //TODO: Make this more general search of StudyStart anywhere in the expression
+            //     // console.log("isScheduledOnASpecificDay: eventStart checking is currently limited to binary expressions starting with StudyStart!");
+            //     const eventStartExpression = eventStart as BinaryExpression;
+            //     if (eventStartExpression.left instanceof StudyStart) {
+            //         return true;
+            //     }
         }
         return false;
     }

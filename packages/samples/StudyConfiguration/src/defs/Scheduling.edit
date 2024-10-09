@@ -1,7 +1,7 @@
 editor default
 
 When {
-    [when ${startWhen}]
+    [when ${startWhen} [? ${operator}] [? ${timeAmount}]]
 } 
 
 TimeAmount {
@@ -17,7 +17,7 @@ Day {
 }
 
 StudyStart {
-    [at Study Start]
+    [at Study Start [? ${operator}] [?${timeAmount}]]
 } 
 
 Previous {
@@ -88,7 +88,7 @@ EventSchedule {
 
 
 EventReference {
-    [${event} ${eventState} ${operator} ${timeAmount}]
+    [${event} ${eventState}]
     referenceShortcut = ${event}
     }
 
