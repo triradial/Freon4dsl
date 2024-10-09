@@ -71,15 +71,22 @@
   /* #region Text Component */
   .text-dropdown-component .text-component-input,
   .text-component-input {
-      color: var(--primary-800);
-      background-color: var(--gray-100);
+      color: var(--green);
+      background-color: var(--green-10t);
     }
     
-    .text-component-text {
-      color: var(--primary-800);
+    .text-dropdown-component .text-component-text,
+     .text-component-text {
+      color: var(--green);
       background-color: inherit;
     }
     
+    .text-dropdown-component .text-component-text:hover,
+    .text-component-text:hover {
+      color: var(--green);
+      background-color: var(--green-10t);
+    }
+
     .text-dropdown-component .text-component-placeholder,
     .text-component-placeholder {
       color: var(--gray-500);
@@ -272,24 +279,24 @@
 
   /* #region Context Menu */
   .contextmenu {
-    background-color: #1F2A37;
-    border-color: #131a22;
+    background-color: #e7eaef;
+    border-color: #98a3b3;
     box-shadow: 1.5px 1.5px 8px grey;
   }
   .contextmenu-button {
-    color: #C6CCE2;
+    background: none;
+    border: none;
+    color: black !important;
   }
-
   .contextmenu-button:hover {
-    background-color: #374151;
-    color: #B3BBD8;
+    background-color: #c2cbe9;
+    color: black;
   }
-
   .contextmenu-hr {
     width: 100%;
     margin: 0;
     color: unset !important;
-    border-top: solid 1px #C6CCE2;
+    border-top: solid 1px #696969;
   }
   .contextmenu-shortcut {
     color: #A0AACF !important;
@@ -316,5 +323,5 @@
   /* #endregion */ 
 
   .render-component-selected {
-    background-color: var(--black-5t);
+    background-color: var(--black-2t);
   }

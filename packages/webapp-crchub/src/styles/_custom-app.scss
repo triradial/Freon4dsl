@@ -13,6 +13,7 @@
   --black-20t: #00000033;
   --black-10t: #0000001a;
   --black-5t: #0000000d;
+  --black-2t: #00000006;
 
   --white: #ffffff;
   --white-90t: #ffffffe6;
@@ -25,6 +26,18 @@
   --white-20t: #ffffff33;
   --white-10t: #ffffff1a;
   --white-5t: #ffffff0d;
+
+  --green: #32cd32;
+  --green-90t: #32cd32e6;
+  --green-80t: #32cd32cc;
+  --green-70t: #32cd32b3;
+  --green-60t: #32cd3299;
+  --green-50t: #32cd3280;
+  --green-40t: #32cd3266;
+  --green-30t: #32cd324d;
+  --green-20t: #32cd3233;
+  --green-10t: #32cd321a;
+  --green-5t: #32cd320d;
 
   --primary-900t: #4c5c9680;
   --primary-900: #4C5C96;
@@ -321,6 +334,16 @@ appnav a:hover {
 
 /* #endregion */
 
+/* #region Editor */
+
+.crc-editor {
+  width: calc(100% - 2.75rem);
+  overflow-y: auto;
+  height: calc(100vh - 9.25rem);
+}
+
+/* #endregion */
+
 /* #region Toast */
 
 .toast-warning-container {
@@ -509,7 +532,8 @@ appnav a:hover {
 .crc-content div[role="tabpanel"] {
   padding: 0;
   margin-top: 0.25rem !important;
-  height: calc(100vh - 9.5rem) !important;
+  height: calc(100vh - 9.2rem) !important;
+  border-radius: 0;
 }
 
 /* #endregion */
@@ -1049,12 +1073,6 @@ appnav a:hover {
 }
 
 /* #endregion */
-
-.crc-editor {
-  width: calc(100% - 2.5rem);
-  overflow-y: auto;
-  height: calc(100vh - 9.25rem);
-}
 
 // .file_selector.svelte-nvt05c {
 //   display: none

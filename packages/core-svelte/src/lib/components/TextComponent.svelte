@@ -571,7 +571,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
 <span id="{id}" on:click={onClick} role="none" class="{cssClass} text-component-parent">
 	{#if isEditing}
-		<span class="text-component-input">
+		<span class="text-component-input-container">
 			<input type="text"
 				   class="text-component-input"
 				   id="{id}-input"
