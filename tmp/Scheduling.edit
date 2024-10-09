@@ -1,0 +1,100 @@
+editor default
+
+When {
+    [when ${startWhen} [? ${operator}] [? ${timeAmount}]]
+} 
+
+TimeAmount {
+    [ ${value} ${unit}]
+}
+
+StartDay {
+    [Start Day]
+}
+
+Day {
+    [
+        day ${startDay}
+    ]
+}
+
+StudyStart {
+    [Study Start [? ${operator}] [?${timeAmount}]]
+} 
+
+Previous {
+    [Previous]
+}
+
+AnyDay {
+    [On Any Day]
+} 
+
+Daily {
+    [daily]
+}
+
+Weekly {
+    [weekly]
+}
+
+Monthly {
+    [monthly]
+}
+
+Forever {
+    [forever]
+}
+
+RepeatEvery {
+    [Every: ${repeatEvery}]
+}
+
+RepeatCondition {
+    [
+    frequency: ${repeatUnit}
+    max  ${maxRepeats}  times
+    until ${until}
+    ]
+} 
+
+RepeatCount {
+    [
+        ${repeatCount} time(s)  
+    ]
+} 
+
+EventTimeOfDay {
+    [
+        ${startHour}:${startMinute}   -    ${endHour}:${endMinute}
+    ] 
+} 
+
+EventWindow {
+    [
+        at most ${maxDaysBefore} day(s) before
+        ${daysBefore} day(s) before
+        ${daysAfter}  day(s) after
+        at most ${maxDaysAfter} day(s) after
+    ]
+}
+
+EventSchedule {
+    [
+    First scheduled: ${eventStart}
+    with a window of: ${eventWindow}
+    and then repeats: ${eventRepeat}
+    limited to this time of day: ${eventTimeOfDay}
+    ]
+} 
+
+
+EventReference {
+    [${event} ${eventState}]
+    referenceShortcut = ${event}
+    }
+
+Days {
+    [${count}]
+}
+
