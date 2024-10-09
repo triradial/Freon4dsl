@@ -13,13 +13,11 @@ StartDay {
 }
 
 Day {
-    [
-        day ${startDay}
-    ]
+    [day ${startDay}]
 }
 
 StudyStart {
-    [ at Study Start]
+    [at Study Start]
 } 
 
 Previous {
