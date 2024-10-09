@@ -50,7 +50,7 @@
         if (!resizing) return;
 
         const dx = startX - event.clientX;
-        const newWidth = Math.max(200, Math.min(1200, startWidth + dx));
+        const newWidth = Math.max(400, Math.min(1400, startWidth + dx));
         drawerWidth = newWidth;
         if (activeDrawer) {
             setDrawerWidth(activeDrawer, drawerWidth);
