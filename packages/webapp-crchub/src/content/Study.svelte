@@ -30,11 +30,13 @@
     let studyConfigurationUnit: StudyConfiguration;
 
     let footerItems = [
-        { id: 'showActivityDetails', label: 'Shared Tasks', visible: true },
-        { id: 'showSystems', label: 'Systems', visible: true },
+        { id: 'showSharedTasks', label: 'Shared Tasks', visible: false },
         { id: 'showScheduling', label: 'Scheduling', visible: true },
-        { id: 'showChecklists', label: 'Checklists', visible: true },
-        { id: 'showDescriptions', label: 'Descriptions', visible: true },
+        { id: 'showChecklists', label: 'Checklists', visible: false },
+        { id: 'showReferences', label: 'References', visible: false, parent: 'showChecklists' },
+        { id: 'showSystems', label: 'Systems', visible: false, parent: 'showChecklists' },
+        { id: 'showPeople', label: 'People', visible: false, parent: 'showChecklists' },
+        { id: 'showDescriptions', label: 'Descriptions', visible: false },
     ];
 
     onMount(async () => {
