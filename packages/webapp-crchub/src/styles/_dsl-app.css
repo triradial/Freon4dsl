@@ -252,11 +252,6 @@ main {
 .list-group.type4 .list-group-label {
   font-size: 0.7rem;
 }
-
-.list-group.type4 .toggle-button {
-  color: inherit;
-}
-
 /* #endregion */
 
 /* #region Item Group Component */

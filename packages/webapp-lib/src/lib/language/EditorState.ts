@@ -99,10 +99,10 @@ export class EditorState {
     }
 
     /**
-     * Reads the model with name 'modelName' from the server and makes this the current model.
-     * The first unit in the model is shown, if present.
-     * @param modelName
-     */
+    * Reads the model with name 'modelName' from the server and makes this the current model.
+    * The first unit in the model is shown, if present.
+    * @param modelName
+    */
     async openModel(modelName: string) {
         // FreLogger.unmuteAllLogs();
         LOGGER.log("EditorState.openmodel(" + modelName + ")");
@@ -137,8 +137,9 @@ export class EditorState {
      * Reads the model with name 'modelName' from the server and makes this the current model.
      * The named model unit is shown
      * @param modelName
+     * @param unitName
      */
-    async openUnitForModel(modelName: string, unitName: string) {
+    async openUnitForModel(modelName: string, unitName: string): Promise<StudyConfiguration | null> {
         // FreLogger.unmuteAllLogs();
         LOGGER.log("EditorState.openmodel(" + modelName + ")");
         editorProgressShown.set(true);
@@ -147,14 +148,15 @@ export class EditorState {
         await this.saveCurrentUnit();
         // create new model instance in memory and set its name
         await this.modelStore.openModel(modelName);
-        const unit = this.modelStore.getUnitByName(unitName);
+        const unit = this.modelStore.getUnitByName(unitName) as StudyConfiguration | null;
         this.currentUnit = unit;
         BoxFactory.clearCaches();
         this.langEnv.projectionHandler.clear();
-        EditorState.getInstance().showUnitAndErrors(this.currentUnit);
+        if (unit) {
+            EditorState.getInstance().showUnitAndErrors(unit);
+        }
+        return unit;
     }
-
-
 
     /**
      * When another model is shown in the editor this function is called.

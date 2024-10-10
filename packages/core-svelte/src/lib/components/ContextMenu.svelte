@@ -11,6 +11,7 @@
     import { FreLogger, MenuItem, FreEditor } from "@freon4dsl/core";
     import { contextMenuVisible } from "./svelte-utils/ContextMenuStore.js";
     import { viewport } from "./svelte-utils/EditorViewportStore.js";
+    import BooleanCheckboxComponent from "./BooleanCheckboxComponent.svelte";
 
     // items for the context menu
     export let items: MenuItem[];
@@ -52,8 +53,20 @@
         let posX: number = event.pageX - $viewport.left;
         let posY: number = event.pageY - $viewport.top;
         // calculate the right position of the context menu
-        left = calculatePos($viewport.width, menuWidth, posX);
-        top = calculatePos($viewport.height, menuHeight, posY);
+
+        let useMousePosition = true;
+
+        if (useMousePosition) {
+            left = calculatePos($viewport.width, menuWidth, posX);
+            top = calculatePos($viewport.height, menuHeight, posY);
+        } else {
+            left = $viewport.left + event.clientX;
+            top = $viewport.top + event.clientY;
+        }
+
+        LOGGER.log("CONTEXTMENU viewport X= " + $viewport.left + " Y=" + $viewport.top);
+        LOGGER.log("CONTEXTMENU event X= " + event.clientX + " Y=" + event.clientY);
+        LOGGER.log("CONTEXTMENU useMousePosition4=" + useMousePosition + " left=" + left + " top=" + top);
     }
 
     /**

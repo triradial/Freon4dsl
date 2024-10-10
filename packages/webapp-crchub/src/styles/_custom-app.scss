@@ -339,9 +339,46 @@ appnav a:hover {
 .crc-editor {
   width: calc(100% - 2.75rem);
   overflow-y: auto;
-  height: calc(100vh - 9.25rem);
+  height: calc(100vh - 11.25rem);
 }
 
+.footer-container {
+  height: 2rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+.editor-display-options {
+  background-color: transparent;
+}
+
+.editor-display-options label {
+  font-size: 0.75rem;
+  color: var(--gray-800);
+}
+
+.editor-display-options-popover {
+  font-size: 0.75rem;
+}
+
+.editor-display-options-popover h3 {
+  font-size: 0.75rem;
+}
+
+.editor-footer-button {
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem 0.375rem;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.editor-footer-text {
+  margin-left: 0.5rem;
+  font-size: 0.675rem;
+}
 /* #endregion */
 
 /* #region Toast */
