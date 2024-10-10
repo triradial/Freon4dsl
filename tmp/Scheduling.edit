@@ -5,7 +5,7 @@ When {
 } 
 
 TimeAmount {
-    [${value}${unit}]
+    [ ${value} ${unit}]
 }
 
 StartDay {
@@ -13,11 +13,13 @@ StartDay {
 }
 
 Day {
-    [day ${startDay}]
+    [
+        day ${startDay}
+    ]
 }
 
 StudyStart {
-    [at Study Start [? ${operator}] [?${timeAmount}]]
+    [Study Start [? ${operator}] [?${timeAmount}]]
 } 
 
 Previous {

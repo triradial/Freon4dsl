@@ -49,15 +49,18 @@ export function createWhenEventSchedule(eventName: string, eventState: EventStat
     let referenceToOperator = FreNodeReference.create(operator, "SimpleOperators");
     // console.log("createWhenEventSchedule eventName: " + eventName + " eventState: " + eventState + " operator: " + operator + " timeAmount: " + timeAmount.value + " " + timeAmount.unit.name);
     let referenceToEventState = FreNodeReference.create(eventState, "EventState");
-    const referencedEvent = FreNodeReference.create<Event>(eventName, "Event");
+    const freNodeReference = FreNodeReference.create<Event>(eventName, "Event");
+    let referencedEvent = freNodeReference;
     const startWhenEventReference = EventReference.create({
-        operator: referenceToOperator,
-        timeAmount: timeAmount,
         eventState: referenceToEventState,
         event: referencedEvent,
     });
 
-    const whenExpression = When.create({ startWhen: startWhenEventReference });
+    const whenExpression = When.create({
+        startWhen: startWhenEventReference,
+        operator: referenceToOperator,
+        timeAmount: timeAmount,
+    });
     const eventSchedule = EventSchedule.create({ eventStart: whenExpression });
     return eventSchedule;
 }
@@ -127,11 +130,17 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(
     let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
     createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-    const studyStartPlusDays = PlusExpression.create({
-        left: StudyStart.create({}),
-        right: NumberLiteralExpression.create({ value: event2DaysAfterStudyStart }),
+    let referenceToOperator = FreNodeReference.create<SimpleOperators>("plus", "SimpleOperators");
+    let days = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
+
+    const studyStart = StudyStart.create({
+        operator: referenceToOperator,
+        timeAmount: TimeAmount.create({
+            value: event2DaysAfterStudyStart,
+            unit: days,
+        }),
     });
-    let eventSchedule = EventSchedule.create({ eventStart: studyStartPlusDays });
+    let eventSchedule = EventSchedule.create({ eventStart: studyStart });
     createEventAndAddToPeriod(period, event2Name, eventSchedule);
 
     studyConfiguration.periods.push(period);

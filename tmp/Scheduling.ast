@@ -49,11 +49,11 @@ concept RepeatEvery implements RepeatUnit {
 }
 
 limited TimeUnit {
-   hours; days; weeks; months;  
+   hours; days; weeks; months;
 }
 
 limited EventState {
-    completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
+    completed; started; scheduled; skipped;
 }
 
 concept RepeatCondition implements RepeatExpression {
