@@ -43,12 +43,13 @@
      * @param event
      */
     export async function show(event: MouseEvent, index: number) {
-        LOGGER.log("CONTEXTMENU show for index " + index);
+        //LOGGER.log("CONTEXTMENU show for index " + index);
         elementIndex = index;
         $contextMenuVisible = true;
         submenuOpen = false;
         // wait for the menu to be rendered, because we need its sizes for the positioning
         await tick();
+
         // get the position of the mouse relative to the editor view
         let posX: number = event.pageX - $viewport.left;
         let posY: number = event.pageY - $viewport.top;
@@ -56,17 +57,21 @@
 
         let useMousePosition = true;
 
-        if (useMousePosition) {
+        if (!useMousePosition) {
             left = calculatePos($viewport.width, menuWidth, posX);
             top = calculatePos($viewport.height, menuHeight, posY);
         } else {
-            left = $viewport.left + event.clientX;
-            top = $viewport.top + event.clientY;
-        }
+            left = event.clientX;
+            top = event.clientY;
 
-        LOGGER.log("CONTEXTMENU viewport X= " + $viewport.left + " Y=" + $viewport.top);
-        LOGGER.log("CONTEXTMENU event X= " + event.clientX + " Y=" + event.clientY);
-        LOGGER.log("CONTEXTMENU useMousePosition4=" + useMousePosition + " left=" + left + " top=" + top);
+            if (left > $viewport.left + $viewport.width - menuWidth) {
+                left = left - menuWidth;
+            }
+            if (top > $viewport.top + $viewport.height - menuHeight) {
+                top = top - menuHeight;
+            }
+        }
+        LOGGER.log("ContextMenu.show: "  + " left=" + left + " top=" + top);
     }
 
     /**

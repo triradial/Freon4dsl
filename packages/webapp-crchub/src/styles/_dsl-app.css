@@ -35,8 +35,8 @@ main {
 /* #region Label Component */
 .label-component:empty:before {
   content: attr(data-placeholdertext);
-  margin: 4px 2px 0px 2px;
-  padding: 0px 0px 0px 0px;
+  margin: 0px 2px 0px 2px;
+  padding: 2px 0px 0px 0px;
 }
 
 .label-component {
@@ -45,7 +45,7 @@ main {
   font-size: 0.75rem;
   font-family: "Roboto";
   font-variant: normal;
-  margin: 2px 2px 2px 2px;
+  margin: 0px 2px 0px 2px;
   padding: 2px 0px 0px 0px;
   white-space: normal;
   display: inline-block;
@@ -66,7 +66,7 @@ main {
   position: absolute;
   left: -9999px;
   display: inline-block;
-  margin: 2px 4px 2px 2px;
+  margin: 0px 4px 0px 2px;
   padding: 2px 2px 0px 2px;
   border: none;
   box-sizing: border-box;
@@ -84,7 +84,7 @@ main {
   line-height: 20px !important;
   border-width: 0px;
   box-sizing: border-box;
-  margin: 2px 2px 2px 2px;
+  margin: 0px 2px 0px 2px;
   padding: 1px 2px 1px 2px;
   padding-block: 0px;
   height: 24px;
@@ -96,7 +96,7 @@ main {
   font-weight: normal;
   font-style: normal;
   line-height: 20px !important;
-  margin: 2px 4px 2px 2px;
+  margin: 0px 4px 0px 2px;
   padding: 2px 2px 0px 2px;
   white-space: normal;
   display: inline-block;
@@ -627,7 +627,7 @@ span:has(> .tinymce-wrapper) {
   border-radius: 3px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   position: absolute;
   min-width: 120px;
 }
@@ -643,7 +643,7 @@ span:has(> .tinymce-wrapper) {
   place-items: center;
   font-style: normal;
   font-weight: normal;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-family: "Roboto";
 }
 
