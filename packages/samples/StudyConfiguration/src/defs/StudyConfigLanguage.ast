@@ -48,7 +48,7 @@ limited TypeOfEvent {
 
 concept Event {
     name: identifier;
-    alternativeName: string = " ";
+    alternativeName: string = "<No Alternative Name>";
     typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;

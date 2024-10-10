@@ -1,8 +1,9 @@
 editor default
 
 When {
-    [when ${startWhen} [? ${operator}] [? ${timeAmount}]]
-} 
+    [when ${startWhen} ${timeAmountPart}]
+    trigger = "When: Depending on when another event occurs"
+}  
 
 TimeAmount {
     [${value}${unit}]
@@ -14,18 +15,26 @@ StartDay {
 
 Day {
     [day ${startDay}]
+    trigger = "Day: A day of the study"
 }
 
+TimeAmountPart {
+    [${operator}${timeAmount}]
+} 
+
 StudyStart {
-    [at Study Start [? ${operator}] [?${timeAmount}]]
+    [at the start day of the Study ${timeAmountPart}]
+    trigger = "Study Start: The start of the study"
 } 
 
 Previous {
-    [Previous]
+    [when the Previous Event ${eventState} ${timeAmountPart}]
+    trigger = "Previous: Depending on the previous event"
 }
 
 AnyDay {
-    [On Any Day]
+    [on Any Day]
+    trigger = "Any Day: An unscheduled event"
 } 
 
 Daily {
@@ -63,32 +72,31 @@ RepeatCount {
 } 
 
 EventTimeOfDay {
+    
     [
-        ${startHour}:${startMinute}   -    ${endHour}:${endMinute}
+        ${timeAsString replace=TimePicker}
     ] 
 } 
 
 EventWindow {
     [
-        at most ${maxDaysBefore} day(s) before
-        ${daysBefore} day(s) before
-        ${daysAfter}  day(s) after
-        at most ${maxDaysAfter} day(s) after
+        ${daysBefore} day(s) before and ${daysAfter} day(s) after
+        and still compliant if completed at most ${maxDaysBefore} day(s) before and ${maxDaysAfter} day(s) after
     ]
 }
 
 EventSchedule {
     [
-    First scheduled: ${eventStart}
-    with a window of: ${eventWindow}
-    and then repeats: ${eventRepeat}
-    limited to this time of day: ${eventTimeOfDay}
+    First scheduled ${eventStart}
+    with a window of ${eventWindow}
+    and then repeats ${eventRepeat}
+    limited to this time of day ${eventTimeOfDay}
     ]
 } 
 
 
 EventReference {
-    [${event} ${eventState}]
+    [${event} ${eventState} ]
     referenceShortcut = ${event}
     }
 

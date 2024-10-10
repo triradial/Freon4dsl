@@ -98,8 +98,8 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         // console.log("entered evalEventReference");
         const timeline = ctx.find("timeline") as unknown as Timeline;
         const referencedEvent = node.$event;
-        const operator = (node.freOwner() as language.When).operator;
-        const timeAmount = (node.freOwner() as language.When).timeAmount;
+        const operator = (node.freOwner() as language.When).timeAmountPart.operator;
+        const timeAmount = (node.freOwner() as language.When).timeAmountPart.timeAmount;
         const eventState = node.eventState;
 
         // let owningEvent = ((node.freOwner() as language.When).freOwner() as language.EventSchedule).freOwner() as language.Event;
@@ -157,7 +157,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                     }
                 }
             }
-            let displacementFromEvent = main.evaluate((node.freOwner() as language.When).timeAmount, ctx) as RtNumber;
+            let displacementFromEvent = main.evaluate((node.freOwner() as language.When).timeAmountPart.timeAmount, ctx) as RtNumber;
             const result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
             return new RtNumber(result);
         }

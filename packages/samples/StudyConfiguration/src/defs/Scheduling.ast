@@ -5,9 +5,13 @@ concept EventReference {
     eventState: EventState;
 }
 
-interface EventStart {
-    operator?: SimpleOperators;
+concept TimeAmountPart {
+    operator?: SimpleOperators = SimpleOperators:plus;
     timeAmount?: TimeAmount;
+}  
+
+interface EventStart {
+    timeAmountPart?: TimeAmountPart;
 }  
 
 concept When implements EventStart {
@@ -25,6 +29,7 @@ concept StudyStart implements EventStart {
 }
 
 concept Previous implements EventStart {
+    eventState: EventState;
 }
 
 interface RepeatExpression {}
@@ -80,13 +85,14 @@ concept Days {
 }
 
 concept EventWindow {
-    maxDaysBefore: Days;
     daysBefore: Days;
     daysAfter: Days;
+    maxDaysBefore: Days;
     maxDaysAfter: Days;
 }
 
 concept EventTimeOfDay {
+    timeAsString: string;
     startHour: number;
     startMinute: number;
     endHour: number;

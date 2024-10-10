@@ -234,7 +234,7 @@ export class ScheduledEvent {
             let eventStart = this.configuredEvent.schedule.eventStart as EventStart;
             let repeatDays = undefined;
             if (eventStart instanceof When) {
-                repeatDays = this.interpret((eventStart as When).timeAmount, timeline) as RtNumber;
+                repeatDays = this.interpret((eventStart as When).timeAmountPart.timeAmount, timeline) as RtNumber;
             } else {
                 repeatDays = this.interpret(eventStart, timeline) as RtNumber;
             }

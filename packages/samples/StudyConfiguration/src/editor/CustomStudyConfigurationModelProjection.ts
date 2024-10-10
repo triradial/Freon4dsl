@@ -59,7 +59,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         ["Description", this.projectDescription],
         ["Period", this.projectPeriod],
         ["Event", this.projectEvent],
-        ["EventSchedule", this.projectSchedule],
+        // ["EventSchedule", this.projectSchedule],
         ["Task", this.projectTask],
         ["TaskReference", this.projectTask],
         ["Step", this.projectStep],
@@ -255,7 +255,12 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                   element,
                                   "schedule",
                                   "Schedule",
-                                  BoxUtil.getBoxOrAction(element, "schedule", "EventSchedule", this.handler),
+                                  BoxUtil.partWrapperBox(
+                                      element as Event,
+                                      "schedule",
+                                      "ExpandCollapseWrapper",
+                                      BoxUtil.getBoxOrAction(element as Event, "schedule", "EventSchedule", this.handler),
+                                  ),
                                   { cssClass: "type3", isExpanded: true },
                               ),
                           ]
@@ -279,66 +284,67 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         return box;
     }
 
-    projectSchedule(event: EventSchedule): Box {
-        const element: EventSchedule = event;
-        let box: Box = BoxFactory.verticalLayout(
-            element,
-            "EventSchedule-overall",
-            "",
-            [
-                BoxFactory.horizontalLayout(
-                    element,
-                    "schedule-event-start-group",
-                    "",
-                    [
-                        BoxUtil.labelBox(element, "It is first scheduled ", "schedule-event-start-label"),
-                        BoxUtil.getBoxOrAction(element, "eventStart", "EventStart", this.handler),
-                    ],
-                    { selectable: true, cssClass: "align-top" },
-                ),
+    // projectSchedule(event: EventSchedule): Box {
+    //     const element: EventSchedule = event;
+    //     let box: Box = BoxFactory.verticalLayout(
+    //         element,
+    //         "EventSchedule-overall",
+    //         "",
+    //         [
+    //             BoxFactory.horizontalLayout(
+    //                 element,
+    //                 "schedule-event-start-group",
+    //                 "",
+    //                 [
+    //                     BoxUtil.labelBox(element, "Is first scheduled ", "schedule-event-start-label"),
+    //                     BoxUtil.getBoxOrAction(element, "eventStart", "EventStart", this.handler),
+    //                 ],
+    //                 { selectable: true, cssClass: "align-top" },
+    //             ),
 
-                BoxFactory.horizontalLayout(
-                    element,
-                    "EventSchedule-hlist-line-2",
-                    "",
-                    [
-                        BoxUtil.labelBox(element, "with a window of:", "schedule-window"),
-                        BoxUtil.getBoxOrAction(element, "eventWindow", "EventWindow", this.handler),
-                    ],
-                    { selectable: true, cssClass: "align-top" },
-                ),
+    //             BoxFactory.horizontalLayout(
+    //                 element,
+    //                 "EventSchedule-hlist-line-2",
+    //                 "",
+    //                 [
+    //                     BoxUtil.labelBox(element, "with a window of ", "schedule-window"),
+    //                     BoxUtil.getBoxOrAction(element, "eventWindow", "EventWindow", this.handler),
+    //                 ],
+    //                 { selectable: true, cssClass: "align-top" },
+    //             ),
 
-                BoxFactory.horizontalLayout(
-                    element,
-                    "EventSchedule-hlist-line-1",
-                    "",
-                    [
-                        BoxUtil.labelBox(element, "and then repeats:", "schedule-then"),
-                        BoxUtil.getBoxOrAction(element, "eventRepeat", "RepeatExpression", this.handler),
-                    ],
-                    { selectable: true, cssClass: "align-top" },
-                ),
+    //             BoxFactory.horizontalLayout(
+    //                 element,
+    //                 "EventSchedule-hlist-line-1",
+    //                 "",
+    //                 [
+    //                     BoxUtil.labelBox(element, "and then repeats", "schedule-then"),
+    //                     BoxUtil.getBoxOrAction(element, "eventRepeat", "RepeatExpression", this.handler),
+    //                 ],
+    //                 { selectable: true, cssClass: "align-top" },
+    //             ),
 
-                BoxFactory.horizontalLayout(
-                    element,
-                    "EventSchedule-hlist-line-3",
-                    "",
-                    [
-                        BoxUtil.labelBox(element, "limited to this time of day:", "top-1-line-3-item-0"),
-                        BoxUtil.getBoxOrAction(element, "eventTimeOfDay", "EventTimeOfDay", this.handler),
-                    ],
-                    { selectable: true, cssClass: "align-top" },
-                ),
-            ],
-            { cssClass: "ml-5 mb-2" },
-        );
-        return box;
-    }
+    //             BoxFactory.horizontalLayout(
+    //                 element,
+    //                 "EventSchedule-hlist-line-3",
+    //                 "",
+    //                 [
+    //                     BoxUtil.labelBox(element, "limited to this time of day:", "top-1-line-3-item-0"),
+    //                     BoxUtil.getBoxOrAction(element, "eventTimeOfDay", "EventTimeOfDay", this.handler),
+    //                 ],
+    //                 { selectable: true, cssClass: "align-top" },
+    //             ),
+    //         ],
+    //         { cssClass: "ml-5 mb-2" },
+    //     );
+    //     return box;
+    // }
 
     projectTask(abstract: AbstractTask) {
         let box: Box;
         let isShareable: boolean = true;
         const event: Event = ownerOfType(abstract, "Event") as Event;
+        const showDescriptions = ((event.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
         if (event) {
             // event task
             if (abstract instanceof Task) {
@@ -354,7 +360,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         4,
                         "it2",
                         BoxFactory.verticalLayout(element, "task-overall", "", [
-                            BoxUtil.getBoxOrAction(element, "description", "Description", this.handler),
+                            ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                             BoxUtil.listGroupBox(
                                 element,
                                 "steps",

@@ -8,6 +8,8 @@ import { setCustomComponents } from "@freon4dsl/core-svelte";
 // import SMUI_Accordion from "./customComponents/forDocuProject/SMUI_Accordion.svelte";
 // import SMUI_Dialog from "./customComponents/forDocuProject/SMUI_Dialog.svelte";
 import DatePicker from "./customComponents/forDocuProject/DatePicker.svelte";
+import TimePicker from "./customComponents/forDocuProject/TimePicker.svelte";
+import ExpandCollapseWrapperComponent from "./customComponents/forDocuProject/ExpandCollapseWrapperComponent.svelte";
 // import {InsuranceModelEnvironment} from "@freon4dsl/samples-docuproject";
 // For ExternalTester
 // import BooleanWrapperComponent from "./customComponents/forExternalTester/BooleanWrapperComponent.svelte";
@@ -22,7 +24,7 @@ import DatePicker from "./customComponents/forDocuProject/DatePicker.svelte";
 // import ExternalPartComponent from "./customComponents/forExternalTester/ExternalPartComponent.svelte";
 // import ExternalNumberComponent from "./customComponents/forExternalTester/ExternalNumberComponent.svelte";
 // import ExternalBooleanComponent from "./customComponents/forExternalTester/ExternalBooleanComponent.svelte";
-// import PartWrapperComponent from "./customComponents/forExternalTester/PartWrapperComponent.svelte";
+import PartWrapperComponent from "./customComponents/forExternalTester/PartWrapperComponent.svelte";
 // import PartListWrapperComponent from "./customComponents/forExternalTester/PartListWrapperComponent.svelte";
 // import RefWrapperComponent from "./customComponents/forExternalTester/RefWrapperComponent.svelte";
 // import RefListWrapperComponent from "./customComponents/forExternalTester/RefListWrapperComponent.svelte";
@@ -51,6 +53,9 @@ setCustomComponents([
     // {component: SMUI_Accordion, knownAs: "SMUI_Accordion"},
     // {component: SMUI_Dialog, knownAs: "SMUI_Dialog"},
     { component: DatePicker, knownAs: "DatePicker" },
+    { component: TimePicker, knownAs: "TimePicker" },
+    { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
+    { component: PartWrapperComponent, knownAs: "partWrapper" },
 ]);
 // For ExternalTester:
 // setCustomComponents([
