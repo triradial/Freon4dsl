@@ -24,6 +24,7 @@ main {
   font-family: "Arial";
   margin: 0px;
   padding: 0px;
+  transform: translate3d(0,0,0);
 }
 
 .render-component {
@@ -540,8 +541,7 @@ span:has(> .tinymce-wrapper) {
 /* #region Dropdown Component */
 .dropdown-component {
   border-width: 1px;
-  border-style: solid;
-  border-radius: 2px;
+  border-radius: 0px;
   opacity: 1;
   z-index: 95;
   display: flex;
@@ -549,7 +549,7 @@ span:has(> .tinymce-wrapper) {
   gap: 0px;
   min-width: 120px;
   width: fit-content;
-  margin-top: 3px;
+  margin-top: 1px;
   position: absolute;
 }
 
@@ -557,14 +557,18 @@ span:has(> .tinymce-wrapper) {
   white-space: nowrap;
   border: none;
   border-radius: 2px;
-  padding: 0px;
-  margin: 5px;
+  padding: 4px 4px 4px 8px;
+  margin: 0px;
   cursor: pointer;
   text-align: left;
   display: flex;
   justify-content: space-between;
-  gap: 2px;
+  gap: 1px;
   place-items: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 0.75rem;
+  font-family: "Roboto";
 }
 
 .dropdown-component-error {

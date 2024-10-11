@@ -107,14 +107,14 @@
                         <FontAwesomeIcon icon={faSwatchbook} class="w-4 h-4" />Study Design
                     </div>
                     {#if editorLoaded}
-                        <div class="crc-editor">
+                        <div class="crc-editor crc-content-width">
                             <FreonComponent editor={dslEditor} />
                         </div>
-                        <div class="h-8 w-full">
+                        <div class="h-8 crc-content-width">
                             <DSLFooter items={footerItems} onCheckboxChange={handleCheckboxChange} />
                         </div>
                     {:else}
-                        <div class="h-full w-full">
+                        <div class="h-full crc-content-width">
                             <ListPlaceholder divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700" />
                         </div>
                     {/if}

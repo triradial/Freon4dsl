@@ -342,6 +342,10 @@ appnav a:hover {
   height: calc(100vh - 11.25rem);
 }
 
+.crc-content-width {
+  width: calc(100% - 2.75rem);
+}
+
 .footer-container {
   height: 2rem;
   width: 100%;
@@ -1107,6 +1111,10 @@ appnav a:hover {
   top: 0.125rem !important;
   border-width: 0 !important;
   border-radius: 0 !important;
+}
+
+.vis-text, .vis-label, .vis-item-content {
+  font-size: 0.75rem !important;
 }
 
 .vis-group {

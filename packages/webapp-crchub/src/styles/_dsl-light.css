@@ -48,280 +48,324 @@
 .text-box-action {
   --freon-text-component-color: rgb(104, 104, 104);
 }
+
 .text-box-select {
   --freon-text-component-color: green;
 }
+
 .text-box-text {
   --freon-text-component-color: blue;
 }
 
 /* #region FREON COMPONENTS */
 
-  /* #region Label Component */
-  .label-component:empty:before {
-    background-color: inherit;
-  }
+/* #region Label Component */
+.label-component:empty:before {
+  background-color: inherit;
+}
 
-  .label-component {
-    color: var(--gray-700);
-    background-color: inherit;
-  }
-  /* #endregion */
+.label-component {
+  color: var(--gray-700);
+  background-color: inherit;
+}
 
-  /* #region Text Component */
-  .text-dropdown-component .text-component-input,
-  .text-component-input {
-      color: var(--green);
-      background-color: var(--green-10t);
-    }
-    
-    .text-dropdown-component .text-component-text,
-     .text-component-text {
-      color: var(--green);
-      background-color: inherit;
-    }
-    
-    .text-dropdown-component .text-component-text:hover,
-    .text-component-text:hover {
-      color: var(--green);
-      background-color: var(--green-10t);
-    }
+/* #endregion */
 
-    .text-dropdown-component .text-component-placeholder,
-    .text-component-placeholder {
-      color: var(--gray-500);
-      background-color: inherit;
-    }
+/* #region Text Component */
+.text-dropdown-component .text-component-input,
+.text-component-input {
+  color: var(--green);
+  background-color: var(--green-10t);
+}
 
-    .text-component-action-placeholder {
-      color: var(--gray-300);
-      background-color: inherit;
-    }
-  /* #endregion */
+.text-dropdown-component .text-component-text,
+.text-component-text {
+  color: var(--green);
+  background-color: inherit;
+}
 
-  /* #region Switch Component */
-    .switch-component button {
-      background:  var(--gray-600);
-    }
+.text-dropdown-component .text-component-text:hover,
+.text-component-text:hover {
+  color: var(--green);
+  background-color: var(--green-10t);
+}
 
-    .switch-component button::before { /* defines the knob */
-    background-color: var(--gray-400);
-    }
+.text-dropdown-component .text-component-placeholder,
+.text-component-placeholder {
+  color: var(--gray-500);
+  background-color: inherit;
+}
 
-    .switch-component button[aria-checked='true']{
-      background-color: var(--primary-900t);
-    }
+.text-component-action-placeholder {
+  color: var(--gray-300);
+  background-color: inherit;
+}
 
-    .switch-component button:focus {
-      box-shadow: 0 0 0 1px #206C2D;;
-    }
+/* #endregion */
 
-    .switch-component button:hover {
-        box-shadow: 0 0 5px 2px #4C5C96;
-    }
-  /* #endregion */ 
+/* #region Switch Component */
+.switch-component button {
+  background: var(--gray-600);
+}
 
-  /* #region List Group Component */
-  .list-group.type1 {
-    background-color: var(--primary-900t); 
-  }
-  .list-group.type2 {
-      background-color: var(--black-5t); 
-  }
-  .list-group.type3 {
-    border-bottom: 1px solid var(--white-20t);
-  }
-  .list-group.type4 {
-    border-bottom: 1px solid #1191b9;;
-  }
-  .list-group.type1 .list-group-label {
-    color: var(--black);
-  }
-  .list-group.type2 .list-group-label {
-    color: var(--gray-700);
-  }
-  .list-group.type3 .list-group-label {
-    color: var(--gray-200);
-  }
-  .list-group.type4 .list-group-label {
-    color: #1191b9;
-  }
-  .list-group.type4 .toggle-button {
-    color: #1191b9;
-  }
+.switch-component button::before {
+  /* defines the knob */
+  background-color: var(--gray-400);
+}
 
-  .list-group .toggle-button {
-    border: none;
-    color: var(--gray-800);
-    background-color: transparent;
-  }
+.switch-component button[aria-checked='true'] {
+  background-color: var(--primary-900t);
+}
 
-  .list-group .toggle-button:hover {
-    background-color: var(--black-10t);
-  }
+.switch-component button:focus {
+  box-shadow: 0 0 0 1px #206C2D;
+  ;
+}
 
-  .list-group .toggle-button:active {
-    background-color: var(--black-20t);
-  }
+.switch-component button:hover {
+  box-shadow: 0 0 5px 2px #4C5C96;
+}
 
-  /* #endregion */
+/* #endregion */
 
-  /* #region Item Group Component */
-  .item-group {
-    background-color: inherit;
-  }
-  
-  .item-group .required {
-    background-color: var(--error-background);
-    color: var(--pink-900);
-  }
+/* #region List Group Component */
+.list-group.type1 {
+  background-color: var(--primary-900t);
+}
 
-  .item-group.type1 {
-    background-color: inherit;
-  }
+.list-group.type2 {
+  background-color: var(--black-5t);
+}
 
-  .item-group.type2 {
-    background-color: inherit;
-  }
+.list-group.type3 {
+  border-bottom: 1px solid var(--white-20t);
+}
 
-  .item-group.type1 .item-group-label {
-    color: var(--black);
-  }
+.list-group.type4 {
+  border-bottom: 1px solid #1191b9;
+  ;
+}
 
-  .item-group.type2 .item-group-label,
-  .item-group.type3 .item-group-label,
-  .item-group.type4 .item-group-label {
-    color: var(--gray-800);
-  }
+.list-group.type1 .list-group-label {
+  color: var(--black);
+}
 
-  .item-group .toggle-button {
-    border: none;
-    color: var(--gray-800);
-    background-color: transparent;
-  }
+.list-group.type2 .list-group-label {
+  color: var(--gray-800);
+}
 
-  .item-group .toggle-button:hover {
-    background-color: var(--black-10t);
-  }
+.list-group.type3 .list-group-label {
+  color: var(--gray-800);
+}
 
-  .item-group .toggle-button:active {
-    background-color: var(--black-20t);
-  }
+.list-group.type4 .list-group-label {
+  color: #1191b9;
+}
 
-  .drag-button {
-    color: var(--gray-800);
-    background-color: transparent;
-  }
+.list-group.type4 .toggle-button {
+  color: #1191b9;
+}
 
-  /* #endregion */ 
- 
-  /* #region Layout Component */
-  .layout-component {
-    background: transparent;
-  }
-  /* #endregion */
+.list-group .toggle-button {
+  border: none;
+  color: var(--gray-800);
+  background-color: transparent;
+}
 
-  /* #region MultlineText Component */
-  .multiline-text {
-    color: var(--freon-editor-component-color, rgb(129, 129, 129)) !important;
-    background: var(--freon-text-component-background-color, inherit) !important;
-  }
+.list-group .toggle-button:hover {
+  background-color: var(--black-10t);
+}
 
-  .multiline-editor {
-    outline: 1px solid transparent !important;
-    outline-offset: 1px !important;
-    --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
-    --tw-ring-offset-width: 0px;
-    --tw-ring-offset-color: #fff;
-    --tw-ring-color: #32cd3275;
-    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
-    border-color: #ffffff00;
-    margin: 4px 4px 4px 4px !important;
-  }
+.list-group .toggle-button:active {
+  background-color: var(--black-20t);
+}
 
-  /* #endregion */ 
+/* #endregion */
 
-  /* #region Date Component */
-  .date-component-input {
-    color: var(--primary-200);
-    background-color: var(--gray-900);
-  }
-  
-  .date-component-text {
-    color: var(--primary-200);
-    background-color: inherit;
-  }
-  
-  .date-component-placeholder {
-    color: var(--gray-600);
-    background-color: inherit;
-  }
-  /* #endregion */ 
+/* #region Item Group Component */
+.item-group {
+  background-color: inherit;
+}
 
-  /* #region Time Component */
-    .time-component-input {
-      color: var(--primary-200);
-      background-color: var(--gray-900);
-    }
-    
-    .time-component-text {
-      color: var(--primary-200);
-      background-color: inherit;
-    }
-    
-    .time-component-placeholder {
-      color: var(--gray-600);
-      background-color:  inherit;
-    }
-    /* #endregion */ 
+.item-group .required {
+  background-color: var(--error-background);
+  color: var(--pink-900);
+}
 
-  /* #region Context Menu */
-  .contextmenu {
-    background-color: #e7eaef;
-    border-color: #98a3b3;
-    box-shadow: 1.5px 1.5px 8px grey;
-  }
-  .contextmenu-button {
-    background: none;
-    border: none;
-    color: black !important;
-  }
-  .contextmenu-button:hover {
-    background-color: #c2cbe9;
-    color: black;
-  }
-  .contextmenu-hr {
-    width: 100%;
-    margin: 0;
-    color: unset !important;
-    border-top: solid 1px #696969;
-  }
-  .contextmenu-shortcut {
-    color: #A0AACF !important;
-  }
-  /* #endregion */ 
+.item-group.type1 {
+  background-color: inherit;
+}
 
-  /* #region Button */
-  /* Copied from https://svelte.dev/repl/hello-world?version=4.2.18 */
-  /* Ripple effect */
-    /* Button style */
-  .button-component {
-  }
+.item-group.type2 {
+  background-color: inherit;
+}
 
-  .button-component-ripple {
-    background-position: center;
-    transition: background 0.8s;
-  }
-  .button-component-ripple:hover {
-  }
-  .button-component-ripple:active {
-  }
-  .button-component-empty {
-  }
-  /* #endregion */ 
+.item-group.type1 .item-group-label {
+  color: var(--black);
+}
 
-  .render-component-selected {
-    background-color: var(--black-2t);
-  }
+.item-group.type2 .item-group-label,
+.item-group.type3 .item-group-label,
+.item-group.type4 .item-group-label {
+  color: var(--gray-800);
+}
+
+.item-group .toggle-button {
+  border: none;
+  color: var(--gray-800);
+  background-color: transparent;
+}
+
+.item-group .toggle-button:hover {
+  background-color: var(--black-10t);
+}
+
+.item-group .toggle-button:active {
+  background-color: var(--black-20t);
+}
+
+.drag-button {
+  color: var(--gray-800);
+  background-color: transparent;
+}
+
+/* #endregion */
+
+/* #region Layout Component */
+.layout-component {
+  background: transparent;
+}
+
+/* #endregion */
+
+/* #region MultlineText Component */
+.multiline-text {
+  color: var(--freon-editor-component-color, rgb(129, 129, 129)) !important;
+  background: var(--freon-text-component-background-color, inherit) !important;
+}
+
+.multiline-editor {
+  outline: 1px solid transparent !important;
+  outline-offset: 1px !important;
+  --tw-ring-inset: var(--tw-empty,
+      /*!*/
+      /*!*/
+    );
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: #32cd3275;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
+  border-color: #ffffff00;
+  margin: 4px 4px 4px 4px !important;
+}
+
+/* #endregion */
+
+/* #region Date Component */
+.date-component-input {
+  color: var(--primary-200);
+  background-color: var(--gray-900);
+}
+
+.date-component-text {
+  color: var(--primary-200);
+  background-color: inherit;
+}
+
+.date-component-placeholder {
+  color: var(--gray-600);
+  background-color: inherit;
+}
+
+/* #endregion */
+
+/* #region Time Component */
+.time-component-input {
+  color: var(--primary-200);
+  background-color: var(--gray-900);
+}
+
+.time-component-text {
+  color: var(--primary-200);
+  background-color: inherit;
+}
+
+.time-component-placeholder {
+  color: var(--gray-600);
+  background-color: inherit;
+}
+
+/* #endregion */
+
+/* #region Dropdown Component */
+.dropdown-component {
+  background-color: #e0e0e0;
+  color: black;
+  border: var(--green-50t) 1px solid;
+}
+
+.dropdown-component-item:hover {
+  background-color: var(--black-20t);
+}
+
+.dropdown-component-selected {
+  background-color: var(--black-10t);
+}
+
+/* #endregion */
+
+/* #region Context Menu */
+.contextmenu {
+  background-color: #e7eaef;
+  border-color: #98a3b3;
+  box-shadow: 1.5px 1.5px 8px grey;
+}
+
+.contextmenu-button {
+  background: none;
+  border: none;
+  color: black !important;
+}
+
+.contextmenu-button:hover {
+  background-color: #c2cbe9;
+  color: black;
+}
+
+.contextmenu-hr {
+  width: 100%;
+  margin: 0;
+  color: unset !important;
+  border-top: solid 1px #696969;
+}
+
+.contextmenu-shortcut {
+  color: #A0AACF !important;
+}
+
+/* #endregion */
+
+/* #region Button */
+/* Copied from https://svelte.dev/repl/hello-world?version=4.2.18 */
+/* Ripple effect */
+/* Button style */
+.button-component {}
+
+.button-component-ripple {
+  background-position: center;
+  transition: background 0.8s;
+}
+
+.button-component-ripple:hover {}
+
+.button-component-ripple:active {}
+
+.button-component-empty {}
+
+/* #endregion */
+
+.render-component-selected {
+  background-color: var(--black-2t);
+}

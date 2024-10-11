@@ -100,6 +100,7 @@
 		//LOGGER.log("setFocus "+ id + " input is there: " + !!inputElement);
 		if (!!inputElement) {
 			inputElement.focus();
+			inputElement.select();
 		} else {
 			// set the local variables, then the inputElement will be shown
 			isEditing = true;

@@ -32,9 +32,7 @@
     };
 </script>
 
-<nav class="dropdown-component"
-     id="{id}"
->
+<nav class="dropdown-component" id="{id}">
     {#if options.length > 0 }
         {#each options as option (option.id + option.label)}
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
