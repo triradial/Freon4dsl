@@ -21,7 +21,7 @@ Event {
             ${schedule wrap=ExpandCollapseWrapper}
         Checklist:
             ${tasks}
-    ]  trigger = "Event"
+    ] 
 }
 
 Task {

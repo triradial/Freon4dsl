@@ -92,7 +92,7 @@ concept WorkflowDescription implements WorkflowDecision  {
 }
 
 concept WorkflowBranch implements WorkflowDecision {
-    branch: FirstScheduledExpression;
+    branch: ScheduleExpression;
 }
 
 // TODO: Customize the validator to allow these strings to be empty.

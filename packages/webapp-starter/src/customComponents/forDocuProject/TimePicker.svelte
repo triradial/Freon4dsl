@@ -47,7 +47,7 @@
         if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
             value = startStr;
         } else {
-            value = "12:00";
+            value = "";
         }
     }
 
@@ -82,6 +82,7 @@
         on:change={onChange}
         bind:this={inputElement}
     />
+    <span class="validity"></span>
 </div>
 
 <style>
@@ -90,8 +91,6 @@
         max-width: 24rem;
     }
     .timepicker-input {
-        background-color: transparent;
-        background-color: transparent;
         border-width: 1px;
         border-color: transparent;
         color: rgb(134, 151, 189);
@@ -104,10 +103,31 @@
         padding: 0.625rem; /* 10px */
         color-scheme: dark;
     }
-    .timepicker-input:hover .timepicker-input:focus {
+    .timepicker-input:hover,
+    .timepicker-input:focus {
         --tw-ring-color: rgb(59 130 246);
         border-color: rgb(59 130 246);
-        color: rgb(255, 255, 255);
+        color: rgb(158, 33, 33);
+        background-color: rgb(17, 10, 133);
         border-width: 1px;
     }
+
+    input + span {
+        padding-right: 30px;
+    }
+
+    input:invalid + span::after {
+        position: absolute;
+        content: "✖";
+        padding-left: 5px;
+    }
+
+    input:valid + span::after {
+        position: absolute;
+        content: "✓";
+        padding-left: 5px;
+    }
+    /* ::-webkit-calendar-picker-indicator {
+        background-color: blue;
+    } */
 </style>

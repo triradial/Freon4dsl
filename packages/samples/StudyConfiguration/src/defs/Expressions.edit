@@ -4,9 +4,14 @@ Time {
     [${value} ${unit}]
 }
 
+PreviousVisit {
+    [Previous Visit]
+}
+
 NumberLiteralExpression {
     [${value}]
-}
+    trigger = "number"
+} 
 
 PlusExpression {
     symbol = "+"
@@ -23,7 +28,7 @@ String {
 
 BooleanLiteralExpression {
     [ ${value} ]
-    trigger = "boolean"
+    trigger = "true / false"
 }
 
 MultiplyExpression {
@@ -52,4 +57,10 @@ GreaterThenExpression {
 EqualsExpression {
     symbol = "=="
 }
+
+EventReferenceExpression {
+    [${event} ${eventState} ]
+    referenceShortcut = ${event}
+    trigger = "----"
+    }
 

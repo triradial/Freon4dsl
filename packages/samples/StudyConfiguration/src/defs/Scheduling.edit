@@ -59,30 +59,45 @@ RepeatEvery {
 
 RepeatCondition {
     [
-    frequency: ${repeatUnit}
-    max  ${maxRepeats}  times
-    until ${until}
-    ]
+    ${repeatUnit} up to ${maxRepeats} times until ${until}
+    ] trigger = "Repeat Condition: repeat until a condition occurs"
 } 
 
 RepeatCount {
     [
         ${repeatCount} time(s)  
-    ]
+    ] trigger = "Repeat Count: repeat a specific number of times"
 } 
 
-EventTimeOfDay {
-    
+BetweenTimes {
     [
-        ${timeAsString replace=TimePicker}
-    ] 
+        starting by ${startTimeAsString replace=TimePicker} and ending by ${endTimeAsString replace=TimePicker}
+    ] trigger = "Between Times: The time of day at which the event must start and end"
 } 
+
+StartingBy {
+    [
+        starting by ${startTimeAsString replace=TimePicker}
+    ] trigger = "Starting By: The time of day at which the event must start"
+} 
+
+EndingBy {
+    [
+        ending by ${endTimeAsString replace=TimePicker}
+    ] trigger = "Ending By: The time of day at which the event must end"
+} 
+
+ComplianceWindow {
+    [
+        ${maxDaysBefore} day(s) before and ${maxDaysAfter} day(s) after
+    ] trigger = "Compliance Window: The window of days before and after an event during which it must be completed to be compliant"
+}
 
 EventWindow {
     [
         ${daysBefore} day(s) before and ${daysAfter} day(s) after
-        and still compliant if completed at most ${maxDaysBefore} day(s) before and ${maxDaysAfter} day(s) after
-    ]
+        with a compliance window of ${complianceWindow}
+    ] 
 }
 
 EventSchedule {
@@ -90,7 +105,7 @@ EventSchedule {
     First scheduled ${eventStart}
     with a window of ${eventWindow}
     and then repeats ${eventRepeat}
-    limited to this time of day ${eventTimeOfDay}
+    limited to ${eventTimeOfDay}
     ]
 } 
 

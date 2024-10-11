@@ -59,7 +59,7 @@ limited EventState {
 concept RepeatCondition implements RepeatExpression {
     repeatUnit: RepeatUnit;
     maxRepeats: number;
-    until?: FirstScheduledExpression;
+    until?: ScheduleExpression;
 }
 
 concept TimeAmount   {

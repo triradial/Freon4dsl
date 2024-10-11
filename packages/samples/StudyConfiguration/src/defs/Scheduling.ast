@@ -32,7 +32,7 @@ concept Previous implements EventStart {
     eventState: EventState;
 }
 
-interface RepeatExpression {}
+//TODO: determine why RepeatUnit isn't better as a limited
 
 //limited RepeatUnit implements RepeatExpression {
 //limited RepeatUnit {
@@ -61,10 +61,13 @@ limited EventState {
     completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
 }
 
+//TODO: rename to something other than 'Expression' or determine if it should be an expression.
+interface RepeatExpression {}
+
 concept RepeatCondition implements RepeatExpression {
     repeatUnit: RepeatUnit;
-    maxRepeats: number;
-    until?: FirstScheduledExpression;
+    maxRepeats?: number;
+    until?: ScheduleExpression;
 }
 
 concept TimeAmount   {
@@ -84,15 +87,34 @@ concept Days {
     count: number;
 }
 
-concept EventWindow {
-    daysBefore: Days;
-    daysAfter: Days;
+concept ComplianceWindow {
     maxDaysBefore: Days;
     maxDaysAfter: Days;
 }
 
-concept EventTimeOfDay {
-    timeAsString: string;
+concept EventWindow {
+    daysBefore: Days;
+    daysAfter: Days;
+    complianceWindow?: ComplianceWindow;
+}
+
+interface EventTimeOfDay { }
+
+concept StartingBy implements EventTimeOfDay {
+    startTimeAsString: string;
+    startHour: number;
+    startMinute: number;
+}
+
+concept EndingBy implements EventTimeOfDay {
+    endTimeAsString: string;
+    endHour: number;
+    endMinute: number;
+}
+ 
+concept BetweenTimes implements EventTimeOfDay {
+    startTimeAsString: string;
+    endTimeAsString: string;
     startHour: number;
     startMinute: number;
     endHour: number;
