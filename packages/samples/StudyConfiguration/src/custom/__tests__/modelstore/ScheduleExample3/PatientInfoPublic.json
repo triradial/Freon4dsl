@@ -3,28 +3,20 @@
    "languages": [],
    "nodes": [
       {
-         "id": "ID-032",
+         "id": "ID-033",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-Availability"
+            "key": "-default-key-PatientInfo"
          },
          "properties": [
             {
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-name"
+                  "key": "-default-key-PatientInfo-name"
                },
-               "value": "Availability"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Availability-baselineStaff"
-               },
-               "value": ""
+               "value": "PatientInfo"
             }
          ],
          "containments": [
@@ -32,7 +24,7 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-staffLevels"
+                  "key": "-default-key-PatientInfo-patientHistories"
                },
                "children": []
             }

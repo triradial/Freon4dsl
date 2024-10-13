@@ -155,8 +155,16 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                     }
                 }
             }
-            let displacementFromEvent = main.evaluate((node.freOwner() as language.When).timeAmountPart.timeAmount, ctx) as RtNumber;
-            const result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
+            let result = lastInstanceOfReferencedEvent.startDay;
+            const when = node.freOwner() as language.When;
+            if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
+                let displacementFromEvent = main.evaluate(when.timeAmountPart.timeAmount, ctx) as RtNumber;
+                if (when.timeAmountPart.operator.name === language.SimpleOperators.plus.name) {
+                    result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
+                } else if (when.timeAmountPart.operator.name === language.SimpleOperators.minus.name) {
+                    result = lastInstanceOfReferencedEvent.startDay - displacementFromEvent.value;
+                }
+            }
             return new RtNumber(result);
         }
     }
@@ -227,9 +235,15 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
-        if (node.timeAmountPart !== undefined) {
+        if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
             let displacementFromEvent = main.evaluate(node.timeAmountPart.timeAmount, ctx) as RtNumber;
-            return new RtNumber(studyStartDayNumber.value + displacementFromEvent.value);
+            if (node.timeAmountPart.operator.name === language.SimpleOperators.plus.name) {
+                return new RtNumber(studyStartDayNumber.value + displacementFromEvent.value);
+            } else if (node.timeAmountPart.operator.name === language.SimpleOperators.minus.name) {
+                return new RtNumber(studyStartDayNumber.value - displacementFromEvent.value);
+            } else {
+                throw new RtError("evalStudyStart: operator of: " + node.timeAmountPart.operator.name + " not implemented");
+            }
         } else {
             return studyStartDayNumber;
         }

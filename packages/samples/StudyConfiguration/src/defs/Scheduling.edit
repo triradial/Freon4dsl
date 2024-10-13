@@ -20,6 +20,7 @@ Day {
 
 TimeAmountPart {
     [${operator}${timeAmount}]
+    trigger = "plus or minus day/week/month/..."
 } 
 
 StudyStart {

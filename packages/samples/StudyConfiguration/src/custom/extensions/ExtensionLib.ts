@@ -44,21 +44,23 @@ export class ExtendedEvent {
         let result = input;
         result = result.replace(patterns[0], this.incrementNumericSequence);
         result = result.replace(patterns[1], this.incrementAlphaNumericSequence);
-
+        if (result === input) {
+            result = input + " copy";
+        }
         return result;
     }
 
     updateSchedule(originalEvent: Event, duplicatedElement: Event): void {
         let eventStart = duplicatedElement.schedule.eventStart;
         if (eventStart instanceof When) {
-            let newRef  = FreNodeReference.create(originalEvent.name, "Event") as FreNodeReference<Event>;
+            let newRef = FreNodeReference.create(originalEvent.name, "Event") as FreNodeReference<Event>;
             (eventStart as When).startWhen.event = newRef;
         }
     }
 
-    smartUpdate(originalElement:Event, duplicatedElement: Event): void {
+    smartUpdate(originalElement: Event, duplicatedElement: Event): void {
         console.log("smartUpdate to duplicate event " + originalElement.name);
-        duplicatedElement.name = this.incrementSequences(duplicatedElement.name) + " (copy)";
+        duplicatedElement.name = this.incrementSequences(duplicatedElement.name);
         this.updateSchedule(originalElement, duplicatedElement);
         // Eventually will need to do other smart things to eliminate manual changes when duplicating.
         // For now just update the reference to the duplicated event in the 'When'.

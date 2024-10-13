@@ -2,7 +2,7 @@ language StudyConfigurationModel
 
 concept EventReference {
     reference event: Event;
-    eventState: EventState;
+    eventState: EventState = EventState:completed;
 }
 
 concept TimeAmountPart {
