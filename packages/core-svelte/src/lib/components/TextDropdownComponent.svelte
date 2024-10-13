@@ -36,6 +36,7 @@
 
     export let box: AbstractChoiceBox; // the accompanying ActionBox or SelectBox
     export let editor: FreEditor; // the editor
+    export let focusMode: "start" | "selectAll" = "start"; // how to set the focus on the input element
     let textBox: TextBox; // the textbox that is to be coupled to the TextComponent part
     $: textBox = box?.textBox; // keeps the textBox variable in state with the box!
 
@@ -569,8 +570,7 @@
     on:blur={onBlur}
     on:contextmenu={(event) => endEditing()}
     class="text-dropdown-component"
-    role="none"
->
+    role="none">
     <TextComponent
         bind:isEditing
         bind:text
@@ -580,6 +580,7 @@
         {editor}
         {textUpdateFunction}
         endEditingParentFunction={endEditing}
+        {focusMode}
         on:textUpdate={textUpdate}
         on:startEditing={startEditing}
         on:endEditing={endEditing}

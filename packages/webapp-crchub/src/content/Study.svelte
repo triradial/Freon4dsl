@@ -2,6 +2,7 @@
     import { onMount, onDestroy, getContext } from "svelte";
     import StudyCard from "../components/cards/StudyCard.svelte";
     import PatientList from '../components/content/PatientGrid.svelte';
+    import DSLFooter from '../components/common/DSLFooter.svelte';
 
     import { Tabs, TabItem } from 'flowbite-svelte';
     import { ListPlaceholder, Skeleton } from 'flowbite-svelte';
@@ -13,6 +14,8 @@
     import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { EditorState } from "@freon4dsl/webapp-lib";
+    import { FreEditor } from "@freon4dsl/core";
+    import { type StudyConfigurationModel, type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
 
     import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/drawerStore";
 
@@ -20,21 +23,45 @@
     let study: any;
     let editorLoaded = false;
 
-    let modelname = "ScheduleExample2";
-    let unitname = "StudyConfiguration";
-    let comm = EditorState.getInstance();
+    let modelName = "ScheduleExample2";
+    let unitName = "StudyConfiguration";
+    let modelManager = EditorState.getInstance();
+    let dslEditor: FreEditor;
+    let studyConfigurationUnit: StudyConfiguration;
+
+    let footerItems = [
+        { id: 'showSharedTasks', label: 'Shared Tasks', visible: false },
+        { id: 'showScheduling', label: 'Scheduling', visible: true },
+        { id: 'showChecklists', label: 'Checklists', visible: false },
+        { id: 'showReferences', label: 'References', visible: false, parent: 'showChecklists' },
+        { id: 'showSystems', label: 'Systems', visible: false, parent: 'showChecklists' },
+        { id: 'showPeople', label: 'People', visible: false, parent: 'showChecklists' },
+        { id: 'showDescriptions', label: 'Descriptions', visible: false },
+    ];
 
     onMount(async () => {
         // get the study data
         study = getStudy(id);
 
-        // get the model data for the study
-        //comm.openModel(modelname);
-        comm.openUnitForModel(modelname, unitname);
-        setTimeout(() => {
-            editorLoaded = true;
-        }, 5000);
-        
+        // Get the model data for the study
+        const result = await modelManager.openUnitForModel(modelName, unitName);
+        if (result !== undefined) {
+            studyConfigurationUnit = result as StudyConfiguration;
+            setTimeout(() => {
+                editorLoaded = true;
+            }, 5000);
+        } else {
+            console.error('Failed to load study configuration');
+        }
+
+         // Set initial visibility based on studyConfigurationUnit
+         footerItems = footerItems.map(item => ({
+            ...item,
+            visible: studyConfigurationUnit[item.id as keyof StudyConfiguration] as boolean
+        }));
+ 
+        dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+
         // initialize the study chart drawer for the study
         setDrawerProps("studyTimelineTable", { studyId: id });
         setDrawerVisibility('studyTimelineTable', true);
@@ -51,6 +78,12 @@
         setDrawerVisibility('studyTimelineTable', false);
         setDrawerVisibility('studyTimelineChart', false);
     });
+
+    function handleCheckboxChange(id: string, visible: boolean) {
+        if (id in studyConfigurationUnit) {
+            (studyConfigurationUnit[id as keyof StudyConfiguration] as boolean) = visible;
+        }
+    }
 
 </script>
 
@@ -74,11 +107,14 @@
                         <FontAwesomeIcon icon={faSwatchbook} class="w-4 h-4" />Study Design
                     </div>
                     {#if editorLoaded}
-                    <div class="crc-editor">
-                        <FreonComponent editor={WebappConfigurator.getInstance().editorEnvironment.editor} />
-                    </div>
+                        <div class="crc-editor crc-content-width">
+                            <FreonComponent editor={dslEditor} />
+                        </div>
+                        <div class="h-8 crc-content-width">
+                            <DSLFooter items={footerItems} onCheckboxChange={handleCheckboxChange} />
+                        </div>
                     {:else}
-                        <div class="h-full w-full">
+                        <div class="h-full crc-content-width">
                             <ListPlaceholder divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700" />
                         </div>
                     {/if}

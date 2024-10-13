@@ -24,6 +24,7 @@ main {
   font-family: "Arial";
   margin: 0px;
   padding: 0px;
+  transform: translate3d(0,0,0);
 }
 
 .render-component {
@@ -35,8 +36,8 @@ main {
 /* #region Label Component */
 .label-component:empty:before {
   content: attr(data-placeholdertext);
-  margin: 4px 2px 0px 2px;
-  padding: 0px 0px 0px 0px;
+  margin: 0px 2px 0px 2px;
+  padding: 2px 0px 0px 0px;
 }
 
 .label-component {
@@ -45,7 +46,7 @@ main {
   font-size: 0.75rem;
   font-family: "Roboto";
   font-variant: normal;
-  margin: 2px 2px 2px 2px;
+  margin: 0px 2px 0px 2px;
   padding: 2px 0px 0px 0px;
   white-space: normal;
   display: inline-block;
@@ -66,7 +67,7 @@ main {
   position: absolute;
   left: -9999px;
   display: inline-block;
-  margin: 2px 4px 2px 2px;
+  margin: 0px 4px 0px 2px;
   padding: 2px 2px 0px 2px;
   border: none;
   box-sizing: border-box;
@@ -84,7 +85,7 @@ main {
   line-height: 20px !important;
   border-width: 0px;
   box-sizing: border-box;
-  margin: 2px 2px 2px 2px;
+  margin: 0px 2px 0px 2px;
   padding: 1px 2px 1px 2px;
   padding-block: 0px;
   height: 24px;
@@ -96,7 +97,7 @@ main {
   font-weight: normal;
   font-style: normal;
   line-height: 20px !important;
-  margin: 2px 4px 2px 2px;
+  margin: 0px 4px 0px 2px;
   padding: 2px 2px 0px 2px;
   white-space: normal;
   display: inline-block;
@@ -252,11 +253,6 @@ main {
 .list-group.type4 .list-group-label {
   font-size: 0.7rem;
 }
-
-.list-group.type4 .toggle-button {
-  color: inherit;
-}
-
 /* #endregion */
 
 /* #region Item Group Component */
@@ -545,8 +541,7 @@ span:has(> .tinymce-wrapper) {
 /* #region Dropdown Component */
 .dropdown-component {
   border-width: 1px;
-  border-style: solid;
-  border-radius: 2px;
+  border-radius: 0px;
   opacity: 1;
   z-index: 95;
   display: flex;
@@ -554,7 +549,7 @@ span:has(> .tinymce-wrapper) {
   gap: 0px;
   min-width: 120px;
   width: fit-content;
-  margin-top: 3px;
+  margin-top: 1px;
   position: absolute;
 }
 
@@ -562,14 +557,18 @@ span:has(> .tinymce-wrapper) {
   white-space: nowrap;
   border: none;
   border-radius: 2px;
-  padding: 0px;
-  margin: 5px;
+  padding: 4px 4px 4px 8px;
+  margin: 0px;
   cursor: pointer;
   text-align: left;
   display: flex;
   justify-content: space-between;
-  gap: 2px;
+  gap: 1px;
   place-items: center;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 0.75rem;
+  font-family: "Roboto";
 }
 
 .dropdown-component-error {
@@ -632,7 +631,7 @@ span:has(> .tinymce-wrapper) {
   border-radius: 3px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   position: absolute;
   min-width: 120px;
 }
@@ -648,7 +647,7 @@ span:has(> .tinymce-wrapper) {
   place-items: center;
   font-style: normal;
   font-weight: normal;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-family: "Roboto";
 }
 

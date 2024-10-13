@@ -11,6 +11,7 @@
     import { FreLogger, MenuItem, FreEditor } from "@freon4dsl/core";
     import { contextMenuVisible } from "./svelte-utils/ContextMenuStore.js";
     import { viewport } from "./svelte-utils/EditorViewportStore.js";
+    import BooleanCheckboxComponent from "./BooleanCheckboxComponent.svelte";
 
     // items for the context menu
     export let items: MenuItem[];
@@ -42,18 +43,35 @@
      * @param event
      */
     export async function show(event: MouseEvent, index: number) {
-        LOGGER.log("CONTEXTMENU show for index " + index);
+        //LOGGER.log("CONTEXTMENU show for index " + index);
         elementIndex = index;
         $contextMenuVisible = true;
         submenuOpen = false;
         // wait for the menu to be rendered, because we need its sizes for the positioning
         await tick();
+
         // get the position of the mouse relative to the editor view
         let posX: number = event.pageX - $viewport.left;
         let posY: number = event.pageY - $viewport.top;
         // calculate the right position of the context menu
-        left = calculatePos($viewport.width, menuWidth, posX);
-        top = calculatePos($viewport.height, menuHeight, posY);
+
+        let useMousePosition = true;
+
+        if (!useMousePosition) {
+            left = calculatePos($viewport.width, menuWidth, posX);
+            top = calculatePos($viewport.height, menuHeight, posY);
+        } else {
+            left = event.clientX;
+            top = event.clientY;
+
+            if (left > $viewport.left + $viewport.width - menuWidth) {
+                left = left - menuWidth;
+            }
+            if (top > $viewport.top + $viewport.height - menuHeight) {
+                top = top - menuHeight;
+            }
+        }
+        LOGGER.log("ContextMenu.show: "  + " left=" + left + " top=" + top);
     }
 
     /**

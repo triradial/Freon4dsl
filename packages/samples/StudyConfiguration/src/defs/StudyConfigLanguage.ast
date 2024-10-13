@@ -8,15 +8,15 @@ model StudyConfigurationModel {
 
 modelunit StudyConfiguration {
     name: identifier = "Study Configuration";
-    showActivityDetails: boolean;
-    showSystems: boolean;
+    showSharedTasks: boolean = false;
     showScheduling: boolean = true;
-    showPeriods: boolean;
     showChecklists: boolean = false;
+    showReferences: boolean = false;
+    showSystems: boolean = false;
+    showPeople: boolean = false;
     showDescriptions: boolean = false;
     studyStartDayNumber: number = 0;
     periods: Period[];
-    // events: Event[];
     tasks: Task[];
     systemAccesses: SystemAccess[];
     staffing: Staffing;

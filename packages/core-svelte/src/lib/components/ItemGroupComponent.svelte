@@ -71,7 +71,7 @@
      * are set.
      */
 	 onMount(() => {
-        LOGGER.log("onMount" + " for element "  + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")");
+        //LOGGER.log("onMount" + " for element "  + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")");
 		if (!!box) {
 			originalText = text = box.getText();
 			placeholder = box.placeHolder;
@@ -97,9 +97,10 @@
      * It is called from the box.
      */
 	export async function setFocus(): Promise<void> {
-		LOGGER.log("setFocus "+ id + " input is there: " + !!inputElement);
+		//LOGGER.log("setFocus "+ id + " input is there: " + !!inputElement);
 		if (!!inputElement) {
 			inputElement.focus();
+			inputElement.select();
 		} else {
 			// set the local variables, then the inputElement will be shown
 			isEditing = true;
@@ -131,7 +132,7 @@
      * @param freCaret
      */
     const setCaret = (freCaret: FreCaret) => {
-		LOGGER.log(`setCaret ${freCaret.position} [${freCaret.from}, ${freCaret.to}]` );
+		//LOGGER.log(`setCaret ${freCaret.position} [${freCaret.from}, ${freCaret.to}]` );
         switch (freCaret.position) {
             case FreCaretPosition.RIGHT_MOST:  // type nr 2
                 from = to = text.length;
@@ -186,11 +187,11 @@
      */
     function onClick(event: MouseEvent) {
 		if (!!inputElement) {
-			LOGGER.log('onClick: ' + id + ', ' + inputElement?.selectionStart + ", " + inputElement?.selectionEnd);
+			//LOGGER.log('onClick: ' + id + ', ' + inputElement?.selectionStart + ", " + inputElement?.selectionEnd);
 			setFromAndTo(inputElement.selectionStart, inputElement.selectionEnd);
 		}
 		if (partOfActionBox) {  // let TextDropdownComponent know, dropdown menu needs to be altered
-            LOGGER.log('dispatching from on click');
+            //LOGGER.log('dispatching from on click');
             dispatcher('textUpdate', {content: text, caret: from});
         }
         event.stopPropagation();
@@ -210,7 +211,7 @@
 
 			if (!partOfActionBox) {
 				// store the current value in the textbox, or delete the box, if appropriate
-				LOGGER.log(`   save text using box.setText(${text})`)
+				//LOGGER.log(`   save text using box.setText(${text})`)
 				runInAction(() => {
 					if (box.deleteWhenEmpty && text.length === 0) {
 						editor.deleteBox(box);
@@ -453,7 +454,7 @@
      * When this component loses focus, do everything that is needed to end the editing state.
      */
 	const onFocusOut = (e) => {
-		LOGGER.log("onFocusOut " + id + " partof:" + partOfActionBox + " isEditing:" + isEditing)
+		//LOGGER.log("onFocusOut " + id + " partof:" + partOfActionBox + " isEditing:" + isEditing)
 		if (!partOfActionBox && isEditing) {
 			endEditing();
 		} else {
@@ -463,7 +464,7 @@
 	}
 
 	const refresh = () => {
-		LOGGER.log("REFRESH " + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")")
+		//LOGGER.log("REFRESH " + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")")
 		placeholder = box.placeHolder;
 		// If being edited, do not set the value, let the user type whatever (s)he wants
 		if (!isEditing) {
@@ -488,7 +489,7 @@
  	 */
 	beforeUpdate(() => {
 		if (editStart && !!inputElement) {
-			LOGGER.log('Before update : ' + id + ", " + inputElement);
+			//LOGGER.log('Before update : ' + id + ", " + inputElement);
 			setInputWidth();
 			inputElement.focus();
 			editStart = false;
@@ -505,7 +506,7 @@
     afterUpdate(() => {
         // LOGGER.log("Start afterUpdate  " + from + ", " + to + " id: " + id);
 		if (editStart && !!inputElement) {
-			LOGGER.log('    editStart in afterupdate for ' + id)
+			//LOGGER.log('    editStart in afterupdate for ' + id)
             inputElement.selectionStart = from >= 0 ? from : 0;
             inputElement.selectionEnd = to >= 0 ? to : 0;
 			setInputWidth();
@@ -515,7 +516,7 @@
         if (isEditing && partOfActionBox) {
 			if (text !== originalText) {
 				// send event to parent
-				LOGGER.log('dispatching event with text ' + text + ' from afterUpdate');
+				//LOGGER.log('dispatching event with text ' + text + ' from afterUpdate');
 				dispatcher('textUpdate', {content: text, caret: from + 1});
 			}
         }
@@ -555,7 +556,7 @@
 	 * @param event
 	 */
 	function onDragStart(event) {
-		LOGGER.log('on drag start');
+		//LOGGER.log('on drag start');
 		event.stopPropagation();
 		event.preventDefault();
 	}

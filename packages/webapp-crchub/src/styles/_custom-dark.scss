@@ -301,6 +301,21 @@ appnav a:visited {
 
 /* #endregion */
 
+/* #region Editor */
+.footer-container {
+  background-color: var(--drawer-header-background);
+  border-top: 1px solid var(--drawer-handle);
+}
+
+.editor-footer-button {
+  color: var(--drawer-header-text);
+}
+
+.editor-footer-text {
+  color: var(--drawer-header-text);
+}
+/* #endregion */
+
 /* #region Grid */
 
 .crc-grid-header {

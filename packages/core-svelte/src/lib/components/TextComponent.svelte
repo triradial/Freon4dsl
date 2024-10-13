@@ -46,6 +46,7 @@
 	export let isEditing: boolean = false; 	// indication whether this component is currently being edited by the user, needs to be exported for binding in TextDropdownComponent
 	export let partOfActionBox: boolean = false; // indication whether this text component is part of an TextDropdownComponent
 	export let text: string;    			// the text to be displayed, needs to be exported for to use 'bind:text' in TextDropdownComponent
+	export let focusMode: "regular" | "start" | "selectAll" = "selectAll"; // how to set the focus on the input element
 
 	export let textUpdateFunction = undefined
 	export let endEditingParentFunction = undefined
@@ -71,9 +72,14 @@
 	 * It is called from the box.
 	 */
 	export async function setFocus(): Promise<void> {
-		// LOGGER.log("setFocus "+ id + " input is there: " + !!inputElement);
+		LOGGER.log("setFocus "+ id + " input is there: " + !!inputElement);
 		if (!!inputElement) {
 			inputElement.focus();
+			if (focusMode === "start") {
+                inputElement.setSelectionRange(0, 0);
+            } else if (focusMode === "selectAll") {
+                inputElement.select();
+            }
 		} else {
 			// set the local variables, then the inputElement will be shown
 			isEditing = true;
@@ -142,7 +148,14 @@
 		editStart = true;
 		originalText = text;
 		let {anchorOffset, focusOffset} = document.getSelection();
-		setFromAndTo(anchorOffset, focusOffset);
+		if (focusMode === "start") {
+            from = to = 0;
+        } else if (focusMode === "selectAll") {
+            from = 0;
+            to = text.length;
+        } else {
+			setFromAndTo(anchorOffset, focusOffset);
+		}
 		event.preventDefault();
 		event.stopPropagation();
 		dispatcher('startEditing', {content: text, caret: from}); // tell the TextDropdown that the edit has started
@@ -478,14 +491,6 @@
 			inputElement.focus();
 			editStart = false;
 		}
-		// if (isEditing && partOfActionBox) {
-		// 	if (text !== originalText) {
-		// send event to parent
-		// LOGGER.log(`${id}: dispatching textUpdateFunction with text ` + text + ' from afterUpdate');
-		// dispatcher('textUpdate', {content: text, caret: from + 1});
-		// textUpdateFunction({content: text, caret: from + 1})
-		// }
-		// }
 		// Always set the input width explicitly.
 		setInputWidth();
 		placeholder = box.placeHolder;

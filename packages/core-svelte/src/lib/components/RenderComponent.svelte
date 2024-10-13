@@ -83,7 +83,7 @@
     let element: HTMLElement;
 
     const onClick = (event: MouseEvent) => {
-        LOGGER.log("RenderComponent.onClick for box " + box.role + ", selectable:" + box.selectable);
+        //LOGGER.log("RenderComponent.onClick for box " + box.role + ", selectable:" + box.selectable);
         // Note that click events on some components, like TextComponent, are already caught.
         // These components need to take care of setting the currently selected element themselves.
         editor.selectElementForBox(box);
@@ -93,7 +93,7 @@
 
     afterUpdate(() => {
         // the following is done in the afterUpdate(), because then we are sure that all boxes are rendered by their respective components
-        LOGGER.log('afterUpdate selectedBoxes: [' + $selectedBoxes.map(b => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind) + "]");
+        //LOGGER.log('afterUpdate selectedBoxes: [' + $selectedBoxes.map(b => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind) + "]");
         let isSelected: boolean = $selectedBoxes.includes(box);
         if (isBooleanControlBox(box) || isLimitedControlBox(box)) {
             // do not set extra class, the control itself handles being selected
@@ -103,7 +103,7 @@
         if (!!element) { // upon initialization the element might be null
             setBoxSizes(box, element.getBoundingClientRect());
         } else {
-            LOGGER.log('No element for ' + box?.id + ' ' + box?.kind);
+            //LOGGER.log('No element for ' + box?.id + ' ' + box?.kind);
         }
     });
     // todo test GridComponent

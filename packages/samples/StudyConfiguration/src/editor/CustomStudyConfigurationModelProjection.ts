@@ -101,26 +101,26 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectStudyConfiguration(studyconfig: StudyConfiguration): Box {
         const element: StudyConfiguration = studyconfig;
         return BoxFactory.verticalLayout(element, "StudyConfiguration-overall", "", [
-            BoxUtil.listGroupBox(
-                element,
-                "study-options",
-                "Display Options",
-                BoxFactory.verticalLayout(
-                    element,
-                    "StudyConfiguration-vlist-line-3",
-                    "",
-                    [
-                        BoxUtil.emptyLineBox2(element, "option-empty-line", "h-2"),
-                        BoxUtil.switchElement(element, "showActivityDetails", "Shared Tasks"),
-                        BoxUtil.switchElement(element, "showSystems", "Systems"),
-                        BoxUtil.switchElement(element, "showScheduling", "Scheduling"),
-                        BoxUtil.switchElement(element, "showChecklists", "Checklists"),
-                        BoxUtil.switchElement(element, "showDescriptions", "Descriptions"),
-                    ],
-                    { cssClass: "w-full ml-4" },
-                ),
-                { cssClass: "type1", isExpanded: true },
-            ),
+            // BoxUtil.listGroupBox(
+            //     element,
+            //     "study-options",
+            //     "Display Options",
+            //     BoxFactory.verticalLayout(
+            //         element,
+            //         "StudyConfiguration-vlist-line-3",
+            //         "",
+            //         [
+            //             BoxUtil.emptyLineBox2(element, "option-empty-line", "h-2"),
+            //             BoxUtil.switchElement(element, "showActivityDetails", "Shared Tasks"),
+            //             BoxUtil.switchElement(element, "showSystems", "Systems"),
+            //             BoxUtil.switchElement(element, "showScheduling", "Scheduling"),
+            //             BoxUtil.switchElement(element, "showChecklists", "Checklists"),
+            //             BoxUtil.switchElement(element, "showDescriptions", "Descriptions"),
+            //         ],
+            //         { cssClass: "w-full ml-4" },
+            //     ),
+            //     { cssClass: "type1", isExpanded: true },
+            // ),
             BoxUtil.listGroupBox(
                 element,
                 "periods",
@@ -128,7 +128,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 BoxUtil.verticalPartListBox(element, element.periods, "periods", null, this.handler, { cssClass: "ml-6 mb-2" }),
                 { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
             ),
-            ...(element.showActivityDetails === true
+            ...(element.showSharedTasks === true
                 ? [
                       BoxUtil.listGroupBox(
                           element,
@@ -137,19 +137,23 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                           BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mb-2" }),
                           { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
                       ),
-                      ...(element.showSystems === true
-                          ? [
-                                BoxUtil.listGroupBox(
-                                    element,
-                                    "shared-systems",
-                                    "Systems",
-                                    BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, {
-                                        cssClass: "ml-6 mb-2",
-                                    }),
-                                    { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                                ),
-                            ]
-                          : []),
+                  ]
+                : []),
+            ...(element.showSystems === true
+                ? [
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-systems",
+                          "Systems",
+                          BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, {
+                              cssClass: "ml-6 mb-2",
+                          }),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                      ),
+                  ]
+                : []),
+            ...(element.showPeople === true
+                ? [
                       BoxUtil.listGroupBox(
                           element,
                           "shared-people",
@@ -180,6 +184,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectPeriod(period: Period): Box {
         const element: Period = period;
+        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
         let box: Box = BoxUtil.itemGroupBox(
             element,
             "period",
@@ -190,18 +195,22 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 "period-detail",
                 "",
                 [
-                    BoxFactory.horizontalLayout(
-                        element,
-                        "period-hlist-line-1",
-                        "",
-                        [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
-                        { selectable: false, cssClass: "w-full mt-1 align-top" },
-                    ),
+                    ...(showDescriptions
+                        ? [
+                              BoxFactory.horizontalLayout(
+                                  element,
+                                  "period-hlist-line-1",
+                                  "",
+                                  [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
+                                  { selectable: false, cssClass: "w-full mt-1 align-top" },
+                              ),
+                          ]
+                        : []),
                     BoxUtil.listGroupBox(
                         element,
                         "events",
                         "Events",
-                        BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
+                        BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler, { cssClass: "ml-6" }),
                         { cssClass: "type2", isExpanded: true, canAdd: true },
                     ),
                 ],
@@ -344,7 +353,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         let box: Box;
         let isShareable: boolean = true;
         const event: Event = ownerOfType(abstract, "Event") as Event;
-        const showDescriptions = ((event.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
+        const studyConfiguration: StudyConfiguration = ownerOfType(abstract, "StudyConfiguration") as StudyConfiguration;
+        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false;
         if (event) {
             // event task
             if (abstract instanceof Task) {
@@ -360,7 +370,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         4,
                         "it2",
                         BoxFactory.verticalLayout(element, "task-overall", "", [
-                            ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                            ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                             BoxUtil.listGroupBox(
                                 element,
                                 "steps",
@@ -396,7 +406,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             4,
                             "it2",
                             BoxFactory.verticalLayout(element, "task-overall", "", [
-                                BoxUtil.getBoxOrAction(element, "description", "Description", this.handler),
+                                ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                                 BoxUtil.listGroupBox(
                                     element,
                                     "steps",
@@ -442,7 +452,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     4,
                     "it1",
                     BoxFactory.verticalLayout(element, "task-overall", "", [
-                        BoxUtil.getBoxOrAction(element, "description", "Description", this.handler),
+                        ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                         BoxUtil.listGroupBox(
                             element,
                             "steps",
@@ -459,6 +469,11 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     }
 
     projectStep(element: Step) {
+        const studyConfiguration: StudyConfiguration = ownerOfType(element, "StudyConfiguration") as StudyConfiguration;
+        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false;
+        const showReferences = studyConfiguration ? studyConfiguration.showReferences : false;
+        const showSystems = studyConfiguration ? studyConfiguration.showSystems : false;
+        const showPeople = studyConfiguration ? studyConfiguration.showPeople : false;
         let box: Box = BoxUtil.itemGroupBox(
             element,
             "step",
@@ -469,28 +484,45 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 4,
                 "ss1",
                 BoxFactory.verticalLayout(element, "step-overall", "", [
-                    BoxUtil.getBoxOrAction(element, "detailsDescription", "Description", this.handler),
-                    BoxUtil.listGroupBox(
-                        element,
-                        "references",
-                        "References",
-                        BoxUtil.indentBox(element, 3, "ss11", BoxUtil.verticalPartListBox(element, element.references, "references", null, this.handler)),
-                        { cssClass: "type4", isExpanded: false, canAdd: true },
-                    ),
-                    BoxUtil.listGroupBox(
-                        element,
-                        "systems",
-                        "Systems",
-                        BoxUtil.indentBox(element, 3, "ss12", BoxUtil.verticalPartListBox(element, element.systems, "systems", null, this.handler)),
-                        { cssClass: "type4", isExpanded: false, canAdd: true },
-                    ),
-                    BoxUtil.listGroupBox(
-                        element,
-                        "people",
-                        "People",
-                        BoxUtil.indentBox(element, 3, "ss13", BoxUtil.verticalPartListBox(element, element.people, "people", null, this.handler)),
-                        { cssClass: "type4", isExpanded: false, canAdd: true },
-                    ),
+                    ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "detailsDescription", "Description", this.handler)] : []),
+                    ...(showReferences
+                        ? [
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "references",
+                                  "References",
+                                  BoxUtil.indentBox(
+                                      element,
+                                      3,
+                                      "ss11",
+                                      BoxUtil.verticalPartListBox(element, element.references, "references", null, this.handler),
+                                  ),
+                                  { cssClass: "type4", isExpanded: false, canAdd: true },
+                              ),
+                          ]
+                        : []),
+                    ...(showSystems
+                        ? [
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "systems",
+                                  "Systems",
+                                  BoxUtil.indentBox(element, 3, "ss12", BoxUtil.verticalPartListBox(element, element.systems, "systems", null, this.handler)),
+                                  { cssClass: "type4", isExpanded: false, canAdd: true },
+                              ),
+                          ]
+                        : []),
+                    ...(showPeople
+                        ? [
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "people",
+                                  "People",
+                                  BoxUtil.indentBox(element, 3, "ss13", BoxUtil.verticalPartListBox(element, element.people, "people", null, this.handler)),
+                                  { cssClass: "type4", isExpanded: false, canAdd: true },
+                              ),
+                          ]
+                        : []),
                 ]),
             ),
             { cssClass: "w-full type3", placeHolder: "enter", isRequired: true },
@@ -511,6 +543,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     }
 
     projectSystem(element: SystemAccess) {
+        const studyConfiguration: StudyConfiguration = ownerOfType(element, "StudyConfiguration") as StudyConfiguration;
+        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false;
         let box: Box = BoxUtil.itemGroupBox(
             element,
             "system",
@@ -522,7 +556,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 "is1",
                 BoxFactory.verticalLayout(element, "system-overall", "", [
                     BoxUtil.textBox(element, "functionName"),
-                    BoxUtil.getBoxOrAction(element, "description", "Description", this.handler),
+                    ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                 ]),
             ),
             { cssClass: "w-full type3", placeHolder: "system", canShare: true, isRequired: true },

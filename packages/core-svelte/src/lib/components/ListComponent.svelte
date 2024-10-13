@@ -126,24 +126,24 @@
     }
 
     onMount( () => {
-        LOGGER.log("ListComponent onMount --------------------------------")
+        //LOGGER.log("ListComponent onMount --------------------------------")
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
 
     afterUpdate(() => {
-        LOGGER.log("ListComponent.afterUpdate for " + box.role);
+        //LOGGER.log("ListComponent.afterUpdate for " + box.role);
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
 
     const onFocusHandler = (e: FocusEvent) => {
-        LOGGER.log("ListComponent.onFocus for box " + box.role);
+        //LOGGER.log("ListComponent.onFocus for box " + box.role);
         // e.preventDefault();
         // e.stopPropagation();
     }
     const onBlurHandler = (e: FocusEvent) => {
-        LOGGER.log("ListComponent.onBlur for box " + box.role);
+        //LOGGER.log("ListComponent.onBlur for box " + box.role);
         // e.preventDefault();
         // e.stopPropagation();
     }
@@ -156,7 +156,7 @@
     let previousBox = null;
 
     const refresh = (why?: string): void =>  {
-        LOGGER.log("REFRESH ListComponent( " + why + ") " + box?.node?.freLanguageConcept());
+        //LOGGER.log("REFRESH ListComponent( " + why + ") " + box?.node?.freLanguageConcept());
         shownElements = [...box.children];
         id = !!box ? componentId(box) : 'list-for-unknown-box';
         isHorizontal = !!box ? (box.getDirection() === ListDirection.HORIZONTAL) : false;
