@@ -98,8 +98,6 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         // console.log("entered evalEventReference");
         const timeline = ctx.find("timeline") as unknown as Timeline;
         const referencedEvent = node.$event;
-        const operator = (node.freOwner() as language.When).timeAmountPart.operator;
-        const timeAmount = (node.freOwner() as language.When).timeAmountPart.timeAmount;
         const eventState = node.eventState;
 
         // let owningEvent = ((node.freOwner() as language.When).freOwner() as language.EventSchedule).freOwner() as language.Event;
@@ -220,15 +218,25 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return timeInDays;
     }
 
+    // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
     evalStartDay(node: language.StartDay, ctx: InterpreterContext): RtObject {
-        // TODO: decide if keeping both this and StudyStart is a necessary convenience; they should be merged?
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
         return studyStartDayNumber;
     }
 
+    // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
-        return studyStartDayNumber;
+        if (node.timeAmountPart !== undefined) {
+            let displacementFromEvent = main.evaluate(node.timeAmountPart.timeAmount, ctx) as RtNumber;
+            return new RtNumber(studyStartDayNumber.value + displacementFromEvent.value);
+        } else {
+            return studyStartDayNumber;
+        }
+    }
+
+    evalTimeAmountPart(node: language.TimeAmountPart, ctx: InterpreterContext): RtObject {
+        return main.evaluate(node.timeAmount, ctx);
     }
 
     evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {

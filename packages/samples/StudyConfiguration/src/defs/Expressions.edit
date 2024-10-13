@@ -61,6 +61,6 @@ EqualsExpression {
 EventReferenceExpression {
     [${event} ${eventState} ]
     referenceShortcut = ${event}
-    trigger = "----"
+    trigger = "------"
     }
 

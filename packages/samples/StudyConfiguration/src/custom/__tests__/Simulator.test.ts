@@ -412,7 +412,7 @@ describe("Study Simulation", () => {
             { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
             { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
             { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
-            { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: at Study Start + 7", content: "&nbsp;", id: "Visit 24" },
+            { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: at the start day of the Study plus 7 days", content: "&nbsp;", id: "Visit 24" },
           ])
         `;
 
@@ -1587,6 +1587,7 @@ var items = new vis.DataSet([
             utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, "", true);
         });
     });
+
     describe("Generation of Timeline Table from Timeline", () => {
         it("generates a TABLE for a three visit timeline for a visit that repeats twice", () => {
             // GIVEN
@@ -1598,48 +1599,51 @@ var items = new vis.DataSet([
             simulator.run();
             let timeline = simulator.timeline;
 
-            const expectedTimelineTableAsHTML = `<div class="table_component" role="region" tabindex="0">
-                <table>
-                <caption><b>StudyTimelineTable</b></caption>
-                <thead>
-                    <tr>
-                    <th>Visit Name</th>
-                    <th>Alternative Name</th>
-                    <th>Phase</th>
-                    <th>Window (-)</th>
-                    <th>Day/Date</th>
-                    <th>Window (+)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                <tr>
-                        <td>Visit 1</td>
-                        <td>V1</td>
-                        <td>Screening</td>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>1</td>
-                        </tr><tr>
-                        <td>Visit 1</td>
-                        <td>V2</td>
-                        <td>Screening</td>
-                        <td>1</td>
-                        <td>9</td>
-                        <td>1</td>
-                        </tr><tr>
-                        <td>Visit 1</td>
-                        <td>V3</td>
-                        <td>Screening</td>
-                        <td>1</td>
-                        <td>16</td>
-                        <td>1</td>
+            const expectedTimelineTableAsHTML = `
+                <div class="table_component" role="region" tabindex="0">
+                    <table>
+                    <thead>
+                        <tr>
+                        <th class="stretch">Visit Name</th>
+                        <th class="stretch">Alternative Name</th>
+                        <th class="stretch">Phase</th>
+                        <th class="fit">Window (-)</th>
+                        <th class="fit">Day/Date</th>
+                        <th class="fit">Window (+)</th>
+                        <th></th>
                         </tr>
-                    </tr>
-                    </tbody>
-                </table>
-                </div> 
-                `;
+                        </thead>
+                        <tbody>
+
+                    <tr>
+                            <td>Visit 1</td>
+                            <td>V1</td>
+                            <td>Screening</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">1</td>
+                            <td>&nbsp;</td>
+                            </tr><tr>
+                            <td>Visit 1</td>
+                            <td>V2</td>
+                            <td>Screening</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">9</td>
+                            <td class="text-center">1</td>
+                            <td>&nbsp;</td>
+                            </tr><tr>
+                            <td>Visit 1</td>
+                            <td>V3</td>
+                            <td>Screening</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">16</td>
+                            <td class="text-center">1</td>
+                            <td>&nbsp;</td>
+                            </tr>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>`;
             const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTML(timeline);
             // Save full HTML of table for viewing / debugging
             utils.saveTimelineTable(timelineTableAsHTML);
@@ -1650,7 +1654,7 @@ var items = new vis.DataSet([
             expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
 
-        it("generates a TABLE for a three visit timeline for a visit that repeats twice and has a special alternative name", () => {
+        it(" generates a TABLE that has a special alternative name for a three visit timeline for a visit that repeats twice", () => {
             // GIVEN
             let listOfEventsToAdd: EventsToAdd[] = [{ eventName: "Visit 1", daysToAdd: 1, repeat: 2, period: "Screening" }];
             studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd, "Special Alt Name");
@@ -1660,46 +1664,50 @@ var items = new vis.DataSet([
             simulator.run();
             let timeline = simulator.timeline;
 
-            const expectedTimelineTableAsHTML = `<div class="table_component" role="region" tabindex="0">
-                <table>
-                <caption><b>StudyTimelineTable</b></caption>
-                <thead>
-                    <tr>
-                    <th>Visit Name</th>
-                    <th>Alternative Name</th>
-                    <th>Phase</th>
-                    <th>Window (-)</th>
-                    <th>Day/Date</th>
-                    <th>Window (+)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                <tr>
-                        <td>Visit 1</td>
-                        <td>Special Alt Name</td>
-                        <td>Screening</td>
-                        <td>1</td>
-                        <td>2</td>
-                        <td>1</td>
-                        </tr><tr>
-                        <td>Visit 1</td>
-                        <td>Special Alt Name (2)</td>
-                        <td>Screening</td>
-                        <td>1</td>
-                        <td>9</td>
-                        <td>1</td>
-                        </tr><tr>
-                        <td>Visit 1</td>
-                        <td>Special Alt Name (3)</td>
-                        <td>Screening</td>
-                        <td>1</td>
-                        <td>16</td>
-                        <td>1</td>
+            const expectedTimelineTableAsHTML = `
+                <div class="table_component" role="region" tabindex="0">
+                    <table>
+                    <thead>
+                        <tr>
+                        <th class="stretch">Visit Name</th>
+                        <th class="stretch">Alternative Name</th>
+                        <th class="stretch">Phase</th>
+                        <th class="fit">Window (-)</th>
+                        <th class="fit">Day/Date</th>
+                        <th class="fit">Window (+)</th>
+                        <th></th>
                         </tr>
-                    </tr>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+
+                    <tr>
+                            <td>Visit 1</td>
+                            <td>Special Alt Name</td>
+                            <td>Screening</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">1</td>
+                            <td>&nbsp;</td>
+                            </tr><tr>
+                            <td>Visit 1</td>
+                            <td>Special Alt Name (2)</td>
+                            <td>Screening</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">9</td>
+                            <td class="text-center">1</td>
+                            <td>&nbsp;</td>
+                            </tr><tr>
+                            <td>Visit 1</td>
+                            <td>Special Alt Name (3)</td>
+                            <td>Screening</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">16</td>
+                            <td class="text-center">1</td>
+                            <td>&nbsp;</td>
+                            </tr>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
               `;
             const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTML(timeline);
