@@ -673,7 +673,7 @@ var items = new vis.DataSet([
     { start: new Date(2024, 09, 18, 00, 00, 00), end: new Date(2024, 09, 19, 23, 59, 59), group: "V19-run in", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19-run in106" },
   ])`;
             // GIVEN a study configuration loaded from a file
-            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2a", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
 
             // WHEN the study is simulated and a timeline picture is generated

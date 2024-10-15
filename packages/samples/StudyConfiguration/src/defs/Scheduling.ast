@@ -6,8 +6,8 @@ concept EventReference {
 }
 
 concept TimeAmountPart {
-    operator?: SimpleOperators = SimpleOperators:plus;
-    timeAmount?: TimeAmount;
+    operator: SimpleOperators = SimpleOperators:plus;
+    timeAmount: TimeAmount;
 }  
 
 interface EventStart {

@@ -77,7 +77,7 @@ export class ScheduledEvent {
         const value = interpreter.evaluateWithContext(node, ctx);
         if (isRtError(value)) {
             const trace = interpreter.getTrace().root.toStringRecursive();
-            console.log("ScheduledEvent.day() timeline is null: " + trace);
+            console.log("ScheduledEvent.day() isRtError: " + trace);
             throw new Error("interpreter isRtError, value: " + value.toString());
         } else {
             return value;
