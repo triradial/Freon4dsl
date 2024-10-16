@@ -1,5 +1,5 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
-import { AST, BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, FreUtils } from "@freon4dsl/core";;
+import { AST, BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, FreUtils } from "@freon4dsl/core";
 import type { FreEnvironment, FreNode, FreModel, FreModelUnit, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
 import { get } from "svelte/store";
 import { currentModelName, currentUnitName, editorProgressShown, noUnitAvailable, units, unitNames } from "../components/stores/ModelStore.js";
@@ -41,7 +41,7 @@ export class EditorState {
     }
     set currentUnit(unit: FreModelUnit) {
         this.__currentUnit = unit;
-        FreUndoManager.getInstance().currentUnit = unit
+        FreUndoManager.getInstance().currentUnit = unit;
         currentUnitName.set({ name: this?.currentUnit?.name, id: this?.currentUnit?.freId() });
     }
 
@@ -66,11 +66,10 @@ export class EditorState {
 
             this.createNewUnit("StudyConfiguration", "StudyConfiguration");
             // Initialize the StudyConfiguration with a default period, event, and task in the checklist
-            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration");
+            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
             studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
             studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
             studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
-            studyConfigUnit.showPeriods = true;
             await this.saveCurrentUnit();
 
             this.currentUnit = studyConfigUnit;
@@ -101,10 +100,10 @@ export class EditorState {
     }
 
     /**
-    * Reads the model with name 'modelName' from the server and makes this the current model.
-    * The first unit in the model is shown, if present.
-    * @param modelName
-    */
+     * Reads the model with name 'modelName' from the server and makes this the current model.
+     * The first unit in the model is shown, if present.
+     * @param modelName
+     */
     async openModel(modelName: string) {
         // FreLogger.unmuteAllLogs();
         LOGGER.log("EditorState.openmodel(" + modelName + ")");
@@ -429,12 +428,7 @@ export class EditorState {
                 if (e instanceof Error) {
                     console.log(e.message + e.stack);
                     modelErrors.set([
-                        new FreError(
-                            "Problem validating model unit: '" + e.message + "'",
-                            this.currentUnit,
-                            this.currentUnit.name,
-                            FreErrorSeverity.Error,
-                        ),
+                        new FreError("Problem validating model unit: '" + e.message + "'", this.currentUnit, this.currentUnit.name, FreErrorSeverity.Error),
                     ]);
                 }
             }
