@@ -4,7 +4,7 @@ const path = require('path');
 const sourceDir = path.join(__dirname, 'packages/server/modelstore/');
 const targetDir = path.join(__dirname, 'packages/samples/StudyConfiguration/src/custom/__tests__/modelstore/');
 
-const foldersToCopy = ['StartMinusDays', 'TwoP3V', 'ScheduleExample1', 'ScheduleExample1a', 'ScheduleExample2a', 'ScheduleExample3', 'ScheduleExample3a', 'OneVisitOneChecklist'];
+const foldersToCopy = ['StartMinusDays', 'TwoP3V', 'ScheduleExample1', 'ScheduleExample1a', 'ScheduleExample2a', 'ScheduleExample3', 'ScheduleExample3Orig', 'OneVisitOneChecklist'];
 
 async function copyFolders() {
   try {

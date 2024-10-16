@@ -709,7 +709,7 @@ describe("Study Simulation", () => {
               { start: new Date(2012, 04, 07, 00, 00, 00), end: new Date(2012, 04, 08, 23, 59, 59), group: "Follow up (5)", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Follow up (5)46" },
               ])`;
             // Then the generated timeline picture has two events on the expected event days
-            testStudyInFile("ScheduleExample3a", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
+            testStudyInFile("ScheduleExample3", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
         });
 
         it("generates a chart for a visit on day 1 that patient completed", () => {
