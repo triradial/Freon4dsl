@@ -85,18 +85,31 @@ export class ScheduledEvent {
     }
 
     day(timeline: Timeline): number {
-        // console.log("ScheduledEvent.day() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay);
+        console.log("ScheduledEvent.day() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay);
         let eventStart = this.configuredEvent.schedule.eventStart;
-        //   if (this.isScheduledOnASpecificDay()) {
-        //     console.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + (eventStart as Day).startDay);
-        //   } else if (eventStart instanceof When) {
-        //     console.log("ScheduledEvent.day() eventStart is a When for: " + this.getName() + " is a When with time unit: " + (eventStart as When).startWhen.timeAmount.unit.name);
-        //   } else {
-        //     console.log("ScheduledEvent.day() eventStart is not a Day or When ");
-        //  }
+        if (this.isScheduledOnASpecificDay()) {
+            console.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + (eventStart as Day).startDay);
+        } else if (eventStart instanceof When) {
+            if ((eventStart as When).timeAmountPart !== undefined && (eventStart as When).timeAmountPart !== null) {
+                console.log(
+                    "ScheduledEvent.day() eventStart is a When for: " +
+                        this.getName() +
+                        " is a When with timeAmount of: " +
+                        (eventStart as When).timeAmountPart.operator.name +
+                        " " +
+                        (eventStart as When).timeAmountPart.timeAmount.value +
+                        " " +
+                        (eventStart as When).timeAmountPart.timeAmount.unit.name,
+                );
+            } else {
+                console.log("ScheduledEvent.day() eventStart is a When for: " + this.getName() + " with no timeAmountPart");
+            }
+        } else {
+            console.log("ScheduledEvent.day() eventStart is not a Day or When ");
+        }
         const value = this.interpret(eventStart, timeline);
-        // console.log("ScheduledEvent.day() for: " + this.getName() + " is: " + (value as RtNumber).value);
         if (value instanceof RtNumber) {
+            console.log("ScheduledEvent.day() for: " + this.getName() + " is: " + (value as RtNumber).value);
             return (value as RtNumber).value;
         } else {
             return undefined;
@@ -278,6 +291,7 @@ export class ScheduledEvent {
      */
     getInstanceIfEventIsReadyToSchedule(completedEvent: ScheduledEventInstance, time: number, timeline: Timeline): ScheduledEventInstance {
         let repeatingEvent = this.isRepeatingEvent();
+        console.log("ScheduledEvent.getInstanceIfEventIsReadyToSchedule() for: " + this.getName());
         let scheduledDay = this.day(timeline);
         if (this.isScheduledOnASpecificDay() && !repeatingEvent) {
             if (timeline.scheduledLogging)
