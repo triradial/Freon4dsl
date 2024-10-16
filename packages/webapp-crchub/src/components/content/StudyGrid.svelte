@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { studies } from "../../services/datastore";
+    import { studies } from "../../services/dataStore";
+    import { editObject } from "../../services/objectDrawerStore";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
@@ -8,6 +9,7 @@
     import { theme } from '../../services/themeStore';
     import GridHeader from '../common/GridHeader.svelte';
     import { getSVGIcon } from "../../services/utils";
+    import { getContext } from 'svelte';
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
@@ -120,15 +122,16 @@
         navigateTo("study", studyId);
     }
 
-    function onDeleteClick(data: { studyId: string }) {
-        console.log("Delete clicked for patient:", data);
-        if (confirm(`Are you sure you want to delete patient ${data.studyId}?`)) {
+    function onDeleteClick(studyId: string) {
+        console.log("Delete clicked for patient:", studyId);
+        if (confirm(`Are you sure you want to delete patient ${studyId}?`)) {
             // TODO: Implement delete functionality
         }
     }
 
-    function onEditClick(data: { studyId: string }) {
-        console.log("Edit clicked for patient:", data);
+    function onEditClick(studyId: string) {
+        console.log("Edit clicked for patient:", studyId);
+        editObject("study", studyId);
     }
 
     function createActionButtons(params: any, buttonConfigs: any) {
@@ -140,7 +143,7 @@
                 const button = document.createElement("button");
                 button.classList.add("grid-button", `${config.type}-button`);
                 button.innerHTML = getSVGIcon(config.icon);
-                button.addEventListener("click", () => config.onClick(params.data));
+                button.addEventListener("click", () => config.onClick(params.data.id));
                 span.appendChild(button);
             }
         });

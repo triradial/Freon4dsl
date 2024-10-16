@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getStudyPatients } from "../../services/datastore";
+    import { getStudyPatients } from "../../services/dataStore";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
@@ -8,6 +8,8 @@
     import { theme } from "../../services/themeStore";
     import GridHeader from "../common/GridHeader.svelte";
     import { getSVGIcon } from "../../services/utils";
+    import { editObject } from "../../services/objectDrawerStore";
+    import ObjectDrawerSystem from "../common/ObjectDrawerSystem.svelte";
 
     export let studyId: string;
 
@@ -130,8 +132,8 @@
         }
     }
 
-    function onEditClick(data: { patientNumber: string }) {
-        console.log("Edit clicked for patient:", data);
+    function onEditClick(patientNumber: string) {
+        editObject("patient", patientNumber);
     }
 
     function createActionButtons(params: any, buttonConfigs: any) {

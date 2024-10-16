@@ -5,7 +5,7 @@
     import { Tabs, TabItem } from 'flowbite-svelte';
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
     import { faListCheck, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
-    import { getPatient } from "../services/datastore";
+    import { getPatient } from "../services/dataStore";
     import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { EditorState } from "@freon4dsl/webapp-lib";

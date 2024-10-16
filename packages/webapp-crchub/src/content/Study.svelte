@@ -9,7 +9,7 @@
 
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
     import { faUser, faSwatchbook } from '@fortawesome/free-solid-svg-icons';
-    import { getStudy } from "../services/datastore";
+    import { getStudy } from "../services/dataStore";
 
     import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
@@ -17,7 +17,7 @@
     import { FreEditor } from "@freon4dsl/core";
     import { type StudyConfigurationModel, type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
 
-    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/drawerStore";
+    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/sideDrawerStore";
 
     export let id: string;
     let study: any;
@@ -30,13 +30,13 @@
     let studyConfigurationUnit: StudyConfiguration;
 
     let footerItems = [
-        { id: 'showSharedTasks', label: 'Shared Tasks', visible: false },
         { id: 'showScheduling', label: 'Scheduling', visible: true },
         { id: 'showChecklists', label: 'Checklists', visible: false },
         { id: 'showReferences', label: 'References', visible: false, parent: 'showChecklists' },
         { id: 'showSystems', label: 'Systems', visible: false, parent: 'showChecklists' },
         { id: 'showPeople', label: 'People', visible: false, parent: 'showChecklists' },
         { id: 'showDescriptions', label: 'Descriptions', visible: false },
+        { id: 'showSharedTasks', label: 'Shared Tasks', visible: false },
     ];
 
     onMount(async () => {
