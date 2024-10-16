@@ -60,43 +60,43 @@ export const MANUAL_BINARY_EXPRESSION_ACTIONS: FreCreateBinaryExpressionAction[]
 ];
 
 export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
-    FreCustomAction.create({
-        activeInBoxRoles: [
-            "FreBinaryExpression-left",
-            "FreBinaryExpression-right",
-            "MultiplyExpression-left",
-            "MultiplyExpression-right",
-            "PlusExpression-left",
-            "PlusExpression-right",
-            "DivideExpression-left",
-            "DivideExpression-right",
-            "AndExpression-left",
-            "AndExpression-right",
-            "OrExpression-left",
-            "OrExpression-right",
-            "ComparisonExpression-left",
-            "ComparisonExpression-right",
-            "LessThenExpression-left",
-            "LessThenExpression-right",
-            "GreaterThenExpression-left",
-            "GreaterThenExpression-right",
-            "EqualsExpression-left",
-            "EqualsExpression-right",
-            "Day-startDay",
-        ],
-        trigger: /[0-9]/,
-        action: (box: Box, trigger: FreTriggerUse, editor: FreEditor) => {
-            const parent = box.node;
-            const x = new NumberLiteralExpression();
-            if (isString(trigger)) {
-                x.value = Number.parseInt(trigger.toString());
-            }
-            parent[(box as ActionBox).propertyName] = x;
-            return x;
-        },
-        boxRoleToSelect: RoleProvider.property("NumberLiteralExpression", "value", "numberbox"),
-        caretPosition: FreCaret.RIGHT_MOST,
-    }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: [
+    //         "FreBinaryExpression-left",
+    //         "FreBinaryExpression-right",
+    //         "MultiplyExpression-left",
+    //         "MultiplyExpression-right",
+    //         "PlusExpression-left",
+    //         "PlusExpression-right",
+    //         "DivideExpression-left",
+    //         "DivideExpression-right",
+    //         "AndExpression-left",
+    //         "AndExpression-right",
+    //         "OrExpression-left",
+    //         "OrExpression-right",
+    //         "ComparisonExpression-left",
+    //         "ComparisonExpression-right",
+    //         "LessThenExpression-left",
+    //         "LessThenExpression-right",
+    //         "GreaterThenExpression-left",
+    //         "GreaterThenExpression-right",
+    //         "EqualsExpression-left",
+    //         "EqualsExpression-right",
+    //         "Day-startDay",
+    //     ],
+    //     trigger: /[0-9]/,
+    //     action: (box: Box, trigger: FreTriggerUse, editor: FreEditor) => {
+    //         const parent = box.node;
+    //         const x = new NumberLiteralExpression();
+    //         if (isString(trigger)) {
+    //             x.value = Number.parseInt(trigger.toString());
+    //         }
+    //         parent[(box as ActionBox).propertyName] = x;
+    //         return x;
+    //     },
+    //     boxRoleToSelect: RoleProvider.property("NumberLiteralExpression", "value", "numberbox"),
+    //     caretPosition: FreCaret.RIGHT_MOST,
+    // }),
     FreCustomAction.create({
         activeInBoxRoles: ["periods"],
         trigger: "add",

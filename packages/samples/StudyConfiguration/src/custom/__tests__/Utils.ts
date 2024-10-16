@@ -29,6 +29,7 @@ import {
     StaffLevel,
     DateRange,
     StartRangeDate,
+    TimeAmountPart,
 } from "../../language/gen/index";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
 import { Timeline } from "../timeline/Timeline";
@@ -58,8 +59,10 @@ export function createWhenEventSchedule(eventName: string, eventState: EventStat
 
     const whenExpression = When.create({
         startWhen: startWhenEventReference,
-        operator: referenceToOperator,
-        timeAmount: timeAmount,
+        timeAmountPart: TimeAmountPart.create({
+            operator: referenceToOperator,
+            timeAmount: timeAmount,
+        }),
     });
     const eventSchedule = EventSchedule.create({ eventStart: whenExpression });
     return eventSchedule;
@@ -134,10 +137,12 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(
     let days = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
 
     const studyStart = StudyStart.create({
-        operator: referenceToOperator,
-        timeAmount: TimeAmount.create({
-            value: event2DaysAfterStudyStart,
-            unit: days,
+        timeAmountPart: TimeAmountPart.create({
+            operator: referenceToOperator,
+            timeAmount: TimeAmount.create({
+                value: event2DaysAfterStudyStart,
+                unit: days,
+            }),
         }),
     });
     let eventSchedule = EventSchedule.create({ eventStart: studyStart });

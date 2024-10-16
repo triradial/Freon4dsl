@@ -1,33 +1,40 @@
 language StudyConfigurationModel
 
-abstract expression FirstScheduledExpression {
+abstract expression ScheduleExpression {
 }
 
-abstract expression TimeExpression {}
-
-expression PreviousVisit base FirstScheduledExpression {
+expression EventReferenceExpression base ScheduleExpression {
+    reference event: Event;
+    eventState: EventState;
 }
 
-expression Time base TimeExpression   {
+expression Time base ScheduleExpression   {
     value: string;
     unit: TimeUnit = TimeUnit:days;
 }
 
-expression StartDay base FirstScheduledExpression {
+expression PreviousVisit base ScheduleExpression {
 }
 
-abstract expression LiteralExpression base FirstScheduledExpression {}
+expression StartDay base ScheduleExpression {
+}
 
-expression String base LiteralExpression {
+abstract expression LiteralExpression base ScheduleExpression {}
+
+expression String {
     value: string;
 }
 
 // Not an expression because it's created in CustomStudyConfigurationModelActions based on /0..9/ regex
 // Do so it doesn't show up in the choices
 //
-concept NumberLiteralExpression {
+// concept NumberLiteralExpression {
+//     value: number;
+// }
+expression NumberLiteralExpression base LiteralExpression {
     value: number;
-}
+} 
+
 
 expression BooleanLiteralExpression base LiteralExpression {
     value: boolean;
@@ -37,31 +44,25 @@ expression BooleanLiteralExpression base LiteralExpression {
 //    Binary Expressions
 ////////////////////////////////////
 
-abstract binary expression BinaryTimeExpression base TimeExpression {
-    left: TimeExpression;
-    right: TimeExpression;
-}
-
-
-abstract binary expression BinaryExpression base TimeExpression {
-    left: TimeExpression;
-    right: TimeExpression;
+abstract binary expression BinaryExpression base ScheduleExpression {
+    left: ScheduleExpression;
+    right: ScheduleExpression;
 }
 
 binary expression MultiplyExpression base BinaryExpression {
     priority = 8;
 }
 
-binary expression DivideExpression base BinaryExpression {
-    priority = 8;
-}
-
 binary expression PlusExpression base BinaryExpression {
-    priority = 4;
+     priority = 4;
 }
 
 binary expression MinusExpression base BinaryExpression {
     priority = 4;
+}
+
+binary expression DivideExpression base BinaryExpression {
+    priority = 8;
 }
 
 binary expression AndExpression base BinaryExpression {
@@ -86,8 +87,10 @@ binary expression GreaterThenExpression base ComparisonExpression {
 binary expression EqualsExpression base ComparisonExpression {
     priority = 2;
 }
+abstract expression TimeExpression {}
 
-interface Type {
-    name: identifier;
-}
+// abstract binary expression BinaryTimeExpression base TimeExpression {
+//     left: TimeExpression;
+//     right: TimeExpression;
+// }
 

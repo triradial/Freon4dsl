@@ -2,7 +2,9 @@ editor default
 
 global {
     external {
-        DatePicker
+        DatePicker,
+        TimePicker,
+        ExpandCollapseWrapper
     }
 }
 

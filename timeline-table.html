@@ -1,57 +1,22 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+    <title>Timeline Table</title>
 </head>
 <body>
   
-<style>
-.table_component {
-    overflow: auto;
-    width: 95%;
-}
-
-.table_component table {
-    border: 1px solid #dededf;
-    height: 100%;
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 1px;
-    text-align: left;
-}
-
-.table_component caption {
-    caption-side: top;
-    text-align: left;
-}
-
-.table_component th {
-    border: 1px solid #dededf;
-    background-color: #eceff1;
-    color: #000000;
-    padding: 5px;
-}
-
-.table_component td {
-    border: 1px solid #dededf;
-    background-color: #ffffff;
-    color: #000000;
-    padding: 5px;
-}
-</style>
-
   
 <div class="table_component" role="region" tabindex="0">
 <table>
-  <caption><b>Study Timeline Table</b></caption>
   <thead>
     <tr>
-      <th>Visit Name</th>
-      <th>Alternative Name</th>
-      <th>Phase</th>
-      <th>Window (-)</th>
-      <th>Day/Date</th>
-      <th>Window (+)</th>
+      <th class="stretch">Visit Name</th>
+      <th class="stretch">Alternative Name</th>
+      <th class="stretch">Phase</th>
+      <th class="fit">Window (-)</th>
+      <th class="fit">Day/Date</th>
+      <th class="fit">Window (+)</th>
+      <th></th>
     </tr>
     </thead>
     <tbody>
@@ -60,23 +25,26 @@
         <td>Visit 1</td>
         <td>Special Alt Name</td>
         <td>Screening</td>
-        <td>1</td>
-        <td>2</td>
-        <td>1</td>
+        <td class="text-center">1</td>
+        <td class="text-center">2</td>
+        <td class="text-center">1</td>
+        <td>&nbsp;</td>
         </tr><tr>
         <td>Visit 1</td>
         <td>Special Alt Name (2)</td>
         <td>Screening</td>
-        <td>1</td>
-        <td>9</td>
-        <td>1</td>
+        <td class="text-center">1</td>
+        <td class="text-center">9</td>
+        <td class="text-center">1</td>
+        <td>&nbsp;</td>
         </tr><tr>
         <td>Visit 1</td>
         <td>Special Alt Name (3)</td>
         <td>Screening</td>
-        <td>1</td>
-        <td>16</td>
-        <td>1</td>
+        <td class="text-center">1</td>
+        <td class="text-center">16</td>
+        <td class="text-center">1</td>
+        <td>&nbsp;</td>
         </tr>
       </tr>
     </tbody>

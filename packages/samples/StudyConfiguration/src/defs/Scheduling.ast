@@ -2,12 +2,16 @@ language StudyConfigurationModel
 
 concept EventReference {
     reference event: Event;
-    eventState: EventState;
+    eventState: EventState = EventState:completed;
 }
 
+concept TimeAmountPart {
+    operator: SimpleOperators = SimpleOperators:plus;
+    timeAmount: TimeAmount;
+}  
+
 interface EventStart {
-    operator?: SimpleOperators;
-    timeAmount?: TimeAmount;
+    timeAmountPart?: TimeAmountPart;
 }  
 
 concept When implements EventStart {
@@ -25,9 +29,10 @@ concept StudyStart implements EventStart {
 }
 
 concept Previous implements EventStart {
+    eventState: EventState;
 }
 
-interface RepeatExpression {}
+//TODO: determine why RepeatUnit isn't better as a limited
 
 //limited RepeatUnit implements RepeatExpression {
 //limited RepeatUnit {
@@ -56,10 +61,13 @@ limited EventState {
     completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
 }
 
+//TODO: rename to something other than 'Expression' or determine if it should be an expression.
+interface RepeatExpression {}
+
 concept RepeatCondition implements RepeatExpression {
     repeatUnit: RepeatUnit;
-    maxRepeats: number;
-    until?: FirstScheduledExpression;
+    maxRepeats?: number;
+    until?: ScheduleExpression;
 }
 
 concept TimeAmount   {
@@ -79,14 +87,34 @@ concept Days {
     count: number;
 }
 
-concept EventWindow {
+concept ComplianceWindow {
     maxDaysBefore: Days;
-    daysBefore: Days;
-    daysAfter: Days;
     maxDaysAfter: Days;
 }
 
-concept EventTimeOfDay {
+concept EventWindow {
+    daysBefore: Days;
+    daysAfter: Days;
+    complianceWindow?: ComplianceWindow;
+}
+
+interface EventTimeOfDay { }
+
+concept StartingBy implements EventTimeOfDay {
+    startTimeAsString: string;
+    startHour: number;
+    startMinute: number;
+}
+
+concept EndingBy implements EventTimeOfDay {
+    endTimeAsString: string;
+    endHour: number;
+    endMinute: number;
+}
+ 
+concept BetweenTimes implements EventTimeOfDay {
+    startTimeAsString: string;
+    endTimeAsString: string;
     startHour: number;
     startMinute: number;
     endHour: number;

@@ -48,7 +48,7 @@ limited TypeOfEvent {
 
 concept Event {
     name: identifier;
-    alternativeName: string = " ";
+    alternativeName: string = "<No Alternative Name>";
     typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;
@@ -92,7 +92,7 @@ concept WorkflowDescription implements WorkflowDecision  {
 }
 
 concept WorkflowBranch implements WorkflowDecision {
-    branch: FirstScheduledExpression;
+    branch: ScheduleExpression;
 }
 
 // TODO: Customize the validator to allow these strings to be empty.

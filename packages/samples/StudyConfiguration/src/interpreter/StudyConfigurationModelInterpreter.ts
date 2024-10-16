@@ -16,8 +16,8 @@ let main: IMainInterpreter;
 
 function calcTimeAmount(value: number, unit: string): RtObject {
     let unitAmount: number;
-    // console.log("entered calcTimeAmount");
-    // console.log("calcTimeAmount: value: " + value + ", unit: " + unit);
+    console.log("entered calcTimeAmount");
+    console.log("calcTimeAmount: value: " + value + ", unit: " + unit);
     if (unit === "hours") {
         unitAmount = 1 / 24; // Assuming 1 hour is 1/24 of a day
     } else if (unit === "days") {
@@ -25,14 +25,14 @@ function calcTimeAmount(value: number, unit: string): RtObject {
     } else if (unit === "weeks") {
         unitAmount = 7;
     } else if (unit === "months") {
-        throw new RtError("evalTimeAmount: unit of months not implemented. Need to calculate the number of days in a month.");
+        throw new RtError("calcTimeAmount: unit of months not implemented. Need to calculate the number of days in a month.");
     } else if (unit === "forever") {
-        throw new RtError("evalTimeAmount: unit of forever not implemented. Need to use some special value or maybe forever doesn't make sense.");
+        throw new RtError("calcTimeAmount: unit of forever not implemented. Need to use some special value or maybe forever doesn't make sense.");
     } else {
-        throw new RtError("evalTimeAmount: unit of: " + unit + " not implemented");
+        throw new RtError("calcTimeAmount: unit of: " + unit + " not implemented");
     }
     let result = value * unitAmount;
-    // console.log("evalTimeAmount: result: " + result);
+    console.log("calcTimeAmount: result: " + result);
     return new RtNumber(result);
 }
 
@@ -98,12 +98,12 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         // console.log("entered evalEventReference");
         const timeline = ctx.find("timeline") as unknown as Timeline;
         const referencedEvent = node.$event;
-        const operator = (node.freOwner() as language.When).operator;
-        const timeAmount = (node.freOwner() as language.When).timeAmount;
-        const eventState = node.eventState;
+        const eventState = node.eventState; //TODO: need to check for the correct state.
 
-        // let owningEvent = ((node.freOwner() as language.When).freOwner() as language.EventSchedule).freOwner() as language.Event;
         let owningEvent = ownerOfType(node, "Event") as language.Event;
+        if (referencedEvent == undefined || referencedEvent == null) {
+            console.log("evalEventReference: owningEvent: " + owningEvent.name);
+        }
         // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
         // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
         // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
@@ -157,18 +157,33 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                     }
                 }
             }
-            let displacementFromEvent = main.evaluate((node.freOwner() as language.When).timeAmount, ctx) as RtNumber;
-            const result = lastInstanceOfReferencedEvent.startDay + displacementFromEvent.value;
+            let result = lastInstanceOfReferencedEvent.startDay;
+            if (eventState.name === language.EventState.completed.name || eventState.name === language.EventState.eachCompleted.name) {
+                result = result + 1;
+            }
+            const when = node.freOwner() as language.When;
+            if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
+                let displacementFromEvent = main.evaluate(when.timeAmountPart.timeAmount, ctx) as RtNumber;
+                if (when.timeAmountPart.operator == undefined || when.timeAmountPart.operator == null) {
+                    throw new RtError("evalEventReference: operator is undefined or null");
+                }
+                const operator = when.timeAmountPart.operator.name;
+                if (operator === language.SimpleOperators.plus.name) {
+                    result = result + displacementFromEvent.value;
+                } else if (operator === language.SimpleOperators.minus.name) {
+                    result = result - displacementFromEvent.value;
+                }
+            }
             return new RtNumber(result);
         }
     }
 
     evalEventStart(node: language.EventStart, ctx: InterpreterContext): RtObject {
         if (node instanceof language.Day) {
-            // console.log("evalEventStart: node is a Day");
+            console.log("evalEventStart: node is a Day");
             return main.evaluate(node, ctx);
         } else if (node instanceof language.When) {
-            // console.log("evalEventStart: node is a When");
+            console.log("evalEventStart: node is a When");
             return main.evaluate(node, ctx);
         } else {
             throw new RtError("evalEventSchedule: eventStart is not a Day or When");
@@ -220,15 +235,32 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return timeInDays;
     }
 
+    // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
     evalStartDay(node: language.StartDay, ctx: InterpreterContext): RtObject {
-        // TODO: decide if keeping both this and StudyStart is a necessary convenience; they should be merged?
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
         return studyStartDayNumber;
     }
 
+    // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
-        return studyStartDayNumber;
+        if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
+            let displacementFromEvent = main.evaluate(node.timeAmountPart.timeAmount, ctx) as RtNumber;
+            // TODO: Ask Jos if should create an expression for this rather than hardcoding the operator.
+            if (node.timeAmountPart.operator.name === language.SimpleOperators.plus.name) {
+                return new RtNumber(studyStartDayNumber.value + displacementFromEvent.value);
+            } else if (node.timeAmountPart.operator.name === language.SimpleOperators.minus.name) {
+                return new RtNumber(studyStartDayNumber.value - displacementFromEvent.value);
+            } else {
+                throw new RtError("evalStudyStart: operator of: " + node.timeAmountPart.operator.name + " not implemented");
+            }
+        } else {
+            return studyStartDayNumber;
+        }
+    }
+
+    evalTimeAmountPart(node: language.TimeAmountPart, ctx: InterpreterContext): RtObject {
+        return main.evaluate(node.timeAmount, ctx);
     }
 
     evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {
@@ -246,7 +278,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
 
     evalWhen(node: language.When, ctx: InterpreterContext): RtObject {
-        // console.log("entered evalWhen");
+        // console.log("entered evalWhen: " + node.startWhen.freLanguageConcept);
         return main.evaluate(node.startWhen, ctx);
     }
 }

@@ -18,10 +18,10 @@ Event {
         Type: 
         Description: ${description}
         Schedule: 
-            ${schedule}
+            ${schedule wrap=ExpandCollapseWrapper}
         Checklist:
             ${tasks}
-    ]  trigger = "Event"
+    ] 
 }
 
 Task {
