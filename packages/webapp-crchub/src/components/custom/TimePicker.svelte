@@ -3,7 +3,7 @@
     import { ExternalStringBox, FreEditor } from "@freon4dsl/core";
     export let box: ExternalStringBox;
 
-    let inputElement;
+    let inputElement: any;
     let value: string = "";
     getValue();
 
@@ -11,7 +11,7 @@
         event.stopPropagation();
     };
 
-    const onChange = (event: MouseEvent & { currentTarget: EventTarget & HTMLInputElement }) => {
+    const onChange = (event: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
         event.stopPropagation();
         let xx = getValidTime(value);
         if (xx !== undefined) {
@@ -48,6 +48,7 @@
         } else {
             value = "";
         }
+        return value;
     }
 
     // The following four functions need to be included for the editor to function properly.

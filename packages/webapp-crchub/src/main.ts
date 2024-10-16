@@ -10,12 +10,14 @@ import { initializeDatastore } from "./services/dataStore";
 
 import DatePicker from "./components/custom/DatePicker.svelte";
 import ExpandCollapseWrapperComponent from "./components/custom/ExpandCollapseWrapperComponent.svelte";
+import TimePicker from "./components/custom/TimePicker.svelte";
 
 WebappConfigurator.getInstance().setEditorEnvironment(StudyConfigurationModelEnvironment.getInstance());
 WebappConfigurator.getInstance().setServerCommunication(ServerCommunication.getInstance());
 setCustomComponents([
     { component: DatePicker, knownAs: "DatePicker" },
     { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
+    { component: TimePicker, knownAs: "TimePicker" },
 ]);
 
 Amplify.configure(awsconfig);
