@@ -1,6 +1,6 @@
 // Generated my Freon once, will NEVER be overwritten.
         import { InterpreterContext, IMainInterpreter, RtObject } from "@freon4dsl/core";
-        import { RulesModelInterpreterBase } from "./gen/RulesModelInterpreterBase";
+        import { RulesModelInterpreterBase } from "./gen/RulesModelInterpreterBase.js";
 
         let main: IMainInterpreter;
 

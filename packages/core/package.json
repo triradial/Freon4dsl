@@ -1,13 +1,12 @@
 {
   "name": "@freon4dsl/core",
-  "version": "0.7.0-beta",
+  "version": "0.7.0-beta5",
   "description": "The uttermost core part of the Freon library, which enables you to build editors for the web",
   "publishConfig": {
     "access": "public"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "type": "module",
   "repository": {

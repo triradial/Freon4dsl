@@ -1,7 +1,7 @@
-import { BehaviorExecutionResult } from "../util";
-import { FreEditor } from "../internal";
-import { AbstractChoiceBox, SelectOption, Box } from "./internal";
-import { FreNode } from "../../ast";
+import { BehaviorExecutionResult } from "../util/index.js";
+import { FreEditor } from "../internal.js";
+import { AbstractChoiceBox, SelectOption, Box } from "./internal.js";
+import { FreNode } from "../../ast/index.js";
 
 // TODO can we rename this one? It is confusing to distinguish between the selectedBox in the editor and SelectBox instances.
 export class SelectBox extends AbstractChoiceBox {
@@ -13,6 +13,7 @@ export class SelectBox extends AbstractChoiceBox {
     deleteWhenEmpty: boolean = false;
 
     private getAllOptions: (editor: FreEditor) => SelectOption[];
+     _innerSelectOption: (editor: FreEditor, option: SelectOption) => BehaviorExecutionResult;
 
     constructor(
         node: FreNode,
@@ -26,9 +27,9 @@ export class SelectBox extends AbstractChoiceBox {
         super(node, role, placeHolder, initializer);
         this.getAllOptions = getOptions;
         this.getSelectedOption = getSelectedOption;
-        this.selectOption = selectOption;
+        this._innerSelectOption = selectOption;
     }
-
+    
     getOptions(editor: FreEditor): SelectOption[] {
         // console.log("Options for " + this.element.freLanguageConcept() + this.getAllOptions(editor).map(opt => {
         //     opt.label
@@ -36,8 +37,16 @@ export class SelectBox extends AbstractChoiceBox {
         return this.getAllOptions(editor);
     }
 
-    public deleteWhenEmpty1(): boolean {
-        return this.deleteWhenEmpty;
+    executeOption(editor: FreEditor, option: SelectOption): BehaviorExecutionResult {
+        const result: BehaviorExecutionResult = this._innerSelectOption(editor, option);
+        if (result === BehaviorExecutionResult.EXECUTED) {
+            this.isDirty()
+            // TODO Might need an index as well
+            const nodeBox: Box = editor.findBoxForNode(this.node, this.propertyName)?.nextLeafRight
+            editor.selectElementForBox(nodeBox)
+            // console.log(`SelectBox: executeOption: ${option.label} box.kind: ${nodeBox.role}`)
+        }
+        return result
     }
 }
 

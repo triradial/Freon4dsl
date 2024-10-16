@@ -1,12 +1,12 @@
-import { FreNode } from "../../../ast";
-import {BoxFactory, LimitedControlBox, LimitedDisplay, SelectBox, SelectOption} from "../../boxes";
-import { FreLanguage, FreLanguageProperty } from "../../../language";
-import { UtilCheckers } from "./UtilCheckers";
-import { RoleProvider } from "../RoleProvider";
-import { runInAction } from "mobx";
-import {FreScoper} from "../../../scoper";
-import {FreEditor} from "../../FreEditor";
-import {BehaviorExecutionResult} from "../../util";
+import { FreNode } from "../../../ast/index.js";
+import { AST } from "../../../change-manager/index.js";
+import {BoxFactory, LimitedControlBox, LimitedDisplay, SelectBox, SelectOption} from "../../boxes/index.js";
+import { FreLanguage, FreLanguageProperty } from "../../../language/index.js";
+import { UtilCheckers } from "./UtilCheckers.js";
+import { RoleProvider } from "../RoleProvider.js";
+import {FreScoper} from "../../../scoper/index.js";
+import {FreEditor} from "../../FreEditor.js";
+import {BehaviorExecutionResult} from "../../util/index.js";
 
 export class UtilLimitedHelpers {
 
@@ -76,7 +76,7 @@ export class UtilLimitedHelpers {
             roleName,
             () => node[propertyName].map((n) => n.name), // node[propertyName] is a list of references, therefore we need to get their names
             (v: string[]) =>
-                runInAction(() => {
+                AST.change(() => {
                     setFunc(v);
                 }),
             possibleValues,
@@ -100,19 +100,18 @@ export class UtilLimitedHelpers {
             node,
             roleName,
             () => (node[propertyName] === null ? [] : [node[propertyName].name]),
-            (v: string[]) =>
-                runInAction(() => {
+            (v: string[]) => {
                     if (!!v[0]) {
                         // console.log("========> set property [" + propertyName + "] of " + node["name"] + " := " + v[0]);
-                        runInAction(() => {
+                        AST.changeNamed(`Limited for property ${propertyName} set to ${v[0]}`, () => {
                             setFunc(v[0]);
                         });
                     } else {
-                        runInAction(() => {
+                        AST.changeNamed(`Limited for property ${propertyName} set to null`, () => {
                             node[propertyName] = null;
                         });
                     }
-                }),
+                 },
             possibleValues,
         );
         result.showAs = LimitedDisplay.RADIO_BUTTON;
@@ -169,11 +168,11 @@ export class UtilLimitedHelpers {
                 // L.log("==> SET selected option for property " + propertyName + " of " + element["name"] + " to " + option?.label);
                 if (!!option) {
                     // console.log("========> set property [" + propertyName + "] of " + element["name"] + " := " + option.label);
-                    runInAction(() => {
+                    AST.changeNamed(`UtilLimitedHelpers.limitedSelectBox for property ${propertyName} set to ${option.label}`, () => {
                         setFunc(option.label);
                     });
                 } else {
-                    runInAction(() => {
+                    AST.changeNamed(`UtilLimitedHelpers.limitedSelectBox for property ${propertyName}  set to null`, () => {
                         node[propertyName] = null;
                     });
                 }

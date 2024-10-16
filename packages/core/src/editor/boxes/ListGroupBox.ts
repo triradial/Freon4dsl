@@ -1,7 +1,7 @@
-import { Box } from "./Box";
-import { FreUtils } from "../../util";
+import { Box } from "./Box.js";
+import { FreUtils } from "../../util/index.js";
 // import { BehaviorExecutionResult } from "../util";
-import { FreNode } from "../../ast";
+import { FreNode } from "../../ast/index.js";
 //import { FreLogger } from "../../logging";
 // import { FrePostAction } from "../actions";
 // import { runInAction } from "mobx";

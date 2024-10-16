@@ -1,8 +1,9 @@
 <script lang="ts">
+    import { LIMITEDRADIO_LOGGER } from "$lib/components/ComponentLoggers.js";
     import {
         ALT, ARROW_DOWN,
         ARROW_LEFT,
-        ARROW_RIGHT, ARROW_UP,
+        ARROW_RIGHT, ARROW_UP, AST,
         CONTROL,
         FreEditor,
         FreLogger,
@@ -15,7 +16,7 @@
     export let box: LimitedControlBox;
     export let editor: FreEditor;			// the editor
 
-    const LOGGER = new FreLogger("LimitedRadioComponent");
+    const LOGGER = LIMITEDRADIO_LOGGER
 
     let id: string = box.id;
     let myEnum = box.getPossibleNames();
@@ -61,7 +62,9 @@
     });
     const onChange = (event: MouseEvent) => {
         currentValue = event.target["value"];
-        box.setNames([currentValue]);
+        AST.change( () => {
+            box.setNames([currentValue]);
+        })
         editor.selectElementForBox(box);
         event.stopPropagation();
     }

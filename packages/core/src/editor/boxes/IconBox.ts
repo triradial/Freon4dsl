@@ -1,6 +1,6 @@
-import { FreUtils } from "../../util";
-import { FreNode } from "../../ast";
-import { Box } from "./Box";
+import { FreUtils } from "../../util/index.js";
+import { FreNode } from "../../ast/index.js";
+import { Box } from "./Box.js";
 import { IconDefinition, faQuestion } from '@fortawesome/free-solid-svg-icons';
 
 export class IconBox extends Box {

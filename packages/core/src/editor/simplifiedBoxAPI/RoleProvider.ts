@@ -1,11 +1,12 @@
-import { FreLanguageConcept, FreLanguageInterface, FreLanguageModelUnit } from "../../language";
-import { FreNode } from "../../ast";
+import { FreLanguageConcept, FreLanguageInterface, FreLanguageModelUnit } from "../../language/index.js";
+import { FreNode } from "../../ast/index.js";
 
 export class RoleProvider {
     public static classifier(concept: FreLanguageModelUnit | FreLanguageConcept | FreLanguageInterface): string {
         return RoleProvider.startWithUpperCase(concept.typeName);
     }
 
+    // todo remove boxType from params
     public static property(owningConceptName: string, propertyName: string, boxType?: string, index?: number): string {
         let roleName: string = RoleProvider.startWithUpperCase(owningConceptName) + "-" + propertyName;
         if (index !== null && index !== undefined && index >= 0) {
@@ -15,6 +16,9 @@ export class RoleProvider {
             roleName += "-" + boxType;
         }
         return roleName;
+    }
+    public static binaryProperty(propertyName: string) {
+        return `FreBinaryExpression-${propertyName}`
     }
 
     private static startWithUpperCase(word: string): string {

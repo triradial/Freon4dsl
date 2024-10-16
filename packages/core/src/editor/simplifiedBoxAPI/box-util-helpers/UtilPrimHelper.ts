@@ -1,4 +1,5 @@
-import { FreNode } from "../../../ast";
+import { FreNode } from "../../../ast/index.js";
+import { AST } from "../../../change-manager/index.js";
 import {
     BoolDisplay,
     BooleanControlBox,
@@ -11,15 +12,14 @@ import {
     SelectBox,
     SelectOption,
     TextBox,
-} from "../../boxes";
-import { runInAction } from "mobx";
-import { FreEditor } from "../../FreEditor";
-import { BehaviorExecutionResult } from "../../util";
-import { UtilCheckers } from "./UtilCheckers";
-import { FreLanguage, FreLanguageProperty } from "../../../language";
-import { RoleProvider } from "../RoleProvider";
-import { FreUtils } from "../../../util";
-import { CharAllowed } from "editor/boxes/CharAllowed";         
+} from "../../boxes/index.js";
+import { FreEditor } from "../../FreEditor.js";
+import { BehaviorExecutionResult } from "../../util/index.js";
+import { UtilCheckers } from "./UtilCheckers.js";
+import { FreLanguage, FreLanguageProperty } from "../../../language/index.js";
+import { RoleProvider } from "../RoleProvider.js";
+import { FreUtils } from "../../../util/index.js";
+import { CharAllowed } from "../../boxes/index.js";         
 
 export class UtilPrimHelper {
     public static textBox(node: FreNode, propertyName: string, index?: number): TextBox {
@@ -40,7 +40,7 @@ export class UtilPrimHelper {
                     roleName,
                     () => node[propertyName][index],
                     (v: string) =>
-                        runInAction(() => {
+                        AST.change(() => {
                             node[propertyName][index] = v;
                         }),
                     { placeHolder: `<${propertyName}>` },
@@ -51,11 +51,13 @@ export class UtilPrimHelper {
                     roleName,
                     () => node[propertyName],
                     (v: string) =>
-                        runInAction(() => {
+                        AST.change(() => {
                             node[propertyName] = v;
                         }),
                     { placeHolder: `<${propertyName}>` },
                 );
+                // ENSURE TEXTBOX IS SEEN AS DIRTY
+                // result.isDirty()
             }
             result.propertyName = propertyName;
             result.propertyIndex = index;
@@ -149,32 +151,46 @@ export class UtilPrimHelper {
             return BoxFactory.text(
                 node,
                 roleName,
-                () => node[propertyName][index].toString(),
+                () => { 
+                    const propValue = node[propertyName][index]
+                    if (isNaN(propValue)) {
+                        return ""
+                    } else {
+                        return propValue.toString()
+                    }
+                },
                 (v: string) =>
-                    runInAction(() => {
+                    AST.change(() => {
                         node[propertyName][index] = Number.parseInt(v, 10);
                     }),
                 {
                     placeHolder: `<${propertyName}>`,
                     isCharAllowed: (currentText: string, key: string, innerIndex: number) => {
                         return isNumber(currentText, key, innerIndex);
-                    },
+                    }
                 },
             );
         } else {
             return BoxFactory.text(
                 node,
                 roleName,
-                () => node[propertyName].toString(),
+                () => {
+                    const propValue = node[propertyName]
+                    if (isNaN(propValue)) {
+                        return ""
+                    } else {
+                        return propValue.toString()
+                    }
+                },
                 (v: string) =>
-                    runInAction(() => {
+                    AST.change(() => {
                         node[propertyName] = Number.parseInt(v, 10);
                     }),
                 {
                     placeHolder: `<${propertyName}>`,
                     isCharAllowed: (currentText: string, key: string, innerIndex: number) => {
                         return isNumber(currentText, key, innerIndex);
-                    },
+                    }
                 },
             );
         }
@@ -196,7 +212,7 @@ export class UtilPrimHelper {
                 roleName,
                 () => node[propertyName][index],
                 (v: number) =>
-                    runInAction(() => {
+                    AST.change(() => {
                         node[propertyName][index] = v;
                     }),
                 {
@@ -210,7 +226,7 @@ export class UtilPrimHelper {
                 roleName,
                 () => node[propertyName],
                 (v: number) =>
-                    runInAction(() => {
+                    AST.change(() => {
                         node[propertyName] = v;
                     }),
                 {
@@ -239,7 +255,7 @@ export class UtilPrimHelper {
                 roleName,
                 () => node[propertyName][index],
                 (v: boolean) =>
-                    runInAction(() => {
+                    AST.change(() => {
                         node[propertyName][index] = v;
                     }),
                 {
@@ -252,7 +268,7 @@ export class UtilPrimHelper {
                 roleName,
                 () => node[propertyName],
                 (v: boolean) =>
-                    runInAction(() => {
+                    AST.change(() => {
                         node[propertyName] = v;
                     }),
                 {
@@ -293,14 +309,14 @@ export class UtilPrimHelper {
                 },
                 // @ts-ignore
                 (editor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
-                    runInAction(() => {
+                    AST.change(() => {
                         if (option.id === labels.yes) {
                             node[propertyName][index] = true;
                         } else if (option.id === labels.no) {
                             node[propertyName][index] = false;
                         }
                     });
-                    return BehaviorExecutionResult.NULL;
+                    return BehaviorExecutionResult.EXECUTED;
                 },
             );
         } else {
@@ -321,14 +337,14 @@ export class UtilPrimHelper {
                 },
                 // @ts-ignore
                 (editor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
-                    runInAction(() => {
+                    AST.change(() => {
                         if (option.id === labels.yes) {
                             node[propertyName] = true;
                         } else if (option.id === labels.no) {
                             node[propertyName] = false;
                         }
                     });
-                    return BehaviorExecutionResult.NULL;
+                    return BehaviorExecutionResult.EXECUTED;
                 },
             );
         }

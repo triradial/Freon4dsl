@@ -1,6 +1,6 @@
 // Generated my Freon once, will NEVER be overwritten.
         import { InterpreterContext, IMainInterpreter, RtObject } from "@freon4dsl/core";
-        import { MpsExpressionModelInterpreterBase } from "./gen/MpsExpressionModelInterpreterBase";
+        import { MpsExpressionModelInterpreterBase } from "./gen/MpsExpressionModelInterpreterBase.js";
 
         let main: IMainInterpreter;
 

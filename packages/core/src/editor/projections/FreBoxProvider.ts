@@ -1,8 +1,8 @@
-import { FreNode } from "../../ast";
-import { isNullOrUndefined } from "../../util";
-import { Box, ElementBox, LabelBox } from "../boxes";
-import { FreProjectionHandler } from "./FreProjectionHandler";
-import { FreProjectionCalculator } from "./FreProjectionCalculator";
+import { FreNode } from "../../ast/index.js";
+import { isNullOrUndefined } from "../../util/index.js";
+import { Box, ElementBox, LabelBox } from "../boxes/index.js";
+import { FreProjectionHandler } from "./FreProjectionHandler.js";
+import { FreProjectionCalculator } from "./FreProjectionCalculator.js";
 
 /**
  * Base class for all box providers.
@@ -23,7 +23,7 @@ export abstract class FreBoxProvider {
 
     /**
      * Every box provider is coupled one-on-one to a single node in the FreNode model.
-     * The property 'element' is a link to this node.
+     * The property 'node' is a link to this node.
      * @param node
      */
     set node(node: FreNode) {

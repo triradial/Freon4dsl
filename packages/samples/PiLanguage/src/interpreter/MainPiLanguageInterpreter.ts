@@ -12,7 +12,7 @@ import {
     RtObject,
     RtError,
 } from "@freon4dsl/core";
-import { PiLanguageInterpreterInit } from "./gen/PiLanguageInterpreterInit";
+import { PiLanguageInterpreterInit } from "./gen/PiLanguageInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;

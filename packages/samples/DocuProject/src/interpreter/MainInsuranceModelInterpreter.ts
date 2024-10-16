@@ -12,7 +12,7 @@ import {
     RtObject,
     RtError,
 } from "@freon4dsl/core";
-import { InsuranceModelInterpreterInit } from "./gen/InsuranceModelInterpreterInit";
+import { InsuranceModelInterpreterInit } from "./gen/InsuranceModelInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;

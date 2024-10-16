@@ -12,7 +12,7 @@ import {
     RtObject,
     RtError,
 } from "@freon4dsl/core";
-import { UndoModelInterpreterInit } from "./gen/UndoModelInterpreterInit";
+import { UndoModelInterpreterInit } from "./gen/UndoModelInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;

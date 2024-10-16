@@ -1,10 +1,10 @@
-import { FreNode } from "../../ast";
-import { isNullOrUndefined, FreUtils, FRE_BINARY_EXPRESSION_LEFT, FRE_BINARY_EXPRESSION_RIGHT } from "../../util";
-import { FreLogger } from "../../logging";
-import { BehaviorExecutionResult } from "../util";
-import { FrePostAction } from "../actions";
+import { FreNode } from "../../ast/index.js";
+import { isNullOrUndefined, FreUtils, FRE_BINARY_EXPRESSION_LEFT, FRE_BINARY_EXPRESSION_RIGHT } from "../../util/index.js";
+import { FreLogger } from "../../logging/index.js";
+import { BehaviorExecutionResult } from "../util/index.js";
+import { FrePostAction } from "../actions/index.js";
 import { runInAction } from "mobx";
-import  {FreEditor } from "../FreEditor";
+import { FreEditor } from "../FreEditor.js";
 
 const LOGGER = new FreLogger("Box");
 
@@ -15,17 +15,27 @@ export abstract class Box {
     $id: string;
     kind: string = "";
     role: string = "";
-    node: FreNode = null; // the model element to which this box is coupled
-    propertyName: string; // the name of the property, if any, in 'element' which this box projects
-    propertyIndex: number; // the index within the property, if appropriate
-    // todo make sure propertyName and index are correctly set
-
-    cssClass: string = ""; // Custom CSS class that will be added to the component rendering this box
-    cssStyle: string = ""; // Custom CSS Style class that will be added as inline style to the component rendering this box
-    selectable: boolean = true; // Can this box be selected in the editor?
-    // todo because most boxes are not selectable the default could be set to false
-    isVisible: boolean = true; // Is this box currently not shown in the editor?
+    // The model element to which this box is coupled
+    node: FreNode = null;
+    // The name of the property, if any, in the 'node' which this box projects
+    propertyName: string;
+    // The index within the property, if appropriate
+    propertyIndex: number;
+    // Custom CSS class that will be added to the component rendering this box
+    cssClass: string = "";
+    // Custom CSS Style class that will be added as inline style to the component rendering this box
+    cssStyle: string = "";
+    // Can this box be selected in the editor?
+    selectable: boolean = true; // todo because most boxes are not selectable the default could be set to false
+    // Is this box currently not shown in the editor?
+    isVisible: boolean = true;
     parent: Box = null;
+
+    // Indication whether the 'node' which this box projects has any validation errors. Adds a CSS class
+    // to the component rendering this box.
+    protected _hasError: boolean = false;
+    // The list of errorMessages that are to be shown by this box.
+    protected _errorMessages: string[] = [];
 
     refreshComponent: (why?: string) => void; // The refresh method from the component that displays this box.
 
@@ -38,6 +48,52 @@ export abstract class Box {
         } else {
             LOGGER.log("No refreshComponent() for " + this.role);
         }
+    }
+
+    /**
+     * If the node displayed in this box is erroneous, this getter returns true.
+     */
+    get hasError(): boolean {
+        return this._hasError;
+    }
+
+    /**
+     * If the node displayed in this box is erroneous, this method should be used to display
+     * that fact.
+     * @param val
+     */
+    set hasError(val: boolean) {
+        this._hasError = val;
+        this.isDirty();
+    }
+
+    get errorMessages(): string[] {
+        return this._errorMessages;
+    }
+
+    /**
+     * Adds the string  or string array to the list of error messages, but only if
+     * the message is not already present.
+     * @param val
+     */
+    addErrorMessage(val: string | string[]) {
+        if (Array.isArray(val)) {
+            val.forEach(v => {
+                if (!this._errorMessages.includes(v)) {
+                    this._errorMessages.push(v);
+                }
+            })
+        } else {
+            if (!this._errorMessages.includes(val)) {
+                this._errorMessages.push(val);
+            }
+        }
+        this.isDirty()
+    }
+
+    resetErrorMessages() {
+        this._errorMessages = [];
+        this.isDirty();
     }
 
     // Never set these manually, these properties are set after rendering to get the
@@ -109,9 +165,8 @@ export abstract class Box {
         if (this.isLeaf() && this.selectable) {
             return this;
         }
-        // TODO Why filter or concat here?
-        // const childrenReversed = this.children.filter(ch => true).reverse();
-        const childrenReversed = this.children.concat().reverse();
+        // _slice_ is needed to create a copy of the array, because _reverse_ changes the array itself
+        const childrenReversed = this.children.slice().reverse();
         for (const child of childrenReversed) {
             const leafChild: Box = child.lastLeaf;
             if (!!leafChild) {
@@ -126,10 +181,16 @@ export abstract class Box {
      * Return the previous selectable leaf in the tree.
      */
     get nextLeafRight(): Box | null {
-        if (!this.parent) {
+        if (this.parent === null || this.parent === undefined) {
             return null;
         }
         const thisIndex: number = this.parent.children.indexOf(this);
+        if (thisIndex === -1) {
+            // LOGGER.error(`nextLeafRight: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
+            // LOGGER.error(`  boxid: ${this.id} parent [id: ${this.parent.id}, id: ${this.parent.kind}, node: ${this.parent.node.freLanguageConcept()}]`)
+            // LOGGER.error(`  tree: ${(this.parent.parent !== undefined && this.parent.parent !== null) ? this.parent.parent.toStringRecursive("  "):this.parent.toStringRecursive("  ")}`)
+            return null
+        }
         const rightSiblings: Box[] = this.parent.children.slice(thisIndex + 1, this.parent.children.length);
         for (const sibling of rightSiblings) {
             const siblingChild: Box = sibling.firstLeaf;
@@ -140,6 +201,7 @@ export abstract class Box {
                 return sibling;
             }
         }
+        LOGGER.log(`${this.id} nextLeafRight: referring to parent`)
         return this.parent.nextLeafRight;
     }
 
@@ -152,6 +214,10 @@ export abstract class Box {
             return null;
         }
         const thisIndex: number = this.parent.children.indexOf(this);
+        if (thisIndex === -1) {
+            LOGGER.error(`nextLeafLeft: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
+            return null
+        }
         const leftSiblings: Box[] = this.parent.children.slice(0, thisIndex).reverse();
         for (const sibling of leftSiblings) {
             const siblingChild: Box = sibling.lastLeaf;
@@ -243,7 +309,7 @@ export abstract class Box {
      */
     findChildBoxForProperty(propertyName?: string, propertyIndex?: number): Box | null {
         // if (propertyName === "value" && propertyIndex === undefined) {
-        console.log("findChildBoxForProperty " + this.role + "[" + propertyName + ", " + propertyIndex + "]");
+        LOGGER.log("findChildBoxForProperty " + this.role + "[" + propertyName + ", " + propertyIndex + "]");
         // }
         for (const child of this.children) {
             // console.log('===> child: [' + child.propertyName + ", " + child.propertyIndex + "]")
@@ -261,7 +327,7 @@ export abstract class Box {
             } else {
                 return child;
             }
-            const result = child.findChildBoxForProperty(propertyName, propertyIndex);
+            const result: Box = child.findChildBoxForProperty(propertyName, propertyIndex);
             if (!isNullOrUndefined(result) && result.node === this.node) {
                 return result;
             }
@@ -284,9 +350,9 @@ export abstract class Box {
      */
     setFocus: () => void = async () => {
         console.log(
-            this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id + ", referring to parent",
+            this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id
         );
-        this.parent?.setFocus();
+        // this.parent?.setFocus();
     };
 
     /**
@@ -324,6 +390,14 @@ export abstract class Box {
 
     isEditable(): boolean {
         return false;
+    }
+    
+    toStringRecursive(indent: string = ""): string {
+        let result = indent + this.id + " (" + this.kind + ")"
+        this.children.forEach(child => {
+            result += "\n" + child.toStringRecursive(indent + "  ")
+        })
+        return result
     }
 
     /* GM - execute actions */

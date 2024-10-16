@@ -1,11 +1,12 @@
-import { FreLanguageConcept, FreLanguage, FreLanguageProperty, FreLanguageClassifier } from "../../language";
-import { BehaviorExecutionResult, executeBehavior, executeSingleBehavior } from "../util";
-import { FreCreatePartAction, FreCustomAction, FreTriggerType } from "../actions";
-import { triggerTypeToString, FreEditor, isProKey } from "../internal";
-import { Box, AbstractChoiceBox, SelectOption } from "./internal";
-import { FreNode, FreNodeReference } from "../../ast";
+import { FreLanguageConcept, FreLanguage, FreLanguageProperty, FreLanguageClassifier } from "../../language/index.js";
+import { BehaviorExecutionResult, executeSingleBehavior } from "../util/index.js";
+import {FreCreatePartAction, FreCustomAction, FreTriggerType, isRegExp} from "../actions/index.js";
+import { triggerTypeToString, FreEditor, isProKey } from "../internal.js";
+import { Box, AbstractChoiceBox, SelectOption } from "./internal.js";
+import { FreNode, FreNodeReference } from "../../ast/index.js";
 import { runInAction } from "mobx";
-import { FreLogger } from "../../logging";
+import { FreLogger } from "../../logging/index.js";
+import {FreUtils} from "../../util/index.js";
 
 const LOGGER: FreLogger = new FreLogger("ActionBox");
 
@@ -28,29 +29,6 @@ export class ActionBox extends AbstractChoiceBox {
         super(element, role, placeHolder, initializer);
     }
 
-    selectOption(editor: FreEditor, option: SelectOption): BehaviorExecutionResult {
-        LOGGER.log("ActionBox selectOption " + JSON.stringify(option));
-        if (!!option.action) {
-            return executeSingleBehavior(option.action, this, option.id, option.label, editor);
-        } else {
-            // Try all statically defined actions
-            const result = executeBehavior(this, option.id, option.label, editor);
-            if (result === BehaviorExecutionResult.EXECUTED) {
-                return result;
-            }
-            // Wasn't a match, now get all dynamic options, including referenceShortcuts and check these
-            const allOptions = this.getOptions(editor);
-            const selectedOptions = allOptions.filter((o) => option.label === o.label);
-            if (selectedOptions.length === 1) {
-                LOGGER.log("ActionBox.selectOption dynamic " + JSON.stringify(selectedOptions));
-                return executeBehavior(this, selectedOptions[0].id, selectedOptions[0].label, editor);
-            } else {
-                LOGGER.log("ActionBox.selectOption : " + JSON.stringify(selectedOptions));
-                return BehaviorExecutionResult.NO_MATCH;
-            }
-        }
-    }
-
     /**
      * Returns the options (for a dropdown component) that fit this ActionBox.
      * @param editor
@@ -67,10 +45,10 @@ export class ActionBox extends AbstractChoiceBox {
                 this.conceptName,
                 this.propertyName,
             );
-            LOGGER.log(`clsIntf: ${clsOtIntf} prop kind: ${propDef?.propertyKind}`);
+            LOGGER.log(`clsIntf: ${clsOtIntf?.typeName} prop kind: ${propDef?.propertyKind}`);
             clsOtIntf.subConceptNames.concat(this.conceptName).forEach((creatableConceptname: string) => {
                 const creatableConcept: FreLanguageConcept = FreLanguage.getInstance().concept(creatableConceptname);
-                LOGGER.log(`creatableConcept: ${creatableConcept}`);
+                LOGGER.log(`creatableConcept: ${creatableConcept?.typeName}`);
                 if (!!creatableConcept && !creatableConcept.isAbstract) {
                     if (!!creatableConcept.referenceShortcut) {
                         this.addReferenceShortcuts(creatableConcept as FreLanguageConcept, result, editor);
@@ -131,9 +109,9 @@ export class ActionBox extends AbstractChoiceBox {
     }
 
     /**
-     * Get all referrable element for the reference shortcut of concept
+     * Get all referable element for the reference shortcut of concept
      * @param concept The concept with the referenceShortcut
-     * @param result  The array where the resutling actions should be addedd to
+     * @param result  The array where the resulting actions should be added to
      * @param editor  The editor context
      * @private
      */
@@ -214,8 +192,61 @@ export class ActionBox extends AbstractChoiceBox {
 
     triggerKeyPressEvent = (key: string) => {
         // TODO rename this one, e.g. to triggerKeyEvent
-        console.error("ActionBox " + this.role + " has empty triggerKeyPressEvent " + key);
+        LOGGER.error("ActionBox " + this.role + " has empty triggerKeyPressEvent " + key);
     };
+
+    executeOption(editor: FreEditor, option: SelectOption): BehaviorExecutionResult {
+        LOGGER.log("ActionBox executeOption " + JSON.stringify(option));
+        FreUtils.CHECK(!!option.action, `ActionBox.executeOption: action missing for ${option.label}` )
+        if (!!option.action) {
+            return executeSingleBehavior(option.action, this, option.label, editor);
+        }
+        return BehaviorExecutionResult.NULL;
+    }
+
+    tryToExecute(key: string, editor: FreEditor): BehaviorExecutionResult {
+        LOGGER.log(`ActionBox ${this.id} tryToExecute [${key}]`);
+        let result: BehaviorExecutionResult;
+        // Try if key fits one of the options, and execute the action that is associated with it
+        const filteredOptions: SelectOption[] = this.getOptions(editor).filter(o => o.label.startsWith(key));
+        if (filteredOptions.length === 1 && filteredOptions[0].label === key ) {
+            result = this.executeOption(editor, filteredOptions[0]);
+        } else {
+            // Try if key matches a regular expression, and execute the action that is associated with it
+            result = this.tryToMatchRegExpAndExecuteAction(key, editor);
+            if (result !== BehaviorExecutionResult.EXECUTED) {
+                // The action was not executed, so add 'key' to the text that is already present
+                this.textHelper.setText(this.textHelper.getText() + key);
+                this.isDirty();
+            }
+        }
+        return result;
+    }
+
+    tryToMatchRegExpAndExecuteAction(text: string, editor: FreEditor): BehaviorExecutionResult {
+        LOGGER.log(`ActionBox tryToMatchRegExpAndExecuteAction [${text}]`);
+        // Try to match a regular expression
+        const matchingOption = this.getOptions(editor).find(option => {
+            if (isRegExp(option.action.trigger)) {
+                if (option.action.trigger.test(text)) {
+                    LOGGER.log("Matched regexp" + triggerTypeToString(option.action.trigger) + " for '" + text + "'");
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        })
+        // If there is a match, execute it.
+        if (!!matchingOption) {
+            LOGGER.log(`Found match to regexp: ${matchingOption.label}`);
+            FreUtils.CHECK(!!matchingOption.action, `ActionBox.executeOption: action missing for ${matchingOption.label}` )
+            if (!!matchingOption.action) {
+                return executeSingleBehavior(matchingOption.action, this, text, editor);
+            }
+            return BehaviorExecutionResult.NULL;
+        }
+        return BehaviorExecutionResult.NO_MATCH;
+    }
 }
 
 export function isActionBox(b: Box): b is ActionBox {

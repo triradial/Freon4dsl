@@ -12,7 +12,7 @@ import {
     RtObject,
     RtError,
 } from "@freon4dsl/core";
-import { ExternalModelInterpreterInit } from "./gen/ExternalModelInterpreterInit";
+import { ExternalModelInterpreterInit } from "./gen/ExternalModelInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;

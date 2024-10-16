@@ -1,6 +1,6 @@
 // Generated my Freon once, will NEVER be overwritten.
         import { InterpreterContext, IMainInterpreter, RtObject } from "@freon4dsl/core";
-        import { PiLanguageInterpreterBase } from "./gen/PiLanguageInterpreterBase";
+        import { PiLanguageInterpreterBase } from "./gen/PiLanguageInterpreterBase.js";
 
         let main: IMainInterpreter;
 

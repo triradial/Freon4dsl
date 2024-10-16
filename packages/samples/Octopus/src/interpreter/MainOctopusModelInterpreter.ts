@@ -12,7 +12,7 @@ import {
     RtObject,
     RtError,
 } from "@freon4dsl/core";
-import { OctopusModelInterpreterInit } from "./gen/OctopusModelInterpreterInit";
+import { OctopusModelInterpreterInit } from "./gen/OctopusModelInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;

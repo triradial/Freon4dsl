@@ -1,13 +1,13 @@
-import { FreLogger } from "../../logging/index";
-import { Box, BoxFactory, ElementBox } from "../boxes";
-import { isNullOrUndefined } from "../../util";
-import { FreNode } from "../../ast";
-import { FreBoxProvider } from "./FreBoxProvider";
-import { FreProjection } from "./FreProjection";
-import { action, makeObservable, observable } from "mobx";
-import { ArrayUtil } from "../../util/ArrayUtil";
-import { FreTableHeaderInfo } from "./FreTableHeaderInfo";
-import { FreHeaderProvider } from "./FreHeaderProvider";
+import { FreLogger } from "../../logging/index.js";
+import { Box, BoxFactory, ElementBox } from "../boxes/index.js";
+import { isNullOrUndefined } from "../../util/index.js";
+import { FreNode } from "../../ast/index.js";
+import { FreBoxProvider } from "./FreBoxProvider.js";
+import { FreProjection } from "./FreProjection.js";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import { ArrayUtil } from "../../util/ArrayUtil.js";
+import { FreTableHeaderInfo } from "./FreTableHeaderInfo.js";
+import { FreHeaderProvider } from "./FreHeaderProvider.js";
 
 const LOGGER = new FreLogger("FreProjectionHandler");
 /**
@@ -88,7 +88,7 @@ export class FreProjectionHandler {
     ////////// Methods for registering the boxproviders ////////////
 
     /**
-     * Method that initilizes the property 'conceptNameToProviderConstructor'.
+     * Method that initializes the property 'conceptNameToProviderConstructor'.
      * @param constructorMap
      */
     initProviderConstructors(constructorMap: Map<string, () => FreBoxProvider>) {
@@ -135,10 +135,12 @@ export class FreProjectionHandler {
      * @param p
      */
     addProjection(p: string) {
-        ArrayUtil.addIfNotPresent(this._allProjections, p);
-        if (p !== "default") {
-            ArrayUtil.addIfNotPresent(this._enabledProjections, p);
-        }
+        runInAction( () => {
+            ArrayUtil.addIfNotPresent(this._allProjections, p);
+            if (p !== "default") {
+                ArrayUtil.addIfNotPresent(this._enabledProjections, p);
+            }
+        })
     }
 
     /**
@@ -156,7 +158,9 @@ export class FreProjectionHandler {
                 newList.push(proj);
             }
         }
-        this._enabledProjections = newList;
+        runInAction( () => {
+            this._enabledProjections = newList;
+        })
         // console.log(" ============== enabled projections: " + this._enabledProjections);
 
         //  Let all providers know that projection may be changed.
@@ -245,7 +249,12 @@ export class FreProjectionHandler {
 
     getKnownTableProjectionsFor(conceptName: string): string[] {
         LOGGER.log("getKnownTableProjectionsFor: " + conceptName);
-        return this.conceptNameToProviderConstructor.get(conceptName)(this).knownTableProjections;
+        const providerConstructor = this.conceptNameToProviderConstructor.get(conceptName)(this);
+        if (!!providerConstructor) {
+            return providerConstructor.knownTableProjections;
+        } else {
+            return [];
+        }
     }
 
     getTableHeaderInfo(conceptName: string, projectionName: string): string[] {

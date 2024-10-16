@@ -1,16 +1,16 @@
+import { AST } from "../../change-manager/index.js";
 import {
     Box,
     HorizontalLayoutBox,
     isHorizontalBox,
-    SelectBox,
     SelectOption,
     FreEditor,
     triggerTypeToString,
     BoxFactory,
     FreProjectionHandler,
-} from "../index";
-import { FreBinaryExpression, FreExpressionNode } from "../../ast";
-import { FreLanguage } from "../../language";
+} from "../index.js";
+import { FreBinaryExpression, FreExpressionNode } from "../../ast/index.js";
+import { FreLanguage } from "../../language/index.js";
 import {
     FRE_BINARY_EXPRESSION_LEFT,
     FRE_BINARY_EXPRESSION_RIGHT,
@@ -23,9 +23,9 @@ import {
     LEFT_MOST,
     RIGHT_MOST,
     FreUtils,
-} from "../../util";
-import { NBSP } from "../index";
-import { BehaviorExecutionResult } from "./BehaviorUtils";
+} from "../../util/index.js";
+import { NBSP } from "../index.js";
+import { BehaviorExecutionResult } from "./BehaviorUtils.js";
 
 // const LOGGER = new FreLogger("FreExpressionNodeHelpers");
 // todo maybe moved these functions to BoxUtils?
@@ -119,7 +119,8 @@ export function createDefaultBinaryBox(
  * @param cssStyle
  */
 export function createOperatorBox(editor: FreEditor, exp: FreBinaryExpression, symbol: string, cssStyle?: string): Box {
-    const operatorBox = new SelectBox(
+    // TODO Does not work without factory!
+    const operatorBox = BoxFactory.select(
         exp,
         EXPRESSION_SYMBOL,
         "<...>",
@@ -138,7 +139,9 @@ export function createOperatorBox(editor: FreEditor, exp: FreBinaryExpression, s
                 return [];
             }
         },
-        () => null,
+        () => {
+            return { id: symbol, label: symbol };
+        },
         (innerEditor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
             if (innerEditor.actions && innerEditor.actions.binaryExpressionActions) {
                 const action = innerEditor.actions.binaryExpressionActions.filter(
@@ -150,10 +153,12 @@ export function createOperatorBox(editor: FreEditor, exp: FreBinaryExpression, s
                         triggerTypeToString(action.trigger),
                         innerEditor,
                     );
-                    newExp.freSetLeft(exp.freLeft());
-                    newExp.freSetRight(exp.freRight());
-                    FreUtils.replaceExpression(exp, newExp, innerEditor);
-                    BTREE.balanceTree(newExp, innerEditor);
+                    AST.changeNamed("FreExpressionUtil.createOperatorBox", () => {
+                        newExp.freSetLeft(exp.freLeft());
+                        newExp.freSetRight(exp.freRight());
+                        FreUtils.replaceExpression(exp, newExp, innerEditor);
+                        BTREE.balanceTree(newExp, innerEditor);
+                    })
                     exp = newExp;
                     innerEditor.selectElementBox(newExp, AFTER_BINARY_OPERATOR); // todo adjust property name
                     // editor.selectBoxNew(operatorBox.nextLeafRight.firstLeaf, FreCaret.LEFT_MOST);
@@ -166,10 +171,6 @@ export function createOperatorBox(editor: FreEditor, exp: FreBinaryExpression, s
             cssStyle: cssStyle,
         },
     );
-
-    operatorBox.getSelectedOption = () => {
-        return { id: symbol, label: symbol };
-    };
 
     return operatorBox;
 }

@@ -1,4 +1,4 @@
-import { FreNode } from "../../ast";
+import { FreNode } from "../../ast/index.js";
 import {
     BoolDisplay,
     BooleanWrapperBox,
@@ -34,18 +34,18 @@ import {
     ItemGroupBox, 
     ItemGroupBox2, 
     ListGroupBox, 
-} from "../boxes";
-import { FreScoper } from "../../scoper";
-import { RoleProvider } from "./RoleProvider";
-import { FreProjectionHandler } from "../projections";
-import { UtilPrimHelper } from "./box-util-helpers/UtilPrimHelper";
-import { UtilRefHelpers } from "./box-util-helpers/UtilRefHelpers";
-import { UtilPartHelpers } from "./box-util-helpers/UtilPartHelpers";
-import { UtilLimitedHelpers } from "./box-util-helpers/UtilLimitedHelpers";
+} from "../boxes/index.js";
+import { FreScoper } from "../../scoper/index.js";
+import { RoleProvider } from "./RoleProvider.js";
+import { FreProjectionHandler } from "../projections/index.js";
+import { UtilPrimHelper } from "./box-util-helpers/UtilPrimHelper.js";
+import { UtilRefHelpers } from "./box-util-helpers/UtilRefHelpers.js";
+import { UtilPartHelpers } from "./box-util-helpers/UtilPartHelpers.js";
+import { UtilLimitedHelpers } from "./box-util-helpers/UtilLimitedHelpers.js";
 
 /** Start - M+G */
-import {FreUtils} from "../../util";
-import {BehaviorExecutionResult} from "../util";
+import {FreUtils} from "../../util/index.js";
+import {BehaviorExecutionResult} from "../util/index.js";
 import { runInAction } from "mobx";
 /**End - M+G */
 

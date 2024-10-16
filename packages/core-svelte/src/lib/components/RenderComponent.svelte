@@ -1,5 +1,7 @@
 <svelte:options immutable={true}/>
 <script lang="ts">
+    import { RENDER_LOGGER } from "$lib/components/ComponentLoggers.js";
+
     // This component renders any box from the box model.
     // Depending on the box type the right component is used.
     // It also makes the rendered element selectable, including changing the style.
@@ -64,6 +66,7 @@
     import { selectedBoxes, componentId, setBoxSizes, findCustomComponent} from "$lib/index.js";
 
     import {afterUpdate} from "svelte";
+    import ErrorMarker from "$lib/components/ErrorMarker.svelte";
 
     /** START - M+G */
     import MultiLineTextComponent2 from "./MultiLineTextComponent2.svelte";
@@ -73,14 +76,16 @@
     import IconComponent from "./IconComponent.svelte";
     /** END - M+G */
 
-    const LOGGER = new FreLogger("RenderComponent");
+    const LOGGER = RENDER_LOGGER
 
     export let box: Box = null;
     export let editor: FreEditor;
 
     let id: string;
-    let className: string = '';
     let element: HTMLElement;
+    let selectedCls: string = '';   // css class name for when the node is selected
+    let errorCls: string = '';      // css class name for when the node is erroneous
+    let errMess: string[] = [];     // error message to be shown when element is hovered
 
     const onClick = (event: MouseEvent) => {
         //LOGGER.log("RenderComponent.onClick for box " + box.role + ", selectable:" + box.selectable);
@@ -98,7 +103,7 @@
         if (isBooleanControlBox(box) || isLimitedControlBox(box)) {
             // do not set extra class, the control itself handles being selected
         } else {
-            className = (isSelected ? "render-component-selected" : "render-component-unselected");
+            selectedCls = (isSelected ? "render-component-selected" : "render-component-unselected");
         }
         if (!!element) { // upon initialization the element might be null
             setBoxSizes(box, element.getBoundingClientRect());
@@ -106,10 +111,18 @@
             //LOGGER.log('No element for ' + box?.id + ' ' + box?.kind);
         }
     });
+
     // todo test GridComponent
     const refresh = (why?: string): void => {
         LOGGER.log("REFRESH RenderComponent (" + why + ")");
         id = !!box? `render-${componentId(box)}` : 'render-for-unknown-box';
+        if (box.hasError) {
+            errorCls = "render-component-error";
+            errMess = box.errorMessages;
+        } else {
+            errorCls = "";
+            errMess = [];
+        }
     };
 
     let first = true;
@@ -128,21 +141,24 @@
 {#if isElementBox(box) }
     <ElementComponent box={box} editor={editor}/>
 {:else}
+    {#if errMess.length > 0}
+        <ErrorMarker element={element} {box}/>
+    {/if}
     {#if isListGroupBox(box)}
-        <span id={id} class="render-component {className} vertical-group" bind:this={element} role="group">
+        <span id={id} class="render-component {selectedCls} vertical-group" bind:this={element} role="group">
             <ListGroupComponent box={box} editor={editor}/>
         </span>
     {:else if isItemGroupBox(box)}
-        <span id={id} class="render-component {className} vertical-group" bind:this={element} role="group">
+        <span id={id} class="render-component {selectedCls} vertical-group" bind:this={element} role="group">
             <ItemGroupComponent box={box} editor={editor} text="" isEditing={false} />
         </span>
     {:else if isItemGroupBox2(box)}
-        <span id={id} class="render-component {className} vertical-group" bind:this={element} role="group">
+        <span id={id} class="render-component {selectedCls} vertical-group" bind:this={element} role="group">
             <ItemGroupComponent2 box={box} editor={editor} />
         </span>
     {:else}
        <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-       <span id={id} class="render-component {className}" on:click={onClick} bind:this={element} role="group">
+       <span id={id} class="render-component {errorCls} {selectedCls} " on:click={onClick} bind:this={element} role="group">
         {#if box === null || box === undefined }
             <p class="error">[BOX IS NULL OR UNDEFINED]</p>
         {:else if isBooleanControlBox(box) && box.showAs === BoolDisplay.CHECKBOX}
@@ -190,7 +206,7 @@
         {:else if isTableBox(box) }
             <TableComponent box={box} editor={editor} />
         {:else if isTextBox(box) }
-            <TextComponent box={box} editor={editor} partOfActionBox={false} text="" isEditing={false}/>
+            <TextComponent box={box} editor={editor} partOfDropdown={false} text="" isEditing={false}/>
         {:else if isMultiLineTextBox(box) }
             <MultiLineTextComponent box={box} editor={editor} text=""/>
         {:else if isMultiLineTextBox2(box) }
@@ -201,7 +217,7 @@
             <EmptyLineComponent box={box}/>
         {:else}
             <!-- we use box["kind"] here instead of box.kind to avoid an error from svelte check-->
-            <p class="render-component-error">[UNKNOWN BOX TYPE: {box["kind"]}]</p>
+            <p class="render-component-unknown-box">[UNKNOWN BOX TYPE: {box["kind"]}]</p>
         {/if}
     </span>
     {/if}

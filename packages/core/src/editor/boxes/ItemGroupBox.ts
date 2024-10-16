@@ -1,9 +1,9 @@
-import { FreUtils } from "../../util";
-import { FreCaret, FreCaretPosition } from "../util";
-import { FreNode } from "../../ast";
-import { Box } from "./Box";
-import { FreLogger } from "../../logging";
-import { CharAllowed } from "./CharAllowed";
+import { FreUtils } from "../../util/index.js";
+import { FreCaret, FreCaretPosition } from "../util/index.js";
+import { FreNode } from "../../ast/index.js";
+import { Box } from "./Box.js";
+import { FreLogger } from "../../logging/index.js";
+import { CharAllowed } from "./CharAllowed.js";
 
 const LOGGER: FreLogger = new FreLogger("TextBox");
 

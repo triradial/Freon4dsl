@@ -1,4 +1,5 @@
-import { FreKey } from "../util";
+import { isNullOrUndefined } from "../../util/index.js";
+import { FreKey } from "../util/index.js";
 
 export type FreTriggerType = string | RegExp | FreKey; // the definition, like parameter
 export type FreTriggerUse = string | FreKey; // the use, like argument
@@ -15,6 +16,9 @@ export function isRegExp(a: FreTriggerType): a is RegExp {
  * @param a
  */
 export function isProKey(a: FreTriggerType): a is FreKey {
+    if (isNullOrUndefined(a)) {
+        return false
+    }
     return (a as any).meta !== undefined;
 }
 

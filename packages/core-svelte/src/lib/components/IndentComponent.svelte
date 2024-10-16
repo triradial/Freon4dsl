@@ -1,10 +1,12 @@
 <svelte:options immutable={true}/>
 <script lang="ts">
+    import { INDENT_LOGGER } from "$lib/components/ComponentLoggers.js";
+
     /**
      * This component indents the child of its (Indent)Box.
      * Every indent is 8px wide.
      */
-    import { Box, FreLogger } from "@freon4dsl/core";
+    import { Box } from "@freon4dsl/core";
     import { afterUpdate, onMount } from "svelte";
     import RenderComponent from "./RenderComponent.svelte";
     import type {IndentBox, FreEditor} from "@freon4dsl/core";
@@ -14,17 +16,18 @@
     export let box: IndentBox;
     export let editor: FreEditor;
 
-    const LOGGER = new FreLogger("IndentComponent");
- 
+    const LOGGER = INDENT_LOGGER
+
     const indentWidth: number = 8;
     let style: string = `margin-left: ${box?.indent * indentWidth}px;`;
     let id: string = !!box ? componentId(box) : 'indent-for-unknown-box';
     let cssClass: string = '';
     let child: Box;
-
+ 
     onMount( () => {
         box.refreshComponent = refresh;
     });
+
     afterUpdate( () => {
         box.refreshComponent = refresh;
     })
@@ -37,6 +40,7 @@
             cssClass = box.cssClass;
         }
     };
+
     $: { // Evaluated and re-evaluated when the box changes.
         refresh(box?.$id);
     }

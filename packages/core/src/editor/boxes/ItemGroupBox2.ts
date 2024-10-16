@@ -1,8 +1,8 @@
-import { BehaviorExecutionResult } from "../util";
-import { FreUtils } from "../../util";
-import { FreEditor } from "../internal";
-import { AbstractChoiceBox, SelectOption, Box } from "./internal";
-import { FreNode } from "../../ast";
+import { BehaviorExecutionResult } from "../util/index.js";
+import { FreUtils } from "../../util/index.js";
+import { FreEditor } from "../internal.js";
+import { AbstractChoiceBox, SelectOption, Box } from "./internal.js";
+import { FreNode } from "../../ast/index.js";
 
 export class ItemGroupBox2 extends AbstractChoiceBox {
   readonly kind: string = "ItemGroupBox2";
@@ -20,7 +20,8 @@ export class ItemGroupBox2 extends AbstractChoiceBox {
   canExpand: boolean = true;
 
   private getAllOptions: (editor: FreEditor) => SelectOption[];
-
+  _innerSelectOption: (editor: FreEditor, option: SelectOption) => BehaviorExecutionResult;
+  
   constructor(node: FreNode, role: string, 
     getLabel: string | (() => string), 
     getOptions: (editor: FreEditor) => SelectOption[],
@@ -34,7 +35,7 @@ export class ItemGroupBox2 extends AbstractChoiceBox {
     this.setLabel(getLabel);    
     this.getAllOptions = getOptions;
     this.getSelectedOption = getSelectedOption;
-    this.selectOption = selectOption;
+    this._innerSelectOption = selectOption;
   }
 
     setLabel(getLabel: string | (() => string)) {

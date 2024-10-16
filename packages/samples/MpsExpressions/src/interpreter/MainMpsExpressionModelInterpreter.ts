@@ -12,7 +12,7 @@ import {
     RtObject,
     RtError,
 } from "@freon4dsl/core";
-import { MpsExpressionModelInterpreterInit } from "./gen/MpsExpressionModelInterpreterInit";
+import { MpsExpressionModelInterpreterInit } from "./gen/MpsExpressionModelInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;

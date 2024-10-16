@@ -1,6 +1,6 @@
 // Generated my Freon once, will NEVER be overwritten.
         import { InterpreterContext, IMainInterpreter, RtObject } from "@freon4dsl/core";
-        import { OctopusModelInterpreterBase } from "./gen/OctopusModelInterpreterBase";
+        import { OctopusModelInterpreterBase } from "./gen/OctopusModelInterpreterBase.js";
 
         let main: IMainInterpreter;
 

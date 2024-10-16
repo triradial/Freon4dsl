@@ -1,7 +1,7 @@
-import { FreUtils } from "../../util";
-import { Box } from "./Box";
-import { FreNode } from "../../ast";
-import { FreLogger } from "../../logging";
+import { FreUtils } from "../../util/index.js";
+import { Box } from "./Box.js";
+import { FreNode } from "../../ast/index.js";
+import { FreLogger } from "../../logging/index.js";
 
 const LOGGER: FreLogger = new FreLogger("LayoutBox");
 export enum ListDirection {
@@ -43,7 +43,8 @@ export abstract class LayoutBox extends Box {
     }
 
     replaceChildren(children: Box[]): LayoutBox {
-        this._children.forEach((ch) => (ch.parent = null));
+        this._children.forEach((ch) => { if(ch.parent === this) ch.parent = null });
+        // this._children.forEach((ch) => ch.parent = null);
         this._children.splice(0, this._children.length);
         if (!!children) {
             children.forEach((child) => {
@@ -60,6 +61,8 @@ export abstract class LayoutBox extends Box {
 
     clearChildren(): void {
         const dirty = this._children.length !== 0;
+        this._children.forEach((ch) => { if(ch.parent === this) ch.parent = null });
+        // this._children.forEach((ch) => ch.parent = null);
         this._children.splice(0, this._children.length);
         if (dirty) {
             LOGGER.log("Layout clearChildren dirty " + this.role);
@@ -131,7 +134,7 @@ export abstract class LayoutBox extends Box {
 export class HorizontalLayoutBox extends LayoutBox {
     kind: string = "HorizontalLayoutBox";
 
-    constructor(element: FreNode, role: string, children?: (Box | null)[], initializer?: Partial<HorizontalLayoutBox>) {
+    constructor(element: FreNode, role: string, children?: Box[], initializer?: Partial<HorizontalLayoutBox>) {
         super(element, role, children, initializer);
         this.direction = ListDirection.HORIZONTAL;
     }
@@ -140,7 +143,7 @@ export class HorizontalLayoutBox extends LayoutBox {
 export class VerticalLayoutBox extends LayoutBox {
     kind: string = "VerticalLayoutBox";
 
-    constructor(element: FreNode, role: string, children?: Box[], initializer?: Partial<HorizontalLayoutBox>) {
+    constructor(element: FreNode, role: string, children?: Box[], initializer?: Partial<VerticalLayoutBox>) {
         super(element, role, children, initializer);
         this.direction = ListDirection.VERTICAL;
     }

@@ -6,7 +6,7 @@ import { FreNode, FreType, FreTyper } from "@freon4dsl/core";
  * custom code for type checking.
  */
 export class CustomExampleTyperPart implements FreTyper {
-    mainTyper: FreTyper; // ExampleTyper;
+    mainTyper: FreTyper;
 
     isType(modelelement: FreNode): boolean | null {
         return null;

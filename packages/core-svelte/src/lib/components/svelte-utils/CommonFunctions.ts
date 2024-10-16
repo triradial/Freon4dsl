@@ -1,8 +1,8 @@
-import type { Box } from "@freon4dsl/core";
-import { FRE_NULL_COMMAND, FreCommand, FreEditor, FreEditorUtil, type FrePostAction, toFreKey } from "@freon4dsl/core";
-import { runInAction } from "mobx";
+import { AST, Box, FRE_NULL_COMMAND, FreLogger, FreCommand, FreEditor, FreEditorUtil, type FrePostAction, toFreKey } from "@freon4dsl/core";
 import { viewport } from "./EditorViewportStore.js";
 import { get } from "svelte/store";
+
+const LOGGER = new FreLogger("CommonFunctions").mute()
 
 export function focusAndScrollIntoView(element: HTMLElement) {
     if (!!element) {
@@ -17,24 +17,40 @@ export function focusAndScrollIntoView(element: HTMLElement) {
             rect.right <= get(viewport).width;
 
         // if the element is not visible then scroll to it
+        // see https://learn.svelte.dev/tutorial/update for example on scrolling
         if (!elemIsVisible) {
             element.scrollIntoView();
         }
     }
 }
 
-export function classMap(classObj: { [k: string]: any }): string {
-    return Object.entries(classObj)
-        .filter(([name, value]) => name !== "" && value)
-        .map(([name]) => name)
-        .join(" ");
+/**
+ * This calculates the position of the context- or sub-menu, either on x-axis or y-axis
+ * @param viewportSize
+ * @param contentSize
+ * @param mousePosition
+ */
+export function calculatePos(viewportSize: number, contentSize: number, mousePosition: number): number {
+    let result: number;
+    // see if the menu will fit in the editor view, if not: position it left/up, not right/down of the mouse click
+    if (viewportSize - mousePosition < contentSize) {
+        result = mousePosition - contentSize;
+    } else {
+        result = mousePosition;
+    }
+    // if the result should be outside the editor view, then position it on the leftmost/uppermost point
+    if (result < 0) {
+        result = 0;
+    }
+    return result;
 }
 
 export function executeCustomKeyboardShortCut(event: KeyboardEvent, index: number, box: Box, editor: FreEditor) {
     const cmd: FreCommand = FreEditorUtil.findKeyboardShortcutCommand(toFreKey(event), box, editor);
     if (cmd !== FRE_NULL_COMMAND) {
         let postAction: FrePostAction;
-        runInAction(() => {
+        AST.change(() => {
+            // todo KeyboardEvent does not have an "action" prop, so what is happening here?
             const action = event["action"];
             if (!!action) {
                 action();

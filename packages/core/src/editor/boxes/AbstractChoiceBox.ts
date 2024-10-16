@@ -1,8 +1,9 @@
-import { FreNode } from "../../ast";
-import { FreUtils } from "../../util";
-import { BehaviorExecutionResult, FreCaret, FreKey } from "../util";
-import { BoxFactory, FreEditor } from "../internal";
-import { Box, ChoiceTextHelper, SelectOption, TextBox } from "./internal";
+import { autorun } from "mobx"
+import { FreNode } from "../../ast/index.js";
+import { FreUtils } from "../../util/index.js";
+import { BehaviorExecutionResult, FreCaret, FreKey } from "../util/index.js";
+import { BoxFactory, FreEditor } from "../internal.js";
+import { Box, ChoiceTextHelper, SelectOption, TextBox } from "./internal.js";
 
 export abstract class AbstractChoiceBox extends Box {
     kind: string = "AbstractChoiceBox";
@@ -35,6 +36,10 @@ export abstract class AbstractChoiceBox extends Box {
         );
         this.textHelper.box = this._textBox;
     }
+    
+    override get children(): Box[] {
+        return [this.textBox]
+    }
 
     get textBox(): TextBox {
         // TODO Does this need to be done every time the textbox is requested?
@@ -44,9 +49,60 @@ export abstract class AbstractChoiceBox extends Box {
         return this._textBox;
     }
 
-    getSelectedOption(): SelectOption | null {
+    override set hasError(val: boolean) {
+        this._hasError = val;
+        this._textBox.hasError = val;
+        this.isDirty();
+    }
+
+    override get errorMessages(): string[] {
+        return this._textBox.errorMessages;
+    }
+
+    override addErrorMessage(val: string | string[]) {
+        // this._errorMessages.push(val);
+        this._textBox.addErrorMessage(val);
+        this.isDirty();
+    }
+
+    override resetErrorMessages() {
+        this._errorMessages = [];
+        this._textBox.resetErrorMessages();
+        this.isDirty();
+    }
+
+    // If true, then this box should carry all error messages on the line.
+    set isFirstInLine(v: boolean) {
+        this._textBox.isFirstInLine = v
+    }
+    get firstInLine(): boolean {
+        return this._textBox.isFirstInLine
+    }
+
+    _getSelectedOption(): SelectOption | null {
         return null;
     }
+
+    set getSelectedOption( value: () => SelectOption | null) {
+        this._getSelectedOption = value
+        this.isDirty()
+        autorun( () => {
+            this._getSelectedOption()
+            this.isDirty()
+        })
+    }
+    get getSelectedOption(): () => SelectOption | null {
+        return this._getSelectedOption
+    }
+
+    // protected setSelectedOptionExec(value: () => SelectOption | null): SelectOption | null {
+    //     this._getSelectedOption = value
+    //     this.isDirty()
+    //     autorun( () => {
+    //         this._getSelectedOption()
+    //         this.isDirty()
+    //     })
+    // }
 
     // @ts-ignore
     // parameter is present to support subclasses
@@ -56,14 +112,16 @@ export abstract class AbstractChoiceBox extends Box {
 
     // @ts-ignore
     // parameter is present to support subclasses
-    selectOption(editor: FreEditor, option: SelectOption): BehaviorExecutionResult {
-        console.error("AbstractChoiceBox.selectOption");
+    executeOption(editor: FreEditor, option: SelectOption): BehaviorExecutionResult {
+        console.error("AbstractChoiceBox.executeOption");
         return BehaviorExecutionResult.NULL;
     }
 
-    setCaret: (caret: FreCaret) => void = (caret: FreCaret) => {
+    setCaret: (caret: FreCaret, editor: FreEditor) => void = (caret: FreCaret, editor: FreEditor) => {
         if (!!this.textBox) {
             this.textBox.setCaret(caret);
+            // todo remove if and when editor.selectedCaretPosition can be removed
+            editor.selectedCaretPosition = caret;
         }
     };
 
@@ -88,10 +146,6 @@ export abstract class AbstractChoiceBox extends Box {
     triggerKeyDownEvent: (key: FreKey) => void = () => {
         /* To be overwritten by `AbstractChoiceComponent` */
     };
-
-    public deleteWhenEmpty1(): boolean {
-        return false;
-    }
 
     isEditable(): boolean {
         return true;

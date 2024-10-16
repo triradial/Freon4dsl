@@ -12,7 +12,7 @@ import {
     RtObject,
     RtError,
 } from "@freon4dsl/core";
-import { ExampleInterpreterInit } from "./gen/ExampleInterpreterInit";
+import { ExampleInterpreterInit } from "./gen/ExampleInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;

@@ -1,7 +1,7 @@
-import { FreOwnerDescriptor, FreNode, FreNamedNode } from "../ast";
-import { FreWriter } from "../writer";
-import { FreType } from "./FreType";
-import { FreParseLocation } from "../reader";
+import { FreOwnerDescriptor, FreNode, FreNamedNode } from "../ast/index.js";
+import { FreWriter } from "../writer/index.js";
+import { FreType } from "./FreType.js";
+import { FreParseLocation } from "../reader/index.js";
 
 class NamedNode implements FreNamedNode {
     static environment: NamedNode;
@@ -83,6 +83,8 @@ export class AstType implements FreType {
         if (!!this.astElement) {
             if (this.astElement === AstType.ANY) {
                 return "ANY";
+            } else if (!!this.astElement["name"]) { // Note "name" must refer to the property of FreNamedNode!
+                return writer.writeNameOnly(this.astElement);
             } else {
                 return writer.writeToString(this.astElement);
             }

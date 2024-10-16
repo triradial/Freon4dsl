@@ -3,11 +3,11 @@
     "access": "public"
   },
   "name": "@freon4dsl/core-svelte",
-  "version": "0.7.0-beta",
+  "version": "0.7.0-beta5",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/freon4dsl/Freon4dsl"
+    "url": "git+https://github.com/freon4dsl/Freon4dsl.git"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -46,7 +46,7 @@
     "!dist/**/*.spec.*"
   ],
   "devDependencies": {
-    "@freon4dsl/core": "^0.7.0-beta",
+    "@freon4dsl/core": "^0.7.0-beta5",
     "@sveltejs/adapter-auto": "^3.2.1",
     "@sveltejs/kit": "^2.5.10",
     "@sveltejs/package": "^2.3.1",
@@ -73,7 +73,7 @@
     "svelte": "^4.2.17"
   },
   "dependencies": {
-    "@freon4dsl/core": "^0.7.0-beta",
+    "@freon4dsl/core": "^0.7.0-beta5",
     "@material/slider": "^14.0.0",
     "@material/switch": "^14.0.0",
     "@material/web": "^1.5.1",
@@ -81,6 +81,7 @@
     "@tinymce/tinymce-svelte": "^3.0.0",
     "flowbite": "^2.4.1",
     "svelte": "^4.2.17",
-    "svelte-cursor": "^0.1.1"
+    "svelte-cursor": "^0.1.1",
+    "mobx": "^6.12.3"
   }
 }

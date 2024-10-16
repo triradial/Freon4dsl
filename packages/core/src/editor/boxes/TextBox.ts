@@ -1,9 +1,11 @@
-import { FreUtils } from "../../util";
-import { FreCaret, FreCaretPosition } from "../util";
-import { FreNode } from "../../ast";
-import { Box } from "./Box";
-import { FreLogger } from "../../logging";
-import { CharAllowed } from "./CharAllowed";
+import { autorun } from "mobx";
+import { AST } from "../../change-manager/index.js";
+import { FreUtils } from "../../util/index.js";
+import { FreCaret, FreCaretPosition } from "../util/index.js";
+import { FreNode } from "../../ast/index.js";
+import { Box } from "./Box.js";
+import { FreLogger } from "../../logging/index.js";
+import { CharAllowed } from "./CharAllowed.js";
 
 const LOGGER: FreLogger = new FreLogger("TextBox");
 
@@ -17,13 +19,16 @@ export class TextBox extends Box {
     deleteWhenEmpty: boolean = false;
 
     /**
-     * If true, delete element when Erase key is pressed while the element is empty.
+     * If true, delete element when Erase (delete, backspace, etc.) key is pressed while the element is empty.
      */
     deleteWhenEmptyAndErase: boolean = false;
 
+    // If true, then this box should carry all error messages on the line.
+    isFirstInLine: boolean = false;
+
     placeHolder: string = "";
     caretPosition: number = -1;
-    $getText: () => string;
+    $_getText: () => string;
     $setText: (newValue: string) => void;
 
     /**
@@ -32,12 +37,24 @@ export class TextBox extends Box {
      */
     setText(newValue: string): void {
         LOGGER.log("setText to " + newValue);
-        this.$setText(newValue);
+        AST.changeNamed("TextBox.setText", () => {
+            this.$setText(newValue);
+        })
         this.isDirty();
     }
 
     getText(): string {
-        return this.$getText();
+        return this.$_getText();
+    }
+    
+    set $getText( value: () => string ) {
+        const oldvalue = this.$_getText()
+        this.$_getText = value;
+        autorun( () => {
+            const newvalue = this.$_getText()
+            LOGGER.log(`old '${oldvalue}'  new '${newvalue}'`)
+            this.isDirty()
+        })
     }
 
     isCharAllowed: (currentText: string, key: string, index: number) => CharAllowed = () => {
@@ -53,13 +70,11 @@ export class TextBox extends Box {
     ) {
         super(node, role);
         FreUtils.initializeObject(this, initializer);
-        this.$getText = getText;
+        this.$_getText = getText;
         this.$setText = setText;
     }
 
-    public deleteWhenEmpty1(): boolean {
-        return this.deleteWhenEmpty;
-    }
+
 
     // INTERNAL FUNCTIONS
 

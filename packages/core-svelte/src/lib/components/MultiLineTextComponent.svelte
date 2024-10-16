@@ -3,16 +3,16 @@
 <!-- (cursor or selected text), when the switch is being made. -->
 
 <script lang="ts">
+	import { MULTILINETEXT_LOGGER } from "$lib/components/ComponentLoggers.js";
 	import { afterUpdate, onMount } from "svelte";
 	import { componentId } from "$lib/index.js";
-	import { FreEditor, FreLogger, MultiLineTextBox } from "@freon4dsl/core";
+	import { FreEditor, MultiLineTextBox } from "@freon4dsl/core";
 
-	import { runInAction } from "mobx";
 	// Probably needed to code/encode HTML inside <TextArea>
 	// import { replaceHTML } from "./svelte-utils/index.js";
 
 	// TODO find out better way to handle muting/unmuting of LOGGERs
-    const LOGGER = new FreLogger("MultiLineTextComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
+    const LOGGER = MULTILINETEXT_LOGGER
 
     // Parameters
     export let box: MultiLineTextBox;		// the accompanying box
@@ -62,14 +62,12 @@
      */
 	const onFocusOut = (e) => {
 		LOGGER.log("onFocusOut " + id)
-		runInAction(() => {
 			if (text !== box.getText()) {
 				LOGGER.log(`   text is new value`)
 				box.setText(text);
 			} else {
 				LOGGER.log("Text is unchanged: " + text)
 			}
-		});
 	}
 
 	const refresh = () => {

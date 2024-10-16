@@ -1,5 +1,5 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
-import { BoxFactory, FreError, FreErrorSeverity, FreLogger, InMemoryModel, FreUtils } from "@freon4dsl/core";
+import { AST, BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, FreUtils } from "@freon4dsl/core";;
 import type { FreEnvironment, FreNode, FreModel, FreModelUnit, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
 import { get } from "svelte/store";
 import { currentModelName, currentUnitName, editorProgressShown, noUnitAvailable, units, unitNames } from "../components/stores/ModelStore.js";
@@ -34,12 +34,14 @@ export class EditorState {
         this.modelStore.addCurrentModelListener(this.modelChanged);
     }
 
+    // todo see whether we can use only the editor.rootElement as currentUnit
     private __currentUnit: FreModelUnit = null;
     get currentUnit(): FreModelUnit {
         return this.__currentUnit;
     }
     set currentUnit(unit: FreModelUnit) {
         this.__currentUnit = unit;
+        FreUndoManager.getInstance().currentUnit = unit
         currentUnitName.set({ name: this?.currentUnit?.name, id: this?.currentUnit?.freId() });
     }
 
@@ -389,7 +391,10 @@ export class EditorState {
                 this.langEnv.editor.rootElement = newUnit;
             });
             this.currentUnit = newUnit;
-            this.getErrors();
+            // todo reinstate the following statement
+            // this.getErrors();
+            // for now:
+            WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
         } else {
             noUnitAvailable.set(true);
             runInAction(() => {
@@ -417,13 +422,19 @@ export class EditorState {
         if (!!this.currentUnit) {
             try {
                 const list = this.langEnv.validator.validate(this.currentUnit);
+                WebappConfigurator.getInstance().editorEnvironment.editor.setErrors(list);
                 modelErrors.set(list);
             } catch (e: unknown) {
                 // catch any errors regarding erroneously stored model units
                 if (e instanceof Error) {
-                    LOGGER.log(e.message);
+                    console.log(e.message + e.stack);
                     modelErrors.set([
-                        new FreError("Problem reading model unit: '" + e.message + "'", this.currentUnit, this.currentUnit.name, FreErrorSeverity.Error),
+                        new FreError(
+                            "Problem validating model unit: '" + e.message + "'",
+                            this.currentUnit,
+                            this.currentUnit.name,
+                            FreErrorSeverity.Error,
+                        ),
                     ]);
                 }
             }

@@ -1,5 +1,7 @@
 <svelte:options immutable={true}/>
 <script lang="ts">
+    import { LIST_LOGGER } from "$lib/components/ComponentLoggers.js";
+
     /**
      * This component shows a list of elements that have the same type (a 'true' list).
      * It can be shown horizontally or vertically, both are displayed as a grid with one
@@ -17,7 +19,7 @@
     export let editor: FreEditor;
 
     // Local state variables
-    let LOGGER: FreLogger = new FreLogger("ListComponent");
+    let LOGGER: FreLogger = LIST_LOGGER
     let id: string;                             // an id for the html element showing the list
     let htmlElement: HTMLSpanElement;
     let isHorizontal: boolean;                  // indicates whether the list should be shown horizontally or vertically
@@ -206,5 +208,5 @@
 		</span>
     {/each}
 </span>
-
+<!--                on:contextmenu|stopPropagation|preventDefault={(event) => showContextMenu(event, index)}-->
 

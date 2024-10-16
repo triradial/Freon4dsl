@@ -1,6 +1,6 @@
 // Generated my Freon once, will NEVER be overwritten.
         import { InterpreterContext, IMainInterpreter, RtObject } from "@freon4dsl/core";
-        import { UndoModelInterpreterBase } from "./gen/UndoModelInterpreterBase";
+        import { UndoModelInterpreterBase } from "./gen/UndoModelInterpreterBase.js";
 
         let main: IMainInterpreter;
 

@@ -1,15 +1,19 @@
 import { action, makeObservable } from "mobx";
-import { FreUtils } from "./internal";
-import { Box, FreEditor } from "../editor";
-import { FreBinaryExpression, FreNode, FreExpressionNode } from "../ast";
-import { isFreBinaryExpression, isFreExpression } from "../ast-utils";
-import { FreLogger } from "../logging";
+import { AST } from "../change-manager/index.js";
+import { FreUtils, isNullOrUndefined } from "./internal.js";
+import { Box, FreEditor } from "../editor/index.js";
+import { FreBinaryExpression, FreNode, FreExpressionNode } from "../ast/index.js";
+import { isFreBinaryExpression, isFreExpression } from "../ast-utils/index.js";
+import { FreLogger } from "../logging/index.js";
 
 // reserved role names for expressions, use with care.
+// TODO sort out the following const, they seems to be overlapping
 export const FRE_BINARY_EXPRESSION_LEFT = "FreBinaryExpression-left";
 export const FRE_BINARY_EXPRESSION_RIGHT = "FreBinaryExpression-right";
 export const BEFORE_BINARY_OPERATOR = "binary-pre";
 export const AFTER_BINARY_OPERATOR = "binary-post";
+// LEFT_MOST and RIGHT_MOST are the action boxes to the extreme right and left of a complete expression
+// BEFORE_BINARY_OPERATOR and AFTER_BINARY_OPERATOR are the action boxes that are before and after a singular binary operator
 export const LEFT_MOST = "exp-left";
 export const RIGHT_MOST = "exp-right";
 export const BINARY_EXPRESSION = "binary-expression";
@@ -17,6 +21,14 @@ export const EXPRESSION = "expression";
 export const EXPRESSION_SYMBOL = "symbol";
 
 const LOGGER = new FreLogger("BalanceTree");
+
+export function isExpressionPreOrPost(box: Box) : boolean {
+    return isNullOrUndefined(box) ||
+        box.role.includes(BEFORE_BINARY_OPERATOR) ||
+        box.role.includes(AFTER_BINARY_OPERATOR) ||
+        box.role.includes(LEFT_MOST) ||
+        box.role.includes(RIGHT_MOST);
+}
 
 /**
  * Type to export the element that needs top be selected after an expression has been inserted.
@@ -105,6 +117,7 @@ class BTree {
     }
 
     insertBinaryExpression(newBinExp: FreBinaryExpression, box: Box, editor: FreEditor): Selected | null {
+        FreUtils.CHECK(AST.isInChange, "Method `insertBinaryExpression` should be called inside AST.change()")
         LOGGER.log("insertBinaryExpression for " + box.node);
         let selectedElement: Selected | null = null;
         FreUtils.CHECK(
@@ -154,6 +167,7 @@ class BTree {
      * Works when `exp` has just been added to the tree.
      */
     balanceTree(binaryExp: FreBinaryExpression, editor: FreEditor) {
+        FreUtils.CHECK(AST.isInChange, "Method `insertBinaryExpression` should be called inside AstChange()")
         const ownerDescriptor = binaryExp.freOwnerDescriptor();
         const left = binaryExp.freLeft();
         if (isFreBinaryExpression(left)) {

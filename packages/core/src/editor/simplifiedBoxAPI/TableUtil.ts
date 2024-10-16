@@ -6,13 +6,13 @@ import {
     TableBoxRowOriented,
     TableCellBox,
     TableRowBox,
-} from "../boxes";
-import { Box, FreBoxProvider, FreProjectionHandler, GridOrientation } from "../index";
-import { FreNode } from "../../ast";
-import { isNullOrUndefined, FreUtils } from "../../util";
-import { FreLanguage } from "../../language";
-import { RoleProvider } from "./RoleProvider";
-import { FreHeaderProvider } from "../projections/FreHeaderProvider";
+} from "../boxes/index.js";
+import { Box, FreBoxProvider, FreProjectionHandler, GridOrientation } from "../index.js";
+import { FreNode } from "../../ast/index.js";
+import { isNullOrUndefined, FreUtils } from "../../util/index.js";
+import { FreLanguage } from "../../language/index.js";
+import { RoleProvider } from "./RoleProvider.js";
+import { FreHeaderProvider } from "../projections/FreHeaderProvider.js";
 
 // import { FreLogger } from "../../logging";
 // const LOGGER = new FreLogger("NewTableUtil");
@@ -68,7 +68,7 @@ export class TableUtil {
         hasHeaders: boolean,
     ): TableRowBox {
         if (isNullOrUndefined(rowIndex)) {
-            console.log("NO rowIndex for TableRowBox! " + node.freLanguageConcept() + node.freId());
+            console.error("NO rowIndex for TableRowBox! " + node.freLanguageConcept() + node.freId());
         }
         // Note that css grid counts from 1, not 0, which is common in lists.
         let gridIndex: number;

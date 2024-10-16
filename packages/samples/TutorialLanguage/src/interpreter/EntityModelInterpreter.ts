@@ -1,6 +1,6 @@
 // Generated my Freon once, will NEVER be overwritten.
         import { InterpreterContext, IMainInterpreter, RtObject } from "@freon4dsl/core";
-        import { EntityModelInterpreterBase } from "./gen/EntityModelInterpreterBase";
+        import { EntityModelInterpreterBase } from "./gen/EntityModelInterpreterBase.js";
 
         let main: IMainInterpreter;
 

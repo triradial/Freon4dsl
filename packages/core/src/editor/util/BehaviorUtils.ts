@@ -1,6 +1,7 @@
 import { runInAction } from "mobx";
-import { isRegExp, isString, Box, FreEditor, FrePostAction, FreAction } from "../index";
-import { FreLogger } from "../../logging";
+import { AST } from "../../change-manager/index.js";
+import { isRegExp, isString, Box, FreEditor, FrePostAction, FreAction } from "../index.js";
+import { FreLogger } from "../../logging/index.js";
 
 const LOGGER: FreLogger = new FreLogger("BehaviorUtils");
 
@@ -92,14 +93,11 @@ export function executeBehavior(box: Box, text: string, label: string, editor: F
 export function executeSingleBehavior(
     action: FreAction,
     box: Box,
-    text: string,
     label: string,
     editor: FreEditor,
 ): BehaviorExecutionResult {
     LOGGER.log(
-        "Enter executeSingleBehavior text [" +
-            text +
-            "] label [" +
+        "Enter executeSingleBehavior label [" +
             label +
             "] refshortcut [" +
             action.referenceShortcut +
@@ -108,28 +106,12 @@ export function executeSingleBehavior(
     let execresult: FrePostAction;
 
     const index = -1; // todo get the correct index
-    runInAction(() => {
+    AST.change(() => {
         const command = action.command();
         execresult = command.execute(box, label, editor, index);
     });
     if (!!execresult) {
         execresult();
-
-        // TODO The following ensured that the cursor gets the correct focus after the change.  probably still needed.
-        // if (!!action.boxRoleToSelect) {
-        //     editor.selectBoxByRoleAndElementId(execresult.freId(),action.boxRoleToSelect,action.caretPosition);
-        // }else {
-        //     editor.selectFirstLeafChildBox();
-        //     if (editor.selectedBox.role.includes(LEFT_MOST)){
-        //         // Special expression prefix box, don't select it
-        //         editor.selectNextLeaf()
-        //     }
-        // }
     }
-    // TODO Probably needed to focus on the correct element.
-    // if( !!execresult){
-    //     await editor.selectElement(execresult, LEFT_MOST);
-    //     editor.selectFirstLeafChildBox();
-    // }
     return BehaviorExecutionResult.EXECUTED;
 }
