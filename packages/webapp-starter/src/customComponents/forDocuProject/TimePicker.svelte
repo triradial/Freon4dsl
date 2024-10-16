@@ -2,7 +2,6 @@
     import { afterUpdate, onMount } from "svelte";
     import { ExternalStringBox, FreEditor } from "@freon4dsl/core";
     export let box: ExternalStringBox;
-    export let editor: FreEditor;
 
     let inputElement;
     let value: string = "";

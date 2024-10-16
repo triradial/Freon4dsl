@@ -47,7 +47,8 @@ import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference.
 // The EventSchedule's EventWindow, RepeatExpression, and EventTimeOfDay are empty.
 export function createWhenEventSchedule(eventName: string, eventState: EventState, operator: SimpleOperators, timeAmount: TimeAmount) {
-    let referenceToOperator = FreNodeReference.create(operator, "SimpleOperators");
+    let referenceToOperator = FreNodeReference.create<SimpleOperators>(operator, "SimpleOperators");
+
     // console.log("createWhenEventSchedule eventName: " + eventName + " eventState: " + eventState + " operator: " + operator + " timeAmount: " + timeAmount.value + " " + timeAmount.unit.name);
     let referenceToEventState = FreNodeReference.create(eventState, "EventState");
     const freNodeReference = FreNodeReference.create<Event>(eventName, "Event");
@@ -133,7 +134,7 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(
     let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
     createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-    let referenceToOperator = FreNodeReference.create<SimpleOperators>("plus", "SimpleOperators");
+    let referenceToOperator = FreNodeReference.create<SimpleOperators>("+", "SimpleOperators");
     let days = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
 
     const studyStart = StudyStart.create({

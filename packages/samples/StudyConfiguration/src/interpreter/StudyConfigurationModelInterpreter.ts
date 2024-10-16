@@ -16,8 +16,8 @@ let main: IMainInterpreter;
 
 function calcTimeAmount(value: number, unit: string): RtObject {
     let unitAmount: number;
-    console.log("entered calcTimeAmount");
-    console.log("calcTimeAmount: value: " + value + ", unit: " + unit);
+    // console.log("entered calcTimeAmount");
+    // console.log("calcTimeAmount: value: " + value + ", unit: " + unit);
     if (unit === "hours") {
         unitAmount = 1 / 24; // Assuming 1 hour is 1/24 of a day
     } else if (unit === "days") {
@@ -32,7 +32,7 @@ function calcTimeAmount(value: number, unit: string): RtObject {
         throw new RtError("calcTimeAmount: unit of: " + unit + " not implemented");
     }
     let result = value * unitAmount;
-    console.log("calcTimeAmount: result: " + result);
+    // console.log("calcTimeAmount: result: " + result);
     return new RtNumber(result);
 }
 
@@ -180,10 +180,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
     evalEventStart(node: language.EventStart, ctx: InterpreterContext): RtObject {
         if (node instanceof language.Day) {
-            console.log("evalEventStart: node is a Day");
+            // console.log("evalEventStart: node is a Day");
             return main.evaluate(node, ctx);
         } else if (node instanceof language.When) {
-            console.log("evalEventStart: node is a When");
+            // console.log("evalEventStart: node is a When");
             return main.evaluate(node, ctx);
         } else {
             throw new RtError("evalEventSchedule: eventStart is not a Day or When");
