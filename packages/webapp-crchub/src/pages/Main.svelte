@@ -3,18 +3,21 @@
     import { ROUTE } from "../constants/routeConstants";
     import { LABEL } from "../constants/labelConstants";
 
-    import { getStudy, type Study, getPatient, type Patient } from "../services/datastore";
-    import { addDrawer, setDrawerVisibility } from "../services/drawerStore";
+    import { getStudy, type Study, getPatient, type Patient } from "../services/dataStore";
+    import { addDrawer, setDrawerVisibility } from "../services/sideDrawerStore";
 
     import NavBar from "../components/common/NavBar.svelte";
     import Breadcrumb from "../components/common/Breadcrumb.svelte";
     import { currentRoute, type RouteData } from "../services/routeStore";
 
-    import DrawerSystem from "../components/common/DrawerSystem.svelte";
+    import SideDrawerSystem from "../components/common/SideDrawerSystem.svelte";
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
     import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
     import StudyTimelineTableDrawer from "../components/drawers/StudyTimelineTableDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
+
+    import ObjectDrawerSystem from "../components/common/ObjectDrawerSystem.svelte";
+    import { addObject, editObject } from "../services/objectDrawerStore";
 
     import HomeContent from "../content/Home.svelte";
     import StudiesContent from "../content/Studies.svelte";
@@ -27,6 +30,9 @@
 
     let contentComponent: typeof SvelteComponent;
     let breadcrumbItems: { label: string; href?: string }[] = [];
+
+    setContext('addObject', addObject);
+    setContext('editObject', editObject);
 
     onMount(() => {
         addDrawer({ key: "help", icon: faQuestion, component: HelpDrawer, title: "Help", description: "Help for application.", supportsRefresh: false, defaultWidth: 900 });
@@ -139,6 +145,7 @@
                 <p>Error loading content: {error.message}</p>
             {/await}
         </main>
-        <DrawerSystem />
+        <ObjectDrawerSystem />
+        <SideDrawerSystem />
     </div>
 </div>

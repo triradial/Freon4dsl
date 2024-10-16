@@ -6,7 +6,7 @@ import { WebappConfigurator } from "@freon4dsl/webapp-lib";
 import { StudyConfigurationModelEnvironment} from "@freon4dsl/samples-study-configuration";
 import { ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
-import { initializeDatastore } from './services/datastore';
+import { initializeDatastore } from './services/dataStore';
 
 import DatePicker from "./components/custom/DatePicker.svelte";
 

@@ -1,6 +1,9 @@
 /* begin CUSTOM APP STYLES */
 
 :root {
+  --standard-font-size: 0.75rem;
+  --small-font-size: 0.625rem;
+  --large-font-size: 0.875rem;
 
   --black: #000000;
   --black-90t: #000000e6;
@@ -246,7 +249,7 @@ button,
 select,
 textarea {
   font-family: inherit;
-  font-size: inherit;
+  font-size: var(--standard-font-size);
   -webkit-padding: 0.4em 0;
   padding: 0.4em;
   margin: 0 0 0.5em 0;
@@ -548,7 +551,7 @@ appnav a:hover {
 
 /* #region Card */
 .crc-card {
-  padding: 0 0.25rem 0 0;
+  padding: 0.25rem 0.25rem 0 0;
   width: 16rem;
   height: calc(100vh - 5.75rem);
   border-radius: 0px;
@@ -557,6 +560,18 @@ appnav a:hover {
 .crc-card-area {
   padding: 0.5rem 0.5rem 0.5rem 1rem;
   border-radius: 0px;
+}
+
+.crc-field {
+  font-size: var(--standard-font-size);
+  line-height: 1rem;
+  padding: 0.5rem;
+}
+
+.crc-field.error {
+  border-color: rgb(161, 17, 17) !important;
+  background-color: rgb(233, 204, 209) !important;
+  color: rgb(161, 17, 17) !important;
 }
 
 /* #endregion */
