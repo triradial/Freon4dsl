@@ -36,10 +36,10 @@ import {
     StudyConfiguration,
     PatientInfo,
     PatientHistory,
-} from "../language/gen";
+} from "../language/gen/index.js";
 
 import { RoleProvider } from "@freon4dsl/core";
-import { ExtendedEvent, extension } from "../custom/extensions/ExtensionLib";
+import { ExtendedEvent, extension } from "../custom/extensions/ExtensionLib.js";
 
 /**
  * Class CustomStudyConfigurationModelActions provides an entry point for the language engineer to

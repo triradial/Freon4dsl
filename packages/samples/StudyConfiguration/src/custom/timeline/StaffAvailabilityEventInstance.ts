@@ -1,7 +1,6 @@
-import { Time } from "language/gen";
-import { TimelineInstanceState } from "./TimelineEventInstance";
-import { TimelineEventInstance } from "./TimelineEventInstance";
-import { Timeline } from "./Timeline";
+import { TimelineInstanceState } from "./TimelineEventInstance.js";
+import { TimelineEventInstance } from "./TimelineEventInstance.js";
+import { Timeline } from "./Timeline.js";
 
 export class StaffAvailabilityEventInstance extends TimelineEventInstance {
     staffAvailable: number;

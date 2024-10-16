@@ -1,47 +1,45 @@
-import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
-import {
-    StudyConfiguration,
-    Period,
-    Event,
-    EventSchedule,
-    Day,
-    PlusExpression,
-    When,
-    NumberLiteralExpression,
-    EventReference,
-    RepeatCondition,
-    RepeatUnit,
-    Days,
-    EventWindow,
-    EventState,
-    SimpleOperators,
-    TimeAmount,
-    StudyStart,
-    TimeUnit,
-    Weekly,
-    PatientVisit,
-    PatientHistory,
-    PatientInfo,
-    VisitDate,
-    Month,
-    PatientVisitStatus,
-    Availability,
-    StaffLevel,
-    DateRange,
-    StartRangeDate,
-    TimeAmountPart,
-} from "../../language/gen/index";
+import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
+import { StudyConfiguration } from "../../language/gen/index.js";
+import { Period } from "../../language/gen/index.js";
+import { Event } from "../../language/gen/index.js";
+import { EventSchedule } from "../../language/gen/index.js";
+import { Day } from "../../language/gen/index.js";
+import { PlusExpression } from "../../language/gen/index.js";
+import { When } from "../../language/gen/index.js";
+import { NumberLiteralExpression } from "../../language/gen/index.js";
+import { EventReference } from "../../language/gen/index.js";
+import { RepeatCondition } from "../../language/gen/index.js";
+import { RepeatUnit } from "../../language/gen/index.js";
+import { Days } from "../../language/gen/index.js";
+import { EventWindow } from "../../language/gen/index.js";
+import { EventState } from "../../language/gen/index.js";
+import { SimpleOperators } from "../../language/gen/index.js";
+import { TimeAmount } from "../../language/gen/index.js";
+import { StudyStart } from "../../language/gen/index.js";
+import { TimeUnit } from "../../language/gen/index.js";
+import { Weekly } from "../../language/gen/index.js";
+import { PatientVisit } from "../../language/gen/index.js";
+import { PatientHistory } from "../../language/gen/index.js";
+import { PatientInfo } from "../../language/gen/index.js";
+import { VisitDate } from "../../language/gen/index.js";
+import { Month } from "../../language/gen/index.js";
+import { PatientVisitStatus } from "../../language/gen/index.js";
+import { Availability } from "../../language/gen/index.js";
+import { StaffLevel } from "../../language/gen/index.js";
+import { DateRange } from "../../language/gen/index.js";
+import { StartRangeDate } from "../../language/gen/index.js";
+import { TimeAmountPart } from "../../language/gen/index.js";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
-import { Timeline } from "../timeline/Timeline";
-import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance";
-import { TimelineInstanceState } from "../timeline/TimelineEventInstance";
-import { PeriodEventInstance } from "../timeline/PeriodEventInstance";
-import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent";
-import { ScheduledPeriod } from "../timeline/ScheduledPeriod";
+import { Timeline } from "../timeline/Timeline.js";
+import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
+import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
+import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
+import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent.js";
+import { ScheduledPeriod } from "../timeline/ScheduledPeriod.js";
 import * as path from "path";
 import * as fs from "fs";
-import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate";
-import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
+import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
+import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element.
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference.

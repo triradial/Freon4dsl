@@ -1,6 +1,6 @@
 import { nodent, undent } from "@bscotch/utility";
-import { Timeline } from "../../custom/timeline/Timeline";
-import { AbstractTask, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen";
+import { Timeline } from "../../custom/timeline/Timeline.js";
+import { AbstractTask, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 
 export class StudyChecklistDocumentTemplate {
     static getTimelineTablAsMarkdown(timeline: Timeline): string {

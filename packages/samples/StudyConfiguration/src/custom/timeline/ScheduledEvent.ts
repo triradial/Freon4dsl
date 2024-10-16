@@ -14,16 +14,16 @@ import {
     Monthly,
     RepeatEvery,
     RepeatCount,
-} from "../../language/gen/index";
+} from "../../language/gen/index.js";
 import { InterpreterContext, isRtError, ownerOfType, RtBoolean, RtNumber, RtObject } from "@freon4dsl/core";
-import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter";
-import { Timeline } from "./Timeline";
-import { ScheduledEventInstance } from "./ScheduledEventInstance";
-import { TimelineInstanceState } from "./TimelineEventInstance";
-import { PeriodEventInstance } from "./PeriodEventInstance";
-import { TimelineEventInstance } from "./TimelineEventInstance";
+import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter.js";
+import { Timeline } from "./Timeline.js";
+import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
+import { TimelineInstanceState } from "./TimelineEventInstance.js";
+import { PeriodEventInstance } from "./PeriodEventInstance.js";
+import { TimelineEventInstance } from "./TimelineEventInstance.js";
 import { repeat } from "lodash";
-import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration";
+import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration.js";
 import { start } from "repl";
 
 export enum ScheduledEventState {

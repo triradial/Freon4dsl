@@ -1,17 +1,15 @@
-import { Timeline } from "../timeline/Timeline";
-import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance";
-import { Period } from "../../language/gen/index";
-import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter";
+import { Timeline } from "../../custom/timeline/Timeline.js";
+import { Period } from "../../language/gen/index.js";
 
 export class TimelineTableTemplate {
-    static getTimelineTableHTMLStyles(external:boolean=false): string {
+    static getTimelineTableHTMLStyles(external: boolean = false): string {
         var template = ``;
         if (external == false) {
             return template;
         } else {
             return ``;
         }
-    }   
+    }
 
     static getTimelineTableHTML(timeline: Timeline): string {
         var template = `
@@ -75,5 +73,4 @@ ${timeline
 </html>
 `;
     }
-
 }

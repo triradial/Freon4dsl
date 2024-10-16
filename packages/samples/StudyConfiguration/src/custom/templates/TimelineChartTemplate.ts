@@ -1,6 +1,6 @@
-import { Timeline } from "custom/timeline/Timeline";
-import { ScheduledEventInstance } from "custom/timeline/ScheduledEventInstance";
-import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter";
+import { Timeline } from "../../custom/timeline/Timeline.js";
+import { ScheduledEventInstance } from "../../custom/timeline/ScheduledEventInstance.js";
+import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 import { nodent, undent } from "@bscotch/utility";
 
 let uniqueCounter = 0;

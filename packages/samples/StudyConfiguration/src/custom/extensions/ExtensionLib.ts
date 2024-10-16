@@ -1,5 +1,5 @@
 import { FreNodeReference } from "@freon4dsl/core";
-import { Event, When } from "../../language/gen/index";
+import { Event, When } from "../../language/gen/index.js";
 export type Constructor22 = new (...args: any[]) => {};
 
 /**

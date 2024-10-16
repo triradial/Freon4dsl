@@ -1,8 +1,8 @@
-import { Timeline } from "./Timeline";
-import { ScheduledEventInstance } from "./ScheduledEventInstance";
-import { BinaryExpression, Day, EventStart, Period, StudyConfiguration, StudyStart } from "../../language/gen";
-import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent";
-import { ScheduledPeriod } from "./ScheduledPeriod";
+import { Timeline } from "./Timeline.js";
+import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
+import { BinaryExpression, Day, EventStart, Period, StudyConfiguration, StudyStart } from "../../language/gen/index.js";
+import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
+import { ScheduledPeriod } from "./ScheduledPeriod.js";
 
 // StudyConfigurationSchedule is a wrapper around a StudyConfiguration that manages access to instances of ScheduledPeriods and ScheduledEvents of those periods.
 // These classes have the behavior needed for simulation and timelines that are not part of the DSL-based StudyConfiguration.

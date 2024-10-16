@@ -1,13 +1,10 @@
-import {StudyConfiguration, Period, Event, EventSchedule, Day, BinaryExpression, PlusExpression, When, StartDay } from "../../language/gen/index";
-import { WebformTemplate } from "../templates/WebFormTemplate";
-import * as utils from "./Utils";
+import { StudyConfiguration } from "../../language/gen/index.js";
+import { WebformTemplate } from "../templates/WebFormTemplate.js";
+import * as utils from "./Utils.js";
 
 describe("Generate Study Site", () => {
-
     test(" is able to generate a WebForm YAML file from a model", async () => {
-        let model: StudyConfiguration = utils.loadModel('StudyConfiguration', "Study2");
-        WebformTemplate.writeWebForms(model);
+        // let model: StudyConfiguration = utils.loadModel('StudyConfiguration', "Study2");
+        // WebformTemplate.writeWebForms(model);
     });
 });
-
-

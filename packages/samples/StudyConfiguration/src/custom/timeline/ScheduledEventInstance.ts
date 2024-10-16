@@ -1,6 +1,6 @@
-import { ScheduledEvent } from "./ScheduledEvent";
-import { Timeline } from "./Timeline";
-import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance";
+import { ScheduledEvent } from "./ScheduledEvent.js";
+import { Timeline } from "./Timeline.js";
+import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
 
 /*
  * Represents an instance of a scheduled event on a day on the timeline.

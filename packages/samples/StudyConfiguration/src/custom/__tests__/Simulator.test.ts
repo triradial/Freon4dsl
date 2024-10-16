@@ -1,31 +1,30 @@
-import * as Sim from "../simjs/sim.js";
-import { Timeline } from "../timeline/Timeline";
-import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance";
-import { PeriodEventInstance } from "../timeline/PeriodEventInstance";
-import { TimelineEventInstance, TimelineInstanceState } from "../timeline/TimelineEventInstance";
-import { Simulator } from "../timeline/Simulator";
-import {
-    StudyConfiguration,
-    Period,
-    Event,
-    StudyConfigurationModel,
-    PatientInfo,
-    PatientVisit,
-    PatientHistory,
-    Availability,
-    PatientNotAvailable,
-    DateRange,
-} from "../../language/gen/index";
+import { Timeline } from "../timeline/Timeline.js";
+import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
+import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
+import { TimelineEventInstance } from "../timeline/TimelineEventInstance.js";
+import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
+import { Simulator } from "../timeline/Simulator.js";
+import { StudyConfiguration } from "../../language/gen/index.js";
+import { Period } from "../../language/gen/index.js";
+import { Event } from "../../language/gen/index.js";
+import { StudyConfigurationModel } from "../../language/gen/index.js";
+import { PatientInfo } from "../../language/gen/index.js";
+import { PatientVisit } from "../../language/gen/index.js";
+import { PatientHistory } from "../../language/gen/index.js";
+import { Availability } from "../../language/gen/index.js";
+import { PatientNotAvailable } from "../../language/gen/index.js";
+import { DateRange } from "../../language/gen/index.js";
 import * as utils from "./Utils";
-import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate";
-import { TimelineTableTemplate } from "../templates/TimelineTableTemplate";
-import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate";
+import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
+import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
+import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate.js";
 import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
-import { ScheduledEventState } from "../timeline/ScheduledEvent";
-import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";
+import { ScheduledEventState } from "../timeline/ScheduledEvent.js";
+import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
+import { Sim } from "../simjs/sim.js";
 
 describe("Study Simulation", () => {
-    var simulator;
+    let simulator;
     const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
     var studyConfigurationUnit: StudyConfiguration;
     var studyConfigurationModel: StudyConfigurationModel;

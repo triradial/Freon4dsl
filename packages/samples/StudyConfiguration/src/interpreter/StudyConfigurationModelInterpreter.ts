@@ -1,16 +1,14 @@
 // Generated my Freon once, will NEVER be overwritten.
 import { InterpreterContext, IMainInterpreter, RtObject, RtError, RtNumber, RtBoolean, RtString, ownerOfType } from "@freon4dsl/core";
-import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfigurationModelInterpreterBase";
-import * as language from "../language/gen/index";
-import { Timeline } from "../custom/timeline/Timeline";
-
+import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfigurationModelInterpreterBase.js";
+import * as language from "../language/gen/index.js";
+import { Timeline } from "../custom/timeline/Timeline.js";
 import * as Sim from "../custom/simjs/sim.js";
-import { Simulator } from "../custom/timeline/Simulator";
-import { StudyConfiguration, StudyConfigurationModel } from "../custom/../language/gen/index";
-import { StudyConfigurationModelEnvironment } from "../custom/../config/gen/StudyConfigurationModelEnvironment";
-import { TimelineChartTemplate } from "../custom/templates/TimelineChartTemplate";
-import { TimelineTableTemplate } from "../custom/templates/TimelineTableTemplate";
-import { RtObjectScheduledEventWrapper, ScheduledEvent } from "custom/timeline/ScheduledEvent";
+import { Simulator } from "../custom/timeline/Simulator.js";
+import { StudyConfiguration, StudyConfigurationModel } from "../custom/../language/gen/index.js";
+import { TimelineChartTemplate } from "../custom/templates/TimelineChartTemplate.js";
+import { TimelineTableTemplate } from "../custom/templates/TimelineTableTemplate.js";
+import { RtObjectScheduledEventWrapper, ScheduledEvent } from "../custom/timeline/ScheduledEvent.js";
 
 let main: IMainInterpreter;
 

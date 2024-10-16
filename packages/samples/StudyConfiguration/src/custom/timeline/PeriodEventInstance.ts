@@ -1,6 +1,6 @@
-import { ScheduledPeriod } from "./ScheduledPeriod";
-import { TimelineInstanceState } from "./TimelineEventInstance";
-import { TimelineEventInstance } from "./TimelineEventInstance";
+import { ScheduledPeriod } from "./ScheduledPeriod.js";
+import { TimelineInstanceState } from "./TimelineEventInstance.js";
+import { TimelineEventInstance } from "./TimelineEventInstance.js";
 
 export class PeriodEventInstance extends TimelineEventInstance {
     scheduledPeriod: ScheduledPeriod;

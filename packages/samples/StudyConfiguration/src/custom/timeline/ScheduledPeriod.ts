@@ -1,5 +1,5 @@
-import { Period } from "../../language/gen/index";
-import { ScheduledEvent } from "./ScheduledEvent";
+import { Period } from "../../language/gen/index.js";
+import { ScheduledEvent } from "./ScheduledEvent.js";
 
 export class ScheduledPeriod {
     configuredPeriod: Period;

@@ -1,11 +1,11 @@
 import { RtBoolean, RtObject } from "@freon4dsl/core";
-import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent";
-import { Availability, Event, PatientHistory, PatientVisit } from "../../language/gen/index";
-import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance";
-import { PeriodEventInstance } from "./PeriodEventInstance";
-import { ScheduledEventInstance } from "./ScheduledEventInstance";
-import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance";
-import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance";
+import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
+import { Availability, Event, PatientHistory, PatientVisit } from "../../language/gen/index.js";
+import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
+import { PeriodEventInstance } from "./PeriodEventInstance.js";
+import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
+import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance.js";
+import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance.js";
 
 /*
  * A Timeline records the events and the days they occur on.

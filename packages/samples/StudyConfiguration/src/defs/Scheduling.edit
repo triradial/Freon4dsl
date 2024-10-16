@@ -67,31 +67,31 @@ RepeatCondition {
 RepeatCount {
     [
         ${repeatCount} time(s)  
-    ] trigger = "Repeat Count: repeat a specific number of times"
+    ] trigger = "repeat count: repeat a specific number of times"
 } 
 
 BetweenTimes {
     [
         starting by ${startTimeAsString replace=TimePicker} and ending by ${endTimeAsString replace=TimePicker}
-    ] trigger = "Between Times: The time of day at which the event must start and end"
+    ] trigger = "between times: The time of day at which the event must start and end"
 } 
 
 StartingBy {
     [
         starting by ${startTimeAsString replace=TimePicker}
-    ] trigger = "Starting By: The time of day at which the event must start"
+    ] trigger = "starting by: The time of day at which the event must start"
 } 
 
 EndingBy {
     [
         ending by ${endTimeAsString replace=TimePicker}
-    ] trigger = "Ending By: The time of day at which the event must end"
+    ] trigger = "ending by: The time of day at which the event must end"
 } 
 
 ComplianceWindow {
     [
         ${maxDaysBefore} day(s) before and ${maxDaysAfter} day(s) after
-    ] trigger = "Compliance Window: The window of days before and after an event during which it must be completed to be compliant"
+    ] trigger = "compliance window: The window of days before and after an event during which it must be completed to be compliant"
 }
 
 EventWindow {
@@ -103,10 +103,10 @@ EventWindow {
 
 EventSchedule {
     [
-    First scheduled ${eventStart}
-    with a window of ${eventWindow}
-    and then repeats ${eventRepeat}
-    limited to ${eventTimeOfDay}
+        First scheduled ${eventStart}
+        with a window of ${eventWindow}
+        and then repeats ${eventRepeat}
+        limited to ${eventTimeOfDay}
     ]
 } 
 

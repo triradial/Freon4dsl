@@ -1,4 +1,3 @@
-import { PatientVisit } from "../../language/gen/PatientVisit";
 import * as Sim from "../simjs/sim.js"
 
 

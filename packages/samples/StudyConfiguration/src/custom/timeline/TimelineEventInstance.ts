@@ -1,5 +1,5 @@
 import { characterSets } from "@bscotch/utility";
-import { Timeline } from "./Timeline";
+import { Timeline } from "./Timeline.js";
 
 export enum TimelineInstanceState {
     Ready,

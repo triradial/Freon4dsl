@@ -35,8 +35,8 @@ import {
     TypeOfEvent,
     PatientInfo,
     PatientHistory,
-} from "../language/gen";
-import { StudyConfigurationModelEnvironment } from "../config/gen/StudyConfigurationModelEnvironment";
+} from "../language/gen/index.js";
+import { StudyConfigurationModelEnvironment } from "../config/gen/StudyConfigurationModelEnvironment.js";
 import { result } from "lodash";
 import { elementFromString } from "@tiptap/core";
 // import { TaskBoxProvider, SystemAccessBoxProvider } from "../editor";

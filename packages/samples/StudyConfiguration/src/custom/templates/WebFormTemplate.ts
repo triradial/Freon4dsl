@@ -1,19 +1,16 @@
 import * as fs from "fs";
-import { FreModelUnit, FreModel, FreNode, FreLanguage, FreLogger, FreLionwebSerializer } from "@freon4dsl/core";
-import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment";  
-import {StudyConfiguration, WorkflowDescription, Event, Task, Description } from "../../language/gen/index";  
+import { StudyConfiguration, WorkflowDescription, Event, Task, Description } from "../../language/gen/index.js";
 // import * as path from 'path';
 
 export class WebformTemplate {
-
     public static writeWebForms(model: StudyConfiguration) {
-      model.periods.forEach((period, periodNumber) => {
-        // log("Period Name:" + period.name);
-        period.events.forEach((event, eventNumber) => {
-          // log("Event Name:" + event.name);
-          // Get the list of tasks that go on this form
-          var tasks = event.tasks;
-          var template = `# TASK WEBFORM - ${event.name} 
+        model.periods.forEach((period, periodNumber) => {
+            // log("Period Name:" + period.name);
+            period.events.forEach((event, eventNumber) => {
+                // log("Event Name:" + event.name);
+                // Get the list of tasks that go on this form
+                var tasks = event.tasks;
+                var template = `# TASK WEBFORM - ${event.name} 
 langcode: en
 status: open
 dependencies: {  }
@@ -46,7 +43,8 @@ elements: |-
       - authenticated
     '#access_view_roles':
       - authenticated
-${tasks.map ((a, counter) => `<#list steps?values as step>
+${tasks.map(
+    (a, counter) => `<#list steps?values as step>
   step_${counter}:
     '#type': checkbox
     '#title': 'Step ${counter} - ${(a as Task).name}'
@@ -62,8 +60,8 @@ ${tasks.map ((a, counter) => `<#list steps?values as step>
         - step-content
     step${counter}_instructions:
       '#type': processed_text
-      '#text': '<div id="container" class="step-detail"><div id="definition" class="step-detail-definition"><ul><li>${(((a as Task).description as Description).text)}</li></ul></div></div>'
-      '#format': full_html`
+      '#text': '<div id="container" class="step-detail"><div id="definition" class="step-detail-definition"><ul><li>${((a as Task).description as Description).text}</li></ul></div></div>'
+      '#format': full_html`,
 )}
   submit_buttons:
     '#type': webform_flexbox
@@ -273,29 +271,28 @@ access:
 handlers: {  }
 variants: {  }`;
 
-          this.writeWebFormToFile(template, event.name);
+                this.writeWebFormToFile(template, event.name);
+            });
         });
-      });
     }
 
     private static writeWebFormToFile(webFormYaml: string, formName: string) {
-      // // log("template:" + webFormYaml);
-      // const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', 'StudyConfiguration');
-      // var fileName = `${studyFolderPath}/tmp/${formName}.yaml`;
-      // if (fs.existsSync(fileName)) {
-      //   try {
-      //     fs.unlinkSync(fileName);
-      //     // log(`${fileName} has been removed`);
-      //   } catch (err) {
-      //     console.error(`Error removing file ${fileName}: ${err}`);
-      //   }
-      // }
-      // try {
-      //   fs.writeFileSync(fileName, webFormYaml);
-      //   // log(`${fileName} has been written`);
-      // } catch (err) {
-      //   console.error('Error writing file:', err);
-      // }
+        // // log("template:" + webFormYaml);
+        // const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', 'StudyConfiguration');
+        // var fileName = `${studyFolderPath}/tmp/${formName}.yaml`;
+        // if (fs.existsSync(fileName)) {
+        //   try {
+        //     fs.unlinkSync(fileName);
+        //     // log(`${fileName} has been removed`);
+        //   } catch (err) {
+        //     console.error(`Error removing file ${fileName}: ${err}`);
+        //   }
+        // }
+        // try {
+        //   fs.writeFileSync(fileName, webFormYaml);
+        //   // log(`${fileName} has been written`);
+        // } catch (err) {
+        //   console.error('Error writing file:', err);
+        // }
     }
-
 }
