@@ -12,17 +12,14 @@ Fetch the branches and their commits from the upstream repository:
 > git fetch upstream
 
 Check out your fork's local default branch - usually main:
-
 > git checkout development
 
 
 Merge the changes from the upstream/main into your local main branch:
-
 > git merge upstream/development
 
 
 Push your updates to the forked repository on GitHub:
-
 > git push origin development
 
 ### How to merge changes to the fork
@@ -31,5 +28,4 @@ Fetch the branches and their commits from the upstream repository:
 > git fetch upstream
 
 Merge the changes from the upstream/main into your local main branch:
-
 > git merge upstream/development

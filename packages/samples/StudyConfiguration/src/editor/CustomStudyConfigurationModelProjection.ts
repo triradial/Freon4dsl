@@ -101,26 +101,6 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectStudyConfiguration(studyconfig: StudyConfiguration): Box {
         const element: StudyConfiguration = studyconfig;
         return BoxFactory.verticalLayout(element, "StudyConfiguration-overall", "", [
-            // BoxUtil.listGroupBox(
-            //     element,
-            //     "study-options",
-            //     "Display Options",
-            //     BoxFactory.verticalLayout(
-            //         element,
-            //         "StudyConfiguration-vlist-line-3",
-            //         "",
-            //         [
-            //             BoxUtil.emptyLineBox2(element, "option-empty-line", "h-2"),
-            //             BoxUtil.switchElement(element, "showActivityDetails", "Shared Tasks"),
-            //             BoxUtil.switchElement(element, "showSystems", "Systems"),
-            //             BoxUtil.switchElement(element, "showScheduling", "Scheduling"),
-            //             BoxUtil.switchElement(element, "showChecklists", "Checklists"),
-            //             BoxUtil.switchElement(element, "showDescriptions", "Descriptions"),
-            //         ],
-            //         { cssClass: "w-full ml-4" },
-            //     ),
-            //     { cssClass: "type1", isExpanded: true },
-            // ),
             BoxUtil.listGroupBox(
                 element,
                 "periods",
@@ -128,41 +108,35 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 BoxUtil.verticalPartListBox(element, element.periods, "periods", null, this.handler, { cssClass: "ml-6 mb-2" }),
                 { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
             ),
-            ...(element.showSharedTasks === true
-                ? [
-                      BoxUtil.listGroupBox(
-                          element,
-                          "shared-tasks",
-                          "Shared Tasks",
-                          BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mb-2" }),
-                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                      ),
-                  ]
-                : []),
-            ...(element.showSystems === true
-                ? [
-                      BoxUtil.listGroupBox(
-                          element,
-                          "shared-systems",
-                          "Systems",
-                          BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, {
-                              cssClass: "ml-6 mb-2",
-                          }),
-                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                      ),
-                  ]
-                : []),
-            ...(element.showPeople === true
-                ? [
-                      BoxUtil.listGroupBox(
-                          element,
-                          "shared-people",
-                          "People",
-                          BoxUtil.indentBox(element, 4, "21", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler)),
-                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                      ),
-                  ]
-                : []),
+            ...(element.showSharedTasks === true? [
+                BoxUtil.listGroupBox(
+                    element,
+                    "shared-tasks",
+                    "Shared Tasks",
+                    BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mb-2" }),
+                    { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                ),
+            ] : []),
+            ...(element.showSystems === true ? [
+                BoxUtil.listGroupBox(
+                    element,
+                    "shared-systems",
+                    "Systems",
+                    BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, {
+                        cssClass: "ml-6 mb-2",
+                    }),
+                    { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                ),
+            ] : []),
+            ...(element.showPeople === true ? [
+                BoxUtil.listGroupBox(
+                    element,
+                    "shared-people",
+                    "People",
+                    BoxUtil.indentBox(element, 4, "21", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler)),
+                    { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                ),
+            ] : []),
         ]);
     }
 
@@ -195,17 +169,15 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 "period-detail",
                 "",
                 [
-                    ...(showDescriptions
-                        ? [
-                              BoxFactory.horizontalLayout(
-                                  element,
-                                  "period-hlist-line-1",
-                                  "",
-                                  [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
-                                  { selectable: false, cssClass: "w-full mt-1 align-top" },
-                              ),
-                          ]
-                        : []),
+                    ...(showDescriptions ? [
+                        BoxFactory.horizontalLayout(
+                            element,
+                            "period-hlist-line-1",
+                            "",
+                            [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
+                            { selectable: false, cssClass: "w-full mt-1 align-top" },
+                        ),
+                    ] : []),
                     BoxUtil.listGroupBox(
                         element,
                         "events",

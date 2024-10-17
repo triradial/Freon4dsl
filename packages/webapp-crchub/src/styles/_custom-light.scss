@@ -276,7 +276,6 @@ appnav a:visited {
 .navbar-component .avatar-menu div {
   color: var(--gray-800);
 }
-
 /* #endregion */
 
 /* #region Breadcrumb */
@@ -302,11 +301,29 @@ appnav a:visited {
 
 /* #endregion */
 
+/* #region Editor */
+.footer-container {
+  background-color: var(--drawer-header-background);
+  border-top: 1px solid var(--drawer-handle);
+}
+
+.editor-footer-button {
+  color: var(--drawer-header-text);
+}
+
+.editor-footer-button:hover {
+  color: var(--white);
+}
+
+.editor-footer-text {
+  color: var(--drawer-header-text);
+}
+/* #endregion */
+
 /* #region Grid */
 .crc-grid-header {
   background-color: var(--card-background);
   box-shadow: none;
-
 }
 
 .crc-grid-header h3 {
@@ -534,19 +551,19 @@ appnav a:visited {
 }
 
 .vis-time-axis .vis-grid.vis-minor {
-  border-color:  var(--black-10t) !important;
+  border-color:  var(--black-5t) !important;
 }
 
 .vis-foreground .vis-group {
-  border-bottom: 1px solid  var(--black-10t) !important;
+  border-bottom: 1px solid  var(--black-5t) !important;
 }
 
 .vis-panel.vis-bottom, .vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right, .vis-panel.vis-top {
-  border: 1px solid  var(--black-10t) !important;
+  border: 1px solid  var(--black-5t) !important;
 }
 
 .vis-labelset .vis-label {
-  border-bottom: 1px solid  var(--black-10t) !important;
+  border-bottom: 1px solid  var(--black-5t) !important;
 }
 
 /* #endregion */

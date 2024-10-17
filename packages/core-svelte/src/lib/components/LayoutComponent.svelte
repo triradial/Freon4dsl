@@ -25,6 +25,7 @@
 
     let errorCls: string = '';              // css class name for when the node is erroneous
     let errMess: string[] = [];             // error message to be shown when element is hovered
+    let cssClass: string = '';              // M+G - additional css class to be added to the element
 
     async function setFocus(): Promise<void> {
         if (!!element) {
@@ -47,6 +48,7 @@
         id = !!box ? componentId(box) : 'layout-for-unknown-box';
         children = [...box.children];
         isHorizontal = box.getDirection() === ListDirection.HORIZONTAL;
+        cssClass = !!box ? box.cssClass : '';
         if (box.hasError) {
             errorCls = !isHorizontal ? 'layout-component-vertical-error' : 'layout-component-horizontal-error';
             errMess = box.errorMessages;
@@ -59,12 +61,13 @@
     $: { // Evaluated and re-evaluated when the box changes.
         refresh("Refresh Layout box changed " + box?.id);
     }
+
 </script>
 
 {#if errMess.length > 0}
     <ErrorMarker element={element} {box}/>
 {/if}
-<span class="layout-component {errorCls}"
+<span class="layout-component {errorCls} {cssClass}"
       id="{id}"
       class:layout-component-horizontal="{isHorizontal}"
       class:layout-component-vertical="{!isHorizontal}"
