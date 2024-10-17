@@ -311,6 +311,10 @@ appnav a:visited {
   color: var(--drawer-header-text);
 }
 
+.editor-footer-button:hover {
+  color: var(--white);
+}
+
 .editor-footer-text {
   color: var(--drawer-header-text);
 }
@@ -455,7 +459,7 @@ appnav a:visited {
 /* #region Drawer Table */
 
 .table_component table {
-  border: 1px solid var(--white-40t) !important;
+  border: 1px solid var(--white-30t) !important;
 }
 
 .table_component caption {
@@ -469,7 +473,7 @@ appnav a:visited {
 }
 
 .table_component td {
-  border: 1px solid var(--white-40t) !important;
+  border: 1px solid var(--white-20t) !important;
   color: var(--white-90t) !important;
 }
 
@@ -562,19 +566,19 @@ appnav a:visited {
 }
 
 .vis-time-axis .vis-grid.vis-minor {
-border-color: var(--white-10t) !important;
+border-color: var(--white-5t) !important;
 }
 
 .vis-foreground .vis-group {
-border-bottom: 1px solid var(--white-10t) !important;
+border-bottom: 1px solid var(--white-5t) !important;
 }
 
 .vis-panel.vis-bottom, .vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right, .vis-panel.vis-top {
-border: 1px solid var(--white-10t) !important;
+border: 1px solid var(--white-5t) !important;
 }
 
 .vis-labelset .vis-label {
-border-bottom: 1px solid var(--white-10t) !important;
+border-bottom: 1px solid var(--white-5t) !important;
 }
 
 /* #endregion */

@@ -18,10 +18,10 @@ main {
   width: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
-  font-size: 14px;
+  font-size: var(--standard-font-size);
   font-style: normal;
   font-weight: normal;
-  font-family: "Arial";
+  font-family: var(--font-family-sans);
   margin: 0px;
   padding: 0px;
   transform: translate3d(0,0,0);
@@ -43,8 +43,8 @@ main {
 .label-component {
   font-style: normal;
   font-weight: normal;
-  font-size: 0.75rem;
-  font-family: "Roboto";
+  font-size: var(--standard-font-size);
+  font-family: var(--font-family-sans);
   font-variant: normal;
   margin: 0px 2px 0px 2px;
   padding: 2px 0px 0px 0px;
@@ -71,15 +71,15 @@ main {
   padding: 2px 2px 0px 2px;
   border: none;
   box-sizing: border-box;
-  font-family: "Roboto";
-  font-size: 0.75rem;
+  font-family: var(--font-family-sans);
+  font-size: var(--standard-font-size);
   font-weight: normal;
   font-style: normal;
 }
 
 .text-component-input {
-  font-family: "Roboto";
-  font-size: 0.75rem;
+  font-family: var(--font-family-sans);
+  font-size: var(--standard-font-size);
   font-weight: normal;
   font-style: normal;
   line-height: 20px !important;
@@ -92,8 +92,8 @@ main {
 }
 
 .text-component-text {
-  font-family: "Roboto";
-  font-size: 0.75rem;
+  font-family: var(--font-family-sans);
+  font-size: var(--standard-font-size);
   font-weight: normal;
   font-style: normal;
   line-height: 20px !important;
@@ -110,8 +110,8 @@ main {
 }
 
 .text-component-placeholder {
-  font-family: "Roboto";
-  font-size: 0.75rem;
+  font-family: var(--font-family-sans);
+  font-size: var(--standard-font-size);
   font-weight: normal;
   font-style: normal;
   white-space: normal;
@@ -119,8 +119,8 @@ main {
 }
 
 .text-component-actionPlaceholder {
-  font-family: "Roboto";
-  font-size: 0.75rem;
+  font-family: var(--font-family-sans);
+  font-size: var(--standard-font-size);
   font-weight: normal;
   font-style: normal;
   white-space: normal;
@@ -234,16 +234,16 @@ main {
   white-space: normal;
   font-style: normal;
   font-weight: normal;
-  font-family: "Roboto";
+  font-family: var(--font-family-sans);
   text-transform: uppercase;
 }
 
 .list-group.type1 .list-group-label {
-  font-size: 0.875rem;
+  font-size: var(--large-font-size);
 }
 
 .list-group.type2 .list-group-label {
-  font-size: 0.75rem;
+  font-size: var(--standard-font-size);
 }
 
 .list-group.type3 .list-group-label {
@@ -303,7 +303,7 @@ main {
   margin-left: 0.2rem;
   font-style: normal;
   font-weight: lighter;
-  font-family: "Roboto";
+  font-family: var(--font-family-sans);
   text-transform: uppercase;
 }
 
@@ -311,7 +311,7 @@ main {
 .item-group.type2 .item-group-label,
 .item-group.type3 .item-group-label,
 .item-group.type4 .item-group-label {
-  font-size: 0.75rem;
+  font-size: var(--standard-font-size);
 }
 
 /* #endregion */
@@ -399,8 +399,8 @@ span:has(> .tinymce-wrapper) {
   box-sizing: border-box;
   padding: 0px 0px 0px 2px;
   /* Adjusted as per variables */
-  font-family: "Roboto";
-  font-size: 0.875rem;
+  font-family: var(--font-family-sans);
+  font-size: var(--large-font-size);
   font-weight: normal;
   font-style: normal;
 }
@@ -413,7 +413,7 @@ span:has(> .tinymce-wrapper) {
   margin: 0px 1px 0px 2px;
   padding: 1px;
   background: rgba(211, 227, 253, 255);
-  font-family: "Roboto";
+  font-family: var(--font-family-sans);
   font-size: 14pt;
   font-weight: inherit;
   font-style: inherit;
@@ -423,7 +423,7 @@ span:has(> .tinymce-wrapper) {
 .date-component-text {
   color: blue;
   background: inherit;
-  font-family: "Roboto";
+  font-family: var(--font-family-sans);
   font-size: 14pt;
   font-weight: inherit;
   font-style: inherit;
@@ -438,7 +438,7 @@ span:has(> .tinymce-wrapper) {
 .date-component-placeholder {
   color: blue;
   background: inherit;
-  font-family: "Roboto";
+  font-family: var(--font-family-sans);
   font-size: 14pt;
   font-weight: inherit;
   font-style: inherit;
@@ -460,8 +460,8 @@ span:has(> .tinymce-wrapper) {
   box-sizing: border-box;
   padding: 0px 0px 0px 2px;
   /* Adjusted as per variables */
-  font-family: "Roboto";
-  font-size: 0.875rem;
+  font-family: var(--font-family-sans);
+  font-size: var(--large-font-size);
   font-weight: normal;
   font-style: normal;
 }
@@ -475,7 +475,7 @@ span:has(> .tinymce-wrapper) {
   padding: 1px;
   padding-inline: 2px;
   background: rgba(211, 227, 253, 255);
-  font-family: "Roboto";
+  font-family: var(--font-family-sans);
   font-size: 14pt;
   font-weight: inherit;
   font-style: inherit;
@@ -484,7 +484,7 @@ span:has(> .tinymce-wrapper) {
 .time-component-text {
   color: blue;
   background: inherit;
-  font-family: "Roboto";
+  font-family: var(--font-family-sans);
   font-size: 14pt;
   font-weight: inherit;
   font-style: inherit;
@@ -499,7 +499,7 @@ span:has(> .tinymce-wrapper) {
 .time-component-placeholder {
   color: blue;
   background: inherit;
-  font-family: "Roboto";
+  font-family: var(--font-family-sans);
   font-size: 14pt;
   font-weight: inherit;
   font-style: inherit;
@@ -567,8 +567,8 @@ span:has(> .tinymce-wrapper) {
   place-items: center;
   font-style: normal;
   font-weight: normal;
-  font-size: 0.75rem;
-  font-family: "Roboto";
+  font-size: var(--standard-font-size);
+  font-family: var(--font-family-sans);
 }
 
 .dropdown-component-error {
@@ -647,8 +647,8 @@ span:has(> .tinymce-wrapper) {
   place-items: center;
   font-style: normal;
   font-weight: normal;
-  font-size: 0.75rem;
-  font-family: "Roboto";
+  font-size: var(--standard-font-size);
+  font-family: var(--font-family-sans);
 }
 
 .contextmenu-button:hover {}
