@@ -28,6 +28,12 @@ concept AnyDay implements EventStart {
 concept StudyStart implements EventStart {
 }
 
+concept Baseline base FirstDayOfStudy {
+}
+
+concept FirstDayOfStudy implements EventStart {
+}
+
 concept Previous implements EventStart {
     eventState: EventState;
 }

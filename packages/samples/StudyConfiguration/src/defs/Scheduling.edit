@@ -2,7 +2,7 @@ editor default
 
 When {
     [when ${startWhen} ${timeAmountPart}]
-    trigger = "When: Depending on when another event occurs"
+    trigger = "when: Depending on when another event occurs"
 }  
 
 TimeAmount {
@@ -15,7 +15,7 @@ StartDay {
 
 Day {
     [day ${startDay}]
-    trigger = "Day: A day of the study"
+    trigger = "day: A day of the study"
 }
 
 TimeAmountPart {
@@ -24,80 +24,95 @@ TimeAmountPart {
 } 
 
 StudyStart {
-    [at the start day of the Study ${timeAmountPart}]
-    trigger = "Study Start: The start of the study"
+    [as the start day of the Study]
+    trigger = "study start: The start of the study"
 } 
+
+FirstDayOfStudy {
+    [on the start day of the Study ${timeAmountPart}]
+    trigger = "start day: depends on the first day of the study"
+}
+
+Baseline {
+    [on the baseline/start day of the Study ${timeAmountPart}]
+    trigger = "baseline day: An alternate way to reference to the first day of the study"
+}
 
 Previous {
     [when the Previous Event ${eventState} ${timeAmountPart}]
-    trigger = "Previous: Depending on the previous event"
+    trigger = "previous: Depending on the previous event"
 }
 
 AnyDay {
     [on Any Day]
-    trigger = "Any Day: An unscheduled event"
+    trigger = "any day: An unscheduled event"
 } 
 
 Daily {
     [daily]
+    trigger = "daily"
 }
 
 Weekly {
     [weekly]
+    trigger = "weekly"
 }
 
 Monthly {
     [monthly]
+    trigger = "monthly"
 }
 
 Forever {
     [forever]
+    trigger = "forever"
 }
 
 RepeatEvery {
     [Every: ${repeatEvery}]
+    trigger = "every"
 }
 
 RepeatCondition {
     [
     ${repeatUnit} up to ${maxRepeats} times until ${until}
-    ] trigger = "Repeat Condition: repeat until a condition occurs"
+    ] trigger = "until: Repeat until a condition occurs"
 } 
 
 RepeatCount {
     [
         ${repeatCount} time(s)  
-    ] trigger = "repeat count: repeat a specific number of times"
+    ] trigger = "count: Repeat a specific number of times"
 } 
 
 BetweenTimes {
     [
         starting by ${startTimeAsString replace=TimePicker} and ending by ${endTimeAsString replace=TimePicker}
-    ] trigger = "between times: The time of day at which the event must start and end"
+    ] trigger = "between times: Times of day event must start and end"
 } 
 
 StartingBy {
     [
         starting by ${startTimeAsString replace=TimePicker}
-    ] trigger = "starting by: The time of day at which the event must start"
+    ] trigger = "starting by: Time of day event must start"
 } 
 
 EndingBy {
     [
         ending by ${endTimeAsString replace=TimePicker}
-    ] trigger = "ending by: The time of day at which the event must end"
+    ] trigger = "ending by: Time of day event must end"
 } 
 
 ComplianceWindow {
     [
         ${maxDaysBefore} day(s) before and ${maxDaysAfter} day(s) after
-    ] trigger = "compliance window: The window of days before and after an event during which it must be completed to be compliant"
+    ] trigger = "compliance window: Days before & after event must be completed to be compliant"
 }
 
 EventWindow {
     [
-        ${daysBefore} day(s) before and ${daysAfter} day(s) after
-        with a compliance window of ${complianceWindow}
+        ${daysBefore} day(s) before and ${daysAfter} day(s) after.
+        Optionally with a compliance window of ${complianceWindow}
     ] 
 }
 

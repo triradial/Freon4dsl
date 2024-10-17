@@ -43,12 +43,12 @@ concept Assignment {
 }
 
 limited TypeOfEvent {
-    site = { name:"Site Visit"} video = { name:"Video Session"} phone = { name:"Phone Call"} other = { name:"Non-Standard"}
+    site = { name:"site visit"} video = { name:"video session"} phone = { name:"phone call"} other = { name:"non-standard"}
 }
 
 concept Event {
     name: identifier;
-    alternativeName: string = "<No Alternative Name>";
+    alternativeName: string;
     typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;

@@ -57,20 +57,22 @@ export class EditorState {
      */
     async newStudyConfigurationModelUnits() {
         try {
-            LOGGER.log("newStudyConfigurationModelUnits called");
-            this.createNewUnit("Availability", "Availability");
+            LOGGER.info("newStudyConfigurationModelUnits called");
+            await this.createNewUnit("Availability", "Availability");
             await this.saveCurrentUnit();
 
-            this.createNewUnit("PatientInfo", "PatientInfo");
+            await this.createNewUnit("PatientInfo", "PatientInfo");
             await this.saveCurrentUnit();
 
-            this.createNewUnit("StudyConfiguration", "StudyConfiguration");
+            LOGGER.info("creating StudyConfiguration");
+            await this.createNewUnit("StudyConfiguration", "StudyConfiguration");
             // Initialize the StudyConfiguration with a default period, event, and task in the checklist
             const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
             studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
             studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
             studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
             await this.saveCurrentUnit();
+            LOGGER.info("StudyConfiguration created");
 
             this.currentUnit = studyConfigUnit;
             EditorState.getInstance().currentUnit = studyConfigUnit;

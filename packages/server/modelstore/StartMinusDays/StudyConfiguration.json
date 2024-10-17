@@ -282,7 +282,7 @@
                "targets": [
                   {
                      "resolveInfo": "Site Visit",
-                     "reference": "ID-27"
+                     "reference": null
                   }
                ]
             }
@@ -771,7 +771,7 @@
                "targets": [
                   {
                      "resolveInfo": "Site Visit",
-                     "reference": "ID-27"
+                     "reference": null
                   }
                ]
             }

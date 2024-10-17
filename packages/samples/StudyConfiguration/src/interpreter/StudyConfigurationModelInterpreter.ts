@@ -242,6 +242,11 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
+        return studyStartDayNumber;
+    }
+
+    evalFirstDayOfStudy(node: language.FirstDayOfStudy, ctx: InterpreterContext): RtObject {
+        let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
         if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
             let displacementFromEvent = main.evaluate(node.timeAmountPart.timeAmount, ctx) as RtNumber;
             // TODO: Ask Jos if should create an expression for this rather than hardcoding the operator.
@@ -255,6 +260,10 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         } else {
             return studyStartDayNumber;
         }
+    }
+
+    evalBaseline(node: language.Baseline, ctx: InterpreterContext): RtObject {
+        return this.evalFirstDayOfStudy(node, ctx);
     }
 
     evalTimeAmountPart(node: language.TimeAmountPart, ctx: InterpreterContext): RtObject {
