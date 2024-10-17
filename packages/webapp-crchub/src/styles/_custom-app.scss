@@ -1089,54 +1089,45 @@ appnav a:hover {
   height: 300px;
   font-family: var(--font-family-sans) !important;
 }
-
 .study-timeline-title {
   text-align: left;
   font-weight: 600;
   padding-bottom: 0.5rem;
   margin-top: 4rem;
 }
-
 .timeline-instructions {
   margin-top: 1rem;
   font-size: var(--standard-font-size) !important;
 }
-
 .timeline-key {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   margin-top: 0.5rem;
 }
-
 .key-item {
   display: flex;
   align-items: center;
 }
-
 .key-item-label span {
   font-size: var(--standard-font-size) !important;
 }
-
 .square {
   width: 1rem;
   height: 1rem;
   margin-right: 10px;
 }
-
 .vis-labelset .vis-label .vis-inner {
   padding: 5px !important;
 }
-
+.vis-text, .vis-label, .vis-inner, .vis-item-content {
+  font-size: var(--standard-font-size) !important;
+}
 .vis-item {
   height: 1.625rem !important;
   top: 0.125rem !important;
   border-width: 0 !important;
   border-radius: 0 !important;
-}
-
-.vis-text, .vis-label, .vis-inner, .vis-item-content {
-  font-size: var(--standard-font-size) !important;
 }
 
 /* #endregion */
