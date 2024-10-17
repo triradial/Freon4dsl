@@ -93,9 +93,13 @@
     }
 
     function handleKeydown(event: KeyboardEvent) {
-        if (event.ctrlKey && event.key === "z") {
+        if ((event.metaKey || event.ctrlKey) && event.key === "z") {
             event.preventDefault();
-            EditorRequestsHandler.getInstance().undo();
+            if (event.shiftKey) {
+                EditorRequestsHandler.getInstance().redo();
+            } else {
+                EditorRequestsHandler.getInstance().undo();
+            }
         }
     }
 
