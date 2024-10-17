@@ -1,4 +1,5 @@
 import {
+    ActionBox,
     BACKSPACE,
     BehaviorExecutionResult,
     FreCaret,
@@ -6,12 +7,13 @@ import {
     FreErrorSeverity,
     FreLogger,
     isActionBox,
+    isActionTextBox,
     TextBox,
 } from "@freon4dsl/core";
-import {EventDispatcher} from "svelte";
-import {executeCustomKeyboardShortCut} from "./CommonFunctions.js";
+import { EventDispatcher } from "svelte";
+import { executeCustomKeyboardShortCut } from "./CommonFunctions.js";
 
-const LOGGER = new FreLogger("TextComponentHelper")
+const LOGGER = new FreLogger("TextComponentHelper");
 
 export class TextComponentHelper {
     // The box that is shown in the text component for which this instance is created
@@ -34,12 +36,13 @@ export class TextComponentHelper {
     // Note that 'from <= to' always holds.
     _to: number = -1;
 
-    constructor(box: TextBox,
-                isPartOfDropdown,
-                getText: () => string,
-                endEditing: () => void,
-                // textUpdateFunction: (p: { caret: number; content: string }) => boolean,
-                dispatcher: EventDispatcher<any>
+    constructor(
+        box: TextBox,
+        isPartOfDropdown,
+        getText: () => string,
+        endEditing: () => void,
+        // textUpdateFunction: (p: { caret: number; content: string }) => boolean,
+        dispatcher: EventDispatcher<any>,
     ) {
         this._myBox = box;
         this._isPartOfDropdown = isPartOfDropdown;
@@ -52,7 +55,7 @@ export class TextComponentHelper {
         return this._to;
     }
 
-    set to (val: number) {
+    set to(val: number) {
         this._to = val;
     }
 
@@ -60,26 +63,28 @@ export class TextComponentHelper {
         return this._from;
     }
 
-    set from (val: number) {
+    set from(val: number) {
         this._from = val;
     }
 
-
     handleDelete(event: KeyboardEvent, editor: FreEditor) {
         LOGGER.log(`Delete`);
-        if (!event.ctrlKey && !event.altKey && event.shiftKey) { // shift-delete
+        if (!event.ctrlKey && !event.altKey && event.shiftKey) {
+            // shift-delete
             // TODO CUT
         } else {
-            this._dispatcher('showDropdown');
+            this._dispatcher("showDropdown");
             this.getCaretPosition(event);
-            if (this._from < this._getText().length || (this._from !== this._to)) { // some chars remain at the right, or several chars are selected
+            if (this._from < this._getText().length || this._from !== this._to) {
+                // some chars remain at the right, or several chars are selected
                 // No need to adjust the caret position, the char will be deleted *after* the caret
                 LOGGER.log(`handleDelete, caret: ${this._from}-${this._to}`);
                 // Without propagation but with event Default, the browser handles which char(s) to be deleted.
                 // With event.ctrlKey: delete text from caret to start, is also handled by the browser.
                 event.stopPropagation();
                 // If needed, the afterUpdate function dispatches a 'textUpdate' to the parent TextDropdownComponent
-            } else { // nothing left in this component to delete at the right
+            } else {
+                // nothing left in this component to delete at the right
                 event.preventDefault();
                 event.stopPropagation();
             }
@@ -87,9 +92,10 @@ export class TextComponentHelper {
     }
 
     handleBackSpace(event: KeyboardEvent, editor: FreEditor) {
-        this._dispatcher('showDropdown');
+        this._dispatcher("showDropdown");
         this.getCaretPosition(event);
-        if (this._from > 0 || (this._from !== this._to)) { // some chars remain at the left, or several chars are selected
+        if (this._from > 0 || this._from !== this._to) {
+            // some chars remain at the left, or several chars are selected
             if (this._from === this._to) {
                 // Adjust the caret position to take into account the deleted char, because it is *before* the current caret
                 this._from -= 1;
@@ -100,7 +106,8 @@ export class TextComponentHelper {
             // With event.ctrlKey: delete text from caret to start, is also handled by the browser.
             event.stopPropagation();
             // If needed, the afterUpdate function dispatches a 'textUpdate' to the parent TextDropdownComponent
-        } else { // nothing left in this component to delete at the left
+        } else {
+            // nothing left in this component to delete at the left
             event.preventDefault();
             event.stopPropagation();
         }
@@ -110,10 +117,11 @@ export class TextComponentHelper {
         this._endEditing();
         editor.selectPreviousLeafIncludingExpressionPreOrPost();
         LOGGER.log(htmlId + "    PREVIOUS LEAF IS " + editor.selectedBox.role);
-        if (isActionBox(editor.selectedBox)) {
-            const executionResult: BehaviorExecutionResult = editor.selectedBox.tryToExecute(event.key, editor)
+        if (isActionTextBox(editor.selectedBox)) {
+            const actionBox = (editor.selectedBox as TextBox).parent as ActionBox;
+            const executionResult: BehaviorExecutionResult = actionBox.tryToExecute(event.key, editor);
             if (executionResult !== BehaviorExecutionResult.EXECUTED) {
-                editor.selectedBox.setCaret(FreCaret.LEFT_MOST, editor)
+                actionBox.setCaret(FreCaret.LEFT_MOST, editor);
             }
         }
         event.preventDefault();
@@ -121,13 +129,15 @@ export class TextComponentHelper {
     }
 
     handleGoToNext(event: KeyboardEvent, editor: FreEditor, htmlId: string) {
+        LOGGER.log("handleGoToNext event " + event.key);
         this._endEditing();
         editor.selectNextLeafIncludingExpressionPreOrPost();
         LOGGER.log(htmlId + "    NEXT LEAF IS " + editor.selectedBox.role);
-        if (isActionBox(editor.selectedBox)) {
-            const executionResult: BehaviorExecutionResult = editor.selectedBox.tryToExecute(event.key, editor)
+        if (isActionTextBox(editor.selectedBox)) {
+            const actionBox = (editor.selectedBox as TextBox).parent as ActionBox;
+            const executionResult: BehaviorExecutionResult = actionBox.tryToExecute(event.key, editor);
             if (executionResult !== BehaviorExecutionResult.EXECUTED) {
-                editor.selectedBox.setCaret(FreCaret.RIGHT_MOST, editor)
+                actionBox.setCaret(FreCaret.RIGHT_MOST, editor);
             }
         }
         event.preventDefault();
@@ -144,31 +154,39 @@ export class TextComponentHelper {
         // todo see which of these can need not be handled here, and can bubble up to FreonComponent
         if (event.ctrlKey) {
             if (!event.altKey) {
-                if (event.key === 'z') { // ctrl-z
+                if (event.key === "z") {
+                    // ctrl-z
                     // UNDO handled by browser
-                } else if (event.key === 'h') { // ctrl-h
+                } else if (event.key === "h") {
+                    // ctrl-h
                     // todo SEARCH
                     event.stopPropagation();
-                } else if (event.key === 'y') { // ctrl-y
+                } else if (event.key === "y") {
+                    // ctrl-y
                     // todo REDO
                     event.stopPropagation();
-                } else if (event.key === 'x') { // ctrl-x
+                } else if (event.key === "x") {
+                    // ctrl-x
                     // todo CUT
                     event.stopPropagation();
-                } else if (event.key === 'x') { // ctrl-a
+                } else if (event.key === "x") {
+                    // ctrl-a
                     // todo SELECT ALL in focused control
                     event.stopPropagation();
-                } else if (event.key === 'c') { // ctrl-c
+                } else if (event.key === "c") {
+                    // ctrl-c
                     // COPY
                     event.stopPropagation();
-                    navigator.clipboard.writeText(this._getText()) // TODO get only the selected text from document.getSelection
+                    navigator.clipboard
+                        .writeText(this._getText()) // TODO get only the selected text from document.getSelection
                         .then(() => {
-                            editor.setUserMessage('Text copied to clipboard', FreErrorSeverity.Info);
+                            editor.setUserMessage("Text copied to clipboard", FreErrorSeverity.Info);
                         })
-                        .catch(err => {
-                            editor.setUserMessage('Error in copying text: ' + err.message);
+                        .catch((err) => {
+                            editor.setUserMessage("Error in copying text: " + err.message);
                         });
-                } else if (event.key === 'v') { // ctrl-v
+                } else if (event.key === "v") {
+                    // ctrl-v
                     // PASTE
                     event.stopPropagation();
                     event.preventDefault(); // the default event causes extra <span> elements to be added
@@ -180,49 +198,57 @@ export class TextComponentHelper {
                     // 		clipText => LOGGER.log('adding ' + clipText + ' after ' + this._getText()[to - 1]));
                     // TODO add the clipText to 'text'
                 }
-            } else { // !!event.altKey
-                if (event.key === 'z') { // ctrl-alt-z
+            } else {
+                // !!event.altKey
+                if (event.key === "z") {
+                    // ctrl-alt-z
                     // REDO handled by browser
                 }
             }
         } else {
-            if (event.altKey && event.key === BACKSPACE) { // alt-backspace
+            if (event.altKey && event.key === BACKSPACE) {
+                // alt-backspace
                 // TODO UNDO
-            } else if (!event.ctrlKey && event.altKey && event.shiftKey) { // alt-shift-backspace
+            } else if (!event.ctrlKey && event.altKey && event.shiftKey) {
+                // alt-shift-backspace
                 // TODO REDO
             }
         }
     }
 
     handleArrowLeft(event: KeyboardEvent) {
-        this._dispatcher('showDropdown');
+        this._dispatcher("showDropdown");
         this.getCaretPosition(event);
         LOGGER.log(`handleArrowLeft, caret: ${this._from}-${this._to}`);
-        if (this._from !== 0) { // when the arrow key can stay within the text, do not let the parent handle it
+        if (this._from !== 0) {
+            // when the arrow key can stay within the text, do not let the parent handle it
             event.stopPropagation();
             // note: caret is set to one less because getCaretPosition is calculated before the event is executed
             this._from -= 1;
             this._to -= 1;
-            LOGGER.log(`caretChanged from handleArrowLeft, caret: ${this._from}-${this._to}`)
-            this._dispatcher('caretChanged', {content: this._getText(), caret: this._from});
-        } else { // the key will cause this element to lose focus, its content should be saved
+            LOGGER.log(`caretChanged from handleArrowLeft, caret: ${this._from}-${this._to}`);
+            this._dispatcher("caretChanged", { content: this._getText(), caret: this._from });
+        } else {
+            // the key will cause this element to lose focus, its content should be saved
             this._endEditing();
             // let the parent take care of handling the event
         }
     }
 
     handleArrowRight(event: KeyboardEvent) {
-        this._dispatcher('showDropdown');
+        this._dispatcher("showDropdown");
         this.getCaretPosition(event);
         LOGGER.log(`handleArrowRight, caret: ${this._from}-${this._to}`);
-        if (this._from !== this._getText().length) { // when the arrow key can stay within the text, do not let the parent handle it
+        if (this._from !== this._getText().length) {
+            // when the arrow key can stay within the text, do not let the parent handle it
             event.stopPropagation();
             // note: caret is set to one more because getCaretPosition is calculated before the event is executed
             this._from += 1;
             this._to += 1;
-            LOGGER.log(`caretChanged from handleArrowLeft, caret: ${this._from}-${this._to}`)
-            this._dispatcher('caretChanged', {content: this._getText(), caret: this._from});
-        } else { // the key will cause this element to lose focus, its content should be saved
+            LOGGER.log(`caretChanged from handleArrowLeft, caret: ${this._from}-${this._to}`);
+            this._dispatcher("caretChanged", { content: this._getText(), caret: this._from });
+        } else {
+            // the key will cause this element to lose focus, its content should be saved
             this._endEditing();
             // let the parent take care of handling the event
         }
@@ -261,4 +287,3 @@ export class TextComponentHelper {
         return this._getText() === "" || !this._getText();
     }
 }
-

@@ -29,11 +29,11 @@ import {
     SelectBox,
     StringWrapperBox,
     TextBox,
-    VerticalListBox, 
-    MultiLineTextBox2, 
-    ItemGroupBox, 
-    ItemGroupBox2, 
-    ListGroupBox, 
+    VerticalListBox,
+    MultiLineTextBox2,
+    ItemGroupBox,
+    ItemGroupBox2,
+    ListGroupBox,
 } from "../boxes/index.js";
 import { FreScoper } from "../../scoper/index.js";
 import { RoleProvider } from "./RoleProvider.js";
@@ -44,8 +44,8 @@ import { UtilPartHelpers } from "./box-util-helpers/UtilPartHelpers.js";
 import { UtilLimitedHelpers } from "./box-util-helpers/UtilLimitedHelpers.js";
 
 /** Start - M+G */
-import {FreUtils} from "../../util/index.js";
-import {BehaviorExecutionResult} from "../util/index.js";
+import { FreUtils } from "../../util/index.js";
+import { BehaviorExecutionResult } from "../util/index.js";
 import { runInAction } from "mobx";
 /**End - M+G */
 
@@ -93,13 +93,7 @@ export class BoxUtil {
      * @param childBox
      * @param initializer
      */
-    public static indentBox(
-        node: FreNode,
-        indent: number,
-        uid: string,
-        childBox: Box,
-        initializer?: Partial<IndentBox>,
-    ): IndentBox {
+    public static indentBox(node: FreNode, indent: number, uid: string, childBox: Box, initializer?: Partial<IndentBox>): IndentBox {
         return BoxFactory.indent(node, RoleProvider.indent(node, uid), indent, childBox, initializer);
     }
 
@@ -110,12 +104,7 @@ export class BoxUtil {
      * @param roleName
      * @param initializer
      */
-    public static buttonBox(
-        node: FreNode,
-        text: string,
-        roleName: string,
-        initializer?: Partial<ButtonBox>,
-    ): ButtonBox {
+    public static buttonBox(node: FreNode, text: string, roleName: string, initializer?: Partial<ButtonBox>): ButtonBox {
         return BoxFactory.button(node, text, roleName, initializer);
     }
 
@@ -141,13 +130,7 @@ export class BoxUtil {
      * @param index the index of the item in the list, if the property is a list
      * @param displayInfo
      */
-    public static numberBox(
-        node: FreNode,
-        propertyName: string,
-        display: NumberDisplay,
-        index?: number,
-        displayInfo?: NumberDisplayInfo,
-    ): Box {
+    public static numberBox(node: FreNode, propertyName: string, display: NumberDisplay, index?: number, displayInfo?: NumberDisplayInfo): Box {
         return UtilPrimHelper.numberBox(node, propertyName, display, index, displayInfo);
     }
 
@@ -191,7 +174,7 @@ export class BoxUtil {
         setFunc: (selected: string) => void,
         display: LimitedDisplay,
         scoper?: FreScoper,
-        index?: number
+        index?: number,
     ): LimitedControlBox | SelectBox {
         return UtilLimitedHelpers.limitedBox(node, propertyName, setFunc, display, scoper, index);
     }
@@ -207,12 +190,7 @@ export class BoxUtil {
      * @param setFunc           a function to make a reference to a single limited value/instance
      * @param display
      */
-    public static limitedListBox(
-        node: FreNode,
-        propertyName: string,
-        setFunc: (selected: string[]) => void,
-        display: LimitedDisplay,
-    ): LimitedControlBox {
+    public static limitedListBox(node: FreNode, propertyName: string, setFunc: (selected: string[]) => void, display: LimitedDisplay): LimitedControlBox {
         return UtilLimitedHelpers.limitedListBox(node, propertyName, setFunc, display);
     }
 
@@ -279,13 +257,7 @@ export class BoxUtil {
      * @param scoper
      * @param index
      */
-    public static referenceBox(
-        node: FreNode,
-        propertyName: string,
-        setFunc: (selected: string) => void,
-        scoper: FreScoper,
-        index?: number,
-    ): ReferenceBox {
+    public static referenceBox(node: FreNode, propertyName: string, setFunc: (selected: string) => void, scoper: FreScoper, index?: number): ReferenceBox {
         return UtilRefHelpers.referenceBox(node, propertyName, setFunc, scoper, index);
     }
 
@@ -337,7 +309,6 @@ export class BoxUtil {
         return UtilRefHelpers.horizontalReferenceListBox(node, propertyName, scoper, isLimited, listJoin, initializer);
     }
 
-
     /**
      * Returns a textBox for a property named 'propertyName' within 'node', either the box that is already present in
      * the 'boxProviderCache', or an ActionBox by means of which a new value for this property can be created. The 'conceptName'
@@ -347,22 +318,18 @@ export class BoxUtil {
      * @param conceptName
      * @param boxProviderCache
      */
-    public static getBoxOrAction(
-        node: FreNode,
-        propertyName: string,
-        conceptName: string,
-        boxProviderCache: FreProjectionHandler,
-    ): Box {
+    public static getBoxOrAction(node: FreNode, propertyName: string, conceptName: string, boxProviderCache: FreProjectionHandler): Box {
         // find the information on the property to be shown
         const property = node[propertyName];
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName);
         let result: Box = !!property
             ? boxProviderCache.getBoxProvider(property).box
-            : BoxFactory.action(node, roleName, BoxUtil.BEGIN_CHAR + "choose" + BoxUtil.END_CHAR, { // M+G Update 
-            // : BoxFactory.action(node, roleName, `<${propertyName}>`, {
-                propertyName: propertyName,
-                conceptName: conceptName,
-            });
+            : BoxFactory.action(node, roleName, BoxUtil.BEGIN_CHAR + "options" + BoxUtil.END_CHAR, {
+                  // M+G Update
+                  // : BoxFactory.action(node, roleName, `<${propertyName}>`, {
+                  propertyName: propertyName,
+                  conceptName: conceptName,
+              });
         result.propertyName = propertyName;
         // result.propertyIndex = ??? todo
         return result;
@@ -409,34 +376,17 @@ export class BoxUtil {
         boxProviderCache: FreProjectionHandler,
         initializer?: Partial<ExternalPartListBox>,
     ): ExternalPartListBox {
-        return UtilPartHelpers.externalPartListBox(
-            node,
-            list,
-            propertyName,
-            externalComponentName,
-            boxProviderCache,
-            initializer,
-        );
+        return UtilPartHelpers.externalPartListBox(node, list, propertyName, externalComponentName, boxProviderCache, initializer);
     }
 
     // TODO get the role names correct in the following methods
     // TODO use caches for following methods
-    static externalStringBox(
-        node: FreNode,
-        propertyName: string,
-        externalComponentName: string,
-        initializer?: Partial<ExternalStringBox>,
-    ): ExternalStringBox {
+    static externalStringBox(node: FreNode, propertyName: string, externalComponentName: string, initializer?: Partial<ExternalStringBox>): ExternalStringBox {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-external";
         return new ExternalStringBox(externalComponentName, node, roleName, propertyName, initializer);
     }
 
-    static externalNumberBox(
-        node: FreNode,
-        propertyName: string,
-        externalComponentName: string,
-        initializer?: Partial<ExternalNumberBox>,
-    ): ExternalNumberBox {
+    static externalNumberBox(node: FreNode, propertyName: string, externalComponentName: string, initializer?: Partial<ExternalNumberBox>): ExternalNumberBox {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-external";
         return new ExternalNumberBox(externalComponentName, node, roleName, propertyName, initializer);
     }
@@ -451,22 +401,12 @@ export class BoxUtil {
         return new ExternalBooleanBox(externalComponentName, node, roleName, propertyName, initializer);
     }
 
-    static externalPartBox(
-        node: FreNode,
-        propertyName: string,
-        externalComponentName: string,
-        initializer?: Partial<ExternalPartBox>,
-    ): ExternalPartBox {
+    static externalPartBox(node: FreNode, propertyName: string, externalComponentName: string, initializer?: Partial<ExternalPartBox>): ExternalPartBox {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-external";
         return new ExternalPartBox(externalComponentName, node, roleName, propertyName, initializer);
     }
 
-    static externalRefBox(
-        node: FreNode,
-        propertyName: string,
-        externalComponentName: string,
-        initializer?: Partial<ExternalRefBox>,
-    ): ExternalRefBox {
+    static externalRefBox(node: FreNode, propertyName: string, externalComponentName: string, initializer?: Partial<ExternalRefBox>): ExternalRefBox {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-external";
         return new ExternalRefBox(externalComponentName, node, roleName, propertyName, initializer);
     }
@@ -547,7 +487,7 @@ export class BoxUtil {
         return new RefListWrapperBox(externalComponentName, node, roleName, propertyName, childBox, initializer);
     }
 
-/** START - M+G */
+    /** START - M+G */
     static listGroupBox(node: FreNode, roleName: string, label: string, childBox: Box, initializer?: Partial<ListGroupBox>): ListGroupBox {
         const role = this.makeKeyName(roleName);
         const updatedInitializer = {
@@ -555,13 +495,20 @@ export class BoxUtil {
             selectable: initializer?.selectable ?? true,
             isExpanded: initializer?.isExpanded ?? false,
             canAdd: initializer?.canAdd ?? false,
-            canCRUD: initializer?.canCRUD ?? false,            
-        }  
-        let result: ListGroupBox = BoxFactory.listGroup(node, role, label, childBox, updatedInitializer );
+            canCRUD: initializer?.canCRUD ?? false,
+        };
+        let result: ListGroupBox = BoxFactory.listGroup(node, role, label, childBox, updatedInitializer);
         return result;
     }
 
-    static itemGroupBox(node: FreNode, roleName: string, label: string, propertyName: string, childBox: Box, initializer?: Partial<ItemGroupBox>): ItemGroupBox {
+    static itemGroupBox(
+        node: FreNode,
+        roleName: string,
+        label: string,
+        propertyName: string,
+        childBox: Box,
+        initializer?: Partial<ItemGroupBox>,
+    ): ItemGroupBox {
         let result: ItemGroupBox = null;
         let ph: string = BoxUtil.formatPlaceholder(initializer?.placeHolder, propertyName);
         const role = this.makeKeyName(roleName);
@@ -577,19 +524,40 @@ export class BoxUtil {
             canCRUD: initializer?.canCRUD ?? false,
             canEdit: initializer?.canEdit ?? true,
             placeHolder: ph,
-        }  
+        };
         const property = node[propertyName];
         if (property !== undefined && property !== null && typeof property === "string") {
             //const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "textbox");
-            result = BoxFactory.itemGroup(node, role, label, () => node[propertyName], (v: string) => runInAction( () => { (node[propertyName] = v); }), childBox, updatedInitializer );
+            result = BoxFactory.itemGroup(
+                node,
+                role,
+                label,
+                () => node[propertyName],
+                (v: string) =>
+                    runInAction(() => {
+                        node[propertyName] = v;
+                    }),
+                childBox,
+                updatedInitializer,
+            );
             result.propertyName = propertyName;
         } else {
-            FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + "\"");
+            FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + '"');
         }
         return result;
     }
 
-    static itemGroupBox2(node: FreNode, roleName: string, label: string, propertyName: string, propType: string, setFunc: (selected: string) => void, scoper: FreScoper, childBox: Box, initializer?: Partial<ItemGroupBox2>): ItemGroupBox2 {
+    static itemGroupBox2(
+        node: FreNode,
+        roleName: string,
+        label: string,
+        propertyName: string,
+        propType: string,
+        setFunc: (selected: string) => void,
+        scoper: FreScoper,
+        childBox: Box,
+        initializer?: Partial<ItemGroupBox2>,
+    ): ItemGroupBox2 {
         let result: ItemGroupBox2 = null;
         //const propType: string = FreLanguage.getInstance().classifierProperty(node.freLanguageConcept(), propertyName)?.type;
         let ph: string = BoxUtil.formatPlaceholder(initializer?.placeHolder, propertyName);
@@ -603,21 +571,40 @@ export class BoxUtil {
             canUnlink: initializer?.canUnlink ?? false,
             canExpand: initializer?.canExpand ?? true,
             placeHolder: ph,
-        }  
+        };
         const property = node[propertyName];
-        result = BoxFactory.itemGroup2( node, role, label,
-            () => { return scoper.getVisibleNames(node, propType) .filter(name => !!name && name !== "") .map(name => ({ id: name, label: name })); },
-            () => { if (!!property) { return { id: property.name, label: property.name }; } else { return null; }},
+        result = BoxFactory.itemGroup2(
+            node,
+            role,
+            label,
+            () => {
+                return scoper
+                    .getVisibleNames(node, propType)
+                    .filter((name) => !!name && name !== "")
+                    .map((name) => ({ id: name, label: name }));
+            },
+            () => {
+                if (!!property) {
+                    return { id: property.name, label: property.name };
+                } else {
+                    return null;
+                }
+            },
             // @ts-ignore
             (editor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
-                if (!!option) { 
-                    runInAction(() => {setFunc(option.label);});} 
-                else {
-                    runInAction(() => { node[propertyName] = null;});
+                if (!!option) {
+                    runInAction(() => {
+                        setFunc(option.label);
+                    });
+                } else {
+                    runInAction(() => {
+                        node[propertyName] = null;
+                    });
                 }
                 return BehaviorExecutionResult.EXECUTED;
-            }, childBox,
-            updatedInitializer
+            },
+            childBox,
+            updatedInitializer,
         );
         result.propertyName = propertyName;
         //result.propertyIndex = index;
@@ -637,35 +624,45 @@ export class BoxUtil {
         const updatedInitializer = {
             selectable: initializer?.selectable ?? true,
             placeHolder: BoxUtil.formatPlaceholder(initializer?.placeHolder, initializer?.propertyName),
-            ...initializer
-        } 
+            ...initializer,
+        };
         const property = node[propertyName];
         // create the box
         if (property !== undefined && property !== null && typeof property === "string") {
             const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "MultiLineTextBox2", index);
-            result = BoxFactory.multitext( node, roleName, () => node[propertyName], (v: string) => runInAction( () => { (node[propertyName] = v); }), updatedInitializer );
+            result = BoxFactory.multitext(
+                node,
+                roleName,
+                () => node[propertyName],
+                (v: string) =>
+                    runInAction(() => {
+                        node[propertyName] = v;
+                    }),
+                updatedInitializer,
+            );
             result.propertyName = propertyName;
             result.propertyIndex = index;
         } else {
-            FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + "\"");
+            FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + '"');
         }
         return result;
     }
 
     static emptyLineBox2(node: FreNode, role: string, cssClass?: string): EmptyLineBox {
-        const updatedInitializer: Partial<EmptyLineBox>  = {
-            cssClass: cssClass
-        }
+        const updatedInitializer: Partial<EmptyLineBox> = {
+            cssClass: cssClass,
+        };
         return new EmptyLineBox(node, role, updatedInitializer);
     }
 
     static switchElement(element: FreNode, id: string, label: string): Box {
-        return BoxFactory.horizontalLayout(element, id + 'group', "",
-            [
-                this.booleanBox(element, id, { yes: "YES", no: "NO" }, BoolDisplay.SWITCH),
-                this.labelBox(element, label, id +'_label'),
-            ],
-        { selectable: false, cssClass:"align-center" } );
+        return BoxFactory.horizontalLayout(
+            element,
+            id + "group",
+            "",
+            [this.booleanBox(element, id, { yes: "YES", no: "NO" }, BoolDisplay.SWITCH), this.labelBox(element, label, id + "_label")],
+            { selectable: false, cssClass: "align-center" },
+        );
     }
 
     static formatPlaceholder(placeholder: string | undefined, propertyname: string): string {
@@ -676,6 +673,5 @@ export class BoxUtil {
         return value.replace(/ /g, "-").toLowerCase();
     }
 
-/** END - M+G */
-
+    /** END - M+G */
 }

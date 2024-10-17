@@ -18,6 +18,8 @@ import {
     FreNodeReference,
     TableUtil,
     LimitedDisplay,
+    NumberDisplay,
+    TextBox,
 } from "@freon4dsl/core";
 import {
     StudyConfiguration,
@@ -35,6 +37,7 @@ import {
     TypeOfEvent,
     PatientInfo,
     PatientHistory,
+    NumberLiteralExpression,
 } from "../language/gen/index.js";
 import { StudyConfigurationModelEnvironment } from "../config/gen/StudyConfigurationModelEnvironment.js";
 import { result } from "lodash";
@@ -68,6 +71,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         ["Person", this.projectPerson],
         ["PatientInfo", this.projectPatientInfo],
         ["PatientHistory", this.projectPatientHistory],
+        ["NumberLiteralExpression", this.createNumberLiteralBox],
     ]);
 
     nodeTypeToTableDefinition: Map<string, () => FreTableDefinition> = new Map<string, () => FreTableDefinition>([
@@ -92,6 +96,14 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     // }
 
     ////////////////////////////////////////////////////////////////////
+    createNumberLiteralBox(num: NumberLiteralExpression): Box {
+        const numBox: Box = BoxUtil.numberBox(num, "value", NumberDisplay.SELECT);
+        if (numBox instanceof TextBox) {
+            numBox.deleteWhenEmpty = true;
+        }
+        return createDefaultExpressionBox(num, [numBox], { selectable: false });
+    }
+
     /**
      * Creates a study configuration box based on the provided element.
      *
@@ -108,35 +120,41 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 BoxUtil.verticalPartListBox(element, element.periods, "periods", null, this.handler, { cssClass: "ml-6 mb-2" }),
                 { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
             ),
-            ...(element.showSharedTasks === true? [
-                BoxUtil.listGroupBox(
-                    element,
-                    "shared-tasks",
-                    "Shared Tasks",
-                    BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mb-2" }),
-                    { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                ),
-            ] : []),
-            ...(element.showSystems === true ? [
-                BoxUtil.listGroupBox(
-                    element,
-                    "shared-systems",
-                    "Systems",
-                    BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, {
-                        cssClass: "ml-6 mb-2",
-                    }),
-                    { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                ),
-            ] : []),
-            ...(element.showPeople === true ? [
-                BoxUtil.listGroupBox(
-                    element,
-                    "shared-people",
-                    "People",
-                    BoxUtil.indentBox(element, 4, "21", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler)),
-                    { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                ),
-            ] : []),
+            ...(element.showSharedTasks === true
+                ? [
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-tasks",
+                          "Shared Tasks",
+                          BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mb-2" }),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                      ),
+                  ]
+                : []),
+            ...(element.showSystems === true
+                ? [
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-systems",
+                          "Systems",
+                          BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, {
+                              cssClass: "ml-6 mb-2",
+                          }),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                      ),
+                  ]
+                : []),
+            ...(element.showPeople === true
+                ? [
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-people",
+                          "People",
+                          BoxUtil.indentBox(element, 4, "21", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler)),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                      ),
+                  ]
+                : []),
         ]);
     }
 
@@ -169,15 +187,17 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 "period-detail",
                 "",
                 [
-                    ...(showDescriptions ? [
-                        BoxFactory.horizontalLayout(
-                            element,
-                            "period-hlist-line-1",
-                            "",
-                            [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
-                            { selectable: false, cssClass: "w-full mt-1 align-top" },
-                        ),
-                    ] : []),
+                    ...(showDescriptions
+                        ? [
+                              BoxFactory.horizontalLayout(
+                                  element,
+                                  "period-hlist-line-1",
+                                  "",
+                                  [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
+                                  { selectable: false, cssClass: "w-full mt-1 align-top" },
+                              ),
+                          ]
+                        : []),
                     BoxUtil.listGroupBox(
                         element,
                         "events",
