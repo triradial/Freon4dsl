@@ -2,10 +2,29 @@ editor default
 
 Time {
     [${value} ${unit}]
+    trigger = "time"
 }
 
+StartDay {
+    [Start Day]
+    trigger = "start day"
+}
+
+
+EventReferenceExpression {
+    [${event} ${eventState} ]
+    referenceShortcut = ${event}
+    trigger = "----------"
+    }
+
+PeriodReferenceExpression {
+    [${period} ${periodState} ]
+    referenceShortcut = ${period}
+    trigger = "-----------"
+}
 PreviousVisit {
     [Previous Visit]
+    trigger = "previous visit"
 }
 
 NumberLiteralExpression {
@@ -26,10 +45,10 @@ String {
     trigger = "'"
 }
 
-BooleanLiteralExpression {
-    [ ${value} ]
-    trigger = "true / false"
-}
+// BooleanLiteralExpression {
+//     [ ${value} ]
+//     trigger = "true / false"
+// }
 
 MultiplyExpression {
     symbol = "*"
@@ -58,9 +77,4 @@ EqualsExpression {
     symbol = "=="
 }
 
-EventReferenceExpression {
-    [${event} ${eventState} ]
-    referenceShortcut = ${event}
-    trigger = "------"
-    }
 

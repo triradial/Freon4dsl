@@ -8,6 +8,11 @@ expression EventReferenceExpression base ScheduleExpression {
     eventState: EventState;
 }
 
+expression PeriodReferenceExpression base ScheduleExpression {
+    reference period: Period;
+    periodState: PhaseState = PhaseState:completed;
+}
+
 expression Time base ScheduleExpression   {
     value: string;
     unit: TimeUnit = TimeUnit:days;
@@ -36,9 +41,9 @@ expression NumberLiteralExpression base LiteralExpression {
 } 
 
 
-expression BooleanLiteralExpression base LiteralExpression {
-    value: boolean;
-}
+// expression BooleanLiteralExpression base LiteralExpression {
+//     value: boolean;
+// }
 
 ///////////////////////////////////
 //    Binary Expressions

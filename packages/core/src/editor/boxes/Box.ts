@@ -78,17 +78,17 @@ export abstract class Box {
      */
     addErrorMessage(val: string | string[]) {
         if (Array.isArray(val)) {
-            val.forEach(v => {
+            val.forEach((v) => {
                 if (!this._errorMessages.includes(v)) {
                     this._errorMessages.push(v);
                 }
-            })
+            });
         } else {
             if (!this._errorMessages.includes(val)) {
                 this._errorMessages.push(val);
             }
         }
-        this.isDirty()
+        this.isDirty();
     }
 
     resetErrorMessages() {
@@ -189,7 +189,7 @@ export abstract class Box {
             // LOGGER.error(`nextLeafRight: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
             // LOGGER.error(`  boxid: ${this.id} parent [id: ${this.parent.id}, id: ${this.parent.kind}, node: ${this.parent.node.freLanguageConcept()}]`)
             // LOGGER.error(`  tree: ${(this.parent.parent !== undefined && this.parent.parent !== null) ? this.parent.parent.toStringRecursive("  "):this.parent.toStringRecursive("  ")}`)
-            return null
+            return null;
         }
         const rightSiblings: Box[] = this.parent.children.slice(thisIndex + 1, this.parent.children.length);
         for (const sibling of rightSiblings) {
@@ -201,7 +201,7 @@ export abstract class Box {
                 return sibling;
             }
         }
-        LOGGER.log(`${this.id} nextLeafRight: referring to parent`)
+        LOGGER.log(`${this.id} nextLeafRight: referring to parent`);
         return this.parent.nextLeafRight;
     }
 
@@ -215,8 +215,10 @@ export abstract class Box {
         }
         const thisIndex: number = this.parent.children.indexOf(this);
         if (thisIndex === -1) {
-            LOGGER.error(`nextLeafLeft: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
-            return null
+            LOGGER.error(
+                `nextLeafLeft: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `,
+            );
+            return null;
         }
         const leftSiblings: Box[] = this.parent.children.slice(0, thisIndex).reverse();
         for (const sibling of leftSiblings) {
@@ -349,9 +351,7 @@ export abstract class Box {
      * AND this method is not overridden, then the focus will be set to the parent box.
      */
     setFocus: () => void = async () => {
-        console.log(
-            this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id
-        );
+        console.log(this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id);
         // this.parent?.setFocus();
     };
 
@@ -391,19 +391,19 @@ export abstract class Box {
     isEditable(): boolean {
         return false;
     }
-    
+
     toStringRecursive(indent: string = ""): string {
-        let result = indent + this.id + " (" + this.kind + ")"
-        this.children.forEach(child => {
-            result += "\n" + child.toStringRecursive(indent + "  ")
-        })
-        return result
+        let result = indent + this.id + " (" + this.kind + ")";
+        this.children.forEach((child) => {
+            result += "\n" + child.toStringRecursive(indent + "  ");
+        });
+        return result;
     }
 
     /* GM - execute actions */
-    executeAction(editor: FreEditor, trigger: string):BehaviorExecutionResult {
-        for (const action of editor.newFreActions.filter(action => action.activeInBoxRoles.includes(this.role) && action.trigger === trigger)) {
-                let postAction: FrePostAction = null;
+    executeAction(editor: FreEditor, trigger: string): BehaviorExecutionResult {
+        for (const action of editor.newFreActions.filter((action) => action.activeInBoxRoles.includes(this.role) && action.trigger === trigger)) {
+            let postAction: FrePostAction = null;
             runInAction(() => {
                 const command = action.command();
                 postAction = command.execute(this, trigger, editor, -1);
