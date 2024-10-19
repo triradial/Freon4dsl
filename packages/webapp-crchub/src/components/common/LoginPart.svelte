@@ -50,11 +50,11 @@
             <form class="flex flex-col space-y-6" on:submit={submitForm}>
                 <Input bind:value={username} type="text" name="username" placeholder="username" required on:input={resetError} />
                 <Input bind:value={password} type="password" name="password" placeholder="password" required on:input={resetError} />
-                <div id="remember-me"class="flex items-start">
+                <div class="flex items-start">
                     <Checkbox class="text-white-500 dark:text-white-500">Remember me</Checkbox>
                     <a href="/" class="ml-auto text-sm text-white-500 hover:underline dark:text-white-500">Forgot password?</a>
                 </div>
-                <Button id="sign-in" type="submit" class="w-full">Sign in</Button>
+                <Button type="submit" class="w-full">Sign in</Button>
                  <p class="text-sm font-light text-white-500 dark:text-white-500">Dont have an account yet? 
                  <a href="/" class="font-medium text-white-500 hover:underline dark:text-white-500">Sign up</a>
                 </p>

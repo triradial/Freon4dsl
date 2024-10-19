@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
-import { studies, patients, getStudy, getPatient, addStudy, editStudy, addPatient, editPatient } from '../services/dataStore';
+import { studies, patients, getStudy, getPatient, addStudy, updateStudy, addPatient, updatePatient } from '../services/dataStore';
 
 export const drawerStore = writable({
     instanceId: uuidv4(),
@@ -18,38 +18,23 @@ export function addObject(type: 'study' | 'patient') {
     drawerStore.set({ instanceId: uuidv4(), open: true, objectType: type, action: 'add', id: null, object });
 }
 
-export function editObject(type: 'study' | 'patient', id: string) {
+export async function editObject(type: 'study' | 'patient', id: string) {
     console.log('editObject called:', type, id);
-    
-    // Log the current state of the studies store
-    console.log('Current studies:', get(studies));
     
     let object;
     if (type === 'study') {
-        object = getStudy(id);
-        if (!object) {
-            console.log('Study not found in getStudy, trying direct access');
-            object = get(studies).find(study => study.id === id);
-        }
+        object = await getStudy(id);
     } else {
-        object = getPatient(id);
-        if (!object) {
-            console.log('Patient not found in getPatient, trying direct access');
-            object = get(patients).find(patient => patient.id === id);
-        }
+        object = await getPatient(id);
     }
-    
     console.log('Object retrieved:', object);
     
     if (!object) {
         console.error(`${type} with id ${id} not found`);
-        // Set an error state in the store
-        drawerStore.set({ instanceId: uuidv4(), open: false, objectType: null, action: null, id: null, object: null });
-        return;
+    } else {
+        console.error(`${type} with id ${id} found`);
+        drawerStore.set({ instanceId: uuidv4(), open: true, objectType: type, action: 'edit', id, object });
     }
-    
-    drawerStore.set({ instanceId: uuidv4(), open: true, objectType: type, action: 'edit', id, object });
-    console.log('drawerStore updated:', get(drawerStore));
 }
 
 export async function saveObject(updatedObject: any) {
@@ -58,13 +43,13 @@ export async function saveObject(updatedObject: any) {
             if (store.action === 'add') {
                 addStudy(updatedObject);
             } else {
-                editStudy(updatedObject);
+                updateStudy(updatedObject);
             }
         } else {
             if (store.action === 'add') {
                 addPatient(updatedObject);
             } else {
-                editPatient(updatedObject);
+                updatePatient(updatedObject);
             }
         }
         return { ...store, open: false };

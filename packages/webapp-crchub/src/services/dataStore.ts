@@ -1,4 +1,8 @@
 import { writable, get } from 'svelte/store';
+import { userStore, type User } from './userStore';
+import { EditorState } from '@freon4dsl/webapp-lib';
+
+const API_BASE_URL = 'http://localhost:8001';
 
 export interface Patient {
     id: string;
@@ -28,29 +32,29 @@ export interface Study {
     }>;
 }  
 
-export interface User {
-    id: string;
-    name: string;
-}
-
-export const patients = writable<Patient[]>([]);
 export const studies = writable<Study[]>([]);
-export const users = writable<User[]>([]);
-
-let usersLoaded = false;
+export const patients = writable<Patient[]>([]);
+export const studyPatients = writable<Patient[]>([]);
 
 export async function initializeDatastore(): Promise<void> {
   await Promise.all([
-    loadStudies(),
-    loadPatients(),
-    loadUsers()
+    getStudies(),
+    getPatients()
   ]);
 }
 
-async function loadStudies(): Promise<boolean> {
+export async function getStudies(): Promise<boolean> {
   try {
-    const resp = await fetch('data/studies.json');
-    const data = await resp.json();
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }
+    const resp = await fetch(`${API_BASE_URL}/getStudies?uid=${currentUser.userid}`);
+    if (!resp.ok) {
+      throw new Error(`HTTP error! status: ${resp.status}`);
+    }
+    const text = await resp.text();
+    const data = JSON.parse(text);
     studies.set(data);
     return true;
   } catch (error) {
@@ -59,12 +63,43 @@ async function loadStudies(): Promise<boolean> {
   }
 }
 
+export async function getStudy(studyId: string): Promise<Study | undefined> {
+  try {
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }   
+    const response = await fetch(`${API_BASE_URL}/getStudy?id=${studyId}&uid=${currentUser.userid}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const text = await response.text();
+    return JSON.parse(text);
+  } catch (error) {
+    console.error('Error fetching study:', error);
+    return undefined;
+  }
+}
+
 export async function addStudy(newStudy: Study): Promise<boolean> {
   try {
-    const currentStudies = get(studies);
-    currentStudies.push(newStudy);
-    studies.set(currentStudies);
-    await saveStudiesToFile(currentStudies);
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const response = await fetch(`${API_BASE_URL}/addStudy?uid=${currentUser.userid}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newStudy)
+    });
+    if (!response.ok) throw new Error('Failed to add study');
+    const text = await response.text();
+    const addedStudy = JSON.parse(text);
+
+    let modelManager = EditorState.getInstance();
+    await modelManager.newModel(addedStudy.id);
+
+    studies.update(s => [...s, addedStudy]);
     return true;
   } catch (error) {
     console.error('Error adding study:', error);
@@ -72,61 +107,58 @@ export async function addStudy(newStudy: Study): Promise<boolean> {
   }
 }
 
-export async function editStudy(updatedStudy: Study): Promise<boolean> {
+export async function updateStudy(updatedStudy: Study): Promise<boolean> {
   try {
-    const currentStudies = get(studies);
-    const index = currentStudies.findIndex((study) => study.id === updatedStudy.id);
-    if (index !== -1) {
-      currentStudies[index] = updatedStudy;
-      studies.set(currentStudies);
-      await saveStudiesToFile(currentStudies);
-      return true;
-    }
-    return false;
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const response = await fetch(`${API_BASE_URL}/updateStudy?id=${updatedStudy.id}&uid=${currentUser.userid}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedStudy)
+    });
+    if (!response.ok) throw new Error('Failed to update study');
+    studies.update(s => s.map(study => study.id === updatedStudy.id ? updatedStudy : study));
+    return true;
   } catch (error) {
-    console.error('Error editing study:', error);
+    console.error('Error updating study:', error);
     return false;
   }
 }
 
 export async function deleteStudy(studyId: string): Promise<boolean> {
   try {
-    const currentStudies = get(studies);
-    const updatedStudies = currentStudies.filter((study) => study.id !== studyId);
-    if (updatedStudies.length < currentStudies.length) {
-      studies.set(updatedStudies);
-      await saveStudiesToFile(updatedStudies);
-      return true;
-    }
-    return false;
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const response = await fetch(`${API_BASE_URL}/deleteStudy?id=${studyId}&uid=${currentUser.userid}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Failed to delete study');
+    studies.update(s => s.filter(study => study.id !== studyId));
+
+    let modelManager = EditorState.getInstance();
+    await modelManager.newModel(studyId);   
+
+    return true;
   } catch (error) {
     console.error('Error deleting study:', error);
     return false;
   }
 }
 
-async function saveStudiesToFile(studiesData: Study[]): Promise<void> {
+export async function getPatients(): Promise<boolean> {
   try {
-    const response = await fetch('data/studies.json', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(studiesData),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to save studies to file');
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const resp = await fetch(`${API_BASE_URL}/getPatients?uid=${currentUser.userid}`);
+    if (!resp.ok) {
+      throw new Error(`HTTP error! status: ${resp.status}`);
     }
-  } catch (error) {
-    console.error('Error saving studies to file:', error);
-    throw error;
-  }
-}
-
-async function loadPatients(): Promise<boolean> {
-  try {
-    const resp = await fetch('data/patients.json');
-    const data = await resp.json();
+    const text = await resp.text();
+    const data = JSON.parse(text);
     patients.set(data);
     return true;
   } catch (error) {
@@ -135,12 +167,59 @@ async function loadPatients(): Promise<boolean> {
   }
 }
 
+export async function getStudyPatients(studyId: string): Promise<boolean> {
+  try {
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const resp = await fetch(`${API_BASE_URL}/getStudyPatients?id=${studyId}&uid=${currentUser.userid}`);
+    if (!resp.ok) {
+      throw new Error(`HTTP error! status: ${resp.status}`);
+    }
+    const text = await resp.text();
+    const data = JSON.parse(text);
+    studyPatients.set(data); 
+    return true;
+  } catch (error) {
+    console.error('Error loading study patients:', error);
+    return false;
+  }
+}
+
+export async function getPatient(patientId: string): Promise<Patient | undefined> {
+  try {
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const response = await fetch(`${API_BASE_URL}/getPatient?id=${patientId}&uid=${currentUser.userid}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const text = await response.text();
+    return JSON.parse(text);
+  } catch (error) {
+    console.error('Error fetching patient:', error);
+    return undefined;
+  }
+}
+
 export async function addPatient(newPatient: Patient): Promise<boolean> {
   try {
-    const currentPatients = get(patients);
-    currentPatients.push(newPatient);
-    patients.set(currentPatients);
-    await savePatientsToFile(currentPatients);
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const response = await fetch(`${API_BASE_URL}/addPatient?uid=${currentUser.userid}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newPatient)
+    });
+    if (!response.ok) throw new Error('Failed to add patient');
+    const text = await response.text();
+    const addedPatient = JSON.parse(text);
+    patients.update(p => [...p, addedPatient]);
     return true;
   } catch (error) {
     console.error('Error adding patient:', error);
@@ -148,79 +227,66 @@ export async function addPatient(newPatient: Patient): Promise<boolean> {
   }
 }
 
-export async function editPatient(updatedPatient: Patient): Promise<boolean> {
+export async function updatePatient(updatedPatient: Patient): Promise<boolean> {
   try {
-    const currentPatients = get(patients);
-    const index = currentPatients.findIndex((patient) => patient.id === updatedPatient.id);
-    if (index !== -1) {
-      currentPatients[index] = updatedPatient;
-      patients.set(currentPatients);
-      await savePatientsToFile(currentPatients);
-      return true;
-    }
-    return false;
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const response = await fetch(`${API_BASE_URL}/updatePatient?id=${updatedPatient.id}&uid=${currentUser.userid}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedPatient)
+    });
+    if (!response.ok) throw new Error('Failed to update patient');
+    patients.update(p => p.map(patient => patient.id === updatedPatient.id ? updatedPatient : patient));
+    return true;
   } catch (error) {
-    console.error('Error editing patient:', error);
+    console.error('Error updating patient:', error);
     return false;
   }
 }
 
 export async function deletePatient(patientId: string): Promise<boolean> {
   try {
-    const currentPatients = get(patients);
-    const updatedPatients = currentPatients.filter((patient) => patient.id !== patientId);
-    if (updatedPatients.length < currentPatients.length) {
-      patients.set(updatedPatients);
-      await savePatientsToFile(updatedPatients);
-      return true;
-    }
-    return false;
+    const currentUser = get(userStore);
+    if (!currentUser) {
+      throw new Error('User not authenticated');
+    }  
+    const response = await fetch(`${API_BASE_URL}/deletePatient?id=${patientId}&uid=${currentUser.userid}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Failed to delete patient');
+    patients.update(p => p.filter(patient => patient.id !== patientId));
+    return true;
   } catch (error) {
     console.error('Error deleting patient:', error);
     return false;
   }
 }
 
-async function savePatientsToFile(patientsData: Patient[]): Promise<void> {
+export async function getUserById(userId: string): Promise<User | undefined> {
   try {
-    const response = await fetch('data/patients.json', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(patientsData),
-    });
+    const response = await fetch(`${API_BASE_URL}/getUser?id=${userId}`);
     if (!response.ok) {
-      throw new Error('Failed to save patients to file');
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    const text = await response.text();
+    return JSON.parse(text);
   } catch (error) {
-    console.error('Error saving patients to file:', error);
-    throw error;
+    console.error('Error fetching user:', error);
+    return undefined;
   }
 }
 
-export async function loadUsers(): Promise<boolean> {
+export async function getUserByEmail(email: string): Promise<User | undefined> {
   try {
-    const resp = await fetch('data/users.json');
-    const data = await resp.json();
-    users.set(data);
-    return true;
+    const response = await fetch(`${API_BASE_URL}/getUserByEmail?email=${email}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const text = await response.text();
+    return JSON.parse(text);
   } catch (error) {
-    console.error('Error loading users:', error);
-    return false;
+    console.error('Error fetching user:', error);
+    return undefined;
   }
 }
-
-export function getStudyPatients(studyId: string): Patient[] {
-    const filteredPatients = get(patients).filter((patient: Patient) => patient.studyId === studyId);
-    return filteredPatients;
-}
-
-export function getStudy(studyId: string): Study | undefined {
-  return get(studies).find((study: Study) => study.id === studyId);
-}
-
-export function getPatient(patientId: string): Patient | undefined {
-  return get(patients).find((patient: Patient) => patient.id === patientId);
-}
-

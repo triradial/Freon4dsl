@@ -9,7 +9,11 @@
     import { theme } from '../../services/themeStore';
     import GridHeader from '../common/GridHeader.svelte';
     import { getSVGIcon } from "../../services/utils";
-    import { getContext } from 'svelte';
+    import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
+    import StudyCard from "../cards/StudyCard.svelte";
+
+    let deleteDialogOpen = false;
+    let objectToDelete: any = null;
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
@@ -30,10 +34,6 @@
         }
     }
 
-    // $: if (gridApi && studiesData) {
-    //     gridApi.setGridOption("rowData", studiesData);
-    //     resizeColumns();
-    // }
     $: gridTheme = $theme === 'dark' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
 
     onMount(async () => {
@@ -119,18 +119,24 @@
     });
 
     function onOpenClick(studyId: string) {
+        console.log("Open clicked for studyid:", studyId);
         navigateTo("study", studyId);
     }
 
     function onDeleteClick(studyId: string) {
-        console.log("Delete clicked for patient:", studyId);
-        if (confirm(`Are you sure you want to delete patient ${studyId}?`)) {
-            // TODO: Implement delete functionality
+        console.log("Delete clicked for study:", studyId);
+        objectToDelete = studiesData.find(s => s.id === studyId);
+        if (objectToDelete) {
+            deleteDialogOpen = true;
         }
     }
 
+    $: if (objectToDelete) {
+        console.log("Object to delete:", objectToDelete);
+    }
+
     function onEditClick(studyId: string) {
-        console.log("Edit clicked for patient:", studyId);
+        console.log("Edit clicked for study:", studyId);
         editObject("study", studyId);
     }
 
@@ -162,5 +168,19 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<GridHeader title="Studies" />
+<GridHeader title="Studies" objectType="study" />
 <div id="studyGrid" class="{gridTheme} ag-grid"></div>
+<DeleteObjectDialog 
+    bind:open={deleteDialogOpen}
+    objectType="study"
+    object={objectToDelete}
+    on:delete={() => {
+        updateGridData();
+        deleteDialogOpen = false;
+        objectToDelete = null;
+    }}
+    on:cancel={() => {
+        deleteDialogOpen = false;
+        objectToDelete = null;
+    }}
+/>

@@ -44,7 +44,7 @@
         setDrawerVisibility("favorites", true);
     });
 
-    function setContent(route: RouteData) {
+    async function setContent(route: RouteData) {
         const routeName = route.name.toLowerCase();
         const id = route.params?.id;
         let study: Study | undefined;
@@ -72,22 +72,26 @@
                 break;
             case ROUTE.STUDY:
                 contentComponent = StudyContent as typeof SvelteComponent;
-                study = getStudy(id);
-                if (study) {
-                    studyName = study.name;
-                    breadcrumbItems = [{ label: LABEL.STUDIES, href: "/" + ROUTE.STUDIES }, { label: LABEL.STUDY + ": " + studyName }];
-                } else {
-                    console.error("Study not found for id:", id);
+                try {
+                    study = await getStudy(id);
+                    if (study) {
+                        studyName = study.name;
+                        breadcrumbItems = [{ label: LABEL.STUDIES, href: "/" + ROUTE.STUDIES }, { label: LABEL.STUDY + ": " + studyName }];
+                    } else {
+                        throw new Error("Study not found");
+                    }
+                } catch (error) {
+                    console.error("Error fetching study:", error);
                     breadcrumbItems = [{ label: LABEL.STUDIES, href: "/" + ROUTE.STUDIES }, { label: LABEL.STUDY + ": Not Found" }];
                 }
                 break;
             case ROUTE.PATIENT:
                 contentComponent = PatientContent as typeof SvelteComponent;
-                patient = getPatient(id);
+                patient = await getPatient(id);
                 if (patient) {
                     patientName = patient.name;
                     studyId = patient.studyId;
-                    study = getStudy(patient.studyId);
+                    study = await getStudy(patient.studyId);
                     if (study) {
                         studyName = study.name;
                         breadcrumbItems = [

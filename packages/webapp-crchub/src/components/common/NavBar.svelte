@@ -8,9 +8,13 @@
     import { theme } from '../../services/themeStore';
     import { ROUTE } from "../../constants/routeConstants";
     import { LABEL } from "../../constants/labelConstants";
+    import { userStore, type User } from "../../services/userStore";
 
+    let user: User | null;
+    userStore.subscribe(value => {
+        user = value;
+    });
 
-    let user = { name: "Mike Vogel" };
     let nonActiveClass = "md:hover:bg-transparent border-none";
 
     function loadContent(event: Event, routeName: string) {
@@ -22,6 +26,7 @@
     function signOut() {
         isAuthenticated.set(false);
         sessionStorage.setItem("auth", "false");
+        userStore.clearUser();
     }
 
     let isDark = true;
@@ -33,6 +38,7 @@
     $: isDark = $theme === 'dark';
     $: icon = isDark ? faSun : faMoon;
 
+    $: userInitials = user ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : '';
 </script>
 
 <Navbar class="navbar-component">
@@ -61,12 +67,12 @@
         </Button>
     </div>
     <div class="flex items-center md:order-2">
-        <Avatar id="avatar" border size="sm" class="cursor-pointer">MV</Avatar>
+        <Avatar id="avatar" border size="sm" class="cursor-pointer">{userInitials}</Avatar>
     </div>
     <Dropdown class="avatar-menu" placement="bottom" triggeredBy="#avatar">
         <DropdownHeader>
-            <span class="block text-sm">Mike Vogel</span>
-            <span class="block truncate text-sm font-medium">mike.vogel@triradial.com</span>
+            <span class="block text-sm">{user ? user.name : 'Unknown'}</span>
+            <span class="block truncate text-sm font-medium">{user ? user.email : 'Unknown'}</span>
         </DropdownHeader>
         <DropdownItem>Profile</DropdownItem>
         <DropdownItem>Settings</DropdownItem>

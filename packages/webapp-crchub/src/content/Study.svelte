@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount, onDestroy, getContext } from "svelte";
     import StudyCard from "../components/cards/StudyCard.svelte";
-    import PatientList from '../components/content/PatientGrid.svelte';
+    import PatientGrid from '../components/content/PatientGrid.svelte';
     import DSLFooter from '../components/common/DSLFooter.svelte';
 
     import { Tabs, TabItem } from 'flowbite-svelte';
@@ -23,8 +23,6 @@
     let study: any;
     let editorLoaded = false;
 
-    let modelName = "ScheduleExample2";
-    let unitName = "StudyConfiguration";
     let modelManager = EditorState.getInstance();
     let dslEditor: FreEditor;
     let studyConfigurationUnit: StudyConfiguration;
@@ -41,10 +39,10 @@
 
     onMount(async () => {
         // get the study data
-        study = getStudy(id);
+        study = await getStudy(id);
 
         // Get the model data for the study
-        const result = await modelManager.openUnitForModel(modelName, unitName);
+        const result = await modelManager.openUnitForModel(study.id, "StudyConfiguration");
         if (result !== undefined) {
             studyConfigurationUnit = result as StudyConfiguration;
             setTimeout(() => {
@@ -99,7 +97,7 @@
                         <FontAwesomeIcon icon={faUser} class="w-4 h-4" />Patients
                     </div>
                     <div class="crc-grid inside-tab">
-                        <PatientList studyId={study.id} />
+                        <PatientGrid studyId={study.id} />
                     </div>
                 </TabItem>
                 <TabItem title="Study Design" class="tab-item">

@@ -374,9 +374,10 @@ export abstract class Box {
 
     // TODO This will find all editable children, but not editable children of an editable child.
     //      Looking at the usage, we only need the first editable child, so maybe this could be simplified.
-    private getEditableChildrenRecursive(result: Box[]) {
+    private getEditableChildrenRecursive(result: Box[], ignoreEdtitableParent?: boolean) {
         LOGGER.info("getEditableChildrenRecursive for " + this.kind);
-        if (this.isEditable()) {
+        if (ignoreEdtitableParent === undefined) ignoreEdtitableParent = false;
+        if (this.isEditable() && !ignoreEdtitableParent) {
             LOGGER.info("Found editable: " + this.role);
             result.push(this);
             return;
