@@ -124,6 +124,7 @@ export class TimelineChartTemplate {
       <title>Timeline Chart</title>
       <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
       <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+      <link id="theme-stylesheet" rel='stylesheet' href='/build/bundle-dark.css'>
        <!--    -->
       </head>
       <body>

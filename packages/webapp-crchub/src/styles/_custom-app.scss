@@ -306,7 +306,6 @@ appbar a:hover,
 appnav a:hover {
   text-decoration: none;
 }
-
 /* #endregion */
 
 /* #region Login */
@@ -337,6 +336,31 @@ appnav a:hover {
   border-color:rgb(156 163 175/var(--tw-border-opacity)) !important;
 }
 
+/* #endregion */
+
+/* #region Dialog */
+.dialog-content {
+  height: 100vh !important;
+  width: 100vw !important;
+  z-index: 901 !important;
+}
+
+.dialog-content > div {
+  width: 20rem !important;
+}
+
+.dialog-backdrop {
+  z-index: 900 !important;
+  background-color: var(--black-50t) !important;
+}
+
+.dialog-content h3 {
+  font-size: var(--large-font-size) !important;
+}
+
+.dialog-content button {
+  font-size: var(--standard-font-size) !important;
+}
 /* #endregion */
 
 /* #region Editor */
@@ -395,26 +419,11 @@ appnav a:hover {
 /* #endregion */
 
 /* #region Toast */
-
 .toast-warning-container {
   position: absolute;
   bottom: -55px;
 }
-
 /* #endregion */
-
-/* #region Colors */
-// :root {
-//   --default-font: var(--font-family-sans);
-//   --default-font-size: 0.875rem;
-//   --content-padding: 1rem;
-//   --inline-spacing: 0.5rem;
-//   --border-radius: 3px;
-// }
-
-/* #endregion */
-
-/* #region Custom */
 
 /* #region Breadcrumb */
 .crc-breadcrumb {
@@ -490,7 +499,7 @@ appnav a:hover {
   border-width: 1px !important;
   height: 1.5rem !important;
   width: 1.5rem !important;
-  margin: 0 0.25rem 0 0.25rem;
+  margin: 0 0.125rem 0 0.125rem;
 }
 
 .grid-button-group {
@@ -562,6 +571,12 @@ appnav a:hover {
 .crc-card-area {
   padding: 0.5rem 0.5rem 0.5rem 1rem;
   border-radius: 0px;
+}
+
+.crc-mutation-area {
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  border-radius: 0px;
+  height: calc(100vh - 9.75rem);
 }
 
 .crc-field {
@@ -1131,3 +1146,24 @@ appnav a:hover {
 }
 
 /* #endregion */
+
+/* #region Object Drawer */
+.object-drawer {
+  width: 24rem;
+  height: calc(100vh - 5.75rem);
+  margin-top: 5.75rem;
+  margin-bottom: 0.25rem;
+  overflow-y: auto; 
+  z-index: 1000;
+  inset-inline-end: 0px;
+  position: fixed;
+  padding:0;
+}
+
+body > :not(main) div[role="presentation"]:not([class*="ag-"]),
+body > div[role="presentation"]:not([class*="ag-"]) {
+  z-index: 900 !important;
+  background-color: var(--black-50t) !important;
+}
+/* #endregion */
+

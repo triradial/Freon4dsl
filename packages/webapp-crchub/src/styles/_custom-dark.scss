@@ -64,6 +64,13 @@
   --popup-highlight: #0000002c;
   --popup-text: #000000;
   --popup-text2: #313131;
+
+  --button-background: var(--primary-800);
+  --button-text: #ffffff;
+  --button-border: #454d59;
+  --button-hover: #304562;
+  --button-active: #1f2d40;
+
   --background-color: white;
   --background-value1: #333;
   --background-label: #555;
@@ -247,6 +254,38 @@ appbar a:visited,
 appnav a:visited {
   color: var(--navbar-text);
 }
+
+/* #region Dialog */
+.dialog-content .primary-button {
+  background-color: var(--primary-800) !important;
+  color: var(--white) !important;
+}
+
+.dialog-content .primary-button:hover {
+  background-color: var(--primary-900) !important;
+  color: var(--white) !important;
+}
+
+.dialog-content .primary-button:active {
+  background-color: var(--primary-900) !important;
+  color: var(--white) !important;
+}
+
+.dialog-content .secondary-button {
+  background-color: var(--gray-400) !important;
+  color: var(--white) !important;
+}
+
+.dialog-content .secondary-button:hover {
+  background-color: var(--gray-500) !important;
+  color: var(--white) !important;
+}
+
+.dialog-content .secondary-button:active {
+  background-color: var(--gray-500) !important;
+  color: var(--white) !important;
+}
+/* #endregion */
 
 /* #region Navbar */
 .navbar-component {

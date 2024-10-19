@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getStudyPatients } from "../../services/dataStore";
+    import { getStudyPatients, studyPatients } from "../../services/dataStore";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
@@ -17,10 +17,23 @@
     let gridApi: GridApi;
     let patientsData: any[] = [];
 
-    $: {
-        patientsData = getStudyPatients(studyId);
+    // React to changes in studyId
+    $: if (studyId) {
+        fetchStudyPatients();
+    }
+
+    // React to changes in $studyPatients, but only update local data
+    $: if ($studyPatients) {
+        patientsData = $studyPatients;
         updateGridData();
     }
+
+    async function fetchStudyPatients() {
+        await getStudyPatients(studyId);
+        patientsData = $studyPatients;
+        updateGridData();
+}
+
     function updateGridData() {
         if (gridApi && patientsData) {
             gridApi.setGridOption("rowData", patientsData);
@@ -163,5 +176,5 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<GridHeader title="Patients" />
+<GridHeader title="Patients" objectType="patient" />
 <div id="patientGrid" class="{gridTheme} ag-grid"></div>

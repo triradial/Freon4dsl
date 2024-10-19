@@ -433,7 +433,7 @@
 		/* GM - Pass the new text to textUpdateFunction */
 		const newtext = inputElement.value;
 		LOGGER.log('newtext=' + newtext);
-		textUpdateFunction({ content: newtext});
+		//textUpdateFunction({ content: newtext});
 	}
 
 	refresh();
