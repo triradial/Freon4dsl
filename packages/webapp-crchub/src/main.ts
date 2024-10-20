@@ -23,7 +23,6 @@ setCustomComponents([
 Amplify.configure(awsconfig);
 
 async function initializeApp() {
-    // await initializeDatastore();
 
     const app = new App({
         target: document.body,

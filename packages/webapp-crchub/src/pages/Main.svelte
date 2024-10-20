@@ -14,6 +14,7 @@
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
     import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
     import StudyTimelineTableDrawer from "../components/drawers/StudyTimelineTableDrawer.svelte";
+    import DSLErrorsDrawer from "../components/drawers/DSLErrorsDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
 
     import ObjectDrawerSystem from "../components/common/ObjectDrawerSystem.svelte";
@@ -26,7 +27,7 @@
     import PatientContent from "../content/Patient.svelte";
     import Availability from "../content/Availability.svelte";
 
-    import { faHeart, faTableList, faTimeline, faQuestion } from "@fortawesome/free-solid-svg-icons";
+    import { faHeart, faTableList, faTimeline, faTriangleExclamation, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
     let contentComponent: typeof SvelteComponent;
     let breadcrumbItems: { label: string; href?: string }[] = [];
@@ -35,8 +36,9 @@
     setContext('editObject', editObject);
 
     onMount(() => {
-        addDrawer({ key: "help", icon: faQuestion, component: HelpDrawer, title: "Help", description: "Help for application.", supportsRefresh: false, defaultWidth: 900 });
+        addDrawer({ key: "help", icon: faInfoCircle, component: HelpDrawer, title: "Help", description: "Help for application.", supportsRefresh: false, defaultWidth: 900 });
         addDrawer({ key: "favorites", icon: faHeart, component: FavoritesDrawer, title: "Favorites", description: "Manage your favorite studies, patients, and tasks.", supportsRefresh: true, defaultWidth: 400 });
+        addDrawer({ key: "dslErrors", icon: faTriangleExclamation, component: DSLErrorsDrawer, title: "Errors", description: "View the errors in the study design.", supportsRefresh: true, defaultWidth: 800 });
         addDrawer({ key: "studyTimelineTable", icon: faTableList, component: StudyTimelineTableDrawer, title: "Study Timeline Table", description: "View the timeline as a table for this study.", supportsRefresh: true, defaultWidth: 600 });
         addDrawer({ key: "studyTimelineChart", icon: faTimeline, component: StudyTimelineChartDrawer, title: "Study Timeline Chart", description: "View the timeline as a chart for this study.", supportsRefresh: true, defaultWidth: 800 });
         setContent($currentRoute);

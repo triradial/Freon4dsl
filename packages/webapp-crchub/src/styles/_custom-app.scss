@@ -368,7 +368,7 @@ appnav a:hover {
 .crc-editor {
   width: calc(100% - 2.75rem);
   overflow-y: auto;
-  height: calc(100vh - 11.25rem);
+  height: calc(100vh - 13.75rem);
 }
 
 .crc-content-width {
@@ -480,6 +480,29 @@ appnav a:hover {
 
 /* #endregion */
 
+/* #region Toolbar */
+.crc-editor-toolbar {
+  padding: 0 !important;
+  margin-top: 0.25rem !important;
+}
+
+.crc-editor-toolbar-button-group {
+  padding-inline-start: 0.25rem !important;
+  padding-inline-end: 0.25rem !important;
+}
+
+.crc-editor-toolbar-button{
+  padding: 0.25rem !important;
+  border-radius: 0.125rem !important;
+}
+
+.crc-editor-toolbar-button>svg{
+  padding: 0.25rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+}
+/* #endregion */
+
 /* #region Grid */
 .ag-theme-quartz,
 .ag-theme-quartz-dark {
@@ -499,7 +522,7 @@ appnav a:hover {
   border-width: 1px !important;
   height: 1.5rem !important;
   width: 1.5rem !important;
-  margin: 0 0.125rem 0 0.125rem;
+  margin: 0 0.125rem 0 0.5rem;
 }
 
 .grid-button-group {

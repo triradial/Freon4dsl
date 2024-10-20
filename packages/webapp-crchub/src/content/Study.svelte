@@ -6,16 +6,17 @@
 
     import { Tabs, TabItem } from 'flowbite-svelte';
     import { ListPlaceholder, Skeleton } from 'flowbite-svelte';
+    import { Toolbar, ToolbarButton, ToolbarGroup } from 'flowbite-svelte';
 
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faUser, faSwatchbook } from '@fortawesome/free-solid-svg-icons';
+    import { faUser, faSwatchbook, faSave, faRedo, faUndo } from '@fortawesome/free-solid-svg-icons';
     import { getStudy } from "../services/dataStore";
 
     import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { EditorState } from "@freon4dsl/webapp-lib";
     import { FreEditor } from "@freon4dsl/core";
-    import { type StudyConfigurationModel, type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
+    import { type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
 
     import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/sideDrawerStore";
 
@@ -61,6 +62,8 @@
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
 
         // initialize the study chart drawer for the study
+        setDrawerProps("dslErrors", { studyId: id });
+        setDrawerVisibility('dslErrors', true);
         setDrawerProps("studyTimelineTable", { studyId: id });
         setDrawerVisibility('studyTimelineTable', true);
         setDrawerProps("studyTimelineChart", { studyId: id });
@@ -73,6 +76,7 @@
         if (activeDrawer === 'studyTimelineTable' || activeDrawer === 'studyTimelineChart') {
             setActiveDrawer(null);
         }
+        setDrawerVisibility('dslErrors', false);
         setDrawerVisibility('studyTimelineTable', false);
         setDrawerVisibility('studyTimelineChart', false);
     });
@@ -83,6 +87,17 @@
         }
     }
 
+    function handleSaveStudy() {
+        console.log("Save study");
+    }   
+
+    function handleUndoAction() {
+        console.log("Undo action");
+    }
+
+    function handleRedoAction() {
+        console.log("Redo action");
+    }
 </script>
 
 {#if study}
@@ -105,10 +120,19 @@
                         <FontAwesomeIcon icon={faSwatchbook} class="w-4 h-4" />Study Design
                     </div>
                     {#if editorLoaded}
+                        <Toolbar class="crc-editor-toolbar">
+                            <ToolbarGroup class="crc-editor-toolbar-button-group">
+                                <ToolbarButton class="crc-editor-toolbar-button" onClick={handleSaveStudy}><FontAwesomeIcon icon={faSave} class="w-6 h-6" /></ToolbarButton>
+                            </ToolbarGroup>
+                            <ToolbarGroup class="crc-editor-toolbar-button-group">
+                                <ToolbarButton class="crc-editor-toolbar-button" onClick={handleUndoAction}><FontAwesomeIcon icon={faUndo} class="w-6 h-6" /></ToolbarButton>
+                                <ToolbarButton class="crc-editor-toolbar-button" onClick={handleRedoAction}><FontAwesomeIcon icon={faRedo} class="w-6 h-6" /></ToolbarButton>
+                            </ToolbarGroup>
+                        </Toolbar>
                         <div class="crc-editor crc-content-width">
                             <FreonComponent editor={dslEditor} />
                         </div>
-                        <div class="h-8 crc-content-width">
+                        <div class="crc-editor-footer h-8 crc-content-width">
                             <DSLFooter items={footerItems} onCheckboxChange={handleCheckboxChange} />
                         </div>
                     {:else}

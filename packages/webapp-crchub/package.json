@@ -1,6 +1,6 @@
 {
     "name": "@freon4dsl/webapp-crchub",
-    "version": "0.7.0-beta",
+    "version": "0.7.0-beta5",
     "license": "MIT",
     "type": "module",
     "scripts": {
@@ -13,10 +13,10 @@
         "prepare-app": "npx gulp"
     },
     "dependencies": {
-        "@freon4dsl/core": "0.7.0-beta",
-        "@freon4dsl/core-svelte": "0.7.0-beta",
-        "@freon4dsl/samples-study-configuration": "0.7.0-beta",
-        "@freon4dsl/webapp-lib": "0.7.0-beta",
+        "@freon4dsl/core": "0.7.0-beta5",
+        "@freon4dsl/core-svelte": "0.7.0-beta5",
+        "@freon4dsl/samples-study-configuration": "0.7.0-beta5",
+        "@freon4dsl/webapp-lib": "0.7.0-beta5",
         "@tinymce/tinymce-svelte": "^3.0.0",
         "@types/node": "^20.14.1",
         "kotlin": "^1.5.21",

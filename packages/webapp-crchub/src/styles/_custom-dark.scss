@@ -359,6 +359,15 @@ appnav a:visited {
 }
 /* #endregion */
 
+/* #region Toolbar */
+
+.crc-editor-toolbar-button{
+  color: var(--primary-600);
+  background-color: transparent;
+  border-color: var(--primary-600);
+}
+
+/* #endregion */
 /* #region Grid */
 
 .crc-grid-header {
