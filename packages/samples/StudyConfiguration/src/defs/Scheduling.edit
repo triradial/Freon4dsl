@@ -1,21 +1,7 @@
 editor default
 
-When {
-    [when ${startWhen} ${timeAmountPart}]
-    trigger = "when: Depending on when another event occurs"
-}  
-
 TimeAmount {
     [${value}${unit}]
-}
-
-StartDay {
-    [Start Day]
-}
-
-Day {
-    [day ${startDay}]
-    trigger = "day: A day of the study"
 }
 
 TimeAmountPart {
@@ -23,29 +9,43 @@ TimeAmountPart {
     trigger = "plus or minus day/week/month/..."
 } 
 
+Day {
+    [day ${startDay}]
+    trigger = "day:         A day of the study"
+}
+
+When {
+    [when ${startWhen} ${timeAmountPart}]
+    trigger = "when:        Depends on when another event occurs"
+}  
+
 StudyStart {
     [as the start day of the Study]
-    trigger = "study start: The start of the study"
+    trigger = "study start: Declares this event to be the start of the study"
 } 
 
 FirstDayOfStudy {
     [on the start day of the Study ${timeAmountPart}]
-    trigger = "start day: depends on the first day of the study"
+    trigger = "start day:   Depends on the first day of the study +/- some amount of time"
 }
 
 Baseline {
     [on the baseline/start day of the Study ${timeAmountPart}]
-    trigger = "baseline day: An alternate way to reference to the first day of the study"
+    trigger = "baseline:    An alternate name for a reference to the first day of the study"
 }
 
 Previous {
     [when the Previous Event ${eventState} ${timeAmountPart}]
-    trigger = "previous: Depending on the previous event"
+    trigger = "previous:    Depends on the previous event"
+}
+Unscheduled {
+    [on Any Day (an Unscheduled Event)]
+    trigger = "unscheduled: An unscheduled event"
 }
 
 AnyDay {
-    [on Any Day]
-    trigger = "any day: An unscheduled event"
+    [on Any Day (an Unscheduled Event)]
+    trigger = "any day:     An alternative name for an unscheduled event"
 } 
 
 Daily {
@@ -103,17 +103,22 @@ EndingBy {
     ] trigger = "ending by: Time of day event must end"
 } 
 
-ComplianceWindow {
+
+NoComplianceWindow {
+    [that allows no extra time] trigger = "no compliance window"
+}
+
+ComplianceWindowOf {
     [
-        ${maxDaysBefore} day(s) before and ${maxDaysAfter} day(s) after
-    ] trigger = "compliance window: Days before & after event must be completed to be compliant"
+        of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+    ] trigger = "time before/after to be compliant"
 }
 
 EventWindow {
     [
-        ${daysBefore} day(s) before and ${daysAfter} day(s) after.
-        Optionally with a compliance window of ${complianceWindow}
-    ] 
+        ${daysBefore} day(s) before and ${daysAfter}day(s) after
+        and a compliance window ${complianceWindow}
+    ] trigger = "event window"
 }
 
 EventSchedule {
@@ -122,7 +127,7 @@ EventSchedule {
         with a window of ${eventWindow}
         and then repeats ${eventRepeat}
         limited to ${eventTimeOfDay}
-    ]
+    ] trigger = "event schedule"
 } 
 
 
