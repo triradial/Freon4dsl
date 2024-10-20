@@ -14,7 +14,7 @@
 
     import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
-    import { EditorState } from "@freon4dsl/webapp-lib";
+    import { EditorState, EditorRequestsHandler } from "@freon4dsl/webapp-lib";
     import { FreEditor } from "@freon4dsl/core";
     import { type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
 
@@ -88,14 +88,17 @@
     }
 
     function handleSaveStudy() {
+        EditorState.getInstance().saveCurrentUnit(); 
         console.log("Save study");
     }   
 
     function handleUndoAction() {
+        EditorRequestsHandler.getInstance().undo();
         console.log("Undo action");
     }
 
     function handleRedoAction() {
+        EditorRequestsHandler.getInstance().redo();
         console.log("Redo action");
     }
 </script>
@@ -120,14 +123,10 @@
                         <FontAwesomeIcon icon={faSwatchbook} class="w-4 h-4" />Study Design
                     </div>
                     {#if editorLoaded}
-                        <Toolbar class="crc-editor-toolbar">
-                            <ToolbarGroup class="crc-editor-toolbar-button-group">
-                                <ToolbarButton class="crc-editor-toolbar-button" onClick={handleSaveStudy}><FontAwesomeIcon icon={faSave} class="w-6 h-6" /></ToolbarButton>
-                            </ToolbarGroup>
-                            <ToolbarGroup class="crc-editor-toolbar-button-group">
-                                <ToolbarButton class="crc-editor-toolbar-button" onClick={handleUndoAction}><FontAwesomeIcon icon={faUndo} class="w-6 h-6" /></ToolbarButton>
-                                <ToolbarButton class="crc-editor-toolbar-button" onClick={handleRedoAction}><FontAwesomeIcon icon={faRedo} class="w-6 h-6" /></ToolbarButton>
-                            </ToolbarGroup>
+                        <Toolbar class="toolbar">
+                            <ToolbarButton class="toolbar-button" on:click={handleSaveStudy}><FontAwesomeIcon icon={faSave} /></ToolbarButton>
+                            <ToolbarButton class="toolbar-button" on:click={handleUndoAction}><FontAwesomeIcon icon={faUndo} /></ToolbarButton>
+                            <ToolbarButton class="toolbar-button" on:click={handleRedoAction}><FontAwesomeIcon icon={faRedo} /></ToolbarButton>
                         </Toolbar>
                         <div class="crc-editor crc-content-width">
                             <FreonComponent editor={dslEditor} />

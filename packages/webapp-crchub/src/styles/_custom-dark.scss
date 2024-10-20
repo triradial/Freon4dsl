@@ -43,11 +43,18 @@
 
   --drawer-background: #22272e;
   --drawer-handle: #4a5568;
-  --drawer-button: #ffffff;
+  --drawer-button: var(--text-primary-500);
   --drawer-content-background: #2c3e50;
   --drawer-header-background: #1e2b38;
   --drawer-header-text: var(--text-primary-500);
   --drawer-content-area: #2c3e50;
+
+  --toolbar-button: var(--text-primary-500);
+  --toolbar-button-background: none;  
+  --toolbar-button-hover: var(--white);
+  --toolbar-button-hover-background: var(--white-10t);
+  --toolbar-button-active: var(--white); 
+  --toolbar-button-active-background: var(--white-20t);
 
   --content-background: #22272e;
 
@@ -360,14 +367,22 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Toolbar */
-
-.crc-editor-toolbar-button{
-  color: var(--primary-600);
-  background-color: transparent;
-  border-color: var(--primary-600);
+.toolbar-button{
+  background: var(--toolbar-button-background) !important;
+  color: var(--toolbar-button) !important;
 }
 
+.toolbar-button:hover {
+  background: var(--toolbar-button-hover-background) !important;
+  color: var(--toolbar-button-hover) !important;
+} 
+
+.toolbar-button:active {
+  background: var(--toolbar-button-active-background) !important;
+  color: var(--toolbar-button-active) !important;
+} 
 /* #endregion */
+
 /* #region Grid */
 
 .crc-grid-header {
@@ -478,7 +493,6 @@ appnav a:visited {
 }
 .drawer-buttons {
   background-color: var(--drawer-background);
-  // border-left: 1px solid var(--drawer-handle);
 }
 .drawer-button {
   background: none;
@@ -629,4 +643,21 @@ border: 1px solid var(--white-5t) !important;
 border-bottom: 1px solid var(--white-5t) !important;
 }
 
+/* #endregion */
+
+/* #region Error Drawer */
+.error-drawer-button{
+  background: var(--toolbar-button-background) !important;
+  color: var(--toolbar-button) !important;
+}
+
+.error-drawer-button:hover {
+  background: var(--toolbar-button-hover-background) !important;
+  color: var(--toolbar-button-hover) !important;
+} 
+
+.error-drawer-button:active {
+  background: var(--toolbar-button-active-background) !important;
+  color: var(--toolbar-button-active) !important;
+} 
 /* #endregion */

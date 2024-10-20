@@ -261,11 +261,12 @@ textarea {
 }
 
 button {
-  outline: none;
+  outline: none !important;
 }
 
 button:not(:disabled):active {
   background-color: #ddd;
+  outline: none !important;
 }
 
 /* #region App */
@@ -481,22 +482,42 @@ appnav a:hover {
 /* #endregion */
 
 /* #region Toolbar */
-.crc-editor-toolbar {
+.toolbar {
   padding: 0 !important;
   margin-top: 0.25rem !important;
 }
 
-.crc-editor-toolbar-button-group {
+.toolbar-button-group {
   padding-inline-start: 0.25rem !important;
   padding-inline-end: 0.25rem !important;
 }
 
-.crc-editor-toolbar-button{
-  padding: 0.25rem !important;
-  border-radius: 0.125rem !important;
+.toolbar-button {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
 }
 
-.crc-editor-toolbar-button>svg{
+.toolbar-button:focus {
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.toolbar-button:hover {
+  border: none !important;
+  outline: none !important;
+}
+
+.toolbar-button:active {
+  border: none !important;
+  outline: none !important;
+}
+
+.toolbar-button>svg{
   padding: 0.25rem !important;
   width: 1rem !important;
   height: 1rem !important;
@@ -1167,6 +1188,49 @@ appnav a:hover {
   border-width: 0 !important;
   border-radius: 0 !important;
 }
+
+/* #endregion */
+
+/* #region Error Drawer */
+.error-drawer-head {
+  padding: 0.75rem 0.5rem !important;
+  font-weight: 600 !important;
+  font-size: var(--standard-font-size) !important;
+}
+
+.error-drawer-cell {
+  padding: 0.5rem 0.5rem !important;
+  font-weight: 400 !important;
+  font-size: var(--standard-font-size) !important;
+}
+
+.error-drawer-button {
+  border: none !important;
+  outline: none !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-right: 0.5rem !important;
+}
+
+// .error-drawer-button:focus {
+//   --tw-ring-offset-shadow: none !important;
+//   --tw-ring-shadow: none !important;
+//   box-shadow: none !important;
+//   padding: 0 !important;
+// }
+
+.error-drawer-button:hover {
+  border: none !important;
+  outline: none !important;
+}
+
+.error-drawer-button:active {
+  border: none !important;
+  outline: none !important;
+}
+
 
 /* #endregion */
 

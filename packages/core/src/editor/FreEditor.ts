@@ -57,6 +57,7 @@ export class FreEditor {
     private _selectedPosition: FreCaret = FreCaret.UNSPECIFIED; // The caret position within the _selectedBox.
     private NOSELECT: Boolean = false; // Do not accept "select" actions, used e.g. when an undo is going to come.
     private _errorDecorator: FreErrorDecorator = null;
+    private _errors: FreError[] = [];           
 
     /**
      * The constructor makes a number of private properties observable.
@@ -626,7 +627,12 @@ export class FreEditor {
      * @param list
      */
     setErrors(list: FreError[]) {
+        this._errors = list;
         this._errorDecorator.setErrors(list);
+    }
+
+    getErrors() {
+        return this._errors;
     }
     //
     // gatherErrorsPerLine() {

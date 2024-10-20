@@ -79,7 +79,7 @@
     <div class="drawer-buttons">
         {#each drawers as drawer}
             {#if drawer.isVisible}
-                <Button id={drawer.key} class="drawer-button" on:click={() => toggleDrawer(drawer.key)}>
+                <Button id={drawer.key} class="toolbar-button" on:click={() => toggleDrawer(drawer.key)}>
                     <FontAwesomeIcon icon={drawer.icon} />
                 </Button>
                 <!-- <Tooltip class="tooltip-popover" triggeredBy="#{drawer.key}" placement="left">{drawer.description}</Tooltip> -->

@@ -43,11 +43,18 @@
 
   --drawer-background: #cfd6e0;
   --drawer-handle: #b6b6b6;
-  --drawer-button: #292929;
+  --drawer-button: var(--text-primary-900);
   --drawer-content-background: #d5dee7;
   --drawer-header-background: #a9b7c5;
   --drawer-header-text: var(--text-primary-900);
   --drawer-content-area: #e2e2e2;
+
+  --toolbar-button: var(--text-primary-500);
+  --toolbar-button-background: none;  
+  --toolbar-button-hover: var(--black);
+  --toolbar-button-hover-background: var(--black-10t);
+  --toolbar-button-active: var(--black); 
+  --toolbar-button-active-background: var(--black-20t);
 
   --content-background: #cfd6e0;
 
@@ -352,6 +359,24 @@ appnav a:visited {
 }
 /* #endregion */
 
+/* #region Toolbar */
+
+.toolbar-button{
+  background: none;
+  color: var(--drawer-button);
+}
+
+.toolbar-button:hover {
+  background: none; 
+  color: var(--drawer-button-hover);
+}
+
+.toolbar-button:active {
+  background: none; 
+  color: var(--drawer-button-active);
+}
+
+/* #endregion */
 /* #region Grid */
 .crc-grid-header {
   background-color: var(--card-background);
@@ -598,4 +623,21 @@ appnav a:visited {
   border-bottom: 1px solid  var(--black-5t) !important;
 }
 
+/* #endregion */
+
+/* #region Error Drawer */
+.error-drawer-button{
+  background: var(--toolbar-button-background) !important;
+  color: var(--toolbar-button) !important;
+}
+
+.error-drawer-button:hover {
+  background: var(--toolbar-button-hover-background) !important;
+  color: var(--toolbar-button-hover) !important;
+} 
+
+.error-drawer-button:active {
+  background: var(--toolbar-button-active-background) !important;
+  color: var(--toolbar-button-active) !important;
+} 
 /* #endregion */
