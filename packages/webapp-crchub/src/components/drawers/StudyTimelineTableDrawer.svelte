@@ -7,7 +7,7 @@
     import { WebappConfigurator, EditorState, EditorRequestsHandler } from "@freon4dsl/webapp-lib";
     import { type FreEnvironment, RtString } from '@freon4dsl/core';
     import { type StudyConfigurationModel } from '@freon4dsl/samples-study-configuration';
-    import { getTimelineTable } from '../../services/app/Timeline';
+    import { getTimelineTable } from '../../services/app/StudyTimeline';
 
     export let studyId: string;
     let isLoading = true;

@@ -9,6 +9,7 @@ export interface Patient {
     patientNumber: string;
     displayName: string;
     name: string;
+    initials: string;
     dob: string;
     gender: string;
     studyId: string;
