@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from "vitest";
 import { Timeline } from "../timeline/Timeline.js";
 import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
@@ -31,7 +32,7 @@ describe("Study Simulation", () => {
     const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
 
     beforeEach(() => {
-        new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
+        new Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
         // const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
         studyConfigurationModel = studyConfigurationModelEnvironment.newModel(modelName) as StudyConfigurationModel;
         studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
@@ -40,7 +41,7 @@ describe("Study Simulation", () => {
     });
 
     describe("Simulation of Trial Events to Generate the Timeline in the same period", () => {
-        it("generates a one visit timeline for a visit on day 0", () => {
+        it("XXX generates a one visit timeline for a visit on day 0", () => {
             // GIVEN a study configuration with one period and one event
             let eventSchedule = utils.createEventScheduleStartingOnADay("Visit 1", 0);
             let period = new Period("Screening");
