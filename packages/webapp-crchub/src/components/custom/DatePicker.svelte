@@ -2,10 +2,10 @@
     import { afterUpdate, onMount } from "svelte";
     import { ExternalStringBox, FreEditor } from "@freon4dsl/core";
     export let box: ExternalStringBox;
-    export let editor: FreEditor;
+    // export let editor: FreEditor;
 
     let inputElement: HTMLInputElement;
-    
+
     let value: string = "";
     getValue();
 
@@ -30,7 +30,7 @@
             return undefined;
         }
         const [year, month, day] = dateArray;
-        const newDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        const newDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 
         console.log("In getValidDate: " + newDate); // YYYY-MM-DD format
         let date = new Date(newDate);
