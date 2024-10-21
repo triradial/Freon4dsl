@@ -77,8 +77,8 @@ export class ScheduledEvent {
         const value = interpreter.evaluateWithContext(node, ctx);
         if (isRtError(value)) {
             const trace = interpreter.getTrace().root.toStringRecursive();
-            console.log("ScheduledEvent.day() isRtError: " + trace);
-            throw new Error("interpreter isRtError, value: " + value.toString());
+            console.log("interpret() isRtError: " + trace);
+            throw new Error("interpret() isRtError, value: " + value.toString());
         } else {
             return value;
         }
@@ -88,7 +88,7 @@ export class ScheduledEvent {
         console.log("ScheduledEvent.day() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay);
         let eventStart = this.configuredEvent.schedule.eventStart;
         if (this.isScheduledOnASpecificDay()) {
-            console.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + (eventStart as Day).startDay);
+            console.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + this.interpret(eventStart, timeline));
         } else if (eventStart instanceof When) {
             if ((eventStart as When).timeAmountPart !== undefined && (eventStart as When).timeAmountPart !== null) {
                 console.log(

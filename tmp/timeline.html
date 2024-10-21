@@ -4,10 +4,10 @@
             <title>Timeline Chart</title>
             <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
             <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
-            <link id="theme-stylesheet" rel='stylesheet' href='../packages/webapp-crchub/public/build/bundle-dark.css'>
+            <link id="theme-stylesheet" rel='stylesheet' href='/build/bundle-dark.css'>
              <!--    -->
             </head>
-            <body style="background-color: rgb(12, 5, 51);">
+            <body>
             <div id="visualization" style="position: unset !important; height:auto"></div>  
             <div class="timeline-instructions">
               <ul style="list-style-type: none;">
@@ -27,22 +27,17 @@
             <script>
               var groups = new vis.DataSet([
               { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-              { "content": "Visit 1", "id": "Visit 1" },
+              { "content": "Screen", "id": "Screen" },
+              { "content": "StudyStart", "id": "StudyStart" },
               
               
               ]);
               
               var items = new vis.DataSet([
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
-              { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
-              { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
-              { start: new Date(2024, 00, 07, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 14" },
-              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 15" },
-              { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 16" },
-              { start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 17" },
-              { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 18" },
-              { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 19" },
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -7", content: "<b>Screening</b>", id: "Screening0" },
+              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Screen", className: "scheduled-event", title: "Screen: as the start day of the Study", content: "&nbsp;", id: "Screen2" },
+              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "StudyStart", className: "scheduled-event", title: "StudyStart: as the start day of the Study", content: "&nbsp;", id: "StudyStart3" },
               
               
               
@@ -81,9 +76,9 @@
                                 showMajorLabels: true,
                                 orientation: 'both',
                                 start: new Date(2024, 0, 1),
-                                end: new Date(2024, 0, 16),
+                                end: new Date(2024, 0, 9),
                                 min: new Date(2024, 0, 1),
-                                max: new Date(2024, 0, 16),
+                                max: new Date(2024, 0, 9),
                                 margin: {
                                     item: {
                                         horizontal: 0,

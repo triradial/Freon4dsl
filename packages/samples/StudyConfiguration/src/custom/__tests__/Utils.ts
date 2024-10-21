@@ -1,5 +1,5 @@
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { StudyConfiguration } from "../../language/gen/index.js";
+import { FirstDayOfStudy, StudyConfiguration } from "../../language/gen/index.js";
 import { Period } from "../../language/gen/index.js";
 import { Event } from "../../language/gen/index.js";
 import { EventSchedule } from "../../language/gen/index.js";
@@ -123,8 +123,8 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(
     periodName: string,
     event1Name: string,
     event1Day: number,
-    event2Name: string,
-    event2DaysAfterStudyStart,
+    secondEventName: string,
+    secondEventDaysAfterStudyStart,
 ): StudyConfiguration {
     let period = new Period(periodName);
     period.name = periodName;
@@ -135,17 +135,17 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(
     let referenceToOperator = FreNodeReference.create<SimpleOperators>("+", "SimpleOperators");
     let days = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
 
-    const studyStart = StudyStart.create({
+    const studyStart = FirstDayOfStudy.create({
         timeAmountPart: TimeAmountPart.create({
             operator: referenceToOperator,
             timeAmount: TimeAmount.create({
-                value: event2DaysAfterStudyStart,
+                value: secondEventDaysAfterStudyStart,
                 unit: days,
             }),
         }),
     });
     let eventSchedule = EventSchedule.create({ eventStart: studyStart });
-    createEventAndAddToPeriod(period, event2Name, eventSchedule);
+    createEventAndAddToPeriod(period, secondEventName, eventSchedule);
 
     studyConfiguration.periods.push(period);
     return studyConfiguration;
@@ -356,7 +356,8 @@ export function saveToFile(stringToSave: string, filename: string) {
 }
 
 export function saveTimeline(timelineDataAsScript: string) {
-    let filename = "tmp/timeline.html";
+    // console.log(process.cwd());
+    let filename = "../../../tmp/timeline.html";
     let timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
     saveToFile(timelineDataAsHTML, filename);

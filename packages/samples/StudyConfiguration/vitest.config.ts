@@ -4,9 +4,16 @@ import path from "path";
 export default defineConfig({
     test: {
         globals: true,
-        environment: "jsdom",
+        environment: "node",
         include: ["**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
         exclude: ["**/node_modules/**", "**/dist/**"],
+        onConsoleLog(log, type) {
+            if (log.includes("[MobX]")) {
+                return false;
+            }
+            console.log(`>XX${log}\n`);
+            return true;
+        },
     },
     resolve: {
         alias: {

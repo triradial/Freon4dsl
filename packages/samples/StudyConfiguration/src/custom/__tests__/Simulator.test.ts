@@ -41,7 +41,7 @@ describe("Study Simulation", () => {
     });
 
     describe("Simulation of Trial Events to Generate the Timeline in the same period", () => {
-        it("XXX generates a one visit timeline for a visit on day 0", () => {
+        it("generates a one visit timeline for a visit on day 0", () => {
             // GIVEN a study configuration with one period and one event
             let eventSchedule = utils.createEventScheduleStartingOnADay("Visit 1", 0);
             let period = new Period("Screening");
@@ -212,7 +212,7 @@ describe("Study Simulation", () => {
               var items = new vis.DataSet([
               { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
               { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 8", content: "<b>Treatment</b>", id: "Treatment1" },
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: at the start day of the Study", content: "&nbsp;", id: "Visit 12" },
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: as the start day of the Study", content: "&nbsp;", id: "Visit 12" },
               { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: when Visit 1 completed + 7 days", content: "&nbsp;", id: "Visit 23" },
               { start: new Date(2024, 00, 17, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "Visit 3", className: "scheduled-event", title: "Visit 3: when Visit 2 completed + 7 days", content: "&nbsp;", id: "Visit 34" },
               ])`;
@@ -329,7 +329,7 @@ describe("Study Simulation", () => {
             { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
             { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
             { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
-            { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: at the start day of the Study + 7 days", content: "&nbsp;", id: "Visit 24" },
+            { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: on the start day of the Study + 7 days", content: "&nbsp;", id: "Visit 24" },
           ])
         `;
 
@@ -429,8 +429,8 @@ describe("Study Simulation", () => {
               var items = new vis.DataSet([
               { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -7", content: "<b>Screening</b>", id: "Screening0" },
               { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Screen", className: "scheduled-event", title: "Screen: at the start day of the Study - 7 days", content: "&nbsp;", id: "Screen2" },
-              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "StudyStart", className: "scheduled-event", title: "StudyStart: at the start day of the Study", content: "&nbsp;", id: "StudyStart3" },
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Screen", className: "scheduled-event", title: "Screen: as the start day of the Study - 7 days", content: "&nbsp;", id: "Screen2" },
+              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "StudyStart", className: "scheduled-event", title: "StudyStart: as the start day of the Study", content: "&nbsp;", id: "StudyStart3" },
               ])
               `;
             testStudyInFile("StartMinusDays", studyConfigurationModel, expectedTimelineDataAsScript);
@@ -457,44 +457,44 @@ describe("Study Simulation", () => {
               var items = new vis.DataSet([
               { start: new Date(2018, 02, 13, 00, 00, 00), end: new Date(2018, 03, 09, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -28", content: "<b>Screening</b>", id: "Screening0" },
               { start: new Date(2018, 03, 10, 00, 00, 00), end: new Date(2019, 03, 23, 23, 59, 59), group: "Phase", className: "baseline-phase", title: "Day: 0", content: "<b>Baseline</b>", id: "Baseline1" },
-              { start: new Date(2018, 02, 13, 00, 00, 00), end: new Date(2018, 02, 13, 23, 59, 59), group: "V1", className: "scheduled-event", title: "V1: at the start day of the Study - 28 days", content: "&nbsp;", id: "V12" },
+              { start: new Date(2018, 02, 13, 00, 00, 00), end: new Date(2018, 02, 13, 23, 59, 59), group: "V1", className: "scheduled-event", title: "V1: as the start day of the Study - 28 days", content: "&nbsp;", id: "V12" },
               { start: new Date(2018, 02, 14, 00, 00, 00), end: new Date(2018, 02, 28, 23, 59, 59), group: "V1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V13" },
-              { start: new Date(2018, 02, 25, 00, 00, 00), end: new Date(2018, 02, 25, 23, 59, 59), group: "V2", className: "scheduled-event", title: "V2: at the start day of the Study - 16 days", content: "&nbsp;", id: "V24" },
+              { start: new Date(2018, 02, 25, 00, 00, 00), end: new Date(2018, 02, 25, 23, 59, 59), group: "V2", className: "scheduled-event", title: "V2: as the start day of the Study - 16 days", content: "&nbsp;", id: "V24" },
               { start: new Date(2018, 02, 26, 00, 00, 00), end: new Date(2018, 03, 08, 23, 59, 59), group: "V2", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V25" },
-              { start: new Date(2018, 02, 26, 00, 00, 00), end: new Date(2018, 02, 26, 23, 59, 59), group: "V3", className: "scheduled-event", title: "V3: at the start day of the Study - 15 days", content: "&nbsp;", id: "V36" },
+              { start: new Date(2018, 02, 26, 00, 00, 00), end: new Date(2018, 02, 26, 23, 59, 59), group: "V3", className: "scheduled-event", title: "V3: as the start day of the Study - 15 days", content: "&nbsp;", id: "V36" },
               { start: new Date(2018, 02, 27, 00, 00, 00), end: new Date(2018, 03, 09, 23, 59, 59), group: "V3", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V37" },
-              { start: new Date(2018, 03, 10, 00, 00, 00), end: new Date(2018, 03, 10, 23, 59, 59), group: "V4", className: "scheduled-event", title: "V4: at the start day of the Study", content: "&nbsp;", id: "V48" },
+              { start: new Date(2018, 03, 10, 00, 00, 00), end: new Date(2018, 03, 10, 23, 59, 59), group: "V4", className: "scheduled-event", title: "V4: as the start day of the Study", content: "&nbsp;", id: "V48" },
               { start: new Date(2018, 04, 07, 00, 00, 00), end: new Date(2018, 04, 08, 23, 59, 59), group: "V5", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V59" },
               { start: new Date(2018, 04, 09, 00, 00, 00), end: new Date(2018, 04, 09, 23, 59, 59), group: "V5", className: "scheduled-event", title: "V5: when V4 completed + 4 weeks", content: "&nbsp;", id: "V510" },
               { start: new Date(2018, 04, 10, 00, 00, 00), end: new Date(2018, 04, 11, 23, 59, 59), group: "V5", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V511" },
               { start: new Date(2018, 04, 31, 00, 00, 00), end: new Date(2018, 05, 04, 23, 59, 59), group: "V6", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V612" },
-              { start: new Date(2018, 05, 05, 00, 00, 00), end: new Date(2018, 05, 05, 23, 59, 59), group: "V6", className: "scheduled-event", title: "V6: at the start day of the Study + 8 weeks", content: "&nbsp;", id: "V613" },
+              { start: new Date(2018, 05, 05, 00, 00, 00), end: new Date(2018, 05, 05, 23, 59, 59), group: "V6", className: "scheduled-event", title: "V6: as the start day of the Study + 8 weeks", content: "&nbsp;", id: "V613" },
               { start: new Date(2018, 05, 06, 00, 00, 00), end: new Date(2018, 05, 10, 23, 59, 59), group: "V6", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V614" },
               { start: new Date(2018, 05, 28, 00, 00, 00), end: new Date(2018, 06, 02, 23, 59, 59), group: "V7, V10, V12", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V7, V10, V1215" },
-              { start: new Date(2018, 06, 03, 00, 00, 00), end: new Date(2018, 06, 03, 23, 59, 59), group: "V7, V10, V12", className: "scheduled-event", title: "V7, V10, V12: at the start day of the Study + 12 weeks", content: "&nbsp;", id: "V7, V10, V1216" },
+              { start: new Date(2018, 06, 03, 00, 00, 00), end: new Date(2018, 06, 03, 23, 59, 59), group: "V7, V10, V12", className: "scheduled-event", title: "V7, V10, V12: as the start day of the Study + 12 weeks", content: "&nbsp;", id: "V7, V10, V1216" },
               { start: new Date(2018, 06, 04, 00, 00, 00), end: new Date(2018, 06, 08, 23, 59, 59), group: "V7, V10, V12", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V7, V10, V1217" },
               { start: new Date(2018, 06, 26, 00, 00, 00), end: new Date(2018, 06, 30, 23, 59, 59), group: "V8", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V818" },
-              { start: new Date(2018, 06, 31, 00, 00, 00), end: new Date(2018, 06, 31, 23, 59, 59), group: "V8", className: "scheduled-event", title: "V8: at the start day of the Study + 16 weeks", content: "&nbsp;", id: "V819" },
+              { start: new Date(2018, 06, 31, 00, 00, 00), end: new Date(2018, 06, 31, 23, 59, 59), group: "V8", className: "scheduled-event", title: "V8: as the start day of the Study + 16 weeks", content: "&nbsp;", id: "V819" },
               { start: new Date(2018, 07, 01, 00, 00, 00), end: new Date(2018, 07, 05, 23, 59, 59), group: "V8", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V820" },
               { start: new Date(2018, 07, 23, 00, 00, 00), end: new Date(2018, 07, 27, 23, 59, 59), group: "V9", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V921" },
-              { start: new Date(2018, 07, 28, 00, 00, 00), end: new Date(2018, 07, 28, 23, 59, 59), group: "V9", className: "scheduled-event", title: "V9: at the start day of the Study + 20 weeks", content: "&nbsp;", id: "V922" },
+              { start: new Date(2018, 07, 28, 00, 00, 00), end: new Date(2018, 07, 28, 23, 59, 59), group: "V9", className: "scheduled-event", title: "V9: as the start day of the Study + 20 weeks", content: "&nbsp;", id: "V922" },
               { start: new Date(2018, 07, 29, 00, 00, 00), end: new Date(2018, 08, 02, 23, 59, 59), group: "V9", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V923" },
               { start: new Date(2018, 08, 20, 00, 00, 00), end: new Date(2018, 08, 24, 23, 59, 59), group: "V7, V10, V12", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V7, V10, V1224" },
-              { start: new Date(2018, 08, 25, 00, 00, 00), end: new Date(2018, 08, 25, 23, 59, 59), group: "V7, V10, V12", className: "scheduled-event", title: "V7, V10, V12: at the start day of the Study + 12 weeks", content: "&nbsp;", id: "V7, V10, V1225" },
+              { start: new Date(2018, 08, 25, 00, 00, 00), end: new Date(2018, 08, 25, 23, 59, 59), group: "V7, V10, V12", className: "scheduled-event", title: "V7, V10, V12: as the start day of the Study + 12 weeks", content: "&nbsp;", id: "V7, V10, V1225" },
               { start: new Date(2018, 08, 26, 00, 00, 00), end: new Date(2018, 08, 30, 23, 59, 59), group: "V7, V10, V12", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V7, V10, V1226" },
               { start: new Date(2018, 09, 18, 00, 00, 00), end: new Date(2018, 09, 22, 23, 59, 59), group: "V11", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1127" },
-              { start: new Date(2018, 09, 23, 00, 00, 00), end: new Date(2018, 09, 23, 23, 59, 59), group: "V11", className: "scheduled-event", title: "V11: at the start day of the Study + 28 weeks", content: "&nbsp;", id: "V1128" },
+              { start: new Date(2018, 09, 23, 00, 00, 00), end: new Date(2018, 09, 23, 23, 59, 59), group: "V11", className: "scheduled-event", title: "V11: as the start day of the Study + 28 weeks", content: "&nbsp;", id: "V1128" },
               { start: new Date(2018, 09, 24, 00, 00, 00), end: new Date(2018, 09, 28, 23, 59, 59), group: "V11", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1129" },
               { start: new Date(2018, 11, 13, 00, 00, 00), end: new Date(2018, 11, 17, 23, 59, 59), group: "V7, V10, V12", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V7, V10, V1230" },
-              { start: new Date(2018, 11, 18, 00, 00, 00), end: new Date(2018, 11, 18, 23, 59, 59), group: "V7, V10, V12", className: "scheduled-event", title: "V7, V10, V12: at the start day of the Study + 12 weeks", content: "&nbsp;", id: "V7, V10, V1231" },
+              { start: new Date(2018, 11, 18, 00, 00, 00), end: new Date(2018, 11, 18, 23, 59, 59), group: "V7, V10, V12", className: "scheduled-event", title: "V7, V10, V12: as the start day of the Study + 12 weeks", content: "&nbsp;", id: "V7, V10, V1231" },
               { start: new Date(2018, 11, 19, 00, 00, 00), end: new Date(2018, 11, 23, 23, 59, 59), group: "V7, V10, V12", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V7, V10, V1232" },
               { start: new Date(2019, 01, 07, 00, 00, 00), end: new Date(2019, 01, 11, 23, 59, 59), group: "V13", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1333" },
-              { start: new Date(2019, 01, 12, 00, 00, 00), end: new Date(2019, 01, 12, 23, 59, 59), group: "V13", className: "scheduled-event", title: "V13: at the start day of the Study + 44 weeks", content: "&nbsp;", id: "V1334" },
+              { start: new Date(2019, 01, 12, 00, 00, 00), end: new Date(2019, 01, 12, 23, 59, 59), group: "V13", className: "scheduled-event", title: "V13: as the start day of the Study + 44 weeks", content: "&nbsp;", id: "V1334" },
               { start: new Date(2019, 01, 13, 00, 00, 00), end: new Date(2019, 01, 17, 23, 59, 59), group: "V13", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1335" },
               { start: new Date(2019, 03, 04, 00, 00, 00), end: new Date(2019, 03, 08, 23, 59, 59), group: "V14", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1436" },
-              { start: new Date(2019, 03, 09, 00, 00, 00), end: new Date(2019, 03, 09, 23, 59, 59), group: "V14", className: "scheduled-event", title: "V14: at the start day of the Study + 52 weeks", content: "&nbsp;", id: "V1437" },
+              { start: new Date(2019, 03, 09, 00, 00, 00), end: new Date(2019, 03, 09, 23, 59, 59), group: "V14", className: "scheduled-event", title: "V14: as the start day of the Study + 52 weeks", content: "&nbsp;", id: "V1437" },
               { start: new Date(2019, 03, 10, 00, 00, 00), end: new Date(2019, 03, 14, 23, 59, 59), group: "V14", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1438" },
-              { start: new Date(2019, 03, 23, 00, 00, 00), end: new Date(2019, 03, 23, 23, 59, 59), group: "FU", className: "scheduled-event", title: "FU: at the start day of the Study + 54 weeks", content: "&nbsp;", id: "FU39" },
+              { start: new Date(2019, 03, 23, 00, 00, 00), end: new Date(2019, 03, 23, 23, 59, 59), group: "FU", className: "scheduled-event", title: "FU: as the start day of the Study + 54 weeks", content: "&nbsp;", id: "FU39" },
               ])
         `;
             testStudyInFile("ScheduleExample1a", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2018, 2, 13));
@@ -521,15 +521,15 @@ describe("Study Simulation", () => {
               var items = new vis.DataSet([
               { start: new Date(2011, 02, 25, 00, 00, 00), end: new Date(2011, 03, 21, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -28", content: "<b>Screening</b>", id: "Screening0" },
               { start: new Date(2011, 03, 22, 00, 00, 00), end: new Date(2012, 01, 08, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
-              { start: new Date(2011, 02, 25, 00, 00, 00), end: new Date(2011, 02, 25, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: at the start day of the Study - 4 weeks", content: "&nbsp;", id: "V1 Randomization2" },
+              { start: new Date(2011, 02, 25, 00, 00, 00), end: new Date(2011, 02, 25, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: as the start day of the Study - 4 weeks", content: "&nbsp;", id: "V1 Randomization2" },
               { start: new Date(2011, 02, 26, 00, 00, 00), end: new Date(2011, 02, 27, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 Run In3" },
               { start: new Date(2011, 02, 28, 00, 00, 00), end: new Date(2011, 02, 28, 23, 59, 59), group: "V1 Run In", className: "scheduled-event", title: "V1 Run In: when V1 Randomization completed + 2 days", content: "&nbsp;", id: "V1 Run In4" },
               { start: new Date(2011, 02, 29, 00, 00, 00), end: new Date(2011, 02, 30, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1 Run In5" },
-              { start: new Date(2011, 03, 08, 00, 00, 00), end: new Date(2011, 03, 08, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: at the start day of the Study - 2 weeks", content: "&nbsp;", id: "V2 Randomization6" },
+              { start: new Date(2011, 03, 08, 00, 00, 00), end: new Date(2011, 03, 08, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: as the start day of the Study - 2 weeks", content: "&nbsp;", id: "V2 Randomization6" },
               { start: new Date(2011, 03, 09, 00, 00, 00), end: new Date(2011, 03, 10, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2 Run In7" },
               { start: new Date(2011, 03, 11, 00, 00, 00), end: new Date(2011, 03, 11, 23, 59, 59), group: "V2 Run In", className: "scheduled-event", title: "V2 Run In: when V2 Randomization completed + 2 days", content: "&nbsp;", id: "V2 Run In8" },
               { start: new Date(2011, 03, 12, 00, 00, 00), end: new Date(2011, 03, 13, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2 Run In9" },
-              { start: new Date(2011, 03, 22, 00, 00, 00), end: new Date(2011, 03, 22, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: at the start day of the Study", content: "&nbsp;", id: "V3 Randomization10" },
+              { start: new Date(2011, 03, 22, 00, 00, 00), end: new Date(2011, 03, 22, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: as the start day of the Study", content: "&nbsp;", id: "V3 Randomization10" },
               { start: new Date(2011, 03, 28, 00, 00, 00), end: new Date(2011, 03, 29, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization11" },
               { start: new Date(2011, 03, 30, 00, 00, 00), end: new Date(2011, 03, 30, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization12" },
               { start: new Date(2011, 04, 01, 00, 00, 00), end: new Date(2011, 04, 02, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization13" },
@@ -662,11 +662,11 @@ describe("Study Simulation", () => {
               var items = new vis.DataSet([
               { start: new Date(2011, 02, 25, 00, 00, 00), end: new Date(2011, 04, 20, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -57", content: "<b>Screening</b>", id: "Screening0" },
               { start: new Date(2011, 04, 21, 00, 00, 00), end: new Date(2012, 04, 06, 23, 59, 59), group: "Phase", className: "period-phase", title: "Day: 0", content: "<b>Period</b>", id: "Period1" },
-              { start: new Date(2011, 02, 25, 00, 00, 00), end: new Date(2011, 02, 25, 23, 59, 59), group: "ICF (1A)", className: "scheduled-event", title: "ICF (1A): at the start day of the Study - 57 days", content: "&nbsp;", id: "ICF (1A)2" },
-              { start: new Date(2011, 02, 26, 00, 00, 00), end: new Date(2011, 02, 26, 23, 59, 59), group: "Screening (1B/1C)", className: "scheduled-event", title: "Screening (1B/1C): at the start day of the Study - 56 days", content: "&nbsp;", id: "Screening (1B/1C)3" },
-              { start: new Date(2011, 03, 30, 00, 00, 00), end: new Date(2011, 03, 30, 23, 59, 59), group: "BAE (2A)", className: "scheduled-event", title: "BAE (2A): at the start day of the Study - 21 days", content: "&nbsp;", id: "BAE (2A)4" },
-              { start: new Date(2011, 04, 14, 00, 00, 00), end: new Date(2011, 04, 14, 23, 59, 59), group: "BAE (2B)", className: "scheduled-event", title: "BAE (2B): at the start day of the Study - 7 days", content: "&nbsp;", id: "BAE (2B)5" },
-              { start: new Date(2011, 04, 21, 00, 00, 00), end: new Date(2011, 04, 21, 23, 59, 59), group: "Randomization (3A)", className: "scheduled-event", title: "Randomization (3A): at the start day of the Study", content: "&nbsp;", id: "Randomization (3A)6" },
+              { start: new Date(2011, 02, 25, 00, 00, 00), end: new Date(2011, 02, 25, 23, 59, 59), group: "ICF (1A)", className: "scheduled-event", title: "ICF (1A): as the start day of the Study - 57 days", content: "&nbsp;", id: "ICF (1A)2" },
+              { start: new Date(2011, 02, 26, 00, 00, 00), end: new Date(2011, 02, 26, 23, 59, 59), group: "Screening (1B/1C)", className: "scheduled-event", title: "Screening (1B/1C): as the start day of the Study - 56 days", content: "&nbsp;", id: "Screening (1B/1C)3" },
+              { start: new Date(2011, 03, 30, 00, 00, 00), end: new Date(2011, 03, 30, 23, 59, 59), group: "BAE (2A)", className: "scheduled-event", title: "BAE (2A): as the start day of the Study - 21 days", content: "&nbsp;", id: "BAE (2A)4" },
+              { start: new Date(2011, 04, 14, 00, 00, 00), end: new Date(2011, 04, 14, 23, 59, 59), group: "BAE (2B)", className: "scheduled-event", title: "BAE (2B): as the start day of the Study - 7 days", content: "&nbsp;", id: "BAE (2B)5" },
+              { start: new Date(2011, 04, 21, 00, 00, 00), end: new Date(2011, 04, 21, 23, 59, 59), group: "Randomization (3A)", className: "scheduled-event", title: "Randomization (3A): as the start day of the Study", content: "&nbsp;", id: "Randomization (3A)6" },
               { start: new Date(2011, 04, 21, 00, 00, 00), end: new Date(2011, 04, 21, 23, 59, 59), group: "Dose Admin (3A)", className: "scheduled-event", title: "Dose Admin (3A): when Randomization (3A) started", content: "&nbsp;", id: "Dose Admin (3A)7" },
               { start: new Date(2011, 05, 16, 00, 00, 00), end: new Date(2011, 05, 17, 23, 59, 59), group: "Dose Admin (3B)", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Dose Admin (3B)8" },
               { start: new Date(2011, 05, 18, 00, 00, 00), end: new Date(2011, 05, 18, 23, 59, 59), group: "Dose Admin (3B)", className: "scheduled-event", title: "Dose Admin (3B): when Dose Admin (3A) started + 4 weeks", content: "&nbsp;", id: "Dose Admin (3B)9" },
@@ -806,15 +806,15 @@ var items = new vis.DataSet([
     { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 28, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -28", content: "<b>Screening</b>", id: "Screening0" },
     { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 09, 17, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
     
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: at the start day of the Study  - 4 weeks", content: "&nbsp;", id: "V1 Randomization2" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: as the start day of the Study  - 4 weeks", content: "&nbsp;", id: "V1 Randomization2" },
     { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "V1  Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1  Run In3" },
     { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "V1  Run In", className: "scheduled-event", title: "V1  Run In: when V1 Randomization completed + 3 days", content: "&nbsp;", id: "V1  Run In4" },
     { start: new Date(2024, 00, 05, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V1  Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1  Run In5" },
-    { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: at the start day of the Study  - 2 weeks", content: "&nbsp;", id: "V2 Randomization6" },
+    { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: as the start day of the Study  - 2 weeks", content: "&nbsp;", id: "V2 Randomization6" },
     { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V2  Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2  Run In7" },
     { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "V2  Run In", className: "scheduled-event", title: "V2  Run In: when V2 Randomization completed + 3 days", content: "&nbsp;", id: "V2  Run In8" },
     { start: new Date(2024, 00, 19, 00, 00, 00), end: new Date(2024, 00, 20, 23, 59, 59), group: "V2  Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2  Run In9" },
-    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: at the start day of the Study ", content: "&nbsp;", id: "V3 Randomization10" },
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: as the start day of the Study ", content: "&nbsp;", id: "V3 Randomization10" },
     { start: new Date(2024, 01, 03, 00, 00, 00), end: new Date(2024, 01, 04, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization11" },
     { start: new Date(2024, 01, 05, 00, 00, 00), end: new Date(2024, 01, 05, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization12" },
     { start: new Date(2024, 01, 06, 00, 00, 00), end: new Date(2024, 01, 07, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization13" },{ start: new Date(2024, 01, 06, 00, 00, 00), end: new Date(2024, 01, 07, 23, 59, 59), group: "V4-V7  Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7  Run In14" },
@@ -936,15 +936,15 @@ var items = new vis.DataSet([
     { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 28, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -28", content: "<b>Screening</b>", id: "Screening0" },
     { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 09, 17, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
     
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: at the start day of the Study  - 4 weeks", content: "&nbsp;", id: "V1 Randomization2" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: as the start day of the Study  - 4 weeks", content: "&nbsp;", id: "V1 Randomization2" },
     { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "V1  Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1  Run In3" },
     { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "V1  Run In", className: "scheduled-event", title: "V1  Run In: when V1 Randomization completed + 3 days", content: "&nbsp;", id: "V1  Run In4" },
     { start: new Date(2024, 00, 05, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V1  Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1  Run In5" },
-    { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: at the start day of the Study  - 2 weeks", content: "&nbsp;", id: "V2 Randomization6" },
+    { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: as the start day of the Study  - 2 weeks", content: "&nbsp;", id: "V2 Randomization6" },
     { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V2  Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2  Run In7" },
     { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "V2  Run In", className: "scheduled-event", title: "V2  Run In: when V2 Randomization completed + 3 days", content: "&nbsp;", id: "V2  Run In8" },
     { start: new Date(2024, 00, 19, 00, 00, 00), end: new Date(2024, 00, 20, 23, 59, 59), group: "V2  Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2  Run In9" },
-    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: at the start day of the Study ", content: "&nbsp;", id: "V3 Randomization10" },
+    { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: as the start day of the Study ", content: "&nbsp;", id: "V3 Randomization10" },
     { start: new Date(2024, 01, 03, 00, 00, 00), end: new Date(2024, 01, 04, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization11" },
     { start: new Date(2024, 01, 05, 00, 00, 00), end: new Date(2024, 01, 05, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization12" },
     { start: new Date(2024, 01, 06, 00, 00, 00), end: new Date(2024, 01, 07, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization13" },{ start: new Date(2024, 01, 06, 00, 00, 00), end: new Date(2024, 01, 07, 23, 59, 59), group: "V4-V7  Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7  Run In14" },
@@ -1151,15 +1151,15 @@ var items = new vis.DataSet([
               var items = new vis.DataSet([
               { start: new Date(2024, 08, 30, 00, 00, 00), end: new Date(2024, 09, 27, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -28", content: "<b>Screening</b>", id: "Screening0" },
               { start: new Date(2024, 09, 28, 00, 00, 00), end: new Date(2025, 07, 16, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
-              { start: new Date(2024, 08, 30, 00, 00, 00), end: new Date(2024, 08, 30, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: at the start day of the Study - 4 weeks", content: "&nbsp;", id: "V1 Randomization2" },
+              { start: new Date(2024, 08, 30, 00, 00, 00), end: new Date(2024, 08, 30, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: as the start day of the Study - 4 weeks", content: "&nbsp;", id: "V1 Randomization2" },
               { start: new Date(2024, 09, 01, 00, 00, 00), end: new Date(2024, 09, 02, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 Run In3" },
               { start: new Date(2024, 09, 03, 00, 00, 00), end: new Date(2024, 09, 03, 23, 59, 59), group: "V1 Run In", className: "scheduled-event", title: "V1 Run In: when V1 Randomization completed + 2 days", content: "&nbsp;", id: "V1 Run In4" },
               { start: new Date(2024, 09, 04, 00, 00, 00), end: new Date(2024, 09, 05, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1 Run In5" },
-              { start: new Date(2024, 09, 14, 00, 00, 00), end: new Date(2024, 09, 14, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: at the start day of the Study - 2 weeks", content: "&nbsp;", id: "V2 Randomization6" },
+              { start: new Date(2024, 09, 14, 00, 00, 00), end: new Date(2024, 09, 14, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: as the start day of the Study - 2 weeks", content: "&nbsp;", id: "V2 Randomization6" },
               { start: new Date(2024, 09, 15, 00, 00, 00), end: new Date(2024, 09, 16, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2 Run In7" },
               { start: new Date(2024, 09, 17, 00, 00, 00), end: new Date(2024, 09, 17, 23, 59, 59), group: "V2 Run In", className: "scheduled-event", title: "V2 Run In: when V2 Randomization completed + 2 days", content: "&nbsp;", id: "V2 Run In8" },
               { start: new Date(2024, 09, 18, 00, 00, 00), end: new Date(2024, 09, 19, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2 Run In9" },
-              { start: new Date(2024, 09, 28, 00, 00, 00), end: new Date(2024, 09, 28, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: at the start day of the Study", content: "&nbsp;", id: "V3 Randomization10" },
+              { start: new Date(2024, 09, 28, 00, 00, 00), end: new Date(2024, 09, 28, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: as the start day of the Study", content: "&nbsp;", id: "V3 Randomization10" },
               { start: new Date(2024, 10, 03, 00, 00, 00), end: new Date(2024, 10, 04, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization11" },
               { start: new Date(2024, 10, 05, 00, 00, 00), end: new Date(2024, 10, 05, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization12" },
               { start: new Date(2024, 10, 06, 00, 00, 00), end: new Date(2024, 10, 07, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization13" },
@@ -1323,7 +1323,7 @@ var items = new vis.DataSet([
             Type: site
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  - 28
+                First scheduled: as the start day of the Study  - 28
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   16 day(s) after
@@ -1336,7 +1336,7 @@ var items = new vis.DataSet([
             Type: site
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  - 16
+                First scheduled: as the start day of the Study  - 16
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   14 day(s) after
@@ -1349,7 +1349,7 @@ var items = new vis.DataSet([
             Type: site
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  - 15
+                First scheduled: as the start day of the Study  - 15
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   14 day(s) after
@@ -1365,7 +1365,7 @@ var items = new vis.DataSet([
             Type: site
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study 
+                First scheduled: as the start day of the Study 
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   0 day(s) after
@@ -1391,7 +1391,7 @@ var items = new vis.DataSet([
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  + "8" weeks
+                First scheduled: as the start day of the Study  + "8" weeks
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   0 day(s) after
@@ -1404,7 +1404,7 @@ var items = new vis.DataSet([
             Type: site
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  + "12" weeks
+                First scheduled: as the start day of the Study  + "12" weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -1419,7 +1419,7 @@ var items = new vis.DataSet([
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  + "16" weeks
+                First scheduled: as the start day of the Study  + "16" weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -1432,7 +1432,7 @@ var items = new vis.DataSet([
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  + "20" weeks
+                First scheduled: as the start day of the Study  + "20" weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -1445,7 +1445,7 @@ var items = new vis.DataSet([
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  + "28" weeks
+                First scheduled: as the start day of the Study  + "28" weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -1458,7 +1458,7 @@ var items = new vis.DataSet([
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  + "44" weeks
+                First scheduled: as the start day of the Study  + "44" weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -1471,7 +1471,7 @@ var items = new vis.DataSet([
             Type: site
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  + "52" weeks
+                First scheduled: as the start day of the Study  + "52" weeks
                 with a window of: at most 0 day(s) before
                                   5 day(s) before
                                   5 day(s) after
@@ -1484,7 +1484,7 @@ var items = new vis.DataSet([
             Type: phone
             Description: " "
             Schedule:
-                First scheduled: at the start day of the Study  + "54" weeks
+                First scheduled: as the start day of the Study  + "54" weeks
                 with a window of: at most 0 day(s) before
                                   0 day(s) before
                                   0 day(s) after
