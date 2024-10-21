@@ -10,7 +10,17 @@ export const redirectUrl = writable<string>('/');
 
 export async function authenticate(signInInput: SignInInput): Promise<boolean> {
     try {
-        const signInOutput = await signIn(signInInput);
+        const fakeauth = true;
+        if (fakeauth) {
+            if (!(signInInput.username === 'graham.mcgibbon@triradial.com') &&
+                !(signInInput.username === 'mike.vogel@triradial.com') &&
+                !(signInInput.username === 'hkneiss@gmail.com'))
+                {
+                return false;
+            }   
+        } else {
+            const signInOutput = await signIn(signInInput);
+        }
         const user = await getUserByEmail(signInInput.username);
         if (user) {
             userStore.setUser(user);
