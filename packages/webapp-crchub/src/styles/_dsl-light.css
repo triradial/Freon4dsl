@@ -370,8 +370,9 @@
 
 .datepicker-input {
   color: rgb(1, 95, 1);
-  background-color: var(--green-10t);
+  background-color: transparent;
   border: transparent;
+  color-scheme: light;
 }
 
 .datepicker-input:hover {
@@ -386,12 +387,13 @@
 }
 /* #endregion */
 
-/* #region Datepicker */
+/* #region Timepicker */
 
 .timepicker-input {
   color: rgb(1, 95, 1);
-  background-color: var(--green-10t);
+  background-color: transparent;
   border: transparent;
+  color-scheme: light;
 }
 
 .timepicker-input:hover {
@@ -403,6 +405,11 @@
   color: rgb(1, 95, 1);
   background-color: var(--green-10t);
   border: rgb(1, 95, 1);
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  background: white;
+  color: black;
 }
 /* #endregion */
 

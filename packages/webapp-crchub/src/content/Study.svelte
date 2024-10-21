@@ -26,7 +26,7 @@
 
     let modelManager = EditorState.getInstance();
     let dslEditor: FreEditor;
-    let studyConfigurationUnit: StudyConfiguration;
+    let unit: StudyConfiguration;
 
     let footerItems = [
         { id: 'showScheduling', label: 'Scheduling', visible: true },
@@ -41,14 +41,14 @@
     onMount(async () => {
         // get the study data
         study = await getStudy(id);
-
+        dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         // Get the model data for the study
         const result = await modelManager.openUnitForModel(study.id, "StudyConfiguration");
         if (result !== undefined) {
-            studyConfigurationUnit = result as StudyConfiguration;
+            unit = result as StudyConfiguration;
             setTimeout(() => {
                 editorLoaded = true;
-            }, 5000);
+            }, 3000);
         } else {
             console.error('Failed to load study configuration');
         }
@@ -56,10 +56,10 @@
          // Set initial visibility based on studyConfigurationUnit
          footerItems = footerItems.map(item => ({
             ...item,
-            visible: studyConfigurationUnit[item.id as keyof StudyConfiguration] as boolean
+            visible: unit[item.id as keyof StudyConfiguration] as boolean
         }));
  
-        dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+        
 
         // initialize the study chart drawer for the study
         setDrawerProps("dslErrors", { studyId: id });
@@ -77,13 +77,13 @@
             setActiveDrawer(null);
         }
         setDrawerVisibility('dslErrors', false);
-        setDrawerVisibility('studyTimelineChart', false);
+        setDrawerVisibility('studyTimelineTable', false);
         setDrawerVisibility('studyTimelineChart', false);
     });
 
     function handleCheckboxChange(id: string, visible: boolean) {
-        if (id in studyConfigurationUnit) {
-            (studyConfigurationUnit[id as keyof StudyConfiguration] as boolean) = visible;
+        if (id in unit) {
+            (unit[id as keyof StudyConfiguration] as boolean) = visible;
         }
     }
 
