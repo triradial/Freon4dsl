@@ -11,6 +11,11 @@ main {
   /* top padding is 0 because the progress indicator uses 4px height */
 }
 
+.error-positioning {
+  position: absolute;
+  left: 0px;
+}
+
 /* #region General Component */
 
 .freon-component {
@@ -662,7 +667,6 @@ span:has(> .tinymce-wrapper) {
 
 /* #endregion */
 
-
 /* #region Datepicker */
 .datepicker {
   margin-left: 0.25rem;
@@ -694,7 +698,6 @@ span:has(> .tinymce-wrapper) {
   padding-bottom: 0.35rem;
 }
 /* #endregion */
-
 
 /* #region TAILWIND OVERRIDES */
 
