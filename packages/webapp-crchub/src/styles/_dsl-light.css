@@ -74,20 +74,20 @@
 /* #region Text Component */
 .text-dropdown-component .text-component-input,
 .text-component-input {
-  color: var(--green);
+  color: rgb(1, 95, 1);
   background-color: var(--green-10t);
 }
 
 .text-dropdown-component .text-component-text,
 .text-component-text {
-  color: var(--green);
-  background-color: inherit;
+  color: rgb(1, 95, 1);
+  background-color: var(--green-20t);
 }
 
 .text-dropdown-component .text-component-text:hover,
 .text-component-text:hover {
-  color: var(--green);
-  background-color: var(--green-10t);
+  color: rgb(1, 95, 1);
+  background-color: var(--green-30t);
 }
 
 .text-dropdown-component .text-component-placeholder,
@@ -369,3 +369,23 @@
 .render-component-selected {
   background-color: var(--black-2t);
 }
+
+/* #region Datepicker */
+
+.datepicker-input {
+  color: rgb(1, 95, 1);
+  background-color: var(--green-10t);
+  border: transparent;
+}
+
+.datepicker-input:hover {
+  color: rgb(1, 95, 1);
+  background-color: var(--green-30t);
+}
+
+.datepicker-input:focus {
+  color: rgb(1, 95, 1);
+  background-color: var(--green-10t);
+  border: rgb(1, 95, 1);
+}
+/* #endregion */

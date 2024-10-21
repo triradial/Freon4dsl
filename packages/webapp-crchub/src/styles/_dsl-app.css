@@ -662,6 +662,40 @@ span:has(> .tinymce-wrapper) {
 
 /* #endregion */
 
+
+/* #region Datepicker */
+.datepicker {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+.datepicker-input {
+  height: 1.25rem;
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-bottom: 0.35rem;
+}
+
+.datepicker-input:hover {
+  height: 1.25rem;
+  width: 6rem;
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-bottom: 0.35rem;
+}
+
+.datepicker-input:focus {
+  height: 1.25rem;
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-bottom: 0.35rem;
+}
+/* #endregion */
+
+
 /* #region TAILWIND OVERRIDES */
 
 [type='text']:focus,

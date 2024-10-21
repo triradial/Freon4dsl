@@ -307,6 +307,21 @@ appbar a:hover,
 appnav a:hover {
   text-decoration: none;
 }
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.card-label-text {
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+
+.card {
+  border-radius: 0;
+  box-shadow: none;
+  border: 1px solid #e5e7eb
+}
 /* #endregion */
 
 /* #region Login */
@@ -1058,21 +1073,6 @@ appnav a:hover {
 }
 
 /* #endregion */
-
-.inline-flex {
-  display: inline-flex;
-}
-
-.card-label-text {
-  font-size: 0.6rem;
-  font-weight: 600;
-}
-
-.card {
-  border-radius: 0;
-  box-shadow: none;
-  border: 1px solid #e5e7eb
-}
 
 /* #region Drawer Table */
 

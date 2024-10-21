@@ -371,6 +371,27 @@
 
 /* #endregion */
 
+
+/* #region Datepicker */
+
+.datepicker-input {
+  color: var(--green-50t);
+  background-color: var(--green-10t);
+  border: transparent;
+}
+
+.datepicker-input:hover {
+  color: var(--green-50t);
+  background-color: var(--green-10t);
+}
+
+.datepicker-input:focus {
+  color: var(--green-60t);
+  background-color: var(--green-10t);
+  border: green;
+}
+/* #endregion */
+
 .render-component-selected {
   background-color: var(--white-5t);
 }
