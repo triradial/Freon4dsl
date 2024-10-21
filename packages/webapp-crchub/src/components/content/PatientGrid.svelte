@@ -71,8 +71,8 @@
                     },
                 },
                 {
-                    field: "displayName",
-                    headerName: "Name",
+                    field: "initials",
+                    headerName: "Initials",
                     filter: "agSetColumnFilter",
                     filterParams: {
                         excelMode: "mac",
@@ -80,7 +80,7 @@
                 },
                 {
                     field: "dob",
-                    headerName: "DOB",
+                    headerName: "YOB",
                     filter: "agSetColumnFilter",
                     filterParams: {
                         excelMode: "mac",

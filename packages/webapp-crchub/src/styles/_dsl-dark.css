@@ -371,13 +371,13 @@
 
 /* #endregion */
 
-
 /* #region Datepicker */
 
 .datepicker-input {
   color: var(--green-50t);
-  background-color: var(--green-10t);
+  background-color: transparent;
   border: transparent;
+  color-scheme: dark;
 }
 
 .datepicker-input:hover {
@@ -390,14 +390,16 @@
   background-color: var(--green-10t);
   border: green;
 }
+
 /* #endregion */
 
 /* #region Timepicker */
 
 .timepicker-input {
   color: var(--green-50t);
-  background-color: var(--green-10t);
+  background-color: transparent;
   border: transparent;
+  color-scheme: dark;
 }
 
 .timepicker-input:hover {

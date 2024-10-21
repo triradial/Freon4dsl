@@ -438,6 +438,16 @@
                "children": [
                   "ID-365"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventSchedule-eventTimeOfDay"
+               },
+               "children": [
+                  "ID-116"
+               ]
             }
          ],
          "references": [],
@@ -642,6 +652,44 @@
          "references": [],
          "annotations": [],
          "parent": "ID-365"
+      },
+      {
+         "id": "ID-116",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-StartingBy"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StartingBy-startTimeAsString"
+               },
+               "value": "12:37"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StartingBy-startHour"
+               },
+               "value": "0"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StartingBy-startMinute"
+               },
+               "value": "0"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-364"
       },
       {
          "id": "ID-383",

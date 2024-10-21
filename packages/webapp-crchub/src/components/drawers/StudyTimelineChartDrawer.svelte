@@ -1,13 +1,11 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { Skeleton, ListPlaceholder } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faHeart, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+    import { ListPlaceholder } from "flowbite-svelte";
 
-    import { WebappConfigurator, EditorState, EditorRequestsHandler } from "@freon4dsl/webapp-lib";
-    import { type FreEnvironment, RtString } from "@freon4dsl/core";
+    import { EditorState } from "@freon4dsl/webapp-lib";
+    import { RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineChart } from "../../services/app/Timeline";
+    import { getTimelineChart } from "../../services/app/StudyTimeline";
 
     export let studyId: string;
     let isLoading = true;

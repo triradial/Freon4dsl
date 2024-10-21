@@ -15,9 +15,9 @@ const createBundle = (theme) => {
     ])
         .pipe(sass().on('error', sass.logError))
         .pipe(postcss([
-            tailwindcss('./tailwind.config.cjs')
-            // autoprefixer()
-            // cssnano()
+            tailwindcss('./tailwind.config.cjs'),
+            autoprefixer(),
+            cssnano()
         ]))
         .pipe(rename(`bundle-${theme}.css`))
         .pipe(gulp.dest('public/build'));

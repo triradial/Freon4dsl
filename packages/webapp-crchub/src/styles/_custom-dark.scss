@@ -231,7 +231,8 @@ button:focus {
 }
 
 .toast-warning-container div {
-  background-color: var(--red);
+  background-color: transparent;
+  color: var(--red);
 }
 
 .crc-logo-p1 {

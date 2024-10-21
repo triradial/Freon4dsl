@@ -45,7 +45,11 @@
         if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
             value = startStr;
         } else {
-            value = "2024-02-24";
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            value = `${yyyy}-${mm}-${dd}`;
         }
     }
 
@@ -82,31 +86,4 @@
     />
 </div>
 
-<style>
-    .datepicker {
-        position: relative;
-        max-width: 24rem;
-    }
-    .datepicker-input {
-        background-color: transparent;
-        background-color: transparent;
-        border-width: 1px;
-        border-color: transparent;
-        color: rgb(134, 151, 189);
-        font-size: 0.875rem; /* 14px */
-        line-height: 1.25rem; /* 20px */
-        border-radius: 0.5rem; /* 8px */
-        display: block;
-        width: 100%;
-        padding-inline-start: 2.5rem; /* 40px */
-        padding: 0.625rem; /* 10px */
-        color-scheme: dark;
-    }
-    .datepicker-input:hover,
-    .datepicker-input:focus {
-        --tw-ring-color: rgb(59 130 246);
-        border-color: rgb(59 130 246);
-        color: rgb(255, 255, 255);
-        border-width: 1px;
-    }
-</style>
+

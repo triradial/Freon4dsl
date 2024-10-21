@@ -142,7 +142,7 @@ export class EditorState {
      * @param modelName
      * @param unitName
      */
-    async openUnitForModel(modelName: string, unitName: string): Promise<StudyConfiguration | null> {
+    async openUnitForModel(modelName: string, unitName: string): Promise<FreModelUnit | null> {
         // FreLogger.unmuteAllLogs();
         LOGGER.log("EditorState.openmodel(" + modelName + ")");
         editorProgressShown.set(true);
@@ -151,7 +151,7 @@ export class EditorState {
         await this.saveCurrentUnit();
         // create new model instance in memory and set its name
         await this.modelStore.openModel(modelName);
-        const unit = this.modelStore.getUnitByName(unitName) as StudyConfiguration | null;
+        const unit = this.modelStore.getUnitByName(unitName) as FreModelUnit | null;
         this.currentUnit = unit;
         BoxFactory.clearCaches();
         this.langEnv.projectionHandler.clear();

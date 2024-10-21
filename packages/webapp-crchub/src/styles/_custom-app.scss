@@ -218,7 +218,7 @@
   color: var(--text-primary-900);
 }
 
-/* end region */
+/* #endregion */
 
 html,
 body {
@@ -345,6 +345,11 @@ appnav a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.login-page input {
+  font-size: var(--standard-font-size) !important;
+  font-weight: 500 !important;
 }
 
 #remember-me input {

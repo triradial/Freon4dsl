@@ -1,0 +1,142 @@
+{
+   "serializationFormatVersion": "2023.1",
+   "languages": [],
+   "nodes": [
+      {
+         "id": "ID-355",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-Availability"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Availability-name"
+               },
+               "value": "Availability"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Availability-baselineStaff"
+               },
+               "value": "4"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Availability-staffLevels"
+               },
+               "children": [
+                  "ID-80"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": null
+      },
+      {
+         "id": "ID-80",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-StaffLevel"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StaffLevel-staffAvailable"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StaffLevel-dateOrRange"
+               },
+               "children": [
+                  "ID-81"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-355"
+      },
+      {
+         "id": "ID-81",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-DateRange"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-DateRange-startDate"
+               },
+               "children": [
+                  "ID-90"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-80"
+      },
+      {
+         "id": "ID-90",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-StartRangeDate"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-dateAsString"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-day"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-Date-year"
+               },
+               "value": "2025"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-81"
+      }
+   ]
+}
