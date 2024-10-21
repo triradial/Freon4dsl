@@ -73,11 +73,11 @@
     onDestroy(() => {
         editorLoaded = false;
         var activeDrawer = getActiveDrawer();
-        if (activeDrawer === 'studyTimelineTable' || activeDrawer === 'studyTimelineChart') {
+        if (activeDrawer === 'studyTimelineTable' || activeDrawer === 'studyTimelineChart' || activeDrawer === 'dslErrors') {
             setActiveDrawer(null);
         }
         setDrawerVisibility('dslErrors', false);
-        setDrawerVisibility('studyTimelineTable', false);
+        setDrawerVisibility('studyTimelineChart', false);
         setDrawerVisibility('studyTimelineChart', false);
     });
 

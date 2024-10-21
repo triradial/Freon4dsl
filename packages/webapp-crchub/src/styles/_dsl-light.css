@@ -75,7 +75,7 @@
 .text-dropdown-component .text-component-input,
 .text-component-input {
   color: rgb(1, 95, 1);
-  background-color: var(--green-10t);
+  background-color: var(--green-20t);
 }
 
 .text-dropdown-component .text-component-text,
@@ -366,10 +366,6 @@
 
 /* #endregion */
 
-.render-component-selected {
-  background-color: var(--black-2t);
-}
-
 /* #region Datepicker */
 
 .datepicker-input {
@@ -389,3 +385,27 @@
   border: rgb(1, 95, 1);
 }
 /* #endregion */
+
+/* #region Datepicker */
+
+.timepicker-input {
+  color: rgb(1, 95, 1);
+  background-color: var(--green-10t);
+  border: transparent;
+}
+
+.timepicker-input:hover {
+  color: rgb(1, 95, 1);
+  background-color: var(--green-30t);
+}
+
+.timepicker-input:focus {
+  color: rgb(1, 95, 1);
+  background-color: var(--green-10t);
+  border: rgb(1, 95, 1);
+}
+/* #endregion */
+
+.render-component-selected {
+  background-color: var(--black-2t);
+}

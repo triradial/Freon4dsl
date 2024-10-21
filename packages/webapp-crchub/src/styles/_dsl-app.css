@@ -699,6 +699,38 @@ span:has(> .tinymce-wrapper) {
 }
 /* #endregion */
 
+/* #region Datepicker */
+.timepicker {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+.timepicker-input {
+  width: 6rem;
+  height: 1.25rem;
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-bottom: 0.35rem;
+}
+
+.timepicker-input:hover {
+  height: 1.25rem;
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-bottom: 0.35rem;
+}
+
+.timepicker-input:focus {
+  height: 1.25rem;
+  font-size: 0.75rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-bottom: 0.35rem;
+}
+/* #endregion */
+
 /* #region TAILWIND OVERRIDES */
 
 [type='text']:focus,
