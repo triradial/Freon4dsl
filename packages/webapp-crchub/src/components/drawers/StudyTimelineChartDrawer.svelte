@@ -38,6 +38,7 @@
         error = null;
         try {
             const startTime = Date.now();
+            console.log("calling getChart from StudyTimelineChartDrawer");
             chartHtml = getChart(studyId);
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
             await loadChartData();

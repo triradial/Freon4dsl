@@ -126,5 +126,16 @@
     "studyId": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
     "study": "MK-3475-028",
     "initials": "UP"
+  },
+  {
+    "id": "c82c5980-bc58-44f0-b9e3-57edb3801f5c",
+    "patientNumber": "1234",
+    "displayName": "",
+    "name": "",
+    "dob": "2024",
+    "gender": "Male",
+    "studyId": "7e010ccb-0eee-405c-8ebb-8beb162c7b59",
+    "study": "ScheduleExample2",
+    "initials": "MV"
   }
 ]
