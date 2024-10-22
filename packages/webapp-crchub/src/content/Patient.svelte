@@ -2,25 +2,25 @@
     import { onMount } from "svelte";
     import PatientCard from "../components/cards/PatientCard.svelte";
 
-    import { Tabs, TabItem, ListPlaceholder } from 'flowbite-svelte';
-    import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faListCheck, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
+    import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
+    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import { faListCheck, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
     import { getPatient, type Patient } from "../services/dataStore";
 
     import { EditorState } from "@freon4dsl/webapp-lib";
     import { RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
+    import { type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
     import { getTimelineChart } from "../services/app/PatientTimeline";
 
     export let id: string;
     let patient: Patient;
 
-    let isLoading = true;  
+    let isLoading = true;
     let showChart = false;
     let chartHtml: string = "";
     let error: string | null = null;
     let container: HTMLElement | null = null;
-    
+
     onMount(async () => {
         const fetchedPatient = await getPatient(id);
         if (fetchedPatient) {
@@ -28,17 +28,18 @@
         } else {
             console.error(`Patient with id ${id} not found`);
         }
-        loadChart(patient.studyId); /* TODO: change to patient.id */
+        await loadChart(patient.studyId); /* TODO: change to patient.id */
     });
-  
+
     async function loadChart(id: string) {
         isLoading = true;
         showChart = false;
         error = null;
         try {
             const startTime = Date.now();
-            chartHtml = getChart(id);
+            chartHtml = await getChart(id);
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
+
             await loadChartData();
             const elapsedTime = Date.now() - startTime;
             if (elapsedTime < 3000) {
@@ -53,27 +54,20 @@
         }
     }
 
-    function getChart(id: string) {
-        const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
-        const studyConfigurationUnit = studyConfigurationModel.configuration;
-        const rtObject = getTimelineChart(studyConfigurationUnit) as RtString;
+    async function getChart(id: string) {
+        const modelManager = EditorState.getInstance();
+        const unit = (await modelManager.openUnitForModel(id, "StudyConfiguration")) as StudyConfiguration;
+        const rtObject = getTimelineChart(unit) as RtString;
         return rtObject.asString();
     }
 
     async function loadChartData() {
         return new Promise<void>((resolve) => {
-            const link = document.createElement("link");
-            link.href = "https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css";
-            link.rel = "stylesheet";
-            document.head.appendChild(link);
-
-            const script = document.createElement("script");
-            script.src = "https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js";
-            script.onload = () => {
+            if (container) {
+                container.innerHTML = chartHtml;
                 executeScripts();
-                resolve();
-            };
-            document.body.appendChild(script);
+            }
+            resolve();
         });
     }
 
@@ -82,12 +76,14 @@
             const scripts = container.querySelectorAll("script");
             scripts.forEach((oldScript) => {
                 const newScript = document.createElement("script");
-                newScript.textContent = oldScript.textContent;
-                oldScript.replaceWith(newScript);
+                Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                if (oldScript.parentNode) {
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                }
             });
         }
     }
-
 </script>
 
 {#if patient}
@@ -95,6 +91,7 @@
         <div class="crc-card">
             <PatientCard {patient} />
         </div>
+
         <div class="crc-content">
             <Tabs tabStyle="underline" class="crc-tab">
                 <TabItem open title="Schedule">
@@ -109,13 +106,12 @@
                             {@html chartHtml}
                         </div>
                     </div>
-                 </TabItem>
+                </TabItem>
                 <TabItem title="Tasks">
                     <div slot="title" class="flex items-center gap-2">
                         <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Tasks
                     </div>
-                    <div class="crc-grid">
-                    </div>
+                    <div class="crc-grid"></div>
                 </TabItem>
             </Tabs>
         </div>

@@ -9,9 +9,12 @@
     import GridHeader from "../common/GridHeader.svelte";
     import { getSVGIcon } from "../../services/utils";
     import { editObject } from "../../services/objectDrawerStore";
-    import ObjectDrawerSystem from "../common/ObjectDrawerSystem.svelte";
+    import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
     export let studyId: string;
+
+    let deleteDialogOpen = false;
+    let objectToDelete: any = null;
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
@@ -23,15 +26,18 @@
     }
 
     // React to changes in $studyPatients, but only update local data
-    $: if ($studyPatients) {
+    $: {
         patientsData = $studyPatients;
         updateGridData();
     }
 
+    // $: if ($studyPatients) {
+    //     patientsData = $studyPatients;
+    //     updateGridData();
+    // }
+
     async function fetchStudyPatients() {
         await getStudyPatients(studyId);
-        patientsData = $studyPatients;
-        updateGridData();
 }
 
     function updateGridData() {
@@ -138,15 +144,20 @@
         navigateTo("patient", patientId);
     }
 
-    function onDeleteClick(data: { patientNumber: string }) {
-        console.log("Delete clicked for patient:", data);
-        if (confirm(`Are you sure you want to delete patient ${data.patientNumber}?`)) {
-            // TODO: Implement delete functionality
+    function onDeleteClick(patientId: string) {
+        console.log("Delete clicked for patient:", patientId);
+        objectToDelete = patientsData.find(p => p.id === patientId);
+        if (objectToDelete) {
+            deleteDialogOpen = true;
         }
     }
 
-    function onEditClick(patientNumber: string) {
-        editObject("patient", patientNumber);
+    $: if (objectToDelete) {
+        console.log("Object to delete:", objectToDelete);
+    }
+
+    function onEditClick(patientId: string) {
+        editObject("patient", patientId);
     }
 
     function createActionButtons(params: any, buttonConfigs: any) {
@@ -158,7 +169,7 @@
                 const button = document.createElement("button");
                 button.classList.add("grid-button", `${config.type}-button`);
                 button.innerHTML = getSVGIcon(config.icon);
-                button.addEventListener("click", () => config.onClick(params.data));
+                button.addEventListener("click", () => config.onClick(params.data.id));
                 span.appendChild(button);
             }
         });
@@ -176,5 +187,19 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<GridHeader title="Patients" objectType="patient" />
+<GridHeader title="Patients" objectType="patient" parentId={studyId} />
 <div id="patientGrid" class="{gridTheme} ag-grid"></div>
+<DeleteObjectDialog 
+    bind:open={deleteDialogOpen}
+    objectType="patient"
+    object={objectToDelete}
+    on:delete={() => {
+        updateGridData();
+        deleteDialogOpen = false;
+        objectToDelete = null;
+    }}
+    on:cancel={() => {
+        deleteDialogOpen = false;
+        objectToDelete = null;
+    }}
+/>

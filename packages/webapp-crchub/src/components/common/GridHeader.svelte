@@ -5,10 +5,11 @@
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
+    export let parentId: string | null = null;
     export let objectType: string;
     export let title: string;
     const onAddObject = () => {
-        addObject(objectType as "study" | "patient");
+        addObject(objectType as "study" | "patient", parentId);
     }
 </script>
 

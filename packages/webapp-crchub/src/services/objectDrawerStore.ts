@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
-import { studies, patients, getStudy, getPatient, addStudy, updateStudy, addPatient, updatePatient } from '../services/dataStore';
+import { getStudy, getPatient, addStudy, updateStudy, addPatient, updatePatient } from '../services/dataStore';
+import type { Study } from '../services/dataStore';
 
 export const drawerStore = writable({
     instanceId: uuidv4(),
@@ -11,10 +12,17 @@ export const drawerStore = writable({
     object: null as any
 });
 
-export function addObject(type: 'study' | 'patient') {
+export async function addObject(type: 'study' | 'patient', parentId?: string) {
+    let parentName = '';
+    if (parentId && type === 'patient') {
+        const parentObject: Study | undefined = await getStudy(parentId);
+        if (parentObject) {
+            parentName = parentObject.name;
+        }
+    }
     const object = type === 'study'
         ? { id: uuidv4(), name: '', title: '', status: '', phase: '', therapeuticArea: '', currentProtocol: '' }
-        : { id: uuidv4(), patientNumber: '', displayName: '', name: '', dob: '', gender: '', studyId: '', study: '' };
+        : { id: uuidv4(), patientNumber: '', displayName: '', name: '', dob: '', gender: '', studyId: parentId, study: parentName };
     drawerStore.set({ instanceId: uuidv4(), open: true, objectType: type, action: 'add', id: null, object });
 }
 

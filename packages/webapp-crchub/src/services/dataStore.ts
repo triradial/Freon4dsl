@@ -221,6 +221,7 @@ export async function addPatient(newPatient: Patient): Promise<boolean> {
     const text = await response.text();
     const addedPatient = JSON.parse(text);
     patients.update(p => [...p, addedPatient]);
+    studyPatients.update(p => [...p, addedPatient]);
     return true;
   } catch (error) {
     console.error('Error adding patient:', error);
@@ -241,6 +242,7 @@ export async function updatePatient(updatedPatient: Patient): Promise<boolean> {
     });
     if (!response.ok) throw new Error('Failed to update patient');
     patients.update(p => p.map(patient => patient.id === updatedPatient.id ? updatedPatient : patient));
+    studyPatients.update(p => p.map(patient => patient.id === updatedPatient.id ? updatedPatient : patient));
     return true;
   } catch (error) {
     console.error('Error updating patient:', error);
@@ -257,6 +259,7 @@ export async function deletePatient(patientId: string): Promise<boolean> {
     const response = await fetch(`${API_BASE_URL}/deletePatient?id=${patientId}&uid=${currentUser.userid}`, { method: 'DELETE' });
     if (!response.ok) throw new Error('Failed to delete patient');
     patients.update(p => p.filter(patient => patient.id !== patientId));
+    studyPatients.update(p => p.filter(patient => patient.id !== patientId));
     return true;
   } catch (error) {
     console.error('Error deleting patient:', error);
