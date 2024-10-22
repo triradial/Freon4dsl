@@ -10,7 +10,6 @@
     import GridHeader from '../common/GridHeader.svelte';
     import { getSVGIcon } from "../../services/utils";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
-    import StudyCard from "../cards/StudyCard.svelte";
 
     let deleteDialogOpen = false;
     let objectToDelete: any = null;

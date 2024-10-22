@@ -2,9 +2,10 @@
     import { Card, Button, Input, Select, Helper } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
-    import { type Patient } from "../../services/dataStore";
+    import { type Study, type Patient } from "../../services/dataStore";
     import { createEventDispatcher } from "svelte";
 
+    export let study: Study;
     export let patient: Patient;
     export let action: "add" | "edit";
     let mutatedPatient = { ...patient };
@@ -15,6 +16,10 @@
     };
     $: if (action === "edit" && patient) {
         validateAllFields();
+    }
+    $: if (action === "add" && patient) {
+        mutatedPatient.studyId = study.id;
+        mutatedPatient.study = study.name;
     }
     let errors = {
         patientNumber: "",
@@ -70,12 +75,11 @@
         </div>
         <div>
             <h4 class="card-label-text">YOB</h4>
-            <Input type="date" bind:value={mutatedPatient.dob} class="crc-field" />
+            <Input type="number"  bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} class="crc-field" />
         </div>
         <div>
             <h4 class="card-label-text">Gender</h4>
             <Select bind:value={mutatedPatient.gender} class="crc-field">
-                <option value="">Select gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
