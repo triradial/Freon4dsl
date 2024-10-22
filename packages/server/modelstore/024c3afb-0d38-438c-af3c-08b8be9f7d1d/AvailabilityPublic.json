@@ -3,7 +3,7 @@
    "languages": [],
    "nodes": [
       {
-         "id": "ID-355",
+         "id": "ID-107",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -32,6 +32,16 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-default-key-Availability-patientNotAvailableDates"
+               },
+               "children": [
+                  "ID-108"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-default-key-Availability-staffLevels"
                },
                "children": []
@@ -40,6 +50,28 @@
          "references": [],
          "annotations": [],
          "parent": null
+      },
+      {
+         "id": "ID-108",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-PatientNotAvailable"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-PatientNotAvailable-dates"
+               },
+               "children": []
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-107"
       }
    ]
 }

@@ -160,20 +160,12 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                 result = result + 1;
             }
             const when = node.freOwner() as language.When;
-            const timeAmount = main.evaluate(when.timeAmountPart, ctx) as RtNumber;
-            // if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
-            //     let displacementFromEvent = main.evaluate(when.timeAmountPart.timeAmount, ctx) as RtNumber;
-            //     if (when.timeAmountPart.operator == undefined || when.timeAmountPart.operator == null) {
-            //         throw new RtError("evalEventReference: operator is undefined or null");
-            //     }
-            //     const operator = when.timeAmountPart.operator.name;
-            //     if (operator === language.SimpleOperators.plus.name) {
-            //         result = result + displacementFromEvent.value;
-            //     } else if (operator === language.SimpleOperators.minus.name) {
-            //         result = result - displacementFromEvent.value;
-            //     }
-            // }
-            return new RtNumber(result + timeAmount.value);
+            if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
+                const timeAmount = main.evaluate(when.timeAmountPart, ctx) as RtNumber;
+                return new RtNumber(result + timeAmount.value);
+            } else {
+                return new RtNumber(result);
+            }
         }
     }
 

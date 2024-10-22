@@ -22,15 +22,7 @@
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-StudyConfiguration-showActivityDetails"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-StudyConfiguration-showSystems"
+                  "key": "-default-key-StudyConfiguration-showSharedTasks"
                },
                "value": "false"
             },
@@ -46,9 +38,41 @@
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-StudyConfiguration-showPeriods"
+                  "key": "-default-key-StudyConfiguration-showChecklists"
                },
                "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-showReferences"
+               },
+               "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-showSystems"
+               },
+               "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-showPeople"
+               },
+               "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-showDescriptions"
+               },
+               "value": "false"
             },
             {
                "property": {
@@ -256,8 +280,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "site",
-                     "reference": "ID-24"
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -693,16 +717,6 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-EventWindow-maxDaysBefore"
-               },
-               "children": [
-                  "ID-117"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
                   "key": "-default-key-EventWindow-daysBefore"
                },
                "children": [
@@ -718,43 +732,11 @@
                "children": [
                   "ID-119"
                ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-EventWindow-maxDaysAfter"
-               },
-               "children": [
-                  "ID-120"
-               ]
             }
          ],
          "references": [],
          "annotations": [],
          "parent": "ID-115"
-      },
-      {
-         "id": "ID-117",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Days"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Days-count"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-116"
       },
       {
          "id": "ID-118",
@@ -780,28 +762,6 @@
       },
       {
          "id": "ID-119",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-Days"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-Days-count"
-               },
-               "value": "0"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-116"
-      },
-      {
-         "id": "ID-120",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",

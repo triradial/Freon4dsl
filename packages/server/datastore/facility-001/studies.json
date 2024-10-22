@@ -156,5 +156,41 @@
     "phase": "III",
     "therapeuticArea": "Alzheimers",
     "currentProtocol": ""
+  },
+  {
+    "id": "e0b1dc36-07ee-4f0f-8ba6-8d9c69724c67",
+    "name": "StartMinusDays",
+    "title": "Study used for automated tests",
+    "status": "Planning",
+    "phase": "II",
+    "therapeuticArea": "Test",
+    "currentProtocol": ""
+  },
+  {
+    "id": "46abda0c-51c3-473a-ad01-dacbc03d8639",
+    "name": "ScheduleExample1",
+    "title": "Example 1 for testing",
+    "status": "Planning",
+    "phase": "II",
+    "therapeuticArea": "Test",
+    "currentProtocol": ""
+  },
+  {
+    "id": "7e010ccb-0eee-405c-8ebb-8beb162c7b59",
+    "name": "ScheduleExample2",
+    "title": "Study for Testing",
+    "status": "Planning",
+    "phase": "",
+    "therapeuticArea": "Test",
+    "currentProtocol": ""
+  },
+  {
+    "id": "024c3afb-0d38-438c-af3c-08b8be9f7d1d",
+    "name": "OneVisitOneChecklist",
+    "title": "Study for Testing",
+    "status": "Planning",
+    "phase": "",
+    "therapeuticArea": "Test",
+    "currentProtocol": ""
   }
 ]

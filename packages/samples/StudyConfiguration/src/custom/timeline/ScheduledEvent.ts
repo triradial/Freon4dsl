@@ -14,6 +14,8 @@ import {
     Monthly,
     RepeatEvery,
     RepeatCount,
+    FirstDayOfStudy,
+    Baseline,
 } from "../../language/gen/index.js";
 import { InterpreterContext, isRtError, ownerOfType, RtBoolean, RtNumber, RtObject } from "@freon4dsl/core";
 import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter.js";
@@ -87,6 +89,10 @@ export class ScheduledEvent {
     day(timeline: Timeline): number {
         console.log("ScheduledEvent.day() for: " + this.getName() + " timeline.currentDay: " + timeline.currentDay);
         let eventStart = this.configuredEvent.schedule.eventStart;
+        if (this.getName() === undefined || this.getName() === null || this.getName() === "") {
+            console.log("ScheduledEvent.day() Ignoring Event with undefined name");
+            return undefined;
+        }
         if (this.isScheduledOnASpecificDay()) {
             console.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + this.interpret(eventStart, timeline));
         } else if (eventStart instanceof When) {
@@ -263,23 +269,25 @@ export class ScheduledEvent {
         }
     }
 
+    isInstanceOfAny(obj: any, classes: any[]): boolean {
+        return classes.some((cls) => obj instanceof cls);
+    }
+
     isScheduledOnASpecificDay() {
         const eventStart = this.configuredEvent.schedule.eventStart as EventStart;
         if (eventStart == null) {
             console.log("isScheduledOnASpecificDay: eventStart is null for: " + this.getName());
             return false;
-        } else if (eventStart instanceof Day) {
+        } else if (this.isInstanceOfAny(eventStart, [Day, StudyStart, FirstDayOfStudy, Baseline])) {
             return true;
-        } else if (eventStart instanceof StudyStart) {
-            return true;
-            // } else if (eventStart.freIsExpression()) { THIS IS NO LONGER NEEDED BECAUSE EVENTSTART IS NEVER AN EXPRESSION
-            //     //TODO: Make this more general search of StudyStart anywhere in the expression
-            //     // console.log("isScheduledOnASpecificDay: eventStart checking is currently limited to binary expressions starting with StudyStart!");
-            //     const eventStartExpression = eventStart as BinaryExpression;
-            //     if (eventStartExpression.left instanceof StudyStart) {
-            //         return true;
-            //     }
-        }
+        } // } else if (eventStart.freIsExpression()) { THIS IS NO LONGER NEEDED BECAUSE EVENTSTART IS NEVER AN EXPRESSION
+        //     //TODO: Make this more general search of StudyStart anywhere in the expression
+        //     // console.log("isScheduledOnASpecificDay: eventStart checking is currently limited to binary expressions starting with StudyStart!");
+        //     const eventStartExpression = eventStart as BinaryExpression;
+        //     if (eventStartExpression.left instanceof StudyStart) {
+        //         return true;
+        //     }
+        // }
         return false;
     }
 
@@ -290,6 +298,10 @@ export class ScheduledEvent {
      * otherwise return null.
      */
     getInstanceIfEventIsReadyToSchedule(completedEvent: ScheduledEventInstance, time: number, timeline: Timeline): ScheduledEventInstance {
+        if (this.getName() === undefined || this.getName() === null) {
+            console.log("ScheduledEvent.getInstanceIfEventIsReadyToSchedule() IGNORING Event without name");
+            return null;
+        }
         let repeatingEvent = this.isRepeatingEvent();
         console.log("ScheduledEvent.getInstanceIfEventIsReadyToSchedule() for: " + this.getName());
         let scheduledDay = this.day(timeline);

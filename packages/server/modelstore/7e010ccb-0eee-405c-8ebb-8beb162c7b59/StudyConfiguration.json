@@ -284,8 +284,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -570,6 +570,16 @@
                "children": [
                   "ID-95"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-96"
+               ]
             }
          ],
          "references": [],
@@ -590,7 +600,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "5"
+               "value": "8"
             }
          ],
          "containments": [],
@@ -615,6 +625,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-93"
+      },
+      {
+         "id": "ID-96",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -702,8 +725,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -1038,6 +1061,16 @@
                "children": [
                   "ID-393"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-97"
+               ]
             }
          ],
          "references": [],
@@ -1083,6 +1116,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-391"
+      },
+      {
+         "id": "ID-97",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -1170,8 +1216,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -1456,6 +1502,16 @@
                "children": [
                   "ID-406"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-98"
+               ]
             }
          ],
          "references": [],
@@ -1501,6 +1557,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-404"
+      },
+      {
+         "id": "ID-98",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -1588,8 +1657,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -1924,6 +1993,16 @@
                "children": [
                   "ID-416"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-99"
+               ]
             }
          ],
          "references": [],
@@ -1969,6 +2048,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-414"
+      },
+      {
+         "id": "ID-99",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -2135,8 +2227,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -2249,6 +2341,16 @@
                "children": [
                   "ID-424"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-100"
+               ]
             }
          ],
          "references": [],
@@ -2294,6 +2396,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-422"
+      },
+      {
+         "id": "ID-100",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -2379,8 +2494,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -2638,6 +2753,16 @@
                "children": [
                   "ID-431"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-101"
+               ]
             }
          ],
          "references": [],
@@ -2683,6 +2808,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-429"
+      },
+      {
+         "id": "ID-101",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -2814,8 +2952,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -3073,6 +3211,16 @@
                "children": [
                   "ID-442"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-102"
+               ]
             }
          ],
          "references": [],
@@ -3118,6 +3266,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-440"
+      },
+      {
+         "id": "ID-102",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -3249,8 +3410,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -3508,6 +3669,16 @@
                "children": [
                   "ID-39"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-103"
+               ]
             }
          ],
          "references": [],
@@ -3553,6 +3724,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-37"
+      },
+      {
+         "id": "ID-103",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -3731,8 +3915,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -3990,6 +4174,16 @@
                "children": [
                   "ID-49"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-104"
+               ]
             }
          ],
          "references": [],
@@ -4035,6 +4229,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-47"
+      },
+      {
+         "id": "ID-104",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -4166,8 +4373,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -4425,6 +4632,16 @@
                "children": [
                   "ID-59"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-105"
+               ]
             }
          ],
          "references": [],
@@ -4470,6 +4687,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-57"
+      },
+      {
+         "id": "ID-105",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -4648,8 +4878,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -4907,6 +5137,16 @@
                "children": [
                   "ID-69"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-106"
+               ]
             }
          ],
          "references": [],
@@ -4952,6 +5192,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-67"
+      },
+      {
+         "id": "ID-106",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -5083,8 +5336,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -5332,6 +5585,16 @@
                "children": [
                   "ID-79"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-107"
+               ]
             }
          ],
          "references": [],
@@ -5377,6 +5640,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-77"
+      },
+      {
+         "id": "ID-107",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -5462,8 +5738,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
-                     "reference": null
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -5627,6 +5903,16 @@
                "children": [
                   "ID-89"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-108"
+               ]
             }
          ],
          "references": [],
@@ -5672,6 +5958,19 @@
                "value": "2"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-87"
+      },
+      {
+         "id": "ID-108",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
