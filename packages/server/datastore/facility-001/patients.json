@@ -106,25 +106,14 @@
     "initials": "JH"
   },
   {
-    "id": "836aad2a-2f72-4ccd-b921-4313630968c8",
-    "patientNumber": "1001-IP",
+    "id": "67837b3b-14a1-4b93-af22-2073cc2604eb",
+    "patientNumber": "AZ100",
     "displayName": "",
     "name": "",
-    "dob": "1956",
-    "gender": "Male",
-    "studyId": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
-    "study": "MK-3475-028",
-    "initials": "IP"
-  },
-  {
-    "id": "6618bae2-c508-48c6-b0ae-26827bf469f6",
-    "patientNumber": "1001-UP",
-    "displayName": "",
-    "name": "",
-    "dob": "1968",
-    "gender": "Male",
-    "studyId": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
-    "study": "MK-3475-028",
-    "initials": "UP"
+    "dob": "1965",
+    "gender": "Female",
+    "studyId": "20fd7b12-a9ab-40b7-ad5b-331f74d8b210",
+    "study": "SV-LIFV",
+    "initials": "PL"
   }
 ]
