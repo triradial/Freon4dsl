@@ -20,7 +20,7 @@ jobs:
 
       # Install all dependencies at the root level if using a monorepo/workspace
       - name: Install dependencies for the whole monorepo
-        run: npm install
+        run: npm install --workspaces
         working-directory: . # Install from the root
 
       # Build only the server package
