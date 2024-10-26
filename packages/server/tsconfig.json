@@ -35,7 +35,8 @@
   },
   "include": ["src"],
   "references": [
-    { "path": "../core" }
+    { "path": "../core" },
+    { "path": "../samples/StudyConfiguration" }
   ],
   "exclude": [
     "dist",

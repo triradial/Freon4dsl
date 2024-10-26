@@ -77,9 +77,11 @@
     "baseUrl": "./src",
     "paths": {
       "@freon4dsl/core": ["packages/core/src"],
-      "@freon4dsl/samples-study-configuration": ["packages/samples-study-configuration/src"],
+      "@freon4dsl/core-svelte": ["packages/core-svelte/src"],
+      "@freon4dsl/samples-study-configuration": ["packages/samples/StudyConfiguration/src"],
       "@freon4dsl/server": ["packages/server/src"],
-      "@freon4dsl/webapp-crchub": ["packages/webapp-crchub/src"]
+      "@freon4dsl/webapp-crchub": ["packages/webapp-crchub/src"],
+      "@freon4dsl/webapp-lib": ["packages/webapp-lib/src"]
     },
     "lib": [
       "dom",
