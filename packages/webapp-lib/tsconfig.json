@@ -20,7 +20,9 @@
     "declarationMap": true,                         /* Generates a sourcemap for each corresponding '.d.ts' file. */
     "declarationDir": "./dist",
     "outDir": "./dist",                             /* Redirect output structure to the directory. NB: this works for rollup.,  for tsc it should be "./dist" !!! */
-    "rootDir": "./src",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    "rootDir": "./src",  
+    "composite": true,                              /* Enable project compilation */
+    "noEmit": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/*", "dist"],
