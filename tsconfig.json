@@ -81,6 +81,12 @@
     "skipLibCheck": true,                           /* Skip type checking of declaration files. */
     "forceConsistentCasingInFileNames": true,        /* Disallow inconsistently-cased references to the same file. */
     "baseUrl": "./src",
+    "paths": {
+      "@freon4dsl/core": ["packages/core/src"],
+      "@freon4dsl/samples-study-configuration": ["packages/samples-study-configuration/src"],
+      "@freon4dsl/server": ["packages/server/src"],
+      "@freon4dsl/webapp-crchub": ["packages/webapp-crchub/src"]
+    },
     "lib": [
       "dom",
       "dom.iterable",
