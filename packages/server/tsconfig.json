@@ -33,8 +33,9 @@
     ],
     "baseUrl": "."
   },
-  "include": [
-    "src"
+  "include": ["src"],
+  "references": [
+    { "path": "../core" }
   ],
   "exclude": [
     "dist",
