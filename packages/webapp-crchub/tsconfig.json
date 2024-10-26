@@ -102,7 +102,10 @@
       "experimentalSpecifierResolution": "node",
     },
     "references": [
-      { "path": "../webapp-lib" }
+      { "path": "../webapp-lib" },
+      { "path": "../core" },
+      { "path": "../core-svelte" },
+      { "path": "../samples/StudyConfiguration" }
     ],
     "exclude": [
       "node_modules",

@@ -1,4 +1,8 @@
 {
+  "compilerOptions": {
+    "composite": true,                              /* Enable project compilation */
+    "noEmit": false
+  },
   "exclude": [
 //    "Calculator",
 //    "RulesLanguage",
