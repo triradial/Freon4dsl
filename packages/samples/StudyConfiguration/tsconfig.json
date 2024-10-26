@@ -92,6 +92,9 @@
       "es2019"
     ]
   },
+  "references": [
+    { "path": "../../core" }
+  ],
   "exclude": [
     "node_modules/*",
     "__sapper__/*",
