@@ -1,10 +1,4 @@
 {
-  "include": [
-    "src",
-    "src/**/*",
-    "src/@types/svg.d.ts",
-    "src/**/*.svelte"
-  ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
@@ -98,14 +92,5 @@
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node",
-  },
-  "exclude": [
-    "node_modules/*",
-    "__sapper__/*",
-    "public/*",
-    "dist",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx",
-    "src/**/*.story.tsx"
-  ]
+  }
 }
