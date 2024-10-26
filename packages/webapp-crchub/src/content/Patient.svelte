@@ -76,18 +76,29 @@
     }
 
     function executeScripts() {
-        if (container) {
-            const scripts = container.querySelectorAll("script");
-            scripts.forEach((oldScript) => {
-                const newScript = document.createElement("script");
-                Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
-                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                if (oldScript.parentNode) {
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                }
-            });
-        }
+    if (container) {
+        const scripts = container.querySelectorAll("script");
+        scripts.forEach((oldScript) => {
+            const newScript = document.createElement("script");
+            Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
+            
+            // Wrap the script content in a function that checks for vis
+            const wrappedContent = `
+                (function checkVis() {
+                    if (typeof vis !== 'undefined') {
+                        ${oldScript.innerHTML}
+                    } else {
+                        setTimeout(checkVis, 100);
+                    }
+                })();
+            `;         
+            newScript.appendChild(document.createTextNode(wrappedContent));
+            if (oldScript.parentNode) {
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            }
+        });
     }
+}
 </script>
 
 {#if patient}
@@ -97,8 +108,8 @@
         </div>
 
         <div class="crc-content">
-            <Tabs tabStyle="underline" class="crc-tab">
-                <TabItem open title="Schedule">
+            <Tabs tabStyle="pill" class="crc-tab">
+                <TabItem open title="Schedule" on:click={() => loadChart(patient.studyId)}>
                     <div slot="title" class="flex items-center gap-2">
                         <FontAwesomeIcon icon={faCalendarDays} class="w-4 h-4" />Schedule
                     </div>
