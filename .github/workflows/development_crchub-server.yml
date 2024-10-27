@@ -24,7 +24,7 @@ jobs:
 
       # Compile all packages using project references
       - name: Build all packages using TypeScript project references
-        run: tsc --build --skipLibCheck
+        run: tsc --build
         working-directory: . # Run from root to ensure all referenced projects are built
 
       - name: Upload artifact for deployment job
