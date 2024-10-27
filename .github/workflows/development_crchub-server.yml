@@ -24,8 +24,11 @@ jobs:
 
       # Compile all packages using project references
       - name: Build all packages using TypeScript project references
-        run: tsc --build
-        working-directory: . # Run from root to ensure all referenced projects are built
+        run: |
+          npm run build
+          tsc -p packages/samples/UnusedOrInvalid/RulesLanguage/tsconfig.json --noEmit
+          tsc -p packages/webapp-crchub/amplify/tsconfig.json --noEmit
+        working-directory: .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
