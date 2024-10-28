@@ -31,6 +31,8 @@ jobs:
         run: |
           npm run build
         working-directory: .
+        env:
+          DEBUG: "*" 
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
