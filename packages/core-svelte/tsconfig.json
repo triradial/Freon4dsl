@@ -27,5 +27,8 @@
     "noEmit": false
   },
   "include": ["src/**/*"],
+  "references": [
+    { "path": "../core" }
+  ],
   "exclude": ["node_modules/*", "dist"],
 }
