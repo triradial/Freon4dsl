@@ -34,6 +34,7 @@
         "rollup-plugin-svelte": "^7.1.6",
         "@rollup/plugin-commonjs": "^25.0.8",
         "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-replace": "^5.0.5",
         "@rollup/plugin-terser": "^0.4.4",
         "@rollup/plugin-typescript": "^11.1.6",
         "@rollup/plugin-json": "^6.0.0",
