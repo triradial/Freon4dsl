@@ -5,12 +5,13 @@ import livereload from 'rollup-plugin-livereload';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import css from 'rollup-plugin-css-only';
-import { sveltePreprocess } from 'svelte-preprocess';
+import pkg from 'svelte-preprocess';
 import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
 import injectProcessEnv from 'rollup-plugin-inject-process-env';
 import childProcess from 'child_process';
 
+const { sveltePreprocess } = pkg;
 const production = !process.env.ROLLUP_WATCH;
 const dev = true;
 
