@@ -26,10 +26,10 @@ const config = [
 			// }
 		],
 		plugins: [
-			nodeResolve({
-                extensions: ['.ts', '.js', '.json'],
-                preferBuiltins: true
-            }),
+			// nodeResolve({
+            //     extensions: ['.ts', '.js', '.json'],
+            //     preferBuiltins: true
+            // }),
             typescript({
                 tsconfig: './tsconfig.json',
                 sourceMap: true,
