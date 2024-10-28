@@ -25,8 +25,14 @@ const config = [
 			// }
 		],
 		plugins: [
-			typescript(),
-
+            typescript({
+                tsconfig: './tsconfig.json',
+                sourceMap: true,
+                inlineSources: true,
+				module: 'NodeNext',
+                target: 'es2021',
+                moduleResolution: 'nodenext'
+            }),
 			// If we're building for production (npm run build
 			// instead of npm run dev), minify
 			production && terser()
