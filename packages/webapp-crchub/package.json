@@ -29,6 +29,10 @@
         "tslib": "^2.6.2"
     },
     "devDependencies": {
+        "@rollup/plugin-commonjs": "^25.0.8",
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^11.1.6",
         "@aws-amplify/backend": "^1.2.2",
         "@aws-amplify/backend-cli": "^1.2.7",
         "@smui/common": "^7.0.0",
