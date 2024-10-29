@@ -1,35 +1,68 @@
 import { app } from "./server-def.js";
 import { config } from "./config.js";
-import Router from 'koa-router';  // Using koa-router instead of @koa/router
+import Router from 'koa-router';
 
-const router = new Router();
+const router = new Router({
+    prefix: '' // Ensure no prefix is set
+});
 
-// Add health check route before other routes
-router.get('/health', async (ctx) => {
-    try {
+// Add CORS headers middleware
+app.use(async (ctx, next) => {
+    ctx.set('Access-Control-Allow-Origin', '*');
+    ctx.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    if (ctx.method === 'OPTIONS') {
         ctx.status = 200;
-        ctx.body = {
-            status: 'ok',
-            timestamp: new Date().toISOString()
-        };
-        console.log('Health check accessed:', ctx.path);
-    } catch (error) {
-        console.error('Health check error:', error);
-        ctx.status = 500;
-        ctx.body = { error: 'Internal server error' };
+        return;
+    }
+    
+    await next();
+});
+
+// Add request logging
+app.use(async (ctx, next) => {
+    const start = Date.now();
+    console.log(`${ctx.method} ${ctx.url} - Request received`);
+    try {
+        await next();
+        const ms = Date.now() - start;
+        console.log(`${ctx.method} ${ctx.url} - ${ctx.status} - ${ms}ms`);
+    } catch (err) {
+        console.error(`${ctx.method} ${ctx.url} - Error:`, err);
+        throw err;
     }
 });
 
-// Add a root route handler
-router.get('/', async (ctx) => {
-    ctx.body = "Freon Model Server";
+router.get('/health', async (ctx) => {
     ctx.status = 200;
+    ctx.body = {
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        env: process.env.NODE_ENV,
+        port: process.env.PORT || config.port
+    };
 });
 
-// Make sure routes are mounted
+router.get('/', async (ctx) => {
+    ctx.status = 200;
+    ctx.body = "Freon Model Server";
+});
+
+// Mount routes BEFORE other middleware
 app.use(router.routes());
 app.use(router.allowedMethods());
 
 const port = process.env.PORT || config.port;
-app.listen(port);
-console.log(`Server running on port ${port}`);
+app.listen(port, () => {
+    console.log(`Server started on port ${port}`);
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Routes registered:', 
+        router.stack.map(layer => ({
+            path: layer.path,
+            methods: layer.methods
+        }))
+    );
+});
+
+export default app;

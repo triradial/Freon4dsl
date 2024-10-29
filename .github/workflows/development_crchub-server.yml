@@ -31,15 +31,20 @@ jobs:
         env:
           DEBUG: "*" 
 
+      # Add this preparation step
+      - name: Prepare deployment files
+        run: |
+          mkdir -p server-app/dist/server
+          cp -r packages/server/dist/server/* server-app/dist/server/
+          cp packages/server/web.config server-app/
+          cp packages/server/package.json server-app/
+          ls -la server-app/dist/server  # Debug: List files
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: |
-            packages/server/dist/**
-            packages/server/web.config
-            packages/server/package.json
-            packages/server/dist/server/start.cjs
+          path: server-app
 
   deploy:
     runs-on: ubuntu-latest
@@ -54,6 +59,14 @@ jobs:
         with:
           name: node-app
           path: server-app
+
+      # Add verification step
+      - name: Verify deployment files
+        run: |
+          echo "Listing deployment files:"
+          ls -la server-app
+          echo "Listing server directory:"
+          ls -la server-app/dist/server
 
       - name: Login to Azure
         uses: azure/login@v2
