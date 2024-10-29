@@ -7,7 +7,7 @@
     "target": "es2021",                                /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', 'ES2021', or 'ESNEXT'. */
     /* "module": "commonjs" must correspond with "type": "commonjs" in package.json */
     /* "module": "es*" must correspond with "type": "module" in package.json */
-    "module": "nodenext",                           /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
+    "module": "NodeNext",                           /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
     // "lib": [],                                   /* Specify library files to be included in the compilation. */
     "allowJs": false,                                /* Allow javascript files to be compiled. */
     // "checkJs": true,                             /* Report errors in .js files. */
@@ -20,10 +20,10 @@
     // NB: If running tsc instead of rollup, next line should be outDir: "./dist" !!
     "outDir": "./dist",                                  /* Redirect output structure to the directory. NB: this works for rollup.,  for tsc it should be "./dist" !!! */
     "rootDir": "./src",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
-    // "composite": true,                           /* Enable project compilation */
+    "composite": true,                           /* Enable project compilation */
     // "tsBuildInfoFile": "./",                     /* Specify file to store incremental compilation information */
     "removeComments": true,                         /* Do not emit comments to output. */
-    // "noEmit": true,                              /* Do not emit outputs. */
+    "noEmit": false,                              /* Emit outputs. */
     // "importHelpers": true,                       /* Import emit helpers from 'tslib'. */
 //    "downlevelIteration": true,                  /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
     // "isolatedModules": true,                     /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */

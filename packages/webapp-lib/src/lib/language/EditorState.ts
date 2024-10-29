@@ -7,7 +7,7 @@ import { setUserMessage } from "../components/stores/UserMessageStore.js";
 import { modelErrors } from "../components/stores/InfoPanelStore.js";
 import { runInAction } from "mobx";
 import { WebappConfigurator } from "../WebappConfigurator.js";
-import { StudyConfigurationModel, Event, Task, Period, StudyConfiguration, Description } from "@freon4dsl/samples-study-configuration";
+import { Event, Task, Period, StudyConfiguration } from "@freon4dsl/samples-study-configuration";
 
 const LOGGER = new FreLogger("EditorState").mute();
 

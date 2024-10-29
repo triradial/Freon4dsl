@@ -10,7 +10,7 @@
     "sourceMap": true,
 //    "strict": true,
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "nodenext",
 
     // the old options, todo: see if we still need them
     "isolatedModules": true,
@@ -23,7 +23,12 @@
     "declarationDir": "./dist",
     "outDir": "./dist",                             /* Redirect output structure to the directory. NB: this works for rollup.,  for tsc it should be "./dist" !!! */
     "rootDir": "./src",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    "composite": true,                              /* Enable project compilation */
+    "noEmit": false
   },
   "include": ["src/**/*"],
+  "references": [
+    { "path": "../core" }
+  ],
   "exclude": ["node_modules/*", "dist"],
 }

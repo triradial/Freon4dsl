@@ -1,10 +1,4 @@
 {
-  "include": [
-    "src",
-    "src/**/*",
-    "src/@types/svg.d.ts",
-    "src/**/*.svelte"
-  ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
@@ -81,6 +75,14 @@
     "skipLibCheck": true,                           /* Skip type checking of declaration files. */
     "forceConsistentCasingInFileNames": true,        /* Disallow inconsistently-cased references to the same file. */
     "baseUrl": "./src",
+    "paths": {
+      "@freon4dsl/core": ["packages/core/src"],
+      "@freon4dsl/core-svelte": ["packages/core-svelte/src"],
+      "@freon4dsl/samples-study-configuration": ["packages/samples/StudyConfiguration/src"],
+      "@freon4dsl/server": ["packages/server/src"],
+      "@freon4dsl/webapp-crchub": ["packages/webapp-crchub/src"],
+      "@freon4dsl/webapp-lib": ["packages/webapp-lib/src"]
+    },
     "lib": [
       "dom",
       "dom.iterable",
@@ -91,15 +93,6 @@
   },
   "ts-node": {
     "esm": true,
-    "experimentalSpecifierResolution": "node",
-  },
-  "exclude": [
-    "node_modules/*",
-    "__sapper__/*",
-    "public/*",
-    "dist",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx",
-    "src/**/*.story.tsx"
-  ]
+    "experimentalSpecifierResolution": "node"
+  }
 }

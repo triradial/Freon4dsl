@@ -1,8 +1,9 @@
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import pkg from './package.json' with { type: 'json'};
 import dts from 'rollup-plugin-dts';
-import copy from 'rollup-plugin-copy'
+import copy from 'rollup-plugin-copy';
 
 const production = false;
 
@@ -25,8 +26,18 @@ const config = [
 			// }
 		],
 		plugins: [
-			typescript(),
-
+			// nodeResolve({
+            //     extensions: ['.ts', '.js', '.json'],
+            //     preferBuiltins: true
+            // }),
+            typescript({
+                tsconfig: './tsconfig.json',
+                sourceMap: true,
+                inlineSources: true,
+				module: 'NodeNext',
+                target: 'es2021',
+                moduleResolution: 'nodenext'
+            }),
 			// If we're building for production (npm run build
 			// instead of npm run dev), minify
 			production && terser()
