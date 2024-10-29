@@ -36,9 +36,10 @@ jobs:
         with:
           name: node-app
           path: |
-            packages/server/dist
+            packages/server/dist/**
             packages/server/web.config
             packages/server/package.json
+            packages/server/dist/server/start.cjs
 
   deploy:
     runs-on: ubuntu-latest
