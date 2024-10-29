@@ -93,9 +93,14 @@ jobs:
         with:
           inlineScript: |
             echo "Cleaning up wwwroot directory..."
-            az webapp deploy list-publishing-credentials --name crchub-server --resource-group your-resource-group --query scmUri --output tsv
+            # Get publishing credentials
+            CREDS=$(az webapp deployment list-publishing-profile --name crchub-server --resource-group your-resource-group --query "[?publishMethod=='MSDeploy'].{userName:userName,userPWD:userPWD}[0]" -o tsv)
+            USERNAME=$(echo $CREDS | cut -f1)
+            PASSWORD=$(echo $CREDS | cut -f2)
+            
+            # Use Kudu API to clean up wwwroot
+            echo "Cleaning wwwroot directory..."
             az webapp ssh --name crchub-server --resource-group your-resource-group --command "rm -rf /home/site/wwwroot/*"
-
 
       # Verification step is correctly placed here
       - name: Verify deployment files
