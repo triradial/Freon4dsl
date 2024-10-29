@@ -41,9 +41,9 @@ jobs:
           cp packages/server/package.json server-deploy/
           cp package-lock.json server-deploy/
           
-          # Install production dependencies in deployment directory
+          # Install dependencies directly (removing workspace flag)
           cd server-deploy
-          npm install --omit=dev --workspace=@freon4dsl/server
+          npm install --omit=dev
           
           # Copy server dist files
           mkdir -p dist/server
@@ -81,6 +81,16 @@ jobs:
         with:
           name: node-app
           path: server-app
+
+      # Add cleanup step using Azure CLI
+      - name: Clean up existing deployment
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            echo "Cleaning up wwwroot directory..."
+            az webapp deploy list-publishing-credentials --name crchub-server --resource-group your-resource-group --query scmUri --output tsv
+            az webapp ssh --name crchub-server --resource-group your-resource-group --command "rm -rf /home/site/wwwroot/*"
+
 
       # Verification step is correctly placed here
       - name: Verify deployment files
