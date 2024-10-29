@@ -24,6 +24,10 @@ expression PreviousVisit base ScheduleExpression {
 expression StartDay base ScheduleExpression {
 }
 
+expression CountExpression base ScheduleExpression {
+    reference event: Event;
+}
+
 abstract expression LiteralExpression base ScheduleExpression {}
 
 expression String {

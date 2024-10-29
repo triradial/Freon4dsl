@@ -458,6 +458,7 @@ export class Timeline extends RtObject {
                 end: ${timeline.getEndOfTimeline()},
                 min: ${timeline.getReferenceDateAsDateString()},
                 max: ${timeline.getEndOfTimeline()},
+                zoomFriction:30,
                 margin: {
                     item: {
                         horizontal: 0,

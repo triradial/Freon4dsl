@@ -9,8 +9,28 @@
 
     import { EditorState } from "@freon4dsl/webapp-lib";
     import { RtString } from "@freon4dsl/core";
-    import { type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
+    import { FreNodeReference } from "@freon4dsl/core";
+    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
+    import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline";
     import { getTimelineChart } from "../services/app/PatientTimeline";
+    import { getTimelineChartHtml } from "../services/app/PatientTimeline";
+    import { getTimeline } from "../services/app/PatientTimeline";
+
+    import {
+        Availability,
+        DateRange,
+        Month,
+        PatientVisit,
+        PatientVisitStatus,
+        StaffLevel,
+        StartRangeDate,
+        Event,
+        VisitDate,
+        PatientNotAvailable,
+        PatientHistory,
+        StudyConfiguration,
+    } from "@freon4dsl/samples-study-configuration/dist/language/gen";
+    import { getChartWithPatientHistory } from "services/utils";
 
     export let id: string;
     let patient: Patient;
@@ -37,7 +57,8 @@
         error = null;
         try {
             const startTime = Date.now();
-            chartHtml = await getChart(id);
+            console.log("calling getChartWithPatientHistory");
+            chartHtml = await getChartWithPatientHistory(id);
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
             if (container) {
                 await loadChartData();

@@ -282,7 +282,7 @@
                "targets": [
                   {
                      "resolveInfo": "Site Visit",
-                     "reference": "ID-27"
+                     "reference": null
                   }
                ]
             }
@@ -423,7 +423,7 @@
                   "key": "-default-key-EventSchedule-eventStart"
                },
                "children": [
-                  "ID-70"
+                  "ID-38"
                ]
             },
             {
@@ -442,11 +442,11 @@
          "parent": "ID-62"
       },
       {
-         "id": "ID-70",
+         "id": "ID-38",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-StudyStart"
+            "key": "-default-key-FirstDayOfStudy"
          },
          "properties": [],
          "containments": [
@@ -457,7 +457,7 @@
                   "key": "-default-key-EventStart-timeAmountPart"
                },
                "children": [
-                  "ID-71"
+                  "ID-39"
                ]
             }
          ],
@@ -466,7 +466,7 @@
          "parent": "ID-64"
       },
       {
-         "id": "ID-71",
+         "id": "ID-39",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -481,7 +481,7 @@
                   "key": "-default-key-TimeAmountPart-timeAmount"
                },
                "children": [
-                  "ID-72"
+                  "ID-40"
                ]
             }
          ],
@@ -495,16 +495,16 @@
                "targets": [
                   {
                      "resolveInfo": "-",
-                     "reference": "ID-26"
+                     "reference": "ID-29"
                   }
                ]
             }
          ],
          "annotations": [],
-         "parent": "ID-70"
+         "parent": "ID-38"
       },
       {
-         "id": "ID-72",
+         "id": "ID-40",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -537,7 +537,7 @@
             }
          ],
          "annotations": [],
-         "parent": "ID-71"
+         "parent": "ID-39"
       },
       {
          "id": "ID-65",
@@ -771,7 +771,7 @@
                "targets": [
                   {
                      "resolveInfo": "Site Visit",
-                     "reference": "ID-27"
+                     "reference": null
                   }
                ]
             }

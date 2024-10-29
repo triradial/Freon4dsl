@@ -63,6 +63,12 @@ export class ScheduledEventInstance extends TimelineEventInstance {
 
     anyDaysBefore() {
         const daysBefore = this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count;
+        if (this.getName() == "V1 Randomization") {
+            console.log("ScheduledEventInstance.anyDaysBefore() for: V1 Randomization daysBefore: " + daysBefore);
+        }
+        if (daysBefore !== 0 && daysBefore != undefined) {
+            console.log("ScheduledEventInstance.anyDaysBefore() for: " + this.getName() + " daysBefore: " + daysBefore);
+        }
         return daysBefore !== 0 && daysBefore != undefined;
     }
 

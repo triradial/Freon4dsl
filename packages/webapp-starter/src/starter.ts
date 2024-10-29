@@ -1,5 +1,5 @@
 import { FreonLayout, WebappConfigurator } from "@freon4dsl/webapp-lib";
-import {FreLogger, ServerCommunication} from "@freon4dsl/core";
+import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 // import { LionWebRepositoryCommunication } from "@freon4dsl/core"
 import { setCustomComponents } from "@freon4dsl/core-svelte";
 // For DocuProject:
@@ -33,8 +33,10 @@ import PartWrapperComponent from "./customComponents/forExternalTester/PartWrapp
 /**
  * The one and only reference to the actual language for which this editor runs
  */
-import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
-WebappConfigurator.getInstance().setEditorEnvironment(StudyConfigurationModelEnvironment.getInstance());
+// import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
+// WebappConfigurator.getInstance().setEditorEnvironment(StudyConfigurationModelEnvironment.getInstance());
+import { ConformanceRulesModelEnvironment } from "@freon4dsl/samples-conformance-rules";
+WebappConfigurator.getInstance().setEditorEnvironment(ConformanceRulesModelEnvironment.getInstance());
 
 /**
  * The one and only reference to the server on which the models are stored

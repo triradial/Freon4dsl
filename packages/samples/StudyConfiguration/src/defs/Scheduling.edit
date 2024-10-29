@@ -20,7 +20,7 @@ When {
 }  
 
 StudyStart {
-    [as the start day of the Study]
+    [as the start day of the Study] 
     trigger = "study start: Declares this event to be the start of the study"
 } 
 

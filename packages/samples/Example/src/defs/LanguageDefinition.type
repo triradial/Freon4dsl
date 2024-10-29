@@ -26,7 +26,7 @@ Method {
     infertype self.declaredType;
 }
 MethodCallExpression {
-    infertype self.methodDefinition;
+    infertype self.methodDefinition.declaredType;
 }
 AttributeRef   {
     infertype self.attribute.declaredType;

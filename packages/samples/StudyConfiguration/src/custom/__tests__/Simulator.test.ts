@@ -429,7 +429,7 @@ describe("Study Simulation", () => {
               var items = new vis.DataSet([
               { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -7", content: "<b>Screening</b>", id: "Screening0" },
               { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Screen", className: "scheduled-event", title: "Screen: as the start day of the Study - 7 days", content: "&nbsp;", id: "Screen2" },
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Screen", className: "scheduled-event", title: "Screen: on the start day of the Study - 7 days", content: "&nbsp;", id: "Screen2" },
               { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "StudyStart", className: "scheduled-event", title: "StudyStart: as the start day of the Study", content: "&nbsp;", id: "StudyStart3" },
               ])
               `;
@@ -497,10 +497,12 @@ describe("Study Simulation", () => {
               { start: new Date(2019, 03, 23, 00, 00, 00), end: new Date(2019, 03, 23, 23, 59, 59), group: "FU", className: "scheduled-event", title: "FU: as the start day of the Study + 54 weeks", content: "&nbsp;", id: "FU39" },
               ])
         `;
-            testStudyInFile("ScheduleExample1a", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2018, 2, 13));
+            testStudyInFile("ScheduleExample1", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2018, 2, 13));
         });
 
         it("generate a chart for the example study 2", () => {
+            //TODO: All example study 2 tests fail because there is something corrupt in the JSON files. the first visit has a ghost daysBefore that can't be changed. It should be zero but it's 1.
+            //      Rebuild the study after meeting.
             let expectedTimelineDataAsScript = `var groups = new vis.DataSet([
               { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
               { "content": "V1 Randomization", "id": "V1 Randomization" },
@@ -630,7 +632,7 @@ describe("Study Simulation", () => {
               { start: new Date(2012, 01, 08, 00, 00, 00), end: new Date(2012, 01, 08, 23, 59, 59), group: "V19 Run In", className: "scheduled-event", title: "V19 Run In: when V19 Randomization completed", content: "&nbsp;", id: "V19 Run In108" },
               { start: new Date(2012, 01, 09, 00, 00, 00), end: new Date(2012, 01, 10, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19 Run In109" },
   ])`;
-            testStudyInFile("ScheduleExample2a", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
+            testStudyInFile("ScheduleExample2", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
         });
 
         it("generate a chart for the example study 3", () => {
@@ -882,10 +884,8 @@ var items = new vis.DataSet([
     { start: new Date(2024, 09, 18, 00, 00, 00), end: new Date(2024, 09, 19, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19 Run In106" },
   ])`;
             // GIVEN a study configuration loaded from a file but patientInfo and availability are not loaded
-            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2a", "StudyConfiguration") as StudyConfiguration;
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
-            // const patientInfoUnit = utils.loadModelUnit("ScheduleExample2", "PatientInfo") as PatientInfo;
-            // studyConfigurationModel.addUnit(patientInfoUnit);
 
             // WHEN the study is simulated and a timeline picture is generated
             let simulator = new Simulator(studyConfigurationUnit);
@@ -911,7 +911,7 @@ var items = new vis.DataSet([
             const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, "");
             const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, "");
             // Then the generated timeline picture has two events on the expected event days
-            // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+            expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
 
         it("generate a chart for the example study ScheduleExample2 with patient unavailable times", () => {
@@ -1012,7 +1012,7 @@ var items = new vis.DataSet([
     { start: new Date(2024, 09, 18, 00, 00, 00), end: new Date(2024, 09, 19, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19 Run In106" },
   ])`;
             // GIVEN a study configuration loaded from a file but patientInfo and availability are not loaded
-            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2a", "StudyConfiguration") as StudyConfiguration;
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
 
             // WHEN the study is simulated and a timeline picture is generated
@@ -1047,7 +1047,7 @@ var items = new vis.DataSet([
             const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, "");
             const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, "");
             // Then the generated timeline picture has two events on the expected event days
-            // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+            expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
 
         it("generates a chart for a visit on day 1 showing staff level", () => {
@@ -1267,10 +1267,8 @@ var items = new vis.DataSet([
               { start: new Date(2024, 10, 15, 00, 00, 00), end: new Date(2024, 10, 15, 23, 59, 59), group: "Staff", className: "staff", title: "2", content: "2", id: "2112" },
             ])`;
             // GIVEN a study configuration loaded from a file but patientInfo and availability are not loaded
-            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2a", "StudyConfiguration") as StudyConfiguration;
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
-            // const patientInfoUnit = utils.loadModelUnit("ScheduleExample2a", "PatientInfo") as PatientInfo;
-            // studyConfigurationModel.addUnit(patientInfoUnit);
             let availability: Availability = utils.createAvailability();
 
             // WHEN the study is simulated and a timeline picture is generated

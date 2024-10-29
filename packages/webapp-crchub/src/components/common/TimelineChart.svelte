@@ -24,6 +24,7 @@
     });
 
     function getChart() {
+        console.log("calling getChart");
         const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
         const studyConfigurationUnit = studyConfigurationModel.configuration;
         const rtObject = getTimelineChart(studyConfigurationUnit) as RtString;
