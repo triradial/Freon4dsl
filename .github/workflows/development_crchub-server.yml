@@ -50,17 +50,10 @@ jobs:
       id-token: write
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: node-app
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          creds: '{"clientId":"${{ secrets.AZUREAPPSERVICE_CLIENTID }}","clientSecret":"${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}","subscriptionId":"${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}","tenantId":"${{ secrets.AZUREAPPSERVICE_TENANTID }}"}'
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
@@ -68,4 +61,4 @@ jobs:
         with:
           app-name: 'crchub-server'
           slot-name: 'Development'
-          package: './packages/server' # Ensure only server package is deployed
+          package: './packages/server'
