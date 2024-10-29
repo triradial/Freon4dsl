@@ -90,8 +90,8 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            echo "Cleaning up wwwroot directory..."
-            az webapp deployment source clean --name crchub-server \
+            echo "Cleaning up deployment..."
+            az webapp deployment source delete --name crchub-server \
                                             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
 
       - name: Download artifact from build job
