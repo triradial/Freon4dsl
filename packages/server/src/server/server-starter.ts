@@ -6,12 +6,17 @@ import Router from 'koa-router';
 const router = new Router();
 
 router.get('/health', async (ctx: Context) => {
-    ctx.status = 200;
-    ctx.body = {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime()
-    };
+    try {
+        ctx.status = 200;
+        ctx.body = {
+            status: 'ok',
+            timestamp: new Date().toISOString()
+        };
+    } catch (error) {
+        console.error('Health check error:', error);
+        ctx.status = 500;
+        ctx.body = { error: 'Internal server error' };
+    }
 });
 
 app.listen(config.port);
