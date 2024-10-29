@@ -32,17 +32,35 @@ jobs:
           DEBUG: "*" 
 
       # Add this preparation step
-      - name: Prepare deployment files
+      - name: Prepare server deployment
         run: |
-          mkdir -p server-app/dist/server
-          # Copy only the specific files needed
-          cp packages/server/dist/server/server-starter.js server-app/dist/server/
-          cp packages/server/dist/server/start.cjs server-app/dist/server/
-          cp packages/server/web.config server-app/
-          cp packages/server/package.json server-app/
+          # Create deployment directory
+          mkdir -p server-deploy
           
-          echo "Deployment contents:"
-          ls -R server-app/
+          # Copy package.json and lock files
+          cp packages/server/package.json server-deploy/
+          cp package-lock.json server-deploy/
+          
+          # Install production dependencies in deployment directory
+          cd server-deploy
+          npm install --omit=dev --workspace=@freon4dsl/server
+          
+          # Copy server dist files
+          mkdir -p dist/server
+          cp -r ../packages/server/dist/server/* dist/server/
+          cp ../packages/server/web.config .
+          
+          # Install workspace dependencies
+          npm install --omit=dev @freon4dsl/core@0.7.0-beta5
+          npm install --omit=dev @freon4dsl/samples-study-configuration@0.7.0-beta5
+          
+          # Verify deployment contents
+          echo "Deployment package contents:"
+          ls -la
+          echo "Server directory contents:"
+          ls -la dist/server
+          
+          cd ..
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -64,13 +82,21 @@ jobs:
           name: node-app
           path: server-app
 
-      # Add verification step
+      # Verification step is correctly placed here
       - name: Verify deployment files
         run: |
-          echo "Listing deployment files:"
-          ls -la server-app
-          echo "Listing server directory:"
-          ls -la server-app/dist/server
+          echo "Checking deployment structure..."
+          test -d server-app/node_modules || (echo "node_modules missing" && exit 1)
+          test -f server-app/web.config || (echo "web.config missing" && exit 1)
+          test -f server-app/package.json || (echo "package.json missing" && exit 1)
+          test -f server-app/dist/server/start.cjs || (echo "start.cjs missing" && exit 1)
+          test -f server-app/dist/server/server-starter.js || (echo "server-starter.js missing" && exit 1)
+          
+          echo "Checking dependencies..."
+          test -d server-app/node_modules/@freon4dsl/core || (echo "@freon4dsl/core missing" && exit 1)
+          test -d server-app/node_modules/@freon4dsl/samples-study-configuration || (echo "@freon4dsl/samples-study-configuration missing" && exit 1)
+          
+          echo "All required files and dependencies present"
 
       - name: Login to Azure
         uses: azure/login@v2
