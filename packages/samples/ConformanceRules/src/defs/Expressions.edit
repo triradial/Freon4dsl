@@ -42,7 +42,7 @@ YNLiteralExpression {
 
 GroupedExpression {
     [( ${inner} )]
-    trigger = "group"
+    trigger = "()"
 }
 
 NotExpression {

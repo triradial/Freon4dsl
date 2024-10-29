@@ -13,6 +13,7 @@ import {
 } from "@freon4dsl/core";
 import { ConformanceRulesModelEnvironment } from "config/gen/ConformanceRulesModelEnvironment.js";
 import { AndOrIndicator } from "language/gen/AndOrIndicator.js";
+import { CheckRule } from "language/gen/CheckRule.js";
 import { CheckSet } from "language/gen/CheckSet.js";
 import { Description } from "language/gen/Description.js";
 import { Executability } from "language/gen/Executability.js";
@@ -38,6 +39,7 @@ export class CustomConformanceRulesModelProjection implements FreProjection {
         ["Rule", this.projectRule],
         ["Organization", this.projectOrganization],
         ["CheckSet", this.projectCheckSet],
+        ["CheckRule", this.projectCheckRule],
         ["Description", this.projectDescription],
     ]);
     nodeTypeToTableDefinition: Map<string, () => FreTableDefinition> = new Map<string, () => FreTableDefinition>([
@@ -51,90 +53,99 @@ export class CustomConformanceRulesModelProjection implements FreProjection {
             "rule",
             "Rule:",
             "name",
-            BoxFactory.verticalLayout(rule, "Rule-overall", "", [
-                BoxFactory.horizontalLayout(
-                    rule,
-                    "Rule-hlist-line-1",
-                    "",
-                    [BoxUtil.labelBox(rule, "Description:", "top-1-line-1-item-0"), BoxUtil.getBoxOrAction(rule, "description", "Description", this.handler)],
-                    { cssClass: "type3", selectable: false },
-                ),
-                BoxFactory.horizontalLayout(
-                    rule,
-                    "Rule-hlist-line-12",
-                    "",
-                    [
-                        BoxUtil.labelBox(rule, "Executability:", "top-1-line-12-item-0"),
-                        BoxUtil.limitedBox(
-                            rule,
-                            "executability",
-                            (selected: string) => {
-                                rule.executability = FreNodeReference.create<Executability>(selected, "Executability");
-                            },
-                            LimitedDisplay.SELECT,
-                            ConformanceRulesModelEnvironment.getInstance().scoper,
-                        ),
-                    ],
-                    { cssClass: "type3", selectable: false },
-                ),
-                BoxUtil.emptyLineBox(rule, "Rule-empty-line-10b"),
-                BoxFactory.horizontalLayout(
-                    rule,
-                    "Rule-hlist-line-16",
-                    "",
-                    [
-                        BoxUtil.labelBox(rule, "Rule Type:", "top-1-line-16-item-0"),
-                        BoxUtil.limitedBox(
-                            rule,
-                            "ruleType",
-                            (selected: string) => {
-                                rule.ruleType = FreNodeReference.create<RuleType>(selected, "RuleType");
-                            },
-                            LimitedDisplay.SELECT,
-                            ConformanceRulesModelEnvironment.getInstance().scoper,
-                        ),
-                    ],
-                    { cssClass: "type3", selectable: false },
-                ),
-                BoxUtil.emptyLineBox(rule, "Rule-empty-line-10c"),
-                BoxUtil.listGroupBox(
-                    rule,
-                    "organizations",
-                    "Authority Organizations",
-                    BoxUtil.verticalPartListBox(rule, rule.organizations, "organizations", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
-                    { cssClass: "type3", isExpanded: false, canAdd: true },
-                ),
-                BoxUtil.listGroupBox(
-                    rule,
-                    "checkSet",
-                    "Checking Rule(s)",
-                    BoxUtil.partWrapperBox(rule, "checkSet", "ExpandCollapseWrapper", BoxUtil.getBoxOrAction(rule, "checkSet", "CheckSet", this.handler)),
-                    { cssClass: "type2", isExpanded: false },
-                ),
-                BoxUtil.listGroupBox(
-                    rule,
-                    "core",
-                    "Core",
-                    BoxUtil.partWrapperBox(rule, "core", "ExpandCollapseWrapper", BoxUtil.getBoxOrAction(rule, "core", "Core", this.handler)),
-                    { cssClass: "type2", isExpanded: false },
-                ),
-                BoxUtil.listGroupBox(
-                    rule,
-                    "outcome",
-                    "Outcome",
-                    BoxUtil.partWrapperBox(rule, "outcome", "ExpandCollapseWrapper", BoxUtil.getBoxOrAction(rule, "outcome", "Outcome", this.handler)),
-                    { cssClass: "type2", isExpanded: false },
-                ),
-                BoxUtil.listGroupBox(
-                    rule,
-                    "scope",
-                    "Scope",
-                    BoxUtil.partWrapperBox(rule, "scope", "ExpandCollapseWrapper", BoxUtil.getBoxOrAction(rule, "scope", "Scope", this.handler)),
-                    { cssClass: "type2", isExpanded: false },
-                ),
-                BoxUtil.emptyLineBox(rule, "Rule-empty-line-19a"),
-            ]),
-            { cssClass: "type1", placeHolder: "enter", isExpanded: true, isRequired: true },
+            BoxFactory.verticalLayout(
+                rule,
+                "Rule-overall",
+                "",
+                [
+                    BoxFactory.horizontalLayout(
+                        rule,
+                        "Rule-hlist-line-1",
+                        "",
+                        [
+                            BoxUtil.labelBox(rule, "Description:", "top-1-line-1-item-0"),
+                            BoxUtil.getBoxOrAction(rule, "description", "Description", this.handler),
+                        ],
+                        { cssClass: "type3", selectable: false },
+                    ),
+                    BoxFactory.horizontalLayout(
+                        rule,
+                        "Rule-hlist-line-12",
+                        "",
+                        [
+                            BoxUtil.labelBox(rule, "Executability:", "top-1-line-12-item-0"),
+                            BoxUtil.limitedBox(
+                                rule,
+                                "executability",
+                                (selected: string) => {
+                                    rule.executability = FreNodeReference.create<Executability>(selected, "Executability");
+                                },
+                                LimitedDisplay.SELECT,
+                                ConformanceRulesModelEnvironment.getInstance().scoper,
+                            ),
+                        ],
+                        { cssClass: "type3", selectable: false },
+                    ),
+                    BoxUtil.emptyLineBox(rule, "Rule-empty-line-10b"),
+                    BoxFactory.horizontalLayout(
+                        rule,
+                        "Rule-hlist-line-16",
+                        "",
+                        [
+                            BoxUtil.labelBox(rule, "Rule Type:", "top-1-line-16-item-0"),
+                            BoxUtil.limitedBox(
+                                rule,
+                                "ruleType",
+                                (selected: string) => {
+                                    rule.ruleType = FreNodeReference.create<RuleType>(selected, "RuleType");
+                                },
+                                LimitedDisplay.SELECT,
+                                ConformanceRulesModelEnvironment.getInstance().scoper,
+                            ),
+                        ],
+                        { cssClass: "type3", selectable: false },
+                    ),
+                    BoxUtil.emptyLineBox(rule, "Rule-empty-line-10c"),
+                    BoxUtil.listGroupBox(
+                        rule,
+                        "organizations",
+                        "Authority Organizations",
+                        BoxUtil.verticalPartListBox(rule, rule.organizations, "organizations", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
+                        { cssClass: "type3", isExpanded: false, canAdd: true },
+                    ),
+                    BoxUtil.listGroupBox(
+                        rule,
+                        "checkSet",
+                        "Checking Rule(s)",
+                        BoxUtil.partWrapperBox(rule, "checkSet", "ExpandCollapseWrapper", BoxUtil.getBoxOrAction(rule, "checkSet", "CheckSet", this.handler)),
+                        { cssClass: "type2", isExpanded: false },
+                    ),
+                    BoxUtil.listGroupBox(
+                        rule,
+                        "core",
+                        "Core",
+                        BoxUtil.partWrapperBox(rule, "core", "ExpandCollapseWrapper", BoxUtil.getBoxOrAction(rule, "core", "Core", this.handler)),
+                        { cssClass: "type2", isExpanded: false },
+                    ),
+                    BoxUtil.listGroupBox(
+                        rule,
+                        "outcome",
+                        "Outcome",
+                        BoxUtil.partWrapperBox(rule, "outcome", "ExpandCollapseWrapper", BoxUtil.getBoxOrAction(rule, "outcome", "Outcome", this.handler)),
+                        { cssClass: "type2", isExpanded: false },
+                    ),
+                    BoxUtil.listGroupBox(
+                        rule,
+                        "scope",
+                        "Scope",
+                        BoxUtil.partWrapperBox(rule, "scope", "ExpandCollapseWrapper", BoxUtil.getBoxOrAction(rule, "scope", "Scope", this.handler)),
+                        { cssClass: "type2", isExpanded: false },
+                    ),
+                    BoxUtil.emptyLineBox(rule, "Rule-empty-line-19a"),
+                ],
+                { cssClass: "ml-8" },
+            ),
+            { cssClass: "type1", placeHolder: "name", isExpanded: true, isRequired: true },
         );
         return box;
     }
@@ -146,57 +157,83 @@ export class CustomConformanceRulesModelProjection implements FreProjection {
             "Organization:",
             "name",
 
-            BoxFactory.verticalLayout(organization, "Organization-overall", "", [
-                BoxFactory.horizontalLayout(
-                    organization,
-                    "Organization-hlist-line-0",
-                    "",
-                    [BoxUtil.labelBox(organization, "organization:", "top-1-line-0-item-0"), BoxUtil.textBox(organization, "name")],
-                    { selectable: false },
-                ),
-                BoxUtil.listGroupBox(
-                    organization,
-                    "organizations",
-                    "STANDARDS",
-                    BoxUtil.verticalPartListBox(organization, organization.standards, "standards", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
-                    { cssClass: "type3", isExpanded: true, canAdd: true },
-                ),
-            ]),
+            BoxFactory.verticalLayout(
+                organization,
+                "Organization-overall",
+                "",
+                [
+                    BoxFactory.horizontalLayout(
+                        organization,
+                        "Organization-hlist-line-0",
+                        "",
+                        [BoxUtil.labelBox(organization, "organization:", "top-1-line-0-item-0"), BoxUtil.textBox(organization, "name")],
+                        { selectable: false },
+                    ),
+                    BoxUtil.listGroupBox(
+                        organization,
+                        "organizations",
+                        "STANDARDS",
+                        BoxUtil.verticalPartListBox(organization, organization.standards, "standards", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
+                        { cssClass: "type3", isExpanded: true, canAdd: true },
+                    ),
+                ],
+                { cssClass: "ml-8" },
+            ),
             { cssClass: "type2", placeHolder: "enter", isExpanded: false, isRequired: true },
         );
         return box;
     }
 
     projectCheckSet(checkSet: CheckSet): Box {
-        let box: Box = BoxFactory.verticalLayout(checkSet, "CheckSet-overall", "", [
-            BoxFactory.horizontalLayout(
-                checkSet,
-                "CheckSet-hlist-line-1",
-                "",
-                [
-                    BoxUtil.labelBox(checkSet, "Rule passes if", "top-1-line-1-item-0"),
-                    BoxUtil.limitedBox(
-                        checkSet,
-                        "andOrIndicator",
-                        (selected: string) => {
-                            checkSet.andOrIndicator = FreNodeReference.create<AndOrIndicator>(selected, "AndOrIndicator");
-                        },
-                        LimitedDisplay.SELECT,
-                        ConformanceRulesModelEnvironment.getInstance().scoper,
-                    ),
-                    BoxUtil.labelBox(checkSet, "checks pass", "top-1-line-1-item-2"),
-                ],
-                { cssClass: "type3", selectable: false },
-            ),
-            BoxUtil.listGroupBox(
-                checkSet,
-                "checkSet",
-                "Checks",
-                BoxUtil.verticalPartListBox(checkSet, checkSet.checks, "checks", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
-                { isExpanded: false, canAdd: true },
-            ),
-        ]);
+        let box: Box = BoxFactory.verticalLayout(
+            checkSet,
+            "CheckSet-overall",
+            "",
+            [
+                BoxFactory.horizontalLayout(
+                    checkSet,
+                    "CheckSet-hlist-line-1",
+                    "",
+                    [
+                        BoxUtil.labelBox(checkSet, "Rule passes if", "top-1-line-1-item-0"),
+                        BoxUtil.limitedBox(
+                            checkSet,
+                            "andOrIndicator",
+                            (selected: string) => {
+                                checkSet.andOrIndicator = FreNodeReference.create<AndOrIndicator>(selected, "AndOrIndicator");
+                            },
+                            LimitedDisplay.SELECT,
+                            ConformanceRulesModelEnvironment.getInstance().scoper,
+                        ),
+                        BoxUtil.labelBox(checkSet, "checks pass", "top-1-line-1-item-2"),
+                    ],
+                    { cssClass: "type3", selectable: false },
+                ),
+                BoxUtil.listGroupBox(
+                    checkSet,
+                    "checkSet",
+                    "Checks",
+                    BoxUtil.verticalPartListBox(checkSet, checkSet.checks, "checks", null, this.handler, { cssClass: "ml-4 mt-2 mb-2" }),
+                    { cssClass: "type3", isExpanded: false, canAdd: true },
+                ),
+            ],
+            { cssClass: "ml-4", selectable: true },
+        );
         return box;
+    }
+
+    projectCheckRule(checkRule: CheckRule) {
+        return BoxFactory.horizontalLayout(
+            checkRule,
+            "CheckRule-hlist-line-0",
+            "",
+            [
+                BoxUtil.labelBox(checkRule, "Check: (", "top-1-line-0-item-0"),
+                BoxUtil.getBoxOrAction(checkRule, "conformanceExpression", "ConformanceExpression", this.handler),
+                BoxUtil.labelBox(checkRule, ")", "top-1-line-0-item-2"),
+            ],
+            { cssClass: "ml-4", selectable: true },
+        );
     }
 
     projectDescription(description: Description): Box {

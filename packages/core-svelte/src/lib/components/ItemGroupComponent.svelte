@@ -348,10 +348,10 @@
                     // todo Maybe this option could be completely handled by TextDropDown and Freon,
                     // this would avoid a second call to endEditing when the selection is changed.
                     LOGGER.log("Arrow up, arrow down, enter, escape, or tab pressed: " + event.key);
-                    if (!partOfActionBox && isEditing) {
-                        endEditing();
-                        // do not switch selection, this will be done by FreonComponent
-                    } // else, let TextDropDownComponent handle this
+                    // if (!partOfActionBox && isEditing) {
+                    //     endEditing();
+                    //     // do not switch selection, this will be done by FreonComponent
+                    // } // else, let TextDropDownComponent handle this
 
                     // MV Attempt to make tabs work...
                     // editor.selectFirstEditableChildBox(box.node);

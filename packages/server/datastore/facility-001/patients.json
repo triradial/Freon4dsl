@@ -115,5 +115,16 @@
     "studyId": "20fd7b12-a9ab-40b7-ad5b-331f74d8b210",
     "study": "SV-LIFV",
     "initials": "PL"
+  },
+  {
+    "id": "7580431b-8e0c-45f6-9930-292b21a9fb41",
+    "patientNumber": "1234",
+    "displayName": "",
+    "name": "",
+    "dob": "1999",
+    "gender": "Male",
+    "studyId": "7e010ccb-0eee-405c-8ebb-8beb162c7b59",
+    "study": "ScheduleExample2",
+    "initials": "MV"
   }
 ]

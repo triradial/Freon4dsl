@@ -3,17 +3,15 @@ language ConformanceRulesModel
 abstract expression ConformanceExpression {
 }
 
-abstract expression LiteralExpression base ConformanceExpression {}
-
-expression FieldNameExpression base LiteralExpression {
+expression FieldNameExpression base ConformanceExpression {
     fieldName: string;
 } 
 
-expression NumberLiteralExpression base LiteralExpression {
+expression NumberLiteralExpression base ConformanceExpression {
     value: number;
 } 
 
-expression BooleanLiteralExpression base LiteralExpression {
+expression BooleanLiteralExpression base ConformanceExpression {
     value: boolean;
 }
 
@@ -22,22 +20,22 @@ limited YNChoice {
     n = { name: "N"}
 }
 
-expression GroupedExpression base LiteralExpression {
-    inner: LiteralExpression;
+expression GroupedExpression base ConformanceExpression {
+    inner: ConformanceExpression;
 }
 
-expression NotEqualsExpression base LiteralExpression{
+expression NotEqualsExpression base ConformanceExpression{
 }
 
-expression NotExpression base LiteralExpression {
+expression NotExpression base ConformanceExpression {
     priority = 20;
 }
 
-expression YNLiteralExpression base LiteralExpression {
+expression YNLiteralExpression base ConformanceExpression {
     value: YNChoice;
 }
 
-expression StringLiteralExpression base LiteralExpression {
+expression StringLiteralExpression base ConformanceExpression {
     value: string;
 }
 
@@ -154,26 +152,26 @@ limited MetaVariable {
     variable_value_length;
     }
 
-expression MetaVariableExpression base LiteralExpression {
+expression MetaVariableExpression base ConformanceExpression {
     functionName: MetaVariable;
 } 
 
-expression DefineVariableMetadata base LiteralExpression {
+expression DefineVariableMetadata base ConformanceExpression {
     attributeName : string;
     targetVariableName: string;
     variableId: string;
 }
 
-expression DatasetNames base LiteralExpression {
+expression DatasetNames base ConformanceExpression {
 }
 
-expression Distinct base LiteralExpression {
+expression Distinct base ConformanceExpression {
     operationId: string;
     name: string;
     domain?: string;
     group?: string;
 }
 
-expression DatasetMetadataCheck base LiteralExpression {
+expression DatasetMetadataCheck base ConformanceExpression {
 
 }
