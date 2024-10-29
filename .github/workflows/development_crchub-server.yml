@@ -60,5 +60,4 @@ jobs:
         id: deploy-to-webapp
         with:
           app-name: 'crchub-server'
-          slot-name: 'Development'
           package: './packages/server'
