@@ -91,9 +91,8 @@ jobs:
         with:
           inlineScript: |
             echo "Cleaning up wwwroot directory..."
-            az webapp ssh --name crchub-server \
-                          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-                          --command "rm -rf /home/site/wwwroot/*"
+            az webapp deployment source clean --name crchub-server \
+                                            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
 
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
