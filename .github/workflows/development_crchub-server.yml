@@ -41,7 +41,12 @@ jobs:
           cp packages/server/package.json server-deploy/
           cp package-lock.json server-deploy/
           
-          # Install dependencies directly (removing workspace flag)
+          # Create a temporary local package directory
+          mkdir -p server-deploy/local-packages
+          cp -r packages/core/dist server-deploy/local-packages/core
+          cp -r packages/samples/StudyConfiguration/dist server-deploy/local-packages/study-configuration
+          
+          # Install production dependencies
           cd server-deploy
           npm install --omit=dev
           
@@ -50,9 +55,9 @@ jobs:
           cp -r ../packages/server/dist/server/* dist/server/
           cp ../packages/server/web.config .
           
-          # Install workspace dependencies
-          npm install --omit=dev @freon4dsl/core@0.7.0-beta5
-          npm install --omit=dev @freon4dsl/samples-study-configuration@0.7.0-beta5
+          # Install local workspace dependencies
+          npm install --omit=dev ../packages/core
+          npm install --omit=dev ../packages/samples/StudyConfiguration
           
           # Verify deployment contents
           echo "Deployment package contents:"
