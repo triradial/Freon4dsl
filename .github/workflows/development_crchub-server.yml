@@ -35,19 +35,19 @@ jobs:
       - name: Prepare server deployment
         run: |
           # Create deployment directory
-          mkdir -p server-deploy
+          mkdir -p server-app
           
           # Copy package.json and lock files
-          cp packages/server/package.json server-deploy/
-          cp package-lock.json server-deploy/
+          cp packages/server/package.json server-app/
+          cp package-lock.json server-app/
           
           # Create a temporary local package directory
-          mkdir -p server-deploy/local-packages
-          cp -r packages/core/dist server-deploy/local-packages/core
-          cp -r packages/samples/StudyConfiguration/dist server-deploy/local-packages/study-configuration
+          mkdir -p server-app/local-packages
+          cp -r packages/core/dist server-app/local-packages/core
+          cp -r packages/samples/StudyConfiguration/dist server-app/local-packages/study-configuration
           
           # Install production dependencies
-          cd server-deploy
+          cd server-app
           npm install --omit=dev
           
           # Copy server dist files
