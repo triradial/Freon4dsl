@@ -1,34 +1,35 @@
 import { app } from "./server-def.js";
 import { config } from "./config.js";
-import type { Context } from 'koa';
-import Router from 'koa-router';
+import Router from 'koa-router';  // Using koa-router instead of @koa/router
 
 const router = new Router();
 
-// Add multiple route handlers to catch both paths
-router.get('/health', healthCheck);
-router.get('/server/health', healthCheck);
-
-// Separate the handler function for reusability
-async function healthCheck(ctx: Context) {
+// Add health check route before other routes
+router.get('/health', async (ctx) => {
     try {
         ctx.status = 200;
         ctx.body = {
             status: 'ok',
             timestamp: new Date().toISOString()
         };
-        console.log('Health check accessed:', ctx.path); // Add logging
+        console.log('Health check accessed:', ctx.path);
     } catch (error) {
         console.error('Health check error:', error);
         ctx.status = 500;
         ctx.body = { error: 'Internal server error' };
     }
-}
+});
 
-// Make sure these are in the correct order
+// Add a root route handler
+router.get('/', async (ctx) => {
+    ctx.body = "Freon Model Server";
+    ctx.status = 200;
+});
+
+// Make sure routes are mounted
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-app.listen(config.port);
-
-console.log(`Server running on port ${config.port}`);
+const port = process.env.PORT || config.port;
+app.listen(port);
+console.log(`Server running on port ${port}`);
