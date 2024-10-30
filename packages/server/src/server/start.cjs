@@ -1,33 +1,25 @@
-// Add uncaught exception handler for Azure logging
-process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
-    // Log stack trace for Azure diagnostics
-    console.error(err.stack);
-});
+// Basic test to see if this file is being executed
+const fs = require('fs');
+const path = require('path');
 
-// Add unhandled rejection handler
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
+// Create a test log file in the root directory
+const logPath = path.join(__dirname, 'startup-test.log');
 
-async function startServer() {
-    try {
-        console.log('Starting server from:', __dirname);
-        console.log('Node version:', process.version);
-        console.log('Environment:', process.env.NODE_ENV);
-        
-        const { default: app } = await import('./server-starter.js');
-        console.log('Server started successfully');
-    } catch (error) {
-        console.error('Failed to start server:', error);
-        // Log stack trace for Azure diagnostics
-        console.error(error.stack);
-        process.exit(1);
-    }
+try {
+    fs.writeFileSync(logPath, `Server started at ${new Date().toISOString()}\n`);
+    fs.appendFileSync(logPath, `Directory: ${__dirname}\n`);
+    fs.appendFileSync(logPath, `Node version: ${process.version}\n`);
+    fs.appendFileSync(logPath, `Environment: ${process.env.NODE_ENV}\n`);
+
+    // Try to list the directory contents
+    const files = fs.readdirSync(__dirname);
+    fs.appendFileSync(logPath, `Directory contents: ${JSON.stringify(files, null, 2)}\n`);
+
+} catch (error) {
+    // If we can't write to the log file, try writing to a different location
+    const fallbackPath = path.join(process.cwd(), 'fallback-startup-test.log');
+    fs.writeFileSync(fallbackPath, `Error: ${error.message}\n${error.stack}`);
 }
 
-startServer().catch(err => {
-    console.error('Top level error:', err);
-    console.error(err.stack);
-    process.exit(1);
-});
+// Only after we confirm this works, we'll add back the server starter code
+// const { default: app } = await import('./server-starter.js');
