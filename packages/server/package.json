@@ -18,7 +18,7 @@
   "scripts": {
     "clean": "rm -rf node_modules/ && rm -rf dist/",
     "cleanup": "bash ../../scripts/cleanup.sh",
-    "start": "if [ \"$NODE_ENV\" = \"production\" ]; then node dist/server/server-starter.js; else cross-env NODE_ENV=development NODE_PORT=8001 nodemon --watch 'src/**/*' -e ts,tsx --exec node ./dist/server/server-starter.js; fi",
+    "start": "if [ \"$NODE_ENV\" = \"production\" ]; then node dist/server/server-starter.js; else nodemon --watch 'src/**/*' -e ts,tsx --exec node ./dist/server/server-starter.js; fi",
     "build": "tsc --build && cp src/server/start.cjs dist/server/",
     "build-dev": "tsc --build",
     "build-verbose": "tsc --build --verbose --listFiles --listEmittedFiles",
