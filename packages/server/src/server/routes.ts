@@ -5,8 +5,13 @@ import { DataHandler } from "./DataHandler.js";
 
 const router = new Router();
 
-router.get("/", async (ctx: Router.IRouterContext) => {
-    ctx.body = "Freon Model Server";
+// General requests
+router.get('/', async (ctx: Router.IRouterContext) => {
+    ctx.body = 'CRCHub Server';
+});
+
+router.get('/health', async (ctx: Router.IRouterContext) => {
+    ctx.body = { status: 'ok' };
 });
 
 // Model requests

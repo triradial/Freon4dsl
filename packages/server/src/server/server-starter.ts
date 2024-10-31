@@ -18,16 +18,6 @@ app.use(async (ctx, next) => {
     }
 });
 
-// Basic root route
-router.get('/', async (ctx) => {
-    ctx.body = 'CRCHub Server';
-});
-
-// Health check route
-router.get('/health', async (ctx) => {
-    ctx.body = { status: 'ok' };
-});
-
 app.use(router.routes());
 app.use(router.allowedMethods());
 
