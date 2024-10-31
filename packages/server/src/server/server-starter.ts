@@ -20,7 +20,7 @@ app.use(async (ctx, next) => {
 
 // Basic root route
 router.get('/', async (ctx) => {
-    ctx.body = 'Freon Model Server';
+    ctx.body = 'CRCHub Server';
 });
 
 // Health check route
