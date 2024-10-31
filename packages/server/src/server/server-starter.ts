@@ -1,8 +1,9 @@
 import Koa from 'koa';
 import Router from 'koa-router';
+import router from './routes.js';
 
 const app = new Koa();
-const router = new Router();
+
 
 // Add error handling middleware
 app.use(async (ctx, next) => {

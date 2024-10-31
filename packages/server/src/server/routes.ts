@@ -274,4 +274,5 @@ router.get("/getUserByEmail", async (ctx: Router.IRouterContext) => {
     }
 });
 
-export const routes = router.routes();
+export default router;
+// export const routes = router.routes();
