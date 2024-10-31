@@ -105,7 +105,6 @@ jobs:
           echo "Checking deployment structure..."
           test -d server-app/node_modules || (echo "node_modules missing" && exit 1)
           test -f server-app/package.json || (echo "package.json missing" && exit 1)
-          test -f server-app/dist/server/start.cjs || (echo "start.cjs missing" && exit 1)
           test -f server-app/dist/server/server-starter.js || (echo "server-starter.js missing" && exit 1)
           
           echo "Checking dependencies..."
