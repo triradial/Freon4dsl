@@ -59,6 +59,7 @@ jobs:
           
           # Copy server dist files
           mkdir -p dist/server
+          mkdir -p dist/config
           cp -r ../packages/server/dist/server/* dist/server/
           cp -r ../packages/server/dist/config/* dist/config/
           
@@ -125,5 +126,5 @@ jobs:
           inlineScript: |
             az webapp config appsettings set --name crchub-server \
                                              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-                                             --settings AZURE_ENVIRONMENT=production \
+                                             --settings AZURE_ENVIRONMENT=development \
                                                        PORT=8080
