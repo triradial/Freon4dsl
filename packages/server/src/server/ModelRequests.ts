@@ -1,38 +1,84 @@
 import { issuestoString, LanguageRegistry, LionWebJsonChunk, LionWebValidator } from "@lionweb/validation";
-import * as fs from "fs";
 import { IRouterContext } from "koa-router";
 import * as path from "node:path";
-// import { StudyConfiguration, StudyConfigurationModel, StudyConfigurationModelEnvironment, Simulator, StudyChecklistDocumentTemplate } from "@freon4dsl/samples-study-configuration";
+import { StorageFactory } from '../storage/StorageFactory.js';
 
-import { FreLionwebSerializer } from "@freon4dsl/core";
-
-// var path = require("path");
-
-const storeFolder = "./modelstore";
+const storage = StorageFactory.getStorageHandler();
 
 export class ModelRequests {
+
+    private static storeFolder: string;
     public static validate = false;
+
+    private static initializeStoreFolder() {
+        const environment = process.env.NODE_ENV || 'development';
+        
+        if (environment === 'production') {
+            this.storeFolder = './datastore/studies';
+        } else {
+            // In development, use the default unless explicitly overridden
+            this.storeFolder = this._overriddenFolder || './modelstore';
+        }
+    }
+
+    private static _overriddenFolder: string | null = null;
+
+    public static setStoreFolder(folder: string) {
+        if (process.env.NODE_ENV !== 'production') {
+            this._overriddenFolder = folder;
+            this.initializeStoreFolder();
+        }
+        // Silently ignore attempts to override in production
+    }
+
+    public static getStoreFolder(): string {
+        if (!this.storeFolder) {
+            this.initializeStoreFolder();
+        }
+        return this.storeFolder;
+    }
+
+    public static setStoreFolderFromId(id: string) {
+        if (process.env.NODE_ENV === 'production' || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+            this.storeFolder = './datastore/studies';
+        } else {
+            this.storeFolder = './modelstore';
+        }
+    }
 
     public static async putModelUnit(foldername: string, name: string, ctx: IRouterContext) {
         try {
-            this.checkStoreFolder();
-            const body = ctx.request.body;
-            if (!fs.existsSync(path.join(`${storeFolder}`, foldername))) {
-                fs.mkdirSync(path.join(`${storeFolder}`, foldername));
-            }
-            fs.writeFileSync(path.join(`${storeFolder}`, foldername, `${name}.json`), JSON.stringify(body, null, 3));
+            this.setStoreFolderFromId(foldername);
+            const modelPath = path.join(this.storeFolder, foldername);
+            const filePath = path.join(modelPath, `${name}.json`);
+            await storage.writeFile(filePath, JSON.stringify(ctx.request.body, null, 3));
         } catch (e) {
             console.log(e.message);
         }
     }
 
+    public static async deleteModelUnit(foldername: string, name: string, ctx: IRouterContext) {
+        try {
+            this.setStoreFolderFromId(foldername);
+            const filePath = path.join(this.storeFolder, foldername, `${name}.json`);
+            await storage.deleteFile(filePath);
+        } catch (e) {
+            console.log(e.message);
+            ctx.request.body = e.message;
+        }
+    }
+
     public static async getModelUnit(foldername: string, name: string, ctx: IRouterContext) {
         try {
-            this.checkStoreFolder();
-            const result = fs.readFileSync(path.join(`${storeFolder}`, foldername, `${name}.json`));
+            this.setStoreFolderFromId(foldername);
+            console.log("ModelRequests.getModelUnit: storeFolder=" + this.storeFolder);
+            const filePath = path.join(this.storeFolder, foldername, `${name}.json`);
+            console.log("ModelRequests.getModelUnit: " + filePath);
+
+            const content = await storage.readFile(filePath);
+            
             if (ModelRequests.validate) {
-                const jsonObject = JSON.parse(result.toString());
-                // LOGGER.log(`jsonObject ${JSON.stringify(jsonObject)}`);
+                const jsonObject = JSON.parse(content);
                 const chunk = jsonObject as LionWebJsonChunk;
                 const validator = new LionWebValidator(chunk, new LanguageRegistry());
                 validator.validateSyntax();
@@ -44,124 +90,75 @@ export class ModelRequests {
                     console.error(issuestoString(validator.validationResult, name + ": lionweb-deserialize-references"));
                 }
             }
-            ctx.response.body = result;
+            ctx.status = 200;
+            ctx.response.body = content;
         } catch (e) {
             console.log(e.message);
-        }
-    }
-
-    public static saveToFile(stringToSave: string, filename: string) {
-        try {
-            fs.writeFileSync(filename, stringToSave);
-            console.log("File written successfully");
-        } catch (err) {
-            console.error("Error writing file:", err);
-        }
-    }
-
-    public static async printModelUnit(modelName: string, name: string, ctx: IRouterContext) {
-        const folderPath = path.join(`${storeFolder}`, modelName, `${name}.json`);
-        try {
-            // this.printModelUnit()
-            // let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
-            // const serializer = new FreLionwebSerializer();
-            // let metaModel = JSON.parse(fs.readFileSync(folderPath).toString());
-            // const ts = serializer.toTypeScriptInstance(metaModel);
-            // let studyConfigurationUnit: StudyConfiguration = ts as StudyConfiguration;
-            // var studyConfigurationModel: StudyConfigurationModel;
-            // studyConfigurationModel.addUnit(studyConfigurationUnit)
-
-            // const simulator = new Simulator(studyConfigurationUnit);
-            // simulator.run();
-            // let timeline = simulator.timeline;
-            // const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline);
-
-            // ModelRequests.saveToFile(studyChecklistAsMarkdown, "StudyOnServer.md");
-            const resultAsObj = {
-                url: "StudyOnServer.md",
-            };
-
-            const result = JSON.stringify(resultAsObj);
-            ctx.response.body = result;
-        } catch (e) {
-            console.log(e.message);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error getting model unit" };
         }
     }
 
     public static async getUnitList(foldername: string, ctx: IRouterContext) {
         try {
-            this.checkStoreFolder();
-            if (!fs.existsSync(path.join(`${storeFolder}`, foldername))) {
-                fs.mkdirSync(path.join(`${storeFolder}`, foldername));
+            this.setStoreFolderFromId(foldername);
+            const modelPath = path.join(this.storeFolder, foldername);
+            
+            // Ensure directory exists
+            if (!await storage.directoryExists(modelPath)) {
+                await storage.ensureDirectory(modelPath);
             }
-            const dir = fs
-                .readdirSync(path.join(`${storeFolder}`, foldername))
-                .filter((f) => f.endsWith(".json"))
-                .map((f) => f.substring(0, f.length - 5));
-            // FIXME A hack to return a specific unit as the ffirst, only for Education demo!!
-            const tmp = dir.findIndex((s) => s === "Fractions10");
-            if (tmp !== -1) {
-                dir.splice(tmp, 1);
-                dir.splice(0, 0, "Fractions10");
+
+            // Get list of files and process them
+            const files = await storage.listFiles(modelPath);
+            const units = files
+                .filter(f => f.endsWith('.json'))
+                .map(f => f.substring(0, f.length - 5));
+
+            // FIXME A hack to return a specific unit as the first, only for Education demo!!
+            const fractionIndex = units.findIndex(s => s === "Fractions10");
+            if (fractionIndex !== -1) {
+                units.splice(fractionIndex, 1);
+                units.splice(0, 0, "Fractions10");
             }
             // FIXME End
-            ctx.response.body = dir;
+            ctx.status = 200;
+            ctx.response.body = units;
+
         } catch (e) {
             console.log(e.message);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error getting unit list" };
         }
     }
 
     public static async getModelList(ctx: IRouterContext) {
         try {
-            this.checkStoreFolder();
-            const dir = fs.readdirSync(`${storeFolder}`);
-            ctx.response.body = dir;
+            if (!await storage.directoryExists(this.storeFolder)) {
+                await storage.ensureDirectory(this.storeFolder);
+            }
+            const models = await storage.listFiles(this.storeFolder);
+            ctx.status = 200;
+            ctx.response.body = models;
         } catch (e) {
             console.log(e.message);
-        }
-    }
-
-    public static async deleteModelUnit(foldername: string, name: string, ctx: IRouterContext) {
-        try {
-            this.checkStoreFolder();
-            fs.unlinkSync(path.join(`${storeFolder}`, foldername, `${name}.json`));
-        } catch (e) {
-            console.log(e.message);
-            ctx.request.body = e.message;
+            ctx.status = 500;
+            ctx.response.body = { error: "Error getting model list" };
         }
     }
 
     public static async deleteModel(foldername: string, ctx: IRouterContext) {
         try {
-            this.checkStoreFolder();
-            console.log("Unlink: " + path.join(`${storeFolder}`, foldername));
-            fs.rmdirSync(path.join(`${storeFolder}`, foldername), { recursive: true });
+            this.setStoreFolderFromId(foldername);
+            const modelPath = path.join(this.storeFolder, foldername);
+            // Note: You may need to add a deleteDirectory method to your storage interface
+            // For now, this will need to be handled differently depending on your storage implementation
+            await storage.deleteFile(modelPath);
         } catch (e) {
             console.log(e.message);
-            ctx.request.body = e.message;
+            ctx.status = 500;
+            ctx.response.body = { error: "Error deleting model" };
         }
     }
 
-    private static checkStoreFolder() {
-        try {
-            if (!fs.existsSync(`${storeFolder}`)) {
-                fs.mkdirSync(`${storeFolder}`);
-            }
-        } catch (e) {
-            console.log(e.message);
-        }
-    }
-
-    // public static async generateChart(modelUnitAsString: string) {
-    //     const serializer = new FreLionwebSerializer();
-    //     const ts = serializer.toTypeScriptInstance(modelUnitAsString);
-    //     let studyConfiguration: StudyConfiguration = ts as StudyConfiguration;
-
-    //     let simulator = new Simulator(studyConfiguration);
-    //     simulator.run();
-    //     const timeline = simulator.getTimeline();
-    //     const timelineDataAsScript = TimelineScriptTemplate.getTimelineDataHTML(timeline);
-    //     const timelineVisualizationHTML = TimelineScriptTemplate.getTimelineVisualizationHTML(timeline);
-    //     TimelineScriptTemplate.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
-    // }
 }

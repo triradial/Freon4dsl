@@ -3,38 +3,22 @@ import { FreLogger } from "../../logging/index.js";
 import { FreLionwebSerializer, FreModelSerializer } from "../index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
 import { IServerCommunication, ModelUnitIdentifier } from "./IServerCommunication.js";
+import { ServerConfig, defaultServerConfig } from '../../config/environments.js';
 
 const LOGGER = new FreLogger("ServerCommunication"); // .mute();
 const modelUnitInterfacePostfix: string = "Public";
 
 export class ServerCommunication implements IServerCommunication {
-    get nodePort(): any {
-        return this._nodePort;
-    }
 
-    set nodePort(value: any) {
-        this._nodePort = value;
-        this.SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
-    }
-
-    get SERVER_URL(): string {
-        return this._SERVER_URL;
-    }
-
-    set SERVER_URL(value: string) {
-        this._SERVER_URL = value;
-    }
-    get SERVER_IP(): string {
-        return this._SERVER_IP;
-    }
-
-    set SERVER_IP(value: string) {
-        this._SERVER_IP = value;
-        this.SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
-    }
     static serial: FreModelSerializer = new FreModelSerializer();
     static lionweb_serial: FreLionwebSerializer = new FreLionwebSerializer();
     static instance: ServerCommunication;
+
+    private _config = defaultServerConfig;
+
+    setServerConfig(config: Partial<ServerConfig>): void {
+        this._config = { ...this._config, ...config };
+    }
 
     static getInstance(): ServerCommunication {
         if (!!!ServerCommunication.instance) {
@@ -50,10 +34,6 @@ export class ServerCommunication implements IServerCommunication {
             return "";
         }
     }
-
-    private _nodePort = 8001; // process.env.NODE_PORT || 8001;
-    private _SERVER_IP = `http://localhost`; //private _SERVER_IP = `http://127.0.0.1`;
-    private _SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
 
     onError(msg: string, severity: FreErrorSeverity): void {
         // default implementation
@@ -100,13 +80,13 @@ export class ServerCommunication implements IServerCommunication {
         } else {
             LOGGER.error(
                 "Name of Unit '" +
-                    unitId.name +
-                    "' may contain only characters, numbers, '_', or '-', and must start with a character.",
+                unitId.name +
+                "' may contain only characters, numbers, '_', or '-', and must start with a character.",
             );
             this.onError(
                 "Name of Unit '" +
-                    unitId.name +
-                    "' may contain only characters, numbers, '_', or '-', and must start with a character.",
+                unitId.name +
+                "' may contain only characters, numbers, '_', or '-', and must start with a character.",
                 FreErrorSeverity.NONE,
             );
         }
@@ -208,24 +188,24 @@ export class ServerCommunication implements IServerCommunication {
      * @param modelName
      * @param unitName
      */
-        async printModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode> {
-            LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
-            if (!!unit.name && unit.name.length > 0) {
-                const res = await this.fetchWithTimeout<Object>(`printModelUnit`, `folder=${modelName}&name=${unit.name}`);
-                if (!!res) {
-                    try {
-                        const urlOfDocument = res["$url"];
-                        return urlOfDocument;
-                    } catch (e) {
-                        LOGGER.error("printModelUnit, " + e.message);
-                        this.onError(e.message, FreErrorSeverity.NONE);
-                        console.log(e.stack);
-                    }
+    async printModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode> {
+        LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
+        if (!!unit.name && unit.name.length > 0) {
+            const res = await this.fetchWithTimeout<Object>(`printModelUnit`, `folder=${modelName}&name=${unit.name}`);
+            if (!!res) {
+                try {
+                    const urlOfDocument = res["$url"];
+                    return urlOfDocument;
+                } catch (e) {
+                    LOGGER.error("printModelUnit, " + e.message);
+                    this.onError(e.message, FreErrorSeverity.NONE);
+                    console.log(e.stack);
                 }
             }
-            return null;
         }
-    
+        return null;
+    }
+
     /**
      * Loads the interface of the unit named 'unitName' of model 'modelName' from the server and calls 'loadCallBack',
      * which takes the unit as parameter.
@@ -267,9 +247,9 @@ export class ServerCommunication implements IServerCommunication {
         LOGGER.log("fetchWithTimeout Params = " + params);
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2000);
-            LOGGER.log("Input: " + `${this._SERVER_URL}${method}${params}`);
-            const promise = await fetch(`${this._SERVER_URL}${method}${params}`, {
+            const timeoutId = setTimeout(() => controller.abort(), this._config.serverTimeout);
+            LOGGER.log("Input: " + `${this._config.serverUrl}${method}${params}`);
+            const promise = await fetch(`${this._config.serverUrl}${method}${params}`, {
                 signal: controller.signal,
                 method: "get",
                 headers: {
@@ -288,8 +268,8 @@ export class ServerCommunication implements IServerCommunication {
         params = ServerCommunication.findParams(params);
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2000);
-            await fetch(`${this._SERVER_URL}${method}${params}`, {
+            const timeoutId = setTimeout(() => controller.abort(), this._config.serverTimeout);
+            await fetch(`${this._config.serverUrl}${method}${params}`, {
                 signal: controller.signal,
                 method: "put",
                 headers: {
@@ -306,7 +286,7 @@ export class ServerCommunication implements IServerCommunication {
     private handleError(e: Error) {
         let errorMess: string = e.message;
         if (e.message.includes("aborted")) {
-            errorMess = `Time out: no response from ${this._SERVER_URL}.`;
+            errorMess = `Time out: no response from ${this._config.serverUrl}.`;
         }
         LOGGER.error(errorMess);
         this.onError(errorMess, FreErrorSeverity.NONE);
@@ -321,7 +301,7 @@ export class ServerCommunication implements IServerCommunication {
     }
 
     // @ts-ignore
-    createModel(modelName: string): any {}
+    createModel(modelName: string): any { }
 
     // @ts-ignore
     createModelUnit(modelName: string, unit: FreModelUnit): Promise<void> {

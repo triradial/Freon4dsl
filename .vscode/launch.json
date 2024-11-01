@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Server (Local)",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/packages/server/dist/server/server-starter.js",
+      "outFiles": ["${workspaceFolder}/packages/server/dist/**/*.js"],
+      "env": {
+        "AZURE_ENVIRONMENT": "local"
+      },
+      "preLaunchTask": "build-server"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Server (Development)",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/packages/server/dist/server/server-starter.js",
+      "outFiles": ["${workspaceFolder}/packages/server/dist/**/*.js"],
+      "env": {
+        "AZURE_ENVIRONMENT": "development"
+      },
+      "preLaunchTask": "build-server"
+    }
+  ]
+} 

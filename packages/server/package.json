@@ -8,7 +8,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/freon4dsl/Freon4dsl"
+    "url": "https://github.com/triradial/Freon4dsl"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,13 @@
   "scripts": {
     "clean": "rm -rf node_modules/ && rm -rf dist/",
     "cleanup": "bash ../../scripts/cleanup.sh",
-    "start": "if [ \"$NODE_ENV\" = \"production\" ]; then node dist/server/server-starter.js; else nodemon --watch 'src/**/*' -e ts,tsx --exec node ./dist/server/server-starter.js; fi",
+    
+    "start": "cross-env AZURE_ENVIRONMENT=local nodemon --watch 'src/**/*' -e ts,tsx --exec node ./dist/server/server-starter.js",
+    "start:local": "cross-env AZURE_ENVIRONMENT=local nodemon --watch 'src/**/*' -e ts,tsx --exec node ./dist/server/server-starter.js",
+    "start:dev": "cross-env AZURE_ENVIRONMENT=development nodemon --watch 'src/**/*' -e ts,tsx --exec node ./dist/server/server-starter.js",
+    "start:staging": "cross-env AZURE_ENVIRONMENT=staging node dist/server/server-starter.js",
+    "start:prod": "cross-env AZURE_ENVIRONMENT=production node dist/server/server-starter.js",
+     
     "build": "tsc --build",
     "build-dev": "tsc --build",
     "build-verbose": "tsc --build --verbose --listFiles --listEmittedFiles",
@@ -35,13 +41,15 @@
     "vitest": "^2.1.0"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.25.0",
     "@freon4dsl/core": "0.7.0-beta5",
     "@freon4dsl/samples-study-configuration": "0.7.0-beta5",
+    "@koa/cors": "^5.0.0",
     "@lionweb/validation": "^0.6.3",
     "@types/koa": "^2.13.4",
     "cross-env": "^7.0.3",
     "koa": "2.13.1",
-    "koa-bodyparser": "4.3.0",
+    "koa-bodyparser": "^4.3.0",
     "koa-router": "10.0.0",
     "koa2-cors": "2.0.6",
     "supertest": "^7.0.0",

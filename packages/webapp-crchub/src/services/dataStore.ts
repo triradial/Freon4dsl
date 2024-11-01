@@ -1,8 +1,8 @@
 import { writable, get } from 'svelte/store';
-import { userStore, type User } from './userStore';
+import { userStore, type User } from './userStore.js';
 import { EditorState } from '@freon4dsl/webapp-lib';
 
-const API_BASE_URL = 'http://localhost:8001';
+const API_BASE_URL = 'http://localhost:8080';
 
 export interface Patient {
     id: string;
@@ -36,6 +36,28 @@ export interface Study {
 export const studies = writable<Study[]>([]);
 export const patients = writable<Patient[]>([]);
 export const studyPatients = writable<Patient[]>([]);
+
+export async function initializeStorePath(): Promise<void> {
+  try {
+      const path = "./datastore/studies";
+      const encodedPath = encodeURIComponent(path);
+      const response = await fetch(`${API_BASE_URL}/setStorePath?path=${encodedPath}`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+          throw new Error(data.error || 'Failed to set store path');
+      }
+      console.log('Store path set successfully:', data.path); // Optional debug log
+  } catch (error) {
+      console.error('Error setting store path:', error);
+      throw error; // Re-throw to let caller handle the error
+  }
+}
 
 export async function initializeDatastore(): Promise<void> {
   await Promise.all([
@@ -283,14 +305,23 @@ export async function getUserById(userId: string): Promise<User | undefined> {
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
   try {
-    const response = await fetch(`${API_BASE_URL}/getUserByEmail?email=${email}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const text = await response.text();
-    return JSON.parse(text);
+      if (!email) {
+          console.error('getUserByEmail called with null or undefined email');
+          return undefined;
+      }
+
+      const url = `${API_BASE_URL}/getUserByEmail?email=${encodeURIComponent(email)}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (!response.ok) {
+          console.error('Error response:', data);
+          throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      }
+
+      return data;
   } catch (error) {
-    console.error('Error fetching user:', error);
-    return undefined;
+      console.error('Error in getUserByEmail:', error);
+      return undefined;
   }
 }

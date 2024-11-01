@@ -1,5 +1,6 @@
 import { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
+import { type ServerConfig } from '../../config/environments.js';
 
 export type OnError = (errorMsg: string, severity: FreErrorSeverity) => void;
 /**
@@ -16,6 +17,12 @@ export type ModelUnitIdentifier = {
  */
 export interface IServerCommunication {
     onError: OnError;
+
+    /**
+     * Configure the server connection settings
+     * @param config Partial server configuration to override defaults
+     */
+    setServerConfig(config: Partial<ServerConfig>): void;
 
     /**
      * return a set of unused Id's

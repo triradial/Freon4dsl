@@ -4,17 +4,19 @@
     import Main from "./pages/Main.svelte";
     import Login from "./pages/Login.svelte";
     import { onMount } from "svelte";
+    import { initializeStorePath } from './services/dataStore';
     import { isAuthenticated, redirectUrl } from "./services/auth";
     import { updateCurrentRoute } from "./services/routeAction";
     import { theme } from './services/themeStore';
 
     let auth = false;
 
-    onMount(() => {
+    onMount(async () => {
         const storedAuth = sessionStorage.getItem("auth");
         if (storedAuth) {
             auth = storedAuth === "true";
         }
+        await initializeStorePath();
     });
          
     $: {

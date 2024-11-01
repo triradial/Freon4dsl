@@ -8,7 +8,7 @@
     "build": "echo No build for webapp-starter",
     "build-app": "rollup -c",
     "build-dev": "cd ../../packages/samples/ConformanceRules && npm run build",
-    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=8192' NODE_PORT=8001 rollup -c -w",
+    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=8192' NODE_PORT=8080 rollup -c -w",
     "start": "sirv public --port 8000",
     "validate": "svelte-check --tsconfig ./tsconfig.json",
     "errors-only": "svelte-check --threshold error --tsconfig ./tsconfig.json",

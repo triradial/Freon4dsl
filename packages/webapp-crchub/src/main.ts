@@ -4,16 +4,27 @@ import awsconfig from "../amplifyconfiguration.json";
 
 import { WebappConfigurator } from "@freon4dsl/webapp-lib";
 import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
-import { ServerCommunication } from "@freon4dsl/core";
+import { ServerCommunication, type IServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
-import { initializeDatastore } from "./services/dataStore";
+import { env } from "./config/env.js";
 
 import DatePicker from "./components/custom/DatePicker.svelte";
 import ExpandCollapseWrapperComponent from "./components/custom/ExpandCollapseWrapperComponent.svelte";
 import TimePicker from "./components/custom/TimePicker.svelte";
 
-WebappConfigurator.getInstance().setEditorEnvironment(StudyConfigurationModelEnvironment.getInstance());
-WebappConfigurator.getInstance().setServerCommunication(ServerCommunication.getInstance());
+// Configure the server connection settings
+const serverComm: IServerCommunication = ServerCommunication.getInstance();
+serverComm.setServerConfig({
+    serverUrl: env.serverUrl,
+    serverTimeout: env.serverTimeout
+});
+
+// Configure the editor environment
+const webappConfigurator = WebappConfigurator.getInstance();
+const editorEnvironment = StudyConfigurationModelEnvironment.getInstance();
+webappConfigurator.setEditorEnvironment(editorEnvironment);
+webappConfigurator.setServerCommunication(serverComm);
+
 setCustomComponents([
     { component: DatePicker, knownAs: "DatePicker" },
     { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
@@ -26,9 +37,7 @@ async function initializeApp() {
 
     const app = new App({
         target: document.body,
-        props: {
-            // you can pass props here if needed
-        },
+        props: {},
     });
 
     return app;
