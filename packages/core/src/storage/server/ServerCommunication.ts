@@ -248,8 +248,8 @@ export class ServerCommunication implements IServerCommunication {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), this._config.serverTimeout);
-            LOGGER.log("Input: " + `${this._config.serverUrl}${method}${params}`);
-            const promise = await fetch(`${this._config.serverUrl}${method}${params}`, {
+            LOGGER.log("Input: " + `${this._config.serverUrl}/${method}${params}`);
+            const promise = await fetch(`${this._config.serverUrl}/${method}${params}`, {
                 signal: controller.signal,
                 method: "get",
                 headers: {
@@ -269,7 +269,7 @@ export class ServerCommunication implements IServerCommunication {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), this._config.serverTimeout);
-            await fetch(`${this._config.serverUrl}${method}${params}`, {
+            await fetch(`${this._config.serverUrl}/${method}${params}`, {
                 signal: controller.signal,
                 method: "put",
                 headers: {

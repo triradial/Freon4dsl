@@ -1,10 +1,6 @@
 import { type Environment, environments } from './environments.js';
 
-const currentEnv = (
-    (import.meta.env.VITE_ENVIRONMENT as Environment) || 
-    (process.env.AZURE_ENVIRONMENT as Environment) || 
-    'local'
-);
+const currentEnv = (process.env.AZURE_ENVIRONMENT as Environment) || 'local';
 
 if (!Object.keys(environments).includes(currentEnv)) {
     throw new Error(`Invalid environment: ${currentEnv}`);

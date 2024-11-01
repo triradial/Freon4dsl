@@ -56,7 +56,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showSystems"
                },
-               "value": "true"
+               "value": "false"
             },
             {
                "property": {
@@ -64,7 +64,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showPeople"
                },
-               "value": "true"
+               "value": "false"
             },
             {
                "property": {
