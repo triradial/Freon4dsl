@@ -1,5 +1,3 @@
-/// <reference types="svelte" />
-
 declare global {
     interface WindowEventMap {
         navigateTo: CustomEvent<{ name: string; params: any }>;
@@ -10,4 +8,11 @@ declare global {
     }
 }
 
-export {};
+// Add Svelte module declaration
+declare module "*.svelte" {
+    import type { ComponentType } from "svelte";
+    const component: ComponentType;
+    export default component;
+}
+
+export { };

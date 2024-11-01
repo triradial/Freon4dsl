@@ -53,7 +53,7 @@
         "gulp-sass": "^5.1.0",
         "rollup-plugin-svelte": "^7.1.6",
         "sass": "^1.78.0",
-        "svelte": "^4.x.x",
+        "svelte": "^4.0.0",
         "svelte-preprocess": "^5.1.3",
         "tailwindcss": "^3.4.11",
         "tsx": "^4.19.1",
