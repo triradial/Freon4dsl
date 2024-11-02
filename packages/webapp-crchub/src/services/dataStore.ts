@@ -1,41 +1,62 @@
 import { writable, get } from 'svelte/store';
-import { userStore, type User } from './userStore';
+import { userStore, type User } from './userStore.js';
 import { EditorState } from '@freon4dsl/webapp-lib';
-
-const API_BASE_URL = 'http://localhost:8001';
+import { env } from '../config/env.js';
 
 export interface Patient {
-    id: string;
-    patientNumber: string;
-    displayName: string;
-    name: string;
-    initials: string;
-    dob: string;
-    gender: string;
-    studyId: string;
-    study: string;
+  id: string;
+  patientNumber: string;
+  displayName: string;
+  name: string;
+  initials: string;
+  dob: string;
+  gender: string;
+  studyId: string;
+  study: string;
 }
 
 export interface Study {
-    id: string;
-    name: string;
-    identifiers: Array<{ type: string; identifier: string }>;
-    status: string;
-    title: string;
-    phase: string;
-    interventions: Array<{ type: string; name: string }>;
-    therapeuticArea: string;
-    currentProtocol: string;
-    protocolAmendments: Array<{
-      version: string;
-      date: string;
-      description: string;
-    }>;
-}  
+  id: string;
+  name: string;
+  identifiers: Array<{ type: string; identifier: string }>;
+  status: string;
+  title: string;
+  phase: string;
+  interventions: Array<{ type: string; name: string }>;
+  therapeuticArea: string;
+  currentProtocol: string;
+  protocolAmendments: Array<{
+    version: string;
+    date: string;
+    description: string;
+  }>;
+}
 
 export const studies = writable<Study[]>([]);
 export const patients = writable<Patient[]>([]);
 export const studyPatients = writable<Patient[]>([]);
+
+export async function initializeStorePath(): Promise<void> {
+  try {
+    const path = "./datastore/studies";
+    const encodedPath = encodeURIComponent(path);
+    const response = await fetch(`${env.serverUrl}/setStorePath?path=${encodedPath}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to set store path');
+    }
+    console.log('Store path set successfully:', data.path); // Optional debug log
+  } catch (error) {
+    console.error('Error setting store path:', error);
+    throw error; // Re-throw to let caller handle the error
+  }
+}
 
 export async function initializeDatastore(): Promise<void> {
   await Promise.all([
@@ -50,7 +71,7 @@ export async function getStudies(): Promise<boolean> {
     if (!currentUser) {
       throw new Error('User not authenticated');
     }
-    const resp = await fetch(`${API_BASE_URL}/getStudies?uid=${currentUser.userid}`);
+    const resp = await fetch(`${env.serverUrl}/getStudies?uid=${currentUser.userid}`);
     if (!resp.ok) {
       throw new Error(`HTTP error! status: ${resp.status}`);
     }
@@ -69,8 +90,8 @@ export async function getStudy(studyId: string): Promise<Study | undefined> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }   
-    const response = await fetch(`${API_BASE_URL}/getStudy?id=${studyId}&uid=${currentUser.userid}`);
+    }
+    const response = await fetch(`${env.serverUrl}/getStudy?id=${studyId}&uid=${currentUser.userid}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -87,8 +108,8 @@ export async function addStudy(newStudy: Study): Promise<boolean> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const response = await fetch(`${API_BASE_URL}/addStudy?uid=${currentUser.userid}`, {
+    }
+    const response = await fetch(`${env.serverUrl}/addStudy?uid=${currentUser.userid}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newStudy)
@@ -113,8 +134,8 @@ export async function updateStudy(updatedStudy: Study): Promise<boolean> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const response = await fetch(`${API_BASE_URL}/updateStudy?id=${updatedStudy.id}&uid=${currentUser.userid}`, {
+    }
+    const response = await fetch(`${env.serverUrl}/updateStudy?id=${updatedStudy.id}&uid=${currentUser.userid}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedStudy)
@@ -133,13 +154,13 @@ export async function deleteStudy(studyId: string): Promise<boolean> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const response = await fetch(`${API_BASE_URL}/deleteStudy?id=${studyId}&uid=${currentUser.userid}`, { method: 'DELETE' });
+    }
+    const response = await fetch(`${env.serverUrl}/deleteStudy?id=${studyId}&uid=${currentUser.userid}`, { method: 'DELETE' });
     if (!response.ok) throw new Error('Failed to delete study');
     studies.update(s => s.filter(study => study.id !== studyId));
 
     let modelManager = EditorState.getInstance();
-    await modelManager.newModel(studyId);   
+    await modelManager.newModel(studyId);
 
     return true;
   } catch (error) {
@@ -153,8 +174,8 @@ export async function getPatients(): Promise<boolean> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const resp = await fetch(`${API_BASE_URL}/getPatients?uid=${currentUser.userid}`);
+    }
+    const resp = await fetch(`${env.serverUrl}/getPatients?uid=${currentUser.userid}`);
     if (!resp.ok) {
       throw new Error(`HTTP error! status: ${resp.status}`);
     }
@@ -173,14 +194,14 @@ export async function getStudyPatients(studyId: string): Promise<boolean> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const resp = await fetch(`${API_BASE_URL}/getStudyPatients?id=${studyId}&uid=${currentUser.userid}`);
+    }
+    const resp = await fetch(`${env.serverUrl}/getStudyPatients?id=${studyId}&uid=${currentUser.userid}`);
     if (!resp.ok) {
       throw new Error(`HTTP error! status: ${resp.status}`);
     }
     const text = await resp.text();
     const data = JSON.parse(text);
-    studyPatients.set(data); 
+    studyPatients.set(data);
     return true;
   } catch (error) {
     console.error('Error loading study patients:', error);
@@ -193,8 +214,8 @@ export async function getPatient(patientId: string): Promise<Patient | undefined
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const response = await fetch(`${API_BASE_URL}/getPatient?id=${patientId}&uid=${currentUser.userid}`);
+    }
+    const response = await fetch(`${env.serverUrl}/getPatient?id=${patientId}&uid=${currentUser.userid}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -211,8 +232,8 @@ export async function addPatient(newPatient: Patient): Promise<boolean> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const response = await fetch(`${API_BASE_URL}/addPatient?uid=${currentUser.userid}`, {
+    }
+    const response = await fetch(`${env.serverUrl}/addPatient?uid=${currentUser.userid}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newPatient)
@@ -234,8 +255,8 @@ export async function updatePatient(updatedPatient: Patient): Promise<boolean> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const response = await fetch(`${API_BASE_URL}/updatePatient?id=${updatedPatient.id}&uid=${currentUser.userid}`, {
+    }
+    const response = await fetch(`${env.serverUrl}/updatePatient?id=${updatedPatient.id}&uid=${currentUser.userid}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedPatient)
@@ -255,8 +276,8 @@ export async function deletePatient(patientId: string): Promise<boolean> {
     const currentUser = get(userStore);
     if (!currentUser) {
       throw new Error('User not authenticated');
-    }  
-    const response = await fetch(`${API_BASE_URL}/deletePatient?id=${patientId}&uid=${currentUser.userid}`, { method: 'DELETE' });
+    }
+    const response = await fetch(`${env.serverUrl}/deletePatient?id=${patientId}&uid=${currentUser.userid}`, { method: 'DELETE' });
     if (!response.ok) throw new Error('Failed to delete patient');
     patients.update(p => p.filter(patient => patient.id !== patientId));
     studyPatients.update(p => p.filter(patient => patient.id !== patientId));
@@ -269,7 +290,7 @@ export async function deletePatient(patientId: string): Promise<boolean> {
 
 export async function getUserById(userId: string): Promise<User | undefined> {
   try {
-    const response = await fetch(`${API_BASE_URL}/getUser?id=${userId}`);
+    const response = await fetch(`${env.serverUrl}/getUser?id=${userId}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -283,14 +304,23 @@ export async function getUserById(userId: string): Promise<User | undefined> {
 
 export async function getUserByEmail(email: string): Promise<User | undefined> {
   try {
-    const response = await fetch(`${API_BASE_URL}/getUserByEmail?email=${email}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (!email) {
+      console.error('getUserByEmail called with null or undefined email');
+      return undefined;
     }
-    const text = await response.text();
-    return JSON.parse(text);
+
+    const url = `${env.serverUrl}/getUserByEmail?email=${encodeURIComponent(email)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error response:', data);
+      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+    }
+
+    return data;
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error('Error in getUserByEmail:', error);
     return undefined;
   }
 }

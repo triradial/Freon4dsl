@@ -7,6 +7,7 @@ import { createLionWebJsonNode, FreLionwebSerializer, FreSerializer } from "../i
 import { FreErrorSeverity } from "../../validator/index.js";
 import type { IServerCommunication, ModelUnitIdentifier } from "./IServerCommunication.js";
 import { collectUsedLanguages } from "./UsedLanguages.js";
+import { type ServerConfig } from '../../config/environments.js';
 
 const LOGGER = new FreLogger("LionWebRepositoryCommunication");
 
@@ -15,6 +16,14 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
     lionweb_serial: FreSerializer = new FreLionwebSerializer();
     static instance: LionWebRepositoryCommunication;
 
+    private _nodePort = 3005; // process.env.NODE_PORT || 3005;
+    private _SERVER_IP = `http://127.0.0.1`;
+    private _SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
+
+    constructor() {
+        this.client.loggingOn = true;
+    }
+
     static getInstance(): LionWebRepositoryCommunication {
         if (!!!LionWebRepositoryCommunication.instance) {
             LionWebRepositoryCommunication.instance = new LionWebRepositoryCommunication();
@@ -22,8 +31,13 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
         return LionWebRepositoryCommunication.instance;
     }
 
-    constructor() {
-        this.client.loggingOn = true;
+    setServerConfig(config: Partial<ServerConfig>): void {
+        if (config.serverUrl) {
+            const url = new URL(config.serverUrl);
+            this._SERVER_IP = `${url.protocol}//${url.hostname}`;
+            this._nodePort = parseInt(url.port) || 3005;
+            this._SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
+        }
     }
 
     // private static findParams(params?: string) {
@@ -33,10 +47,6 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
     //         return "";
     //     }
     // }
-
-    private _nodePort = 3005; // process.env.NODE_PORT || 3005;
-    private _SERVER_IP = `http://127.0.0.1`;
-    private _SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
 
     onError(msg: string, severity: FreErrorSeverity): void {
         // default implementation
@@ -99,13 +109,13 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
         } else {
             LOGGER.error(
                 "Name of Unit '" +
-                    unitIdentifier.name +
-                    "' may contain only characters, numbers, '_', or '-', and must start with a character.",
+                unitIdentifier.name +
+                "' may contain only characters, numbers, '_', or '-', and must start with a character.",
             );
             this.onError(
                 "Name of Unit '" +
-                    unitIdentifier.name +
-                    "' may contain only characters, numbers, '_', or '-', and must start with a character.",
+                unitIdentifier.name +
+                "' may contain only characters, numbers, '_', or '-', and must start with a character.",
                 FreErrorSeverity.NONE,
             );
         }
@@ -211,7 +221,7 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
         unit: ModelUnitIdentifier,
         // @ts-ignore
         loadCallback: (unit: FreModelUnit) => void,
-    ) {}
+    ) { }
 
     // @ts-ignore
     private handleError(e: Error) {

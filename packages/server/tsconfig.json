@@ -3,6 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "target": "es2021",
+    "composite": true,
+    "rootDir": "./src",
     "declaration": true,
     "downlevelIteration": true,
     "declarationMap": true,
@@ -33,10 +35,16 @@
     ],
     "baseUrl": "."
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "references": [
-    { "path": "../core" },
-    { "path": "../samples/StudyConfiguration" }
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../samples/StudyConfiguration"
+    }
   ],
   "exclude": [
     "dist",

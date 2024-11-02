@@ -1,68 +1,134 @@
-import { app } from "./server-def.js";
-import { config } from "./config.js";
-import Router from 'koa-router';
+// Import required dependencies
+import { Server } from 'http';
+import { createServer } from 'net';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
-const router = new Router({
-    prefix: '' // Ensure no prefix is set
+import Koa from 'koa';
+import cors from '@koa/cors';
+import router from './routes.js';
+import bodyParser from 'koa-bodyparser';
+import { type Environment, environments } from '../config/environments.js';
+
+// Create new Koa application instance
+const app = new Koa();
+const currentEnv = (process.env.AZURE_ENVIRONMENT || 'local') as Environment;
+const env = environments[currentEnv];
+const execAsync = promisify(exec);
+
+console.log('Server Environment:', {
+    AZURE_ENVIRONMENT: process.env.AZURE_ENVIRONMENT,
+    environment: currentEnv,
+    serverUrl: env.serverUrl,
+    serverPort: env.serverPort,
+    serverTimeout: env.serverTimeout,
+    corsOrigins: env.corsOrigins,
+    storeBasePath: env.storeBasePath,
+    logLevel: env.logLevel
 });
 
-// Add CORS headers middleware
-app.use(async (ctx, next) => {
-    ctx.set('Access-Control-Allow-Origin', '*');
-    ctx.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    ctx.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
-    if (ctx.method === 'OPTIONS') {
-        ctx.status = 200;
-        return;
-    }
-    
-    await next();
-});
+// Add CORS middleware first
+app.use(cors({
+    origin: (ctx) => {
+        const allowedOrigins = env.corsOrigins;
+        const origin = ctx.request.header.origin;
+        if (allowedOrigins.includes(origin)) {
+            return origin;
+        }
+        return allowedOrigins[0];
+    },
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 
-// Add request logging
+// Add body parser middleware
+app.use(bodyParser());
+
+// Global error handling middleware
 app.use(async (ctx, next) => {
-    const start = Date.now();
-    console.log(`${ctx.method} ${ctx.url} - Request received`);
     try {
         await next();
-        const ms = Date.now() - start;
-        console.log(`${ctx.method} ${ctx.url} - ${ctx.status} - ${ms}ms`);
     } catch (err) {
-        console.error(`${ctx.method} ${ctx.url} - Error:`, err);
-        throw err;
+        // Log error and set appropriate response
+        console.error('Server error:', err);
+        ctx.status = err.status || 500;
+        ctx.body = {
+            message: 'Internal server error',
+            // Only show detailed error in non-production environments
+            error: process.env.NODE_ENV === 'production' ? undefined : err.message
+        };
+
+        // Ensure CORS headers are set even in error responses
+        ctx.set('Access-Control-Allow-Origin', ctx.request.header.origin || env.corsOrigins[0]);
+        ctx.set('Access-Control-Allow-Credentials', 'true');
     }
 });
 
-router.get('/health', async (ctx) => {
-    ctx.status = 200;
-    ctx.body = {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        env: process.env.NODE_ENV,
-        port: process.env.PORT || config.port
-    };
-});
-
-router.get('/', async (ctx) => {
-    ctx.status = 200;
-    ctx.body = "Freon Model Server";
-});
-
-// Mount routes BEFORE other middleware
+// Configure routing
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const port = process.env.PORT || config.port;
-app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-    console.log('Environment:', process.env.NODE_ENV);
-    console.log('Routes registered:', 
-        router.stack.map(layer => ({
-            path: layer.path,
-            methods: layer.methods
-        }))
-    );
+// Start the server
+let server: Server;
+try {
+    if (currentEnv === 'local') {
+        await killPortProcess(env.serverPort);
+    }
+
+    server = app.listen(env.serverPort);
+
+    server.on('error', (err) => {
+        console.error('Server startup error:', err);
+        process.exit(1);
+    });
+
+    server.on('listening', () => {
+        console.log(`Server now listening on port ${env.serverPort}`);
+    });
+} catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+}
+
+// Global server error handler
+server.on('error', (err) => {
+    console.error('Server startup error:', err);
+    process.exit(1); // Exit on critical errors
 });
 
+// Handle process termination
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received. Shutting down gracefully...');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
+});
+
+process.on('SIGINT', () => {
+    console.log('SIGINT received. Shutting down gracefully...');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
+});
+
+async function killPortProcess(port: number): Promise<void> {
+    try {
+        console.log(`Attempting to kill process on port ${port}...`);
+        const { stdout } = await execAsync(`lsof -i :${port} -t`);
+        if (stdout) {
+            const pid = stdout.trim();
+            await execAsync(`kill -9 ${pid}`);
+            console.log(`Killed process ${pid} on port ${port}`);
+            // Increased wait time
+            await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+    } catch (error) {
+        console.log(`Error checking/killing process on port ${port}:`, error.message);
+    }
+}
+
+// Export the app instance for testing/importing
 export default app;

@@ -15,12 +15,7 @@
         let url: string = '/';
         const unsubscribe = redirectUrl.subscribe(value => { url = value || '/'; });
         unsubscribe();  // Unsubscribe to avoid memory leaks
-
-        const credentials = {
-            username: username,
-            password: password,
-        };
-        const auth = await authenticate(credentials);
+        const auth = await authenticate(username, password);
         if (!auth) {
             showError.set(true);
         } else {

@@ -4,18 +4,18 @@
     /**
      * This component shows a boolean value as checkbox.
      */
-    import {FreEditor, BooleanControlBox} from "@freon4dsl/core";
+    import { FreEditor, BooleanControlBox } from "@freon4dsl/core";
     import { componentId } from "$lib/index.js";
-    import {afterUpdate, onMount} from "svelte";
-    import '@material/web/checkbox/checkbox.js';
-    import {MdCheckbox} from "@material/web/checkbox/checkbox.js";
+    import { afterUpdate, onMount } from "svelte";
+    import "@material/web/checkbox/checkbox.js";
+    import { MdCheckbox } from "@material/web/checkbox/checkbox.js";
 
     export let box: BooleanControlBox;
-    export let editor: FreEditor;			// the editor
+    export let editor: FreEditor; // the editor
 
-    const LOGGER = CHECKBOX_LOGGER
+    const LOGGER = CHECKBOX_LOGGER;
 
-    let id: string = !!box ? componentId(box) : 'checkbox-for-unknown-box';
+    let id: string = !!box ? componentId(box) : "checkbox-for-unknown-box";
     let inputElement: MdCheckbox;
     let value = box.getBoolean();
 
@@ -44,7 +44,7 @@
     const onClick = (event: MouseEvent) => {
         event.stopPropagation();
         LOGGER.log("CheckBoxComponent.onClick for box " + box.role + ", box value: " + box.getBoolean());
-    }
+    };
     const onChange = (event: MouseEvent) => {
         value = inputElement.checked;
         box.setBoolean(value);
@@ -53,18 +53,11 @@
         }
         event.stopPropagation();
         LOGGER.log("CheckBoxComponent.onClick for box " + box.role + ", box value: " + box.getBoolean());
-    }
+    };
 </script>
 
-<span id="{id}" class="boolean-checkbox-component">
-    <md-checkbox
-            aria-label="{id}"
-            on:click={onClick}
-            on:change={onChange}
-            bind:this={inputElement}
-            checked={value}
-    ></md-checkbox>
+<span {id} class="boolean-checkbox-component">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <md-checkbox aria-label={id} on:click={onClick} on:change={onChange} bind:this={inputElement} checked={value}></md-checkbox>
 </span>
-
-
-

@@ -14,8 +14,8 @@ import {
     VisitDate,
 } from "@freon4dsl/samples-study-configuration/dist/language/gen";
 import { EditorState } from "@freon4dsl/webapp-lib";
-import type { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline";
-import { getTimeline, getTimelineChartHtml } from "./app/PatientTimeline";
+import type { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+import { getTimeline, getTimelineChartHtml } from "./app/PatientTimeline.js";
 
 export function getStatusColor(status: string): string {
     switch (status.toLowerCase()) {

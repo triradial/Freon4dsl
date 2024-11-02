@@ -26,21 +26,32 @@ const config = [
 			// }
 		],
 		plugins: [
-			// nodeResolve({
-            //     extensions: ['.ts', '.js', '.json'],
-            //     preferBuiltins: true
-            // }),
-            typescript({
-                tsconfig: './tsconfig.json',
-                sourceMap: true,
-                inlineSources: true,
+			nodeResolve({
+				extensions: ['.ts', '.js', '.json'],
+				preferBuiltins: true
+			}),
+			typescript({
+				tsconfig: './tsconfig.json',
+				sourceMap: true,
+				inlineSources: true,
 				module: 'NodeNext',
-                target: 'es2021',
-                moduleResolution: 'nodenext'
-            }),
+				target: 'es2021',
+				moduleResolution: 'nodenext'
+			}),
 			// If we're building for production (npm run build
 			// instead of npm run dev), minify
 			production && terser()
+		],
+		// Explicitly declare external dependencies
+		external: [
+			'mobx',
+			'lodash',
+			'@lionweb/repository-client',
+			'reflect-metadata',
+			'@fortawesome/free-solid-svg-icons',
+			'@fortawesome/fontawesome-svg-core',
+			'@fortawesome/svelte-fontawesome',
+			'@lionweb/validation'
 		]
 	},
 	{
