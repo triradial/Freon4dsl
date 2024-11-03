@@ -1,0 +1,43 @@
+[
+  {
+    "id": "ab7ac10b-58cc-4372-a567-0e02b2c3d479",
+    "name": "BE-X5",
+    "identifiers": [
+      {
+        "type": "nct",
+        "identifier": "NCT75521706"
+      }
+    ],
+    "status": "Planning",
+    "title": "Effect of combination of device Megabond with varying doeses of Amoxocillin Treatment of Patients With Advanced Malignancies",
+    "phase": "III",
+    "interventions": [
+      {
+        "type": "device",
+        "name": "Megabond 5000"
+      },
+      {
+        "type": "drug",
+        "name": "Amoxocillin"
+      }
+    ],
+    "therapeuticArea": "Oncology",
+    "currentProtocol": "v1",
+    "protocolAmendments": [
+      {
+        "version": "v1",
+        "date": "04-MAR-2024",
+        "description": "initial protocol"
+      }
+    ]
+  },
+  {
+    "id": "c134550f-359a-4254-829b-7b141340b403",
+    "name": "CLIVE",
+    "title": "",
+    "status": "Planning",
+    "phase": "I",
+    "therapeuticArea": "Oncology",
+    "currentProtocol": ""
+  }
+]
