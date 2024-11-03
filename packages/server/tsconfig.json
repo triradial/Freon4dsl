@@ -41,9 +41,6 @@
   "references": [
     {
       "path": "../core"
-    },
-    {
-      "path": "../samples/StudyConfiguration"
     }
   ],
   "exclude": [

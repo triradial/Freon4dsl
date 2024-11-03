@@ -1,15 +1,4 @@
 {
-  "include": [
-    "src",
-    "src/**/*",
-    "src/@types/svg.d.ts",
-    "src/**/*.ts",
-    "src/**/*.js",
-    "src/**/*.svelte",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue"
-  ],
   "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
@@ -110,10 +99,18 @@
     },
     {
       "path": "../core-svelte"
-    },
-    {
-      "path": "../samples/StudyConfiguration"
     }
+  ],
+  "include": [
+    "src",
+    "src/**/*",
+    "src/@types/svg.d.ts",
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.svelte",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
   ],
   "exclude": [
     "node_modules",
