@@ -1,4 +1,4 @@
-// Import required dependencies
+import '../config/loadEnv.js';
 import { Server } from 'http';
 import { createServer } from 'net';
 import { exec } from 'child_process';
@@ -9,9 +9,6 @@ import cors from '@koa/cors';
 import router from './routes.js';
 import bodyParser from 'koa-bodyparser';
 import { type Environment, environments } from '../config/environments.js';
-import dotenv from 'dotenv';
-
-dotenv.config(); // Only for local development environment
 
 // Create new Koa application instance
 const app = new Koa();

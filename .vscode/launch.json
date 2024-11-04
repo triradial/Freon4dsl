@@ -5,9 +5,13 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Server (Local)",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/packages/server/dist/server/server-starter.js",
-      "outFiles": ["${workspaceFolder}/packages/server/dist/**/*.js"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/packages/server-crchub/dist/server/server-starter.js",
+      "outFiles": [
+        "${workspaceFolder}/packages/server-crchub/dist/**/*.js"
+      ],
       "env": {
         "AZURE_ENVIRONMENT": "local"
       },
@@ -17,13 +21,17 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Server (Development)",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/packages/server/dist/server/server-starter.js",
-      "outFiles": ["${workspaceFolder}/packages/server/dist/**/*.js"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}/packages/server-crchub/dist/server/server-starter.js",
+      "outFiles": [
+        "${workspaceFolder}/packages/server-crchub/dist/**/*.js"
+      ],
       "env": {
         "AZURE_ENVIRONMENT": "development"
       },
       "preLaunchTask": "build-server"
     }
   ]
-} 
+}

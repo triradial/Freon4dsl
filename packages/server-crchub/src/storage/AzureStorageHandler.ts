@@ -4,34 +4,37 @@ import { IStorageHandler } from './IStorageHandler.js';
 export class AzureStorageHandler implements IStorageHandler {
 
     private shareServiceClient: ShareServiceClient;
-    private shareClient: ShareClient;
-    private basePath: string;
+    private fileShare: ShareClient;
 
     constructor() {
         const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
         const shareName = process.env.AZURE_STORAGE_SHARE_NAME || 'datastore';
-        const basePath = process.env.AZURE_STORAGE_BASE_PATH || 'datastore';
 
         if (!connectionString) {
             throw new Error('Azure Storage connection string not found');
         }
 
         this.shareServiceClient = ShareServiceClient.fromConnectionString(connectionString);
-        this.shareClient = this.shareServiceClient.getShareClient(shareName);
-        this.basePath = basePath.startsWith('/') ? basePath.slice(1) : basePath;
-    }
-
-    private getDirectoryClient(path: string): ShareDirectoryClient {
-        const fullPath = `${this.basePath}/${path}`.replace(/\/+/g, '/');
-        return this.shareClient.getDirectoryClient(fullPath);
+        this.fileShare = this.shareServiceClient.getShareClient(shareName);
     }
 
     async readFile(filePath: string): Promise<string> {
         const dirPath = filePath.substring(0, filePath.lastIndexOf('/'));
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-        const directoryClient = this.getDirectoryClient(dirPath);
-        const fileClient = directoryClient.getFileClient(fileName);
 
+        console.log('Azure Storage Read Request:', {
+            requestedPath: filePath,
+            dirPath,
+            fileName,
+            fileShare: this.fileShare.name
+        });
+
+        const directoryClient = dirPath ? this.getDirectoryClient(dirPath) : this.fileShare.rootDirectoryClient;
+        const fileClient = directoryClient.getFileClient(fileName);
+        const fileExists = await fileClient.exists();
+        if (!fileExists) {
+            throw new Error(`File does not exist: ${filePath} (in share: ${this.fileShare.name})`);
+        }
         const downloadResponse = await fileClient.downloadToBuffer();
         return downloadResponse.toString();
     }
@@ -39,39 +42,72 @@ export class AzureStorageHandler implements IStorageHandler {
     async writeFile(filePath: string, content: string): Promise<void> {
         const dirPath = filePath.substring(0, filePath.lastIndexOf('/'));
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-        const directoryClient = this.getDirectoryClient(dirPath);
 
-        // Ensure directory exists
-        await directoryClient.createIfNotExists();
+        console.log('Azure Storage Write Request:', {
+            requestedPath: filePath,
+            dirPath,
+            fileName,
+            shareName: this.fileShare.name
+        });
 
+        const directoryClient = dirPath ? this.getDirectoryClient(dirPath) : this.fileShare.rootDirectoryClient;
         const fileClient = directoryClient.getFileClient(fileName);
-        await fileClient.uploadData(Buffer.from(content));
+
+        const buffer = Buffer.from(content);
+        await fileClient.uploadData(buffer, {
+            rangeSize: buffer.length
+        });
     }
 
     async deleteFile(filePath: string): Promise<void> {
         const dirPath = filePath.substring(0, filePath.lastIndexOf('/'));
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-        const directoryClient = this.getDirectoryClient(dirPath);
+
+        console.log('Azure Storage Delete Request:', {
+            requestedPath: filePath,
+            dirPath,
+            fileName,
+            shareName: this.fileShare.name
+        });
+
+        const directoryClient = dirPath ? this.getDirectoryClient(dirPath) : this.fileShare.rootDirectoryClient;
         const fileClient = directoryClient.getFileClient(fileName);
+
         await fileClient.deleteIfExists();
     }
 
     async fileExists(filePath: string): Promise<boolean> {
         const dirPath = filePath.substring(0, filePath.lastIndexOf('/'));
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-        const directoryClient = this.getDirectoryClient(dirPath);
+
+        console.log('Azure Storage File Exists Check:', {
+            requestedPath: filePath,
+            dirPath,
+            fileName,
+            shareName: this.fileShare.name
+        });
+
+        const directoryClient = dirPath ? this.getDirectoryClient(dirPath) : this.fileShare.rootDirectoryClient;
         const fileClient = directoryClient.getFileClient(fileName);
+
         return await fileClient.exists();
     }
 
     async listFiles(dirPath: string): Promise<string[]> {
-        const directoryClient = this.getDirectoryClient(dirPath);
-        const files: string[] = [];
+        console.log('Azure Storage List Files Request:', {
+            dirPath,
+            shareName: this.fileShare.name
+        });
 
+        const directoryClient = dirPath ? this.getDirectoryClient(dirPath) : this.fileShare.rootDirectoryClient;
+
+        const files: string[] = [];
         let marker;
         do {
-            const response = await directoryClient.listFilesAndDirectories().byPage({ maxPageSize: 20 }).next();
+            const response = await directoryClient.listFilesAndDirectories().byPage({ maxPageSize: 20, continuationToken: marker }).next();
             const segment = response.value;
+
+            if (!segment) break;
 
             for (const item of segment.segment.files || []) {
                 files.push(item.name);
@@ -84,12 +120,28 @@ export class AzureStorageHandler implements IStorageHandler {
     }
 
     async ensureDirectory(dirPath: string): Promise<void> {
+        console.log('Azure Storage Ensure Directory:', {
+            dirPath,
+            shareName: this.fileShare.name
+        });
+
+        if (!dirPath) return; // Don't create root directory
         const directoryClient = this.getDirectoryClient(dirPath);
         await directoryClient.createIfNotExists();
     }
 
     async directoryExists(dirPath: string): Promise<boolean> {
+        console.log('Azure Storage Directory Exists Check:', {
+            dirPath,
+            shareName: this.fileShare.name
+        });
+
+        if (!dirPath) return true; // Root directory always exists
         const directoryClient = this.getDirectoryClient(dirPath);
         return await directoryClient.exists();
+    }
+
+    private getDirectoryClient(dirPath: string): ShareDirectoryClient {
+        return this.fileShare.getDirectoryClient(dirPath);
     }
 }

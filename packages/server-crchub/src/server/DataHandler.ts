@@ -7,6 +7,7 @@ const storage = StorageFactory.getStorageHandler();
 export class DataHandler {
 
     private static async getUserFacility(uid: string): Promise<string> {
+        console.log("DataHandler.getUserFacility: uid:" + uid);
         const usersFile = "users.json";
         const usersContent = await storage.readFile(usersFile);
         const users = JSON.parse(usersContent);
@@ -25,13 +26,16 @@ export class DataHandler {
 
     // Studies
     public static async getStudies(uid: string, ctx: IRouterContext) {
+        var step = "1";
         try {
             ctx.response.type = 'application/json';
             const facilityFolder = await this.getFacilityFolder(uid);
+            step = "2";
             const studiesFile = path.join(facilityFolder, "studies.json");
-
+            step = "3";
             if (await storage.fileExists(studiesFile)) {
                 const studiesContent = await storage.readFile(studiesFile);
+                step = "4";
                 ctx.status = 200;
                 ctx.response.body = JSON.parse(studiesContent);
             } else {
@@ -40,7 +44,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving studies", details: e.message };
+            ctx.response.body = { error: "Error retrieving studies", details: step };
         }
     }
 
