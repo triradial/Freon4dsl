@@ -85,7 +85,8 @@
     "packages/webapp-lib",
     "packages/webapp-starter",
     "packages/webapp-crchub",
-    "packages/server"
+    "packages/server",
+    "packages/server-crchub"
   ],
   "version": "0.7.0-beta5",
   "dependencies": {
