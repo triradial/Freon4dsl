@@ -9,11 +9,9 @@ const LOGGER = new FreLogger("ServerCommunication"); // .mute();
 const modelUnitInterfacePostfix: string = "Public";
 
 export class ServerCommunication implements IServerCommunication {
-
     static serial: FreModelSerializer = new FreModelSerializer();
     static lionweb_serial: FreLionwebSerializer = new FreLionwebSerializer();
     static instance: ServerCommunication;
-
     private _config = defaultServerConfig;
 
     setServerConfig(config: Partial<ServerConfig>): void {
@@ -64,8 +62,10 @@ export class ServerCommunication implements IServerCommunication {
                 // "__version": "1234abcdef",
                 nodes: model,
             };
-
-            await this.putWithTimeout(`putModelUnit`, output, `folder=${modelName}&name=${unitId.name}`);
+            await this.putWithTimeout(
+                `saveModelUnit`,
+                output,
+                `model=${modelName}&unit=${unitId.name}`);
             let publicOutput = {
                 serializationFormatVersion: "2023.1",
                 languages: [],
@@ -73,9 +73,9 @@ export class ServerCommunication implements IServerCommunication {
                 nodes: publicModel,
             };
             await this.putWithTimeout(
-                `putModelUnit`,
+                `saveModelUnit`,
                 publicOutput,
-                `folder=${modelName}&name=${unitId.name}${modelUnitInterfacePostfix}`,
+                `model=${modelName}&unit=${unitId.name}${modelUnitInterfacePostfix}`,
             );
         } else {
             LOGGER.error(
@@ -100,10 +100,12 @@ export class ServerCommunication implements IServerCommunication {
     async deleteModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<void> {
         LOGGER.log(`ServerCommunication.deleteModelUnit ${modelName}/${unit.name}`);
         if (!!unit.name && unit.name.length > 0) {
-            await this.fetchWithTimeout<any>(`deleteModelUnit`, `folder=${modelName}&name=${unit.name}`);
             await this.fetchWithTimeout<any>(
                 `deleteModelUnit`,
-                `folder=${modelName}&name=${unit.name}${modelUnitInterfacePostfix}`,
+                `model=${modelName}&unit=${unit.name}`);
+            await this.fetchWithTimeout<any>(
+                `deleteModelUnit`,
+                `model=${modelName}&unit=${unit.name}${modelUnitInterfacePostfix}`,
             );
         }
     }
@@ -115,7 +117,9 @@ export class ServerCommunication implements IServerCommunication {
     async deleteModel(modelName: string): Promise<void> {
         LOGGER.log(`ServerCommunication.deleteModel ${modelName}`);
         if (!!modelName && modelName.length > 0) {
-            await this.fetchWithTimeout<any>(`deleteModel`, `folder=${modelName}`);
+            await this.fetchWithTimeout<any>(
+                `deleteModel`,
+                `name=${modelName}`);
         }
     }
 
@@ -125,7 +129,8 @@ export class ServerCommunication implements IServerCommunication {
      */
     async loadModelList(): Promise<string[]> {
         LOGGER.log(`ServerCommunication.loadModelList`);
-        const res: string[] = await this.fetchWithTimeout<string[]>(`getModelList`);
+        const res: string[] = await this.fetchWithTimeout<string[]>(
+            `getModelList`);
         if (!!res) {
             return res;
         } else {
@@ -140,7 +145,9 @@ export class ServerCommunication implements IServerCommunication {
      */
     async loadUnitList(modelName: string): Promise<ModelUnitIdentifier[]> {
         LOGGER.log(`ServerCommunication.loadUnitList`);
-        let modelUnits: string[] = await this.fetchWithTimeout<string[]>(`getUnitList`, `folder=${modelName}`);
+        let modelUnits: string[] = await this.fetchWithTimeout<string[]>(
+            `getModelUnitList`,
+            `model=${modelName}`);
         // filter out the modelUnitInterfaces
         if (!!modelUnits) {
             modelUnits = modelUnits.filter((name: string) => name.indexOf(modelUnitInterfacePostfix) === -1);
@@ -162,7 +169,9 @@ export class ServerCommunication implements IServerCommunication {
     async loadModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode> {
         LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
         if (!!unit.name && unit.name.length > 0) {
-            const res = await this.fetchWithTimeout<Object>(`getModelUnit`, `folder=${modelName}&name=${unit.name}`);
+            const res = await this.fetchWithTimeout<Object>(
+                `getModelUnit`,
+                `model=${modelName}&unit=${unit.name}`);
             if (!!res) {
                 try {
                     let unit: FreNode;
@@ -191,7 +200,9 @@ export class ServerCommunication implements IServerCommunication {
     async printModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode> {
         LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
         if (!!unit.name && unit.name.length > 0) {
-            const res = await this.fetchWithTimeout<Object>(`printModelUnit`, `folder=${modelName}&name=${unit.name}`);
+            const res = await this.fetchWithTimeout<Object>(
+                `printModelUnit`,
+                `model=${modelName}&unit=${unit.name}`);
             if (!!res) {
                 try {
                     const urlOfDocument = res["$url"];
@@ -222,7 +233,7 @@ export class ServerCommunication implements IServerCommunication {
         if (!!unit.name && unit.name.length > 0) {
             const res = await this.fetchWithTimeout<Object>(
                 `getModelUnit`,
-                `folder=${modelName}&name=${unit.name}${modelUnitInterfacePostfix}`,
+                `model=${modelName}&unit=${unit.name}${modelUnitInterfacePostfix}`,
             );
             if (!!res) {
                 try {
@@ -263,7 +274,6 @@ export class ServerCommunication implements IServerCommunication {
         }
         return null;
     }
-
     private async putWithTimeout(method: string, data: Object, params?: string) {
         params = ServerCommunication.findParams(params);
         try {
@@ -302,7 +312,6 @@ export class ServerCommunication implements IServerCommunication {
 
     // @ts-ignore
     createModel(modelName: string): any { }
-
     // @ts-ignore
     createModelUnit(modelName: string, unit: FreModelUnit): Promise<void> {
         return Promise.resolve(undefined);

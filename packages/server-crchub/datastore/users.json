@@ -1,0 +1,21 @@
+[
+    {
+      "userid": "e1cbf5d0-1061-70ab-461d-9b2ed97751d5",
+      "email": "hkneiss@gmail.com",
+      "facility": "facility-002",
+      "name": "Hank Kneiss"
+    },
+    {
+      "userid": "21cb25a0-30a1-70fa-4222-4c091619dfb3",
+      "email": "graham.mcgibbon@triradial.com",
+      "facility": "facility-001",
+      "name": "Graham McGibbon"
+    },
+    {
+      "userid": "417b7500-80b1-7096-e8eb-5635a92cc092",
+      "email": "mike.vogel@triradial.com",
+      "facility": "facility-001",
+      "name": "Mike Vogel"
+    }
+  ]
+  
