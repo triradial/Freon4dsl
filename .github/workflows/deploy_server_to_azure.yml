@@ -88,11 +88,25 @@ jobs:
         with:
           creds: '{"clientId":"${{ secrets.AZUREAPPSERVICE_CLIENTID }}","clientSecret":"${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}","subscriptionId":"${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}","tenantId":"${{ secrets.AZUREAPPSERVICE_TENANTID }}"}'
 
+      - name: Install jq for JSON parsing
+        run: sudo apt-get install jq -y
+  
       - name: Clean up existing deployment
         uses: azure/CLI@v1
         with:
           inlineScript: |
             echo "Cleaning up deployment..."
+            # Delete all files in wwwroot
+            az webapp deploy list-publishing-credentials --name crchub-server --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "{publishingUserName:publishingUserName,publishingPassword:publishingPassword}" --output json > credentials.json
+            DEPLOY_USER=$(jq -r .publishingUserName credentials.json)
+            DEPLOY_PASS=$(jq -r .publishingPassword credentials.json)
+            
+            # Use Kudu API to clean wwwroot
+            curl -X POST --user "$DEPLOY_USER:$DEPLOY_PASS" https://crchub-server.scm.azurewebsites.net/api/command \
+                  -H "Content-Type: application/json" \
+                  -d '{"command":"rm -rf /home/site/wwwroot/*","dir":"/home/site/wwwroot"}'
+            
+            # Delete deployment source as before
             az webapp deployment source delete --name crchub-server \
                                             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
 
