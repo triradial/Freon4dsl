@@ -96,22 +96,23 @@ jobs:
         with:
           inlineScript: |
             echo "Cleaning up deployment..."
-            # Delete all files in wwwroot
-            az webapp deploy list-publishing-credentials --name crchub-server --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "{publishingUserName:publishingUserName,publishingPassword:publishingPassword}" --output json > credentials.json
-            DEPLOY_USER=$(jq -r .publishingUserName credentials.json)
-            DEPLOY_PASS=$(jq -r .publishingPassword credentials.json)
+            # Delete all files in wwwroot - using correct command syntax
+            az webapp deployment list-publishing-profiles --name crchub-server --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?publishMethod=='MSDeploy'].{publishUrl:publishUrl, userName:userName, userPWD:userPWD}[0]" --output json > credentials.json
+            DEPLOY_USER=$(jq -r .userName credentials.json)
+            DEPLOY_PASS=$(jq -r .userPWD credentials.json)
             
             # Use Kudu API to clean wwwroot
             curl -X POST --user "$DEPLOY_USER:$DEPLOY_PASS" https://crchub-server.scm.azurewebsites.net/api/command \
-                  -H "Content-Type: application/json" \
-                  -d '{"command":"rm -rf /home/site/wwwroot/*","dir":"/home/site/wwwroot"}'
+                 -H "Content-Type: application/json" \
+                 -d '{"command":"rm -rf /home/site/wwwroot/*","dir":"/home/site/wwwroot"}'
             
-            # Delete deployment source as before
+            # Delete deployment source
             az webapp deployment source delete --name crchub-server \
                                             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
-
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+      
+                                            - name: Download artifact from build job
+        
+      - uses: actions/download-artifact@v4
         with:
           name: node-app
           path: server-app
