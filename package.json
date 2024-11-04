@@ -81,6 +81,7 @@
     "packages/core-svelte",
     "packages/meta",
     "packages/samples/StudyConfiguration",
+    "packages/samples/ConformanceRules",
     "packages/webapp-lib",
     "packages/webapp-starter",
     "packages/webapp-crchub",
