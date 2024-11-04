@@ -2,7 +2,6 @@ import { writable, get } from 'svelte/store';
 import { userStore, type User } from './userStore.js';
 import { EditorState } from '@freon4dsl/webapp-lib';
 import { env } from '../config/env.js';
-
 export interface Patient {
   id: string;
   patientNumber: string;
@@ -14,7 +13,6 @@ export interface Patient {
   studyId: string;
   study: string;
 }
-
 export interface Study {
   id: string;
   name: string;
@@ -31,7 +29,6 @@ export interface Study {
     description: string;
   }>;
 }
-
 export const studies = writable<Study[]>([]);
 export const patients = writable<Patient[]>([]);
 export const studyPatients = writable<Patient[]>([]);
@@ -46,7 +43,6 @@ export async function initializeStorePath(): Promise<void> {
         'Content-Type': 'application/json'
       }
     });
-
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.error || 'Failed to set store path');
@@ -117,10 +113,8 @@ export async function addStudy(newStudy: Study): Promise<boolean> {
     if (!response.ok) throw new Error('Failed to add study');
     const text = await response.text();
     const addedStudy = JSON.parse(text);
-
     let modelManager = EditorState.getInstance();
     await modelManager.newModel(addedStudy.id);
-
     studies.update(s => [...s, addedStudy]);
     return true;
   } catch (error) {
@@ -158,10 +152,8 @@ export async function deleteStudy(studyId: string): Promise<boolean> {
     const response = await fetch(`${env.serverUrl}/deleteStudy?id=${studyId}&uid=${currentUser.userid}`, { method: 'DELETE' });
     if (!response.ok) throw new Error('Failed to delete study');
     studies.update(s => s.filter(study => study.id !== studyId));
-
     let modelManager = EditorState.getInstance();
     await modelManager.newModel(studyId);
-
     return true;
   } catch (error) {
     console.error('Error deleting study:', error);
@@ -308,16 +300,13 @@ export async function getUserByEmail(email: string): Promise<User | undefined> {
       console.error('getUserByEmail called with null or undefined email');
       return undefined;
     }
-
     const url = `${env.serverUrl}/getUserByEmail?email=${encodeURIComponent(email)}`;
     const response = await fetch(url);
     const data = await response.json();
-
     if (!response.ok) {
       console.error('Error response:', data);
       throw new Error(data.error || `HTTP error! status: ${response.status}`);
     }
-
     return data;
   } catch (error) {
     console.error('Error in getUserByEmail:', error);
