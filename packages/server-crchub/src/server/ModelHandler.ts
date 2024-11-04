@@ -9,8 +9,8 @@ export class ModelHandler {
 
     public static validate = false;
 
-    private static getModelPath(foldername: string): string {
-        return path.join('studies', foldername);
+    private static getModelPath(model: string): string {
+        return path.join('studies', model);
     }
 
     public static async getModelList(ctx: IRouterContext) {
@@ -31,13 +31,13 @@ export class ModelHandler {
         }
     }
 
-    public static async deleteModel(foldername: string, ctx: IRouterContext) {
+    public static async deleteModel(model: string, ctx: IRouterContext) {
         try {
-            const modelPath = this.getModelPath(foldername);
+            const modelPath = this.getModelPath(model);
             // Delete all files in the directory first
-            const files = await storage.listFiles(modelPath);
-            for (const file of files) {
-                await storage.deleteFile(path.join(modelPath, file));
+            const units = await storage.listFiles(modelPath);
+            for (const unit of units) {
+                await storage.deleteFile(path.join(modelPath, unit));
             }
             // Note: We might need to add a deleteDirectory method to IStorageHandler
             // For now, the directory might remain empty
@@ -48,16 +48,16 @@ export class ModelHandler {
         }
     }
 
-    public static async getModelUnitList(foldername: string, ctx: IRouterContext) {
+    public static async getModelUnitList(model: string, ctx: IRouterContext) {
         try {
-            const modelPath = this.getModelPath(foldername);
+            const modelPath = this.getModelPath(model);
 
             // Ensure directory exists
             if (!await storage.directoryExists(modelPath)) {
                 await storage.ensureDirectory(modelPath);
             }
 
-            // Get list of files and process them
+            // Get list of units and process them
             const files = await storage.listFiles(modelPath);
             const units = files
                 .filter(f => f.endsWith('.json'))
@@ -75,10 +75,10 @@ export class ModelHandler {
         }
     }
 
-    public static async getModelUnit(foldername: string, name: string, ctx: IRouterContext) {
+    public static async getModelUnit(model: string, unit: string, ctx: IRouterContext) {
         try {
-            const filePath = path.join(this.getModelPath(foldername), `${name}.json`);
-            console.log("ModelRequests.getModelUnit: " + filePath);
+            const filePath = path.join(this.getModelPath(model), `${unit}.json`);
+            console.log("ModelHandler.getModelUnit: " + filePath);
 
             const content = await storage.readFile(filePath);
 
@@ -106,19 +106,19 @@ export class ModelHandler {
         }
     }
 
-    public static async saveModelUnit(foldername: string, name: string, ctx: IRouterContext) {
+    public static async saveModelUnit(model: string, unit: string, ctx: IRouterContext) {
         try {
-            const modelPath = this.getModelPath(foldername);
-            const filePath = path.join(modelPath, `${name}.json`);
+            const modelPath = this.getModelPath(model);
+            const filePath = path.join(modelPath, `${unit}.json`);
             await storage.writeFile(filePath, JSON.stringify(ctx.request.body, null, 3));
         } catch (e) {
             console.log(e.message);
         }
     }
 
-    public static async deleteModelUnit(foldername: string, name: string, ctx: IRouterContext) {
+    public static async deleteModelUnit(model: string, unit: string, ctx: IRouterContext) {
         try {
-            const filePath = path.join(this.getModelPath(foldername), `${name}.json`);
+            const filePath = path.join(this.getModelPath(model), `${unit}.json`);
             await storage.deleteFile(filePath);
         } catch (e) {
             console.log(e.message);

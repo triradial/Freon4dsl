@@ -4,22 +4,27 @@ import { FreLionwebSerializer, FreModelSerializer } from "../index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
 import { IServerCommunication, ModelUnitIdentifier } from "./IServerCommunication.js";
 import { ServerConfig, defaultServerConfig } from '../../config/environments.js';
+
 const LOGGER = new FreLogger("ServerCommunication"); // .mute();
 const modelUnitInterfacePostfix: string = "Public";
+
 export class ServerCommunication implements IServerCommunication {
     static serial: FreModelSerializer = new FreModelSerializer();
     static lionweb_serial: FreLionwebSerializer = new FreLionwebSerializer();
     static instance: ServerCommunication;
     private _config = defaultServerConfig;
+
     setServerConfig(config: Partial<ServerConfig>): void {
         this._config = { ...this._config, ...config };
     }
+
     static getInstance(): ServerCommunication {
         if (!!!ServerCommunication.instance) {
             ServerCommunication.instance = new ServerCommunication();
         }
         return ServerCommunication.instance;
     }
+
     static findParams(params?: string) {
         if (!!params && params.length > 0) {
             return "?" + params;
@@ -27,15 +32,18 @@ export class ServerCommunication implements IServerCommunication {
             return "";
         }
     }
+
     onError(msg: string, severity: FreErrorSeverity): void {
         // default implementation
         console.error(`ServerCommunication ${severity}: ${msg}`);
     }
+
     // @ts-ignore
     // parameters present to adhere to interface
     async generateIds(quantity: number, callback: (strings: string[]) => void): Promise<string[]> {
         return null;
     }
+
     /**
      * Takes 'unit' and stores it as 'unitName' in the folder 'modelName' on the server at SERVER_URL.
      * 'unitName' must start with a character and contain only characters and/or numbers.
@@ -83,6 +91,7 @@ export class ServerCommunication implements IServerCommunication {
             );
         }
     }
+
     /**
      * Deletes the unit indicated by 'modelInfo' including its interface.
      * @param modelName
@@ -100,6 +109,7 @@ export class ServerCommunication implements IServerCommunication {
             );
         }
     }
+
     /**
      * Deletes the complete model named 'modelName'.
      * @param modelName
@@ -112,6 +122,7 @@ export class ServerCommunication implements IServerCommunication {
                 `name=${modelName}`);
         }
     }
+
     /**
      * Reads the list of models that are available on the server and calls 'modelListCallback'.
      * @param modelListCallback
@@ -126,6 +137,7 @@ export class ServerCommunication implements IServerCommunication {
             return [];
         }
     }
+
     /**
      * Reads the list of units in model 'modelName' that are available on the server and calls 'modelListCallback'.
      * @param modelName
@@ -146,6 +158,7 @@ export class ServerCommunication implements IServerCommunication {
             return [];
         }
     }
+
     /**
      * Loads the unit named 'unitName' of model 'modelName' from the server and calls 'loadCallBack',
      * which takes the unit as parameter.
@@ -178,6 +191,7 @@ export class ServerCommunication implements IServerCommunication {
         }
         return null;
     }
+
     /**
      * Generates a print out as a document of the unit named 'unitName' of model 'modelName' from the server,
      * @param modelName
@@ -202,6 +216,7 @@ export class ServerCommunication implements IServerCommunication {
         }
         return null;
     }
+
     /**
      * Loads the interface of the unit named 'unitName' of model 'modelName' from the server and calls 'loadCallBack',
      * which takes the unit as parameter.
@@ -237,6 +252,7 @@ export class ServerCommunication implements IServerCommunication {
             }
         }
     }
+
     async fetchWithTimeout<T>(method: string, params?: string): Promise<T> {
         params = ServerCommunication.findParams(params);
         LOGGER.log("fetchWithTimeout Params = " + params);
@@ -276,6 +292,7 @@ export class ServerCommunication implements IServerCommunication {
             this.handleError(e);
         }
     }
+
     private handleError(e: Error) {
         let errorMess: string = e.message;
         if (e.message.includes("aborted")) {
@@ -284,6 +301,7 @@ export class ServerCommunication implements IServerCommunication {
         LOGGER.error(errorMess);
         this.onError(errorMess, FreErrorSeverity.NONE);
     }
+
     async renameModelUnit(modelName: string, oldName: string, newName: string, unit: FreNamedNode): Promise<void> {
         LOGGER.log(`ServerCommunication.renameModelUnit ${modelName}/${oldName} to ${modelName}/${newName}`);
         // put the unit and its interface under the new name
@@ -291,6 +309,7 @@ export class ServerCommunication implements IServerCommunication {
         // remove the old unit and interface
         this.deleteModelUnit(modelName, { name: unit.name, id: unit.freId() });
     }
+
     // @ts-ignore
     createModel(modelName: string): any { }
     // @ts-ignore

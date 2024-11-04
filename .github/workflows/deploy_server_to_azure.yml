@@ -38,7 +38,7 @@ jobs:
           mkdir -p server-app
           
           # Copy package.json and modify for production
-          cp packages/server/package.json server-app/
+          cp packages/server-crchub/package.json server-app/
           node -e '
             const pkg = require("./server-app/package.json");
             pkg.scripts.start = "node dist/server/server-starter.js";
