@@ -95,27 +95,34 @@ export class AzureStorageHandler implements IStorageHandler {
 
     async listFiles(dirPath: string): Promise<string[]> {
         console.log('Azure Storage List Files Request:', {
-            dirPath,
-            shareName: this.fileShare.name
+            fileShare: this.fileShare.name,
+            dirPath: dirPath
         });
 
         const directoryClient = dirPath ? this.getDirectoryClient(dirPath) : this.fileShare.rootDirectoryClient;
-
         const files: string[] = [];
-        let marker;
-        do {
-            const response = await directoryClient.listFilesAndDirectories().byPage({ maxPageSize: 20, continuationToken: marker }).next();
-            const segment = response.value;
 
-            if (!segment) break;
-
-            for (const item of segment.segment.files || []) {
-                files.push(item.name);
+        try {
+            // Use for-await to iterate through all entries
+            for await (const entity of directoryClient.listFilesAndDirectories()) {
+                if (entity.kind === 'file' && entity.name.endsWith('.json')) {
+                    files.push(entity.name);
+                }
             }
+        } catch (error) {
+            console.error('Error listing files:', {
+                message: error.message,
+                code: error.code,
+                details: error.details
+            });
+            throw error;
+        }
 
-            marker = segment.continuationToken;
-        } while (marker);
-
+        console.log('Final file list:', {
+            fileShare: this.fileShare.name,
+            directory: dirPath,
+            files: files
+        });
         return files;
     }
 

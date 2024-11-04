@@ -167,7 +167,7 @@ export class ServerCommunication implements IServerCommunication {
      * @param loadCallback
      */
     async loadModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode> {
-        LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
+        LOGGER.log(`ServerCommunication.loadModelUnit ${modelName}/${unit.name}`);
         if (!!unit.name && unit.name.length > 0) {
             const res = await this.fetchWithTimeout<Object>(
                 `getModelUnit`,
@@ -274,6 +274,7 @@ export class ServerCommunication implements IServerCommunication {
         }
         return null;
     }
+
     private async putWithTimeout(method: string, data: Object, params?: string) {
         params = ServerCommunication.findParams(params);
         try {
