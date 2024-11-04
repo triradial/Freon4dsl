@@ -96,22 +96,39 @@ jobs:
         with:
           inlineScript: |
             echo "Cleaning up deployment..."
-            # Delete all files in wwwroot - using correct command syntax
-            az webapp deployment list-publishing-profiles --name crchub-server --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?publishMethod=='MSDeploy'].{publishUrl:publishUrl, userName:userName, userPWD:userPWD}[0]" --output json > credentials.json
-            DEPLOY_USER=$(jq -r .userName credentials.json)
-            DEPLOY_PASS=$(jq -r .userPWD credentials.json)
             
-            # Use Kudu API to clean wwwroot
-            curl -X POST --user "$DEPLOY_USER:$DEPLOY_PASS" https://crchub-server.scm.azurewebsites.net/api/command \
-                 -H "Content-Type: application/json" \
-                 -d '{"command":"rm -rf /home/site/wwwroot/*","dir":"/home/site/wwwroot"}'
+            # Get publishing credentials and store in variables directly
+            CREDS=$(az webapp deployment list-publishing-profiles --name crchub-server --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[?publishMethod=='MSDeploy'].[userName,userPWD]" --output tsv)
+            DEPLOY_USER=$(echo "$CREDS" | head -n 1)
+            DEPLOY_PASS=$(echo "$CREDS" | tail -n 1)
             
-            # Delete deployment source
-            az webapp deployment source delete --name crchub-server \
-                                            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
-      
-                                            - name: Download artifact from build job
-        
+            echo "Got deployment credentials"
+            
+            # Clean wwwroot using multiple approaches to ensure cleanup
+            echo "Cleaning wwwroot directory..."
+            
+            # Approach 1: Using Kudu API
+            curl -X POST "https://crchub-server.scm.azurewebsites.net/api/command" \
+                 --user "$DEPLOY_USER:$DEPLOY_PASS" \
+                 --header "Content-Type: application/json" \
+                 --data-raw '{"command":"rm -rf /home/site/wwwroot/*","dir":"/home/site/wwwroot"}' \
+                 --fail \
+                 --silent \
+                 --show-error
+            
+            # Approach 2: Alternative cleanup command
+            curl -X POST "https://crchub-server.scm.azurewebsites.net/api/command" \
+                 --user "$DEPLOY_USER:$DEPLOY_PASS" \
+                 --header "Content-Type: application/json" \
+                 --data-raw '{"command":"if [ -d /home/site/wwwroot ]; then cd /home/site/wwwroot && rm -rf * .[^.]*; fi","dir":"/home/site/wwwroot"}' \
+                 --fail \
+                 --silent \
+                 --show-error
+            
+            echo "Deleting deployment source..."
+            az webapp deployment source delete --name crchub-server --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --yes
+            
+            echo "Cleanup completed"
       - uses: actions/download-artifact@v4
         with:
           name: node-app
