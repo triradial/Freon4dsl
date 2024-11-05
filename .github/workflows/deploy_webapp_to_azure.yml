@@ -40,7 +40,7 @@ jobs:
           cp packages/webapp-crchub/package.json webapp-app/
           node -e '
             const pkg = require("./webapp-app/package.json");
-            pkg.scripts.start = "node node_modules/sirv-cli/bin.js public --port 8080 --single";
+            pkg.scripts.start = "node node_modules/sirv-cli/bin.js public --port 8080 --single --host 0.0.0.0";
             const { dependencies } = pkg;
             pkg.dependencies = dependencies;
             require("fs").writeFileSync("./webapp-app/package.json", JSON.stringify(pkg, null, 2));
