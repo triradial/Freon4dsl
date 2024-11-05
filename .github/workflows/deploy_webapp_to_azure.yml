@@ -58,7 +58,7 @@ jobs:
          
           # Copy built webapp files
           mkdir -p webapp-app/public
-          cp -r packages/webapp-crchub/public/* webapp/public/
+          cp -r packages/webapp-crchub/public/* webapp-app/public/
 
           # Verify the public directory contents
           echo "Contents of webapp-app/public:"
