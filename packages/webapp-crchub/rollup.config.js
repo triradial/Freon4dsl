@@ -5,7 +5,6 @@ import livereload from 'rollup-plugin-livereload';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import css from 'rollup-plugin-css-only';
-// import pkg from 'svelte-preprocess';
 import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
 import injectProcessEnv from 'rollup-plugin-inject-process-env';
@@ -48,7 +47,7 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/build/bundle.js'
+    file: 'dist/build/bundle.js'
   },
   plugins: [
     svelte({
