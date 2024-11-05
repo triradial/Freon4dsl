@@ -38,14 +38,17 @@ jobs:
           
           # Copy package.json and modify for production
           cp packages/webapp-crchub/package.json webapp-app/
-          node -e "
-            const pkg = require('./webapp-app/package.json');
-            pkg.scripts = { 'start': 'sirv public --port 8080 --single' };
+          node -e '
+            const pkg = require("./webapp-app/package.json");
+            pkg.scripts.start = { "start": "sirv public --port 8080 --single" };
             const { dependencies } = pkg;
             pkg.dependencies = dependencies;
-            require('fs').writeFileSync('./webapp-app/package.json', JSON.stringify(pkg, null, 2));
-          "
-          
+            require("fs").writeFileSync("./webapp-app/package.json", JSON.stringify(pkg, null, 2));
+          '
+
+          # Rest of your existing preparation steps...
+          cp package-lock.json webapp-app/
+
           # Copy dependencies
           mkdir -p webapp-app/local-packages
           cp -r packages/core/dist webapp-app/local-packages/core
@@ -56,10 +59,6 @@ jobs:
           # Install production dependencies
           cd webapp-app
           npm install --omit=dev
-          
-          # Copy server dist files
-          mkdir -p build
-          cp -r packages/webapp-crchub/dist/build/* build/
          
           # Copy built webapp files
           mkdir -p public
