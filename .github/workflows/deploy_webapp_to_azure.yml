@@ -38,10 +38,13 @@ jobs:
           
           # Copy package.json and modify for production
           cp packages/webapp-crchub/package.json webapp-app/
-          node -e '
-            pkg.scripts.start = "sirv public --port 8080 --single";
-            require("fs").writeFileSync("./webapp-app/package.json", JSON.stringify(pkg, null, 2));
-          '
+          node -e "
+            const pkg = require('./webapp-app/package.json');
+            pkg.scripts = { 'start': 'sirv public --port 8080 --single' };
+            const { dependencies } = pkg;
+            pkg.dependencies = dependencies;
+            require('fs').writeFileSync('./webapp-app/package.json', JSON.stringify(pkg, null, 2));
+          "
           
           # Copy dependencies
           mkdir -p webapp-app/local-packages

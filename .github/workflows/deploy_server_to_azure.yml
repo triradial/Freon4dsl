@@ -39,15 +39,13 @@ jobs:
           
           # Copy package.json and modify for production
           cp packages/server-crchub/package.json server-app/
-          node -e '
-            const pkg = require("./server-app/package.json");
-            // Keep only what's needed for production
-            pkg.scripts = { start: "node dist/server/server-starter.js" };
-            // Keep only runtime dependencies
+          node -e "
+            const pkg = require('./server-app/package.json');
+            pkg.scripts = { 'start': 'node dist/server/server-starter.js' };
             const { dependencies } = pkg;
             pkg.dependencies = dependencies;
-            require("fs").writeFileSync("./server-app/package.json", JSON.stringify(pkg, null, 2));
-          '
+            require('fs').writeFileSync('./server-app/package.json', JSON.stringify(pkg, null, 2));
+          "
           
           # Copy dependencies
           mkdir -p server-app/local-packages
