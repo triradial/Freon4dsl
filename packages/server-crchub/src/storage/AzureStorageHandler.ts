@@ -126,6 +126,17 @@ export class AzureStorageHandler implements IStorageHandler {
         return files;
     }
 
+    async listDirectories(dirPath: string): Promise<string[]> {
+        const directoryClient = dirPath ? this.getDirectoryClient(dirPath) : this.fileShare.rootDirectoryClient;
+        const directories: string[] = [];
+        for await (const entity of directoryClient.listFilesAndDirectories()) {
+            if (entity.kind === 'directory') {
+                directories.push(entity.name);
+            }
+        }
+        return directories;
+    }
+
     async ensureDirectory(dirPath: string): Promise<void> {
         console.log('Azure Storage Ensure Directory:', {
             dirPath,

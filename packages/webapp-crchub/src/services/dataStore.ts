@@ -2,6 +2,7 @@ import { writable, get } from 'svelte/store';
 import { userStore, type User } from './userStore.js';
 import { EditorState } from '@freon4dsl/webapp-lib';
 import { env } from '../config/env.js';
+
 export interface Patient {
   id: string;
   patientNumber: string;
@@ -13,6 +14,7 @@ export interface Patient {
   studyId: string;
   study: string;
 }
+
 export interface Study {
   id: string;
   name: string;
@@ -29,6 +31,7 @@ export interface Study {
     description: string;
   }>;
 }
+
 export const studies = writable<Study[]>([]);
 export const patients = writable<Patient[]>([]);
 export const studyPatients = writable<Patient[]>([]);

@@ -8,9 +8,10 @@ const storage = StorageFactory.getStorageHandler();
 export class ModelHandler {
 
     public static validate = false;
+    static rootpath = "studies";
 
     private static getModelPath(model: string): string {
-        return path.join('studies', model);
+        return path.join(this.rootpath, model);
     }
 
     public static async getModelList(ctx: IRouterContext) {
@@ -19,7 +20,7 @@ export class ModelHandler {
             if (!await storage.directoryExists(studiesPath)) {
                 await storage.ensureDirectory(studiesPath);
             }
-            const models = await storage.listFiles(studiesPath);
+            const models = await storage.listDirectories(studiesPath);
             ctx.status = 200;
             ctx.response.type = 'application/json';
             ctx.response.body = models;
@@ -67,7 +68,7 @@ export class ModelHandler {
             ctx.status = 200;
             ctx.response.type = 'application/json';
             ctx.response.body = units;
-            console.log("ModelHandler.getModelUnitList: set response body to:", ctx.response.body);
+            console.log("ModelHandler.getModelUnitList: list:", ctx.response.body);
 
         } catch (e) {
             console.error("ModelHandler.getModelUnitList: error occurred:", e);

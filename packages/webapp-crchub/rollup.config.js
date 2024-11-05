@@ -11,29 +11,35 @@ import replace from '@rollup/plugin-replace';
 import injectProcessEnv from 'rollup-plugin-inject-process-env';
 import childProcess from 'child_process';
 import preprocess from 'svelte-preprocess';
+import dotenv from 'dotenv';
 
-// const { sveltePreprocess } = pkg;
+dotenv.config();
+console.log('Building with environment:', {
+  AZURE_ENVIRONMENT: process.env.AZURE_ENVIRONMENT,
+  NODE_ENV: process.env.NODE_ENV
+});
+
 const production = !process.env.ROLLUP_WATCH;
 const dev = true;
 
 function serve() {
-	let server;
+  let server;
 
-	function toExit() {
-		if (server) server.kill(0);
-	}
+  function toExit() {
+    if (server) server.kill(0);
+  }
 
-	return {
-		writeBundle() {
-			if (server) return;
-			server = childProcess.spawn('npm', ['run', 'start', '--', '--dev'], {
-				stdio: ['ignore', 'inherit', 'inherit'],
-				shell: true
-			});
-			process.on('SIGTERM', toExit);
-			process.on('exit', toExit);
-		}
-	};
+  return {
+    writeBundle() {
+      if (server) return;
+      server = childProcess.spawn('npm', ['run', 'start', '--', '--dev'], {
+        stdio: ['ignore', 'inherit', 'inherit'],
+        shell: true
+      });
+      process.on('SIGTERM', toExit);
+      process.on('exit', toExit);
+    }
+  };
 }
 
 export default {
@@ -60,8 +66,9 @@ export default {
       extensions: ['.svelte', '.mjs', '.js', '.json', '.node']
     }),
     replace({
-      'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
-      preventAssignment: true
+      preventAssignment: true,
+      'process.env.AZURE_ENVIRONMENT': JSON.stringify(process.env.AZURE_ENVIRONMENT || 'local'),
+      'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development')
     }),
     commonjs(),
     typescript({
@@ -69,19 +76,19 @@ export default {
       inlineSources: !production || dev
     }),
     injectProcessEnv({
-			NODE_ENV: 'development',
-			NODE_PORT: '8001'
-		}),
-    		// In dev mode, call `npm run start` once
-		// the bundle has been generated
-		!production && serve(),
+      NODE_ENV: 'development',
+      NODE_PORT: '8001'
+    }),
+    // In dev mode, call `npm run start` once
+    // the bundle has been generated
+    !production && serve(),
 
-		// Watch the `public` directory and refresh the
-		// browser on changes when not in production
-		!production && livereload('public'),
+    // Watch the `public` directory and refresh the
+    // browser on changes when not in production
+    !production && livereload('public'),
 
     // If we're building for production (npm run build
-		// instead of npm run dev), minify
+    // instead of npm run dev), minify
     production && terser()
   ],
   watch: {

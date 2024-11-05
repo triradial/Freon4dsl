@@ -62,6 +62,15 @@ export class LocalStorageHandler implements IStorageHandler {
         }
     }
 
+    async listDirectories(dirPath: string): Promise<string[]> {
+        try {
+            const fullPath = this.getFullPath(dirPath);
+            return await fs.readdir(fullPath);
+        } catch (error) {
+            throw new Error(`Error listing directories in directory ${dirPath}: ${error.message}`);
+        }
+    }
+
     async ensureDirectory(dirPath: string): Promise<void> {
         try {
             const fullPath = this.getFullPath(dirPath);
