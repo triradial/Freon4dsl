@@ -36,7 +36,7 @@ router.get("/deleteModel", async (ctx: Router.IRouterContext) => {
 router.get("/getModelUnit", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
     const unit = ctx.query["unit"];
-    console.log("router.getModelUnit: " + model + "/" + unit);
+    console.log("router.getModelUnit: model=" + model + " unit=" + unit);
     if ((!!unit || model) && typeof unit === "string" && typeof model === "string") {
         console.log("router.getModelUnit: calling ModelRequests.getModelUnit");
         await ModelHandler.getModelUnit(model, unit, ctx);
@@ -49,8 +49,7 @@ router.get("/getModelUnit", async (ctx: Router.IRouterContext) => {
 
 router.get("/getModelUnitList", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
-    // const subfolder = ctx.query["subfolder"];
-    console.log("router.getModelUnitList: " + model);
+    console.log("router.getModelUnitList: model=" + model);
     if (!!model && typeof model === "string") {
         await ModelHandler.getModelUnitList(model, ctx);
     } else {

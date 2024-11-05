@@ -61,9 +61,9 @@ jobs:
           mkdir -p dist/server
           mkdir -p dist/config
           mkdir -p dist/storage
-          cp -r ../packages/server/dist/server/* dist/server/
-          cp -r ../packages/server/dist/config/* dist/config/
-          cp -r ../packages/server/dist/storage/* dist/storage/
+          cp -r ../packages/server-crchub/dist/server/* dist/server/
+          cp -r ../packages/server-crchub/dist/config/* dist/config/
+          cp -r ../packages/server-crchub/dist/storage/* dist/storage/
           
           # Install local workspace dependencies
           npm install --omit=dev ../packages/core
@@ -87,17 +87,8 @@ jobs:
         uses: azure/login@v2
         with:
           creds: '{"clientId":"${{ secrets.AZUREAPPSERVICE_CLIENTID }}","clientSecret":"${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}","subscriptionId":"${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}","tenantId":"${{ secrets.AZUREAPPSERVICE_TENANTID }}"}'
-
-      - name: Clean up existing deployment
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            echo "Cleaning up deployment..."
-            az webapp deployment source delete --name crchub-server \
-                                            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
-
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+  
+      - uses: actions/download-artifact@v4
         with:
           name: node-app
           path: server-app

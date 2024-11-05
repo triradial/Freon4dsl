@@ -85,11 +85,14 @@
     "packages/webapp-lib",
     "packages/webapp-starter",
     "packages/webapp-crchub",
-    "packages/server"
+    "packages/server",
+    "packages/server-crchub"
   ],
   "version": "0.7.0-beta5",
   "dependencies": {
     "@aws-amplify/cli": "^12.12.6",
+    "@azure/storage-blob": "^12.25.0",
+    "@azure/storage-file-share": "^12.25.0",
     "@bscotch/utility": "^7.2.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",

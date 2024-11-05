@@ -8,9 +8,10 @@ const storage = StorageFactory.getStorageHandler();
 export class ModelHandler {
 
     public static validate = false;
+    static rootpath = "studies";
 
     private static getModelPath(model: string): string {
-        return path.join('studies', model);
+        return path.join(this.rootpath, model);
     }
 
     public static async getModelList(ctx: IRouterContext) {
@@ -19,7 +20,7 @@ export class ModelHandler {
             if (!await storage.directoryExists(studiesPath)) {
                 await storage.ensureDirectory(studiesPath);
             }
-            const models = await storage.listFiles(studiesPath);
+            const models = await storage.listDirectories(studiesPath);
             ctx.status = 200;
             ctx.response.type = 'application/json';
             ctx.response.body = models;
@@ -51,24 +52,26 @@ export class ModelHandler {
     public static async getModelUnitList(model: string, ctx: IRouterContext) {
         try {
             const modelPath = this.getModelPath(model);
+            console.log("ModelHandler.getModelUnitList: starting with modelPath=", modelPath);
 
             // Ensure directory exists
             if (!await storage.directoryExists(modelPath)) {
+                console.log("ModelHandler.getModelUnitList: directory does not exist, creating");
                 await storage.ensureDirectory(modelPath);
             }
 
-            // Get list of units and process them
+            // Get list of units
             const files = await storage.listFiles(modelPath);
-            const units = files
-                .filter(f => f.endsWith('.json'))
-                .map(f => f.substring(0, f.length - 5));
+            const units = files.map(file => file.substring(0, file.length - 5));
 
+            // Set response
             ctx.status = 200;
             ctx.response.type = 'application/json';
             ctx.response.body = units;
+            console.log("ModelHandler.getModelUnitList: list:", ctx.response.body);
 
         } catch (e) {
-            console.log(e.message);
+            console.error("ModelHandler.getModelUnitList: error occurred:", e);
             ctx.status = 500;
             ctx.response.type = 'application/json';
             ctx.response.body = { error: "Error getting unit list" };
