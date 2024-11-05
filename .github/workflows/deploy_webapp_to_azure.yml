@@ -55,14 +55,18 @@ jobs:
           cp -r packages/core-svelte/dist webapp-app/local-packages/core-svelte
           cp -r packages/webapp-lib/dist webapp-app/local-packages/webapp-lib
           cp -r packages/samples/StudyConfiguration/dist webapp-app/local-packages/study-configuration
+         
+          # Copy built webapp files
+          mkdir -p webapp-app/public
+          cp -r packages/webapp-crchub/public/* webapp/public/
+
+          # Verify the public directory contents
+          echo "Contents of webapp-app/public:"
+          ls -la webapp-app/public/
 
           # Install production dependencies
           cd webapp-app
           npm install --omit=dev
-         
-          # Copy built webapp files
-          mkdir -p public
-          cp -r ../packages/webapp-crchub/public/* public/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
