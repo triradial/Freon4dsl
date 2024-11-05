@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Replace 8000 with your port number
-PORT=8004
+PORT=8000
 
 # Find the process using the specified port and kill it
 PID=$(lsof -ti:$PORT)
