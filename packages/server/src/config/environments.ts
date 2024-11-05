@@ -1,4 +1,4 @@
-export type Environment = 'local' | 'development' | 'staging' | 'production';
+export type Environment = 'local';
 
 export interface EnvironmentConfig {
     serverUrl: string;
@@ -11,46 +11,13 @@ export interface EnvironmentConfig {
 
 export const environments: Record<Environment, EnvironmentConfig> = {
     local: {
-        serverUrl: 'http://localhost:8080',
-        serverPort: 8080,
+        serverUrl: 'http://localhost:8001',
+        serverPort: 8001,
         serverTimeout: 2000,
         corsOrigins: [
-            'http://127.0.0.1:8004', 'http://localhost:8004'
+            'http://127.0.0.1:8000', 'http://localhost:8000'
         ],
-        storeBasePath: './datastore',
+        storeBasePath: './modelstore',
         logLevel: 'debug'
-    },
-    development: {
-        serverUrl: 'https://crchub-server.azurewebsites.net',
-        serverPort: 8080,
-        serverTimeout: 5000,
-        corsOrigins: [
-            'https://crchub-webapp.azurewebsites.net',
-            'http://127.0.0.1:8004', 'http://localhost:8004'
-        ],
-        storeBasePath: '/home/site/wwwroot/datastore',
-        logLevel: 'debug'
-    },
-    staging: {
-        serverUrl: 'https://crchub-server.azurewebsites.net',
-        serverPort: 8080,
-        serverTimeout: 5000,
-        corsOrigins: [
-            'https://crchub-webapp.azurewebsites.net',
-            'http://127.0.0.1:8004', 'http://localhost:8004'
-        ],
-        storeBasePath: '/home/site/wwwroot/datastore',
-        logLevel: 'info'
-    },
-    production: {
-        serverUrl: 'https://crchub-server.azurewebsites.net',
-        serverPort: 8080,
-        serverTimeout: 5000,
-        corsOrigins: [
-            'https://crchub-webapp.azurewebsites.net',
-            'http://127.0.0.1:8004', 'http://localhost:8004'
-        ],
-        storeBasePath: '/home/site/wwwroot/datastore',
-        logLevel: 'error'
     }
 }; 

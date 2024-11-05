@@ -10,7 +10,5 @@ if (!Object.keys(environments).includes(currentEnv)) {
 export const env = {
     ...environments[currentEnv],
     environment: currentEnv,
-    isProduction: currentEnv === 'production',
-    isDevelopment: currentEnv === 'development',
     isLocal: currentEnv === 'local'
 }; 

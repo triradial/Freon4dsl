@@ -12,7 +12,7 @@ import { type Environment, environments } from '../config/environments.js';
 
 // Create new Koa application instance
 const app = new Koa();
-const currentEnv = (process.env.AZURE_ENVIRONMENT || 'local') as Environment;
+const currentEnv = 'local' as Environment;
 const env = environments[currentEnv];
 const execAsync = promisify(exec);
 
