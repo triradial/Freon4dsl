@@ -34,10 +34,13 @@ jobs:
       - name: Build webapp
         run: |
           echo "Building webapp..."
-          cd packages/webapp-crchub
-          npm run build-app
-          echo "Verifying build output:"
-          ls -la public/build/
+            cd packages/webapp-crchub
+            npm run build-app
+            echo "Copying build files to public..."
+            mkdir -p public/build
+            cp -r dist/build/* public/build/
+            echo "Verifying build output:"
+            ls -la public/build/
 
       - name: Prepare webapp deployment
         run: |
