@@ -75,6 +75,7 @@ export default {
       inlineSources: !production || dev
     }),
     injectProcessEnv({
+      AZURE_ENVIRONMENT: process.env.AZURE_ENVIRONMENT || 'development',
       NODE_ENV: 'development',
       NODE_PORT: '8001'
     }),
