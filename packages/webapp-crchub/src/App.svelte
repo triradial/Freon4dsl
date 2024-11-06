@@ -1,13 +1,13 @@
 <script lang="ts">
     import { Router, Route } from "svelte-routing";
-    import { ROUTE, VALID_ROUTES, VALID_ROUTES_WITH_ID, type ValidRoute, type ValidRouteWithId } from "./constants/routeConstants";
+    import { ROUTE, VALID_ROUTES, VALID_ROUTES_WITH_ID, type ValidRoute, type ValidRouteWithId } from "./constants/routeConstants.js";
     import Main from "./pages/Main.svelte";
     import Login from "./pages/Login.svelte";
     import { onMount } from "svelte";
-    import { initializeStorePath } from './services/dataStore';
-    import { isAuthenticated, redirectUrl } from "./services/auth";
-    import { updateCurrentRoute } from "./services/routeAction";
-    import { theme } from './services/themeStore';
+    import { initializeStorePath } from "./services/dataStore.js";
+    import { isAuthenticated, redirectUrl } from "./services/auth.js";
+    import { updateCurrentRoute } from "./services/routeAction.js";
+    import { theme } from "./services/themeStore.js";
 
     let auth = false;
 
@@ -18,22 +18,22 @@
         }
         await initializeStorePath();
     });
-         
+
     $: {
         isAuthenticated.subscribe((value) => {
             auth = value;
             console.log("auth:", auth);
             sessionStorage.setItem("auth", auth.toString());
 
-            let currentRouteName = window.location.pathname.split('/')[1] || '';
-            let currentId = (window.location.search.split('?')[1]?.split('=')[1] ?? undefined);
-           
+            let currentRouteName = window.location.pathname.split("/")[1] || "";
+            let currentId = window.location.search.split("?")[1]?.split("=")[1] ?? undefined;
+
             if (!auth) {
                 if (VALID_ROUTES.includes(currentRouteName as ValidRoute) && currentRouteName !== ROUTE.LOGIN) {
                     let currentUrl = "/" + currentRouteName;
                     if (VALID_ROUTES_WITH_ID.includes(currentRouteName as ValidRouteWithId)) {
                         currentUrl += "?id=" + currentId;
-                    }                
+                    }
                     redirectUrl.set(currentUrl);
                 } else {
                     redirectUrl.set("/");
@@ -41,15 +41,15 @@
                 updateCurrentRoute(ROUTE.LOGIN);
             } else {
                 redirectUrl.subscribe((url) => {
-                    let routeName:string = "";
-                    let id:string | undefined;
+                    let routeName: string = "";
+                    let id: string | undefined;
                     if (currentRouteName === ROUTE.LOGIN) {
-                        redirectUrl.set(""); 
+                        redirectUrl.set("");
                         if (url) {
-                            if (url !== '/' && url !== 'undefined') {
-                                routeName = url.split('?')[0].replace(/^\//, '');
+                            if (url !== "/" && url !== "undefined") {
+                                routeName = url.split("?")[0].replace(/^\//, "");
                                 if (VALID_ROUTES.includes(routeName as ValidRoute)) {
-                                    id = (url.split('?')[1]?.split('=')[1] ?? undefined);
+                                    id = url.split("?")[1]?.split("=")[1] ?? undefined;
                                 } else {
                                     routeName = ROUTE.HOME;
                                 }
@@ -78,11 +78,10 @@
             }
         });
     }
-
 </script>
 
 <svelte:head>
-    <link rel="stylesheet" href="/build/bundle-{$theme}.css">
+    <link rel="stylesheet" href="/assets/styles/bundle-{$theme}.css" />
 </svelte:head>
 
 <Router>

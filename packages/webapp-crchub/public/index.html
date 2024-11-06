@@ -4,7 +4,7 @@
   const savedTheme = localStorage.getItem('theme') || 'dark';
   const themeStylesheet = document.getElementById('theme-stylesheet');
   if (themeStylesheet) {
-    themeStylesheet.href = savedTheme === 'dark' ? '/assets/bundle-dark.css' : '/assets/bundle-light.css';
+    themeStylesheet.href = savedTheme === 'dark' ? '/assets/styles/bundle-dark.css' : '/assets/styles/bundle-light.css';
   }
 </script>
 
@@ -17,8 +17,8 @@
   <title>CRCHub</title>
 
   <link rel='icon' type='image/svg' href='/assets/images/logo_grey.svg'>
-  <link id="tailwind-stylesheet" rel='stylesheet' href='/assets/tailwind.css'>
-  <link id="theme-stylesheet" rel='stylesheet' href='/assets/bundle-dark.css'>
+  <link id="tailwind-stylesheet" rel='stylesheet' href='/assets/styles/tailwind.css'>
+  <link id="theme-stylesheet" rel='stylesheet' href='/assets/styles/bundle-dark.css'>
   <!-- <link rel="stylesheet" href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css">
     <script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script> -->
   <script defer src='/build/bundle.js'></script>
