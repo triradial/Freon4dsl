@@ -20,14 +20,14 @@ const createBundle = (theme) => {
             cssnano()
         ]))
         .pipe(rename(`bundle-${theme}.css`))
-        .pipe(gulp.dest('public/build'));
+        .pipe(gulp.dest('public/assets/styles'));
 };
 
 gulp.task('bundle-light', () => createBundle('light'));
 gulp.task('bundle-dark', () => createBundle('dark'));
 
 gulp.task('watch', () => {
-    gulp.watch(['src/styles/*.scss','src/styles/*.css', 'tailwind.config.cjs'], gulp.parallel('bundle-light', 'bundle-dark'));
+    gulp.watch(['src/styles/*.scss', 'src/styles/*.css', 'tailwind.config.cjs'], gulp.parallel('bundle-light', 'bundle-dark'));
 });
 
 gulp.task('default', gulp.parallel('bundle-light', 'bundle-dark', 'watch'));
