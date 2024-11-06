@@ -31,6 +31,14 @@ jobs:
         env:
           DEBUG: "*"
 
+      - name: Build webapp
+        run: |
+          echo "Building webapp..."
+          cd packages/webapp-crchub
+          npm run build-app
+          echo "Verifying build output:"
+          ls -la public/build/
+
       - name: Prepare webapp deployment
         run: |
           # Create deployment directory
