@@ -4,7 +4,7 @@
     import Main from "./pages/Main.svelte";
     import Login from "./pages/Login.svelte";
     import { onMount } from "svelte";
-    import { initializeStorePath } from "./services/dataStore.js";
+    // import { initializeStorePath } from "./services/dataStore.js";
     import { isAuthenticated, redirectUrl } from "./services/auth.js";
     import { updateCurrentRoute } from "./services/routeAction.js";
     import { theme } from "./services/themeStore.js";
@@ -16,7 +16,7 @@
         if (storedAuth) {
             auth = storedAuth === "true";
         }
-        await initializeStorePath();
+        // await initializeStorePath();
     });
 
     $: {

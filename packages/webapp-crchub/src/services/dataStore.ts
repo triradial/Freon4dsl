@@ -36,26 +36,26 @@ export const studies = writable<Study[]>([]);
 export const patients = writable<Patient[]>([]);
 export const studyPatients = writable<Patient[]>([]);
 
-export async function initializeStorePath(): Promise<void> {
-  try {
-    const path = "./datastore/studies";
-    const encodedPath = encodeURIComponent(path);
-    const response = await fetch(`${env.serverUrl}/setStorePath?path=${encodedPath}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to set store path');
-    }
-    console.log('Store path set successfully:', data.path); // Optional debug log
-  } catch (error) {
-    console.error('Error setting store path:', error);
-    throw error; // Re-throw to let caller handle the error
-  }
-}
+// export async function initializeStorePath(): Promise<void> {
+//   try {
+//     const path = "./datastore/studies";
+//     const encodedPath = encodeURIComponent(path);
+//     const response = await fetch(`${env.serverUrl}/setStorePath?path=${encodedPath}`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     });
+//     const data = await response.json();
+//     if (!response.ok) {
+//       throw new Error(data.error || 'Failed to set store path');
+//     }
+//     console.log('Store path set successfully:', data.path); // Optional debug log
+//   } catch (error) {
+//     console.error('Error setting store path:', error);
+//     throw error; // Re-throw to let caller handle the error
+//   }
+// }
 
 export async function initializeDatastore(): Promise<void> {
   await Promise.all([

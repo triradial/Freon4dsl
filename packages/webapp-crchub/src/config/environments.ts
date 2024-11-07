@@ -1,4 +1,4 @@
-export type Environment = 'local' | 'development' | 'staging' | 'production';
+export type Environment = "local" | "development" | "staging" | "production";
 
 export interface EnvironmentConfig {
     serverUrl: string;

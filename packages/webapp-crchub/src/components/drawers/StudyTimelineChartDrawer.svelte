@@ -5,7 +5,7 @@
     import { EditorState } from "@freon4dsl/webapp-lib";
     import { RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineChart } from "../../services/app/StudyTimeline";
+    import { getTimelineChart } from "../../services/app/StudyTimeline.js";
 
     export let studyId: string;
     let isLoading = true;
@@ -97,7 +97,7 @@
 
 <div class="drawer-content-area p-2">
     <div style="display: {isLoading || !showChart ? 'block' : 'none'}">
-        <ListPlaceholder class="mb-4" />
+        <ListPlaceholder divClass="mb-4" />
     </div>
     <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
         <div bind:this={container}>

@@ -2,7 +2,7 @@
     import { Card, Button, Input, Select, Helper } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
-    import { type Study, type Patient } from "../../services/dataStore";
+    import { type Study, type Patient } from "../../services/dataStore.js";
     import { createEventDispatcher } from "svelte";
 
     export let study: Study;
@@ -67,7 +67,12 @@
     <div class="space-y-2">
         <div>
             <h4 class="card-label-text">Patient Number</h4>
-            <Input type="text" bind:value={mutatedPatient.patientNumber} on:input={handleInput("patientNumber")} class="crc-field {getInputClass('patientNumber')}" />
+            <Input
+                type="text"
+                bind:value={mutatedPatient.patientNumber}
+                on:input={handleInput("patientNumber")}
+                class="crc-field {getInputClass('patientNumber')}"
+            />
         </div>
         <div>
             <h4 class="card-label-text">Initials</h4>
@@ -75,7 +80,7 @@
         </div>
         <div>
             <h4 class="card-label-text">YOB</h4>
-            <Input type="number"  bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} class="crc-field" />
+            <Input type="number" bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} class="crc-field" />
         </div>
         <div>
             <h4 class="card-label-text">Gender</h4>

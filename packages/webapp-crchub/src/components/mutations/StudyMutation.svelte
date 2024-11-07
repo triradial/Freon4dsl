@@ -1,18 +1,19 @@
 <script lang="ts">
     import { Card, Button, Input, Select, Textarea, Helper } from "flowbite-svelte";
-    import type { ColorVariant } from "flowbite-svelte";
+    // import type { ColorVariant } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
-    import { getStatusColor } from "../../services/utils";
-    import { type Study } from "../../services/dataStore";
+    import { getStatusColor } from "../../services/utils.js";
+    import { type Study } from "../../services/dataStore.js";
     import { createEventDispatcher } from "svelte";
 
     export let study: Study;
     export let action: "add" | "edit";
     let mutatedStudy = { ...study };
+    let rows: number = 6;
     const dispatch = createEventDispatcher();
 
-    $: statusColor = getStatusColor(mutatedStudy.status) as ColorVariant;
+    $: statusColor = getStatusColor(mutatedStudy.status);
     $: getInputClass = (field: keyof typeof errors) => {
         return errorState[field] ? "error" : "";
     };
@@ -69,7 +70,7 @@
         </div>
         <div>
             <h4 class="card-label-text">Title</h4>
-            <Textarea class="crc-field min-h-[5rem]" rows="6" bind:value={mutatedStudy.title} />
+            <Textarea class="crc-field min-h-[5rem]" {rows} bind:value={mutatedStudy.title} />
         </div>
         <div>
             <h4 class="card-label-text">Status</h4>

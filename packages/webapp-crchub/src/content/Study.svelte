@@ -1,16 +1,16 @@
 <script lang="ts">
     import { onMount, onDestroy, getContext } from "svelte";
     import StudyCard from "../components/cards/StudyCard.svelte";
-    import PatientGrid from '../components/content/PatientGrid.svelte';
-    import DSLFooter from '../components/common/DSLFooter.svelte';
+    import PatientGrid from "../components/content/PatientGrid.svelte";
+    import DSLFooter from "../components/common/DSLFooter.svelte";
 
-    import { Tabs, TabItem } from 'flowbite-svelte';
-    import { ListPlaceholder, Skeleton } from 'flowbite-svelte';
-    import { Toolbar, ToolbarButton, ToolbarGroup } from 'flowbite-svelte';
+    import { Tabs, TabItem } from "flowbite-svelte";
+    import { ListPlaceholder, Skeleton } from "flowbite-svelte";
+    import { Toolbar, ToolbarButton, ToolbarGroup } from "flowbite-svelte";
 
-    import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faUser, faSwatchbook, faSave, faRedo, faUndo } from '@fortawesome/free-solid-svg-icons';
-    import { getStudy } from "../services/dataStore";
+    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import { faUser, faSwatchbook, faSave, faRedo, faUndo } from "@fortawesome/free-solid-svg-icons";
+    import { getStudy } from "../services/dataStore.js";
 
     import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
@@ -18,7 +18,7 @@
     import { FreEditor } from "@freon4dsl/core";
     import { type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
 
-    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/sideDrawerStore";
+    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/sideDrawerStore.js";
 
     export let id: string;
     let study: any;
@@ -29,13 +29,13 @@
     let unit: StudyConfiguration;
 
     let footerItems = [
-        { id: 'showScheduling', label: 'Scheduling', visible: true },
-        { id: 'showChecklists', label: 'Checklists', visible: false },
-        { id: 'showReferences', label: 'References', visible: false, parent: 'showChecklists' },
-        { id: 'showSystems', label: 'Systems', visible: false, parent: 'showChecklists' },
-        { id: 'showPeople', label: 'People', visible: false, parent: 'showChecklists' },
-        { id: 'showDescriptions', label: 'Descriptions', visible: false },
-        { id: 'showSharedTasks', label: 'Shared Tasks', visible: false },
+        { id: "showScheduling", label: "Scheduling", visible: true },
+        { id: "showChecklists", label: "Checklists", visible: false },
+        { id: "showReferences", label: "References", visible: false, parent: "showChecklists" },
+        { id: "showSystems", label: "Systems", visible: false, parent: "showChecklists" },
+        { id: "showPeople", label: "People", visible: false, parent: "showChecklists" },
+        { id: "showDescriptions", label: "Descriptions", visible: false },
+        { id: "showSharedTasks", label: "Shared Tasks", visible: false },
     ];
 
     onMount(async () => {
@@ -50,35 +50,33 @@
                 editorLoaded = true;
             }, 3000);
         } else {
-            console.error('Failed to load study configuration');
+            console.error("Failed to load study configuration");
         }
 
-         // Set initial visibility based on studyConfigurationUnit
-         footerItems = footerItems.map(item => ({
+        // Set initial visibility based on studyConfigurationUnit
+        footerItems = footerItems.map((item) => ({
             ...item,
-            visible: unit[item.id as keyof StudyConfiguration] as boolean
+            visible: unit[item.id as keyof StudyConfiguration] as boolean,
         }));
- 
-        
 
         // initialize the study chart drawer for the study
         setDrawerProps("dslErrors", { studyId: id });
-        setDrawerVisibility('dslErrors', true);
+        setDrawerVisibility("dslErrors", true);
         setDrawerProps("studyTimelineTable", { studyId: id });
-        setDrawerVisibility('studyTimelineTable', true);
+        setDrawerVisibility("studyTimelineTable", true);
         setDrawerProps("studyTimelineChart", { studyId: id });
-        setDrawerVisibility('studyTimelineChart', true);
+        setDrawerVisibility("studyTimelineChart", true);
     });
 
     onDestroy(() => {
         editorLoaded = false;
         var activeDrawer = getActiveDrawer();
-        if (activeDrawer === 'studyTimelineTable' || activeDrawer === 'studyTimelineChart' || activeDrawer === 'dslErrors') {
+        if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors") {
             setActiveDrawer(null);
         }
-        setDrawerVisibility('dslErrors', false);
-        setDrawerVisibility('studyTimelineTable', false);
-        setDrawerVisibility('studyTimelineChart', false);
+        setDrawerVisibility("dslErrors", false);
+        setDrawerVisibility("studyTimelineTable", false);
+        setDrawerVisibility("studyTimelineChart", false);
     });
 
     function handleCheckboxChange(id: string, visible: boolean) {
@@ -88,9 +86,9 @@
     }
 
     function handleSaveStudy() {
-        EditorState.getInstance().saveCurrentUnit(); 
+        EditorState.getInstance().saveCurrentUnit();
         console.log("Save study");
-    }   
+    }
 
     function handleUndoAction() {
         EditorRequestsHandler.getInstance().undo();
@@ -136,7 +134,9 @@
                         </div>
                     {:else}
                         <div class="h-full crc-content-width">
-                            <ListPlaceholder divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700" />
+                            <ListPlaceholder
+                                divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
+                            />
                         </div>
                     {/if}
                 </TabItem>
@@ -144,6 +144,5 @@
         </div>
     </div>
 {:else}
-    <Skeleton size="sm" class="my-8 " />
+    <Skeleton size="sm" divClass="my-8" />
 {/if}
- 

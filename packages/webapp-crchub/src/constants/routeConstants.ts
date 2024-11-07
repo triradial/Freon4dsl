@@ -1,4 +1,4 @@
-export const ROUTE = {
+export const ROUTE = Object.freeze({
     HOME: 'home',
     LOGIN: 'login',
     PATIENTS: 'patients',
@@ -6,7 +6,7 @@ export const ROUTE = {
     AVAILABILITY: 'availability',
     STUDY: 'study',
     PATIENT: 'patient'
-  } as const;
+});
 
 export const VALID_ROUTES = [
     ROUTE.LOGIN,

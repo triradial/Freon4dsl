@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { getStudyPatients, studyPatients } from "../../services/dataStore";
+    import { getStudyPatients, studyPatients } from "../../services/dataStore.js";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
-    import { navigateTo } from "../../services/routeAction";
-    import { theme } from "../../services/themeStore";
+    import { navigateTo } from "../../services/routeAction.js";
+    import { theme } from "../../services/themeStore.js";
     import GridHeader from "../common/GridHeader.svelte";
-    import { getSVGIcon } from "../../services/utils";
-    import { editObject } from "../../services/objectDrawerStore";
+    import { getSVGIcon } from "../../services/utils.js";
+    import { editObject } from "../../services/objectDrawerStore.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
     export let studyId: string;
@@ -38,7 +38,7 @@
 
     async function fetchStudyPatients() {
         await getStudyPatients(studyId);
-}
+    }
 
     function updateGridData() {
         if (gridApi && patientsData) {
@@ -105,8 +105,8 @@
                     field: "actions",
                     cellRenderer: (params: any) => {
                         return createActionButtons(params, [
-                            { type: 'edit', icon: 'edit', onClick: onEditClick },
-                            { type: 'delete', icon: 'delete', onClick: onDeleteClick }
+                            { type: "edit", icon: "edit", onClick: onEditClick },
+                            { type: "delete", icon: "delete", onClick: onDeleteClick },
                         ]);
                     },
                     width: 100,
@@ -146,7 +146,7 @@
 
     function onDeleteClick(patientId: string) {
         console.log("Delete clicked for patient:", patientId);
-        objectToDelete = patientsData.find(p => p.id === patientId);
+        objectToDelete = patientsData.find((p) => p.id === patientId);
         if (objectToDelete) {
             deleteDialogOpen = true;
         }
@@ -189,7 +189,7 @@
 
 <GridHeader title="Patients" objectType="patient" parentId={studyId} />
 <div id="patientGrid" class="{gridTheme} ag-grid"></div>
-<DeleteObjectDialog 
+<DeleteObjectDialog
     bind:open={deleteDialogOpen}
     objectType="patient"
     object={objectToDelete}

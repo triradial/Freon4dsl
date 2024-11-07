@@ -4,14 +4,14 @@
     import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
     import { Alert } from "flowbite-svelte";
     import { isAuthenticated } from "../../services/auth.js";
-    import { navigateTo } from "../../services/routeAction";
-    import { theme } from '../../services/themeStore';
-    import { ROUTE } from "../../constants/routeConstants";
-    import { LABEL } from "../../constants/labelConstants";
-    import { userStore, type User } from "../../services/userStore";
+    import { navigateTo } from "../../services/routeAction.js";
+    import { theme } from "../../services/themeStore.js";
+    import { ROUTE } from "../../constants/routeConstants.js";
+    import { LABEL } from "../../constants/labelConstants.js";
+    import { userStore, type User } from "../../services/userStore.js";
 
     let user: User | null;
-    userStore.subscribe(value => {
+    userStore.subscribe((value) => {
         user = value;
     });
 
@@ -32,13 +32,19 @@
     let isDark = true;
 
     function themeToggle() {
-        theme.update(currentTheme => currentTheme === 'dark' ? 'light' : 'dark');
+        theme.update((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
     }
 
-    $: isDark = $theme === 'dark';
+    $: isDark = $theme === "dark";
     $: icon = isDark ? faSun : faMoon;
 
-    $: userInitials = user ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : '';
+    $: userInitials = user
+        ? user.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+        : "";
 </script>
 
 <Navbar class="navbar-component">
@@ -62,7 +68,7 @@
     <div class="flex items-center gap-2 mr-2">
         <Button pill={true} outline={true} class="navbar-button" size="md" on:click={themeToggle}>
             {#key icon}
-                <FontAwesomeIcon icon={icon} />
+                <FontAwesomeIcon {icon} />
             {/key}
         </Button>
     </div>
@@ -71,8 +77,8 @@
     </div>
     <Dropdown class="avatar-menu" placement="bottom" triggeredBy="#avatar">
         <DropdownHeader>
-            <span class="block text-sm">{user ? user.name : 'Unknown'}</span>
-            <span class="block truncate text-sm font-medium">{user ? user.email : 'Unknown'}</span>
+            <span class="block text-sm">{user ? user.name : "Unknown"}</span>
+            <span class="block truncate text-sm font-medium">{user ? user.email : "Unknown"}</span>
         </DropdownHeader>
         <DropdownItem>Profile</DropdownItem>
         <DropdownItem>Settings</DropdownItem>

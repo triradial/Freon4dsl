@@ -2,16 +2,14 @@
     import { Drawer, Button } from "flowbite-svelte";
     import StudyMutation from "../mutations/StudyMutation.svelte";
     import PatientMutation from "../mutations/PatientMutation.svelte";
-    import { drawerStore, closeDrawer, saveObject } from "../../services/objectDrawerStore";
+    import { drawerStore, closeDrawer, saveObject } from "../../services/objectDrawerStore.js";
     import { sineIn } from "svelte/easing";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
     let activeDrawerInstance: any;
     let currentInstanceId: string | null = null;
-    $: title = $drawerStore.action === "add" 
-        ? `Add ${toProperCase($drawerStore.objectType ?? '')}`
-        : `Edit ${toProperCase($drawerStore.objectType ?? '')}`;
+    $: title = $drawerStore.action === "add" ? `Add ${toProperCase($drawerStore.objectType ?? "")}` : `Edit ${toProperCase($drawerStore.objectType ?? "")}`;
     $: hidden = !$drawerStore.open;
     $: {
         if ($drawerStore.instanceId !== currentInstanceId) {

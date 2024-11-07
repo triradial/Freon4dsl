@@ -4,7 +4,7 @@ import awsconfig from "../amplifyconfiguration.json";
 
 import { WebappConfigurator } from "@freon4dsl/webapp-lib";
 import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
-import { ServerCommunication, type IServerCommunication } from "@freon4dsl/core";
+import { ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
 import { env } from "./config/env.js";
 
@@ -13,7 +13,7 @@ import ExpandCollapseWrapperComponent from "./components/custom/ExpandCollapseWr
 import TimePicker from "./components/custom/TimePicker.svelte";
 
 // Configure the server connection settings
-const serverComm: IServerCommunication = ServerCommunication.getInstance();
+const serverComm = ServerCommunication.getInstance();
 serverComm.setServerConfig({
     serverUrl: env.serverUrl,
     serverTimeout: env.serverTimeout

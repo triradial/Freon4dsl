@@ -47,9 +47,17 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'dist/build/bundle.js'
+    file: 'public/assets/scripts/bundle.js'
   },
   plugins: [
+    typescript({
+      tsconfig: './tsconfig.json',
+      sourceMap: true,
+      inlineSources: true,
+      module: 'NodeNext',
+      target: 'es2021',
+      moduleResolution: 'nodenext'
+    }),
     svelte({
       preprocess: preprocess({ sourceMap: !production }),
       compilerOptions: {
@@ -62,7 +70,7 @@ export default {
       browser: true,
       dedupe: ['svelte'],
       exportConditions: ['svelte'],
-      extensions: ['.svelte', '.mjs', '.js', '.json', '.node']
+      extensions: ['.svelte', '.mjs', '.js', '.json', '.node', '.ts']
     }),
     replace({
       preventAssignment: true,
@@ -70,10 +78,6 @@ export default {
       'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development')
     }),
     commonjs(),
-    typescript({
-      sourceMap: !production || dev,
-      inlineSources: !production || dev
-    }),
     injectProcessEnv({
       AZURE_ENVIRONMENT: process.env.AZURE_ENVIRONMENT || 'development',
       NODE_ENV: 'development',

@@ -5,16 +5,16 @@
     import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faListCheck, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
-    import { getPatient, type Patient } from "../services/dataStore";
+    import { getPatient, type Patient } from "../services/dataStore.js";
 
     import { EditorState } from "@freon4dsl/webapp-lib";
     import { RtString } from "@freon4dsl/core";
     import { FreNodeReference } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline";
-    import { getTimelineChart } from "../services/app/PatientTimeline";
-    import { getTimelineChartHtml } from "../services/app/PatientTimeline";
-    import { getTimeline } from "../services/app/PatientTimeline";
+    import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+    import { getTimelineChart } from "../services/app/PatientTimeline.js";
+    import { getTimelineChartHtml } from "../services/app/PatientTimeline.js";
+    import { getTimeline } from "../services/app/PatientTimeline.js";
 
     import {
         Availability,
@@ -30,7 +30,7 @@
         PatientHistory,
         StudyConfiguration,
     } from "@freon4dsl/samples-study-configuration/dist/language/gen";
-    import { getChartWithPatientHistory } from "services/utils";
+    import { getChartWithPatientHistory } from "../services/utils.js";
 
     export let id: string;
     let patient: Patient;
@@ -97,14 +97,14 @@
     }
 
     function executeScripts() {
-    if (container) {
-        const scripts = container.querySelectorAll("script");
-        scripts.forEach((oldScript) => {
-            const newScript = document.createElement("script");
-            Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
-            
-            // Wrap the script content in a function that checks for vis
-            const wrappedContent = `
+        if (container) {
+            const scripts = container.querySelectorAll("script");
+            scripts.forEach((oldScript) => {
+                const newScript = document.createElement("script");
+                Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
+
+                // Wrap the script content in a function that checks for vis
+                const wrappedContent = `
                 (function checkVis() {
                     if (typeof vis !== 'undefined') {
                         ${oldScript.innerHTML}
@@ -112,14 +112,14 @@
                         setTimeout(checkVis, 100);
                     }
                 })();
-            `;         
-            newScript.appendChild(document.createTextNode(wrappedContent));
-            if (oldScript.parentNode) {
-                oldScript.parentNode.replaceChild(newScript, oldScript);
-            }
-        });
+            `;
+                newScript.appendChild(document.createTextNode(wrappedContent));
+                if (oldScript.parentNode) {
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                }
+            });
+        }
     }
-}
 </script>
 
 {#if patient}
@@ -135,7 +135,7 @@
                         <FontAwesomeIcon icon={faCalendarDays} class="w-4 h-4" />Schedule
                     </div>
                     <div style="display: {isLoading || !showChart ? 'block' : 'none'}">
-                        <ListPlaceholder class="mb-4" />
+                        <ListPlaceholder divClass="mb-4" />
                     </div>
                     <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
                         <div bind:this={container}>

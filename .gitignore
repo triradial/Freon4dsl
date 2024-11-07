@@ -10,6 +10,7 @@
 *.tsbuildinfo
 **/*.tsbuildinfo
 .rollup.cache/
+.tsbuildinfo
 
 # dependencies
 node_modules

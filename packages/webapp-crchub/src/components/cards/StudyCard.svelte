@@ -1,15 +1,15 @@
 <script lang="ts">
     import { Card, Badge, Button } from "flowbite-svelte";
-    import { type Study } from "../../services/dataStore";
-    import { editObject } from "../../services/objectDrawerStore";
-    import type { ColorVariant } from "flowbite-svelte";
+    import { type Study } from "../../services/dataStore.js";
+    import { editObject } from "../../services/objectDrawerStore.js";
+    // import type { ColorVariant } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faPencil } from "@fortawesome/free-solid-svg-icons";
-    import { getStatusColor } from '../../services/utils';
+    import { getStatusColor } from "../../services/utils.js";
 
     export let study: Study;
 
-    let statusColor = getStatusColor(study.status) as ColorVariant;
+    let statusColor = getStatusColor(study.status);
 
     function onEditClick() {
         editObject("study", study.id);

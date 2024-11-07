@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { studies } from "../../services/dataStore";
-    import { editObject } from "../../services/objectDrawerStore";
+    import { studies } from "../../services/dataStore.js";
+    import { editObject } from "../../services/objectDrawerStore.js";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
-    import { navigateTo } from "../../services/routeAction";
-    import { theme } from '../../services/themeStore';
-    import GridHeader from '../common/GridHeader.svelte';
-    import { getSVGIcon } from "../../services/utils";
+    import { navigateTo } from "../../services/routeAction.js";
+    import { theme } from "../../services/themeStore.js";
+    import GridHeader from "../common/GridHeader.svelte";
+    import { getSVGIcon } from "../../services/utils.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
     let deleteDialogOpen = false;
@@ -33,7 +33,7 @@
         }
     }
 
-    $: gridTheme = $theme === 'dark' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
+    $: gridTheme = $theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz";
 
     onMount(async () => {
         gridOptions = {
@@ -82,8 +82,8 @@
                     field: "actions",
                     cellRenderer: (params: any) => {
                         return createActionButtons(params, [
-                            { type: 'edit', icon: 'edit', onClick: onEditClick },
-                            { type: 'delete', icon: 'delete', onClick: onDeleteClick }
+                            { type: "edit", icon: "edit", onClick: onEditClick },
+                            { type: "delete", icon: "delete", onClick: onDeleteClick },
                         ]);
                     },
                     width: 100,
@@ -124,7 +124,7 @@
 
     function onDeleteClick(studyId: string) {
         console.log("Delete clicked for study:", studyId);
-        objectToDelete = studiesData.find(s => s.id === studyId);
+        objectToDelete = studiesData.find((s) => s.id === studyId);
         if (objectToDelete) {
             deleteDialogOpen = true;
         }
@@ -160,7 +160,6 @@
         // based on row data and button type
         return true; // For now, always render all buttons
     }
-
 </script>
 
 <svelte:head>
@@ -169,7 +168,7 @@
 
 <GridHeader title="Studies" objectType="study" />
 <div id="studyGrid" class="{gridTheme} ag-grid"></div>
-<DeleteObjectDialog 
+<DeleteObjectDialog
     bind:open={deleteDialogOpen}
     objectType="study"
     object={objectToDelete}

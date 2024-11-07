@@ -13,6 +13,7 @@
         "prepare-app": "npx gulp"
     },
     "dependencies": {
+        "@azure/msal-browser": "^3.27.0",
         "@freon4dsl/core": "0.7.0-beta5",
         "@freon4dsl/core-svelte": "0.7.0-beta5",
         "@freon4dsl/samples-study-configuration": "0.7.0-beta5",

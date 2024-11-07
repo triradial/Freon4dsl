@@ -4,7 +4,7 @@
     import { EditorState } from "@freon4dsl/webapp-lib";
     import { RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineChart } from "../../services/app/PatientTimeline";
+    import { getTimelineChart } from "../../services/app/PatientTimeline.js";
 
     export let box: ExternalStringBox;
 
