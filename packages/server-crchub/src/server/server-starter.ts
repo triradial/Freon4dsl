@@ -18,6 +18,8 @@ const execAsync = promisify(exec);
 
 console.log('Server Environment:', {
     AZURE_ENVIRONMENT: process.env.AZURE_ENVIRONMENT,
+    AD_B2C_TENANT: process.env.AD_B2C_TENANT,
+    AD_B2C_CLIENT_ID: process.env.AD_B2C_CLIENT_ID,
     environment: currentEnv,
     serverUrl: env.serverUrl,
     serverPort: env.serverPort,

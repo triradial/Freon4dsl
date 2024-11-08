@@ -1,9 +1,25 @@
 import Router from "koa-router";
+import { RateLimit } from 'koa2-ratelimit';
 
 import { ModelHandler } from "./ModelHandler.js";
 import { DataHandler } from "./DataHandler.js";
+import { AuthHandler } from "./AuthHandler.js";
+
+import { z } from 'zod';
 
 const router = new Router();
+
+const rateLimiter = RateLimit.middleware({
+    interval: { min: 15 }, // 15 minutes
+    max: 5, // 5 requests per interval
+    message: 'Too many login attempts, please try again later',
+    prefixKey: 'login' // to separate login attempts from other rate limits
+});
+
+const signInSchema = z.object({
+    username: z.string().email(),
+    password: z.string().min(1)
+});
 
 // General requests
 router.get('/', async (ctx: Router.IRouterContext) => {
@@ -12,6 +28,31 @@ router.get('/', async (ctx: Router.IRouterContext) => {
 
 router.get('/health', async (ctx: Router.IRouterContext) => {
     ctx.body = { status: 'ok' };
+});
+
+// Auth requests
+router.post('/signIn', rateLimiter, async (ctx: Router.IRouterContext) => {
+    try {
+        console.log('signIn: ctx.request.body=', JSON.stringify(ctx.request.body, null, 2));
+        const { username, password } = signInSchema.parse(ctx.request.body);
+        console.log('signIn: ' + username);
+        await AuthHandler.signIn(username, password, ctx);
+    } catch (error) {
+        console.error('SignIn error:', error);
+        ctx.status = 500;
+        ctx.body = { error: 'Authentication failed' };
+    }
+});
+
+router.post('/signOut', async (ctx: Router.IRouterContext) => {
+    try {
+        console.log('signOut');
+        await AuthHandler.signOut(ctx);
+    } catch (error) {
+        console.error('SignOut error:', error);
+        ctx.status = 500;
+        ctx.body = { error: 'SignOut failed' };
+    }
 });
 
 // Model requests
