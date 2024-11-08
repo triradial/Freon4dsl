@@ -40,7 +40,7 @@ router.post('/signIn', rateLimiter, async (ctx: Router.IRouterContext) => {
     } catch (error) {
         console.error('SignIn error:', error);
         ctx.status = 500;
-        ctx.body = { error: 'Authentication failed' };
+        ctx.body = { error: 'Authentication failed', details: error + ' ' + JSON.stringify(ctx.request.body, null, 2) };
     }
 });
 

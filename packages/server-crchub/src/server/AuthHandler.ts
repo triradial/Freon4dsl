@@ -45,7 +45,7 @@ export class AuthHandler {
             const tenantID = process.env.AD_B2C_TENANT;
             const clientId = process.env.AD_B2C_CLIENT_ID;
             const clientSecret = process.env.AD_B2C_CLIENT_SECRET;
-            const tokenEndpoint = `https://login.microsoftonline.com/${tenantID}/oauth2/v2.0/token`;
+            const tokenEndpoint = process.env.AD_B2C_URL;
 
             const params = new URLSearchParams();
             params.append('grant_type', 'password');
