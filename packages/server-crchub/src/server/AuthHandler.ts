@@ -46,7 +46,8 @@ export class AuthHandler {
             const tenantID = process.env.AD_B2C_TENANT;
             const clientId = process.env.AD_B2C_CLIENT_ID;
             const clientSecret = process.env.AD_B2C_CLIENT_SECRET;
-            const tokenEndpoint = process.env.AD_B2C_URL;
+            const tokenEndpointTemplate = process.env.AD_B2C_URL;
+            const tokenEndpoint = tokenEndpointTemplate?.replace('${tenantID}', tenantID ?? '');
 
             console.log('Auth Environment:', {
                 clientId: clientId,
