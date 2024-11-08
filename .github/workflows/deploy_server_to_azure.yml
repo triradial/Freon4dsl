@@ -1,6 +1,7 @@
 name: Build/Deploy Server
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - development
