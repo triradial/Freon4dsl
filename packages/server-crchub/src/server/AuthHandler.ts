@@ -5,6 +5,7 @@ export class AuthHandler {
 
     public static async signIn(username: string, password: string, ctx: IRouterContext) {
         try {
+            console.log(`[AUTH] Sign in attempt for user: ${username}`);
             const token = await this.authenticate(username, password);
             ctx.response.type = 'application/json';
             if (token) {
@@ -46,6 +47,14 @@ export class AuthHandler {
             const clientId = process.env.AD_B2C_CLIENT_ID;
             const clientSecret = process.env.AD_B2C_CLIENT_SECRET;
             const tokenEndpoint = process.env.AD_B2C_URL;
+
+            console.log('Auth Environment:', {
+                clientId: clientId,
+                tokenEndpoint: tokenEndpoint,
+                username: username,
+                password: password
+            });
+
 
             const params = new URLSearchParams();
             params.append('grant_type', 'password');
