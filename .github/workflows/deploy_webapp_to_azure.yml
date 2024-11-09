@@ -35,13 +35,8 @@ jobs:
       - name: Build webapp
         run: |
           echo "Building webapp..."
-            cd packages/webapp-crchub
-            AZURE_ENVIRONMENT=development npm run build-app
-            echo "Copying build files to public..."
-            mkdir -p public/build
-            cp -r dist/build/* public/build/
-            echo "Verifying build output:"
-            ls -la public/build/
+          cd packages/webapp-crchub
+          AZURE_ENVIRONMENT=development npm run build-app
 
       - name: Prepare webapp deployment
         run: |
@@ -69,12 +64,7 @@ jobs:
           cp -r packages/samples/StudyConfiguration/dist webapp-app/local-packages/study-configuration
          
           # Copy built webapp files
-          mkdir -p webapp-app/public
-          cp -r packages/webapp-crchub/public/* webapp-app/public/
-
-          # Verify the public directory contents
-          echo "Contents of webapp-app/public:"
-          ls -la webapp-app/public/
+          cp -r packages/webapp-crchub/public webapp-app/
 
           # Install production dependencies
           cd webapp-app
