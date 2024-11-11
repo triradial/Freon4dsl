@@ -7,48 +7,11 @@ const storage = StorageFactory.getStorageHandler();
 
 export class ModelRequests {
 
-    private static storeFolder: string;
+    private static storeFolder: string = './modelstore';
     public static validate = false;
-
-    private static initializeStoreFolder() {
-        const environment = process.env.NODE_ENV || 'development';
-        
-        if (environment === 'production') {
-            this.storeFolder = './datastore/studies';
-        } else {
-            // In development, use the default unless explicitly overridden
-            this.storeFolder = this._overriddenFolder || './modelstore';
-        }
-    }
-
-    private static _overriddenFolder: string | null = null;
-
-    public static setStoreFolder(folder: string) {
-        if (process.env.NODE_ENV !== 'production') {
-            this._overriddenFolder = folder;
-            this.initializeStoreFolder();
-        }
-        // Silently ignore attempts to override in production
-    }
-
-    public static getStoreFolder(): string {
-        if (!this.storeFolder) {
-            this.initializeStoreFolder();
-        }
-        return this.storeFolder;
-    }
-
-    public static setStoreFolderFromId(id: string) {
-        if (process.env.NODE_ENV === 'production' || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
-            this.storeFolder = './datastore/studies';
-        } else {
-            this.storeFolder = './modelstore';
-        }
-    }
 
     public static async putModelUnit(foldername: string, name: string, ctx: IRouterContext) {
         try {
-            this.setStoreFolderFromId(foldername);
             const modelPath = path.join(this.storeFolder, foldername);
             const filePath = path.join(modelPath, `${name}.json`);
             await storage.writeFile(filePath, JSON.stringify(ctx.request.body, null, 3));
@@ -59,7 +22,6 @@ export class ModelRequests {
 
     public static async deleteModelUnit(foldername: string, name: string, ctx: IRouterContext) {
         try {
-            this.setStoreFolderFromId(foldername);
             const filePath = path.join(this.storeFolder, foldername, `${name}.json`);
             await storage.deleteFile(filePath);
         } catch (e) {
@@ -70,13 +32,12 @@ export class ModelRequests {
 
     public static async getModelUnit(foldername: string, name: string, ctx: IRouterContext) {
         try {
-            this.setStoreFolderFromId(foldername);
             console.log("ModelRequests.getModelUnit: storeFolder=" + this.storeFolder);
             const filePath = path.join(this.storeFolder, foldername, `${name}.json`);
             console.log("ModelRequests.getModelUnit: " + filePath);
 
             const content = await storage.readFile(filePath);
-            
+
             if (ModelRequests.validate) {
                 const jsonObject = JSON.parse(content);
                 const chunk = jsonObject as LionWebJsonChunk;
@@ -101,9 +62,8 @@ export class ModelRequests {
 
     public static async getUnitList(foldername: string, ctx: IRouterContext) {
         try {
-            this.setStoreFolderFromId(foldername);
             const modelPath = path.join(this.storeFolder, foldername);
-            
+
             // Ensure directory exists
             if (!await storage.directoryExists(modelPath)) {
                 await storage.ensureDirectory(modelPath);
@@ -149,7 +109,6 @@ export class ModelRequests {
 
     public static async deleteModel(foldername: string, ctx: IRouterContext) {
         try {
-            this.setStoreFolderFromId(foldername);
             const modelPath = path.join(this.storeFolder, foldername);
             // Note: You may need to add a deleteDirectory method to your storage interface
             // For now, this will need to be handled differently depending on your storage implementation

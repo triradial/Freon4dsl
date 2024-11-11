@@ -15,19 +15,6 @@ router.get('/health', async (ctx: Router.IRouterContext) => {
 });
 
 // Model requests
-router.post('/setStorePath', async (ctx: Router.IRouterContext) => {
-    const path = ctx.query["path"];
-    if (!path || typeof path !== 'string') {
-        ctx.status = 400; // Precondition failed
-        ctx.message = "Missing or invalid 'path' parameter in request body";
-        return;
-    }
-    ModelRequests.setStoreFolder(path);
-    ctx.status = 200;
-    ctx.response.type = 'application/json';
-    ctx.response.body = { path: ModelRequests.getStoreFolder() };
-});
-
 router.get("/getModelUnit", async (ctx: Router.IRouterContext) => {
     const folder = ctx.query["folder"];
     const name = ctx.query["name"];
