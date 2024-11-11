@@ -10,13 +10,14 @@
     export let selectedId: string = "";
     export let options: SelectOption[] = [];
     let id: string = "dropdown";
-    let cssClass: string = '';
-    let style: string = '';
+    let cssClass: string = "";
+    let style: string = "";
     const dispatcher = createEventDispatcher();
 
-    const LOGGER = DROPDOWN_LOGGER
+    const LOGGER = DROPDOWN_LOGGER;
 
-    $: isSelected = (option: SelectOption) => { // determines the style of the selected option
+    $: isSelected = (option: SelectOption) => {
+        // determines the style of the selected option
         if (options.length === 1) {
             return true;
         }
@@ -28,32 +29,34 @@
      * @param option
      */
     const handleClick = (option: SelectOption) => {
-        LOGGER.log("handleClick")
+        LOGGER.log("handleClick");
         selectedId = option.id;
         dispatcher("freItemSelected", option);
     };
 </script>
 
 <span class="dropdown-component-container">
-<nav class="dropdown-component"
-     id="{id}"
->
-    {#if options.length > 0 }
-        {#each options as option (option.id + option.label)}
-            <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-            <div class="dropdown-component-item"
-                 class:dropdown-component-selected={isSelected(option)}
-                 on:click={(event) => {event.preventDefault(); event.stopPropagation(); handleClick(option); }}
-                 role="none">
-                {option.label}
-            </div>
-        {/each}
-    {:else}
-        <div class="dropdown-component-error">
-            No selection available
-        </div>
-    {/if}
-</nav>
+    <nav class="dropdown-component" {id}>
+        {#if options.length > 0}
+            {#each options as option (option.id + option.label)}
+                <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
+                <div
+                    class="dropdown-component-item"
+                    class:dropdown-component-selected={isSelected(option)}
+                    on:mousedown={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        handleClick(option);
+                    }}
+                    role="none"
+                >
+                    {option.label}
+                </div>
+            {/each}
+        {:else}
+            <div class="dropdown-component-error">No selection available</div>
+        {/if}
+    </nav>
 </span>
 
 <style>

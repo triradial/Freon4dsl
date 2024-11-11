@@ -1,4 +1,5 @@
-<svelte:options immutable={true}/>
+<svelte:options immutable={true} />
+
 <script lang="ts">
     import { LAYOUT_LOGGER } from "$lib/components/ComponentLoggers.js";
 
@@ -9,7 +10,7 @@
      */
     import { afterUpdate, onMount } from "svelte";
     import RenderComponent from "./RenderComponent.svelte";
-    import {Box, FreEditor, FreLogger, ListDirection, LayoutBox } from "@freon4dsl/core";
+    import { Box, FreEditor, FreLogger, ListDirection, LayoutBox } from "@freon4dsl/core";
     import { componentId } from "$lib/index.js";
     import ErrorMarker from "$lib/components/ErrorMarker.svelte";
 
@@ -17,15 +18,15 @@
     export let box: LayoutBox;
     export let editor: FreEditor;
 
-    let LOGGER: FreLogger = LAYOUT_LOGGER
-    let id: string ;
+    let LOGGER: FreLogger = LAYOUT_LOGGER;
+    let id: string;
     let element: HTMLSpanElement;
     let children: Box[];
     let isHorizontal: boolean;
 
-    let errorCls: string = '';              // css class name for when the node is erroneous
-    let errMess: string[] = [];             // error message to be shown when element is hovered
-    let cssClass: string = '';              // M+G - additional css class to be added to the element
+    let errorCls: string = ""; // css class name for when the node is erroneous
+    let errMess: string[] = []; // error message to be shown when element is hovered
+    let cssClass: string = ""; // M+G - additional css class to be added to the element
 
     async function setFocus(): Promise<void> {
         if (!!element) {
@@ -44,13 +45,13 @@
     });
 
     const refresh = (why?: string): void => {
-        LOGGER.log("REFRESH LayoutComponent (" + why +")" + box?.node?.freLanguageConcept());
-        id = !!box ? componentId(box) : 'layout-for-unknown-box';
+        LOGGER.log("REFRESH LayoutComponent (" + why + ")" + box?.node?.freLanguageConcept());
+        id = !!box ? componentId(box) : "layout-for-unknown-box";
         children = [...box.children];
         isHorizontal = box.getDirection() === ListDirection.HORIZONTAL;
-        cssClass = !!box ? box.cssClass : '';
+        cssClass = !!box ? box.cssClass : "";
         if (box.hasError) {
-            errorCls = !isHorizontal ? 'layout-component-vertical-error' : 'layout-component-horizontal-error';
+            errorCls = !isHorizontal ? "layout-component-vertical-error" : "layout-component-horizontal-error";
             errMess = box.errorMessages;
         } else {
             errorCls = "";
@@ -58,29 +59,30 @@
         }
     };
 
-    $: { // Evaluated and re-evaluated when the box changes.
+    $: {
+        // Evaluated and re-evaluated when the box changes.
         refresh("Refresh Layout box changed " + box?.id);
     }
-
 </script>
 
 {#if errMess.length > 0}
-    <ErrorMarker element={element} {box}/>
+    <ErrorMarker {element} {box} />
 {/if}
-<span class="layout-component {errorCls} {cssClass}"
-      id="{id}"
-      class:layout-component-horizontal="{isHorizontal}"
-      class:layout-component-vertical="{!isHorizontal}"
-      tabIndex={0}
-      bind:this={element}
+<span
+    class="layout-component {errorCls} {cssClass}"
+    {id}
+    class:layout-component-horizontal={isHorizontal}
+    class:layout-component-vertical={!isHorizontal}
+    tabindex="-1"
+    bind:this={element}
 >
-    {#if isHorizontal }
+    {#if isHorizontal}
         {#each children as child (child.id)}
-            <RenderComponent box={child} editor={editor}/>
+            <RenderComponent box={child} {editor} />
         {/each}
     {:else}
         {#each children as child, i (child.id)}
-            <RenderComponent box={child} editor={editor}/>
+            <RenderComponent box={child} {editor} />
         {/each}
     {/if}
 </span>

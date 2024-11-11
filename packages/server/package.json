@@ -1,6 +1,6 @@
 {
   "name": "@freon4dsl/server",
-  "version": "0.7.0-beta5",
+  "version": "1.0.0-beta1",
   "publishConfig": {
     "access": "public"
   },
@@ -42,8 +42,8 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.25.0",
-    "@freon4dsl/core": "0.7.0-beta5",
-    "@freon4dsl/samples-study-configuration": "0.7.0-beta5",
+    "@freon4dsl/core": "1.0.0-beta1",
+    "@freon4dsl/samples-study-configuration": "1.0.0-beta1",
     "@koa/cors": "^5.0.0",
     "@lionweb/validation": "^0.6.3",
     "@types/koa": "^2.13.4",

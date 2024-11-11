@@ -46,6 +46,8 @@ export class ConceptTemplate {
 
         // Template starts here. Note that the imports are gathered during the generation, and added later.
         const result: string = `
+            ${hasSuper ? "" : 'import { makeObservable, action } from "mobx"'}
+
             /**
              * Class ${myName} is the implementation of the concept with the same name in the language definition file.
              * It uses mobx decorators to enable parts of the language environment, e.g. the editor, to react
@@ -57,17 +59,17 @@ export class ConceptTemplate {
 
                 ${ConceptUtils.makeBasicProperties(metaType, myName, hasSuper)}
                 ${concept
-                    .implementedPrimProperties()
-                    .map((p) => ConceptUtils.makePrimitiveProperty(p))
-                    .join("\n")}
+                .implementedPrimProperties()
+                .map((p) => ConceptUtils.makePrimitiveProperty(p))
+                .join("\n")}
                 ${concept
-                    .implementedParts()
-                    .map((p) => ConceptUtils.makePartProperty(p))
-                    .join("\n")}
+                .implementedParts()
+                .map((p) => ConceptUtils.makePartProperty(p))
+                .join("\n")}
                 ${concept
-                    .implementedReferences()
-                    .map((p) => ConceptUtils.makeReferenceProperty(p))
-                    .join("\n")}
+                .implementedReferences()
+                .map((p) => ConceptUtils.makeReferenceProperty(p))
+                .join("\n")}
 
                 ${ConceptUtils.makeConstructor(hasSuper, concept.implementedProperties(), coreImports)}
                 ${ConceptUtils.makeBasicMethods(hasSuper, metaType, false, false, isExpression, false)}
@@ -103,6 +105,8 @@ export class ConceptTemplate {
 
         // Template starts here. Note that the imports are gathered during the generation, and added later.
         const result: string = `
+            ${hasSuper ? "" : 'import { makeObservable, action } from "mobx"'}
+            
             /**
              * Class ${myName} is the implementation of the binary expression concept with the same name in the language definition file.
              * It uses mobx decorators to enable parts of the language environment, e.g. the editor, to react
@@ -113,17 +117,17 @@ export class ConceptTemplate {
 
                 ${ConceptUtils.makeBasicProperties(metaType, myName, hasSuper)}
                 ${concept
-                    .implementedPrimProperties()
-                    .map((p) => ConceptUtils.makePrimitiveProperty(p))
-                    .join("\n")}
+                .implementedPrimProperties()
+                .map((p) => ConceptUtils.makePrimitiveProperty(p))
+                .join("\n")}
                 ${concept
-                    .implementedParts()
-                    .map((p) => ConceptUtils.makePartProperty(p))
-                    .join("\n")}
+                .implementedParts()
+                .map((p) => ConceptUtils.makePartProperty(p))
+                .join("\n")}
                 ${concept
-                    .implementedReferences()
-                    .map((p) => ConceptUtils.makeReferenceProperty(p))
-                    .join("\n")}
+                .implementedReferences()
+                .map((p) => ConceptUtils.makeReferenceProperty(p))
+                .join("\n")}
 
                 ${ConceptUtils.makeConstructor(hasSuper, concept.implementedProperties(), coreImports)}
                 ${ConceptUtils.makeBasicMethods(hasSuper, metaType, false, false, true, true)}
@@ -191,7 +195,7 @@ export class ConceptTemplate {
 
         // Template starts here. Note that the imports are gathered during the generation, and added later.
         const result: string = `
-            import { runInAction } from "mobx"
+            import { runInAction ${hasSuper ? "" : ", makeObservable, action"} } from "mobx"
             /**
              * Class ${myName} is the implementation of the limited concept with the same name in the language definition file.
              * It uses mobx decorators to enable parts of the language environment, e.g. the editor, to react
@@ -202,15 +206,15 @@ export class ConceptTemplate {
                 ${!concept.isAbstract ? `${ConceptUtils.makeStaticCreateMethod(concept, myName)}` : ""}
 
                 ${concept.instances
-            .map((predef) => `static ${predef.name}: ${myName};  // implementation of instance ${predef.name}`)
-            .join("\n")}
+                .map((predef) => `static ${predef.name}: ${myName};  // implementation of instance ${predef.name}`)
+                .join("\n")}
                      static $freANY : ${myName};        // default predefined instance
 
                 ${ConceptUtils.makeBasicProperties(metaType, myName, hasSuper)}
                 ${concept
-            .implementedPrimProperties()
-            .map((p) => ConceptUtils.makePrimitiveProperty(p))
-            .join("\n")}
+                .implementedPrimProperties()
+                .map((p) => ConceptUtils.makePrimitiveProperty(p))
+                .join("\n")}
 
                 ${ConceptUtils.makeConstructor(hasSuper, concept.implementedProperties(), coreImports)}
                 ${ConceptUtils.makeBasicMethods(hasSuper, metaType, false, false, false, false)}

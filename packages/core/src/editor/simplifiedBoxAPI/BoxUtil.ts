@@ -325,11 +325,11 @@ export class BoxUtil {
         let result: Box = !!property
             ? boxProviderCache.getBoxProvider(property).box
             : BoxFactory.action(node, roleName, BoxUtil.BEGIN_CHAR + "options" + BoxUtil.END_CHAR, {
-                  // M+G Update
-                  // : BoxFactory.action(node, roleName, `<${propertyName}>`, {
-                  propertyName: propertyName,
-                  conceptName: conceptName,
-              });
+                // M+G Update
+                // : BoxFactory.action(node, roleName, `<${propertyName}>`, {
+                propertyName: propertyName,
+                conceptName: conceptName,
+            });
         result.propertyName = propertyName;
         // result.propertyIndex = ??? todo
         return result;

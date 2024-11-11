@@ -1,12 +1,12 @@
 import { FreLanguageConcept, FreLanguage, FreLanguageProperty, FreLanguageClassifier } from "../../language/index.js";
 import { BehaviorExecutionResult, executeSingleBehavior } from "../util/index.js";
-import {FreCreatePartAction, FreCustomAction, FreTriggerType, isRegExp} from "../actions/index.js";
+import { FreCreatePartAction, FreCustomAction, FreTriggerType, isRegExp } from "../actions/index.js";
 import { triggerTypeToString, FreEditor, isProKey } from "../internal.js";
 import { Box, AbstractChoiceBox, SelectOption } from "./internal.js";
 import { FreNode, FreNodeReference } from "../../ast/index.js";
 import { runInAction } from "mobx";
 import { FreLogger } from "../../logging/index.js";
-import {FreUtils} from "../../util/index.js";
+import { FreUtils, isNullOrUndefined } from "../../util/index.js";
 
 const LOGGER: FreLogger = new FreLogger("ActionBox");
 
@@ -36,7 +36,7 @@ export class ActionBox extends AbstractChoiceBox {
     getOptions(editor: FreEditor): SelectOption[] {
         LOGGER.log("getOptions for " + this.$id + "- " + this.conceptName + "." + this.propertyName);
         const result: SelectOption[] = [];
-        if (!!this.propertyName && !!this.conceptName) {
+        if (!isNullOrUndefined(this.propertyName) && !isNullOrUndefined(this.conceptName)) {
             LOGGER.log(`  has property ${this.propertyName} and concept ${this.conceptName}`);
             // If the action box has a property and concept name, then this can be used to create element of the
             // concept type and its subtypes.
@@ -49,21 +49,22 @@ export class ActionBox extends AbstractChoiceBox {
             clsOtIntf.subConceptNames.concat(this.conceptName).forEach((creatableConceptname: string) => {
                 const creatableConcept: FreLanguageConcept = FreLanguage.getInstance().concept(creatableConceptname);
                 LOGGER.log(`creatableConcept: ${creatableConcept?.typeName}`);
-                if (!!creatableConcept && !creatableConcept.isAbstract) {
-                    if (!!creatableConcept.referenceShortcut) {
+                if (!isNullOrUndefined(creatableConcept) && !creatableConcept.isAbstract) {
+                    if (!isNullOrUndefined(creatableConcept.referenceShortcut)) {
                         this.addReferenceShortcuts(creatableConcept as FreLanguageConcept, result, editor);
+                    } else {
+                        result.push(
+                            this.getCreateElementOption(
+                                this.propertyName,
+                                creatableConceptname,
+                                creatableConcept as FreLanguageConcept,
+                            ),
+                        );
                     }
-                    result.push(
-                        this.getCreateElementOption(
-                            this.propertyName,
-                            creatableConceptname,
-                            creatableConcept as FreLanguageConcept,
-                        ),
-                    );
                 }
             });
-        } else if (!!this.propertyName) {
-            // Reference property
+        } else if (!isNullOrUndefined(this.propertyName)) {
+            // Only has a propertyname, so it is a reference property
             const propDef: FreLanguageProperty = FreLanguage.getInstance().classifierProperty(
                 this.node.freLanguageConcept(),
                 this.propertyName,
@@ -79,14 +80,15 @@ export class ActionBox extends AbstractChoiceBox {
             .filter((action) => !isProKey(action.trigger) && action.activeInBoxRoles.includes(this.role))
             .forEach((action) => {
                 const options: SelectOption[] = [];
-                options.push({
-                    id: triggerTypeToString(action.trigger), // + "_action",
-                    label: triggerTypeToString(action.trigger), // + "_action",
-                    action: action,
-                    description: "action " + triggerTypeToString(action.trigger),
-                });
-                // }
-                result.push(...options);
+                if (!isRegExp(action.trigger)) {
+                    options.push({
+                        id: triggerTypeToString(action.trigger), // + "_action",
+                        label: triggerTypeToString(action.trigger), // + "_action",
+                        action: action,
+                        description: "action " + triggerTypeToString(action.trigger),
+                    });
+                    result.push(...options);
+                }
             });
         return result;
     }
@@ -96,7 +98,7 @@ export class ActionBox extends AbstractChoiceBox {
         conceptName: string,
         concept: FreLanguageConcept,
     ): SelectOption {
-        LOGGER.log("ActionBox.createElementAction property: " + propertyName + " concept " + conceptName);
+        LOGGER.log("createElementAction property: " + propertyName + " concept " + conceptName);
         return {
             id: conceptName,
             label: concept.trigger,
@@ -117,6 +119,7 @@ export class ActionBox extends AbstractChoiceBox {
      */
     private addReferenceShortcuts(concept: FreLanguageConcept, result: SelectOption[], editor: FreEditor) {
         // Create the new element for this behavior inside a dummy and then point the owner to the
+        LOGGER.log("addReferenceShortcuts")
         // current element.  This way the new element is not part of the model and will not trigger mobx
         // reactions. But the scoper can be used to find available references, because the scoper only
         // needs the owner.
@@ -184,6 +187,7 @@ export class ActionBox extends AbstractChoiceBox {
                                 parentNode[property.name].push(FreNodeReference.create(name, null));
                                 return null;
                             },
+                            boxRoleToSelect: "REFERENCE"
                         }),
                     })),
             );
@@ -197,7 +201,7 @@ export class ActionBox extends AbstractChoiceBox {
 
     executeOption(editor: FreEditor, option: SelectOption): BehaviorExecutionResult {
         LOGGER.log("ActionBox executeOption " + JSON.stringify(option));
-        FreUtils.CHECK(!!option.action, `ActionBox.executeOption: action missing for ${option.label}` )
+        FreUtils.CHECK(!!option.action, `ActionBox.executeOption: action missing for ${option.label}`)
         if (!!option.action) {
             return executeSingleBehavior(option.action, this, option.label, editor);
         }
@@ -209,7 +213,7 @@ export class ActionBox extends AbstractChoiceBox {
         let result: BehaviorExecutionResult;
         // Try if key fits one of the options, and execute the action that is associated with it
         const filteredOptions: SelectOption[] = this.getOptions(editor).filter(o => o.label.startsWith(key));
-        if (filteredOptions.length === 1 && filteredOptions[0].label === key ) {
+        if (filteredOptions.length === 1 && filteredOptions[0].label === key) {
             result = this.executeOption(editor, filteredOptions[0]);
         } else {
             // Try if key matches a regular expression, and execute the action that is associated with it
@@ -225,11 +229,14 @@ export class ActionBox extends AbstractChoiceBox {
 
     tryToMatchRegExpAndExecuteAction(text: string, editor: FreEditor): BehaviorExecutionResult {
         LOGGER.log(`ActionBox tryToMatchRegExpAndExecuteAction [${text}]`);
-        // Try to match a regular expression
-        const matchingOption = this.getOptions(editor).find(option => {
-            if (isRegExp(option.action.trigger)) {
-                if (option.action.trigger.test(text)) {
-                    LOGGER.log("Matched regexp" + triggerTypeToString(option.action.trigger) + " for '" + text + "'");
+        // Find all regular expression actions
+        const regExpActions = editor.newFreActions
+            .filter((action) => !isProKey(action.trigger) && action.activeInBoxRoles.includes(this.role) && isRegExp(action.trigger))
+
+        const matchingAction = regExpActions.find(action => {
+            if (isRegExp(action.trigger)) {
+                if (action.trigger.test(text)) {
+                    LOGGER.log("Matched regexp" + triggerTypeToString(action.trigger) + " for '" + text + "'");
                     return true;
                 }
                 return false;
@@ -237,11 +244,10 @@ export class ActionBox extends AbstractChoiceBox {
             return false;
         })
         // If there is a match, execute it.
-        if (!!matchingOption) {
-            LOGGER.log(`Found match to regexp: ${matchingOption.label}`);
-            FreUtils.CHECK(!!matchingOption.action, `ActionBox.executeOption: action missing for ${matchingOption.label}` )
-            if (!!matchingOption.action) {
-                return executeSingleBehavior(matchingOption.action, this, text, editor);
+        if (!isNullOrUndefined(matchingAction)) {
+            LOGGER.log(`Found match to regexp: ${triggerTypeToString(matchingAction.trigger)}`);
+            if (!!matchingAction) {
+                return executeSingleBehavior(matchingAction, this, text, editor);
             }
             return BehaviorExecutionResult.NULL;
         }

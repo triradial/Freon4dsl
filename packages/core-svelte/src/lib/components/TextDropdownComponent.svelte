@@ -32,7 +32,6 @@
 
     export let box: AbstractChoiceBox; // the accompanying ActionBox or SelectBox
     export let editor: FreEditor; // the editor
-    // export let focusMode: "start" | "selectAll" = "start";
     let textBox: TextBox; // the textbox that is to be coupled to the TextComponent part
     $: textBox = box?.textBox; // keeps the textBox variable in state with the box!
 
@@ -69,7 +68,7 @@
      * This function sets the focus on this element programmatically.
      */
     const setFocus = () => {
-        LOGGER.log("setFocus " + box.kind + id);
+        console.log("TextDropdownComponent.setFocus " + box.kind + id);
         if (!!textComponent) {
             textComponent.setFocus();
         } else {
@@ -400,7 +399,14 @@
         isEditing = false;
         dropdownShown = false;
 
-        box.executeOption(editor, selected); // TODO the result of the execution is ignored
+        const post = box.executeOption(editor, selected); // TODO the result of the execution is ignored
+        if (!!post) {
+            if (typeof post === "function") {
+                post();
+            } else {
+                console.log("POST is noit a function: " + post);
+            }
+        }
         if (isActionBox(box)) {
             // ActionBox, action done, clear input text
             setTextLocalAndInBox("");

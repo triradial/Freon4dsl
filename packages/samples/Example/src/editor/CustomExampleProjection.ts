@@ -67,25 +67,25 @@ export class CustomExampleProjection implements FreProjection {
         );
     }
 
-createDocumentation (doc: Documentation): Box {
+    createDocumentation(doc: Documentation): Box {
         return BoxFactory.horizontalLayout(
             doc,
             "Documentation-hlist-line-0",
-            "", 
+            "",
             [
                 BoxUtil.labelBox(doc, "doc start: ", "top-1-line-0-item-0"),
                 // BoxUtil.textBox(this._element as Documentation, "text"),
                 new MultiLineTextBox(doc, "exampleunit-documentation",
-                    () => { return doc.text},
-                    (t: string) => { doc.text = t}
+                    () => { return doc.text },
+                    (t: string) => { doc.text = t }
                 ),
                 BoxUtil.labelBox(doc, ":end doc", "top-1-line-0-item-2")
             ],
             { selectable: false }
         );
     }
-    
-    createSumBox (sum: SumExpression): Box {
+
+    createSumBox(sum: SumExpression): Box {
         const cells: GridCellBox[] = [
             new GridCellBox(sum, "Sum-from-cell", 3, 1,
                 new HorizontalLayoutBox(sum, "Sum-from-part", [
@@ -93,7 +93,8 @@ createDocumentation (doc: Documentation): Box {
                     new LabelBox(sum, "sum-from-equals", "="),
                     this.optionalPartBox(sum, "SumExpression-from", "from")
                 ]),
-                { columnSpan: 2,
+                {
+                    columnSpan: 2,
                     cssClass: "mycell"
                 }),
             new GridCellBox(sum, "sum-icon-cell", 2, 1,

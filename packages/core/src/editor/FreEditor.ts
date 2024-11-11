@@ -18,8 +18,8 @@ import {
     RoleProvider
 } from "./index.js";
 import { FreError, FreErrorSeverity } from "../validator/index.js";
-import { isExpressionPreOrPost, isNullOrUndefined } from "../util/index.js";
-import {FreErrorDecorator} from "./FreErrorDecorator.js";
+import { isExpressionPreOrPost, isNullOrUndefined, LEFT_MOST } from "../util/index.js";
+import { FreErrorDecorator } from "./FreErrorDecorator.js";
 
 const LOGGER = new FreLogger("FreEditor").mute();
 
@@ -57,7 +57,7 @@ export class FreEditor {
     private _selectedPosition: FreCaret = FreCaret.UNSPECIFIED; // The caret position within the _selectedBox.
     private NOSELECT: Boolean = false; // Do not accept "select" actions, used e.g. when an undo is going to come.
     private _errorDecorator: FreErrorDecorator = null;
-    private _errors: FreError[] = [];           
+    private _errors: FreError[] = [];
 
     /**
      * The constructor makes a number of private properties observable.
@@ -255,14 +255,14 @@ export class FreEditor {
     selectElementBox(node: FreNode, role: string, caretPosition?: FreCaret) {
         LOGGER.log(
             "selectElementBox " +
-                node?.freLanguageConcept() +
-                " with id " +
-                node?.freId() +
-                ", role: [" +
-                role +
-                "]" +
-                " " +
-                caretPosition,
+            node?.freLanguageConcept() +
+            " with id " +
+            node?.freId() +
+            ", role: [" +
+            role +
+            "]" +
+            " " +
+            caretPosition,
         );
         if (this.checkParam(node)) {
             const box: ElementBox = this.projection.getBox(node);
@@ -293,9 +293,12 @@ export class FreEditor {
      * Sets 'element' to be the selectedElement, and its first child, which is editable, to the selectedBox.
      * @param element
      */
-    selectFirstEditableChildBox(element: FreNode) {
+    selectFirstEditableChildBox(element: FreNode, skip: boolean = false) {
         if (this.checkParam(element)) {
-            const first = this.projection.getBox(element).firstEditableChild;
+            let first = this.projection.getBox(element).firstEditableChild;
+            if (skip && first.role === LEFT_MOST) {
+                first = first.nextLeafRight
+            }
             if (!isNullOrUndefined(first)) {
                 this._selectedBox = first;
                 this._selectedProperty = first.propertyName;
@@ -367,6 +370,9 @@ export class FreEditor {
     deleteBox(box: Box) {
         LOGGER.log("deleteBox " + box.id);
         const node: FreNode = box.node;
+        if (node.freIsUnit()) {
+            return
+        }
         const ownerDescriptor: FreOwnerDescriptor = node.freOwnerDescriptor();
         if (ownerDescriptor !== null) {
             const role: string = RoleProvider.property(ownerDescriptor.owner.freLanguageConcept(), ownerDescriptor.propertyName);
@@ -489,7 +495,7 @@ export class FreEditor {
         const next: Box = box?.nextLeafRight;
         LOGGER.log("Select next leaf is box " + next?.role);
         if (!isNullOrUndefined(next)) {
-            if (isExpressionPreOrPost(next)){
+            if (isExpressionPreOrPost(next)) {
                 // Special expression prefix or postfix box, don't select it
                 LOGGER.log(`selectNextleaf: skipping ${next.id} ${next.kind}`)
                 this.selectNextLeaf(next);
@@ -541,7 +547,7 @@ export class FreEditor {
         const y = box.actualY + this.scrollY;
         let result: Box = box.nextLeafLeft;
         let tmpResult = result;
-        LOGGER.log(`boxAbove ${box.role+ box.node.freId()}: actual (${box.actualX}, ${box.actualY}) scroll-relative (${x}, ${y})`);
+        LOGGER.log(`boxAbove ${box.role + box.node.freId()}: actual (${box.actualX}, ${box.actualY}) scroll-relative (${x}, ${y})`);
         while (result !== null) {
             LOGGER.log(`previous: ${result.role + result.node.freId()} result (${result.actualX}, ${result.actualY}) scroll-relative (${result.actualX + this.scrollX}, ${result.actualY + this.scrollY})`);
             if (FreEditor.isOnPreviousLine(tmpResult, result) && FreEditor.isOnPreviousLine(box, tmpResult)) {
@@ -572,22 +578,22 @@ export class FreEditor {
         let tmpResult = result;
         LOGGER.log(
             "boxBelow " +
-                box.role +
-                ": " +
-                Math.round(x) +
-                ", " +
-                Math.round(y) +
-                " text: " +
-                (isTextBox(box) ? box.getText() : "NotTextBox"),
+            box.role +
+            ": " +
+            Math.round(x) +
+            ", " +
+            Math.round(y) +
+            " text: " +
+            (isTextBox(box) ? box.getText() : "NotTextBox"),
         );
         while (result !== null) {
             LOGGER.log(
                 "next : " +
-                    result.role +
-                    "  " +
-                    Math.round(result.actualX + this.scrollX) +
-                    ", " +
-                    Math.round(result.actualY + this.scrollY),
+                result.role +
+                "  " +
+                Math.round(result.actualX + this.scrollX) +
+                ", " +
+                Math.round(result.actualY + this.scrollY),
             );
             if (FreEditor.isOnNextLine(tmpResult, result) && FreEditor.isOnNextLine(box, tmpResult)) {
                 LOGGER.log("Found box below 1 [" + (!!tmpResult ? tmpResult.role : "null") + "]");

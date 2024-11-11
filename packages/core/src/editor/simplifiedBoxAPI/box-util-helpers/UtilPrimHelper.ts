@@ -19,7 +19,7 @@ import { UtilCheckers } from "./UtilCheckers.js";
 import { FreLanguage, FreLanguageProperty } from "../../../language/index.js";
 import { RoleProvider } from "../RoleProvider.js";
 import { FreUtils } from "../../../util/index.js";
-import { CharAllowed } from "../../boxes/index.js";         
+import { CharAllowed } from "../../boxes/index.js";
 
 export class UtilPrimHelper {
     public static textBox(node: FreNode, propertyName: string, index?: number): TextBox {
@@ -151,7 +151,7 @@ export class UtilPrimHelper {
             return BoxFactory.text(
                 node,
                 roleName,
-                () => { 
+                () => {
                     const propValue = node[propertyName][index]
                     if (isNaN(propValue)) {
                         return ""

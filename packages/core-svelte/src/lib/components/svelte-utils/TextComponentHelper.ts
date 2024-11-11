@@ -6,28 +6,26 @@ import {
     FreEditor,
     FreErrorSeverity,
     FreLogger,
-    isActionBox,
     isActionTextBox,
-    TextBox,
+    TextBox
 } from "@freon4dsl/core";
 import { EventDispatcher } from "svelte";
-import { executeCustomKeyboardShortCut } from "./CommonFunctions.js";
+import { executeCustomKeyboardShortCut } from "$lib/components/svelte-utils/CommonFunctions.js";
+import { shouldBeHandledByBrowser } from "$lib/components/svelte-utils/KeystrokeStore.js";
 
-const LOGGER = new FreLogger("TextComponentHelper");
+const LOGGER = new FreLogger("TextComponentHelper")
 
 export class TextComponentHelper {
     // The box that is shown in the text component for which this instance is created
     private readonly _myBox: TextBox;
-    // Function that enables us to set the text variable in the TextComponent
-    // private _setText: (val: string) => boolean;
     // Function that enables us to get the value from the text variable in the TextComponent
     private readonly _getText: () => string;
+    // Function that enables us to determine whether the text variable in the TextComponent is different from the value stored in the model
+    private readonly _hasChanges: () => boolean;
     // Function that enables us to do everything that is needed when the editing of the TextComponent is in any way stopped.
     private readonly _endEditing: () => void;
     // The dispatcher that enables us to communicate with the surrounding TextDropdownComponent
     private readonly _dispatcher: EventDispatcher<any>;
-    // Indicates whether the text component is part of a TextDropdownComponent
-    private _isPartOfDropdown: boolean = false;
 
     // The cursor position, or when different from 'to', the start of the selected text.
     // Note that 'from <= to' always holds.
@@ -36,17 +34,15 @@ export class TextComponentHelper {
     // Note that 'from <= to' always holds.
     _to: number = -1;
 
-    constructor(
-        box: TextBox,
-        isPartOfDropdown,
+    constructor(box: TextBox,
         getText: () => string,
+        hasChanges: () => boolean,
         endEditing: () => void,
-        // textUpdateFunction: (p: { caret: number; content: string }) => boolean,
-        dispatcher: EventDispatcher<any>,
+        dispatcher: EventDispatcher<any>
     ) {
         this._myBox = box;
-        this._isPartOfDropdown = isPartOfDropdown;
         this._getText = getText;
+        this._hasChanges = hasChanges;
         this._endEditing = endEditing;
         this._dispatcher = dispatcher;
     }
@@ -69,22 +65,19 @@ export class TextComponentHelper {
 
     handleDelete(event: KeyboardEvent, editor: FreEditor) {
         LOGGER.log(`Delete`);
-        if (!event.ctrlKey && !event.altKey && event.shiftKey) {
-            // shift-delete
-            // TODO CUT
+        if (!event.ctrlKey && !event.altKey && event.shiftKey) { // shift-delete
+            this.cut();
         } else {
-            this._dispatcher("showDropdown");
+            this._dispatcher('showDropdown');
             this.getCaretPosition(event);
-            if (this._from < this._getText().length || this._from !== this._to) {
-                // some chars remain at the right, or several chars are selected
+            if (this._from < this._getText().length || (this._from !== this._to)) { // some chars remain at the right, or several chars are selected
                 // No need to adjust the caret position, the char will be deleted *after* the caret
                 LOGGER.log(`handleDelete, caret: ${this._from}-${this._to}`);
                 // Without propagation but with event Default, the browser handles which char(s) to be deleted.
                 // With event.ctrlKey: delete text from caret to start, is also handled by the browser.
                 event.stopPropagation();
                 // If needed, the afterUpdate function dispatches a 'textUpdate' to the parent TextDropdownComponent
-            } else {
-                // nothing left in this component to delete at the right
+            } else { // nothing left in this component to delete at the right
                 event.preventDefault();
                 event.stopPropagation();
             }
@@ -92,10 +85,9 @@ export class TextComponentHelper {
     }
 
     handleBackSpace(event: KeyboardEvent, editor: FreEditor) {
-        this._dispatcher("showDropdown");
+        this._dispatcher('showDropdown');
         this.getCaretPosition(event);
-        if (this._from > 0 || this._from !== this._to) {
-            // some chars remain at the left, or several chars are selected
+        if (this._from > 0 || (this._from !== this._to)) { // some chars remain at the left, or several chars are selected
             if (this._from === this._to) {
                 // Adjust the caret position to take into account the deleted char, because it is *before* the current caret
                 this._from -= 1;
@@ -106,8 +98,7 @@ export class TextComponentHelper {
             // With event.ctrlKey: delete text from caret to start, is also handled by the browser.
             event.stopPropagation();
             // If needed, the afterUpdate function dispatches a 'textUpdate' to the parent TextDropdownComponent
-        } else {
-            // nothing left in this component to delete at the left
+        } else { // nothing left in this component to delete at the left
             event.preventDefault();
             event.stopPropagation();
         }
@@ -118,10 +109,10 @@ export class TextComponentHelper {
         editor.selectPreviousLeafIncludingExpressionPreOrPost();
         LOGGER.log(htmlId + "    PREVIOUS LEAF IS " + editor.selectedBox.role);
         if (isActionTextBox(editor.selectedBox)) {
-            const actionBox = (editor.selectedBox as TextBox).parent as ActionBox;
-            const executionResult: BehaviorExecutionResult = actionBox.tryToExecute(event.key, editor);
+            const actionBox = (editor.selectedBox as TextBox).parent as ActionBox
+            const executionResult: BehaviorExecutionResult = actionBox.tryToExecute(event.key, editor)
             if (executionResult !== BehaviorExecutionResult.EXECUTED) {
-                actionBox.setCaret(FreCaret.LEFT_MOST, editor);
+                actionBox.setCaret(FreCaret.LEFT_MOST, editor)
             }
         }
         event.preventDefault();
@@ -129,15 +120,15 @@ export class TextComponentHelper {
     }
 
     handleGoToNext(event: KeyboardEvent, editor: FreEditor, htmlId: string) {
-        LOGGER.log("handleGoToNext event " + event.key);
+        LOGGER.log("handleGoToNext event " + event.key)
         this._endEditing();
         editor.selectNextLeafIncludingExpressionPreOrPost();
         LOGGER.log(htmlId + "    NEXT LEAF IS " + editor.selectedBox.role);
         if (isActionTextBox(editor.selectedBox)) {
-            const actionBox = (editor.selectedBox as TextBox).parent as ActionBox;
-            const executionResult: BehaviorExecutionResult = actionBox.tryToExecute(event.key, editor);
+            const actionBox = (editor.selectedBox as TextBox).parent as ActionBox
+            const executionResult: BehaviorExecutionResult = actionBox.tryToExecute(event.key, editor)
             if (executionResult !== BehaviorExecutionResult.EXECUTED) {
-                actionBox.setCaret(FreCaret.RIGHT_MOST, editor);
+                actionBox.setCaret(FreCaret.RIGHT_MOST, editor)
             }
         }
         event.preventDefault();
@@ -151,104 +142,71 @@ export class TextComponentHelper {
         // first check if this event has a command defined for it
         executeCustomKeyboardShortCut(event, 0, this._myBox, editor); // this method will stop the event from propagating, but does not prevent default!!
         // next handle any key that should have a special effect within the text
-        // todo see which of these can need not be handled here, and can bubble up to FreonComponent
+        this.getCaretPosition(event);
+        // see which of these need to be handled here, and which can bubble up to FreonComponent or to the browser
         if (event.ctrlKey) {
             if (!event.altKey) {
-                if (event.key === "z") {
-                    // ctrl-z
-                    // UNDO handled by browser
-                } else if (event.key === "h") {
-                    // ctrl-h
-                    // todo SEARCH
-                    event.stopPropagation();
-                } else if (event.key === "y") {
-                    // ctrl-y
-                    // todo REDO
-                    event.stopPropagation();
-                } else if (event.key === "x") {
-                    // ctrl-x
-                    // todo CUT
-                    event.stopPropagation();
-                } else if (event.key === "x") {
-                    // ctrl-a
-                    // todo SELECT ALL in focused control
-                    event.stopPropagation();
-                } else if (event.key === "c") {
-                    // ctrl-c
-                    // COPY
-                    event.stopPropagation();
-                    navigator.clipboard
-                        .writeText(this._getText()) // TODO get only the selected text from document.getSelection
-                        .then(() => {
-                            editor.setUserMessage("Text copied to clipboard", FreErrorSeverity.Info);
-                        })
-                        .catch((err) => {
-                            editor.setUserMessage("Error in copying text: " + err.message);
-                        });
-                } else if (event.key === "v") {
-                    // ctrl-v
-                    // PASTE
-                    event.stopPropagation();
-                    event.preventDefault(); // the default event causes extra <span> elements to be added
-
-                    // clipboard.readText does not work in Firefox
-                    // Firefox only supports reading the clipboard in browser extensions, using the "clipboardRead" extension permission.
-                    // TODO add a check on the browser used
-                    // navigator.clipboard.readText().then(
-                    // 		clipText => LOGGER.log('adding ' + clipText + ' after ' + this._getText()[to - 1]));
-                    // TODO add the clipText to 'text'
+                switch (event.key) {
+                    case 'z': // ctrl-z
+                    case 'y': // ctrl-y
+                        shouldBeHandledByBrowser.set(this._hasChanges());
+                        break;
+                    case 'x': // ctrl-x
+                        this.cut();
+                        break;
+                    case 'a': // ctrl-a
+                        // todo SELECT ALL in focused control
+                        break;
+                    case 'c': // ctrl-c
+                        this.copy(event, editor);
+                        break;
+                    case 'v': // ctrl-v
+                        this.paste(event);
+                        break;
                 }
-            } else {
-                // !!event.altKey
-                if (event.key === "z") {
-                    // ctrl-alt-z
-                    // REDO handled by browser
+            } else { // !!event.altKey
+                if (event.key === 'z') { // ctrl-alt-z
+                    shouldBeHandledByBrowser.set(this._hasChanges());
                 }
             }
         } else {
-            if (event.altKey && event.key === BACKSPACE) {
-                // alt-backspace
-                // TODO UNDO
-            } else if (!event.ctrlKey && event.altKey && event.shiftKey) {
-                // alt-shift-backspace
-                // TODO REDO
+            if (event.altKey && event.key === BACKSPACE) { // alt-backspace
+                shouldBeHandledByBrowser.set(this._hasChanges());
+            } else if (!event.ctrlKey && event.altKey && event.shiftKey) { // alt-shift-backspace
+                shouldBeHandledByBrowser.set(this._hasChanges());
             }
         }
     }
 
     handleArrowLeft(event: KeyboardEvent) {
-        this._dispatcher("showDropdown");
+        this._dispatcher('showDropdown');
         this.getCaretPosition(event);
         LOGGER.log(`handleArrowLeft, caret: ${this._from}-${this._to}`);
-        if (this._from !== 0) {
-            // when the arrow key can stay within the text, do not let the parent handle it
+        if (this._from !== 0) { // when the arrow key can stay within the text, do not let the parent handle it
             event.stopPropagation();
             // note: caret is set to one less because getCaretPosition is calculated before the event is executed
             this._from -= 1;
             this._to -= 1;
-            LOGGER.log(`caretChanged from handleArrowLeft, caret: ${this._from}-${this._to}`);
-            this._dispatcher("caretChanged", { content: this._getText(), caret: this._from });
-        } else {
-            // the key will cause this element to lose focus, its content should be saved
+            LOGGER.log(`caretChanged from handleArrowLeft, caret: ${this._from}-${this._to}`)
+            this._dispatcher('caretChanged', { content: this._getText(), caret: this._from });
+        } else { // the key will cause this element to lose focus, its content should be saved
             this._endEditing();
             // let the parent take care of handling the event
         }
     }
 
     handleArrowRight(event: KeyboardEvent) {
-        this._dispatcher("showDropdown");
+        this._dispatcher('showDropdown');
         this.getCaretPosition(event);
         LOGGER.log(`handleArrowRight, caret: ${this._from}-${this._to}`);
-        if (this._from !== this._getText().length) {
-            // when the arrow key can stay within the text, do not let the parent handle it
+        if (this._from !== this._getText().length) { // when the arrow key can stay within the text, do not let the parent handle it
             event.stopPropagation();
             // note: caret is set to one more because getCaretPosition is calculated before the event is executed
             this._from += 1;
             this._to += 1;
-            LOGGER.log(`caretChanged from handleArrowLeft, caret: ${this._from}-${this._to}`);
-            this._dispatcher("caretChanged", { content: this._getText(), caret: this._from });
-        } else {
-            // the key will cause this element to lose focus, its content should be saved
+            LOGGER.log(`caretChanged from handleArrowLeft, caret: ${this._from}-${this._to}`)
+            this._dispatcher('caretChanged', { content: this._getText(), caret: this._from });
+        } else { // the key will cause this element to lose focus, its content should be saved
             this._endEditing();
             // let the parent take care of handling the event
         }
@@ -286,4 +244,50 @@ export class TextComponentHelper {
     isTextEmpty(): boolean {
         return this._getText() === "" || !this._getText();
     }
+
+    /**
+     * This function determines where the current keystroke event should be handled.
+     * It is used for keystrokes that are not directly handled by the corresponding TextComponent,
+     * but are either handled by the browser, e.g. an undo in the input text, or by the surrounding
+     * FreonComponent, e.g. an undo when there are no changes in the input text left that could be undone.
+     * @private
+     */
+
+
+    /**
+     * Like setHandler(), this function determines where the current keystroke event should be handled.
+     * However, the condition for the choice is a different one.
+     * @private
+     */
+    private cut() {
+        if (this._from !== this._to) { // handled by browser
+            shouldBeHandledByBrowser.set(true);
+        } else { // handled by FreonComponent
+            shouldBeHandledByBrowser.set(false);
+        }
+    }
+
+    private paste(event: KeyboardEvent) {
+        event.stopPropagation();
+        event.preventDefault(); // the default event causes extra <span> elements to be added
+
+        // clipboard.readText does not work in Firefox
+        // Firefox only supports reading the clipboard in browser extensions, using the "clipboardRead" extension permission.
+        // TODO add a check on the browser used
+        // navigator.clipboard.readText().then(
+        // 		clipText => LOGGER.log('adding ' + clipText + ' after ' + this._getText()[to - 1]));
+        // TODO add the clipText to 'text'
+    }
+
+    private copy(event: KeyboardEvent, editor: FreEditor) {
+        event.stopPropagation();
+        navigator.clipboard.writeText(this._getText()) // TODO get only the selected text from document.getSelection
+            .then(() => {
+                editor.setUserMessage('Text copied to clipboard', FreErrorSeverity.Info);
+            })
+            .catch(err => {
+                editor.setUserMessage('Error in copying text: ' + err.message);
+            });
+    }
 }
+

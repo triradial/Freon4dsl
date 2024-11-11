@@ -215,10 +215,8 @@ export abstract class Box {
         }
         const thisIndex: number = this.parent.children.indexOf(this);
         if (thisIndex === -1) {
-            LOGGER.error(
-                `nextLeafLeft: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `,
-            );
-            return null;
+            LOGGER.error(`nextLeafLeft: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `);
+            return null
         }
         const leftSiblings: Box[] = this.parent.children.slice(0, thisIndex).reverse();
         for (const sibling of leftSiblings) {
@@ -406,8 +404,7 @@ export abstract class Box {
         for (const action of editor.newFreActions.filter((action) => action.activeInBoxRoles.includes(this.role) && action.trigger === trigger)) {
             let postAction: FrePostAction = null;
             runInAction(() => {
-                const command = action.command();
-                postAction = command.execute(this, trigger, editor, -1);
+                action.execute(this, trigger, editor, -1);
             });
             if (!!postAction) {
                 postAction();

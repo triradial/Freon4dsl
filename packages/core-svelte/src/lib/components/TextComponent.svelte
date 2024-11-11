@@ -86,7 +86,7 @@
      * It is called from the box.
      */
     export async function setFocus(): Promise<void> {
-        LOGGER.log("setFocus " + id + " input is there: " + !!inputElement);
+        //console.log("TextComponent.setFocus "+ id + " input is there: " + !!inputElement);
         if (!!inputElement) {
             inputElement.focus();
             if (focusMode === "start") {
@@ -100,6 +100,22 @@
             editStart = true;
             originalText = text;
             setCaret(editor.selectedCaretPosition);
+        }
+    }
+
+    /**
+     * This function ensures that 'from <= to' always holds.
+     * Should be called whenever these variables are set.
+     * @param inFrom
+     * @param inTo
+     */
+    function setFromAndTo(inFrom: number, inTo: number) {
+        if (inFrom < inTo) {
+            from = inFrom;
+            to = inTo;
+        } else {
+            from = inTo;
+            to = inFrom;
         }
     }
 
@@ -171,10 +187,12 @@
      * @param event
      */
     function onClick(event: MouseEvent) {
-        LOGGER.log("onClick: ");
+        LOGGER.log("onClick enter ");
         if (!!inputElement) {
-            LOGGER.log("onClick: " + id + ", " + inputElement?.selectionStart + ", " + inputElement?.selectionEnd);
+            //LOGGER.log('onClick: for input element ' + id + ', ' + inputElement?.selectionStart + ", " + inputElement?.selectionEnd);
             myHelper.setFromAndTo(inputElement.selectionStart, inputElement.selectionEnd);
+        } else {
+            LOGGER.log("onClick without input");
         }
         if (partOfDropdown) {
             // let TextDropdownComponent know, dropdown menu needs to be altered
@@ -212,6 +230,9 @@
         }
     }
 
+    const onKeyDownSpan = (event: KeyboardEvent) => {
+        LOGGER.log(`${id}: onKeyDownSpan: [${event.key}] alt [${event.altKey}] shift [${event.shiftKey}] ctrl [${event.ctrlKey}] meta [${event.metaKey}]`);
+    };
     /**
      * This function handles any keyboard event that occurs within the <input> element.
      * Note, we use onKeyDown, because onKeyPress is deprecated.
@@ -223,7 +244,9 @@
         // stopPropagation on an element will stop that event from happening on the parent (the entire ancestors),
         // preventDefault on an element will stop the event on the element, but it will happen on it's parent (and the ancestors too!)
         LOGGER.log(`${id}: onKeyDown: [${event.key}] alt [${event.altKey}] shift [${event.shiftKey}] ctrl [${event.ctrlKey}] meta [${event.metaKey}]`);
-        if (event.key === SHIFT || event.key === CONTROL || event.key === ALT) {
+        if (event.key === TAB) {
+            // Do nothing, browser handles this
+        } else if (event.key === SHIFT || event.key === CONTROL || event.key === ALT) {
             // ignore meta keys
             LOGGER.log("META KEY: stop propagation");
             event.stopPropagation();
@@ -241,13 +264,9 @@
                 }
                 case ARROW_DOWN:
                 case ARROW_UP:
-                case ENTER:
-                case TAB: {
-                    // NOTE Not needed as the TAB will be handled by the FreonComponent, and if it leaves
-                    // the textbox, a focusOut will occurr, which does exaclt the same.
-                    // if (!partOfDropdown && isEditing) {
-                    // 	endEditing(); // do not switch selection, this will be done by FreonComponent
-                    // } // else, let TextDropDownComponent or FreonComponent (in case of TAB) handle this
+                case ENTER: {
+                    // NOTE No explicit call to endEditing needed, as these events are handled by the FreonComponent,
+                    // and if the selection leaves this textbox, a focusOut event will occur, which does exactly this.
                     break;
                 }
                 case ARROW_LEFT: {
@@ -311,6 +330,15 @@
             dispatcher("focusOutTextComponent");
         }
     };
+    const onFocusIn = () => {
+        LOGGER.log(`onFocusIn ${id}: ` + " partof:" + partOfDropdown + " isEditing:" + isEditing);
+        editor.selectElementForBox(box);
+    };
+    const onFocusInSpan = (event: FocusEvent) => {
+        LOGGER.log(`onFocusInSpan ${id}: ` + " partof:" + partOfDropdown + " isEditing:" + isEditing);
+        editor.selectElementForBox(box);
+        // startEditing(event)
+    };
 
     const refresh = (why?: string) => {
         LOGGER.log(`${id}: REFRESH why ${why}: (${box?.node?.freLanguageConcept()}) boxtext '${box.getText()}' text '${text}'`);
@@ -327,7 +355,6 @@
         }
         boxType = box.parent instanceof ActionBox ? "action" : box.parent instanceof SelectBox ? "select" : "text";
         setInputWidth();
-        // cssClass = box.cssClass;
     };
 
     /**
@@ -452,6 +479,7 @@
         //textUpdateFunction({ content: newtext});
     }
 
+    const tabindex = box.role.startsWith("action-binary") || box.role.startsWith("action-exp") ? -1 : 0;
     refresh();
 </script>
 
@@ -472,6 +500,7 @@
                     on:input={onInput}
                     bind:value={text}
                     on:focusout={onFocusOut}
+                    on:focusin={onFocusIn}
                     on:keydown={onKeyDown}
                     draggable="true"
                     on:dragstart={onDragStart}
@@ -486,9 +515,12 @@
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
             <span
                 class="{box.role} text-box-{boxType} text-component-text {errorCls}"
-                on:click={startEditing}
+                on:mousedown={onClick}
+                on:focusin={onFocusInSpan}
+                {tabindex}
                 bind:this={spanElement}
                 contenteditable="true"
+                on:keydown={onKeyDownSpan}
                 spellcheck="false"
                 id="{id}-span"
                 role="none"

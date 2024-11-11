@@ -1,21 +1,21 @@
 {
   "compilerOptions": {
-    "composite": true,                              /* Enable project compilation */
+    "composite": true, /* Enable project compilation */
     "noEmit": false
   },
   "exclude": [
-//    "Calculator",
-//    "RulesLanguage",
-//    "DocuProject",
-//    "Education",
-//    "Calculator",
-//    "Examples",
-//    "ExpressionLibrary",
-//    "ExpTest",
-//    "UnusedOrInvalid/*",
-//    "heat",
-//    "Json",
-//    "MpsExpressions",
-//    "Octopus"
+    //    "Calculator",
+    //    "RulesLanguage",
+    //    "DocuProject",
+    //    "Education",
+    //    "Calculator",
+    //    "Examples",
+    //    "ExpressionLibrary",
+    //    "ExpTest",
+    //    "UnusedOrInvalid/*",
+    //    "heat",
+    //    "Json",
+    //    "MpsExpressions",
+    //    "Octopus"
   ]
 }

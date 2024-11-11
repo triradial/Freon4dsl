@@ -46,11 +46,11 @@ export class TextBox extends Box {
     getText(): string {
         return this.$_getText();
     }
-    
-    set $getText( value: () => string ) {
+
+    set $getText(value: () => string) {
         const oldvalue = this.$_getText()
         this.$_getText = value;
-        autorun( () => {
+        autorun(() => {
             const newvalue = this.$_getText()
             LOGGER.log(`old '${oldvalue}'  new '${newvalue}'`)
             this.isDirty()

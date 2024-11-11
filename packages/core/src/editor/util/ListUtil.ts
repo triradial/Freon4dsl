@@ -11,7 +11,7 @@ import { MetaKey } from "./Keys.js";
 import { FreLogger } from "../../logging/index.js";
 import { ListElementInfo, MenuItem, FreCreatePartAction, FreEditor } from "../index.js";
 import { FreLanguage, FreLanguageClassifier, PropertyKind } from "../../language/index.js";
-import { /* FreNamedNode, */ FreNode } from "../../ast/index.js";
+import { FreNode } from "../../ast/index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
 
 const LOGGER = new FreLogger("ListUtil");
@@ -105,10 +105,10 @@ export function dropListElement(
         // check if item may be dropped here
         editor.setUserMessage(
             "Drop is not allowed here, because the types do not match (" +
-                dropped.element.freLanguageConcept() +
-                " does not conform to " +
-                targetMetaType +
-                ").",
+            dropped.element.freLanguageConcept() +
+            " does not conform to " +
+            targetMetaType +
+            ").",
             FreErrorSeverity.Error,
         );
         return;
@@ -123,7 +123,7 @@ export function dropListElement(
         // Note that we need not explicitly remove the item from its old position, the mobx decorators do that.
         // Note that because of the placeholder that is shown as last element of a list, the targetIndex may be equal to the property.length.
         if (isList && targetIndex <= property.length) {
-            AST.change( () => {
+            AST.change(() => {
                 property.splice(targetIndex, 0, dropped.element);
             })
         }
@@ -168,7 +168,7 @@ export function getContextMenuOptions(
         "No options available",
         "",
         // @ts-ignore
-        (element: FreNode, index: number, editor: FreEditor) => {},
+        (element: FreNode, index: number, editor: FreEditor) => { },
     );
     if (clsOtIntf === undefined || clsOtIntf === null) {
         console.error("Unexpected: Cannot find class or interface for [" + conceptName + "]");
@@ -212,7 +212,7 @@ export function getContextMenuOptions(
             `Add before ${contextMsg}`,
             "Ctrl+A",
             // @ts-ignore
-            (element: FreNode, index: number, editor: FreEditor) => {},
+            (element: FreNode, index: number, editor: FreEditor) => { },
             submenuItemsBefore,
         );
         // @ts-ignore
@@ -220,7 +220,7 @@ export function getContextMenuOptions(
             `Add after ${contextMsg}`,
             "Ctrl+I",
             // @ts-ignore
-            (element: FreNode, index: number, editor: FreEditor) => {},
+            (element: FreNode, index: number, editor: FreEditor) => { },
             submenuItemsAfter,
         );
     } else {
@@ -250,7 +250,7 @@ export function getContextMenuOptions(
         "Paste after",
         "",
         // @ts-ignore
-        (element: FreNode, index: number, editor: FreEditor) => 
+        (element: FreNode, index: number, editor: FreEditor) =>
             pasteListElement(listParent, propertyName, index, editor, false),
     );
     const smartDup = new MenuItem(
@@ -261,7 +261,7 @@ export function getContextMenuOptions(
             copyListElement(element, editor);
             smartDuplicate(element, editor.copiedElement);
             pasteListElement(listParent, propertyName, index, editor, false);
-        }       
+        }
     );
     // now create the whole item list
     if (optionsType === MenuOptionsType.placeholder) {
@@ -441,10 +441,10 @@ function pasteListElement(
     if (!FreLanguage.getInstance().metaConformsToType(editor.copiedElement, type)) {
         editor.setUserMessage(
             "Types do not conform (" +
-                editor.copiedElement.freLanguageConcept() +
-                " does not conform to " +
-                type +
-                ").",
+            editor.copiedElement.freLanguageConcept() +
+            " does not conform to " +
+            type +
+            ").",
             FreErrorSeverity.Error,
         );
         return;

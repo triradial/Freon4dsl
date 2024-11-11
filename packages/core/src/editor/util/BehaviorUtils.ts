@@ -34,17 +34,16 @@ export function executeBehavior(box: Box, text: string, label: string, editor: F
                 const matchArray = label.match(trigger);
                 LOGGER.log(
                     "executeBehavior: MATCH " +
-                        label +
-                        " against " +
-                        trigger +
-                        "  results in " +
-                        (!!matchArray ? matchArray.length : "null"),
+                    label +
+                    " against " +
+                    trigger +
+                    "  results in " +
+                    (!!matchArray ? matchArray.length : "null"),
                 );
                 let execresult: FrePostAction = null;
                 if (matchArray !== null && label === matchArray[0]) {
                     runInAction(() => {
-                        const command = action.command();
-                        execresult = command.execute(box, label, editor, index);
+                        execresult = action.execute(box, label, editor, index);
                     });
                     if (!!execresult) {
                         execresult();
@@ -53,17 +52,10 @@ export function executeBehavior(box: Box, text: string, label: string, editor: F
                 }
             } else if (isString(trigger)) {
                 if (trigger === text) {
-                    LOGGER.log(
-                        "executeBehavior: MATCH FULL TEXT label [" +
-                            label +
-                            "] refShortcut [" +
-                            action.referenceShortcut +
-                            "]",
-                    );
+                    LOGGER.log(`  executeBehavior: MATCH DFULL TEXT label [${label}] refshortcut [${action.referenceShortcut}]`);
                     let postAction: FrePostAction;
                     runInAction(() => {
-                        const command = action.command();
-                        postAction = command.execute(box, label, editor, index);
+                        postAction = action.execute(box, label, editor, index);
                     });
                     postAction();
                     return BehaviorExecutionResult.EXECUTED;
@@ -74,7 +66,7 @@ export function executeBehavior(box: Box, text: string, label: string, editor: F
             }
         }
     }
-    LOGGER.log("executeBehavior: no action match, ;partial is " + partialMatch);
+    LOGGER.log("  executeBehavior: no action match, partial is " + partialMatch);
     if (partialMatch) {
         return BehaviorExecutionResult.PARTIAL_MATCH;
     } else {
@@ -96,19 +88,12 @@ export function executeSingleBehavior(
     label: string,
     editor: FreEditor,
 ): BehaviorExecutionResult {
-    LOGGER.log(
-        "Enter executeSingleBehavior label [" +
-            label +
-            "] refshortcut [" +
-            action.referenceShortcut +
-            "]",
-    );
+    LOGGER.log(`Enter executeSingleBehavior label [${label}] refshortcut [${action.referenceShortcut}]`);
     let execresult: FrePostAction;
 
     const index = -1; // todo get the correct index
     AST.change(() => {
-        const command = action.command();
-        execresult = command.execute(box, label, editor, index);
+        execresult = action.execute(box, label, editor, index);
     });
     if (!!execresult) {
         execresult();
