@@ -1,6 +1,4 @@
 import App from "./App.svelte";
-import { Amplify } from "aws-amplify";
-import awsconfig from "../amplifyconfiguration.json";
 
 import { WebappConfigurator } from "@freon4dsl/webapp-lib";
 import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
@@ -30,8 +28,6 @@ setCustomComponents([
     { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
     { component: TimePicker, knownAs: "TimePicker" },
 ]);
-
-Amplify.configure(awsconfig);
 
 async function initializeApp() {
 
