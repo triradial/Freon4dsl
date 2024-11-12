@@ -73,9 +73,11 @@
     // We create an extra object that handles a number of the more complex functions for this component
     let myHelper: TextComponentHelper = new TextComponentHelper(
         box,
-        partOfDropdown,
         () => {
             return text;
+        },
+        () => {
+            return originalText !== text;
         },
         endEditing,
         dispatcher,
@@ -103,21 +105,21 @@
         }
     }
 
-    /**
-     * This function ensures that 'from <= to' always holds.
-     * Should be called whenever these variables are set.
-     * @param inFrom
-     * @param inTo
-     */
-    function setFromAndTo(inFrom: number, inTo: number) {
-        if (inFrom < inTo) {
-            from = inFrom;
-            to = inTo;
-        } else {
-            from = inTo;
-            to = inFrom;
-        }
-    }
+    // /**
+    //  * This function ensures that 'from <= to' always holds.
+    //  * Should be called whenever these variables are set.
+    //  * @param inFrom
+    //  * @param inTo
+    //  */
+    // function setFromAndTo(inFrom: number, inTo: number) {
+    //     if (inFrom < inTo) {
+    //         from = inFrom;
+    //         to = inTo;
+    //     } else {
+    //         from = inTo;
+    //         to = inFrom;
+    //     }
+    // }
 
     /**
      * This function sets the caret position of the <input> element programmatically.
@@ -513,6 +515,7 @@
 				 But ... this is only a problem when this component is inside a draggable element (like List or table)
 			-->
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
             <span
                 class="{box.role} text-box-{boxType} text-component-text {errorCls}"
                 on:mousedown={onClick}
