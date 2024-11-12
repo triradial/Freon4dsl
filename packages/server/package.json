@@ -44,6 +44,7 @@
     "@azure/storage-blob": "^12.25.0",
     "@freon4dsl/core": "1.0.0-beta1",
     "@freon4dsl/samples-study-configuration": "1.0.0-beta1",
+    "@freon4dsl/samples-conformance-rules": "1.0.0-beta1",
     "@koa/cors": "^5.0.0",
     "@lionweb/validation": "^0.6.3",
     "@types/koa": "^2.13.4",

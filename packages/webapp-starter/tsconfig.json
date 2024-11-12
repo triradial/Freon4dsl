@@ -3,7 +3,8 @@
     "src",
     "src/**/*",
     "src/@types/svg.d.ts",
-    "../samples/StudyConfiguration/src/custom/extensions"
+    "../samples/StudyConfiguration/src/custom/extensions",
+    "../samples/ConformanceRules/src/custom/extensions"
   ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
