@@ -79,7 +79,7 @@ Reference {
 }
 CheckRule {
   [
-    Check: ( ${conformanceExpression} )
+    Check:  ${conformanceExpression} 
   ]
   trigger = "check"
 }

@@ -42,7 +42,7 @@ YNLiteralExpression {
 
 GroupedExpression {
     [( ${inner} )]
-    trigger = "()"
+    trigger = "() parenthesis"
 }
 
 NotExpression {
@@ -59,8 +59,13 @@ MinusExpression {
 }
 
 StringLiteralExpression {
-    ['${value}']
+    [\"${value}\"]
     trigger = "string"
+}
+
+ExistsExpression {
+    ['${value}' exists]
+    trigger = "exists"
 }
 
 BooleanLiteralExpression {
@@ -97,7 +102,7 @@ EqualsExpression {
 }
 
 NotEqualsExpression {
-    symbol = "!="
+    symbol = "^="
 }
 
 
