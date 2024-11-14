@@ -93,7 +93,9 @@ export class EditorState {
             this.resetGlobalVariables();
             // create a new model
             await this.modelStore.createModel(modelName);
-            await this.newStudyConfigurationModelUnits();
+            if (modelName === "StudyConfiguration") {
+                await this.newStudyConfigurationModelUnits();
+            }
             editorProgressShown.set(false);
         } catch (error) {
             LOGGER.error("Error in newModel: " + error);

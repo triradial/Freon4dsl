@@ -24,9 +24,6 @@ expression GroupedExpression base ConformanceExpression {
     inner: ConformanceExpression;
 }
 
-expression NotEqualsExpression base ConformanceExpression{
-}
-
 expression NotExpression base ConformanceExpression {
     priority = 20;
 }
@@ -36,6 +33,10 @@ expression YNLiteralExpression base ConformanceExpression {
 }
 
 expression StringLiteralExpression base ConformanceExpression {
+    value: string;
+}
+
+expression ExistsExpression base ConformanceExpression {
     value: string;
 }
 
@@ -84,6 +85,10 @@ binary expression GreaterThenExpression base ComparisonExpression {
 }
 
 binary expression EqualsExpression base ComparisonExpression {
+    priority = 2;
+}
+
+binary expression NotEqualsExpression base ComparisonExpression{
     priority = 2;
 }
 
