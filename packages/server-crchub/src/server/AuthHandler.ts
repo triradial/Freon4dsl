@@ -30,12 +30,17 @@ export class AuthHandler {
     private static async authenticate(username: string, password: string) {
         try {
             // Check if we're in local environment
-            if (process.env.ENVIRONMENT === 'local') {
+            if (process.env.AZURE_ENVIRONMENT === 'local') {
+                console.log('Auth Environment:', {
+                    environment: process.env.AZURE_ENVIRONMENT,
+                    username: username,
+                    password: password
+                });
                 if (password === '#2Pencil' && username.endsWith('@triradialapps.onmicrosoft.com')) {
                     const localUser = username.split('@')[0].toLowerCase();
                     switch (localUser) {
-                        case 'graham': return { token: "fa12eb", uid: "3a165" };
-                        case 'mike': return { token: "ea12eb", uid: "3e165" };
+                        case 'graham': return { token: "fa12eb", uid: "d1537092-f9a9-4516-a8b5-bf4c52a16c28" };
+                        case 'mike': return { token: "ea12eb", uid: "42825aeb-bb4c-4c4c-b775-4e4f6d2f8526" };
                         default: return false;
                     }
                 }
@@ -50,6 +55,7 @@ export class AuthHandler {
             const tokenEndpoint = tokenEndpointTemplate?.replace('${tenantID}', tenantID ?? '');
 
             console.log('Auth Environment:', {
+                environment: process.env.AD_ENVIRONMENT,
                 clientId: clientId,
                 tokenEndpoint: tokenEndpoint,
                 username: username,

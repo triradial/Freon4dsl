@@ -23,7 +23,7 @@ export const environments: Record<Environment, EnvironmentConfig> = {
         serverTimeout: 2000,
         corsOrigins: ["http://127.0.0.1:8004", "http://localhost:8004", "http://127.0.0.1:8000", "http://localhost:8000"],
         logLevel: "debug",
-        storage: "azure", // 'azure' or 'local'
+        storage: "local", // 'azure' or 'local'
     },
     development: {
         serverUrl: "https://crchub-server.azurewebsites.net",
