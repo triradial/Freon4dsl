@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { studies } from "../../services/dataStore.js";
+    import { dataStore } from "../../services/dataStore.js";
     import { editObject } from "../../services/objectDrawerStore.js";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
@@ -19,7 +19,7 @@
     let studiesData: any[] = [];
 
     $: {
-        studiesData = $studies;
+        studiesData = $dataStore.studies;
         updateGridData();
     }
 

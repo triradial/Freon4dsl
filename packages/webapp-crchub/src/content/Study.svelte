@@ -10,7 +10,7 @@
 
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faUser, faSwatchbook, faSave, faRedo, faUndo } from "@fortawesome/free-solid-svg-icons";
-    import { getStudy } from "../services/dataStore.js";
+    import { dataStore, type Study } from "../services/dataStore.js";
 
     import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
@@ -21,7 +21,8 @@
     import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/sideDrawerStore.js";
 
     export let id: string;
-    let study: any;
+
+    let study: Study | undefined;
     let editorLoaded = false;
 
     let modelManager = EditorState.getInstance();
@@ -40,7 +41,11 @@
 
     onMount(async () => {
         // get the study data
-        study = await getStudy(id);
+        study = await dataStore.getStudy(id);
+        if (!study) {
+            console.error(`Study with id ${id} not found`);
+            return;
+        }
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         // Get the model data for the study
         const result = await modelManager.openUnitForModel(study.id, "StudyConfiguration");

@@ -3,7 +3,7 @@
     import { ROUTE } from "../constants/routeConstants.js";
     import { LABEL } from "../constants/labelConstants.js";
 
-    import { getStudy, type Study, getPatient, type Patient } from "../services/dataStore.js";
+    import { dataStore, type Study, type Patient } from "../services/dataStore.js";
     import { addDrawer, setDrawerVisibility } from "../services/sideDrawerStore.js";
 
     import NavBar from "../components/common/NavBar.svelte";
@@ -115,7 +115,7 @@
             case ROUTE.STUDY:
                 contentComponent = StudyContent as typeof SvelteComponent;
                 try {
-                    study = await getStudy(id);
+                    study = await dataStore.getStudy(id);
                     if (study) {
                         studyName = study.name;
                         breadcrumbItems = [{ label: LABEL.STUDIES, href: "/" + ROUTE.STUDIES }, { label: LABEL.STUDY + ": " + studyName }];
@@ -129,11 +129,11 @@
                 break;
             case ROUTE.PATIENT:
                 contentComponent = PatientContent as typeof SvelteComponent;
-                patient = await getPatient(id);
+                patient = await dataStore.getPatient(id);
                 if (patient) {
                     patientName = patient.name;
                     studyId = patient.studyId;
-                    study = await getStudy(patient.studyId);
+                    study = await dataStore.getStudy(patient.studyId);
                     if (study) {
                         studyName = study.name;
                         breadcrumbItems = [

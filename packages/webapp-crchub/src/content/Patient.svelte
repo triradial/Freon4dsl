@@ -5,7 +5,7 @@
     import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faListCheck, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
-    import { getPatient, type Patient } from "../services/dataStore.js";
+    import { dataStore, type Patient } from "../services/dataStore.js";
 
     import { EditorState } from "@freon4dsl/webapp-lib";
     import { RtString } from "@freon4dsl/core";
@@ -33,7 +33,7 @@
     import { getChartWithPatientHistory } from "../services/utils.js";
 
     export let id: string;
-    let patient: Patient;
+    let patient: Patient | undefined;
 
     let isLoading = true;
     let showChart = false;
@@ -42,13 +42,13 @@
     let container: HTMLElement | null = null;
 
     onMount(async () => {
-        const fetchedPatient = await getPatient(id);
+        const fetchedPatient = await dataStore.getPatient(id);
         if (fetchedPatient) {
             patient = fetchedPatient;
+            await loadChart(patient.studyId);
         } else {
             console.error(`Patient with id ${id} not found`);
         }
-        await loadChart(patient.studyId); /* TODO: change to patient.id */
     });
 
     async function loadChart(id: string) {
@@ -130,7 +130,7 @@
 
         <div class="crc-content">
             <Tabs tabStyle="pill" class="crc-tab">
-                <TabItem open title="Schedule" on:click={() => loadChart(patient.studyId)}>
+                <TabItem open title="Schedule" on:click={() => patient && loadChart(patient.studyId)}>
                     <div slot="title" class="flex items-center gap-2">
                         <FontAwesomeIcon icon={faCalendarDays} class="w-4 h-4" />Schedule
                     </div>
