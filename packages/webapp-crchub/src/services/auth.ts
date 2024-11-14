@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { userStore } from '../services/userStore.js';
-import { initializeDatastore, getUserByEmail } from "../services/dataStore.js";
+import { dataStore } from "../services/dataStore.js";
 import { env } from '../config/env.js';
 
 const initialAuth = sessionStorage.getItem('auth') === 'true';
@@ -27,12 +27,12 @@ export async function authenticate(username: string, password: string): Promise<
     }
     try {
         console.log('Calling getUserByEmail with:', username);
-        const user = await getUserByEmail(username);
+        const user = await dataStore.getUserByEmail(username);
         console.log('getUserByEmail returned:', user);
 
         if (user) {
             userStore.setUser(user);
-            await initializeDatastore();
+            await dataStore.initializeDatastore();
             sessionStorage.setItem('auth', 'true');
             isAuthenticated.set(true);
             return true;

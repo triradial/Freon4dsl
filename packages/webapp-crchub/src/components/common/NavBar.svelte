@@ -2,7 +2,6 @@
     import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Avatar, Dropdown, DropdownItem, DropdownHeader, DropdownDivider, Button } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
-    import { Alert } from "flowbite-svelte";
     import { isAuthenticated } from "../../services/auth.js";
     import { navigateTo } from "../../services/routeAction.js";
     import { theme } from "../../services/themeStore.js";

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Modal, Button } from "flowbite-svelte";
     import { createEventDispatcher } from "svelte";
-    import { deleteStudy, deletePatient } from "../../services/dataStore.js";
+    import { dataStore } from "../../services/dataStore.js";
 
     export let open = false;
     export let objectType: "study" | "patient";
@@ -16,9 +16,9 @@
 
     function handleDelete() {
         if (objectType === "study") {
-            deleteStudy(object.id);
+            dataStore.deleteStudy(object.id);
         } else if (objectType === "patient") {
-            deletePatient(object.id);
+            dataStore.deletePatient(object.id);
         }
         dispatch("delete");
         open = false;

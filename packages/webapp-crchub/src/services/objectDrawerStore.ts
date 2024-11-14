@@ -1,6 +1,6 @@
 import { get, writable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
-import { getStudy, getPatient, addStudy, updateStudy, addPatient, updatePatient } from '../services/dataStore.js';
+import { dataStore } from '../services/dataStore.js';
 import type { Study } from '../services/dataStore.js';
 
 export const drawerStore = writable({
@@ -15,7 +15,7 @@ export const drawerStore = writable({
 export async function addObject(type: 'study' | 'patient', parentId?: string) {
     let parentName = '';
     if (parentId && type === 'patient') {
-        const parentObject: Study | undefined = await getStudy(parentId);
+        const parentObject: Study | undefined = await dataStore.getStudy(parentId);
         if (parentObject) {
             parentName = parentObject.name;
         }
@@ -28,15 +28,15 @@ export async function addObject(type: 'study' | 'patient', parentId?: string) {
 
 export async function editObject(type: 'study' | 'patient', id: string) {
     console.log('editObject called:', type, id);
-    
+
     let object;
     if (type === 'study') {
-        object = await getStudy(id);
+        object = await dataStore.getStudy(id);
     } else {
-        object = await getPatient(id);
+        object = await dataStore.getPatient(id);
     }
     console.log('Object retrieved:', object);
-    
+
     if (!object) {
         console.error(`${type} with id ${id} not found`);
     } else {
@@ -49,15 +49,15 @@ export async function saveObject(updatedObject: any) {
     drawerStore.update(store => {
         if (store.objectType === 'study') {
             if (store.action === 'add') {
-                addStudy(updatedObject);
+                dataStore.addStudy(updatedObject);
             } else {
-                updateStudy(updatedObject);
+                dataStore.updateStudy(updatedObject);
             }
         } else {
             if (store.action === 'add') {
-                addPatient(updatedObject);
+                dataStore.addPatient(updatedObject);
             } else {
-                updatePatient(updatedObject);
+                dataStore.updatePatient(updatedObject);
             }
         }
         return { ...store, open: false };

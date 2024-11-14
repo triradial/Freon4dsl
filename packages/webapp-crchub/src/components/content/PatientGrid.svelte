@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getStudyPatients, studyPatients } from "../../services/dataStore.js";
+    import { dataStore } from "../../services/dataStore.js";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
@@ -27,7 +27,7 @@
 
     // React to changes in $studyPatients, but only update local data
     $: {
-        patientsData = $studyPatients;
+        patientsData = $dataStore.studyPatients;
         updateGridData();
     }
 
@@ -37,7 +37,7 @@
     // }
 
     async function fetchStudyPatients() {
-        await getStudyPatients(studyId);
+        await dataStore.getStudyPatients(studyId);
     }
 
     function updateGridData() {

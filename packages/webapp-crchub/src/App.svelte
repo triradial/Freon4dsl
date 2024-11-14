@@ -4,20 +4,45 @@
     import Main from "./pages/Main.svelte";
     import Login from "./pages/Login.svelte";
     import { onMount } from "svelte";
-    // import { initializeStorePath } from "./services/dataStore.js";
     import { isAuthenticated, redirectUrl } from "./services/auth.js";
     import { updateCurrentRoute } from "./services/routeAction.js";
     import { theme } from "./services/themeStore.js";
+    import { userStore } from "./services/userStore.js";
+    import { dataStore } from "./services/dataStore.js";
 
     let auth = false;
 
-    onMount(async () => {
-        const storedAuth = sessionStorage.getItem("auth");
-        if (storedAuth) {
-            auth = storedAuth === "true";
-        }
-        // await initializeStorePath();
-    });
+    // Step 1: Check auth state from session storage immediately (synchronous)
+    auth = sessionStorage.getItem("auth") === "true";
+    isAuthenticated.set(auth); // Set the store value to match session storage
+
+    // Step 2: Restore user data from session storage immediately (synchronous)
+    if (auth) {
+        userStore.initializeFromStorage();
+        dataStore.initializeDatastore();
+    }
+
+    // Step 3: Validate the restored session (asynchronous)
+    // onMount(async () => {
+    //     if (auth) {
+    //         try {
+    //             // Validate token with backend
+    //             const isValid = await validateSession();
+    //             if (!isValid) {
+    //                 auth = false;
+    //                 isAuthenticated.set(false);
+    //                 sessionStorage.removeItem("auth");
+    //                 userStore.clearUser();
+    //             }
+    //         } catch (error) {
+    //             console.error("Session validation failed:", error);
+    //             auth = false;
+    //             isAuthenticated.set(false);
+    //             sessionStorage.removeItem("auth");
+    //             userStore.clearUser();
+    //         }
+    //     }
+    // });
 
     $: {
         isAuthenticated.subscribe((value) => {
