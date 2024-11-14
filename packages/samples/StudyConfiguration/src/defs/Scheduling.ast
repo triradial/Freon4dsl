@@ -115,7 +115,7 @@ concept ComplianceWindowOf base ComplianceWindow {
 concept EventWindow {
     daysBefore: Days;
     daysAfter: Days;
-    complianceWindow: ComplianceWindow;
+    complianceWindow?: ComplianceWindow;
 }
 
 interface EventTimeOfDay { }
