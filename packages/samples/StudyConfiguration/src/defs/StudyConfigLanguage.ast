@@ -48,7 +48,7 @@ limited TypeOfEvent {
 
 concept Event {
     name: identifier;
-    alternativeName?: string;
+    alternativeName: string; // Optional, see validator where errors about it are removed.
     typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;
