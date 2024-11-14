@@ -11,7 +11,7 @@ MetaVariableExpression {
 }
 
 DefineVariableMetadata {
-    [ (Define Variable Metadata for ${attributeName} with id ${variableId} ${targetVariableName} )]
+    [ ( Define Variable Metadata for ${attributeName} with id ${variableId} and target${targetVariableName} )]
     trigger = "define variable metadata"
 }
 

@@ -228,11 +228,10 @@ export class CustomConformanceRulesModelProjection implements FreProjection {
             "CheckRule-hlist-line-0",
             "",
             [
-                BoxUtil.labelBox(checkRule, "Check: (", "top-1-line-0-item-0"),
+                BoxUtil.labelBox(checkRule, "Check: ", "top-1-line-0-item-0"),
                 BoxUtil.getBoxOrAction(checkRule, "conformanceExpression", "ConformanceExpression", this.handler),
-                BoxUtil.labelBox(checkRule, ")", "top-1-line-0-item-2"),
             ],
-            { cssClass: "ml-4", selectable: true },
+            { selectable: true },
         );
     }
 
