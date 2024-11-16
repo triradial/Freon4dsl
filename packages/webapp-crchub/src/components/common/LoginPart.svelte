@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Button, Checkbox, Input } from "flowbite-svelte";
-    import { authenticate, isAuthenticated, redirectUrl } from "../../services/auth.js";
+    import { authenticate, isAuthenticated, redirectUrl } from "../../services/security/auth.js";
     import { writable } from "svelte/store";
     import ToastWarning from "../common/ToastWarning.svelte";
 

@@ -2,12 +2,12 @@
     import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Avatar, Dropdown, DropdownItem, DropdownHeader, DropdownDivider, Button } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
-    import { isAuthenticated } from "../../services/auth.js";
-    import { navigateTo } from "../../services/routeAction.js";
-    import { theme } from "../../services/themeStore.js";
-    import { ROUTE } from "../../constants/routeConstants.js";
-    import { LABEL } from "../../constants/labelConstants.js";
-    import { userStore, type User } from "../../services/userStore.js";
+    import { isAuthenticated } from "../../services/security/auth.js";
+    import { navigateTo } from "../../services/routing/route-action.js";
+    import { theme } from "../../services/stores/theme-store.js";
+    import { ROUTE } from "../../constants/route-constants.js";
+    import { LABEL } from "../../constants/label-constants.js";
+    import { userStore, type User } from "../../services/stores/users-store.js";
 
     let user: User | null;
     userStore.subscribe((value) => {

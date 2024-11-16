@@ -8,7 +8,7 @@ export class CustomStudyConfigurationModelValidator extends StudyConfigurationMo
     errorList: FreError[] = [];
 
     public execBeforeEvent(_modelelement: Event): boolean {
-        console.log(" execBeforeEvent calling super.execBeforeEvent");
+        console.log("XXX execBeforeEvent calling super.execBeforeEvent");
         let result = super.execBeforeEvent(_modelelement);
         console.log("entered execBeforeEvent result:", result);
         console.log("execBeforeEvent before finding error", this.errorList.length);

@@ -1,14 +1,14 @@
 <script lang="ts">
     import { onMount, SvelteComponent, setContext } from "svelte";
-    import { ROUTE } from "../constants/routeConstants.js";
-    import { LABEL } from "../constants/labelConstants.js";
+    import { ROUTE } from "../constants/route-constants.js";
+    import { LABEL } from "../constants/label-constants.js";
 
-    import { dataStore, type Study, type Patient } from "../services/dataStore.js";
-    import { addDrawer, setDrawerVisibility } from "../services/sideDrawerStore.js";
+    import { dataStore, type Study, type Patient } from "../services/data/data-store.js";
+    import { addDrawer, setDrawerVisibility } from "../services/stores/side-drawer-store.js";
 
     import NavBar from "../components/common/NavBar.svelte";
     import Breadcrumb from "../components/common/Breadcrumb.svelte";
-    import { currentRoute, type RouteData } from "../services/routeStore.js";
+    import { currentRoute, type RouteData } from "../services/routing/route-store.js";
 
     import SideDrawerSystem from "../components/common/SideDrawerSystem.svelte";
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
@@ -18,7 +18,7 @@
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
 
     import ObjectDrawerSystem from "../components/common/ObjectDrawerSystem.svelte";
-    import { addObject, editObject } from "../services/objectDrawerStore.js";
+    import { addObject, editObject } from "../services/stores/object-drawer-store.js";
 
     import HomeContent from "../content/Home.svelte";
     import StudiesContent from "../content/Studies.svelte";

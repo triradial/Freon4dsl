@@ -1,14 +1,14 @@
 <script lang="ts">
     import { Router, Route } from "svelte-routing";
-    import { ROUTE, VALID_ROUTES, VALID_ROUTES_WITH_ID, type ValidRoute, type ValidRouteWithId } from "./constants/routeConstants.js";
+    import { ROUTE, VALID_ROUTES, VALID_ROUTES_WITH_ID, type ValidRoute, type ValidRouteWithId } from "./constants/route-constants.js";
     import Main from "./pages/Main.svelte";
     import Login from "./pages/Login.svelte";
     import { onMount } from "svelte";
-    import { isAuthenticated, redirectUrl } from "./services/auth.js";
-    import { updateCurrentRoute } from "./services/routeAction.js";
-    import { theme } from "./services/themeStore.js";
-    import { userStore } from "./services/userStore.js";
-    import { dataStore } from "./services/dataStore.js";
+    import { isAuthenticated, redirectUrl } from "./services/security/auth.js";
+    import { updateCurrentRoute } from "./services/routing/route-action.js";
+    import { theme } from "./services/stores/theme-store.js";
+    import { userStore } from "./services/stores/users-store.js";
+    import { dataStore } from "./services/data/data-store.js";
 
     let auth = false;
 

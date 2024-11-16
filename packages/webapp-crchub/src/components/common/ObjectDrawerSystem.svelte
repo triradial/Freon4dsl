@@ -2,7 +2,7 @@
     import { Drawer, Button } from "flowbite-svelte";
     import StudyMutation from "../mutations/StudyMutation.svelte";
     import PatientMutation from "../mutations/PatientMutation.svelte";
-    import { drawerStore, closeDrawer, saveObject } from "../../services/objectDrawerStore.js";
+    import { drawerStore, closeDrawer, saveObject } from "../../services/stores/object-drawer-store.js";
     import { sineIn } from "svelte/easing";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faTimes } from "@fortawesome/free-solid-svg-icons";

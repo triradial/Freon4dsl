@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { addObject } from "../../services/objectDrawerStore.js";
+    import { addObject } from "../../services/stores/object-drawer-store.js";
     import { Button } from "flowbite-svelte";
     import { Card } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";

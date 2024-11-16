@@ -3,11 +3,10 @@
     import { Skeleton, ListPlaceholder } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faHeart, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-
-    import { WebappConfigurator, EditorState, EditorRequestsHandler } from "@freon4dsl/webapp-lib";
+    import { ModelManager } from "../../services/dsl/model-manager.js";
     import { type FreEnvironment, RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineTable } from "../../services/app/StudyTimeline.js";
+    import { getTimelineTable } from "../../services/app/study-timeline.js";
 
     export let studyId: string;
     let isLoading = true;
@@ -56,9 +55,9 @@
     }
 
     function loadTableData(id: string) {
-        const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
-        const studyConfigurationUnit = studyConfigurationModel.configuration;
-        const rtObject = getTimelineTable(studyConfigurationUnit) as RtString;
+        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+        const unit = model.configuration;
+        const rtObject = getTimelineTable(unit) as RtString;
         return rtObject.asString();
     }
 </script>

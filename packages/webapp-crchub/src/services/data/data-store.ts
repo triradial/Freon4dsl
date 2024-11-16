@@ -1,7 +1,7 @@
 import { writable, get } from 'svelte/store';
-import { userStore, type User } from './userStore.js';
-import { EditorState } from '@freon4dsl/webapp-lib';
-import { env } from '../config/env.js';
+import { userStore, type User } from '../stores/users-store.js';
+import { ModelManager } from '../dsl/model-manager.js';
+import { env } from '../../config/env.js';
 
 export interface Patient {
   id: string;
@@ -104,8 +104,7 @@ function createDataStore() {
       if (!response.ok) throw new Error('Failed to add study');
       const text = await response.text();
       const addedStudy = JSON.parse(text);
-      let modelManager = EditorState.getInstance();
-      await modelManager.newModel(addedStudy.id);
+      await ModelManager.getInstance().createModel(addedStudy.id);
       update(state => ({ ...state, studies: [...state.studies, addedStudy] }));
       return true;
     } catch (error) {
@@ -143,8 +142,7 @@ function createDataStore() {
       const response = await fetch(`${env.serverUrl}/deleteStudy?id=${studyId}&uid=${currentUser.userid}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Failed to delete study');
       update(state => ({ ...state, studies: state.studies.filter(study => study.id !== studyId) }));
-      let modelManager = EditorState.getInstance();
-      await modelManager.newModel(studyId);
+      await ModelManager.getInstance().deleteModel(studyId);
       return true;
     } catch (error) {
       console.error('Error deleting study:', error);

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Card, Badge, Button } from "flowbite-svelte";
-    import { type Patient } from "../../services/dataStore.js";
-    import { editObject } from "../../services/objectDrawerStore.js";
+    import { type Patient } from "../../services/data/data-store.js";
+    import { editObject } from "../../services/stores/object-drawer-store.js";
 
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faPencil } from "@fortawesome/free-solid-svg-icons";

@@ -1,7 +1,7 @@
 import * as fs from "fs/promises";
 import { stat, access } from "fs/promises";
 import path from 'path';
-import { IStorageHandler } from './IStorageHandler.js';
+import { IStorageHandler } from './istorage-handler.js';
 
 export class LocalStorageHandler implements IStorageHandler {
     private basePath: string;

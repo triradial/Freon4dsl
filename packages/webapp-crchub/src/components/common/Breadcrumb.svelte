@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
     import CustomBreadcrumbItem from "./CustomBreadcrumbItem.svelte";
-    import { LABEL } from "../../constants/labelConstants.js";
-    import { navigateTo } from "../../services/routeAction.js";
+    import { LABEL } from "../../constants/label-constants.js";
+    import { navigateTo } from "../../services/routing/route-action.js";
 
     export let items: Array<{ label: string; href?: string }> = [];
 

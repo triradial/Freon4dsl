@@ -1,11 +1,10 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import { ListPlaceholder } from "flowbite-svelte";
-
-    import { EditorState } from "@freon4dsl/webapp-lib";
+    import { ModelManager } from "../../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineChart } from "../../services/app/StudyTimeline.js";
+    import { getTimelineChart } from "../../services/app/study-timeline.js";
 
     export let studyId: string;
     let isLoading = true;
@@ -55,9 +54,9 @@
     }
 
     function getChart(id: string) {
-        const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
-        const studyConfigurationUnit = studyConfigurationModel.configuration;
-        const rtObject = getTimelineChart(studyConfigurationUnit) as RtString;
+        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+        const unit = model.configuration;
+        const rtObject = getTimelineChart(unit) as RtString;
         return rtObject.asString();
     }
 

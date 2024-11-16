@@ -4,24 +4,25 @@ import type { FreEnvironment, FreNode, FreModel, FreModelUnit, FreOwnerDescripto
 import { runInAction } from "mobx";
 
 import { get } from "svelte/store";
-import { currentModelName, currentUnitName, editorProgressShown, noUnitAvailable, units, unitNames } from "../components/stores/ModelStore.js";
-import { setUserMessage } from "../components/stores/UserMessageStore.js";
-import { modelErrors } from "../components/stores/InfoPanelStore.js";
+import { currentModelName, currentUnitName, editorProgressShown, noUnitAvailable, units, unitNames } from "./model-store.js";
+import { setUserMessage } from "./usermessage-store.js";
+import { modelErrors } from "./error-store.js";
 
-import { WebappConfigurator } from "../WebappConfigurator.js";
+import { WebappConfigurator } from "./webapp-configurator.js";
 
 import { Event, Task, Period, StudyConfiguration } from "@freon4dsl/samples-study-configuration";
 
 const LOGGER = new FreLogger("EditorState").mute();
 
-export class EditorState {
-    private static instance: EditorState | null = null;
+export class ModelManager {
 
-    static getInstance(): EditorState {
-        if (EditorState.instance === null) {
-            EditorState.instance = new EditorState();
+    private static instance: ModelManager | null = null;
+
+    static getInstance(): ModelManager {
+        if (ModelManager.instance === null) {
+            ModelManager.instance = new ModelManager();
         }
-        return EditorState.instance;
+        return ModelManager.instance;
     }
 
     modelStore: InMemoryModel;
@@ -38,14 +39,19 @@ export class EditorState {
     }
 
     // todo see whether we can use only the editor.rootElement as currentUnit
-    private __currentUnit: FreModelUnit = null;
-    get currentUnit(): FreModelUnit {
-        return this.__currentUnit;
+    private currentUnit: FreModelUnit | undefined;
+
+    getCurrentUnit(): FreModelUnit | undefined {
+        return this.currentUnit;
     }
-    set currentUnit(unit: FreModelUnit) {
-        this.__currentUnit = unit;
-        FreUndoManager.getInstance().currentUnit = unit;
-        currentUnitName.set({ name: this?.currentUnit?.name, id: this?.currentUnit?.freId() });
+    setCurrentUnit(unit: FreModelUnit | undefined) {
+        this.currentUnit = unit;
+        if (unit) {
+            FreUndoManager.getInstance().currentUnit = unit;
+            currentUnitName.set({ name: this?.currentUnit?.name ?? "", id: this?.currentUnit?.freId() ?? "" });
+        } else {
+            currentUnitName.set({ name: "", id: "" });
+        }
     }
 
     get currentModel(): FreModel {
@@ -56,53 +62,22 @@ export class EditorState {
 
     /**
      * Creates a new model
-     * @param modelName
      */
-    async newStudyConfigurationModelUnits() {
+    async createModel(modelName: string) {
         try {
-            LOGGER.info("newStudyConfigurationModelUnits called");
-            await this.createNewUnit("Availability", "Availability");
+            LOGGER.log("ModelHandler.createModel name: " + modelName);
             await this.saveCurrentUnit();
-
-            await this.createNewUnit("PatientInfo", "PatientInfo");
-            await this.saveCurrentUnit();
-
-            LOGGER.info("creating StudyConfiguration");
-            await this.createNewUnit("StudyConfiguration", "StudyConfiguration");
-            // Initialize the StudyConfiguration with a default period, event, and task in the checklist
-            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
-            studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
-            studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
-            studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
-            await this.saveCurrentUnit();
-            LOGGER.info("StudyConfiguration created");
-
-            this.currentUnit = studyConfigUnit;
-            EditorState.getInstance().currentUnit = studyConfigUnit;
-            currentModelName.set(this.currentModel.name); //TODO: Why wasn't this in the original code?
-        } catch (error) {
-            LOGGER.error("Error in newStudyConfigurationModelUnits: " + error);
-            LOGGER.error("Stack trace: " + error.stack);
-        }
-    }
-
-    async newModel(modelName: string) {
-        try {
-            LOGGER.log("new model called: " + modelName);
-            editorProgressShown.set(true);
-            // save the old current unit, if there is one
-            await this.saveCurrentUnit();
-            // reset all visible information on the model and unit
             this.resetGlobalVariables();
-            // create a new model
             await this.modelStore.createModel(modelName);
             if (modelName === "StudyConfiguration") {
-                await this.newStudyConfigurationModelUnits();
+                await this.createStudyConfigurationModelUnits();
+                // } else if (modelName === "SomethingElse") {
+                //     await this.createSomethingElseModelUnits();
+            } else {
+                LOGGER.info("ModelHandler.createModel units: none");
             }
-            editorProgressShown.set(false);
         } catch (error) {
             LOGGER.error("Error in newModel: " + error);
-            editorProgressShown.set(false);
         }
     }
 
@@ -113,7 +88,7 @@ export class EditorState {
      */
     async openModel(modelName: string) {
         // FreLogger.unmuteAllLogs();
-        LOGGER.log("EditorState.openmodel(" + modelName + ")");
+        LOGGER.log("ModelManager.openModel(" + modelName + ")");
         editorProgressShown.set(true);
         this.resetGlobalVariables();
         // save the old current unit, if there is one
@@ -129,13 +104,15 @@ export class EditorState {
                 if (first) {
                     const unit = this.modelStore.getUnitByName(unitIdentifier.name);
                     LOGGER.log("UnitId " + unitIdentifier.name + " unit is " + unit?.name);
-                    this.currentUnit = unit;
+                    this.setCurrentUnit(unit);
                     first = false;
                 }
             }
             BoxFactory.clearCaches();
             this.langEnv.projectionHandler.clear();
-            EditorState.getInstance().showUnitAndErrors(this.currentUnit);
+            if (this.currentUnit) {
+                this.showModelUnit(this.currentUnit);
+            }
         } else {
             editorProgressShown.set(false);
         }
@@ -147,34 +124,53 @@ export class EditorState {
      * @param modelName
      * @param unitName
      */
-    async openUnitForModel(modelName: string, unitName: string): Promise<FreModelUnit | null> {
-        // FreLogger.unmuteAllLogs();
-        LOGGER.log("EditorState.openmodel(" + modelName + ")");
+    async openModelUnit(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
+        LOGGER.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
         editorProgressShown.set(true);
         this.resetGlobalVariables();
         // save the old current unit, if there is one
         await this.saveCurrentUnit();
         // create new model instance in memory and set its name
         await this.modelStore.openModel(modelName);
-        const unit = this.modelStore.getUnitByName(unitName) as FreModelUnit | null;
-        this.currentUnit = unit;
-        BoxFactory.clearCaches();
-        this.langEnv.projectionHandler.clear();
+        const unit = this.modelStore.getUnitByName(unitName);
         if (unit) {
-            EditorState.getInstance().showUnitAndErrors(unit);
+            this.setCurrentUnit(unit);
+            BoxFactory.clearCaches();
+            this.langEnv.projectionHandler.clear();
+            this.showModelUnit(unit);
         }
         return unit;
     }
 
     /**
-     * When another model is shown in the editor this function is called.
-     * It resets a series of global variables.
-     * @private
+     * Parses the string 'content' to create a model unit. If the parsing is ok,
+     * then the unit is added to the current model.
+     * @param fileName
+     * @param content
+     * @param metaType
      */
-    private resetGlobalVariables() {
-        noUnitAvailable.set(true);
-        units.set([]);
-        modelErrors.set([]);
+    async openModelUnitFromFile(fileName: string, content: string, metaType: string, showIt: boolean) {
+        this.saveCurrentUnit(); // save the old current unit, if there is one
+        let unit: FreModelUnit;
+        try {
+            // the following also adds the new unit to the model
+            unit = this.langEnv.reader.readFromString(content, metaType, this.currentModel, fileName) as FreModelUnit;
+            if (!!unit) {
+                // if the element does not yet have a name, try to use the file name
+                if (!unit.name || unit.name.length === 0) {
+                    unit.name = this.makeUnitNameFromFileName(fileName);
+                }
+                if (showIt) {
+                    // set elem in editor
+                    this.showModelUnit(unit);
+                }
+                await this.modelStore.addUnit(unit);
+            }
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                setUserMessage(e.message, FreErrorSeverity.Error);
+            }
+        }
     }
 
     /**
@@ -182,38 +178,71 @@ export class EditorState {
      * @param newName
      * @param unitType
      */
-    async newUnit(newName: string, unitType: string) {
+    async createModelUnit(newName: string, unitType: string) {
         LOGGER.log("EditorCommuncation.newUnit: unitType: " + unitType + ", name: " + newName);
-        editorProgressShown.set(true);
-        // save the old current unit, if there is one
         await this.saveCurrentUnit();
         await this.createNewUnit(newName, unitType);
     }
 
     /**
-     * Because of the asynchronicity the true work of creating a new unit is done by this function
-     * which is called at various points in the code.
-     * @param newName
-     * @param unitType
-     * @private
+     * Reads the model with name 'modelName' from the server and makes this the current model.
+     * The first unit in the model is shown, if present.
+     * @param modelName
      */
-    private async createNewUnit(newName: string, unitType: string) {
-        LOGGER.log("private createNewUnit called, unitType: " + unitType + " name: " + newName);
-        const newUnit = await this.modelStore.createUnit(newName, unitType);
-        if (!!newUnit) {
-            newUnit.name = newName;
-            // show the new unit in the editor
-            this.showUnitAndErrors(newUnit);
-        } else {
-            setUserMessage(`Model unit of type '${unitType}' could not be created.`);
+    async deleteModel(modelName: string) {
+        // FreLogger.unmuteAllLogs();
+        LOGGER.log("ModelManager.deleteModel(" + modelName + ")");
+        this.resetGlobalVariables();
+        // save the old current unit, if there is one
+        await this.saveCurrentUnit();
+        // delete model instance in memory
+        await this.modelStore.deleteModel(modelName);
+    }
+
+    /**
+     * Creates model units for the StudyConfiguration model
+     */
+    private async createStudyConfigurationModelUnits() {
+        try {
+            LOGGER.info("ModelHandler.createModelUnits START name: StudyConfiguration");
+
+            await this.createNewUnit("Availability", "Availability");
+            await this.saveCurrentUnit();
+
+            await this.createNewUnit("PatientInfo", "PatientInfo");
+            await this.saveCurrentUnit();
+
+            await this.createNewUnit("StudyConfiguration", "StudyConfiguration");
+
+            LOGGER.info("ModelHandler.createModelUnits units: Availability, PatientInfo, StudyConfiguration");
+
+            // Initialize the StudyConfiguration with a default period, event, and task in the checklist
+            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
+            studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
+            studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
+            studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
+            await this.saveCurrentUnit();
+
+            this.setCurrentUnit(studyConfigUnit);
+            currentModelName.set(this.currentModel.name);
+
+            LOGGER.info("ModelHandler.createModelUnits END name: StudyConfiguration");
+
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                LOGGER.error("ModelHandler.createModelUnits ERROR: " + error.message);
+                LOGGER.error("ModelHandler.createModelUnits ERROR: Stack trace: " + error.stack);
+            } else {
+                LOGGER.error("ModelHandler.createModelUnits ERROR: " + String(error));
+            }
         }
     }
 
     /**
-     * Pushes the current unit to the server
-     */
+ * Pushes the current unit to the server
+ */
     async saveCurrentUnit() {
-        LOGGER.log("saveCurrentUnit: " + get(currentUnitName)?.name);
+        LOGGER.log("ModelHandler.saveCurrentUnit: " + get(currentUnitName)?.name);
         const unit: FreModelUnit = this.langEnv.editor.rootElement as FreModelUnit;
         if (!!unit) {
             if (!!this.currentModel?.name && this.currentModel?.name?.length) {
@@ -232,9 +261,39 @@ export class EditorState {
     }
 
     /**
+     * Because of the asynchronicity the true work of creating a new unit is done by this function
+     * which is called at various points in the code.
+     * @param newName
+     * @param unitType
+     * @private
+     */
+    private async createNewUnit(newName: string, unitType: string) {
+        LOGGER.log("private createNewUnit called, unitType: " + unitType + " name: " + newName);
+        const newUnit = await this.modelStore.createUnit(newName, unitType);
+        if (!!newUnit) {
+            newUnit.name = newName;
+            // show the new unit in the editor
+            this.showModelUnit(newUnit);
+        } else {
+            setUserMessage(`Model unit of type '${unitType}' could not be created.`);
+        }
+    }
+
+    /**
+     * When another model is shown in the editor this function is called.
+     * It resets a series of global variables.
+     * @private
+     */
+    private resetGlobalVariables() {
+        noUnitAvailable.set(true);
+        units.set([]);
+        modelErrors.set([]);
+    }
+
+    /**
      * Pushes the current unit to the server
      */
-    async saveStudyUnits() {
+    private async saveStudyUnits() {
         LOGGER.log("EditorState.saveCurrentUnit: " + get(currentUnitName));
         console.log("EditorState.saveCurrentUnit: " + get(currentUnitName));
         const unit: FreModelUnit = this.langEnv.editor.rootElement as FreModelUnit;
@@ -251,7 +310,7 @@ export class EditorState {
                     // await this.serverCommunication.putModelUnit(this.currentModel.name, "StudyConfiguration", this.currentModel.findUnit("StudyConfiguration") );
                     // LOGGER.log("Unit saved: StudyConfiguration");
                     currentUnitName.set({ name: unit.name, id: unit.freId() }); // just in case the user has changed the name in the editor
-                    EditorState.getInstance().setUnitLists();
+                    this.setUnitLists();
                 } else {
                     setUserMessage(`Unit without name cannot be saved. Please, name it and try again.`);
                 }
@@ -263,36 +322,6 @@ export class EditorState {
             console.log("No current model unit");
             LOGGER.log("No current model unit");
         }
-    }
-
-    async renameModelUnit(unit: FreModelUnit, newName: string) {
-        console.log("Units before: " + this.currentModel.getUnits().map((u: FreModelUnit) => u.name));
-        const oldName: string = unit.name;
-        unit.name = newName;
-        // TODO Use model store
-        this.serverCommunication.renameModelUnit(this.currentModel.name, oldName, newName, unit);
-        console.log("Units after: " + this.currentModel.getUnits().map((u: FreModelUnit) => u.name));
-    }
-
-    /**
-     * Deletes the unit 'unit', from the server and from the current in-memory model
-     * @param unit
-     */
-    async deleteModelUnit(unit: FreModelUnit) {
-        LOGGER.log("delete called for unit: " + unit.name);
-
-        // get rid of the unit on the server
-        await this.modelStore.deleteUnit(unit);
-        // if the unit is shown in the editor, get rid of that one, as well
-        if (this.currentUnit.freId() === unit.freId()) {
-            runInAction(() => {
-                this.langEnv.editor.rootElement = null;
-            });
-            noUnitAvailable.set(true);
-            modelErrors.set([]);
-        }
-        // get rid of the name in the navigator
-        currentUnitName.set({ name: "", id: "???" });
     }
 
     /**
@@ -309,54 +338,10 @@ export class EditorState {
     }
 
     /**
-     * Reads the unit called 'newUnit' from the server and shows it in the editor
-     * @param newUnit
+     * Attempts to create a new unit name from a file name.
+     * @param fileName
      */
-    async openModelUnit(newUnit: FreModelUnit) {
-        LOGGER.log("openModelUnit called, unitName: " + newUnit.name);
-        // TODO currentUnitName is not updated properly
-        if (!!this.currentUnit && newUnit.name === this.currentUnit.name) {
-            // the unit to open is the same as the unit in the editor, so we are doing nothing
-            LOGGER.log("openModelUnit doing NOTHING");
-            return;
-        }
-        // save the old current unit, if there is one
-        await this.saveCurrentUnit();
-        this.showUnitAndErrors(newUnit);
-    }
-
-    /**
-     * Parses the string 'content' to create a model unit. If the parsing is ok,
-     * then the unit is added to the current model.
-     * @param content
-     * @param metaType
-     */
-    async unitFromFile(fileName: string, content: string, metaType: string, showIt: boolean) {
-        // save the old current unit, if there is one
-        this.saveCurrentUnit();
-        let unit: FreModelUnit = null;
-        try {
-            // the following also adds the new unit to the model
-            unit = this.langEnv.reader.readFromString(content, metaType, this.currentModel, fileName) as FreModelUnit;
-            if (!!unit) {
-                // if the element does not yet have a name, try to use the file name
-                if (!unit.name || unit.name.length === 0) {
-                    unit.name = this.makeUnitName(fileName);
-                }
-                if (showIt) {
-                    // set elem in editor
-                    this.showUnitAndErrors(unit);
-                }
-                await this.modelStore.addUnit(unit);
-            }
-        } catch (e: unknown) {
-            if (e instanceof Error) {
-                setUserMessage(e.message, FreErrorSeverity.Error);
-            }
-        }
-    }
-
-    private makeUnitName(fileName: string): string {
+    private makeUnitNameFromFileName(fileName: string): string {
         const nameExist: boolean = !!this.currentModel.getUnits().find((existing: FreModelUnit) => existing.name === fileName);
         if (nameExist) {
             setUserMessage(`Unit named '${fileName}' already exists, adding number.`, FreErrorSeverity.Error);
@@ -389,26 +374,24 @@ export class EditorState {
      * @param newUnit
      * @private
      */
-    private showUnitAndErrors(newUnit: FreModelUnit) {
-        LOGGER.log("showUnitAndErrors called, unitName: " + newUnit?.name);
-        if (!!newUnit) {
+    private showModelUnit(unit: FreModelUnit) {
+        LOGGER.log("ModelHandler.showUnitAndErrors called, unitName: " + unit?.name);
+        if (!!unit) {
             noUnitAvailable.set(false);
             runInAction(() => {
-                this.langEnv.editor.rootElement = newUnit;
+                this.langEnv.editor.rootElement = unit;
             });
-            this.currentUnit = newUnit;
-            // todo reinstate the following statement
-            // this.getErrors();
-            // for now:
+            this.setCurrentUnit(unit);
+
             WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
         } else {
             noUnitAvailable.set(true);
             runInAction(() => {
-                this.langEnv.editor.rootElement = null;
+                this.langEnv.editor.rootElement = {} as FreNode;
             });
-            this.currentUnit = null;
+            this.setCurrentUnit(undefined);
+            WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
         }
-        editorProgressShown.set(false);
     }
 
     /**
@@ -416,18 +399,20 @@ export class EditorState {
      * @param item
      */
     selectElement(item: FreNode, propertyName?: string) {
-        LOGGER.log("Item selected");
+        //LOGGER.log("Item selected");
         this.langEnv.editor.selectElement(item, propertyName);
     }
 
     /**
      * Runs the validator for the current unit
      */
-    getErrors() {
-        LOGGER.log("EditorState.getErrors() for " + this.currentUnit.name);
-        if (!!this.currentUnit) {
+    runValidator(): FreError[] {
+        const currentUnit = this.getCurrentUnit();
+        let list: FreError[] = [];
+        if (!!currentUnit) {
+            LOGGER.log("EditorState.runValidator - for " + currentUnit.name);
             try {
-                const list = this.langEnv.validator.validate(this.currentUnit);
+                list = this.langEnv.validator.validate(currentUnit);
                 WebappConfigurator.getInstance().editorEnvironment.editor.setErrors(list);
                 modelErrors.set(list);
             } catch (e: unknown) {
@@ -435,27 +420,34 @@ export class EditorState {
                 if (e instanceof Error) {
                     console.log(e.message + e.stack);
                     modelErrors.set([
-                        new FreError("Problem validating model unit: '" + e.message + "'", this.currentUnit, this.currentUnit.name, FreErrorSeverity.Error),
+
+                        new FreError("EditorState.runValidator - problem validating model unit: '" + e.message + "'", currentUnit, currentUnit.name, FreErrorSeverity.Error),
                     ]);
                 }
             }
+        } else {
+            LOGGER.log("EditorState.runValidator - No current unit to validate");
         }
+        return list;
     }
 
     deleteElement(tobeDeleted: FreNode) {
         if (!!tobeDeleted) {
             // find the owner of the element to be deleted and remove the element there
-            const owner: FreNode = tobeDeleted.freOwner();
-            const desc: FreOwnerDescriptor = tobeDeleted.freOwnerDescriptor();
-            if (!!desc) {
-                // console.log("deleting " + desc.propertyName + "[" + desc.propertyIndex + "]");
-                if (desc.propertyIndex !== null && desc.propertyIndex !== undefined && desc.propertyIndex >= 0) {
-                    const propList = owner[desc.propertyName];
-                    if (Array.isArray(propList) && propList.length > desc.propertyIndex) {
-                        runInAction(() => propList.splice(desc.propertyIndex, 1));
+            const owner = tobeDeleted.freOwner();
+            if (owner) {
+                const desc: FreOwnerDescriptor = tobeDeleted.freOwnerDescriptor();
+                if (!!desc) {
+                    if (desc.propertyIndex !== null && desc.propertyIndex !== undefined && desc.propertyIndex >= 0) {
+                        const propList = owner[desc.propertyName as keyof typeof owner];
+                        if (Array.isArray(propList) && propList.length > desc.propertyIndex) {
+                            runInAction(() => propList.splice(desc.propertyIndex!, 1));
+                        }
+                    } else {
+                        console.error("deleting of " + tobeDeleted.freId() + " not succeeded, because owner descriptor is empty.");
                     }
                 } else {
-                    runInAction(() => (owner[desc.propertyName] = null));
+                    console.error("deleting of " + tobeDeleted.freId() + " not succeeded, because owner descriptor is empty.");
                 }
             } else {
                 console.error("deleting of " + tobeDeleted.freId() + " not succeeded, because owner descriptor is empty.");
@@ -464,7 +456,7 @@ export class EditorState {
     }
 
     pasteInElement(element: FreNode, propertyName: string, index?: number) {
-        const property = element[propertyName];
+        const property = element[propertyName as keyof typeof element];
         // todo make new copy to keep in 'this.langEnv.editor.copiedElement'
         if (Array.isArray(property)) {
             // console.log('List before: [' + property.map(x => x.freId()).join(', ') + ']');
@@ -477,8 +469,8 @@ export class EditorState {
             });
             // console.log('List after: [' + property.map(x => x.freId()).join(', ') + ']');
         } else {
-            // console.log('property ' + propertyName + ' is no list');
-            runInAction(() => (element[propertyName] = this.langEnv.editor.copiedElement));
+            console.log('property ' + propertyName + ' is no list');
+            // runInAction(() => (element[propertyName] = this.langEnv.editor.copiedElement));
         }
     }
 }

@@ -1,5 +1,5 @@
 import { ShareServiceClient, ShareClient, ShareDirectoryClient } from '@azure/storage-file-share';
-import { IStorageHandler } from './IStorageHandler.js';
+import { IStorageHandler } from './istorage-handler.js';
 
 export class AzureStorageHandler implements IStorageHandler {
 

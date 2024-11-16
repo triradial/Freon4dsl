@@ -43,9 +43,18 @@ export class InMemoryModel {
      * After this call the current model is undefined.
      * @param name
      */
-    async deleteModel(): Promise<void> {
+    async deleteCurrentModel(): Promise<void> {
         await this.server.deleteModel(this.__model.name);
         this.__model = undefined;
+    }
+
+    /**
+     * Delete current model from the server.
+     * After this call the current model is undefined.
+     * @param name
+     */
+    async deleteModel(name: string): Promise<void> {
+        await this.server.deleteModel(name);
     }
 
     /**
@@ -60,7 +69,7 @@ export class InMemoryModel {
         for (const unitId of unitsIds) {
             LOGGER.log("openModel: load model-unit: " + unitId.name);
             const unit = await this.server.loadModelUnit(this.model.name, unitId);
-            AST.change( () => {
+            AST.change(() => {
                 this.model.addUnit(unit as FreModelUnit);
             })
         }
@@ -116,7 +125,7 @@ export class InMemoryModel {
      */
     async addUnit(unit: FreModelUnit): Promise<void> {
         LOGGER.log(`addUnit ${unit?.name}`)
-        AST.change( () => {
+        AST.change(() => {
             this.model.addUnit(unit);
         })
         await this.saveUnit(unit);

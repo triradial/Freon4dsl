@@ -1,7 +1,7 @@
 import { get, writable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
-import { dataStore } from '../services/dataStore.js';
-import type { Study } from '../services/dataStore.js';
+import { dataStore } from '../data/data-store.js';
+import type { Study } from '../data/data-store.js';
 
 export const drawerStore = writable({
     instanceId: uuidv4(),

@@ -6,26 +6,25 @@
 
     import { Tabs, TabItem } from "flowbite-svelte";
     import { ListPlaceholder, Skeleton } from "flowbite-svelte";
-    import { Toolbar, ToolbarButton, ToolbarGroup } from "flowbite-svelte";
+    import { Toolbar, ToolbarButton } from "flowbite-svelte";
 
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faUser, faSwatchbook, faSave, faRedo, faUndo } from "@fortawesome/free-solid-svg-icons";
-    import { dataStore, type Study } from "../services/dataStore.js";
+    import { dataStore, type Study } from "../services/data/data-store.js";
 
-    import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
-    import { EditorState, EditorRequestsHandler } from "@freon4dsl/webapp-lib";
     import { FreEditor } from "@freon4dsl/core";
     import { type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
-
-    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/sideDrawerStore.js";
+    import { ModelManager } from "../services/dsl/model-manager.js";
+    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
+    import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
+    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/stores/side-drawer-store.js";
 
     export let id: string;
 
     let study: Study | undefined;
     let editorLoaded = false;
 
-    let modelManager = EditorState.getInstance();
     let dslEditor: FreEditor;
     let unit: StudyConfiguration;
 
@@ -48,7 +47,7 @@
         }
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         // Get the model data for the study
-        const result = await modelManager.openUnitForModel(study.id, "StudyConfiguration");
+        const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration");
         if (result !== undefined) {
             unit = result as StudyConfiguration;
             setTimeout(() => {
@@ -91,8 +90,8 @@
     }
 
     function handleSaveStudy() {
-        EditorState.getInstance().saveCurrentUnit();
-        console.log("Save study");
+        ModelManager.getInstance().saveCurrentUnit();
+        console.log("Study.Save study");
     }
 
     function handleUndoAction() {

@@ -13,9 +13,9 @@ import {
     StudyConfigurationModel,
     VisitDate,
 } from "@freon4dsl/samples-study-configuration/dist/language/gen";
-import { EditorState } from "@freon4dsl/webapp-lib";
+import { ModelManager } from "./dsl/model-manager.js";
 import type { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-import { getTimeline, getTimelineChartHtml } from "./app/PatientTimeline.js";
+import { getTimeline, getTimelineChartHtml } from "./app/patient-timeline.js";
 
 export function getStatusColor(status: string): string {
     switch (status.toLowerCase()) {
@@ -225,11 +225,11 @@ function createCompletedPatientVisits(numberToCreate: number, timeline: Timeline
                 );
                 console.log(
                     "Adding completed visit: " +
-                        scheduledEventInstance.getName() +
-                        " instance: " +
-                        scheduledEventInstance.getInstanceNumber() +
-                        " on " +
-                        dateOfVisit.toDateString(),
+                    scheduledEventInstance.getName() +
+                    " instance: " +
+                    scheduledEventInstance.getInstanceNumber() +
+                    " on " +
+                    dateOfVisit.toDateString(),
                 );
                 completedPatientVisits.push(patientVisit);
             }
@@ -241,12 +241,12 @@ type ShiftsFromScheduledVisit = { name: string; instance: number; shift: number;
 
 export async function getChartWithPatientHistory(id: string) {
     console.log("getChartWithPatientHistory");
-    const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
-    const studyConfigurationUnit = studyConfigurationModel.configuration;
+    const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+    const unit = model.configuration;
     // createAvailability();
 
     // Adding after simulation because the timeline is used to find the visits to complete.
-    let timeline = getTimeline(studyConfigurationUnit) as Timeline;
+    let timeline = getTimeline(unit) as Timeline;
     let shiftsFromScheduledVisit: ShiftsFromScheduledVisit[] = [
         { name: "V2 Randomization", instance: 1, shift: -1, numberFound: 0, foundThisInstance: false },
         { name: "V4-V7 Randomization", instance: 1, shift: -4, numberFound: 0, foundThisInstance: false },
