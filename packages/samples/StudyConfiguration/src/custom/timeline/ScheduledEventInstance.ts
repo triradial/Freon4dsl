@@ -31,7 +31,7 @@ export class ScheduledEventInstance extends TimelineEventInstance {
         return this.scheduledEvent;
     }
 
-    getInstanceNumber() {
+    getInstanceNumber(): number {
         return this.instanceNumber;
     }
 

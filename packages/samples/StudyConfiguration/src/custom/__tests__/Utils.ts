@@ -320,13 +320,15 @@ export function addEventAndInstanceToTimeline(
     return eventInstance;
 }
 
-export function loadModelUnit(modelFolderName: string, modelUnitName: string): FreModelUnit {
+export function loadModelUnit(modelFolderName: string, modelUnitName: string, alternateStudyFolderPath?: string): FreModelUnit {
     FreLogger.muteAllLogs();
-    // const studyFolderPath: string = path.resolve(__dirname, '..','__tests__', 'modelstore', modelFolderName);
+    var studyFolderPath: string = path.resolve(__dirname, "..", "..", "..", "..", "..", "server", "modelstore", modelFolderName);
+
+    if (alternateStudyFolderPath) {
+        studyFolderPath = alternateStudyFolderPath;
+    }
     console.log("__dirname:" + __dirname);
     let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
-    const studyFolderPath: string = path.resolve(__dirname, "..", "..", "..", "..", "..", "server", "modelstore", modelFolderName);
-    console.log("studyFolderPath (TODO: move from tests folder):" + studyFolderPath);
     const serializer = new FreLionwebSerializer();
     let metaModel = JSON.parse(fs.readFileSync(`${studyFolderPath}/${modelUnitName}.json`).toString());
     const ts = serializer.toTypeScriptInstance(metaModel);

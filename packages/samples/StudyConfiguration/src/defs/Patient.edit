@@ -15,6 +15,7 @@ Availability {
 
       Staffing Level Changes:
       ${staffLevels}
+
   ]
 }
 
@@ -27,7 +28,7 @@ PatientNotAvailable {
 StaffLevel {
   [ 
     # Staff: ${staffAvailable} on: ${dateOrRange}
-  ]
+  ] trigger = "Staff Level"
 }
 
 DateRange {

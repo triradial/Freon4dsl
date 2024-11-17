@@ -1,6 +1,7 @@
 import { nodent, undent } from "@bscotch/utility";
 import { Timeline } from "../../custom/timeline/Timeline.js";
 import { AbstractTask, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
+import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
 export class StudyChecklistDocumentTemplate {
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
@@ -50,42 +51,54 @@ export class StudyChecklistDocumentTemplate {
      * @returns
      */
     static getVisitsByPeriodAsMarkdown(studyConfiguration: StudyConfiguration): string {
+        let writer = new StudyConfigurationModelModelUnitWriter();
+        // ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
+
         var template = studyConfiguration.periods
             .map(
                 (period, periodCounter) => nodent`# ${period.name}
-            ${period.events
-                .map(
-                    (event, eventCounter) => `## ${event.name}
-              ${event.description.text}
+                    ${period.events
+                        .map((event, eventCounter) => {
+                            const timeOfDay = event.schedule.eventTimeOfDay ? writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "") : "";
+                            const eventRepeat = event.schedule.eventRepeat ? writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "") : "";
+                            return `## ${event.name}
 
-              ${event.tasks
-                  .map((task, taskCounter) => {
-                      let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
-                      return `### ${t.name}
+                                ${event.description.text}
 
-                        ${t.description.text}
+                                SCHEDULE:
+                                ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
+                                ${writer.writeToString(event.schedule.eventWindow).replace(/"/g, "")}
+                                ${eventRepeat}
+                                ${timeOfDay}
 
-                        ${t.steps
-                            .map(
-                                (step, stepCounter) => nodent`#### Step ${stepCounter + 1}: ${step.title}
+                                ${event.tasks
+                                    .map((task, taskCounter) => {
+                                        let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
+                                        return `### ${t.name}
 
-                        ${step.detailsDescription.text}
+                                            ${t.description.text}
 
-                        ${step.references.length > 0 ? "**REFERENCES**" : ""}
-                        ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
-                       
-                        ${step.people.length > 0 ? "**PEOPLE**" : ""}
-                        ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
+                                            ${t.steps
+                                                .map(
+                                                    (step, stepCounter) => nodent`#### Step ${stepCounter + 1}: ${step.title}
 
-                        `,
-                            )
-                            .join("")}`;
-                  })
-                  .join("")}
-            `,
-                )
-                .join("")}
-        `,
+                                            ${step.detailsDescription.text}
+
+                                            ${step.references.length > 0 ? "**REFERENCES**" : ""}
+                                            ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
+                                        
+                                            ${step.people.length > 0 ? "**PEOPLE**" : ""}
+                                            ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
+
+                                            `,
+                                                )
+                                                .join("")}`;
+                                    })
+                                    .join("")}
+                                `;
+                        })
+                        .join("")}
+                `,
             )
             .join("");
         return template;

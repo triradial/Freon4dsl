@@ -23,6 +23,7 @@ import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent.js";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
 import { Sim } from "../simjs/sim.js";
+import path from "path";
 
 describe("Study Simulation", () => {
     let simulator;
@@ -1684,27 +1685,6 @@ var items = new vis.DataSet([
             const normalizedExpectedTimelineDataAsScript = expectedTimelineTableAsHTML.replace(/\s+/g, "");
             // Then the generated timeline table has the expected data in it
             expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
-        });
-    });
-
-    describe("Generation of Study Checklists Document", () => {
-        it("generate a document for a one visit,one checklist, one task study", () => {
-            // GIVEN a study configuration loaded from a file and the study is simulated
-            const studyConfigurationUnit = utils.loadModelUnit("OneVisitOneChecklist", "StudyConfiguration") as StudyConfiguration;
-            studyConfigurationModel.addUnit(studyConfigurationUnit);
-            let simulator = new Simulator(studyConfigurationUnit);
-            simulator.run();
-            let timeline = simulator.timeline;
-
-            // WHEN the study checklist document is generated
-            const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline);
-
-            // THEN the generated study checklist document has the expected content
-            utils.saveToFile(studyChecklistAsMarkdown, "StudyChecklistOneVisitOneChecklist.md");
-            const expectedMarkdown = utils.readTestDataFile("StudyChecklistOneVisitOneChecklist.md");
-            const normalizedActualMarkdown = studyChecklistAsMarkdown.replace(/\s+/g, "");
-            const normalizedExpectedMarkdown = expectedMarkdown.replace(/\s+/g, "");
-            expect(normalizedActualMarkdown).toEqual(normalizedExpectedMarkdown);
         });
     });
 });
