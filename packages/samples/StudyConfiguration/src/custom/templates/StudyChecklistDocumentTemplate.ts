@@ -1,6 +1,7 @@
 import { nodent, undent } from "@bscotch/utility";
 import { Timeline } from "../../custom/timeline/Timeline.js";
 import { AbstractTask, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
+import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
 export class StudyChecklistDocumentTemplate {
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
@@ -19,7 +20,7 @@ export class StudyChecklistDocumentTemplate {
                   )
                   .join(""),
           )
-          .join("")}`;
+          .join("\n")}`;
         return template;
     }
 
@@ -50,42 +51,60 @@ export class StudyChecklistDocumentTemplate {
      * @returns
      */
     static getVisitsByPeriodAsMarkdown(studyConfiguration: StudyConfiguration): string {
+        let writer = new StudyConfigurationModelModelUnitWriter();
+
         var template = studyConfiguration.periods
             .map(
                 (period, periodCounter) => nodent`# ${period.name}
-            ${period.events
-                .map(
-                    (event, eventCounter) => `## ${event.name}
-              ${event.description.text}
+                    ${period.events
+                        .map((event, eventCounter) => {
+                            const timeOfDay = event.schedule.eventTimeOfDay
+                                ? "limited to" + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
+                                : "";
+                            const eventRepeat = event.schedule.eventRepeat
+                                ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
+                                : "";
+                            const complianceWindow = event.schedule.eventWindow.complianceWindow
+                                ? " and a compliance window of " +
+                                  writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, " and no compliance window")
+                                : "";
+                            return `## ${event.name}
 
-              ${event.tasks
-                  .map((task, taskCounter) => {
-                      let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
-                      return `### ${t.name}
+                                ${event.description.text}
 
-                        ${t.description.text}
+                                SCHEDULE:
+                                First scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
+                                with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/"/g, "")}  ${complianceWindow}
+                                ${eventRepeat}
+                                ${timeOfDay}
+                                ${event.tasks
+                                    .map((task, taskCounter) => {
+                                        let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
+                                        return `### ${t.name}
 
-                        ${t.steps
-                            .map(
-                                (step, stepCounter) => nodent`#### Step ${stepCounter + 1}: ${step.title}
+                                            ${t.description.text}
 
-                        ${step.detailsDescription.text}
+                                            ${t.steps
+                                                .map(
+                                                    (step, stepCounter) => nodent`#### Step ${stepCounter + 1}: ${step.title}
 
-                        ${step.references.length > 0 ? "**REFERENCES**" : ""}
-                        ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
-                       
-                        ${step.people.length > 0 ? "**PEOPLE**" : ""}
-                        ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
+                                            ${step.detailsDescription.text}
 
-                        `,
-                            )
-                            .join("")}`;
-                  })
-                  .join("")}
-            `,
-                )
-                .join("")}
-        `,
+                                            ${step.references.length > 0 ? "**REFERENCES**" : ""}
+                                            ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
+                                        
+                                            ${step.people.length > 0 ? "**PEOPLE**" : ""}
+                                            ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
+
+                                            `,
+                                                )
+                                                .join("")}`;
+                                    })
+                                    .join("")}
+                                `;
+                        })
+                        .join("")}
+                `,
             )
             .join("");
         return template;

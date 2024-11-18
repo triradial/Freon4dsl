@@ -11,7 +11,7 @@ export default defineConfig({
             if (log.includes("[MobX]")) {
                 return false;
             }
-            console.log(`>XX${log}\n`);
+            console.log(`>${log}\n`);
             return true;
         },
     },

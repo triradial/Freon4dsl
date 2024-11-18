@@ -89,11 +89,13 @@ export class Timeline extends RtObject {
     }
 
     getScheduledEventInstance(name: string, instanceNumber: number): ScheduledEventInstance {
-        return this.days
+        var result: ScheduledEventInstance;
+        result = this.days
             .flatMap((day) => day.events.filter((event) => event instanceof ScheduledEventInstance))
-            .find((event) => {
+            .find((event: ScheduledEventInstance) => {
                 return event.getName() === name && event.getInstanceNumber() === instanceNumber;
             }) as ScheduledEventInstance;
+        return result;
     }
 
     getDays() {
@@ -239,7 +241,7 @@ export class Timeline extends RtObject {
         return this.days.flatMap((day) => day.events.filter((event) => event instanceof PeriodEventInstance));
     }
 
-    getScheduleEventInstancesOrderByDay() {
+    getScheduleEventInstancesOrderByDay(): ScheduledEventInstance[] {
         const result = this.days
             .flatMap((day) => day.events.filter((event) => event instanceof ScheduledEventInstance).map((event) => ({ event, day: day.day })))
             .sort((a, b) => {
@@ -248,7 +250,7 @@ export class Timeline extends RtObject {
             })
             .map(({ event }) => event);
         // console.log("Ordered events: " + result.map((event) => event.getName()));
-        return result;
+        return result as ScheduledEventInstance[];
     }
 
     getPeriodInstanceFor(scheduledPeriodName: string) {

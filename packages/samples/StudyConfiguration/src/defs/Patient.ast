@@ -1,12 +1,12 @@
 language StudyConfigurationModel
 
-modelunit Availability { //TODO: rename and remodel to cover just staff
+modelunit Availability { //TODO: rename StaffAvailability
   name: identifier = "Availability";
   baselineStaff: string;
   staffLevels: StaffLevel[];
 }
 
-modelunit PatientInfo {
+modelunit PatientInfo {  // TODO: Change to Patients 
   name: identifier = "Patients";
   patientHistories: PatientHistory[];
 }

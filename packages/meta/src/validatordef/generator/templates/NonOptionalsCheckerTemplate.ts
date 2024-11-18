@@ -76,15 +76,12 @@ export class NonOptionalsCheckerTemplate {
                 // if the property is of type `string`
                 // then add a check on the length of the string
                 let additionalStringCheck: string = "";
-                if (
-                    prop.isPrimitive &&
-                    (prop.type === FreMetaPrimitiveType.string || prop.type === FreMetaPrimitiveType.identifier)
-                ) {
+                if (prop.isPrimitive && (prop.type === FreMetaPrimitiveType.string || prop.type === FreMetaPrimitiveType.identifier)) {
                     additionalStringCheck = `|| modelelement.${prop.name}?.length === 0`;
                 }
 
                 result += `if (modelelement.${prop.name} === null || modelelement.${prop.name} === undefined ${additionalStringCheck}) {
-                    hasFatalError = true;
+                    hasFatalError = false;  // MV Fix until updated in Freon
                     this.errorList.push(new ${Names.FreError}("Property '${prop.name}' must have a value", modelelement, ${locationdescription}, '${prop.name}', ${Names.FreErrorSeverity}.Error));
                 }
                 `;
