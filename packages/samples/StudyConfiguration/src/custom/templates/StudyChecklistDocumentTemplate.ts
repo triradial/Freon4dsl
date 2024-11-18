@@ -20,7 +20,7 @@ export class StudyChecklistDocumentTemplate {
                   )
                   .join(""),
           )
-          .join("")}`;
+          .join("\n")}`;
         return template;
     }
 
@@ -52,25 +52,31 @@ export class StudyChecklistDocumentTemplate {
      */
     static getVisitsByPeriodAsMarkdown(studyConfiguration: StudyConfiguration): string {
         let writer = new StudyConfigurationModelModelUnitWriter();
-        // ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
 
         var template = studyConfiguration.periods
             .map(
                 (period, periodCounter) => nodent`# ${period.name}
                     ${period.events
                         .map((event, eventCounter) => {
-                            const timeOfDay = event.schedule.eventTimeOfDay ? writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "") : "";
-                            const eventRepeat = event.schedule.eventRepeat ? writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "") : "";
+                            const timeOfDay = event.schedule.eventTimeOfDay
+                                ? "limited to" + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
+                                : "";
+                            const eventRepeat = event.schedule.eventRepeat
+                                ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
+                                : "";
+                            const complianceWindow = event.schedule.eventWindow.complianceWindow
+                                ? " and a compliance window of " +
+                                  writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, " and no compliance window")
+                                : "";
                             return `## ${event.name}
 
                                 ${event.description.text}
 
                                 SCHEDULE:
-                                ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
-                                ${writer.writeToString(event.schedule.eventWindow).replace(/"/g, "")}
+                                First scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
+                                with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/"/g, "")}  ${complianceWindow}
                                 ${eventRepeat}
                                 ${timeOfDay}
-
                                 ${event.tasks
                                     .map((task, taskCounter) => {
                                         let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);

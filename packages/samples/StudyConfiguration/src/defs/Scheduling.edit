@@ -110,16 +110,20 @@ NoComplianceWindow {
 
 ComplianceWindowOf {
     [
-        of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+        and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
     ] trigger = "time before/after to be compliant"
 }
 
 EventWindow {
     [
         ${daysBefore} day(s) before and ${daysAfter}day(s) after
-        and a compliance window ${complianceWindow}
+        ${complianceWindow}
     ] trigger = "event window"
 }
+
+//RepeatExpression {
+//    [${eventRepeat}]
+//}
 
 EventSchedule {
     [

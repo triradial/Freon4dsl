@@ -7,11 +7,11 @@ import { Event } from "../language/gen/index.js";
 export class CustomStudyConfigurationModelValidator extends StudyConfigurationModelDefaultWorker implements StudyConfigurationModelCheckerInterface {
     errorList: FreError[] = [];
 
-    public execBeforeEvent(_modelelement: Event): boolean {
-        console.log("ZZZ execBeforeEvent calling super.execBeforeEvent");
+    public override execBeforeEvent(_modelelement: Event): boolean {
+        console.log("XXX execBeforeEvent calling super.execBeforeEvent");
         let result = super.execBeforeEvent(_modelelement);
         console.log("entered execBeforeEvent result:", result);
-        console.log("execBeforeEvent before finding erro length is:", this.errorList.length);
+        console.log("execBeforeEvent before finding error length is:", this.errorList.length);
 
         const errorIndex = this.errorList.indexOf(
             this.errorList.find((error) => {
@@ -25,6 +25,10 @@ export class CustomStudyConfigurationModelValidator extends StudyConfigurationMo
             this.errorList.splice(errorIndex, 1);
             console.log("execBeforeEvent errorList", this.errorList.length);
         }
+        return false;
+    }
+    public override execAfterEvent(_modelelement: Event): boolean {
+        console.log("ZZZ execAfterEvent calling super.execBeforeEvent");
         return false;
     }
 }
