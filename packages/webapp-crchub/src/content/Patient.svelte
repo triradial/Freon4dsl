@@ -5,16 +5,16 @@
     import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faListCheck, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
-    import { dataStore, type Patient } from "../services/dataStore.js";
+    import { dataStore, type Patient } from "../services/data/data-store.js";
 
-    import { EditorState } from "@freon4dsl/webapp-lib";
+    import { ModelManager } from "../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
     import { FreNodeReference } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
     import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-    import { getTimelineChart } from "../services/app/PatientTimeline.js";
-    import { getTimelineChartHtml } from "../services/app/PatientTimeline.js";
-    import { getTimeline } from "../services/app/PatientTimeline.js";
+    import { getTimelineChart } from "../services/app/patient-timeline.js";
+    import { getTimelineChartHtml } from "../services/app/patient-timeline.js";
+    import { getTimeline } from "../services/app/patient-timeline.js";
 
     import {
         Availability,
@@ -80,8 +80,8 @@
     }
 
     async function getChart(id: string) {
-        const modelManager = EditorState.getInstance();
-        const unit = (await modelManager.openUnitForModel(id, "StudyConfiguration")) as StudyConfiguration;
+        const modelManager = ModelManager.getInstance();
+        const unit = (await modelManager.openModelUnit(id, "StudyConfiguration")) as StudyConfiguration;
         const rtObject = getTimelineChart(unit) as RtString;
         return rtObject.asString();
     }

@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount, afterUpdate } from "svelte";
     import { ExternalStringBox } from "@freon4dsl/core";
-    import { EditorState } from "@freon4dsl/webapp-lib";
+    import { ModelManager } from "../../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineChart } from "../../services/app/PatientTimeline.js";
+    import { getTimelineChart } from "../../services/app/patient-timeline.js";
 
     export let box: ExternalStringBox;
 
@@ -24,10 +24,10 @@
     });
 
     function getChart() {
-        console.log("calling getChart");
-        const studyConfigurationModel = EditorState.getInstance().modelStore.model as StudyConfigurationModel;
-        const studyConfigurationUnit = studyConfigurationModel.configuration;
-        const rtObject = getTimelineChart(studyConfigurationUnit) as RtString;
+        console.log("TimelineChar.getChart");
+        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+        const unit = model.configuration;
+        const rtObject = getTimelineChart(unit) as RtString;
         chartHtml = rtObject.asString();
     }
 

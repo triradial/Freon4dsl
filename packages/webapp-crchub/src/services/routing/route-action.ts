@@ -1,5 +1,5 @@
 import { navigate } from 'svelte-routing';
-import { currentRoute } from './routeStore.js';
+import { currentRoute } from './route-store.js';
 
 export function updateCurrentRoute(routeName: string, id?: string) {
     // if routeName contains ?id= then split it into routeName and id

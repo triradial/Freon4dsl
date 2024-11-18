@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
-import { userStore } from '../services/userStore.js';
-import { dataStore } from "../services/dataStore.js";
-import { env } from '../config/env.js';
+import { userStore } from '../stores/users-store.js';
+import { dataStore } from "../data/data-store.js";
+import { env } from '../../config/env.js';
 
 const initialAuth = sessionStorage.getItem('auth') === 'true';
 

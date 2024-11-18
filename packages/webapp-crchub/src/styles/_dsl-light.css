@@ -1,13 +1,3 @@
-:root {
-  --mdc-theme-primary: #ff5722;
-  --mdc-theme-secondary: #4caf50;
-  --mdc-theme-surface: #ffffff;
-  --mdc-theme-background: #f0f0f0;
-  --mdc-theme-error: #f44336;
-  --mdc-theme-on-secondary: #ffffff;
-  --mdc-theme-on-surface: #000000;
-}
-
 /* #region GENERAL */
 .mdc-drawer {
   background-color: #e4e4e4 !important;
@@ -45,6 +35,12 @@
   --freon-text-style-status: italic;
 }
 
+.main-frame {
+  /* SplitPane divider */
+  --freon-colors-slider: var(--black);
+  /* The color of the slider between the error/search pane and the editor */
+}
+
 .text-box-action {
   --freon-text-component-color: rgb(104, 104, 104);
 }
@@ -55,6 +51,10 @@
 
 .text-box-text {
   --freon-text-component-color: blue;
+}
+
+.app-green-font {
+  color: #00fcfc !important;
 }
 
 /* #region FREON COMPONENTS */
@@ -72,16 +72,18 @@
 /* #endregion */
 
 /* #region Text Component */
+/* text-component-text text-dropdown-component */
+
 .text-dropdown-component .text-component-input,
 .text-component-input {
-  color: rgb(1, 95, 1);
+  color: #015f01;
   background-color: var(--green-20t);
 }
 
 .text-dropdown-component .text-component-text,
 .text-component-text {
-  color: rgb(1, 95, 1);
-  background-color: var(--green-20t);
+  color: #35a52b;
+  background-color: inherit;
 }
 
 .text-dropdown-component .text-component-text:hover,
@@ -92,13 +94,13 @@
 
 .text-dropdown-component .text-component-placeholder,
 .text-component-placeholder {
-  color: var(--gray-500);
-  background-color: inherit;
+  color: #35a52b;
+  background-color: transparent;
 }
 
 .text-component-action-placeholder {
-  color: var(--gray-700);
-  background-color: inherit;
+  color: #35a52b;
+  background-color: transparent;
 }
 
 /* #endregion */
@@ -314,6 +316,19 @@
   background-color: var(--black-10t);
 }
 
+.reference-button {
+  background-color: transparent !important;
+  color: var(--gray-700) !important;
+}
+
+.reference-button:hover {
+  background-color: var(--black-10t) !important;
+}
+
+.reference-button:active {
+  background-color: var(--black-20t) !important;
+}
+
 /* #endregion */
 
 /* #region Context Menu */
@@ -385,6 +400,7 @@
   background-color: var(--green-10t);
   border: rgb(1, 95, 1);
 }
+
 /* #endregion */
 
 /* #region Timepicker */
@@ -411,6 +427,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background: white;
   color: black;
 }
+
 /* #endregion */
 
 .render-component-selected {

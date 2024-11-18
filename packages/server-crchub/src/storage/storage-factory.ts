@@ -1,6 +1,6 @@
-import { IStorageHandler } from './IStorageHandler.js';
-import { AzureStorageHandler } from './AzureStorageHandler.js';
-import { LocalStorageHandler } from './LocalStorageHandler.js';
+import { IStorageHandler } from './istorage-handler.js';
+import { AzureStorageHandler } from './azure-storage-handler.js';
+import { LocalStorageHandler } from './local-storage-handler.js';
 import { env } from '../config/env.js';
 
 export class StorageFactory {

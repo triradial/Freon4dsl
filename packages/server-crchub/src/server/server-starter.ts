@@ -1,4 +1,4 @@
-import '../config/loadEnv.js';
+import '../config/load-environment.js';
 import { Server } from 'http';
 import { createServer } from 'net';
 import { exec } from 'child_process';

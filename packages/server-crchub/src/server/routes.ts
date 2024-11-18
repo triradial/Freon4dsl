@@ -1,9 +1,9 @@
 import Router from "koa-router";
 import { RateLimit } from 'koa2-ratelimit';
 
-import { ModelHandler } from "./ModelHandler.js";
-import { DataHandler } from "./DataHandler.js";
-import { AuthHandler } from "./AuthHandler.js";
+import { ModelHandler } from "./model-handler.js";
+import { DataHandler } from "./data-handler.js";
+import { AuthHandler } from "./auth-handler.js";
 
 import { z } from 'zod';
 

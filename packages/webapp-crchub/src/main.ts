@@ -1,6 +1,6 @@
 import App from "./App.svelte";
 
-import { WebappConfigurator } from "@freon4dsl/webapp-lib";
+import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
 import { ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";

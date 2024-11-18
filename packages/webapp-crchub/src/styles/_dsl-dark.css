@@ -90,20 +90,15 @@
   background-color: var(--green-10t);
 }
 
-/* .text-component-input::selection {
-  color: black !important;
-  background-color: white !important;
-} */
-
 .text-dropdown-component .text-component-placeholder,
 .text-component-placeholder {
-  color: var(--gray-500);
-  background-color: inherit;
+  color: var(--green-60t);
+  background-color: transparent;
 }
 
 .text-component-action-placeholder {
-  color: var(--gray-500);
-  background-color: inherit;
+  color: var(--green-60t);
+  background-color: transparent;
 }
 
 /* #endregion */
@@ -319,6 +314,19 @@
   background-color: var(--white-10t);
 }
 
+.reference-button {
+  background-color: transparent !important;
+  color: var(--gray-400) !important;
+}
+
+.reference-button:hover {
+  background-color: var(--white-10t) !important;
+}
+
+.reference-button:active {
+  background-color: var(--white-20t) !important;
+}
+
 /* #endregion */
 
 /* #region Context Menu */
@@ -412,6 +420,7 @@
   background-color: var(--green-10t);
   border: green;
 }
+
 /* #endregion */
 
 .render-component-selected {

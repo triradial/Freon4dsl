@@ -4,7 +4,7 @@
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
     import { getStatusColor } from "../../services/utils.js";
-    import { type Study } from "../../services/dataStore.js";
+    import { type Study } from "../../services/data/data-store.js";
     import { createEventDispatcher } from "svelte";
 
     export let study: Study;

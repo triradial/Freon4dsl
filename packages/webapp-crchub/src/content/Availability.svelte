@@ -1,9 +1,8 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-
-    import { WebappConfigurator } from "@freon4dsl/webapp-lib";
     import { FreonComponent } from "@freon4dsl/core-svelte";
-    import { EditorState } from "@freon4dsl/webapp-lib";
+    import { ModelManager } from "../services/dsl/model-manager.js";
+    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { FreEditor } from "@freon4dsl/core";
 
     import { type Availability } from "@freon4dsl/samples-study-configuration";
@@ -12,14 +11,14 @@
 
     let modelname = "11119f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f";
 
-    let modelManager = EditorState.getInstance();
+    let modelManager: ModelManager = ModelManager.getInstance();
     let dslEditor: FreEditor;
     let unit: Availability;
     let editorLoaded = false;
 
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
-        const result = await modelManager.openUnitForModel(modelname, "Availability");
+        const result = await modelManager.openModelUnit(modelname, "Availability");
         if (result !== undefined) {
             unit = result as Availability;
             setTimeout(() => {

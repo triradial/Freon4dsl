@@ -2,9 +2,9 @@
     import { Sidebar, SidebarBrand, SidebarCta, SidebarDropdownItem, SidebarDropdownWrapper, SidebarGroup, SidebarItem, SidebarWrapper } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faHome, faMicroscope, faHospitalUser } from "@fortawesome/free-solid-svg-icons";
-    import { navigateTo } from "../../services/routeAction.js";
-    import { ROUTE } from "../../constants/routeConstants.js";
-    import { LABEL } from "../../constants/labelConstants.js";
+    import { navigateTo } from "../../services/routing/route-action.js";
+    import { ROUTE } from "../../constants/route-constants.js";
+    import { LABEL } from "../../constants/label-constants.js";
 
     let activeClass = "flex items-center p-2 text-base font-normal hover:bg-primary-100";
     let nonActiveClass = "flex items-center p-2 text-base font-normal hover:bg-primary-900";

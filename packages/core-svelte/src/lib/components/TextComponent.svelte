@@ -531,7 +531,7 @@
                 {#if !!text && text.length > 0}
                     {text}
                 {:else}
-                    <span class="{placeHolderStyle} {errorCls}">{placeholder}</span>
+                    <span class={placeHolderStyle}>{placeholder}</span>
                 {/if}
             </span>
         {/if}

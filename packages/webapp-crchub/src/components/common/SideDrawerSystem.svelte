@@ -3,7 +3,7 @@
     import { Button, Tooltip } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faTimes, faGripLinesVertical, faRotateRight } from "@fortawesome/free-solid-svg-icons";
-    import { getDrawer, drawerStore, setDrawerWidth, setActiveDrawer, getDrawerWidth, type Drawer } from "../../services/sideDrawerStore";
+    import { getDrawer, drawerStore, setDrawerWidth, setActiveDrawer, getDrawerWidth, type Drawer } from "../../services/stores/side-drawer-store.js";
 
     export let isOpen = false;
 
@@ -12,7 +12,7 @@
     $: drawers = Object.values($drawerStore.drawers) as Drawer[];
     $: if (activeDrawer !== activeDrawerKey) {
         activeDrawerKey = activeDrawer;
-        activeDrawerInstance = null;  
+        activeDrawerInstance = null;
     }
 
     let activeDrawerInstance: any;
@@ -37,7 +37,7 @@
     }
 
     function refreshDrawer() {
-        if (activeDrawerInstance && typeof activeDrawerInstance.refresh === 'function') {
+        if (activeDrawerInstance && typeof activeDrawerInstance.refresh === "function") {
             activeDrawerInstance.refresh();
         }
     }
@@ -107,11 +107,7 @@
                     </Button>
                 </div>
                 {#key activeDrawer}
-                    <svelte:component 
-                        this={getDrawer(activeDrawer)?.component}
-                        {...getDrawer(activeDrawer)?.props}
-                        bind:this={activeDrawerInstance}
-                    />
+                    <svelte:component this={getDrawer(activeDrawer)?.component} {...getDrawer(activeDrawer)?.props} bind:this={activeDrawerInstance} />
                 {/key}
             </div>
         </div>

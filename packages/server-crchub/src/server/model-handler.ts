@@ -1,7 +1,7 @@
 import { issuestoString, LanguageRegistry, LionWebJsonChunk, LionWebValidator } from "@lionweb/validation";
 import { IRouterContext } from "koa-router";
 import * as path from "node:path";
-import { StorageFactory } from '../storage/StorageFactory.js';
+import { StorageFactory } from '../storage/storage-factory.js';
 
 const storage = StorageFactory.getStorageHandler();
 

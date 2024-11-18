@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { dataStore } from "../../services/dataStore.js";
-    import { editObject } from "../../services/objectDrawerStore.js";
+    import { dataStore } from "../../services/data/data-store.js";
+    import { editObject } from "../../services/stores/object-drawer-store.js";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
-    import { navigateTo } from "../../services/routeAction.js";
-    import { theme } from "../../services/themeStore.js";
+    import { navigateTo } from "../../services/routing/route-action.js";
+    import { theme } from "../../services/stores/theme-store.js";
     import GridHeader from "../common/GridHeader.svelte";
     import { getSVGIcon } from "../../services/utils.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";

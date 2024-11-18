@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Modal, Button } from "flowbite-svelte";
     import { createEventDispatcher } from "svelte";
-    import { dataStore } from "../../services/dataStore.js";
+    import { dataStore } from "../../services/data/data-store.js";
 
     export let open = false;
     export let objectType: "study" | "patient";

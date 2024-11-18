@@ -29,7 +29,7 @@ main {
   font-family: var(--font-family-sans);
   margin: 0px;
   padding: 0px;
-  transform: translate3d(0,0,0);
+  transform: translate3d(0, 0, 0);
 }
 
 .render-component {
@@ -65,7 +65,7 @@ main {
 .text-component-parent {
   height: 24px;
   display: flex;
-  align-items: top;
+  align-items: baseline;
 }
 
 .text-component-width {
@@ -107,6 +107,10 @@ main {
   white-space: normal;
   display: inline-block;
   height: 24px;
+}
+
+.text-dropdown-component {
+  display: flex;
 }
 
 .text-dropdown-component .text-component-text:hover,
@@ -258,6 +262,7 @@ main {
 .list-group.type4 .list-group-label {
   font-size: 0.7rem;
 }
+
 /* #endregion */
 
 /* #region Item Group Component */
@@ -588,6 +593,11 @@ span:has(> .tinymce-wrapper) {
   border: none;
 }
 
+.reference-button {
+  border: 0;
+  margin: 0 0 0.125rem 0;
+}
+
 /* #endregion */
 
 /* #region Table Component */
@@ -595,7 +605,8 @@ span:has(> .tinymce-wrapper) {
 .table-component {
   display: inline-grid;
   grid-gap: 2px;
-  align-items: center; /* place-items is an abbreviation for align-items and justify-items */
+  align-items: center;
+  /* place-items is an abbreviation for align-items and justify-items */
   justify-items: center;
   align-content: center;
   border-width: 1pt;
@@ -605,7 +616,7 @@ span:has(> .tinymce-wrapper) {
 
 .table-cell-component {
   box-sizing: border-box;
-  align-self: baseline; 
+  align-self: baseline;
   justify-self: baseline;
   margin: 1px;
 }
@@ -613,12 +624,13 @@ span:has(> .tinymce-wrapper) {
 .table-cell-component-unselected {
   border: none;
 }
+
 .table-cell-component-selected {
   outline-style: solid;
   outline-width: 1px;
 }
 
-/* #endregion */  
+/* #endregion */
 
 /* #region Render Component */
 .render-component-selected {
@@ -640,6 +652,7 @@ span:has(> .tinymce-wrapper) {
   position: absolute;
   min-width: 120px;
 }
+
 .contextmenu-button {
   border-radius: 2px;
   padding: 4px !important;
@@ -698,6 +711,7 @@ span:has(> .tinymce-wrapper) {
   padding-right: 0.25rem;
   padding-bottom: 0.35rem;
 }
+
 /* #endregion */
 
 /* #region Timepicker */

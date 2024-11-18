@@ -2,7 +2,7 @@
     import { Card, Button, Input, Select, Helper } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
     import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
-    import { type Study, type Patient } from "../../services/dataStore.js";
+    import { type Study, type Patient } from "../../services/data/data-store.js";
     import { createEventDispatcher } from "svelte";
 
     export let study: Study;
