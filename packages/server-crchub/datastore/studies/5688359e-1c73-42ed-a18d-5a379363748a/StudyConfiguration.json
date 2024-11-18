@@ -215,7 +215,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-name"
                },
-               "value": "Screen"
+               "value": "Visit 1"
             },
             {
                "property": {
@@ -548,7 +548,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-name"
                },
-               "value": "ICF"
+               "value": "Visit 2"
             },
             {
                "property": {
@@ -749,7 +749,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Screen",
+                     "resolveInfo": "Visit 1",
                      "reference": "ID-260"
                   }
                ]
@@ -1096,7 +1096,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "headache",
+                     "resolveInfo": "Visit 3",
                      "reference": "ID-296"
                   }
                ]
@@ -1155,7 +1155,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Event-name"
                },
-               "value": "headache"
+               "value": "Visit 3"
             },
             {
                "property": {

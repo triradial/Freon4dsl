@@ -31,7 +31,7 @@ export class InMemoryModel {
      * @param name
      */
     async createModel(name: string): Promise<FreModel> {
-        LOGGER.log(`createModel ${name}`)
+        LOGGER.log(`InMemoryModel.createModel ${name}`);
         this.__model = this.languageEnvironment.newModel(name);
         await this.server.createModel(name);
         this.currentModelChanged();
@@ -44,6 +44,7 @@ export class InMemoryModel {
      * @param name
      */
     async deleteCurrentModel(): Promise<void> {
+        LOGGER.log(`InMemoryModel.deleteCurrentModel ${this.__model?.name}`);
         await this.server.deleteModel(this.__model.name);
         this.__model = undefined;
     }
@@ -54,6 +55,7 @@ export class InMemoryModel {
      * @param name
      */
     async deleteModel(name: string): Promise<void> {
+        LOGGER.log(`InMemoryModel.deleteModel ${name}`);
         await this.server.deleteModel(name);
     }
 
@@ -63,7 +65,7 @@ export class InMemoryModel {
      * * @param name
      */
     async openModel(name: string): Promise<FreModel> {
-        LOGGER.log("openModel(" + name + ")");
+        LOGGER.log("InMemoryModel.openModel(" + name + ")");
         this.__model = this.languageEnvironment.newModel(name);
         const unitsIds = await this.server.loadUnitList(name);
         for (const unitId of unitsIds) {
@@ -92,7 +94,7 @@ export class InMemoryModel {
      * @param unitConcept
      */
     async createUnit(name: string, unitConcept: string): Promise<FreModelUnit> {
-        LOGGER.log(`createUnit ${name} of type ${unitConcept}`)
+        LOGGER.log(`InMemoryModel.createUnit ${name} of type ${unitConcept}`);
         const newUnit = this.model.newUnit(unitConcept);
         newUnit.name = name;
         await this.server.createModelUnit(this.model.name, newUnit);
@@ -105,6 +107,7 @@ export class InMemoryModel {
      * @param unit
      */
     async deleteUnit(unit: FreModelUnit) {
+        LOGGER.log(`InMemoryModel.deleteUnit ${unit.name}`);
         await this.server.deleteModelUnit(this.model.name, { name: unit.name, id: unit.freId() });
         this.model.removeUnit(unit);
         this.currentModelChanged();
@@ -124,7 +127,7 @@ export class InMemoryModel {
      * @param unit
      */
     async addUnit(unit: FreModelUnit): Promise<void> {
-        LOGGER.log(`addUnit ${unit?.name}`)
+        LOGGER.log(`InMemoryModel.addUnit ${unit?.name}`);
         AST.change(() => {
             this.model.addUnit(unit);
         })
