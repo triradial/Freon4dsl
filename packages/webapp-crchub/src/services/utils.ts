@@ -15,7 +15,7 @@ import {
 } from "@freon4dsl/samples-study-configuration/dist/language/gen";
 import { ModelManager } from "./dsl/model-manager.js";
 import type { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-import { getTimeline, getTimelineChartHtml } from "./app/PatientTimeline.js";
+import { getTimeline, getTimelineChartHtml } from "./app/patient-timeline.js";
 import type { TimelineEventInstance } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/TimelineEventInstance.js";
 import type { ScheduledEventInstance } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/ScheduledEventInstance.js";
 
