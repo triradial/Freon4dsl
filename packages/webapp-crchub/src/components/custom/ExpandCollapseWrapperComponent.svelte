@@ -44,7 +44,7 @@
 
     onMount(() => {
         let verticalBox = box.childBox.children[0];
-        const extendedCssClass = verticalBox.cssClass + " ml-5 mb-2";
+        const extendedCssClass = verticalBox.cssClass + " ml-5";
         FreUtils.initializeObject(verticalBox, { selectable: false, cssClass: extendedCssClass });
         verticalBox.children.forEach((childBox) => {
             let childExtendedCssClass = verticalBox.cssClass + " align-top";

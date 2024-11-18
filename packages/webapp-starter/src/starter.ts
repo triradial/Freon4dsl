@@ -33,10 +33,10 @@ import PartWrapperComponent from "./customComponents/forExternalTester/PartWrapp
 /**
  * The one and only reference to the actual language for which this editor runs
  */
-// import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
-// WebappConfigurator.getInstance().setEditorEnvironment(StudyConfigurationModelEnvironment.getInstance());
-import { ConformanceRulesModelEnvironment } from "@freon4dsl/samples-conformance-rules";
-WebappConfigurator.getInstance().setEditorEnvironment(ConformanceRulesModelEnvironment.getInstance());
+import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
+WebappConfigurator.getInstance().setEditorEnvironment(StudyConfigurationModelEnvironment.getInstance());
+// import { ConformanceRulesModelEnvironment } from "@freon4dsl/samples-conformance-rules";
+// WebappConfigurator.getInstance().setEditorEnvironment(ConformanceRulesModelEnvironment.getInstance());
 
 /**
  * The one and only reference to the server on which the models are stored

@@ -239,12 +239,12 @@
 /* #endregion */
 
 /* #region MultlineText Component */
-.multiline-text {
-  color: var(--freon-editor-component-color, rgb(129, 129, 129)) !important;
-  background: var(--freon-text-component-background-color, inherit) !important;
+.multiline2-text {
+  color: var(--gray-200) !important;
+  background: inherit !important;
 }
 
-.multiline-editor {
+.multiline2-editor {
   outline: 1px solid transparent !important;
   outline-offset: 1px !important;
   --tw-ring-inset: var(--tw-empty,
@@ -259,6 +259,10 @@
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
   border-color: #ffffff00;
   margin: 4px 4px 4px 4px !important;
+}
+
+.tinymce-wrapper>div {
+  color: var(--gray-200);
 }
 
 /* #endregion */
