@@ -465,7 +465,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Description-text"
                },
-               "value": " "
+               "value": "<p>This is how you need to show the ICF to the patient...</p>\n<p>Also look at the following document for reference.</p>"
             },
             {
                "property": {
@@ -1005,16 +1005,6 @@
                "children": [
                   "ID-95"
                ]
-            },
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-EventWindow-complianceWindow"
-               },
-               "children": [
-                  "ID-96"
-               ]
             }
          ],
          "references": [],
@@ -1060,19 +1050,6 @@
                "value": "0"
             }
          ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-93"
-      },
-      {
-         "id": "ID-96",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-NoComplianceWindow"
-         },
-         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],

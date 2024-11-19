@@ -84,7 +84,7 @@ export class StudyChecklistDocumentTemplate {
                                 ${event.tasks
                                     .map((task, taskCounter) => {
                                         let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
-                                        return `### ${t.name}
+                                        return `### Task:${t.name}
 
                                             ${t.description.text}
 
@@ -92,19 +92,19 @@ export class StudyChecklistDocumentTemplate {
                                                 .map(
                                                     (step, stepCounter) => nodent`#### Step ${stepCounter + 1}: ${step.title}
 
-                                            ${step.detailsDescription.text}
+                                                    ${step.detailsDescription.text}
 
-                                            ${step.references.length > 0 ? "**REFERENCES**" : ""}
-                                            ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
-                                        
-                                            ${step.people.length > 0 ? "**PEOPLE**" : ""}
-                                            ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
+                                                    ${step.references.length > 0 ? "**REFERENCES**" : ""}
+                                                    ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
+                                                
+                                                    ${step.people.length > 0 ? "**PEOPLE**" : ""}
+                                                    ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
 
-                                            `,
+                                                    `,
                                                 )
-                                                .join("")}`;
+                                                .join("\n")}`;
                                     })
-                                    .join("")}
+                                    .join("\n")}
                                 `;
                         })
                         .join("--- \n")}

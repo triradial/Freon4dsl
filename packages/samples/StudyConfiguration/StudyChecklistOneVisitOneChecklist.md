@@ -72,7 +72,7 @@ This event is first scheduled on the start day of the Study - 4 weeks
 with a window of 8 day(s) before and 0 day(s) after and a compliance window of no extra window  
 
 
-### Informed Consent
+### Task:Informed Consent
 
 <p>Review the ICF with the patient.</p>
 <p>Check the reference to the document describing the ICF as needed.</p>
@@ -82,7 +82,9 @@ with a window of 8 day(s) before and 0 day(s) after and a compliance window of n
 
 
 **REFERENCES**
-- ICF Document www.ICF.com#### Step 2: Get the ICF Singed#### Step 3: Save the ICF
+- ICF Document www.ICF.com
+#### Step 2: Get the ICF Singed
+#### Step 3: Save the ICF
 
 <p>Scan and upload the signed ICF</p>
 
@@ -97,7 +99,7 @@ This event is first scheduled when V1 Randomization completed + 2 days
 with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 
 
-### Task 1
+### Task:Task 1
 
 
 
@@ -111,7 +113,7 @@ This event is first scheduled on the start day of the Study - 2 weeks
 with a window of 0 day(s) before and 0 day(s) after and a compliance window of no extra window  
 
 
-### Task 1
+### Task:Task 1
 
 
 
@@ -125,7 +127,7 @@ This event is first scheduled when V2 Randomization completed + 2 days
 with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 
 
-### Task 1
+### Task:Task 1
 # Treatment
 ## V3 Randomization
 
