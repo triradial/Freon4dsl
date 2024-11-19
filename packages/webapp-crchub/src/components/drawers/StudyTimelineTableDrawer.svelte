@@ -6,13 +6,16 @@
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { type FreEnvironment, RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineTable } from "../../services/app/study-timeline.js";
+    import { getChecklistAsMarkdown, getTimelineTable } from "../../services/app/study-timeline.js";
+    import { marked } from "marked";
 
     export let studyId: string;
     let isLoading = true;
     let tableHtml: string = "";
+    let checklistHtml: string = "";
     let error: string | null = null;
     let container: HTMLElement | null = null;
+    let container2: HTMLElement | null = null;
     let showTable = false;
 
     const dispatch = createEventDispatcher();
@@ -24,16 +27,29 @@
     export function refresh() {
         dispatch("refresh");
         loadTable(studyId);
+        loadChecklistAsMarkdown(studyId);
     }
 
     $: {
         if (studyId) {
             console.log("studyId", studyId);
             loadTable(studyId);
+            loadChecklistAsMarkdown(studyId);
         }
     }
 
+    async function loadChecklistAsMarkdown(id: string) {
+        console.log("loadChecklistAsMarkdown: ", id);
+        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+        const unit = model.configuration;
+        const checklistAsMarkdown = getChecklistAsMarkdown(unit);
+        const htmlContent = marked(checklistAsMarkdown);
+        console.log("htmlContent: ", htmlContent);
+        checklistHtml = `<div class="limited-width-container">${htmlContent}</div>`;
+    }
+
     async function loadTable(id: string) {
+        console.log("loadTable: ", id);
         isLoading = true;
         showTable = false;
         error = null;
@@ -71,4 +87,27 @@
             {@html tableHtml}
         </div>
     </div>
+
+    <div style="display: block" class="markdown-body">
+        <div bind:this={container2}>
+            {@html checklistHtml}
+        </div>
+    </div>
 </div>
+
+<style>
+    @import "github-markdown-css/github-markdown.css";
+    .markdown-body {
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 45px;
+    }
+
+    @media (max-width: 767px) {
+        .markdown-body {
+            padding: 15px;
+        }
+    }
+</style>

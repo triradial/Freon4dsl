@@ -1,5 +1,6 @@
-Study 123ABC 
-==============
+Study StudyConfiguration 
+
+---
 
 The timeline and visit checklists for the study.
 
@@ -51,10 +52,11 @@ The timeline and visit checklists for the study.
 
 ## Chart
 
+
+
 [View the interactive chart of the schedule](./timeline.html)
 
-
-![Overview of Timeline](./docs/example-schedule.png)
+To view the interactive chart you must have downloaded it.
 
 ---
 
@@ -63,7 +65,6 @@ The timeline and visit checklists for the study.
 
 
 
-SCHEDULE:
 First scheduled on the start day of the Study - 4 weeks
 with a window of 8 day(s) before and 0 day(s) after  
 
@@ -73,11 +74,11 @@ with a window of 8 day(s) before and 0 day(s) after
 
 
 
+--- 
 ## V1 Run In
 
 
 
-SCHEDULE:
 First scheduled when V1 Randomization completed + 2 days
 with a window of 2 day(s) before and 2 day(s) after  
 
@@ -87,11 +88,11 @@ with a window of 2 day(s) before and 2 day(s) after
 
 
 
+--- 
 ## V2 Randomization
 
 
 
-SCHEDULE:
 First scheduled on the start day of the Study - 2 weeks
 with a window of 0 day(s) before and 0 day(s) after  
 
@@ -101,100 +102,100 @@ with a window of 0 day(s) before and 0 day(s) after
 
 
 
+--- 
 ## V2 Run In
 
 
 
-SCHEDULE:
 First scheduled when V2 Randomization completed + 2 days
 with a window of 2 day(s) before and 2 day(s) after  
 
 
-### Task 1# Treatment
+### Task 1
+# Treatment
 ## V3 Randomization
 
 
 
-SCHEDULE:
 First scheduled as the start day of the Study
 with a window of 0 day(s) before and 0 day(s) after  
 
 
 
+--- 
 ## V4-V7 Randomization
 
 
 
-SCHEDULE:
 First scheduled when V3 Randomization completed + 1 weeks
 with a window of 2 day(s) before and 2 day(s) after  
 and then repeats weekly up to 3 times until
 
 
+--- 
 ## V4-V7 Run In
 
 
 
-SCHEDULE:
 First scheduled when V4-V7 Randomization each completed + 2 days
 with a window of 2 day(s) before and 2 day(s) after  
 and then repeats weekly up to 3 times until
 
 
+--- 
 ## V8-V13 Randomization
 
 
 
-SCHEDULE:
 First scheduled when V4-V7 Randomization completed + 2 weeks
 with a window of 2 day(s) before and 2 day(s) after  
 and then repeats Every: 2 weeks up to 5 times until
 
 
+--- 
 ## V8-V13 Run In
 
 
 
-SCHEDULE:
 First scheduled when V8-V13 Randomization each completed + 2 days
 with a window of 2 day(s) before and 2 day(s) after  
 and then repeats weekly up to 5 times until
 
 
+--- 
 ## V14-V18 Randomization
 
 
 
-SCHEDULE:
 First scheduled when V8-V13 Randomization completed + 4 weeks
 with a window of 2 day(s) before and 2 day(s) after  
 and then repeats Every: 4 weeks up to 5 times until
 
 
+--- 
 ## V14-V18 Run In
 
 
 
-SCHEDULE:
 First scheduled when V14-V18 Randomization each completed + 2 days
 with a window of 2 day(s) before and 2 day(s) after  
 and then repeats weekly up to 4 times until
 
 
+--- 
 ## V19 Randomization
 
 
 
-SCHEDULE:
 First scheduled when V14-V18 Randomization completed + 1 weeks
 with a window of 2 day(s) before and 2 day(s) after  
 
 
 
+--- 
 ## V19 Run In
 
 
 
-SCHEDULE:
 First scheduled when V19 Randomization completed
 with a window of 2 day(s) before and 2 day(s) after

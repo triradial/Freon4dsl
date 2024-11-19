@@ -105,7 +105,7 @@ EndingBy {
 
 
 NoComplianceWindow {
-    [that allows no extra time] trigger = "no compliance window"
+    [that has no extra compliance window] trigger = "no compliance window"
 }
 
 ComplianceWindowOf {

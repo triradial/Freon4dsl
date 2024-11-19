@@ -55,7 +55,8 @@ export class StudyChecklistDocumentTemplate {
 
         var template = studyConfiguration.periods
             .map(
-                (period, periodCounter) => nodent`# ${period.name}
+                (period, periodCounter) => nodent`
+                # ${period.name}
                     ${period.events
                         .map((event, eventCounter) => {
                             const timeOfDay = event.schedule.eventTimeOfDay
@@ -66,13 +67,12 @@ export class StudyChecklistDocumentTemplate {
                                 : "";
                             const complianceWindow = event.schedule.eventWindow.complianceWindow
                                 ? " and a compliance window of " +
-                                  writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, " and no compliance window")
+                                  writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, " with no extra compliance window")
                                 : "";
                             return `## ${event.name}
 
                                 ${event.description.text}
 
-                                SCHEDULE:
                                 First scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
                                 with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/"/g, "")}  ${complianceWindow}
                                 ${eventRepeat}
@@ -103,16 +103,17 @@ export class StudyChecklistDocumentTemplate {
                                     .join("")}
                                 `;
                         })
-                        .join("")}
+                        .join("--- \n")}
                 `,
             )
-            .join("");
+            .join("\n");
         return template;
     }
 
     static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline): string {
-        var template = nodent`Study 123ABC 
-==============
+        var template = nodent`Study ${"STUDY-NAME"} 
+
+---
 
 The timeline and visit checklists for the study.
 
@@ -124,10 +125,11 @@ ${StudyChecklistDocumentTemplate.getTimelineTablAsMarkdown(timeline)}
 
 ## Chart
 
+
+
 [View the interactive chart of the schedule](./timeline.html)
 
-
-![Overview of Timeline](./docs/example-schedule.png)
+To view the interactive chart you must have downloaded it.
 
 ---
 
