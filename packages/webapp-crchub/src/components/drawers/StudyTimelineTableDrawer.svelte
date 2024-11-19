@@ -96,7 +96,6 @@
 </div>
 
 <style>
-    @import "github-markdown-css/github-markdown.css";
     .markdown-body {
         box-sizing: border-box;
         min-width: 200px;
