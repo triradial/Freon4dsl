@@ -1,6 +1,6 @@
 import { nodent, undent } from "@bscotch/utility";
 import { Timeline } from "../../custom/timeline/Timeline.js";
-import { AbstractTask, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
+import { AbstractTask, ComplianceWindowOf, NoComplianceWindow, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
 export class StudyChecklistDocumentTemplate {
@@ -65,16 +65,20 @@ export class StudyChecklistDocumentTemplate {
                             const eventRepeat = event.schedule.eventRepeat
                                 ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
                                 : "";
-                            const complianceWindow = event.schedule.eventWindow.complianceWindow
-                                ? " and a compliance window of " +
-                                  writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, " with no extra compliance window")
-                                : "";
+                            var complianceWindow = " with no extra compliance window";
+                            if (
+                                event.schedule.eventWindow.complianceWindow != undefined ||
+                                event.schedule.eventWindow.complianceWindow instanceof ComplianceWindowOf
+                            ) {
+                                complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
+                            }
+
                             return `## ${event.name}
 
                                 ${event.description.text}
 
-                                First scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
-                                with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/"/g, "")}  ${complianceWindow}
+                                This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
+                                with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}  
                                 ${eventRepeat}
                                 ${timeOfDay}
                                 ${event.tasks

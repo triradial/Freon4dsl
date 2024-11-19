@@ -45,9 +45,9 @@ describe("Generating Documents", () => {
         it("generate a document for a one visit,one checklist, one task study", () => {
             // GIVEN a study configuration loaded from a file and the study is simulated
             // const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "OneVisitOneChecklist");
-            // const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "ScheduleExample2");
+            const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "ScheduleExample2");
             // const studyConfigurationUnit = utils.loadModelUnit("OneVisitOneChecklist", "StudyConfiguration", studyFolderPath) as StudyConfiguration;
-            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
+            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration", studyFolderPath) as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
 
             let simulator = new Simulator(studyConfigurationUnit);
