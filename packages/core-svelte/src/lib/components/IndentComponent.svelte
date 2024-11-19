@@ -1,6 +1,7 @@
-<svelte:options immutable={true}/>
+<svelte:options immutable={true} />
+
 <script lang="ts">
-    import { INDENT_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { INDENT_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component indents the child of its (Indent)Box.
@@ -9,43 +10,44 @@
     import { Box } from "@freon4dsl/core";
     import { afterUpdate, onMount } from "svelte";
     import RenderComponent from "./RenderComponent.svelte";
-    import type {IndentBox, FreEditor} from "@freon4dsl/core";
+    import type { IndentBox, FreEditor } from "@freon4dsl/core";
     import { componentId } from "./svelte-utils/index.js";
 
     // Parameters
     export let box: IndentBox;
     export let editor: FreEditor;
 
-    const LOGGER = INDENT_LOGGER
+    const LOGGER = INDENT_LOGGER;
 
     const indentWidth: number = 8;
     let style: string = `margin-left: ${box?.indent * indentWidth}px;`;
-    let id: string = !!box ? componentId(box) : 'indent-for-unknown-box';
-    let cssClass: string = '';
+    let id: string = !!box ? componentId(box) : "indent-for-unknown-box";
+    let cssClass: string = "";
     let child: Box;
- 
-    onMount( () => {
+
+    onMount(() => {
         box.refreshComponent = refresh;
     });
 
-    afterUpdate( () => {
+    afterUpdate(() => {
         box.refreshComponent = refresh;
-    })
+    });
 
     const refresh = (why?: string): void => {
         if (!!box) {
             LOGGER.log("REFRESH Indent for box (" + why + ") " + box?.role + " child " + box?.child?.role);
             child = box?.child;
-            style = `margin-left: ${box?.indent * indentWidth}px;`
+            style = `margin-left: ${box?.indent * indentWidth}px;`;
             cssClass = box.cssClass;
         }
     };
 
-    $: { // Evaluated and re-evaluated when the box changes.
+    $: {
+        // Evaluated and re-evaluated when the box changes.
         refresh(box?.$id);
     }
 </script>
 
-<span id="{id}" class="indent-component {cssClass}" style="{style}">
-    <RenderComponent box={child} editor={editor}/>
+<span {id} class="indent-component {cssClass}" {style}>
+    <RenderComponent box={child} {editor} />
 </span>

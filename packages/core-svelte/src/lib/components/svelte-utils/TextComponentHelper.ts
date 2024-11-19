@@ -10,8 +10,8 @@ import {
     TextBox
 } from "@freon4dsl/core";
 import { EventDispatcher } from "svelte";
-import { executeCustomKeyboardShortCut } from "$lib/components/svelte-utils/CommonFunctions.js";
-import { shouldBeHandledByBrowser } from "$lib/components/svelte-utils/KeystrokeStore.js";
+import { executeCustomKeyboardShortCut } from "./CommonFunctions.js";
+import { shouldBeHandledByBrowser } from "./KeystrokeStore.js";
 
 const LOGGER = new FreLogger("TextComponentHelper")
 

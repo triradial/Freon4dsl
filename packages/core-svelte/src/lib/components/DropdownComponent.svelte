@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { DROPDOWN_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { DROPDOWN_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component is a dropdown menu that is used with a TextDropdownComponent.

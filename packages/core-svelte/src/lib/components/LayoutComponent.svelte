@@ -1,7 +1,7 @@
 <svelte:options immutable={true} />
 
 <script lang="ts">
-    import { LAYOUT_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { LAYOUT_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component shows a list of various boxes (no 'true' list). It can be shown
@@ -11,8 +11,8 @@
     import { afterUpdate, onMount } from "svelte";
     import RenderComponent from "./RenderComponent.svelte";
     import { Box, FreEditor, FreLogger, ListDirection, LayoutBox } from "@freon4dsl/core";
-    import { componentId } from "$lib/index.js";
-    import ErrorMarker from "$lib/components/ErrorMarker.svelte";
+    import { componentId } from "./index.js";
+    import ErrorMarker from "./ErrorMarker.svelte";
 
     // Parameters
     export let box: LayoutBox;

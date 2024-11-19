@@ -3,7 +3,7 @@
 <!-- (cursor or selected text), when the switch is being made. -->
 
 <script lang="ts">
-    import { TEXT_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { TEXT_LOGGER } from "./ComponentLoggers.js";
     import { afterUpdate, beforeUpdate, createEventDispatcher, type EventDispatcher, onMount } from "svelte";
     import { componentId, replaceHTML, setBoxSizes } from "$lib/components/svelte-utils/index.js";
     import {

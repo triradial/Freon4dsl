@@ -16,6 +16,9 @@
       ],
       "@freon4dsl/server/*": [
         "packages/server/src/*"
+      ],
+      "@freon4dsl/server-crchub/*": [
+        "packages/server-crchub/src/*"
       ]
     }
   }

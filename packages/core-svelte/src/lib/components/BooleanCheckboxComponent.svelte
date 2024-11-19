@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { CHECKBOX_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { CHECKBOX_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component shows a boolean value as checkbox.
      */
     import { FreEditor, BooleanControlBox } from "@freon4dsl/core";
-    import { componentId } from "$lib/index.js";
+    import { componentId } from "./svelte-utils/index.js";
     import { afterUpdate, onMount } from "svelte";
     import "@material/web/checkbox/checkbox.js";
     import { MdCheckbox } from "@material/web/checkbox/checkbox.js";

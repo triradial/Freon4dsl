@@ -1,7 +1,7 @@
 <svelte:options immutable={true} />
 
 <script lang="ts">
-    import { RENDER_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { RENDER_LOGGER } from "./ComponentLoggers.js";
 
     // This component renders any box from the box model.
     // Depending on the box type the right component is used.

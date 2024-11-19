@@ -1,22 +1,13 @@
 <script lang="ts">
-    import { LIMITEDRADIO_LOGGER } from "$lib/components/ComponentLoggers.js";
-    import {
-        ALT, ARROW_DOWN,
-        ARROW_LEFT,
-        ARROW_RIGHT, ARROW_UP, AST,
-        CONTROL,
-        FreEditor,
-        FreLogger,
-        LimitedControlBox,
-        SHIFT
-    } from "@freon4dsl/core";
-    import {afterUpdate, onMount} from "svelte";
-    import {MdRadio} from "@material/web/all.js";
+    import { LIMITEDRADIO_LOGGER } from "./ComponentLoggers.js";
+    import { ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, AST, CONTROL, FreEditor, FreLogger, LimitedControlBox, SHIFT } from "@freon4dsl/core";
+    import { afterUpdate, onMount } from "svelte";
+    import { MdRadio } from "@material/web/all.js";
 
     export let box: LimitedControlBox;
-    export let editor: FreEditor;			// the editor
+    export let editor: FreEditor; // the editor
 
-    const LOGGER = LIMITEDRADIO_LOGGER
+    const LOGGER = LIMITEDRADIO_LOGGER;
 
     let id: string = box.id;
     let myEnum = box.getPossibleNames();
@@ -62,18 +53,21 @@
     });
     const onChange = (event: MouseEvent) => {
         currentValue = event.target["value"];
-        AST.change( () => {
+        AST.change(() => {
             box.setNames([currentValue]);
-        })
+        });
         editor.selectElementForBox(box);
         event.stopPropagation();
-    }
-    const onClick = (event: MouseEvent & {currentTarget: EventTarget & HTMLInputElement; }) => {
+    };
+    const onClick = (event: MouseEvent & { currentTarget: EventTarget & HTMLInputElement }) => {
         event.stopPropagation();
-    }
+    };
     const onKeyDown = (event: KeyboardEvent) => {
-        if (event.key !== SHIFT && event.key !== CONTROL && event.key !== ALT) { // ignore meta keys
-            switch (event.key) { // only react to arrow keys, other keys are handled by other components
+        if (event.key !== SHIFT && event.key !== CONTROL && event.key !== ALT) {
+            // ignore meta keys
+            switch (
+                event.key // only react to arrow keys, other keys are handled by other components
+            ) {
                 case ARROW_LEFT:
                 case ARROW_RIGHT:
                 case ARROW_UP:
@@ -83,13 +77,13 @@
                 }
             }
         }
-    }
+    };
 </script>
 
-<span role="radiogroup" aria-labelledby={ariaLabel} id={id} class="limited-radio-component-group" class:limited-radio-component-vertical="{!isHorizontal}">
-	{#each myEnum as nn, i}
-      <span class="limited-radio-component-single">
-        <md-radio
+<span role="radiogroup" aria-labelledby={ariaLabel} {id} class="limited-radio-component-group" class:limited-radio-component-vertical={!isHorizontal}>
+    {#each myEnum as nn, i}
+        <span class="limited-radio-component-single">
+            <md-radio
                 id="{id}-{nn}-{i}"
                 name="{id}-group"
                 role="radio"
@@ -102,8 +96,8 @@
                 on:change={onChange}
                 on:keydown={onKeyDown}
                 bind:this={allElements[i]}
-        ></md-radio>
-        <label class="limited-radio-component-label" for="{id}-{nn}-{i}">{nn}</label>
-      </span>
-	{/each}
+            ></md-radio>
+            <label class="limited-radio-component-label" for="{id}-{nn}-{i}">{nn}</label>
+        </span>
+    {/each}
 </span>

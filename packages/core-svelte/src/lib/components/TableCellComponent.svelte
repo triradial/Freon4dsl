@@ -1,6 +1,7 @@
-<svelte:options immutable={true}/>
+<svelte:options immutable={true} />
+
 <script lang="ts">
-    import { TABLECELL_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { TABLECELL_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component show a single cell in a TableComponent. It supports drag and drop,
@@ -23,18 +24,12 @@
         MenuOptionsType,
         FreUtils,
         isTableRowBox,
-        TableRowBox
+        TableRowBox,
     } from "@freon4dsl/core";
     import { onMount, createEventDispatcher, afterUpdate } from "svelte";
     import RenderComponent from "./RenderComponent.svelte";
     import { componentId } from "$lib/index.js";
-    import {
-        activeElem,
-        activeIn,
-        draggedElem,
-        draggedFrom,
-        selectedBoxes
-    } from "$lib/index.js";
+    import { activeElem, activeIn, draggedElem, draggedFrom, selectedBoxes } from "$lib/index.js";
     import { contextMenu, contextMenuVisible } from "$lib/index.js";
 
     // properties
@@ -48,9 +43,9 @@
     type BoxTypeName = "gridcellNeutral" | "gridcellOdd" | "gridcellEven";
 
     // local variables
-    const LOGGER = TABLECELL_LOGGER
+    const LOGGER = TABLECELL_LOGGER;
     const dispatcher = createEventDispatcher();
-    let id: string = !!box ? `cell-${componentId(box)}` : 'table-cell-for-unknown-box';
+    let id: string = !!box ? `cell-${componentId(box)}` : "table-cell-for-unknown-box";
 
     let row: number;
     let column: number;
@@ -79,7 +74,7 @@
             myMetaType = box.conceptName;
         }
         LOGGER.log("    refresh row, col = " + row + ", " + column);
-    }
+    };
 
     /**
      * This function sets the focus on this element programmatically.
@@ -103,7 +98,7 @@
         box.setFocus = setFocus;
         // selection is handled here because TableCells are not included in the RenderComponent
         let isSelected: boolean = $selectedBoxes.includes(box);
-        cssClass = (isSelected ? "table-cell-component-selected" : "table-cell-component-unselected");
+        cssClass = isSelected ? "table-cell-component-selected" : "table-cell-component-unselected";
     });
 
     const onKeydown = (event: KeyboardEvent) => {
@@ -117,8 +112,9 @@
         }
     };
 
-    $: { // Evaluated and re-evaluated when the box changes.
-        refresh('New TableCellComponent created for ' + box?.id );//+ " element name: " + box?.element["name"]);
+    $: {
+        // Evaluated and re-evaluated when the box changes.
+        refresh("New TableCellComponent created for " + box?.id); //+ " element name: " + box?.element["name"]);
     }
 
     const drop = (event: DragEvent) => {
@@ -194,9 +190,8 @@
 
     // Note that this component is never part of a RenderComponent, therefore we must handle being selected here
     let isSelected: boolean;
-    $: isSelected = box.content.selectable ? ($selectedBoxes.includes(box) || $selectedBoxes.includes(box.content)) : false;
+    $: isSelected = box.content.selectable ? $selectedBoxes.includes(box) || $selectedBoxes.includes(box.content) : false;
 </script>
-
 
 <!-- on:focus is here to avoid a known bug in svelte 3.4*: "A11y: on:mouseover must be accompanied by on:focus with Svelte v3.40 #285" -->
 <!-- Likewise on:blur is needed for on:mouseout -->
@@ -204,25 +199,23 @@
 <!--  style="grid-row: '{row}' grid-column: '{column}' {cssStyle}"-->
 
 <span
-        id="{id}"
-        role="cell"
-        class="table-cell-component {orientation} {isHeader} {cssClass} "
-        style:grid-row="{row}"
-        style:grid-column="{column}"
-        style="{cssStyle}"
-        draggable=true
-        on:keydown={onKeydown}
-        on:dragstart|stopPropagation={event => dragstart(event)}
-        on:drop|stopPropagation={event => drop(event)}
-
-        on:dragenter|stopPropagation={(event) => dragenter(event)}
-        on:mouseout|stopPropagation={mouseout}
-        on:focus={() => {}}
-        on:blur={() => {}}
-        on:keydown={onKeydown}
-        on:contextmenu|stopPropagation|preventDefault={(event) => showContextMenu(event)}
-        bind:this={htmlElement}
+    {id}
+    role="cell"
+    class="table-cell-component {orientation} {isHeader} {cssClass} "
+    style:grid-row={row}
+    style:grid-column={column}
+    style={cssStyle}
+    draggable="true"
+    on:keydown={onKeydown}
+    on:dragstart|stopPropagation={(event) => dragstart(event)}
+    on:drop|stopPropagation={(event) => drop(event)}
+    on:dragenter|stopPropagation={(event) => dragenter(event)}
+    on:mouseout|stopPropagation={mouseout}
+    on:focus={() => {}}
+    on:blur={() => {}}
+    on:keydown={onKeydown}
+    on:contextmenu|stopPropagation|preventDefault={(event) => showContextMenu(event)}
+    bind:this={htmlElement}
 >
-    <RenderComponent box={childBox} editor={editor}/>
+    <RenderComponent box={childBox} {editor} />
 </span>
-

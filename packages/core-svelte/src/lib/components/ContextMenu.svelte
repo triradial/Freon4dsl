@@ -1,7 +1,9 @@
-<svelte:options accessors={true}/> <!-- this option lets us set the items props after the component has been created -->
+<svelte:options accessors={true} />
+
+<!-- this option lets us set the items props after the component has been created -->
 
 <script lang="ts">
-    import { CONTEXTMENU_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { CONTEXTMENU_LOGGER } from "./ComponentLoggers.js";
 
     /**
      *  This component combines a menu with a submenu. The positions of both the menu and the submenu are determined
@@ -22,16 +24,20 @@
     // local variables
     const LOGGER = CONTEXTMENU_LOGGER;
     let submenuItems: MenuItem[];
-    let elementIndex: number;                   // the index of the element in a list to which this menu is coupled
+    let elementIndex: number; // the index of the element in a list to which this menu is coupled
 
     // dimension (height and width) of context menu
-    let menuHeight = 0, menuWidth = 0;
+    let menuHeight = 0,
+        menuWidth = 0;
     // position of context menu
-    let top = 0, left = 0;
+    let top = 0,
+        left = 0;
     // dimension (height and width) of sub menu
-    let submenuHeight = 0, submenuWidth = 0;
+    let submenuHeight = 0,
+        submenuWidth = 0;
     // position of sub menu
-    let topSub = 0, leftSub = 0;
+    let topSub = 0,
+        leftSub = 0;
     // height of items in menu and sub menu
     let itemHeight = 40;
     let submenuOpen = false;
@@ -73,7 +79,7 @@
                 top = top - menuHeight;
             }
         }
-        LOGGER.log("ContextMenu.show: "  + " left=" + left + " top=" + top);
+        LOGGER.log("ContextMenu.show: " + " left=" + left + " top=" + top);
     }
 
     /**
@@ -134,16 +140,12 @@
     }
 </script>
 
-<div use:clickOutsideConditional={{enabled: $contextMenuVisible}}
-     on:click_outside={hide}>
+<div use:clickOutsideConditional={{ enabled: $contextMenuVisible }} on:click_outside={hide}>
     {#if $contextMenuVisible}
-        <nav use:getContextMenuDimension
-             class="contextmenu"
-             style="top: {top}px; left: {left}px"
-        >
+        <nav use:getContextMenuDimension class="contextmenu" style="top: {top}px; left: {left}px">
             {#each items as item, index}
-                {#if item.label === '---'}
-                    <hr class="contextmenu-hr"/>
+                {#if item.label === "---"}
+                    <hr class="contextmenu-hr" />
                 {:else}
                     <button class="contextmenu-button" on:click={(event) => onClick(event, item, index)} bind:clientHeight={itemHeight}>
                         {item.label}
@@ -155,13 +157,10 @@
             {/each}
         </nav>
         {#if submenuOpen}
-            <nav use:getSubMenuDimension
-                 class="contextmenu"
-                 style="top: {topSub}px; left: {leftSub}px"
-            >
+            <nav use:getSubMenuDimension class="contextmenu" style="top: {topSub}px; left: {leftSub}px">
                 {#each submenuItems as item, index}
-                    {#if item.label === '---'}
-                        <hr class="contextmenu-hr"/>
+                    {#if item.label === "---"}
+                        <hr class="contextmenu-hr" />
                     {:else}
                         <button class="contextmenu-button" on:click={(event) => onClick(event, item, index)}>
                             {item.label}
@@ -175,5 +174,3 @@
         {/if}
     {/if}
 </div>
-
-

@@ -4,13 +4,13 @@
 
 <script lang="ts">
     import { afterUpdate, onMount } from "svelte";
-    import { componentId } from "$lib/index.js";
+    import { componentId } from "./svelte-utils/index.js";
     import { FreEditor, FreLogger, MultiLineTextBox2 } from "@freon4dsl/core";
     import { ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BACKSPACE, CONTROL, DELETE, ENTER, ESCAPE, SHIFT, TAB } from "@freon4dsl/core";
 
     import Editor from "@tinymce/tinymce-svelte";
-    import type { TinyMCE as TinyMCEEditor, Editor as TinyEditor } from "tinymce";
-
+    import type { ComponentType } from "svelte";
+    import type { TinyMCE as TinyMCEEditor, Editor as TinyEditor, TinyMCE } from "tinymce";
     import { runInAction } from "mobx";
 
     // Probably needed to code/encode HTML inside <TextArea>
@@ -61,7 +61,7 @@
      * are set.
      */
     onMount(() => {
-        LOGGER.log("onMount" + " for element " + box?.element?.freId() + " (" + box?.element?.freLanguageConcept() + ")");
+        LOGGER.log("onMount" + " for element " + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")");
         placeholder = box.placeHolder;
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
@@ -248,7 +248,7 @@
     }
 
     const refresh = () => {
-        LOGGER.log("REFRESH " + box?.element?.freId() + " (" + box?.element?.freLanguageConcept() + ")");
+        LOGGER.log("REFRESH " + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")");
         placeholder = box.placeHolder;
         text = box.getText();
         cssClass = box.cssClass;

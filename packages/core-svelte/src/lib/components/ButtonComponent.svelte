@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { BUTTON_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { BUTTON_LOGGER } from "./ComponentLoggers.js";
     import { ButtonBox, FreEditor } from "@freon4dsl/core";
     import { afterUpdate, onMount } from "svelte";
 
-    const LOGGER = BUTTON_LOGGER
+    const LOGGER = BUTTON_LOGGER;
 
     export let editor: FreEditor;
     export let box: ButtonBox;
@@ -31,14 +31,18 @@
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
-    const onClick = (event: MouseEvent & {currentTarget: EventTarget & HTMLButtonElement; }) => {
+    const onClick = (event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) => {
         box.executeAction(editor);
         event.stopPropagation();
-    }
+    };
 </script>
 
-<button class="button-component-ripple button-component {box.role}" class:button-component-empty="{box.text.length === 0}" id="{id}" on:click={onClick} bind:this={thisButton} >
+<button
+    class="button-component-ripple button-component {box.role}"
+    class:button-component-empty={box.text.length === 0}
+    {id}
+    on:click={onClick}
+    bind:this={thisButton}
+>
     <span>{box.text}</span>
 </button>
-
-

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { FREON_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { FREON_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component shows a complete projection, by displaying the rootbox of

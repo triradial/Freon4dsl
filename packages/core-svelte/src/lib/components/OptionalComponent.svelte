@@ -1,6 +1,7 @@
-<svelte:options immutable={true}/>
+<svelte:options immutable={true} />
+
 <script lang="ts">
-    import { OPTIONAL_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { OPTIONAL_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component display an optional part. It either shows the content of the
@@ -14,9 +15,9 @@
     export let box: OptionalBox;
     export let editor: FreEditor;
 
-    const LOGGER = OPTIONAL_LOGGER
-    let id: string;                             // an id for the html element showing the optional
-    id = !!box ? componentId(box) : 'optional-for-unknown-box';
+    const LOGGER = OPTIONAL_LOGGER;
+    let id: string; // an id for the html element showing the optional
+    id = !!box ? componentId(box) : "optional-for-unknown-box";
     let childBox: Box;
     let mustShow = false;
     let showByCondition = false;
@@ -32,7 +33,7 @@
 
     async function setFocus(): Promise<void> {
         LOGGER.log("OptionalComponent.setFocus on box " + box.role);
-        if (mustShow || showByCondition && !!contentComponent) {
+        if (mustShow || (showByCondition && !!contentComponent)) {
             box.content.firstEditableChild.setFocus();
         } else if (!!placeholderComponent) {
             box.placeholder.setFocus();
@@ -41,28 +42,26 @@
         }
     }
 
-    onMount( () => {
+    onMount(() => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
 
-    afterUpdate( () => {
+    afterUpdate(() => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
 
-    $: { // Evaluated and re-evaluated when the box changes.
+    $: {
+        // Evaluated and re-evaluated when the box changes.
         refresh(box?.$id);
     }
 </script>
 
-<span class="optional-component"
-      id="{id}"
->
+<span class="optional-component" {id}>
     {#if mustShow || showByCondition}
-        <RenderComponent box={childBox} editor={editor} bind:this={contentComponent}/>
+        <RenderComponent box={childBox} {editor} bind:this={contentComponent} />
     {:else}
-        <RenderComponent box={box.placeholder} editor={editor} bind:this={placeholderComponent}/>
+        <RenderComponent box={box.placeholder} {editor} bind:this={placeholderComponent} />
     {/if}
 </span>
-

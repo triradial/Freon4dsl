@@ -1,8 +1,8 @@
 <!-- Copied and adapted from https://svelte.dev/repl/dd6754a2ad0547c5b1c1ea37c0293fef?version=4.2.19 -->
 
 <script lang="ts">
-    import { viewport } from "$lib/components/svelte-utils/EditorViewportStore.js";
-    import {Box} from "@freon4dsl/core";
+    import { viewport } from "./svelte-utils/EditorViewportStore.js";
+    import { Box } from "@freon4dsl/core";
 
     export let box: Box;
     export let hasErr: boolean = false;
@@ -38,24 +38,15 @@
     }
 
     // Empty function to avoid error: "Svelte: A11y: on:mouseover must be accompanied by on:focus"
-    function onFocus() {
-    }
+    function onFocus() {}
 </script>
 
-<span role= "group"
-     on:mouseover={mouseOver}
-     on:mouseleave={mouseLeave}
-     on:mousemove={mouseMove}
-     on:focus={onFocus}
-     >
+<span role="group" on:mouseover={mouseOver} on:mouseleave={mouseLeave} on:mousemove={mouseMove} on:focus={onFocus}>
     <slot />
 </span>
 
 {#if isHovered}
-    <div
-         style="top: {top}px; left: {left}px;"
-         class="error-tooltip"
-    >
+    <div style="top: {top}px; left: {left}px;" class="error-tooltip">
         {#if content.length > 1}
             <ol class="error-tooltip-list-content">
                 {#each content as item}

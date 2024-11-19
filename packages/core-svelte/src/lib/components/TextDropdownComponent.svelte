@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TEXTDROPDOWN_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { TEXTDROPDOWN_LOGGER } from "./ComponentLoggers.js";
 
     // This component is a combination of a TextComponent and a DropdownComponent.
     // The TextComponent is shown in non-editable state until it gets focus,

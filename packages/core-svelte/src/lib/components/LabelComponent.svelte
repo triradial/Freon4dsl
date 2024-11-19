@@ -1,6 +1,7 @@
-<svelte:options immutable={true}/>
+<svelte:options immutable={true} />
+
 <script lang="ts">
-    import { LABEL_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { LABEL_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component shows to piece of non-editable text.
@@ -11,22 +12,22 @@
 
     export let box: LabelBox;
 
-    const LOGGER = LABEL_LOGGER
+    const LOGGER = LABEL_LOGGER;
 
-    let id: string = !!box ? componentId(box) : 'label-for-unknown-box';
+    let id: string = !!box ? componentId(box) : "label-for-unknown-box";
     let element: HTMLSpanElement = null;
     let style: string;
-    let cssClass: string = !!box ? box.cssClass : '';
+    let cssClass: string = !!box ? box.cssClass : "";
     let text: string;
 
-    onMount( () => {
+    onMount(() => {
         if (!!box) {
             box.refreshComponent = refresh;
             cssClass = box.cssClass;
         }
     });
 
-    afterUpdate( () => {
+    afterUpdate(() => {
         if (!!box) {
             box.refreshComponent = refresh;
         }
@@ -41,16 +42,12 @@
         }
     };
 
-    $: { // Evaluated and re-evaluated when the box changes.
+    $: {
+        // Evaluated and re-evaluated when the box changes.
         refresh("FROM component " + box?.id);
     }
 </script>
 
-<span class="label-component {text} {cssClass}"
-      style="{style}"
-      bind:this={element}
-      id="{id}"
->
+<span class="label-component {text} {cssClass}" {style} bind:this={element} {id}>
     {@html text}
 </span>
-

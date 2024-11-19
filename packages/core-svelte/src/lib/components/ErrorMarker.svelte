@@ -1,7 +1,7 @@
 <script lang="ts">
     import { afterUpdate, onMount, tick } from "svelte";
-    import ErrorTooltip from "$lib/components/ErrorTooltip.svelte";
-    import { viewport } from "$lib/components/svelte-utils/index.js";
+    import ErrorTooltip from "./ErrorTooltip.svelte";
+    import { viewport } from "./svelte-utils/index.js";
     import { Box } from "@freon4dsl/core";
 
     export let box: Box;

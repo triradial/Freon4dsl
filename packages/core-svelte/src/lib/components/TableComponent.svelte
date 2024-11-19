@@ -1,6 +1,7 @@
-<svelte:options immutable={true}/>
+<svelte:options immutable={true} />
+
 <script lang="ts">
-    import { TABLE_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { TABLE_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component shows a list of elements that have the same type (a 'true' list) as
@@ -17,19 +18,19 @@
         GridCellBox,
         isTableRowBox,
         isElementBox,
-        TableCellBox
+        TableCellBox,
     } from "@freon4dsl/core";
     import { afterUpdate, onMount } from "svelte";
     import { activeElem, activeIn, componentId, draggedElem, draggedFrom } from "./svelte-utils/index.js";
     import { dropListElement, moveListElement } from "@freon4dsl/core";
     import TableCellComponent from "./TableCellComponent.svelte";
 
-    const LOGGER = TABLE_LOGGER
+    const LOGGER = TABLE_LOGGER;
 
     export let box: TableBox;
     export let editor: FreEditor;
 
-    let id = !!box ? componentId(box) : 'table-for-unknown-box';
+    let id = !!box ? componentId(box) : "table-for-unknown-box";
     let cells: TableCellBox[];
     let templateColumns: string;
     let templateRows: string;
@@ -59,12 +60,12 @@
     }
 
     function getCells(): TableCellBox[] {
-        const _cells: TableCellBox[] = []
-        box.children.forEach(ch => {
+        const _cells: TableCellBox[] = [];
+        box.children.forEach((ch) => {
             if (isElementBox(ch)) {
                 const rowBox = ch.content;
                 if (isTableRowBox(rowBox)) {
-                    _cells.push(...rowBox.cells)
+                    _cells.push(...rowBox.cells);
                 }
             } else if (isTableRowBox(ch)) {
                 _cells.push(...ch.cells);
@@ -76,7 +77,7 @@
         return _cells;
     }
 
-    onMount( () => {
+    onMount(() => {
         box.refreshComponent = refresh;
         box.setFocus = setFocus;
         // We also set the refresh to each child that is a TableRowBox,
@@ -84,25 +85,26 @@
         for (const child of box.children) {
             if (isTableRowBox(child)) {
                 child.refreshComponent = refresh;
-            } else if (isElementBox(child) && isTableRowBox(child.content)){
+            } else if (isElementBox(child) && isTableRowBox(child.content)) {
                 child.refreshComponent = refresh;
             }
         }
     });
 
-    afterUpdate( () => {
+    afterUpdate(() => {
         box.refreshComponent = refresh;
         box.setFocus = setFocus;
         for (const child of box.children) {
             if (isTableRowBox(child)) {
                 child.refreshComponent = refresh;
-            } else if (isElementBox(child) && isTableRowBox(child.content)){
+            } else if (isElementBox(child) && isTableRowBox(child.content)) {
                 child.content.refreshComponent = refresh;
             }
         }
     });
 
-    $: { // Evaluated and re-evaluated when the box changes.
+    $: {
+        // Evaluated and re-evaluated when the box changes.
         refresh("Refresh new box: " + box?.id);
     }
     // determine the type of the elements in the list
@@ -116,43 +118,39 @@
         }
 
         // console.log("DROPPING item [" + data.element.freId() + "] from [" + data.componentId + "] in grid [" + id + "] on position [" + targetIndex + "]");
-        if (box.hasHeaders) { // take headers into account for the target index
+        if (box.hasHeaders) {
+            // take headers into account for the target index
             targetIndex = targetIndex - 1;
             // console.log("grid has headers, targetIndex: " + targetIndex);
         }
-        if (data.componentId === id) { // dropping in the same grid
+        if (data.componentId === id) {
+            // dropping in the same grid
             // console.log("moving item within grid");
             moveListElement(box.node, data.element, box.propertyName, targetIndex);
-        } else { // dropping in another list
+        } else {
+            // dropping in another list
             // console.log("moving item to another grid, drop type: " + data.elementType + ", grid cell type: " + elementType);
             dropListElement(editor, data, elementType, box.node, box.propertyName, targetIndex);
         }
         // Everything is done, so reset the variables
         $draggedElem = null;
-        $draggedFrom = '';
-        $activeElem = {row: - 1, column: -1 };
-        $activeIn = '';
+        $draggedFrom = "";
+        $activeElem = { row: -1, column: -1 };
+        $activeIn = "";
         // Clear the drag data cache (for all formats/types) (gives error in FireFox!)
         // event.dataTransfer.clearData();
     };
 </script>
 
 <span
-        style:grid-template-columns="{templateColumns}"
-        style:grid-template-rows="{templateRows}"
-        class="table-component {cssClass}"
-        id="{id}"
-        tabIndex={0}
-        bind:this={htmlElement}
+    style:grid-template-columns={templateColumns}
+    style:grid-template-rows={templateRows}
+    class="table-component {cssClass}"
+    {id}
+    tabIndex={0}
+    bind:this={htmlElement}
 >
-    {#each cells as cell (cell.content.id + '-' + cell.row + '-' + cell.column)}
-        <TableCellComponent
-                box={cell}
-                editor={editor}
-                parentComponentId={id}
-                parentOrientation={box.direction}
-                myMetaType={elementType}
-                on:dropOnCell={drop}/>
+    {#each cells as cell (cell.content.id + "-" + cell.row + "-" + cell.column)}
+        <TableCellComponent box={cell} {editor} parentComponentId={id} parentOrientation={box.direction} myMetaType={elementType} on:dropOnCell={drop} />
     {/each}
 </span>
-

@@ -1,23 +1,13 @@
 <script lang="ts">
-    import { LIMITEDCHECKBOX_LOGGER } from "$lib/components/ComponentLoggers.js";
-    import {
-        LimitedControlBox,
-        FreEditor,
-        FreLogger,
-        SHIFT,
-        CONTROL,
-        ALT,
-        SPACEBAR,
-        ARROW_RIGHT,
-        ARROW_LEFT, ARROW_DOWN, ARROW_UP
-    } from "@freon4dsl/core";
-    import {afterUpdate, onMount} from "svelte";
-    import {MdCheckbox} from "@material/web/all.js";
+    import { LIMITEDCHECKBOX_LOGGER } from "./ComponentLoggers.js";
+    import { LimitedControlBox, FreEditor, FreLogger, SHIFT, CONTROL, ALT, SPACEBAR, ARROW_RIGHT, ARROW_LEFT, ARROW_DOWN, ARROW_UP } from "@freon4dsl/core";
+    import { afterUpdate, onMount } from "svelte";
+    import { MdCheckbox } from "@material/web/all.js";
 
     export let box: LimitedControlBox;
-    export let editor: FreEditor;			// the editor
+    export let editor: FreEditor; // the editor
 
-    const LOGGER = LIMITEDCHECKBOX_LOGGER
+    const LOGGER = LIMITEDCHECKBOX_LOGGER;
 
     let id: string = box.id;
     let currentNames: string[] = box.getNames();
@@ -31,7 +21,7 @@
         // console.log("onClick")
         // prevent bubbling up
         event.stopPropagation();
-    }
+    };
 
     function isChecked(nn: string): boolean {
         return currentNames.includes(nn);
@@ -76,7 +66,7 @@
         for (let i = 0; i < allElements.length; i++) {
             if (document.activeElement === allElements[i]) {
                 if (i === allElements.length - 1) {
-                    allElements[0].focus()
+                    allElements[0].focus();
                 } else {
                     allElements[i + 1].focus();
                 }
@@ -89,7 +79,7 @@
         for (let i = 0; i < allElements.length; i++) {
             if (document.activeElement === allElements[i]) {
                 if (i === 0) {
-                    allElements[allElements.length - 1].focus()
+                    allElements[allElements.length - 1].focus();
                 } else {
                     allElements[i - 1].focus();
                 }
@@ -100,8 +90,11 @@
 
     const onKeyDown = (event) => {
         // space key should toggle the checkbox
-        if (event.key !== SHIFT && event.key !== CONTROL && event.key !== ALT) { // ignore meta keys
-            switch (event.key) { // only react to space key, other keys are handled by other components
+        if (event.key !== SHIFT && event.key !== CONTROL && event.key !== ALT) {
+            // ignore meta keys
+            switch (
+                event.key // only react to space key, other keys are handled by other components
+            ) {
                 case SPACEBAR: {
                     event.stopPropagation();
                     // event.preventDefault();
@@ -141,28 +134,26 @@
                 }
             }
         }
-    }
-
+    };
 </script>
 
-<span role="group" aria-labelledby={ariaLabel} id={id} class="limited-checkbox-component-group" class:limited-checkbox-component-vertical="{!isHorizontal}">
-	{#each myEnum as nn, i}
-  <span class="limited-checkbox-component-single">
-    <md-checkbox
-            id="{id}-{nn}-{i}"
-            value={nn}
-            checked={isChecked(nn)}
-            aria-label="checkbox-{nn}"
-            role="checkbox"
-            aria-checked={isChecked(nn)}
-            tabindex={0}
-            on:change={() => changed(nn)}
-            on:click={onClick}
-            on:keydown={onKeyDown}
-            bind:this={allElements[i]}
-    ></md-checkbox>
-    <label for="{id}-{nn}-{i}" class="limited-checkbox-component-label">{nn}</label>
-  </span>
-	{/each}
+<span role="group" aria-labelledby={ariaLabel} {id} class="limited-checkbox-component-group" class:limited-checkbox-component-vertical={!isHorizontal}>
+    {#each myEnum as nn, i}
+        <span class="limited-checkbox-component-single">
+            <md-checkbox
+                id="{id}-{nn}-{i}"
+                value={nn}
+                checked={isChecked(nn)}
+                aria-label="checkbox-{nn}"
+                role="checkbox"
+                aria-checked={isChecked(nn)}
+                tabindex={0}
+                on:change={() => changed(nn)}
+                on:click={onClick}
+                on:keydown={onKeyDown}
+                bind:this={allElements[i]}
+            ></md-checkbox>
+            <label for="{id}-{nn}-{i}" class="limited-checkbox-component-label">{nn}</label>
+        </span>
+    {/each}
 </span>
-
