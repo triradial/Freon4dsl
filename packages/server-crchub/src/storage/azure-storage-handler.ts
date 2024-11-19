@@ -9,11 +9,9 @@ export class AzureStorageHandler implements IStorageHandler {
     constructor() {
         const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
         const shareName = process.env.AZURE_STORAGE_SHARE_NAME || 'datastore';
-
         if (!connectionString) {
             throw new Error('Azure Storage connection string not found');
         }
-
         this.shareServiceClient = ShareServiceClient.fromConnectionString(connectionString);
         this.fileShare = this.shareServiceClient.getShareClient(shareName);
     }
@@ -21,14 +19,12 @@ export class AzureStorageHandler implements IStorageHandler {
     async readFile(filePath: string): Promise<string> {
         const dirPath = filePath.substring(0, filePath.lastIndexOf('/'));
         const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-
         console.log('Azure Storage Read Request:', {
             requestedPath: filePath,
             dirPath,
             fileName,
             fileShare: this.fileShare.name
         });
-
         const directoryClient = dirPath ? this.getDirectoryClient(dirPath) : this.fileShare.rootDirectoryClient;
         const fileClient = directoryClient.getFileClient(fileName);
         const fileExists = await fileClient.exists();

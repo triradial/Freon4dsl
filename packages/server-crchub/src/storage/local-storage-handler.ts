@@ -15,31 +15,31 @@ export class LocalStorageHandler implements IStorageHandler {
     }
 
     async readFile(filePath: string): Promise<string> {
+        const fullPath = this.getFullPath(filePath);
         try {
-            const fullPath = this.getFullPath(filePath);
             const content = await fs.readFile(fullPath, 'utf8');
             return content;
         } catch (error) {
-            throw new Error(`Error reading file ${filePath}: ${error.message}`);
+            throw new Error(`LocalStorageHandler.readFile: Error reading file ${fullPath}: ${error.message}`);
         }
     }
 
     async writeFile(filePath: string, content: string): Promise<void> {
+        const fullPath = this.getFullPath(filePath);
         try {
-            const fullPath = this.getFullPath(filePath);
             await fs.mkdir(path.dirname(fullPath), { recursive: true });
-            await fs.writeFile(filePath, content);
+            await fs.writeFile(fullPath, content);
         } catch (error) {
-            throw new Error(`Error writing file ${filePath}: ${error.message}`);
+            throw new Error(`LocalStorageHandler.writeFile: Error writing file ${fullPath}: ${error.message}`);
         }
     }
 
     async deleteFile(filePath: string): Promise<void> {
+        const fullPath = this.getFullPath(filePath);
         try {
-            const fullPath = this.getFullPath(filePath);
             await fs.unlink(fullPath);
         } catch (error) {
-            throw new Error(`Error deleting file ${filePath}: ${error.message}`);
+            throw new Error(`Error deleting file ${fullPath}: ${error.message}`);
         }
     }
 
@@ -54,35 +54,35 @@ export class LocalStorageHandler implements IStorageHandler {
     }
 
     async listFiles(dirPath: string): Promise<string[]> {
+        const fullPath = this.getFullPath(dirPath);
         try {
-            const fullPath = this.getFullPath(dirPath);
             return await fs.readdir(fullPath);
         } catch (error) {
-            throw new Error(`Error listing files in directory ${dirPath}: ${error.message}`);
+            throw new Error(`Error listing files in directory ${fullPath}: ${error.message}`);
         }
     }
 
     async listDirectories(dirPath: string): Promise<string[]> {
+        const fullPath = this.getFullPath(dirPath);
         try {
-            const fullPath = this.getFullPath(dirPath);
             return await fs.readdir(fullPath);
         } catch (error) {
-            throw new Error(`Error listing directories in directory ${dirPath}: ${error.message}`);
+            throw new Error(`Error listing directories in directory ${fullPath}: ${error.message}`);
         }
     }
 
     async ensureDirectory(dirPath: string): Promise<void> {
+        const fullPath = this.getFullPath(dirPath);
         try {
-            const fullPath = this.getFullPath(dirPath);
             await fs.mkdir(fullPath, { recursive: true });
         } catch (error) {
-            throw new Error(`Error creating directory ${dirPath}: ${error.message}`);
+            throw new Error(`Error creating directory ${fullPath}: ${error.message}`);
         }
     }
 
     async directoryExists(dirPath: string): Promise<boolean> {
+        const fullPath = this.getFullPath(dirPath);
         try {
-            const fullPath = this.getFullPath(dirPath);
             const stats = await stat(fullPath);
             return stats.isDirectory();
         } catch {

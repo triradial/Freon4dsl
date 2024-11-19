@@ -33,8 +33,7 @@ export class AuthHandler {
             if (process.env.AZURE_ENVIRONMENT === 'local') {
                 console.log('Auth Environment:', {
                     environment: process.env.AZURE_ENVIRONMENT,
-                    username: username,
-                    password: password
+                    username: username
                 });
                 if (password === '#2Pencil' && username.endsWith('@triradialapps.onmicrosoft.com')) {
                     const localUser = username.split('@')[0].toLowerCase();
@@ -59,7 +58,6 @@ export class AuthHandler {
                 clientId: clientId,
                 tokenEndpoint: tokenEndpoint,
                 username: username,
-                password: password
             });
 
 

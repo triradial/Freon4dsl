@@ -33,9 +33,9 @@ router.get('/health', async (ctx: Router.IRouterContext) => {
 // Auth requests
 router.post('/signIn', rateLimiter, async (ctx: Router.IRouterContext) => {
     try {
-        console.log('signIn: ctx.request.body=', JSON.stringify(ctx.request.body, null, 2));
+        console.log('Router.signIn: ctx.request.body=', JSON.stringify(ctx.request.body, null, 2));
         const { username, password } = signInSchema.parse(ctx.request.body);
-        console.log('signIn: ' + username);
+        console.log('Router.signIn: ' + username);
         await AuthHandler.signIn(username, password, ctx);
     } catch (error) {
         console.error('SignIn error:', error);
@@ -46,7 +46,7 @@ router.post('/signIn', rateLimiter, async (ctx: Router.IRouterContext) => {
 
 router.post('/signOut', async (ctx: Router.IRouterContext) => {
     try {
-        console.log('signOut');
+        console.log('Router.signOut');
         await AuthHandler.signOut(ctx);
     } catch (error) {
         console.error('SignOut error:', error);
@@ -57,13 +57,13 @@ router.post('/signOut', async (ctx: Router.IRouterContext) => {
 
 // Model requests
 router.get("/getModelList", async (ctx: Router.IRouterContext) => {
-    console.log("router.getModelList");
+    console.log("Routes.getModelList");
     await ModelHandler.getModelList(ctx);
 });
 
 router.get("/deleteModel", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
-    console.log("router.deleteModel: " + model);
+    console.log("Routes.deleteModel: " + model);
     if (!!model && typeof model === "string") {
         await ModelHandler.deleteModel(model, ctx);
     } else {
@@ -77,9 +77,9 @@ router.get("/deleteModel", async (ctx: Router.IRouterContext) => {
 router.get("/getModelUnit", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
     const unit = ctx.query["unit"];
-    console.log("router.getModelUnit: model=" + model + " unit=" + unit);
+    console.log("Routes.getModelUnit: model=" + model + " unit=" + unit);
     if ((!!unit || model) && typeof unit === "string" && typeof model === "string") {
-        console.log("router.getModelUnit: calling ModelRequests.getModelUnit");
+        console.log("Routes.getModelUnit: calling ModelRequests.getModelUnit");
         await ModelHandler.getModelUnit(model, unit, ctx);
     } else {
         ctx.status = 412; // Precondition failed
@@ -90,7 +90,7 @@ router.get("/getModelUnit", async (ctx: Router.IRouterContext) => {
 
 router.get("/getModelUnitList", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
-    console.log("router.getModelUnitList: model=" + model);
+    console.log("Routes.getModelUnitList: model=" + model);
     if (!!model && typeof model === "string") {
         await ModelHandler.getModelUnitList(model, ctx);
     } else {
@@ -103,7 +103,7 @@ router.get("/getModelUnitList", async (ctx: Router.IRouterContext) => {
 router.put("/saveModelUnit", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
     const unit = ctx.query["unit"];
-    console.log("router.saveModelUnit: " + model + "/" + unit);
+    console.log("Routes.saveModelUnit: " + model + "/" + unit);
     if ((!!unit || !!model) && typeof unit === "string" && typeof model === "string") {
         await ModelHandler.saveModelUnit(model, unit, ctx);
     } else {
@@ -118,7 +118,7 @@ router.put("/saveModelUnit", async (ctx: Router.IRouterContext) => {
 router.get("/deleteModelUnit", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
     const unit = ctx.query["unit"];
-    console.log("router.deleteModelUnit: " + model + "/" + unit);
+    console.log("Routes.deleteModelUnit: " + model + "/" + unit);
     if ((!!unit || !!model) && typeof unit === "string" && typeof model === "string") {
         await ModelHandler.deleteModelUnit(model, unit, ctx);
     } else {
@@ -132,7 +132,7 @@ router.get("/deleteModelUnit", async (ctx: Router.IRouterContext) => {
 // Study requests
 router.get("/getStudies", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
-    console.log("routes.getStudies: uid:" + uid);
+    console.log("Routes.getStudies: uid:" + uid);
     if (!!uid && typeof uid === "string") {
         await DataHandler.getStudies(uid, ctx);
     } else {
@@ -145,7 +145,7 @@ router.get("/getStudies", async (ctx: Router.IRouterContext) => {
 router.get("/getStudy", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
-    console.log("routes.getStudy: id=" + id + " uid=" + uid);
+    console.log("Routes.getStudy: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
         await DataHandler.getStudy(uid, id, ctx);
     } else {
@@ -157,7 +157,7 @@ router.get("/getStudy", async (ctx: Router.IRouterContext) => {
 
 router.post("/addStudy", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
-    console.log("routes.addStudy: uid=" + uid);
+    console.log("Routes.addStudy: uid=" + uid);
     if (!!uid && typeof uid === "string") {
         await DataHandler.addStudy(uid, ctx);
     } else {
@@ -170,7 +170,7 @@ router.post("/addStudy", async (ctx: Router.IRouterContext) => {
 router.put("/updateStudy", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
-    console.log("routes.updateStudy: id=" + id + " uid=" + uid);
+    console.log("Routes.updateStudy: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
         await DataHandler.updateStudy(uid, id, ctx);
     } else {
@@ -183,7 +183,7 @@ router.put("/updateStudy", async (ctx: Router.IRouterContext) => {
 router.delete("/deleteStudy", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
-    console.log("routes.deleteStudy: id=" + id + " uid=" + uid);
+    console.log("Routes.deleteStudy: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
         await DataHandler.deleteStudy(uid, id, ctx);
     } else {
@@ -196,7 +196,7 @@ router.delete("/deleteStudy", async (ctx: Router.IRouterContext) => {
 // Patient requests
 router.get("/getPatients", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
-    console.log("routes.getPatients: uid=" + uid);
+    console.log("Routes.getPatients: uid=" + uid);
     if (!!uid && typeof uid === "string") {
         await DataHandler.getPatients(uid, ctx);
     } else {
@@ -209,7 +209,7 @@ router.get("/getPatients", async (ctx: Router.IRouterContext) => {
 router.get("/getPatient", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
-    console.log("routes.getPatient: id=" + id + " uid=" + uid);
+    console.log("Routes.getPatient: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
         await DataHandler.getPatient(uid, id, ctx);
     } else {
@@ -222,7 +222,7 @@ router.get("/getPatient", async (ctx: Router.IRouterContext) => {
 router.get("/getStudyPatients", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
-    console.log("routes.getStudyPatients: id=" + id + " uid=" + uid);
+    console.log("Routes.getStudyPatients: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
         await DataHandler.getStudyPatients(uid, id, ctx);
     } else {
@@ -234,7 +234,7 @@ router.get("/getStudyPatients", async (ctx: Router.IRouterContext) => {
 
 router.post("/addPatient", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
-    console.log("routes.addPatient: uid=" + uid);
+    console.log("Routes.addPatient: uid=" + uid);
     if (!!uid && typeof uid === "string") {
         await DataHandler.addPatient(uid, ctx);
     } else {
@@ -247,7 +247,7 @@ router.post("/addPatient", async (ctx: Router.IRouterContext) => {
 router.put("/updatePatient", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
-    console.log("routes.updatePatient: id=" + id + " uid=" + uid);
+    console.log("Routes.updatePatient: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
         await DataHandler.updatePatient(uid, id, ctx);
     } else {
@@ -260,7 +260,7 @@ router.put("/updatePatient", async (ctx: Router.IRouterContext) => {
 router.delete("/deletePatient", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
-    console.log("routes.deletePatient: id=" + id + " uid=" + uid);
+    console.log("Routes.deletePatient: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
         await DataHandler.deletePatient(uid, id, ctx);
     } else {
@@ -272,13 +272,13 @@ router.delete("/deletePatient", async (ctx: Router.IRouterContext) => {
 
 // User requests
 router.get("/getUsers", async (ctx: Router.IRouterContext) => {
-    console.log("routes.getUsers");
+    console.log("Routes.getUsers");
     await DataHandler.getUsers(ctx);
 });
 
 router.get("/getUser", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
-    console.log("routes.getUser: " + id);
+    console.log("Routes.getUser: " + id);
     if (!!id && typeof id === "string") {
         await DataHandler.getUser(id, ctx);
     } else {
@@ -290,7 +290,7 @@ router.get("/getUser", async (ctx: Router.IRouterContext) => {
 
 router.get("/getUserByEmail", async (ctx: Router.IRouterContext) => {
     const email = ctx.query["email"];
-    console.log("routes.getUserByEmail: " + email);
+    console.log("Routes.getUserByEmail: " + email);
     if (!!email && typeof email === "string") {
         await DataHandler.getUserByEmail(email, ctx);
     } else {
