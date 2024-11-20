@@ -109,23 +109,20 @@ EndingBy {
 
 
 NoComplianceWindow {
-    [ that has no extra compliance window ] 
-    trigger = "no compliance window"
+    [ no extra window] trigger = "no compliance window"
 }
 
 ComplianceWindowOf {
     [
-        and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
-    ] 
-    trigger = "time before/after to be compliant"
+         ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+    ] trigger = "time before/after to be compliant"
 }
 
 EventWindow {
     [
         ${daysBefore} day(s) before and ${daysAfter}day(s) after
-        ${complianceWindow}
-    ] 
-    trigger = "event window"
+        and a compliance window of: ${complianceWindow}
+    ] trigger = "event window"
 }
 
 //RepeatExpression {

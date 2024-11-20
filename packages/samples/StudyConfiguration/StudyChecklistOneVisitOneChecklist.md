@@ -1,4 +1,4 @@
-Study StudyConfiguration 
+Study STUDY-NAME 
 
 ---
 
@@ -63,27 +63,43 @@ To view the interactive chart you must have downloaded it.
 # Screening
 ## V1 Randomization
 
+<ul>
+<li>There are several steps in this initial visit event</li>
+<li>They are documented as separate steps in the checklist</li>
+</ul>
+
+This event is first scheduled on the start day of the Study - 4 weeks
+with a window of 8 day(s) before and 0 day(s) after and a compliance window of no extra window  
 
 
-First scheduled on the start day of the Study - 4 weeks
-with a window of 8 day(s) before and 0 day(s) after  
+### Task:Informed Consent
+
+<p>Review the ICF with the patient.</p>
+<p>Check the reference to the document describing the ICF as needed.</p>
+
+#### Step 1: Show the ICF
 
 
-### Task 1
 
+**REFERENCES**
+- ICF Document www.ICF.com
+#### Step 2: Get the ICF Singed
+#### Step 3: Save the ICF
 
+<p>Scan and upload the signed ICF</p>
 
-
+**REFERENCES**
+- Link to upload to www.uploadToHere.com
 --- 
 ## V1 Run In
 
 
 
-First scheduled when V1 Randomization completed + 2 days
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V1 Randomization completed + 2 days
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 
 
-### Task 1
+### Task:Task 1
 
 
 
@@ -93,11 +109,11 @@ with a window of 2 day(s) before and 2 day(s) after
 
 
 
-First scheduled on the start day of the Study - 2 weeks
-with a window of 0 day(s) before and 0 day(s) after  
+This event is first scheduled on the start day of the Study - 2 weeks
+with a window of 0 day(s) before and 0 day(s) after and a compliance window of no extra window  
 
 
-### Task 1
+### Task:Task 1
 
 
 
@@ -107,18 +123,18 @@ with a window of 0 day(s) before and 0 day(s) after
 
 
 
-First scheduled when V2 Randomization completed + 2 days
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V2 Randomization completed + 2 days
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 
 
-### Task 1
+### Task:Task 1
 # Treatment
 ## V3 Randomization
 
 
 
-First scheduled as the start day of the Study
-with a window of 0 day(s) before and 0 day(s) after  
+This event is first scheduled as the start day of the Study
+with a window of 0 day(s) before and 0 day(s) after and a compliance window of no extra window  
 
 
 
@@ -127,8 +143,8 @@ with a window of 0 day(s) before and 0 day(s) after
 
 
 
-First scheduled when V3 Randomization completed + 1 weeks
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V3 Randomization completed + 1 weeks
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 and then repeats weekly up to 3 times until
 
 
@@ -137,8 +153,8 @@ and then repeats weekly up to 3 times until
 
 
 
-First scheduled when V4-V7 Randomization each completed + 2 days
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V4-V7 Randomization each completed + 2 days
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 and then repeats weekly up to 3 times until
 
 
@@ -147,8 +163,8 @@ and then repeats weekly up to 3 times until
 
 
 
-First scheduled when V4-V7 Randomization completed + 2 weeks
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V4-V7 Randomization completed + 2 weeks
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 and then repeats Every: 2 weeks up to 5 times until
 
 
@@ -157,8 +173,8 @@ and then repeats Every: 2 weeks up to 5 times until
 
 
 
-First scheduled when V8-V13 Randomization each completed + 2 days
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V8-V13 Randomization each completed + 2 days
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 and then repeats weekly up to 5 times until
 
 
@@ -167,8 +183,8 @@ and then repeats weekly up to 5 times until
 
 
 
-First scheduled when V8-V13 Randomization completed + 4 weeks
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V8-V13 Randomization completed + 4 weeks
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 and then repeats Every: 4 weeks up to 5 times until
 
 
@@ -177,8 +193,8 @@ and then repeats Every: 4 weeks up to 5 times until
 
 
 
-First scheduled when V14-V18 Randomization each completed + 2 days
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V14-V18 Randomization each completed + 2 days
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 and then repeats weekly up to 4 times until
 
 
@@ -187,8 +203,8 @@ and then repeats weekly up to 4 times until
 
 
 
-First scheduled when V14-V18 Randomization completed + 1 weeks
-with a window of 2 day(s) before and 2 day(s) after  
+This event is first scheduled when V14-V18 Randomization completed + 1 weeks
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window  
 
 
 
@@ -197,5 +213,5 @@ with a window of 2 day(s) before and 2 day(s) after
 
 
 
-First scheduled when V19 Randomization completed
-with a window of 2 day(s) before and 2 day(s) after
+This event is first scheduled when V19 Randomization completed
+with a window of 2 day(s) before and 2 day(s) after and a compliance window of no extra window
