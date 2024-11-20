@@ -6,7 +6,7 @@ Time {
 }
 
 StartDay {
-    [Start Day]
+    [start day]
     trigger = "start day"
 }
 
@@ -30,7 +30,7 @@ CountExpression {
 } 
 
 PreviousVisit {
-    [Previous Visit]
+    [previous visit]
     trigger = "previous visit"
 }
 

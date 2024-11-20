@@ -43,7 +43,7 @@
     }
 </script>
 
-<Drawer id="generic-drawer" class="object-drawer" transitionType="fly" {transitionParams} placement="right" backdrop={true} bind:hidden>
+<Drawer id="generic-drawer" class="object-drawer" transitionType="fly" {transitionParams} placement="left" backdrop={true} bind:hidden>
     <div class="drawer-header">
         <div class="drawer-title-container">
             <h5 class="text-lg font-bold">{title}</h5>

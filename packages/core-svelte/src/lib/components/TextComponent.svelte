@@ -4,7 +4,7 @@
 
 <script lang="ts">
     import { TEXT_LOGGER } from "./ComponentLoggers.js";
-    import { afterUpdate, beforeUpdate, createEventDispatcher, type EventDispatcher, onMount } from "svelte";
+    import { tick, afterUpdate, beforeUpdate, createEventDispatcher, type EventDispatcher, onMount } from "svelte";
     import { componentId, replaceHTML, setBoxSizes } from "$lib/components/svelte-utils/index.js";
     import {
         ActionBox,
@@ -83,26 +83,34 @@
         dispatcher,
     );
 
-    /**
-     * This function sets the focus on this element programmatically.
-     * It is called from the box.
-     */
     export async function setFocus(): Promise<void> {
-        //console.log("TextComponent.setFocus "+ id + " input is there: " + !!inputElement);
-        if (!!inputElement) {
-            inputElement.focus();
-            if (focusMode === "start") {
-                inputElement.setSelectionRange(0, 0);
-            } else if (focusMode === "selectAll") {
-                inputElement.select();
-            }
-        } else {
-            // set the local variables, then the inputElement will be shown
+        console.log("TextComponent.setFocus " + id + " input is set: " + !!inputElement + " focusMode: " + focusMode);
+        // First ensure we're in editing mode
+        if (!isEditing) {
             isEditing = true;
             editStart = true;
             originalText = text;
-            setCaret(editor.selectedCaretPosition);
+            // Wait for the next tick to allow the input element to be created
+            await tick();
         }
+
+        // Wait another tick to ensure input element is fully rendered with text
+        await tick();
+
+        if (!!inputElement) {
+            inputElement.focus();
+            // Ensure selection happens after focus
+            setTimeout(() => {
+                if (focusMode === "start") {
+                    inputElement.setSelectionRange(0, 0);
+                } else if (focusMode === "selectAll") {
+                    inputElement.setSelectionRange(0, text.length);
+                }
+            }, 0);
+        }
+
+        // Set caret position even if input isn't available yet
+        setCaret(editor.selectedCaretPosition);
     }
 
     // /**
