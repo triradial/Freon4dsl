@@ -195,11 +195,11 @@
   },
   {
     "id": "65a6658b-5772-4ee9-a139-4fd7c792291a",
-    "name": "Demo",
-    "title": "Demo for testing",
+    "name": "ALLIANCE A022104",
+    "title": "THE JANUS RECTAL CANCER TRIAL: A RANDOMIZED PHASE II/III TRIAL TESTING THE EFFICACY OF TRIPLET VERSUS DOUBLET CHEMOTHERAPY REGARDING CLINICAL COMPLETE RESPONSE AND DISEASE-FREE SURVIVAL IN PATIENTS WITH LOCALLY ADVANCED RECTAL CANCER",
     "status": "Planning",
-    "phase": "Demo",
-    "therapeuticArea": "",
+    "phase": "II/III",
+    "therapeuticArea": "Oncology",
     "currentProtocol": ""
   },
   {

@@ -23,7 +23,7 @@ function calcTimeAmount(value: number, unit: string): RtObject {
     } else if (unit === "weeks") {
         unitAmount = 7;
     } else if (unit === "months") {
-        throw new RtError("calcTimeAmount: unit of months not implemented. Need to calculate the number of days in a month.");
+        unitAmount = 30;
     } else if (unit === "forever") {
         throw new RtError("calcTimeAmount: unit of forever not implemented. Need to use some special value or maybe forever doesn't make sense.");
     } else {
