@@ -210,5 +210,23 @@
     "phase": "",
     "therapeuticArea": "",
     "currentProtocol": ""
+  },
+  {
+    "id": "5069dcf5-efea-429c-bc23-1d934fa5b7a9",
+    "name": "A022104 Checklist",
+    "title": "Example Oncology Study from MD Anderson Cancer Center at Cooper",
+    "status": "Planning",
+    "phase": "Phase I",
+    "therapeuticArea": "Oncology",
+    "currentProtocol": ""
+  },
+  {
+    "id": "19e0d795-364e-49cf-aa09-f5ee808b4743",
+    "name": "A022104",
+    "title": "A022104 Checklist Template",
+    "status": "Planning",
+    "phase": "Phase I",
+    "therapeuticArea": "Oncology",
+    "currentProtocol": ""
   }
 ]

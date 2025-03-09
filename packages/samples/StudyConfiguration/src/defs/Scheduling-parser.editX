@@ -1,9 +1,5 @@
 editor parser  precedence 4
 
-ComplianceWindow {
-  [abstract]
-}
-
 NoComplianceWindow {
     [ and no extra compliance window]
 }

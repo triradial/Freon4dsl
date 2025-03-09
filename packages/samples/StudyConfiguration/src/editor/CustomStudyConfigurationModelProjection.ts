@@ -57,7 +57,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         ["TaskReference", this.projectTask],
         ["Step", this.projectStep],
         ["Reference", this.projectReference],
-        ["SystemAccess", this.projectSystem],
+        // ["SystemAccess", this.projectSystem],
         ["Person", this.projectPerson],
         ["PatientInfo", this.projectPatientInfo],
         ["PatientHistory", this.projectPatientHistory],
@@ -112,38 +112,38 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             ),
             ...(element.showSharedTasks === true
                 ? [
-                    BoxUtil.listGroupBox(
-                        element,
-                        "shared-tasks",
-                        "Shared Tasks",
-                        BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mb-2" }),
-                        { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                    ),
-                ]
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-tasks",
+                          "Shared Tasks",
+                          BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mb-2" }),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                      ),
+                  ]
                 : []),
             ...(element.showSystems === true
                 ? [
-                    BoxUtil.listGroupBox(
-                        element,
-                        "shared-systems",
-                        "Systems",
-                        BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, {
-                            cssClass: "ml-6 mb-2",
-                        }),
-                        { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                    ),
-                ]
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-systems",
+                          "Systems",
+                          BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, {
+                              cssClass: "ml-6 mb-2",
+                          }),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                      ),
+                  ]
                 : []),
             ...(element.showPeople === true
                 ? [
-                    BoxUtil.listGroupBox(
-                        element,
-                        "shared-people",
-                        "People",
-                        BoxUtil.indentBox(element, 4, "21", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler)),
-                        { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
-                    ),
-                ]
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-people",
+                          "People",
+                          BoxUtil.indentBox(element, 4, "21", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler)),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+                      ),
+                  ]
                 : []),
         ]);
     }
@@ -179,14 +179,14 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 [
                     ...(showDescriptions
                         ? [
-                            BoxFactory.horizontalLayout(
-                                element,
-                                "period-hlist-line-1",
-                                "",
-                                [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
-                                { selectable: false, cssClass: "w-full mt-1 align-top" },
-                            ),
-                        ]
+                              BoxFactory.horizontalLayout(
+                                  element,
+                                  "period-hlist-line-1",
+                                  "",
+                                  [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
+                                  { selectable: false, cssClass: "w-full mt-1 align-top" },
+                              ),
+                          ]
                         : []),
                     BoxUtil.listGroupBox(
                         element,
@@ -242,30 +242,30 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                     ...(showScheduling === true
                         ? [
-                            BoxUtil.listGroupBox(
-                                element,
-                                "schedule",
-                                "Schedule",
-                                BoxUtil.partWrapperBox(
-                                    element as Event,
-                                    "schedule",
-                                    "ExpandCollapseWrapper",
-                                    BoxUtil.getBoxOrAction(element as Event, "schedule", "EventSchedule", this.handler),
-                                ),
-                                { cssClass: "type3", isExpanded: true },
-                            ),
-                        ]
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "schedule",
+                                  "Schedule",
+                                  BoxUtil.partWrapperBox(
+                                      element as Event,
+                                      "schedule",
+                                      "ExpandCollapseWrapper",
+                                      BoxUtil.getBoxOrAction(element as Event, "schedule", "EventSchedule", this.handler),
+                                  ),
+                                  { cssClass: "type3", isExpanded: true },
+                              ),
+                          ]
                         : []),
                     ...(showChecklists === true
                         ? [
-                            BoxUtil.listGroupBox(
-                                element,
-                                "tasks",
-                                "Checklist",
-                                BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
-                                { cssClass: "type3", isExpanded: true, canAdd: true },
-                            ),
-                        ]
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "tasks",
+                                  "Checklist",
+                                  BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
+                                  { cssClass: "type3", isExpanded: true, canAdd: true },
+                              ),
+                          ]
                         : []),
                 ],
                 { cssClass: "ml-6 mb-2" },
@@ -469,41 +469,41 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "detailsDescription", "Description", this.handler)] : []),
                     ...(showReferences
                         ? [
-                            BoxUtil.listGroupBox(
-                                element,
-                                "references",
-                                "References",
-                                BoxUtil.indentBox(
-                                    element,
-                                    3,
-                                    "ss11",
-                                    BoxUtil.verticalPartListBox(element, element.references, "references", null, this.handler),
-                                ),
-                                { cssClass: "type4", isExpanded: false, canAdd: true },
-                            ),
-                        ]
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "references",
+                                  "References",
+                                  BoxUtil.indentBox(
+                                      element,
+                                      3,
+                                      "ss11",
+                                      BoxUtil.verticalPartListBox(element, element.references, "references", null, this.handler),
+                                  ),
+                                  { cssClass: "type4", isExpanded: false, canAdd: true },
+                              ),
+                          ]
                         : []),
                     ...(showSystems
                         ? [
-                            BoxUtil.listGroupBox(
-                                element,
-                                "systems",
-                                "Systems",
-                                BoxUtil.indentBox(element, 3, "ss12", BoxUtil.verticalPartListBox(element, element.systems, "systems", null, this.handler)),
-                                { cssClass: "type4", isExpanded: false, canAdd: true },
-                            ),
-                        ]
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "systems",
+                                  "Systems",
+                                  BoxUtil.indentBox(element, 3, "ss12", BoxUtil.verticalPartListBox(element, element.systems, "systems", null, this.handler)),
+                                  { cssClass: "type4", isExpanded: false, canAdd: true },
+                              ),
+                          ]
                         : []),
                     ...(showPeople
                         ? [
-                            BoxUtil.listGroupBox(
-                                element,
-                                "people",
-                                "People",
-                                BoxUtil.indentBox(element, 3, "ss13", BoxUtil.verticalPartListBox(element, element.people, "people", null, this.handler)),
-                                { cssClass: "type4", isExpanded: false, canAdd: true },
-                            ),
-                        ]
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "people",
+                                  "People",
+                                  BoxUtil.indentBox(element, 3, "ss13", BoxUtil.verticalPartListBox(element, element.people, "people", null, this.handler)),
+                                  { cssClass: "type4", isExpanded: false, canAdd: true },
+                              ),
+                          ]
                         : []),
                 ]),
             ),
