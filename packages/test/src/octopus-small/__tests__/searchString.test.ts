@@ -12,7 +12,7 @@ const searcher = new FreSearcher();
 function readFile(filepath: string): FreModelUnit {
     let unit: FreModelUnit = null
     try {
-        AST.change(() => {
+        AST.change( () => {
             const model: OctopusModel = new OctopusModel();
             const langSpec: string = handler.stringFromFile(filepath);
             unit = reader.readFromString(langSpec, "UmlPart", model) as FreModelUnit;

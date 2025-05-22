@@ -21,7 +21,7 @@ const searcher = new FreSearcher();
 function readFile(filepath: string): FreModelUnit {
     let unit = null
     try {
-        AST.change(() => {
+        AST.change( () => {
             const model: OctopusModel = new OctopusModel();
             const langSpec: string = handler.stringFromFile(filepath);
             unit = reader.readFromString(langSpec, "UmlPart", model) as FreModelUnit;
@@ -49,7 +49,7 @@ describe("Testing Search Structure", () => {
         if (!!myUnit) {
             // make the partial to be found
             let toBeFound: FreNode = null
-            AST.change(() => {
+            AST.change( () => {
                 toBeFound = AssociationEnd.create({
                     name: "prevChap",
                     multiplicity: MultiplicityKind.create({ lowerBound: 1 }),
@@ -67,7 +67,7 @@ describe("Testing Search Structure", () => {
     test("search associationclass named 'ChapterDependency' in Book", () => {
         const myUnit = readFile("src/octopus-small/__inputs__/Book.uml2");
         if (!!myUnit) {
-            AST.change(() => {
+            AST.change( () => {
                 // make the partial to be found
                 const toBeFound: FreNode = AssociationClass.create({ name: "ChapterDependency" });
                 // search for it
@@ -83,7 +83,7 @@ describe("Testing Search Structure", () => {
     test("search associationclass with attribute named 'sameAuthor' in Book", () => {
         const myUnit = readFile("src/octopus-small/__inputs__/Book.uml2");
         if (!!myUnit) {
-            AST.change(() => {
+            AST.change( () => {
                 // make the partial to be found
                 const attrToBeFound: Attribute = Attribute.create({ name: "sameAuthor" });
                 const toBeFound: FreNode = AssociationClass.create({ attributes: [attrToBeFound] });
@@ -100,7 +100,7 @@ describe("Testing Search Structure", () => {
     test("search associationclass that has 'Chapter.?' as end in Book", () => {
         const myUnit = readFile("src/octopus-small/__inputs__/Book.uml2");
         if (!!myUnit) {
-            AST.change(() => {
+            AST.change( () => {
                 // make the partial to be found
                 const refToBeFound: FreNodeReference<IClassifier> = FreNodeReference.create<IClassifier>(
                     "Chapter",
@@ -121,7 +121,7 @@ describe("Testing Search Structure", () => {
     test("search class named 'Chapter' in Book", () => {
         const myUnit = readFile("src/octopus-small/__inputs__/Book.uml2");
         if (!!myUnit) {
-            AST.change(() => {
+            AST.change( () => {
                 // make the partial to be found
                 const toBeFound: FreNode = UmlClass.create({ name: "Chapter" });
                 // search for it
@@ -137,7 +137,7 @@ describe("Testing Search Structure", () => {
     test("search class named 'Chapter' with attribute 'autor' in Book", () => {
         const myUnit = readFile("src/octopus-small/__inputs__/Book.uml2");
         if (!!myUnit) {
-            AST.change(() => {
+            AST.change( () => {
                 // make the partial to be found
                 const attrToBeFound: Attribute = Attribute.create({ name: "autor" }); // typo in name!!!
                 const toBeFound: FreNode = UmlClass.create({ name: "Chapter", attributes: [attrToBeFound] });
@@ -154,7 +154,7 @@ describe("Testing Search Structure", () => {
     test("search attributes with type 'Boolean' in Book", () => {
         const myUnit = readFile("src/octopus-small/__inputs__/Book.uml2");
         if (!!myUnit) {
-            AST.change(() => {
+            AST.change( () => {
                 // make the partial to be found
                 const refToBeFound: FreNodeReference<IClassifier> = FreNodeReference.create<IClassifier>(
                     "Boolean",

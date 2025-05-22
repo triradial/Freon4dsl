@@ -268,7 +268,7 @@ describe("Checking editor definition ", () => {
         }
     });
 
-    test("on standard displays for primitives and limiteds", () => {
+    test("on standard displays for primitives and limiteds in test10.edit", () => {
         try {
             parser.parse(testdir + "test10.edit");
         } catch (e: unknown) {
@@ -305,7 +305,7 @@ describe("Checking editor definition ", () => {
         }
     });
 
-    test("on display types for limiteds", () => {
+    test("on display types for limiteds in test11.edit", () => {
         try {
             parser.parse(testdir + "test11.edit");
         } catch (e: unknown) {
@@ -372,14 +372,14 @@ describe("Checking editor definition ", () => {
         }
     });
 
-    test("on multiple standard definitions", () => {
+    test("on multiple standard definitions in test11.edit and test12.edit", () => {
         try {
             parser.parseMulti([testdir + "test11.edit", testdir + "test12.edit"]);
         } catch (e: unknown) {
             if (e instanceof Error) {
                 expect(e.message).toBe(`checking errors (11).`); // these are checked in the previous test
                 expect(checker.hasWarnings()).toBeTruthy;
-                // console.log("Warnings [" + checker.warnings.length +"]:" + checker.warnings.map(err => `"${err}"`).join("\n"));
+                console.log("Warnings [" + checker.warnings.length +"]:" + checker.warnings.map(err => `"${err}"`).join("\n"));
                 expect(checker.warnings.length).toBe(1);
                 expect(
                     checker.warnings.includes(
@@ -459,11 +459,11 @@ describe("Checking editor definition ", () => {
         try {
             parser.parse(testdir + "test14.edit");
         } catch (e: unknown) {
-            console.log("in test14: " + e);
-            console.log(checker.errors.map(err => `"${err}"`).join("\n"));
-            console.log(
-                "Warnings [" + checker.warnings.length + "]:\n" + checker.warnings.map((err) => `"${err}"`).join("\n"),
-            );
+            // console.log("in test14: " + e);
+            // console.log(checker.errors.map(err => `"${err}"`).join("\n"));
+            // console.log(
+            //     "Warnings [" + checker.warnings.length + "]:\n" + checker.warnings.map((err) => `"${err}"`).join("\n"),
+            // );
             if (e instanceof Error) {
                 expect(e.message).toBe(`checking errors (8).`);
                 expect(
@@ -529,11 +529,11 @@ describe("Checking editor definition ", () => {
         try {
             parser.parse(testdir + "test15.edit");
         } catch (e: unknown) {
-            console.log("in test15: " + e);
-            console.log(checker.errors.map(err => `"${err}"`).join("\n"));
-            console.log(
-                "Warnings [" + checker.warnings.length + "]:\n" + checker.warnings.map((err) => `"${err}"`).join("\n"),
-            );
+            // console.log("in test15: " + e);
+            // console.log(checker.errors.map(err => `"${err}"`).join("\n"));
+            // console.log(
+            //     "Warnings [" + checker.warnings.length + "]:\n" + checker.warnings.map((err) => `"${err}"`).join("\n"),
+            // );
             if (e instanceof Error) {
                 expect(e.message).toBe(`checking errors (1).`);
                 expect(
@@ -552,6 +552,48 @@ describe("Checking editor definition ", () => {
                     checker.warnings.includes(
                         "Fragment 'yy' is defined, but not used [file: test15.edit:9:1].",
                     ),
+                ).toBeTruthy();
+            }
+        }
+    });
+
+    test("on fragment definitions in multiple projection sets", () => {
+        try {
+            parser.parseMulti([testdir + "test15.edit", testdir + "test15-non-default.edit"]);
+        } catch (e: unknown) {
+            // console.log("in test15 plus test15-non-default: " + e);
+            // console.log(checker.errors.map(err => `"${err}"`).join("\n"));
+            // console.log(
+            //     "Warnings [" + checker.warnings.length + "]:\n" + checker.warnings.map((err) => `"${err}"`).join("\n"),
+            // );
+            if (e instanceof Error) {
+                expect(e.message).toBe(`checking errors (3).`);
+                expect(
+                  checker.errors.includes(
+                    "No empty projections allowed [file: test15.edit:3:5].",
+                  ),
+                ).toBeTruthy();
+                expect(
+                  checker.errors.includes(
+                    "Fragment 'xx' has already been defined for BB [file: test15-non-default.edit:3:5].",
+                  ),
+                ).toBeTruthy();
+                expect(
+                  checker.errors.includes(
+                    "Fragment 'zz' has already been defined for BB [file: test15-non-default.edit:3:5].",
+                  ),
+                ).toBeTruthy();
+                expect(checker.hasWarnings()).toBeTruthy;
+                expect(checker.warnings.length).toBe(2);
+                expect(
+                  checker.warnings.includes(
+                    "Fragment 'xx' is defined, but not used [file: test15.edit:5:1].",
+                  ),
+                ).toBeTruthy();
+                expect(
+                  checker.warnings.includes(
+                    "Fragment 'yy' is defined, but not used [file: test15.edit:9:1].",
+                  ),
                 ).toBeTruthy();
             }
         }

@@ -212,15 +212,15 @@ export class FreProjectionHandler {
      */
     executeCustomProjection(element: FreNode, projectionName: string): Box {
         let BOX: Box = null;
-        let customFunction: (node: FreNode) => Box = null;
-        const customToUse = this.customProjections.find(cp => cp.name === projectionName);
+        let customFuction: (node: FreNode) => Box = null;
+        const customToUse = this.customProjections.find((cp) => cp.name === projectionName);
         if (!!customToUse) {
             // bind(customToUse) binds the projection 'customToUse' to the 'this' variable, for use within the custom function
-            customFunction = customToUse.nodeTypeToBoxMethod.get(element.freLanguageConcept())?.bind(customToUse);
+            customFuction = customToUse.nodeTypeToBoxMethod.get(element.freLanguageConcept())?.bind(customToUse);
         }
 
-        if (!!customFunction) {
-            BOX = customFunction(element);
+        if (!!customFuction) {
+            BOX = customFuction(element);
         }
         return BOX;
     }

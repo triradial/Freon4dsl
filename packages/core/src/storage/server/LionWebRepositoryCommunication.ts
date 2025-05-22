@@ -1,13 +1,11 @@
 import { ClientResponse, ListPartitionsResponse, RepositoryClient } from "@lionweb/repository-client";
-// import { createLwNode, LionWebJsonNode } from "@lionweb/validation"
-// import process from "process"
 import { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreLogger } from "../../logging/index.js";
 import { createLionWebJsonNode, FreLionwebSerializer, FreSerializer } from "../index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
-import type { IServerCommunication, ModelUnitIdentifier } from "./IServerCommunication.js";
+import type { IServerCommunication, FreUnitIdentifier } from "./IServerCommunication.js";
 import { collectUsedLanguages } from "./UsedLanguages.js";
-import { type ServerConfig } from '../../config/environments.js';
+import { FreLanguage } from '../../language/index.js';
 
 const LOGGER = new FreLogger("LionWebRepositoryCommunication");
 
@@ -16,14 +14,6 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
     lionweb_serial: FreSerializer = new FreLionwebSerializer();
     static instance: LionWebRepositoryCommunication;
 
-    private _nodePort = 3005; // process.env.NODE_PORT || 3005;
-    private _SERVER_IP = `http://127.0.0.1`;
-    private _SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
-
-    constructor() {
-        this.client.loggingOn = true;
-    }
-
     static getInstance(): LionWebRepositoryCommunication {
         if (!!!LionWebRepositoryCommunication.instance) {
             LionWebRepositoryCommunication.instance = new LionWebRepositoryCommunication();
@@ -31,22 +21,13 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
         return LionWebRepositoryCommunication.instance;
     }
 
-    setServerConfig(config: Partial<ServerConfig>): void {
-        if (config.serverUrl) {
-            const url = new URL(config.serverUrl);
-            this._SERVER_IP = `${url.protocol}//${url.hostname}`;
-            this._nodePort = parseInt(url.port) || 3005;
-            this._SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
-        }
+    constructor() {
+        this.client.loggingOn = true;
     }
 
-    // private static findParams(params?: string) {
-    //     if (!!params && params.length > 0) {
-    //         return "?" + params;
-    //     } else {
-    //         return "";
-    //     }
-    // }
+    private _nodePort = 3005; // process.env.NODE_PORT || 3005;
+    private _SERVER_IP = `http://127.0.0.1`;
+    private _SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
 
     onError(msg: string, severity: FreErrorSeverity): void {
         // default implementation
@@ -90,12 +71,12 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
      * @param unitIdentifier
      * @param unit
      */
-    async putModelUnit(modelName: string, unitIdentifier: ModelUnitIdentifier, unit: FreNamedNode) {
+    async putModelUnit(modelName: string, unitIdentifier: FreUnitIdentifier, unit: FreNamedNode) {
         LOGGER.log(`LionWebRepositoryCommunication.putModelUnit ${modelName}/${unitIdentifier.name}`);
         if (
             !!unitIdentifier.name &&
             unitIdentifier.name.length > 0 &&
-            unitIdentifier.name.match(/^[a-z,A-Z][a-z,A-Z0-9_\-\.]*$/)
+            unitIdentifier.name.match(/^[a-z,A-Z][a-z,A-Z0-9_\-.]*$/)
         ) {
             const model = this.lionweb_serial.convertToJSON(unit);
             const usedLanguages = collectUsedLanguages(model);
@@ -109,13 +90,13 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
         } else {
             LOGGER.error(
                 "Name of Unit '" +
-                unitIdentifier.name +
-                "' may contain only characters, numbers, '_', or '-', and must start with a character.",
+                    unitIdentifier.name +
+                    "' may contain only characters, numbers, '_', or '-', and must start with a character.",
             );
             this.onError(
                 "Name of Unit '" +
-                unitIdentifier.name +
-                "' may contain only characters, numbers, '_', or '-', and must start with a character.",
+                    unitIdentifier.name +
+                    "' may contain only characters, numbers, '_', or '-', and must start with a character.",
                 FreErrorSeverity.NONE,
             );
         }
@@ -129,9 +110,9 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
     /**
      * Deletes the unit indicated by 'modelInfo' including its interface.
      * @param modelName
-     * @param unitName
+     * @param unit
      */
-    async deleteModelUnit(modelName: string, unit: ModelUnitIdentifier) {
+    async deleteModelUnit(modelName: string, unit: FreUnitIdentifier) {
         LOGGER.log(`LionWebRepositoryCommunication.deleteModelUnit ${modelName}/${unit.name}`);
         if (!!unit.name && unit.name.length > 0) {
             this.client.repository = modelName;
@@ -152,7 +133,6 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
 
     /**
      * Reads the list of models that are available on the server and calls 'modelListCallback'.
-     * @param modelListCallback
      */
     async loadModelList(): Promise<string[]> {
         LOGGER.log(`loadModelList`);
@@ -168,14 +148,13 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
     /**
      * Reads the list of units in model 'modelName' that are available on the server and calls 'modelListCallback'.
      * @param modelName
-     * @param modelListCallback
      */
-    async loadUnitList(modelName: string): Promise<ModelUnitIdentifier[]> {
+    async loadUnitList(modelName: string): Promise<FreUnitIdentifier[]> {
         LOGGER.log(`loadUnitList`);
         this.client.repository = modelName;
         let modelUnits: ClientResponse<ListPartitionsResponse> = await this.client.bulk.listPartitions();
         return modelUnits.body.chunk.nodes.map((n) => {
-            return { name: "name " + n.id, id: n.id };
+            return { name: "name " + n.id, id: n.id, type: FreLanguage.getInstance().classifierByKey(n.classifier.key).typeName };
         });
     }
 
@@ -183,10 +162,10 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
      * Loads the unit named 'unitName' of model 'modelName' from the server and calls 'loadCallBack',
      * which takes the unit as parameter.
      * @param modelName
-     * @param unitName
+     * @param unit
      * @return the loaded in memory modelunit
      */
-    async loadModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode> {
+    async loadModelUnit(modelName: string, unit: FreUnitIdentifier): Promise<FreNode> {
         LOGGER.log(`loadModelUnit ${unit.name}`);
         this.client.repository = modelName;
         if (!!unit.name && unit.name.length > 0) {
@@ -206,22 +185,6 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
         return null;
     }
 
-    /**
-     * Loads the interface of the unit named 'unitName' of model 'modelName' from the server and calls 'loadCallBack',
-     * which takes the unit as parameter.
-     * @param modelName
-     * @param unitName
-     * @param loadCallback
-     */
-    // @ts-ignore prettier breaks the following line, there many ts-ignores
-    async loadModelUnitInterface(
-        // @ts-ignore
-        modelName: string,
-        // @ts-ignore
-        unit: ModelUnitIdentifier,
-        // @ts-ignore
-        loadCallback: (unit: FreModelUnit) => void,
-    ) { }
 
     // @ts-ignore
     private handleError(e: Error) {
@@ -237,8 +200,8 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
         LOGGER.log(`renameModelUnit ${modelName}/${oldName} to ${modelName}/${newName}`);
         this.client.repository = modelName;
         // put the unit and its interface under the new name
-        await this.putModelUnit(modelName, { name: newName, id: unit.freId() }, unit);
+        await this.putModelUnit(modelName, { name: newName, id: unit.freId(), type: unit.freLanguageConcept() }, unit);
         // remove the old unit and interface
-        await this.deleteModelUnit(modelName, { name: unit.name, id: unit.freId() });
+        await this.deleteModelUnit(modelName, { name: unit.name, id: unit.freId(), type: unit.freLanguageConcept() });
     }
 }

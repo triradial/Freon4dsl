@@ -1,13 +1,11 @@
 import fs from "fs";
-import { IdMap } from "../../commandline/IdMap.js";
 import { FreMetaLanguage } from "../metalanguage/index.js";
-import { FreGenericParser, LOG2USER } from "../../utils/index.js";
+import { FreGenericParser } from "../../utils/index.js";
+import { parseIds } from "./IdParser.js";
 import { parser } from "./LanguageGrammar.js";
 
 import { cleanNonFatalParseErrors, getNonFatalParseErrors, setCurrentFileName, setIdMap } from "./LanguageCreators.js";
 import { FreLangChecker } from "../checking/FreLangChecker.js";
-
-// const LOGGER = new MetaLogger("LanguageParser").mute();
 
 export class LanguageParser extends FreGenericParser<FreMetaLanguage> {
     idFile: string | undefined;
@@ -20,14 +18,12 @@ export class LanguageParser extends FreGenericParser<FreMetaLanguage> {
     }
 
     parse(definitionFile: string): FreMetaLanguage | undefined {
-        LOG2USER.log("ParseFile: " + definitionFile);
+        // LOG2USER.log("ParseFile: " + definitionFile);
         if (this.idFile !== undefined && this.idFile !== null && this.idFile.length > 0) {
             const idFileString = fs.readFileSync(this.idFile, "utf-8");
             const idJson = JSON.parse(idFileString);
-            const idMap = this.parseIds(idJson);
+            const idMap = parseIds(idJson);
             setIdMap(idMap);
-        } else {
-            LOG2USER.log("No id.json found");
         }
         return super.parse(definitionFile);
     }
@@ -36,10 +32,8 @@ export class LanguageParser extends FreGenericParser<FreMetaLanguage> {
         if (this.idFile !== undefined && this.idFile !== null) {
             const idFileString = fs.readFileSync(this.idFile, "utf-8");
             const idJson = JSON.parse(idFileString);
-            const idMap = this.parseIds(idJson);
+            const idMap = parseIds(idJson);
             setIdMap(idMap);
-        } else {
-            LOG2USER.log("No id.json found");
         }
         return super.parseMulti(filePaths);
     }
@@ -80,62 +74,5 @@ export class LanguageParser extends FreGenericParser<FreMetaLanguage> {
 
     protected cleanNonFatalParseErrors() {
         cleanNonFatalParseErrors();
-    }
-
-    private parseIds(json: any): IdMap {
-        LOG2USER.log("PARSE IDS");
-        const idMap = new IdMap();
-
-        const jsonLanguages = json["languages"];
-        for (const jsonLanguage of jsonLanguages) {
-            idMap.setLanguageIdAndKey(jsonLanguage["language"], jsonLanguage["id"], jsonLanguage["key"]);
-        }
-        if (!Array.isArray(jsonLanguages)) {
-            throw new Error("id.json 'languages' property should be an array");
-        }
-        const languageId = json["id"];
-        if (typeof languageId === "string") {
-            LOG2USER.log("Language has id " + languageId);
-        }
-        const concepts = json["concepts"];
-        if (!Array.isArray(concepts)) {
-            throw new Error("id.json 'concepts' property should be an array");
-        }
-        for (const jsonConcept of concepts) {
-            idMap.setClassifierIdAndKey(jsonConcept["concept"], jsonConcept["id"], jsonConcept["key"]);
-            const properties = jsonConcept["properties"];
-            if (!Array.isArray(properties)) {
-                throw new Error("id.json 'properties' property should be an array");
-            }
-            for (const jsonProperty of properties) {
-                idMap.setPropertyIdAndKey(
-                    jsonConcept["concept"],
-                    jsonProperty["name"],
-                    jsonProperty["id"],
-                    jsonProperty["key"],
-                );
-            }
-        }
-        const interfaces = json["interfaces"];
-        if (!Array.isArray(interfaces)) {
-            throw new Error("id.json 'interfaces' property should be an array");
-        }
-        for (const jsonInterface of interfaces) {
-            idMap.setClassifierIdAndKey(jsonInterface["interface"], jsonInterface["id"], jsonInterface["key"]);
-            const properties = jsonInterface["properties"];
-            if (!Array.isArray(properties)) {
-                throw new Error("id.json 'properties' property should be an array");
-            }
-            for (const jsonProperty of properties) {
-                idMap.setPropertyIdAndKey(
-                    jsonInterface["interface"],
-                    jsonProperty["name"],
-                    jsonProperty["id"],
-                    jsonProperty["key"],
-                );
-            }
-        }
-        console.log("End parse ids");
-        return idMap;
     }
 }

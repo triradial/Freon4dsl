@@ -38,7 +38,7 @@ export function createDefaultExpressionBox(exp: FreExpressionNode, children: Box
         if (children.length === 1 && isHorizontalBox(children[0])) {
             result = children[0] as HorizontalLayoutBox;
         } else {
-            result = BoxFactory.horizontalLayout(exp, EXPRESSION, "", children, {cssClass: "align-top"});
+            result = BoxFactory.horizontalLayout(exp, EXPRESSION, "", children);
         }
         if (isLeftMost) {
             result.insertChild(BoxFactory.action(exp, LEFT_MOST, NBSP));
@@ -52,7 +52,7 @@ export function createDefaultExpressionBox(exp: FreExpressionNode, children: Box
         if (children.length === 1) {
             return children[0];
         } else {
-            return BoxFactory.horizontalLayout(exp, EXPRESSION, "", children, {cssClass: "align-top"});
+            return BoxFactory.horizontalLayout(exp, EXPRESSION, "", children);
         }
     }
 }
@@ -73,7 +73,7 @@ export function createDefaultBinaryBox(
     boxProviderCache: FreProjectionHandler,
 ): HorizontalLayoutBox {
     // TODO move this method to BoxUtils
-    const result = BoxFactory.horizontalLayout(exp, BINARY_EXPRESSION,"");
+    const result = BoxFactory.horizontalLayout(exp, BINARY_EXPRESSION, "");
     // const projection = editor.projection;
     // const projectionToUse = !!projection.rootProjection ? projection.rootProjection : projection;
 

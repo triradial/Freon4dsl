@@ -23,12 +23,12 @@ export const EXPRESSION_SYMBOL = "symbol";
 
 const LOGGER = new FreLogger("BalanceTree");
 
-export function isExpressionPreOrPost(box: Box): boolean {
+export function isExpressionPreOrPost(box: Box) : boolean {
     return isNullOrUndefined(box) ||
         box.role.includes(BEFORE_BINARY_OPERATOR) ||
         box.role.includes(AFTER_BINARY_OPERATOR) ||
-        box.role.includes(LEFT_MOST) ||
-        box.role.includes(RIGHT_MOST);
+        box.role.includes(LEFT_MOST) 
+        // box.role.includes(RIGHT_MOST);
 }
 
 /**

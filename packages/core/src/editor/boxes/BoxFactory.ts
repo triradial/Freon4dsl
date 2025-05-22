@@ -23,11 +23,7 @@ import {
     TableCellBox,
     OptionalBox2,
     LimitedControlBox,
-    ButtonBox, 
-    ItemGroupBox, 
-    ItemGroupBox2, 
-    ListGroupBox,
-    MultiLineTextBox2,
+    ButtonBox,
     NumberDisplay,
     AbstractExternalBox,
     ExternalPartListBox,
@@ -48,15 +44,11 @@ type BoxCache<T extends Box> = {
 let actionCache: BoxCache<ActionBox> = {};
 let labelCache: BoxCache<LabelBox> = {};
 let textCache: BoxCache<TextBox> = {};
-let multiTextCache: BoxCache<MultiLineTextBox2> = {};
 let boolCache: BoxCache<BooleanControlBox> = {};
 let buttonCache: BoxCache<ButtonBox> = {};
 let numberCache: BoxCache<NumberControlBox> = {};
 let limitedCache: BoxCache<LimitedControlBox> = {};
 let selectCache: BoxCache<SelectBox> = {};
-let listGroupCache: BoxCache<ListGroupBox> = {};
-let itemGroupCache: BoxCache<ItemGroupBox> = {};
-let itemGroupCache2: BoxCache<ItemGroupBox2> = {};
 let referenceCache: BoxCache<ReferenceBox> = {};
 // let indentCache: BoxCache<IndentBox> = {};
 let optionalCache: BoxCache<OptionalBox> = {};
@@ -73,15 +65,11 @@ let externalCache: BoxCache<AbstractExternalBox> = {};
 let cacheActionOff: boolean = false;
 let cacheLabelOff: boolean = false;
 let cacheTextOff: boolean = false;
-let cacheMultilineTextOff: boolean = false;
 let cacheBooleanOff: boolean = false;
 let cacheButtonOff: boolean = false;
 let cacheNumberOff: boolean = false;
 let cacheLimitedOff: boolean = false;
 let cacheSelectOff: boolean = false;
-let cacheListGroupOff: boolean = false;
-let cacheItemGroupOff: boolean = false;
-let cacheItemGroupOff2: boolean = false;
 let cacheReferenceOff: boolean = false;
 // let cacheIndentOff: boolean = false;
 // let cacheOptionalOff: boolean = false;
@@ -89,8 +77,8 @@ let cacheHorizontalLayoutOff: boolean = false;
 let cacheVerticalLayoutOff: boolean = false;
 let cacheHorizontalListOff: boolean = false;
 let cacheVerticalListOff: boolean = false;
-let cacheGridcellOff: boolean = true;
-let cacheTablecellOff: boolean = true;
+const cacheGridcellOff: boolean = true;
+const cacheTablecellOff: boolean = true;
 let cacheExternalsOff: boolean = true;
 
 /**
@@ -101,15 +89,11 @@ export class BoxFactory {
         actionCache = {};
         labelCache = {};
         textCache = {};
-        multiTextCache = {};
         boolCache = {};
         buttonCache = {};
         numberCache = {};
         limitedCache = {};
         selectCache = {};
-        listGroupCache = {};
-        itemGroupCache = {};
-        itemGroupCache2 = {};
         referenceCache = {};
         // indentCache = {};
         optionalCache = {};
@@ -128,15 +112,11 @@ export class BoxFactory {
         cacheActionOff = true;
         cacheLabelOff = true;
         cacheTextOff = true;
-        cacheMultilineTextOff = true;
         cacheBooleanOff = true;
         cacheButtonOff = true;
         cacheNumberOff = true;
         cacheLimitedOff = true;
         cacheSelectOff = true;
-        cacheListGroupOff = true;
-        cacheItemGroupOff = true;
-        cacheItemGroupOff2 = true;
         cacheReferenceOff = true;
         // cacheIndentOff = true;
         // cacheOptionalOff = true;
@@ -151,15 +131,11 @@ export class BoxFactory {
         cacheActionOff = false;
         cacheLabelOff = false;
         cacheTextOff = false;
-        cacheMultilineTextOff = false;
         cacheBooleanOff = false;
         cacheButtonOff = false;
         cacheNumberOff = false;
         cacheLimitedOff = false;
         cacheSelectOff = false;
-        cacheListGroupOff = false;
-        cacheItemGroupOff = false;
-        cacheItemGroupOff2 = false;
         cacheReferenceOff = false;
         // cacheIndentOff = false;
         // cacheOptionalOff = false;
@@ -261,21 +237,7 @@ export class BoxFactory {
         result.$getText = getText;
         result.$setText = setText;
         FreUtils.initializeObject(result, initializer);
-        return result;
-    }
 
-    static multitext(element: FreNode, role: string, getText: () => string, setText: (text: string) => void, initializer?: Partial<MultiLineTextBox2>): MultiLineTextBox2 {
-        if (cacheMultilineTextOff) {
-            return new MultiLineTextBox2(element, role, getText, setText, initializer);
-        }
-        // 1. Create the text box, or find the one that already exists for this element and role
-        const creator = () => new MultiLineTextBox2(element, role, getText, setText);
-        const result: MultiLineTextBox2 = this.find<MultiLineTextBox2>(element, role, creator, multiTextCache);
-
-        // 2. Apply the other arguments in case they have changed
-        result.$getText = getText;
-        result.$setText = setText;
-        FreUtils.initializeObject(result, initializer);
         return result;
     }
 
@@ -420,17 +382,17 @@ export class BoxFactory {
     }
 
     static verticalList(
-        node: FreNode,
+        element: FreNode,
         role: string,
         propertyName: string,
         children?: (Box | null)[],
         initializer?: Partial<VerticalListBox>,
     ): VerticalListBox {
         if (cacheVerticalListOff) {
-            return new VerticalListBox(node, role, propertyName, children);
+            return new VerticalListBox(element, role, propertyName, children, initializer);
         }
-        const creator = () => new VerticalListBox(node, role, propertyName, children);
-        const result: VerticalListBox = this.find<VerticalListBox>(node, role, creator, verticalListCache);
+        const creator = () => new VerticalListBox(element, role, propertyName, children);
+        const result: VerticalListBox = this.find<VerticalListBox>(element, role, creator, verticalListCache);
         // 2. Apply the other arguments in case they have changed
         if (!equals(result.children, children)) {
             result.replaceChildren(children);
@@ -643,73 +605,24 @@ export class BoxFactory {
         initializer: Partial<ExternalPartListBox>,
     ): ExternalPartListBox {
         if (cacheExternalsOff) {
-            return new ExternalPartListBox(externalComponentName, node, roleName, propertyName, children);
+            return new ExternalPartListBox(externalComponentName, node, roleName, propertyName, children, initializer);
         }
         // 1. Create the Boolean box, or find the one that already exists for this element and role
-        const creator = () => new ExternalPartListBox(externalComponentName, node, roleName, propertyName, children);
+        const creator = () => new ExternalPartListBox(externalComponentName, node, roleName, propertyName, children, initializer);
         const result: AbstractExternalBox = this.find<AbstractExternalBox>(node, roleName, creator, externalCache);
 
         // 2. Apply the other arguments in case they have changed
         FreUtils.initializeObject(result, initializer);
         if (isExternalPartListBox(result)) {
+            result.propertyName = propertyName
+            if (!equals(result.children, children)) {
+                result.replaceChildren(children);
+            }
             return result;
         } else {
             return creator();
         }
     }
-
-    static listGroup(element: FreNode, role: string, getLabel: string | (() => string), childBox: Box, initializer?: Partial<ListGroupBox>): ListGroupBox {
-        if (cacheListGroupOff) {
-            return new ListGroupBox(element, role, getLabel, childBox, initializer);
-        }
-        // 1. Create the  box, or find the one that already exists for this element and role
-        const creator = () => new ListGroupBox(element, role, getLabel, childBox, initializer);
-        const result: ListGroupBox = this.find<ListGroupBox>(element, role, creator, listGroupCache);
-
-        // 2. Apply the other arguments in case they have changed
-        result.setLabel(getLabel);
-        result.child = childBox;
-        FreUtils.initializeObject(result, initializer);
-
-        return result;
-    }
-
-    static itemGroup(element: FreNode, role: string, getLabel, getText: () => string, setText: (text: string) => void, childBox: Box, initializer?: Partial<ItemGroupBox>): ItemGroupBox {
-        if (cacheItemGroupOff) {
-            return new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer);
-        }
-        // 1. Create the  box, or find the one that already exists for this element and role
-        const creator = () => new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer);
-        const result: ItemGroupBox = this.find<ItemGroupBox>(element, role, creator, itemGroupCache);
-
-        // 2. Apply the other arguments in case they have changed
-        result.setLabel(getLabel);
-        result.child = childBox;
-        FreUtils.initializeObject(result, initializer);
-
-        return result;
-    }
-
-    static itemGroup2(element: FreNode, role: string, getLabel, 
-        getOptions: (editor: FreEditor) => SelectOption[], 
-        getSelectedOption: () => SelectOption | null,
-        selectOption: (editor: FreEditor, option: SelectOption) => BehaviorExecutionResult,
-        childBox: Box, initializer?: Partial<ItemGroupBox2>): ItemGroupBox2 {
-
-            if (cacheItemGroupOff2) {
-                return new ItemGroupBox2(element, role, getLabel, getOptions, getSelectedOption, selectOption, childBox, initializer);
-            }
-            // 1. Create the  box, or find the one that already exists for this element and role
-            const creator = () => new ItemGroupBox2(element, role, getLabel, getOptions, getSelectedOption, selectOption, childBox, initializer);
-            const result: ItemGroupBox2 = this.find<ItemGroupBox2>(element, role, creator, itemGroupCache2);
-
-            // 2. Apply the other arguments in case they have changed
-            result.setLabel(getLabel);
-            result.child = childBox;
-            FreUtils.initializeObject(result, initializer);
-
-            return result;
-        }
 }
 
 const equals = (a, b): boolean | any => {

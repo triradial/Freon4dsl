@@ -1,6 +1,6 @@
 {
   "name": "@freon4dsl/core",
-  "version": "1.0.0-beta1",
+  "version": "1.1.0-beta.3",
   "description": "The uttermost core part of the Freon library, which enables you to build editors for the web",
   "publishConfig": {
     "access": "public"
@@ -11,7 +11,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/freon4dsl/Freon4dsl"
+    "url": "git+https://github.com/freon4dsl/Freon4dsl.git"
   },
   "files": [
     "/dist"
@@ -30,13 +30,8 @@
     "republish-local": "npm run unpublish-local && npm run publish-local"
   },
   "devDependencies": {
-    "vitest": "^2.1.0",
-    "@vitest/ui": "^2.1.0",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "rollup-plugin-dts": "^6.1.0",
-    "rollup-plugin-copy": "^3.5.0"
+    "vitest": "^3.0.5",
+    "@vitest/ui": "^3.0.5"
   },
   "dependencies": {
     "lodash": "^4.17.21",
@@ -44,9 +39,6 @@
     "@lionweb/repository-client": "0.2.2",
     "mobx": "^6.12.3",
     "reflect-metadata": "^0.2.2",
-    "tslib": "^2.6.3",
-    "@fortawesome/fontawesome-svg-core": "^6.6.0",
-    "@fortawesome/free-solid-svg-icons": "^6.6.0",
-    "@fortawesome/svelte-fontawesome": "^0.2.2"
+    "tslib": "^2.6.3"
   }
 }

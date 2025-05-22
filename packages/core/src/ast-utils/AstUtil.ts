@@ -96,7 +96,7 @@ export function matchElementList(list: FreNode[], toBeMatched: Partial<FreNode>[
 }
 
 /**
- * matchReferenceList implements the match functionality on a list of FreElementReferences.
+ * matchReferenceList implements the match functionality on a list of FreNodeReferences.
  */
 export function matchReferenceList<T extends FreNamedNode>(
     list: FreNodeReference<T>[],
@@ -145,4 +145,20 @@ export function matchPrimitiveList(
         }
     }
     return foundMatch;
+}
+
+export function astToString(element: FreNode): string {
+    return JSON.stringify(element, skipReferences, "  " )
+}
+
+const ownerprops: string[] = ["$$owner", "$$propertyName", "$$propertyIndex"];
+
+function skipReferences(key: string, value: Object) {
+    if (ownerprops.includes(key)) {
+        return undefined;
+    } else if( value instanceof FreNodeReference) {
+        return "REF => " + value.name;
+    }else {
+        return value;
+    }
 }

@@ -5,12 +5,11 @@ import {
     BoxFactory,
     ExternalRefListBox,
     HorizontalListBox,
-    LimitedDisplay,
     ReferenceBox,
     SelectOption,
     VerticalListBox,
 } from "../../boxes/index.js";
-import { FreNamedNode, FreNode, FreNodeReference } from "../../../ast/index.js";
+import { FreNamedNode, FreNode, FreNodeReference, qualifiedName } from '../../../ast/index.js';
 import { RoleProvider } from "../RoleProvider.js";
 import { FreScoper } from "../../../scoper/index.js";
 import { BehaviorExecutionResult } from "../../util/index.js";
@@ -53,16 +52,17 @@ export class UtilRefHelpers {
             `<${propertyName}>`,
             () => {
                 return scoper
-                    .getVisibleNames(node, propType)
-                    .filter((name) => !!name && name !== "")
-                    .map((name) => ({
-                        id: name,
-                        label: name,
+                    .getVisibleElements(node, propType)
+                    .filter((node) => !!node.name && node.name !== "")
+                    .map((node) => ({
+                        id: node.name,
+                        label: node.name,
+                        additional_label: this.makeAdditionalLabel(node)
                     }));
             },
             () => {
                 if (!!property) {
-                    return { id: property.name, label: property.name };
+                    return { id: property.name, label: property.name, additional_label: this.makeAdditionalLabel(property) };
                 } else {
                     return null;
                 }
@@ -89,11 +89,31 @@ export class UtilRefHelpers {
         return result;
     }
 
+    private static makeAdditionalLabel(node: FreNamedNode): string {
+        const additionalLabelSeparator: string = "." // todo use ref-separator from .edit file
+        // remove the last of qualified name, because this is equal to the name of the node
+        const names: string[] = qualifiedName(node);
+        names.pop(); // Note that pop changes the array!
+        if (names.length >= 1) {
+            let result: string = '';
+            let first: boolean = true;
+            names.forEach(name => {
+                if (!first) {
+                    result += additionalLabelSeparator;
+                }
+                result += name;
+                first = false;
+            })
+            return 'from ' + result;
+        } else {
+            return '';
+        }
+    }
+
     public static verticalReferenceListBox(
         node: FreNode,
         propertyName: string,
         scoper: FreScoper,
-        isLimited: boolean,
         listInfo?: FreListInfo,
         initializer?: Partial<VerticalListBox>,
     ): VerticalListBox {
@@ -106,7 +126,6 @@ export class UtilRefHelpers {
                     node,
                     property as FreNodeReference<FreNamedNode>[],
                     propertyName,
-                    isLimited,
                     scoper,
                     listInfo,
                 );
@@ -131,7 +150,6 @@ export class UtilRefHelpers {
         node: FreNode,
         propertyName: string,
         scoper: FreScoper,
-        isLimited: boolean,
         listJoin?: FreListInfo,
         initializer?: Partial<HorizontalListBox>,
     ): HorizontalListBox {
@@ -145,7 +163,6 @@ export class UtilRefHelpers {
                 node,
                 property as FreNodeReference<FreNamedNode>[],
                 propertyName,
-                isLimited,
                 scoper,
                 listJoin,
             );
@@ -187,7 +204,6 @@ export class UtilRefHelpers {
                 node,
                 property as FreNodeReference<FreNamedNode>[],
                 propertyName,
-                false,
                 scoper,
             );
             // determine the role
@@ -230,7 +246,6 @@ export class UtilRefHelpers {
         element: FreNode,
         properties: FreNodeReference<FreNamedNode>[],
         propertyName: string,
-        asSelect: boolean,
         scoper: FreScoper,
         listJoin?: FreListInfo,
     ): Box[] {
@@ -247,12 +262,7 @@ export class UtilRefHelpers {
                 listElem.name = selected;
                 return BehaviorExecutionResult.EXECUTED;
             };
-            let innerBox: Box;
-            if (asSelect) {
-                innerBox = BoxUtil.limitedBox(element, propertyName, setFunc, LimitedDisplay.SELECT, scoper, index);
-            } else {
-                innerBox = BoxUtil.referenceBox(element, propertyName, setFunc, scoper, index);
-            }
+            let innerBox = BoxUtil.referenceBox(element, propertyName, setFunc, scoper, index);
             if (listJoin !== null && listJoin !== undefined) {
                 result.push(...UtilCommon.addListJoin(listJoin, index, numberOfItems, element, roleName, propertyName, innerBox));
             } else {

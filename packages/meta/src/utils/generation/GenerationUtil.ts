@@ -3,13 +3,10 @@ import {
     FreMetaConcept,
     FreMetaConceptProperty,
     FreMetaExpressionConcept,
-    FreMetaInterface,
     FreMetaLangElement,
     FreMetaLanguage,
     FreMetaPrimitiveProperty,
     FreMetaProperty,
-} from "../../languagedef/metalanguage/index.js";
-import {
     FreInstanceExp,
     FreLangAppliedFeatureExp,
     FreLangExp,
@@ -30,7 +27,7 @@ export class GenerationUtil {
      * An entry for a subconcept must precede an entry for its base concept,
      * otherwise the unparse${concept.name} for the base concept will be called.
      *
-     * @param freConcepts: the list of concepts to be sorted
+     * @param freConcepts the list of concepts to be sorted
      */
     public static sortConceptsOrRefs(
         freConcepts: FreMetaConcept[] | MetaElementReference<FreMetaConcept>[],
@@ -40,7 +37,7 @@ export class GenerationUtil {
         freConcepts.forEach((p) => {
             if (p instanceof FreMetaConcept) {
                 newList.push(p);
-            } else if (p instanceof MetaElementReference) {
+            } else {
                 newList.push(p.referred);
             }
         });
@@ -96,7 +93,7 @@ export class GenerationUtil {
                 if (xx.referred === element) {
                     return true;
                 }
-            } else if (element instanceof MetaElementReference) {
+            } else {
                 if (xx.referred === element.referred) {
                     return true;
                 }
@@ -104,68 +101,36 @@ export class GenerationUtil {
         }
         return false;
     }
-
-    /**
-     * Takes a list of FreClassifiers that contains both interfaces and concepts and returns a list of concepts
-     * that are either in the list or implement an interface that is in the list.
-     *
-     * @param classifiers
-     */
-    public static replaceInterfacesWithImplementors(
-        classifiers: FreMetaClassifier[] | MetaElementReference<FreMetaClassifier>[],
-    ): FreMetaClassifier[] {
-        const result: FreMetaClassifier[] = [];
-        for (const ref of classifiers) {
-            const myClassifier = ref instanceof MetaElementReference ? ref.referred : ref;
-            if (myClassifier instanceof FreMetaInterface) {
-                const implementors = myClassifier.language.concepts.filter((con) =>
-                    con.interfaces.some((intf) => intf.referred === myClassifier),
-                );
-                // check on duplicates
-                for (const implementor of implementors) {
-                    if (!result.includes(implementor)) {
-                        result.push(implementor);
-                    }
-                }
-            } else {
-                if (!result.includes(myClassifier)) {
-                    result.push(myClassifier);
-                }
-            }
-        }
-        return result;
-    }
-
+    
     /**
      * Returns a string representation of 'exp' that can be used in TypeScript code.
-     * @param exp
+     * @param exp       the expression to turn into TypeScript
+     * @param paramName the name to be used for the
+     * @param noRef
      */
-    public static langExpToTypeScript(exp: FreLangExp): string {
-        // tslint:disable-next-line:typedef-whitespace
-        let result: string = "";
+    public static langExpToTypeScript(exp: FreLangExp, paramName: string, noRef?: boolean): string {
+        let result: string;
         if (exp instanceof FreLangSelfExp) {
-            result = `modelelement.${this.langExpToTypeScript(exp.appliedfeature)}`;
+            result = `${paramName}.${this.langExpToTypeScript(exp.appliedfeature, paramName, noRef)}`;
         } else if (exp instanceof FreLangFunctionCallExp) {
             if (exp.sourceName === "ancestor") {
-                const metaType: string = this.langExpToTypeScript(exp.actualparams[0]); // there is always 1 param to this function
-                result = `this.ancestor(modelelement, "${metaType}") as ${metaType}`;
+                const metaType: string = this.langExpToTypeScript(exp.actualparams[0], paramName, noRef); // there is always 1 param to this function
+                result = `this.ancestor(${paramName}, "${metaType}") as ${metaType}`;
             } else {
                 result = `this.${exp.sourceName} (${exp.actualparams
-                    .map((param) => `${this.langExpToTypeScript(param)}`)
+                    .map((param) => `${this.langExpToTypeScript(param, paramName, noRef)}`)
                     .join(", ")})`;
             }
             if (!!exp.appliedfeature) {
-                result = `(${result}).${this.langExpToTypeScript(exp.appliedfeature)}`;
+                result = `(${result}).${this.langExpToTypeScript(exp.appliedfeature, paramName, noRef)}`;
             }
         } else if (exp instanceof FreLangAppliedFeatureExp) {
             // TODO this should be replaced by special getters and setters for reference properties
             // and the unparser should be adjusted to this
-            const isRef = this.isReferenceProperty(exp);
-            // result = exp.sourceName + (isRef ? "?.referred" : "")
-            //     + (exp.appliedfeature ? (`?.${this.langExpToTypeScript(exp.appliedfeature)}`) : "");
+            const isRef = noRef ? false : this.isReferenceProperty(exp);
             result =
                 (isRef ? Names.refName(exp.referredElement) : exp.sourceName) +
-                (exp.appliedfeature ? `?.${this.langExpToTypeScript(exp.appliedfeature)}` : "");
+                (exp.appliedfeature ? `?.${this.langExpToTypeScript(exp.appliedfeature, paramName, noRef)}` : "");
         } else if (exp instanceof FreInstanceExp) {
             result = `${exp.sourceName}.${exp.instanceName}`;
         } else {
@@ -180,7 +145,7 @@ export class GenerationUtil {
      */
     public static propertyToTypeScript(prop: FreMetaProperty): string {
         const isRef = !prop.isPart;
-        return `modelelement.${prop.name + (isRef ? "?.referred" : "")}`;
+        return `node.${prop.name + (isRef ? "?.referred" : "")}`;
     }
 
     /**
@@ -188,7 +153,7 @@ export class GenerationUtil {
      * @param prop
      */
     public static propertyToTypeScriptWithoutReferred(prop: FreMetaProperty): string {
-        return `modelelement.${prop.name}`;
+        return `node.${prop.name}`;
     }
 
     /**
@@ -217,7 +182,7 @@ export class GenerationUtil {
     }
 
     /**
-     * Returns true if 'freClasssifier' has a property that represents it name, i.e. a property
+     * Returns true if 'freClassifier' has a property that represents it name, i.e. a property
      * that is called 'name' and has as type 'identifier'.
      * @param freClassifier
      */
@@ -278,15 +243,20 @@ export class GenerationUtil {
         return type;
     }
 
-    public static createImports(language: FreMetaLanguage): string {
-        // sort all names alphabetically
-        let tmp: string[] = [];
-        language.concepts.map((c) => tmp.push(Names.concept(c)));
-        language.units.map((c) => tmp.push(Names.classifier(c)));
-        tmp.push(Names.classifier(language.modelConcept));
-        tmp = tmp.sort();
+    public static allConceptsAndUnits(language: FreMetaLanguage): Set<string> {
+        return new Set<string>([
+            ...language.concepts.map((c) => Names.concept(c)),
+            ...language.units.map((c) => Names.classifier(c)),
+            Names.classifier(language.modelConcept)
+        ]);
+    }
 
-        return `${tmp.map((c) => `${c}`).join(", ")}`;
+    public static allConceptsInterfacesAndUnits(language: FreMetaLanguage): Set<string> {
+        return new Set<string>([
+            ...language.concepts?.map(concept => Names.concept(concept)),
+            ...language.interfaces?.map(intf => Names.interface(intf)),
+            ...language.units?.map(intf => Names.classifier(intf))
+        ])
     }
 
     public static findExpressionBase(exp: FreMetaExpressionConcept): FreMetaExpressionConcept {
@@ -295,16 +265,5 @@ export class GenerationUtil {
         } else {
             return exp;
         }
-    }
-
-    public static sortUnitNames(language: FreMetaLanguage, unitNames: string[]) {
-        // sort all names alphabetically
-        const tmp: string[] = [];
-        language.concepts.map((c) => tmp.push(Names.concept(c)));
-        language.interfaces.map((c) => tmp.push(Names.interface(c)));
-        tmp.push(...unitNames);
-        tmp.push(Names.classifier(language.modelConcept));
-
-        return tmp.sort();
     }
 }

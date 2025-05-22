@@ -16,6 +16,7 @@ export type FreLanguageProperty = {
     key?: string; // used for LionWeb
     isList: boolean;
     isPublic: boolean;
+    isOptional: boolean;
     language: string;
     propertyKind: PropertyKind;
 };
@@ -23,7 +24,7 @@ export type FreLanguageModel = {
     typeName: string;
     id?: string;
     key?: string; // used for LionWeb
-    isNamespace?: boolean;
+    isNamespace: boolean;
     isNamedElement?: boolean;
     isAbstract?: boolean;
     language: string;
@@ -38,7 +39,7 @@ export type FreLanguageModelUnit = {
     id?: string;
     key?: string; // used for LionWeb
     // isPublic?: boolean;
-    isNamespace?: boolean;
+    isNamespace: boolean;
     isNamedElement?: boolean;
     isAbstract?: boolean;
     language: string;
@@ -58,7 +59,7 @@ export type FreLanguageConcept = {
     isPublic: boolean;
     isLimited: boolean;
     instanceNames: string[];
-    isNamespace?: boolean;
+    isNamespace: boolean;
     isNamedElement?: boolean;
     language: string;
     baseName: string;
@@ -76,7 +77,7 @@ export type FreLanguageInterface = {
     id?: string;
     key?: string; // used for LionWeb
     isPublic: boolean;
-    isNamespace?: boolean;
+    isNamespace: boolean;
     isNamedElement?: boolean;
     isAbstract?: boolean;
     subConceptNames: string[];
@@ -456,4 +457,15 @@ export class FreLanguage {
         const metatype = element.freLanguageConcept();
         return metatype === requestedType || FreLanguage.getInstance().subConcepts(requestedType).includes(metatype);
     }
+
+    public dragMetaConformsToType(sourceType: DragAndDropType, requestedType: DragAndDropType): boolean {
+        return sourceType.isRef 
+            === requestedType.isRef &&
+        (sourceType.type === requestedType.type || FreLanguage.getInstance().subConcepts(requestedType.type).includes(sourceType.type));
+    }
 }
+
+export type DragAndDropType = {
+    type: string;
+    isRef: boolean
+} 

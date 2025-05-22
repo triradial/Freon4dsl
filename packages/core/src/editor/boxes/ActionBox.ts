@@ -1,6 +1,6 @@
 import { FreLanguageConcept, FreLanguage, FreLanguageProperty, FreLanguageClassifier } from "../../language/index.js";
 import { BehaviorExecutionResult, executeSingleBehavior } from "../util/index.js";
-import { FreCreatePartAction, FreCustomAction, FreTriggerType, isRegExp } from "../actions/index.js";
+import {FreCreatePartAction, FreCustomAction, FreTriggerType, isRegExp} from "../actions/index.js";
 import { triggerTypeToString, FreEditor, isProKey } from "../internal.js";
 import { Box, AbstractChoiceBox, SelectOption } from "./internal.js";
 import { FreNode, FreNodeReference } from "../../ast/index.js";
@@ -201,10 +201,11 @@ export class ActionBox extends AbstractChoiceBox {
 
     executeOption(editor: FreEditor, option: SelectOption): BehaviorExecutionResult {
         LOGGER.log("ActionBox executeOption " + JSON.stringify(option));
-        FreUtils.CHECK(!!option.action, `ActionBox.executeOption: action missing for ${option.label}`)
+        FreUtils.CHECK(!!option.action, `ActionBox.executeOption: action missing for ${option.label}` )
         if (!!option.action) {
             return executeSingleBehavior(option.action, this, option.label, editor);
         }
+        LOGGER.log("<== ActionBox executeOption " );
         return BehaviorExecutionResult.NULL;
     }
 
@@ -213,7 +214,7 @@ export class ActionBox extends AbstractChoiceBox {
         let result: BehaviorExecutionResult;
         // Try if key fits one of the options, and execute the action that is associated with it
         const filteredOptions: SelectOption[] = this.getOptions(editor).filter(o => o.label.startsWith(key));
-        if (filteredOptions.length === 1 && filteredOptions[0].label === key) {
+        if (filteredOptions.length === 1 && filteredOptions[0].label === key ) {
             result = this.executeOption(editor, filteredOptions[0]);
         } else {
             // Try if key matches a regular expression, and execute the action that is associated with it

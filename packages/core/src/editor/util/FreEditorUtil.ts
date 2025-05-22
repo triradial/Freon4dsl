@@ -43,21 +43,21 @@ export class FreEditorUtil {
     static findKeyboardShortcutAction(freKey: FreTriggerUse, box: Box, editor: FreEditor): FreAction {
         LOGGER.log(
             "findKeyboardShortcutCommand for box " +
-            box.role +
-            " kind " +
-            box.kind +
-            " for key " +
-            JSON.stringify(freKey),
+                box.role +
+                " kind " +
+                box.kind +
+                " for key " +
+                JSON.stringify(freKey),
         );
         for (const act of editor.newFreActions) {
             if (isProKey(act.trigger) && isProKey(freKey)) {
                 LOGGER.log(
                     "findKeyboardShortcutCommand for box " +
-                    box.role +
-                    " kind " +
-                    box.kind +
-                    " with activeroles: " +
-                    act.activeInBoxRoles,
+                        box.role +
+                        " kind " +
+                        box.kind +
+                        " with activeroles: " +
+                        act.activeInBoxRoles,
                 );
                 if (act.trigger.meta === freKey.meta && act.trigger.key === freKey.key) {
                     if (act.activeInBoxRoles.includes(box.role)) {

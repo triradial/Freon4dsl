@@ -31,7 +31,17 @@
 .layout-component-horizontal {
 }
 
+.layout-component-horizontal-error {
+    border-bottom: double thin red;
+    padding-bottom: 1px;
+}
+
 .layout-component-vertical {
+}
+
+.layout-component-vertical-error {
+    border-left: 2px solid red;
+    height: 100%;
 }
 
 .limited-checkbox-component-group {
@@ -178,7 +188,7 @@ boolean-checkbox-component {
     border-radius: 0.1em;
 }
 
-.dropdown-component {
+dropdown-component {
     border-color: whitesmoke;
     box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.5);
     background: #e5e5e5;
@@ -312,6 +322,14 @@ boolean-checkbox-component {
     color: inherit;
 }
 
+.reference-button {
+    background-color: transparent;
+}
+
 .text-dropdown-component .text-component-text {
     color: lightgreen;
+}
+
+.brackets {
+    color: gray;
 }

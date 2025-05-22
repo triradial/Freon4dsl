@@ -7,11 +7,11 @@
     // On Designing and Building Toggle Switches by Sara Soueidan https://www.sarasoueidan.com/blog/toggle-switch-design/
     // and this example by Scott O'hara https://codepen.io/scottohara/pen/zLZwNv
 
-    import { INNERSWITCH_LOGGER } from "./ComponentLoggers.js";
+    import { INNERSWITCH_LOGGER } from "$lib/components/ComponentLoggers.js";
     import { BooleanControlBox, FreEditor } from "@freon4dsl/core";
     import { afterUpdate, onMount } from "svelte";
 
-    const LOGGER = INNERSWITCH_LOGGER;
+    const LOGGER = INNERSWITCH_LOGGER
 
     export let editor: FreEditor;
     export let box: BooleanControlBox;
@@ -36,9 +36,9 @@
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
-    function handleClick(event) {
+    function handleClick(event){
         const target = event.target;
-        value = target.getAttribute("aria-checked") !== "true";
+        value = target.getAttribute('aria-checked') !== 'true';
         box.setBoolean(value);
         if (box.selectable) {
             editor.selectElementForBox(box);
@@ -48,7 +48,13 @@
 </script>
 
 <span class="inner-switch-component">
-    <button {id} bind:this={switchElement} role="switch" aria-checked={value} aria-labelledby={`switch-${id}`} on:click={handleClick}>
+    <button
+            id="{id}"
+            bind:this={switchElement}
+            role="switch"
+            aria-checked={value}
+            aria-labelledby={`switch-${id}`}
+            on:click={handleClick}>
         <span>{box.labels.yes}</span>
         <span>{box.labels.no}</span>
     </button>

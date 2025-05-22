@@ -7,17 +7,17 @@
     // On Designing and Building Toggle Switches by Sara Soueidan https://www.sarasoueidan.com/blog/toggle-switch-design/
     // and this example by Scott O'hara https://codepen.io/scottohara/pen/zLZwNv
 
-    import { SWITCH_LOGGER } from "./ComponentLoggers.js";
-    import { BooleanControlBox, FreEditor, FreLogger } from "@freon4dsl/core";
-    import { componentId } from "$lib/index.js";
-    import { afterUpdate, onMount } from "svelte";
+    import { SWITCH_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import {BooleanControlBox, FreEditor, FreLogger} from "@freon4dsl/core";
+    import {componentId} from "$lib/index.js";
+    import {afterUpdate, onMount} from "svelte";
 
-    const LOGGER = SWITCH_LOGGER;
-
+    const LOGGER = SWITCH_LOGGER
+    
     export let box: BooleanControlBox;
-    export let editor: FreEditor; // the editor
+    export let editor: FreEditor;			// the editor
 
-    let id: string = !!box ? componentId(box) : "switch-for-unknown-box";
+    let id: string = !!box ? componentId(box) : 'switch-for-unknown-box';
     let value = box.getBoolean();
     let switchElement: HTMLButtonElement;
 
@@ -43,9 +43,9 @@
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
-    function handleClick(event) {
+    function handleClick(event){
         const target = event.target;
-        value = target.getAttribute("aria-checked") !== "true";
+        value = target.getAttribute('aria-checked') !== 'true';
         box.setBoolean(value);
         if (box.selectable) {
             editor.selectElementForBox(box);
@@ -55,6 +55,15 @@
     }
 </script>
 
+
 <span class="switch-component">
-    <button {id} bind:this={switchElement} role="switch" aria-checked={value} aria-labelledby={`switch-${id}`} on:click={handleClick}> </button>
+    <button
+            id="{id}"
+            bind:this={switchElement}
+            role="switch"
+            aria-checked={value}
+            aria-labelledby={`switch-${id}`}
+            on:click={handleClick}>
+    </button>
 </span>
+

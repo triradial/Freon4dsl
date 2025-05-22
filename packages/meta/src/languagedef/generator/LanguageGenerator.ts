@@ -29,6 +29,7 @@ import {
 import { CommandLineTemplate } from "./templates/CommandLineTemplate.js";
 import { ConfigurationTemplate } from "./templates/ConfigurationTemplate.js";
 import { ModelTemplate } from "./templates/ModelTemplate.js";
+import { RootIndexTemplate } from "./templates/RootIndexTemplate.js";
 import { UnitTemplate } from "./templates/UnitTemplate.js";
 import { ListUtilTemplate } from "./templates/ListUtilTemplate.js";
 
@@ -61,6 +62,7 @@ export class LanguageGenerator {
         const languageIndexTemplate = new IndexTemplate();
         // const allConceptsTemplate = new AllConceptsTemplate();
         const environmentTemplate = new EnvironmentTemplate();
+        const rootIndexTemplate = new RootIndexTemplate()
         const stdlibTemplate = new StdlibTemplate();
         const walkerTemplate = new WalkerTemplate();
         const workerTemplate = new WorkerInterfaceTemplate();
@@ -165,9 +167,9 @@ export class LanguageGenerator {
         // set relative path to an extra level to get the imports right
         relativePath = "../../";
 
-        // LOGGER.log(`Generating FreNodeReference: ${this.languageGenFolder}/${Names.FreElementReference}.ts`);
-        // const referenceFile = FileUtil.pretty(freReferenceTemplate.generateFreReference(language, relativePath), "FreElementReference", generationStatus);
-        // fs.writeFileSync(`${this.languageGenFolder}/${Names.FreElementReference}.ts`, referenceFile);
+        // LOGGER.log(`Generating FreNodeReference: ${this.languageGenFolder}/${Names.FreNodeReference}.ts`);
+        // const referenceFile = FileUtil.pretty(freReferenceTemplate.generateFreReference(language, relativePath), "FreNodeReference", generationStatus);
+        // fs.writeFileSync(`${this.languageGenFolder}/${Names.FreNodeReference}.ts`, referenceFile);
 
         LOGGER.log(
             `Generating language structure information: ${this.languageGenFolder}/${Names.language(language)}.ts`,
@@ -288,6 +290,14 @@ export class LanguageGenerator {
             generationStatus,
         );
         FileUtil.generateManualFile(`${this.commandlineFolder}/DummyAction.ts`, emptyActionFile, "DummyAction Class");
+
+        LOGGER.log(`Generating root index: ./index.ts`);
+        const rootIndexFile = FileUtil.pretty(
+            rootIndexTemplate.generateRootIndex(language),
+            "Root Index",
+            generationStatus,
+        );
+        fs.writeFileSync(`${this.outputfolder}/index.ts`, rootIndexFile);
 
         if (generationStatus.numberOfErrors > 0) {
             LOGGER.info(`Generated language '${language.name}' with ${generationStatus.numberOfErrors} errors.`);

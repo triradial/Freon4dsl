@@ -25,7 +25,7 @@ export class FreCreateBinaryExpressionAction extends FreAction {
     execute(box: Box, trigger: FreTriggerUse, editor: FreEditor): FrePostAction {
         // console.log("FreCreateBinaryExpressionCommand: trigger [" + triggerTypeToString(trigger) + "] part: ");
         let selected: Selected
-        AST.change(() => {
+        AST.change( () => {
             selected = BTREE.insertBinaryExpression(
                 this.expressionBuilder(box, triggerTypeToString(trigger), editor),
                 box,

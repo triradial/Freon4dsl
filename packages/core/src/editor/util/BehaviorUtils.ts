@@ -34,11 +34,11 @@ export function executeBehavior(box: Box, text: string, label: string, editor: F
                 const matchArray = label.match(trigger);
                 LOGGER.log(
                     "executeBehavior: MATCH " +
-                    label +
-                    " against " +
-                    trigger +
-                    "  results in " +
-                    (!!matchArray ? matchArray.length : "null"),
+                        label +
+                        " against " +
+                        trigger +
+                        "  results in " +
+                        (!!matchArray ? matchArray.length : "null"),
                 );
                 let execresult: FrePostAction = null;
                 if (matchArray !== null && label === matchArray[0]) {

@@ -40,32 +40,32 @@ export class LimitedRule extends GrammarRule {
         return result + " ;";
     }
 
-    toMethod(): string {
+    toMethod(mainAnalyserName: string): string {
         if (!!this.myMap && this.myMap.size > 0) {
             // found a limited concept with a special projection
-            let ifStat: string = "";
+            let switchStat: string = "";
+            // create all cases for the switch statement
             for (const [key, value] of this.myMap) {
-                ifStat += `if (choice === '${value}') {
-                return ${key};
-            } else `;
+                switchStat += `case'${value}': {
+                    result = ${Names.FreNodeReference}.create<${Names.classifier(this.concept)}>(${key}, '${Names.classifier(this.concept)}');
+                    break;
+                }\n`;
             }
-            // close the ifStatement
-            ifStat += `{
-                return null;
+            // complete the switch statement
+            switchStat = `switch (children.toArray()[0]) {
+                ${switchStat} default: result = undefined;
             }`;
             return `
                 ${ParserGenUtil.makeComment(this.toGrammar())}
-                public transform${this.ruleName}(branch: SPPTBranch): ${Names.classifier(this.concept)} {
-                    const choice = branch.nonSkipMatchedText;
-                    ${ifStat}
+                public transform${this.ruleName}(nodeInfo: SpptDataNodeInfo, children: KtList<object>, sentence: Sentence): ${Names.FreNodeReference}<${Names.classifier(this.concept)}> {
+                    let result: ${Names.FreNodeReference}<${Names.classifier(this.concept)}> | undefined;
+                    ${switchStat}
+                    if (result !== undefined) {
+                        result.parseLocation = this.${mainAnalyserName}.location(sentence, nodeInfo.node);
+                    }
+                    return result;
                 }`;
-        } else {
-            // make a 'normal' reference method
-            return `
-                    ${ParserGenUtil.makeComment(this.toGrammar())}
-                    public transform${this.ruleName}(branch: SPPTBranch): string {
-                        return branch.nonSkipMatchedText;
-                    }`;
         }
+        return ``;
     }
 }

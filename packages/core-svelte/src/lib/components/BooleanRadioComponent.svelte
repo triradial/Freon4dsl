@@ -1,23 +1,33 @@
 <script lang="ts">
-    import { RADIO_LOGGER } from "./ComponentLoggers.js";
+    import { RADIO_LOGGER } from '$lib/components/ComponentLoggers.js';
 
     /**
      * This component shows a boolean value as checkbox.
      */
-    import { ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BooleanControlBox, CONTROL, FreEditor, SHIFT } from "@freon4dsl/core";
-    import { afterUpdate, onMount } from "svelte";
-    import { MdRadio } from "@material/web/all.js";
+    import {
+        ALT,
+        ARROW_DOWN,
+        ARROW_LEFT,
+        ARROW_RIGHT,
+        ARROW_UP,
+        BooleanControlBox,
+        CONTROL,
+        isNullOrUndefined,
+        SHIFT
+    } from '@freon4dsl/core';
+    import { onMount } from 'svelte';
+    import { MdRadio } from '@material/web/all.js';
+    import type { FreComponentProps } from '$lib/components/svelte-utils/FreComponentProps.js';
 
     const LOGGER = RADIO_LOGGER;
 
-    export let editor: FreEditor;
-    export let box: BooleanControlBox;
+    let { editor, box }: FreComponentProps<BooleanControlBox> = $props();
 
     let id: string = box.id;
     let trueElement: MdRadio;
     let falseElement: MdRadio;
-    let currentValue = box.getBoolean();
-    let ariaLabel = "toBeDone"; // todo create useful aria-label
+    let currentValue: boolean = $state(box.getBoolean());
+    let ariaLabel = 'toBeDone'; // todo create useful aria-label
     let isHorizontal: boolean = false; // todo expose horizontal/vertical to user
 
     /**
@@ -33,29 +43,41 @@
             falseElement.focus();
         }
     }
+
     const refresh = (why?: string): void => {
-        LOGGER.log("REFRESH BooleanControlBox: " + why);
+        LOGGER.log('REFRESH BooleanControlBox: ' + why);
         currentValue = box.getBoolean();
     };
+
     onMount(() => {
         currentValue = box.getBoolean();
+    });
+
+    $effect(() => {
+        // runs after the initial onMount
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
-    afterUpdate(() => {
-        box.setFocus = setFocus;
-        box.refreshComponent = refresh;
-    });
+
     const onChange = (event: MouseEvent & { currentTarget: EventTarget & HTMLInputElement }) => {
-        LOGGER.log("BooleanRadioComponent.onChange for box " + box.role + ", value:" + event.target["value"]);
-        currentValue = event.target["value"];
-        box.setBoolean(currentValue);
-        editor.selectElementForBox(box);
-        event.stopPropagation();
+        if (!isNullOrUndefined(event.target)) {
+            LOGGER.log(
+                'BooleanRadioComponent.onChange for box ' +
+                    box.role +
+                    ', value:' +
+                    event.target['value' as keyof EventTarget]
+            );
+            currentValue = event.currentTarget.value as unknown as boolean;
+            box.setBoolean(currentValue);
+            editor.selectElementForBox(box);
+            event.stopPropagation();
+        }
     };
+
     const onClick = (event: MouseEvent & { currentTarget: EventTarget & HTMLInputElement }) => {
         event.stopPropagation();
     };
+
     const onKeyDown = (event: KeyboardEvent) => {
         if (event.key !== SHIFT && event.key !== CONTROL && event.key !== ALT) {
             // ignore meta keys
@@ -74,7 +96,13 @@
     };
 </script>
 
-<span role="radiogroup" aria-labelledby={ariaLabel} class="boolean-radio-component-group" class:boolean-radio-component-vertical={!isHorizontal} {id}>
+<span
+    role="radiogroup"
+    aria-labelledby={ariaLabel}
+    class="boolean-radio-component-group"
+    class:boolean-radio-component-vertical={!isHorizontal}
+    {id}
+>
     <span class="boolean-radio-component-single">
         <md-radio
             id="{id}-trueOne"
@@ -85,9 +113,9 @@
             value={true}
             checked={currentValue === true}
             aria-label="radio-control-true"
-            on:click={onClick}
-            on:change={onChange}
-            on:keydown={onKeyDown}
+            onclick={onClick}
+            onchange={onChange}
+            onkeydown={onKeyDown}
             bind:this={trueElement}
         ></md-radio>
         <label for="{id}-trueOne" class="boolean-radio-component-label">{box.labels.yes}</label>
@@ -102,9 +130,9 @@
             value={false}
             checked={currentValue === false}
             aria-label="radio-control-false"
-            on:click={onClick}
-            on:change={onChange}
-            on:keydown={onKeyDown}
+            onclick={onClick}
+            onchange={onChange}
+            onkeydown={onKeyDown}
             bind:this={falseElement}
         ></md-radio>
         <label class="boolean-radio-component-label" for="{id}-falseOne">{box.labels.no}</label>

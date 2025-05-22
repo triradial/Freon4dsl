@@ -27,7 +27,6 @@ import {
     RHSOptionalGroup,
     RHSBooleanWithSingleKeyWord,
     RHSPrimEntry,
-    RHSPrimOptionalEntry,
     RHSPrimListEntry,
     RHSPrimListEntryWithSeparator,
     RHSPartEntry,
@@ -55,6 +54,7 @@ import {
 } from "./grammarModel/index.js";
 import { LOG2USER, ListUtil } from "../../utils/index.js";
 import { RHSRefListWithTerminator } from "./grammarModel/RHSEntries/RHSRefListWithTerminator.js";
+import {RHSRefListWithInitiator} from "./grammarModel/RHSEntries/RHSRefListWithInitiator.js";
 
 export class ConceptMaker {
     imports: FreMetaClassifier[] = [];
@@ -256,8 +256,7 @@ export class ConceptMaker {
                     result = new RHSRefListWithSeparator(prop, joinText); // [ propTypeName / "joinText" ]
                 } else if (item.listInfo?.joinType === ListJoinType.Initiator) {
                     const sub1 = new RHSRefEntry(prop);
-                    // TODO create a RHSRefListWithInitiator class
-                    result = new RHSPartListWithInitiator(prop, sub1, joinText); // `("joinText" propTypeName)*`
+                    result = new RHSRefListWithInitiator(prop, sub1, joinText); // `("joinText" propTypeName)*`
                 } else if (item.listInfo?.joinType === ListJoinType.Terminator) {
                     const sub1 = new RHSRefEntry(prop);
                     result = new RHSRefListWithTerminator(prop, sub1, joinText, isSingleEntry); // `(propTypeName "joinText")*`
@@ -327,7 +326,8 @@ export class ConceptMaker {
             if (!prop.isOptional || inOptionalGroup) {
                 return new RHSPrimEntry(prop);
             } else {
-                return new RHSPrimOptionalEntry(prop);
+                console.error('Found optional primitive property during parser generation! Primitives should not be optional.')
+                return undefined;
             }
         } else {
             if (!!item.listInfo) {

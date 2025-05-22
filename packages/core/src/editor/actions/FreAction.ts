@@ -5,8 +5,8 @@ import { Box } from "../boxes/index.js";
 import { FreEditor } from "../FreEditor.js";
 import { FreTriggerUse, FreTriggerType } from "./FreTriggers.js";
 
-export const ACTION_LOGGER = new FreLogger("FreAction");
-
+export const ACTION_LOGGER = new FreLogger("FreAction")
+    
 export type CustomAction = (box: Box, trigger: FreTriggerUse, editor: FreEditor) => FreNode | null;
 export type FrePostAction = () => void;
 

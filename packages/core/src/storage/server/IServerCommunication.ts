@@ -1,15 +1,15 @@
 import { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
-import { type ServerConfig } from '../../config/environments.js';
 
 export type OnError = (errorMsg: string, severity: FreErrorSeverity) => void;
 /**
  * ModelUnit identity for communication with server.
  * Needs both name and id, as the Freon server uses the name, and the LionWeb server uses the id.
  */
-export type ModelUnitIdentifier = {
-    name: string;
+export type FreUnitIdentifier = {
     id: string;
+    name: string;
+    type: string;
 };
 
 /**
@@ -17,12 +17,6 @@ export type ModelUnitIdentifier = {
  */
 export interface IServerCommunication {
     onError: OnError;
-
-    /**
-     * Configure the server connection settings
-     * @param config Partial server configuration to override defaults
-     */
-    setServerConfig(config: Partial<ServerConfig>): void;
 
     /**
      * return a set of unused Id's
@@ -33,21 +27,21 @@ export interface IServerCommunication {
 
     /**
      * Takes 'unit' and stores it according to the data in 'modelInfo'
-     * This assumes that the unit already exists on the server, if tghe _unit_
+     * This assumes that the unit already exists on the server, if the _unit_
      * does not exist on the server use _createModelUnit_.
      * @see createModelUnit
      * @param modelName
-     * @param unitName
+     * @param unitId
      * @param unit
      */
-    putModelUnit(modelName: string, unitId: ModelUnitIdentifier, unit: FreNode): void;
+    putModelUnit(modelName: string, unitId: FreUnitIdentifier, unit: FreNode): void;
 
     /**
      * Deletes the unit according to the data in 'modelInfo' from the server
      * @param modelName
-     * @param unitName
+     * @param unit
      */
-    deleteModelUnit(modelName: string, unit: ModelUnitIdentifier): void;
+    deleteModelUnit(modelName: string, unit: FreUnitIdentifier): void;
 
     /**
      * Renames 'unit' in model with name 'modelName' to 'newName'.
@@ -72,34 +66,22 @@ export interface IServerCommunication {
 
     /**
      * Reads the list of models that are available on the server and calls 'modelListCallback'.
-     * @param modelListCallback
      */
     loadModelList(): Promise<string[]>;
 
     /**
      * Reads the list of units in model 'modelName' that are available on the server and calls 'modelListCallback'.
      * @param modelName
-     * @param modelListCallback
      */
-    loadUnitList(modelName: string): Promise<ModelUnitIdentifier[]>;
+    loadUnitList(modelName: string): Promise<FreUnitIdentifier[]>;
 
     /**
      * Reads the model unit according to the data in 'modelInfo' from the server and
      * calls 'loadCallBack', which takes the model unit as parameter.
      * @param modelName
-     * @param unitName
-     * @param loadCallback
+     * @param unit
      */
-    loadModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode>;
-
-    /**
-     * Reads the public interface of the model unit according to the data in 'modelInfo' from the server and
-     * calls 'loadCallBack', which takes the model unit as parameter.
-     * @param modelName
-     * @param unitName
-     * @param loadCallback
-     */
-    // loadModelUnitInterface(modelName: string, unit: ModelUnitIdentifier, loadCallback: (unit: FreModelUnit) => void);
+    loadModelUnit(modelName: string, unit: FreUnitIdentifier): Promise<FreNode>;
 
     /**
      * Create a new modelunit on the server.
@@ -108,12 +90,4 @@ export interface IServerCommunication {
      * @param unit
      */
     createModelUnit(modelName: string, unit: FreModelUnit): void;
-
-    /**
-     * Reads all interfaces for all available units of model 'modelName' and calls loadCallback for each.
-     * @param languageName
-     * @param modelName
-     * @param loadCallback
-     */
-    // getInterfacesForModel(languageName: string, modelName: string, loadCallback: (model: FreNode) => void);
 }

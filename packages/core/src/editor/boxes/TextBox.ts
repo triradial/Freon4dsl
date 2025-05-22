@@ -5,9 +5,15 @@ import { FreCaret, FreCaretPosition } from "../util/index.js";
 import { FreNode } from "../../ast/index.js";
 import { Box } from "./Box.js";
 import { FreLogger } from "../../logging/index.js";
-import { CharAllowed } from "./CharAllowed.js";
 
 const LOGGER: FreLogger = new FreLogger("TextBox");
+
+export enum CharAllowed {
+    OK,
+    GOTO_NEXT,
+    GOTO_PREVIOUS,
+    NOT_OK,
+}
 
 export class TextBox extends Box {
     kind: string = "TextBox";
@@ -46,11 +52,11 @@ export class TextBox extends Box {
     getText(): string {
         return this.$_getText();
     }
-
-    set $getText(value: () => string) {
+    
+    set $getText( value: () => string ) {
         const oldvalue = this.$_getText()
         this.$_getText = value;
-        autorun(() => {
+        autorun( () => {
             const newvalue = this.$_getText()
             LOGGER.log(`old '${oldvalue}'  new '${newvalue}'`)
             this.isDirty()
