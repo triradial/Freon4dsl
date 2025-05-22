@@ -29,3 +29,5 @@ Fetch the branches and their commits from the upstream repository:
 
 Merge the changes from the upstream/main into your local main branch:
 > git merge upstream/development
+
+### How to merge changes for specific parts of freon
