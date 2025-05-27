@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { MULTILINETEXT_LOGGER } from '$lib/components/ComponentLoggers.js';
-    import { componentId } from '$lib/index.js';
+    import { MULTILINETEXT_LOGGER } from './ComponentLoggers.js';
+    import { componentId } from '../index.js';
     import { isNullOrUndefined, MultiLineTextBox } from '@freon4dsl/core';
-    import type { FreComponentProps } from '$lib/components/svelte-utils/FreComponentProps.js';
+    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
     // Probably needed to code/encode HTML inside <TextArea>
     // import { replaceHTML } from "./svelte-utils/index.js";

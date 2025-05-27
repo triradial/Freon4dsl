@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { TEXTDROPDOWN_LOGGER } from '$lib/components/ComponentLoggers.js';
+    import { TEXTDROPDOWN_LOGGER } from './ComponentLoggers.js';
 
     // This component is a combination of a TextComponent and a DropdownComponent.
     // The TextComponent is shown in non-editable state until it becomes editable,
@@ -9,7 +9,7 @@
     import TextComponent from './TextComponent.svelte';
     import DropdownComponent from './DropdownComponent.svelte';
     import ArrowForward from './images/ArrowForward.svelte';
-    import { componentId } from '$lib/index.js';
+    import { componentId } from '../index.js';
     import {
         type AbstractChoiceBox,
         ARROW_DOWN,
@@ -23,10 +23,10 @@
         BehaviorExecutionResult,
         isNullOrUndefined
     } from '@freon4dsl/core';
-    import type { FreComponentProps } from '$lib/components/svelte-utils/FreComponentProps.js';
-    import { selectedBoxes } from '$lib/components/stores/AllStores.svelte.js';
-    import { clickOutsideConditional } from '$lib';
-    import { type CaretDetails } from '$lib/components/svelte-utils/CaretDetails';
+    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
+    import { selectedBoxes } from './stores/AllStores.svelte.js';
+    import { clickOutsideConditional } from './svelte-utils/ClickOutside.js';
+    import { type CaretDetails } from './svelte-utils/CaretDetails';
     import { onMount } from 'svelte';
 
     const LOGGER = TEXTDROPDOWN_LOGGER;

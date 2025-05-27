@@ -35,7 +35,7 @@
     import { CharAllowed } from "@freon4dsl/core";
 
     import { runInAction } from "mobx";
-    import { replaceHTML } from "./svelte-utils/index.js";
+    import { replaceHTML } from "../index.js";
 
     // TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("TimeComponent"); // .mute(); muting done through webapp/logging/LoggerSettings

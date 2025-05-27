@@ -1,6 +1,6 @@
 <script lang="ts">
     import { tick } from 'svelte';
-    import ErrorTooltip from '$lib/components/ErrorTooltip.svelte';
+    import ErrorTooltip from './ErrorTooltip.svelte';
     import type { FreComponentProps } from "$lib";
     import {Box} from "@freon4dsl/core";
 

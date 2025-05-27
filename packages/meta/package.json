@@ -7,7 +7,7 @@
   "version": "1.1.0-beta.3",
   "license": "MIT",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "repository": {
     "type": "git",
@@ -17,49 +17,52 @@
     "freon": "dist/bin/freon-generator.js"
   },
   "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "build-dev": "tsc --noEmit && vite build",
     "clean": "rm -rf node_modules/ && rm -rf dist/",
-    "cleanup": "bash ../../scripts/cleanup.sh",
-    "lang-parser1": "peggy src/languagedef/parser/LanguageGrammar.part.pegjs src/languagedef/parser/BasicGrammar.part.pegjs",
-    "lang-parser": "peggy src/languagedef/parser/LanguageGrammar.pegjs && npm run patch-language",
-    "scop-parser": "peggy src/scoperdef/parser/ScoperGrammar.pegjs && npm run patch-scoper",
-    "edit-parser": "peggy src/editordef/parser/FreEditGrammar.pegjs && npm run patch-editor",
-    "valid-parser": "peggy src/validatordef/parser/ValidatorGrammar.pegjs && npm run patch-validator",
-    "lang-exp-parser": "peggy src/languagedef/parser/ExpressionGrammar.pegjs && npm run patch-expressions",
-    "start": "echo Starting meta",
-    "pegjs-concat-language": "cd src/languagedef/parser && bash ./concat.sh",
-    "patch-language": "cd src/languagedef/parser && bash ./patch-language.sh",
-    "patch-expressions": "cd src/languagedef/parser && bash ./patch-expressions.sh",
-    "patch-scoper": "cd src/scoperdef/parser && bash ./patch.sh",
-    "patch-validator": "cd src/validatordef/parser && bash ./patch.sh",
-    "patch-editor": "cd src/editordef/parser && bash ./patch.sh",
-    "pegjs-concat-editor": "cd src/editordef/parser && bash ./concat.sh",
-    "pegjs-concat-scoper": "cd src/scoperdef/parser && bash ./concat.sh",
-    "pegjs-concat-validator": "cd src/validatordef/parser && bash ./concat.sh",
-    "concat-pegjs": "npm run pegjs-concat-language && npm run pegjs-concat-editor && npm run pegjs-concat-scoper",
-    "build": "npm run concat-pegjs && npm run lang-parser && npm run pegjs-concat-validator && npm run scop-parser && npm run valid-parser && npm run edit-parser && npm run lang-exp-parser && tsc",
-    "build-dev": "npm run build",
-    "lint": "tslint -c ./tslint.json './src/**/*.ts*'",
-    "release": "npm publish",
-    "publish-local": "npm publish --verbose --registry http://localhost:4873",
-    "unpublish-local": "npm unpublish --force --registry http://localhost:4873",
+    "build-release": "npm run build",
+    "install-local": "npm install --registry http://localhost:4873",
     "republish-local": "npm run unpublish-local && npm run publish-local",
-    "test": "vitest run",
-    "build-release": "npm run build"
+    "release": "npm publish",
+    "publish-local": "npm publish --registry http://localhost:4873",
+    "unpublish-local": "npm unpublish --force --registry http://localhost:4873"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "devDependencies": {
-    "vitest": "^3.0.5",
-    "@vitest/ui": "^3.0.5",
-    "vite-tsconfig-paths": "^5.0.1",
-    "vitest-tsconfig-paths": "^3.4.1"
+    "autoprefixer": "^10.4.20",
+    "globals": "^15.14.0",
+    "publint": "^0.3.5",
+    "typescript": "^5.0.0",
+    "vite": "^6.0.0",
+    "vite-plugin-commonjs": "^0.10.4",
+    "vitest": "^2.1.4"
   },
   "dependencies": {
-    "@rushstack/ts-command-line": "^4.22.0",
-    "@prettier/sync": "^0.5.2",
-    "kotlin": "^1.5.21",
+    "@freon4dsl/core": "1.1.0-beta.3",
     "@lionweb/validation": "^0.6.3",
-    "net.akehurst.language-agl-processor": "4.2.1-20-RC2",
+    "@prettier/sync": "^0.5.2",
+    "@rushstack/ts-command-line": "^4.22.0",
+    "kotlin": "^1.5.21",
+    "net.akehurst.language-agl-processor": "4.0.0-rc.5",
     "peggy": "^4.0.3",
-    "prettier": "^3.5.1",
+    "pegjs": "0.10.0",
+    "prettier": "^3.3.0",
     "source-map-support": "^0.5.21",
     "tslib": "^2.6.3"
   }

@@ -7,7 +7,7 @@
     // On Designing and Building Toggle Switches by Sara Soueidan https://www.sarasoueidan.com/blog/toggle-switch-design/
     // and this example by Scott O'hara https://codepen.io/scottohara/pen/zLZwNv
 
-    import { INNERSWITCH_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { INNERSWITCH_LOGGER } from "./ComponentLoggers.js";
     import { BooleanControlBox, FreEditor } from "@freon4dsl/core";
     import { afterUpdate, onMount } from "svelte";
 

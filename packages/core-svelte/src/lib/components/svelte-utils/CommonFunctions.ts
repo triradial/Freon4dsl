@@ -13,8 +13,8 @@ import {
     type FreNodeReference,
     type FreNamedNode
 } from '@freon4dsl/core';
-import { SimpleElement } from '$lib/__test__/test-environment/simple-models/SimpleElement.js';
-import {draggedElem, draggedFrom} from "$lib/components/stores/AllStores.svelte";
+import { SimpleElement } from '../../__test__/test-environment/simple-models/SimpleElement.js';
+import {draggedElem, draggedFrom} from "../stores/AllStores.svelte";
 
 // const LOGGER = new FreLogger('CommonFunctions').mute();
 
@@ -83,7 +83,7 @@ export function executeCustomKeyboardShortCut(
             }
             postAction = cmd.execute(box, toFreKey(event), editor, index);
         });
-        // @ts-expect-error this causes no error, because of the if-stat check
+
         if (!isNullOrUndefined(postAction)) {
             postAction();
         }

@@ -7,7 +7,7 @@ import { FreWriter } from "../writer/index.js";
 import { FreReader } from "../reader/index.js";
 import { FreModel } from "../ast/index.js";
 
-export interface FreEnvironment {
+export type FreEnvironment = {
     /**
      * Creates a new model, an implementation of the language defined in the .ast file
      * @param modelName

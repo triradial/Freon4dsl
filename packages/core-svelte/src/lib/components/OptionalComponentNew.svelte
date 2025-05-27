@@ -1,6 +1,6 @@
 <svelte:options immutable={true}/>
 <script lang="ts">
-    import { OPTIONAL_LOGGER } from "$lib/components/ComponentLoggers.js";
+    import { OPTIONAL_LOGGER } from "./ComponentLoggers.js";
 
     /**
      * This component display an optional part. It either shows the content of the

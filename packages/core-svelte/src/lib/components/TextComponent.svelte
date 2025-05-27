@@ -3,9 +3,9 @@
 <!-- (cursor or selected text), when the switch is being made. -->
 
 <script lang="ts">
-    import { TEXT_LOGGER } from '$lib/components/ComponentLoggers.js';
+    import { TEXT_LOGGER } from './ComponentLoggers.js';
     import { onMount, tick } from 'svelte';
-    import { componentId, replaceHTML } from '$lib/components/svelte-utils/index.js';
+    import { componentId, replaceHTML } from './svelte-utils/index.js';
     import {
         ActionBox,
         ALT,
@@ -29,11 +29,11 @@
         TAB,
         TextBox, UndefinedRectangle
     } from "@freon4dsl/core"
-    import { TextComponentHelper } from '$lib/components/svelte-utils/TextComponentHelper.js';
-    import ErrorTooltip from '$lib/components/ErrorTooltip.svelte';
-    import ErrorMarker from '$lib/components/ErrorMarker.svelte';
-    import type { TextComponentProps } from '$lib/components/svelte-utils/FreComponentProps.js';
-    import {contextMenu} from "$lib/components/stores/AllStores.svelte";
+    import { TextComponentHelper } from './svelte-utils/TextComponentHelper.js';
+    import ErrorTooltip from './ErrorTooltip.svelte';
+    import ErrorMarker from './ErrorMarker.svelte';
+    import type { TextComponentProps } from './svelte-utils/FreComponentProps.js';
+    import {contextMenu} from "./stores/AllStores.svelte";
 
     const LOGGER = TEXT_LOGGER;
 

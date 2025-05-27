@@ -7,11 +7,9 @@ import {
     FreMetaProperty,
 } from "./internal.js";
 import { Names } from "../../utils/index.js";
-// The next import should be separate and the last of the imports.
-// Otherwise, the run-time error 'Cannot read property 'create' of undefined' occurs.
-// See: https://stackoverflow.com/questions/48123645/error-when-accessing-static-properties-when-services-include-each-other
-// and: https://stackoverflow.com/questions/45986547/property-undefined-typescript
-import { MetaElementReference } from "./index.js";
+
+// Create a separate file for MetaElementReference to break circular dependency
+import { MetaElementReference } from "./MetaElementReference.js";
 
 /** This module contains classes that implement Expressions over the FreLanguage structure.
  *  There are five types of Expressions:
