@@ -1,6 +1,0 @@
-language FreTyperLanguage
-
-model FreTyperModel {
-    name: identifier;
-    typer: FreTyperDef;
-}
