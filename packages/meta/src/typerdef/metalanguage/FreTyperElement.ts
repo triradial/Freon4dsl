@@ -1,4 +1,4 @@
-import { FreMetaLangElement } from "../../languagedef/metalanguage/index.js";
+import { FreMetaLangElement } from "../../languagedef/metalanguage/FreMetaLangElement.js";
 
 export class FreTyperElement extends FreMetaLangElement {
     // @ts-ignore Property is set during parsing and checking phases

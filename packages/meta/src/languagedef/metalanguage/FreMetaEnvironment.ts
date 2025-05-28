@@ -1,4 +1,4 @@
-import { FreLangScoper } from "./internal.js";
+import { FreLangScoper } from "./FreLangScoper.js";
 
 export class FreMetaEnvironment {
     static metascoper = new FreLangScoper();

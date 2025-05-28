@@ -2,9 +2,12 @@ import { FreNode } from "../../ast/index.js";
 import { isNullOrUndefined, FreUtils, FRE_BINARY_EXPRESSION_LEFT, FRE_BINARY_EXPRESSION_RIGHT } from "../../util/index.js";
 import { FreLogger } from "../../logging/index.js";
 import {ClientRectangle, UndefinedRectangle} from "../ClientRectangleTypes.js";
+import { BehaviorExecutionResult } from "../util/index.js";
+import { FrePostAction } from "../actions/index.js";
+import { runInAction } from "mobx";
+import { FreEditor } from "../FreEditor.js";
 
 const LOGGER = new FreLogger("Box");
-
 
 /**
  * The root of the Box class hierarchy, contains all generic properties and a number of navigation/search functions.
@@ -99,6 +102,14 @@ export abstract class Box {
         this.isDirty();
     }
 
+    // Never set these manually, these properties are set after rendering to get the
+    // actual coordinates as rendered in the browser,
+    // TODO see whether these can be set on demand and whether this is useful ??? Probably yes.
+    actualX: number = -1;
+    actualY: number = -1;
+    actualWidth: number = -1;
+    actualHeight: number = -1;
+
     protected constructor(node: FreNode, role: string) {
         FreUtils.CHECK(!!node, "Element cannot be empty in Box constructor");
         this.node = node;
@@ -181,9 +192,9 @@ export abstract class Box {
         }
         const thisIndex: number = this.parent.children.indexOf(this);
         if (thisIndex === -1) {
-            LOGGER.error(`nextLeafRight: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
-            LOGGER.error(`  boxid: ${this.id} parent [id: ${this.parent.id}, id: ${this.parent.kind}, node: ${this.parent.node.freLanguageConcept()}]`)
-            LOGGER.error(`  tree: ${(this.parent.parent !== undefined && this.parent.parent !== null) ? this.parent.parent.toStringRecursive("  "):this.parent.toStringRecursive("  ")}`)
+            // LOGGER.error(`nextLeafRight: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
+            // LOGGER.error(`  boxid: ${this.id} parent [id: ${this.parent.id}, id: ${this.parent.kind}, node: ${this.parent.node.freLanguageConcept()}]`)
+            // LOGGER.error(`  tree: ${(this.parent.parent !== undefined && this.parent.parent !== null) ? this.parent.parent.toStringRecursive("  "):this.parent.toStringRecursive("  ")}`)
             return null
         }
         const rightSiblings: Box[] = this.parent.children.slice(thisIndex + 1, this.parent.children.length);
@@ -196,7 +207,7 @@ export abstract class Box {
                 return sibling;
             }
         }
-        LOGGER.log(`${this.id} nextLeafRight: referring to parent`)
+        // LOGGER.log(`${this.id} nextLeafRight: referring to parent`)
         return this.parent.nextLeafRight;
     }
 
@@ -344,9 +355,9 @@ export abstract class Box {
      * AND this method is not overridden, then the focus will be set to the parent box.
      */
     setFocus: () => void = async () => {
-        console.log(
-            this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id
-        );
+        // console.log(
+        //     this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id
+        // );
         // this.parent?.setFocus();
     };
 
@@ -393,5 +404,20 @@ export abstract class Box {
             result += "\n" + child.toStringRecursive(indent + "  ")
         })
         return result
+    }
+
+    /* GM - execute actions */
+    executeAction(editor: FreEditor, trigger: string): BehaviorExecutionResult {
+        for (const action of editor.newFreActions.filter((action) => action.activeInBoxRoles.includes(this.role) && action.trigger === trigger)) {
+            let postAction: FrePostAction = null;
+            runInAction(() => {
+                postAction = action.execute(this, trigger, editor, -1);
+            });
+            if (!!postAction) {
+                postAction();
+            }
+            return BehaviorExecutionResult.EXECUTED;
+        }
+        return BehaviorExecutionResult.NULL;
     }
 }

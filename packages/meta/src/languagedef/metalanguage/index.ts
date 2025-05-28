@@ -4,4 +4,11 @@
  * in order to avoid problem with circular imports.
  */
 
-export * from "./internal.js";
+export * from "./FreLangEveryConcept.js";
+export * from "./FreMetaLanguage.js";
+export * from "./MetaElementReference.js";
+export * from "./FreLangScoper.js";
+export * from "./FreMetaEnvironment.js";
+export * from "./FreLangExpressions.js";
+export { FreLangExp } from "./FreLangBaseExp.js";
+export { FreLangAppliedFeatureExp } from "./FreLangAppliedFeatureExp.js";

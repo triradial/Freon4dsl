@@ -21,7 +21,11 @@ export default defineConfig({
                 'kotlin',
                 '@prettier/sync',
                 'tslib',
-                'prettier'
+                'prettier',
+                'fs',
+                'path',
+                'os',
+                'crypto'
             ],
             output: {
                 format: 'es',
@@ -29,6 +33,12 @@ export default defineConfig({
                 preserveModules: true,
                 preserveModulesRoot: 'src',
                 hoistTransitiveImports: false
+            },
+            onwarn(warning, warn) {
+                if (warning.code === 'CIRCULAR_DEPENDENCY') {
+                    return;
+                }
+                warn(warning);
             }
         }
     },

@@ -1,5 +1,6 @@
 import { FreMetaDefinitionElement } from "../../../utils/index.js";
-import { DisplayType, FreEditBoolKeywords } from "./internal.js";
+import { DisplayType } from "./FreEditEnums.js";
+import { FreEditBoolKeywords } from "./FreEditBoolKeywords.js";
 
 /**
  * A single definition of the global for properties with primitive type, or the reference separator

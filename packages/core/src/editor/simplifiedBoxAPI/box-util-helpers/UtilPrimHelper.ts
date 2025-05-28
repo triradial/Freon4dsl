@@ -5,7 +5,6 @@ import {
     BooleanControlBox,
     Box,
     BoxFactory,
-    CharAllowed,
     NumberControlBox,
     NumberDisplay,
     NumberDisplayInfo,
@@ -19,6 +18,7 @@ import { UtilCheckers } from "./UtilCheckers.js";
 import { FreLanguage, FreLanguageProperty } from "../../../language/index.js";
 import { RoleProvider } from "../RoleProvider.js";
 import { FreUtils } from "../../../util/index.js";
+import { CharAllowed } from "../../boxes/CharAllowed.js";
 
 export class UtilPrimHelper {
     public static textBox(node: FreNode, propertyName: string, index?: number): TextBox {

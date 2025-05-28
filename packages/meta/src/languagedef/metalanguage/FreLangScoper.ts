@@ -2,10 +2,9 @@ import {
     FreMetaLangElement,
     FreMetaClassifier,
     FreMetaLanguage,
-    FreLangAppliedFeatureExp,
     FreMetaPrimitiveType,
     FreMetaLimitedConcept,
-} from "./internal.js";
+} from "./FreMetaLanguage.js";
 import { MetaLogger } from "../../utils/MetaLogger.js";
 import { FreMetaDefinitionElement } from "../../utils/index.js";
 
@@ -51,11 +50,12 @@ export class FreLangScoper {
             typeName === "FrePrimitiveProperty" ||
             typeName === "FreConceptProperty"
         ) {
-            if (owner instanceof FreLangAppliedFeatureExp) {
-                const xx = owner.sourceExp.$referredElement?.referred;
+            if (owner instanceof FreMetaDefinitionElement && 'sourceExp' in owner) {
+                const sourceExp = (owner as any).sourceExp;
+                const xx = sourceExp.$referredElement?.referred;
                 if (!!!xx) {
                     LOGGER.error(
-                        `Incorrect use of applied feature, source expression has unknown reference: '${owner.sourceExp.sourceName}'.`,
+                        `Incorrect use of applied feature, source expression has unknown reference: '${sourceExp.sourceName}'.`,
                     );
                 }
                 if (!!xx && xx instanceof FreMetaClassifier) {

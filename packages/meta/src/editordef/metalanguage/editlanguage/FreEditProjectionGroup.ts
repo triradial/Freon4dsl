@@ -1,14 +1,12 @@
 import { FreMetaClassifier } from "../../../languagedef/metalanguage/index.js";
 import { FreMetaDefinitionElement } from "../../../utils/index.js";
-import {
-    FreEditClassifierProjection,
-    FreEditGlobalProjection,
-    FreEditExtraClassifierInfo,
-    FreEditUnit,
-    FreEditTableProjection,
-    FreEditNormalProjection,
-    ForType,
-} from "./internal.js";
+import { FreEditClassifierProjection } from "./FreEditClassifierProjection.js";
+import { FreEditGlobalProjection } from "./FreEditGlobalProjection.js";
+import { FreEditExtraClassifierInfo } from "./FreEditExtraClassifierInfo.js";
+import { FreEditUnit } from "./FreEditUnit.js";
+import { FreEditTableProjection } from "./FreEditTableProjection.js";
+import { FreEditNormalProjection } from "./FreEditNormalProjection.js";
+import { ForType } from "./FreEditEnums.js";
 
 /**
  * A group of projection definitions that share the same name

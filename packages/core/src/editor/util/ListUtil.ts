@@ -73,10 +73,12 @@ export function moveListElement(
         AST.change(() => {
             const tmpProp = property[oldIndex];
             property.splice(oldIndex, 1);
+            /* START GM - This doesn't seem to work
             // Make sure the item is added at the correct index
-            if (targetIndex > 0) {
-                targetIndex -= 1;
-            }
+            // if (targetIndex > 0) {
+            //     targetIndex -= 1;
+            // }
+            END GM */
             property.splice(targetIndex, 0, tmpProp);
         });
     }
@@ -141,6 +143,18 @@ export function dropListElement(
             })
         }
         // console.log('List after: [' + property.map(x => x["name"]).join(', ') + ']');
+    }
+}
+
+export function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
+    const methodName = 'smartUpdate';
+    const args = [originalElement];
+    // Call methodName if it exists on the element
+    if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === 'function') {
+        console.log(`Calling ${methodName} on the instance.`);
+        return (duplicatedElement as any)[methodName](...args);
+    } else {
+        console.log(`Method ${methodName} does not exist on the instance.`);
     }
 }
 
@@ -254,7 +268,16 @@ export function getContextMenuOptions(
         (element: FreNode, index: number, editor: FreEditor) =>
             pasteListElement(listParent, propertyName, index, editor, false),
     );
-
+    const smartDup = new MenuItem(
+        "Duplicate",
+        "Ctrl+D",
+        // @ts-ignore
+        (element: FreNode, index: number, editor: FreEditor) => {
+            copyListElement(element, editor);
+            smartDuplicate(element, editor.copiedElement);
+            pasteListElement(listParent, propertyName, index, editor, false);
+        }       
+    );
     // now create the whole item list
     if (optionsType === MenuOptionsType.placeholder) {
         // add lesser items for a placeholder
@@ -295,6 +318,7 @@ export function getContextMenuOptions(
             ),
             pasteBefore,
             pasteAfter,
+            smartDup,
         ];
     }
     return items;
@@ -473,7 +497,7 @@ export type PropertyInfo = {
  * @param propertyName
  */
 function getPropertyInfo(element: FreNode, propertyName: string): PropertyInfo {
-    console.log(`element: ${element.freId()}, element type: ${element.freLanguageConcept()}, propertyName: ${propertyName}`)
+    // console.log(`element: ${element.freId()}, element type: ${element.freLanguageConcept()}, propertyName: ${propertyName}`)
     const property = element[propertyName];
     const propInfo = FreLanguage.getInstance().classifierProperty(element.freLanguageConcept(), propertyName);
     const isList: boolean = propInfo.isList;

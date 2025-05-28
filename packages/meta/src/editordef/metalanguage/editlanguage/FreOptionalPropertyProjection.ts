@@ -1,4 +1,6 @@
-import { FreEditPropertyProjection, FreEditProjectionLine, FreEditProjectionText } from "./internal.js";
+import { FreEditPropertyProjection } from "./FreEditPropertyProjection.js";
+import { FreEditProjectionLine } from "./FreEditProjectionLine.js";
+import { FreEditProjectionText } from "./FreEditProjectionText.js";
 
 /**
  * An element of a line in a projection definition that represents the projection of a property that is optional.

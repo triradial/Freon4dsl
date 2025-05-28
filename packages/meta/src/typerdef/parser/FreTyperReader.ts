@@ -9,7 +9,7 @@ import {
 } from 'net.akehurst.language-agl-processor';
 import { MetaTyperGrammarStr } from "./FreTyperGrammar.js";
 import { FreTyperSyntaxAnalyser } from "./FreTyperSyntaxAnalyser.js";
-import { FreMetaLangElement } from '../../languagedef/metalanguage/index.js';
+import { FreMetaLangElement } from '../../languagedef/metalanguage/FreMetaLangElement.js';
 import { TyperDef } from '../metalanguage/index.js';
 import { MetaLogger } from '../../utils/index.js';
 

@@ -21,6 +21,37 @@ modelunit StudyConfiguration {
     staffing: Staffing;
 }
 
+concept Availability {
+    name: identifier = "Availability";
+    description: Description;
+    availableDays: AvailableDay[];
+    exceptions: AvailabilityException[];
+}
+
+concept AvailableDay {
+    name: identifier;
+    dayOfWeek: DayOfWeek;
+    startTime: string;
+    endTime: string;
+}
+
+limited DayOfWeek {
+    monday = { name: "Monday" }
+    tuesday = { name: "Tuesday" }
+    wednesday = { name: "Wednesday" }
+    thursday = { name: "Thursday" }
+    friday = { name: "Friday" }
+    saturday = { name: "Saturday" }
+    sunday = { name: "Sunday" }
+}
+
+concept AvailabilityException {
+    name: identifier;
+    date: string;
+    isAvailable: boolean;
+    reason: string;
+}
+
 concept Period {
     name: identifier = "Period";
     description: Description;

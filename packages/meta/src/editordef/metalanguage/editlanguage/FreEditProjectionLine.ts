@@ -1,10 +1,8 @@
 import { FreMetaDefinitionElement } from "../../../utils/index.js";
-import {
-    FreEditParsedNewline,
-    FreEditParsedProjectionIndent,
-    FreEditProjectionItem,
-    FreOptionalPropertyProjection,
-} from "./internal.js";
+import { FreEditParsedNewline } from "./FreEditParsedClasses.js";
+import { FreEditParsedProjectionIndent } from "./FreEditParsedClasses.js";
+import { FreEditProjectionItem } from "./FreEditTypes.js";
+import { FreOptionalPropertyProjection } from "./FreOptionalPropertyProjection.js";
 
 /**
  * One of the lines in a 'normal' projection definition

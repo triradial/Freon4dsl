@@ -1,6 +1,9 @@
 import { FreMetaDefinitionElement } from "../../../utils/index.js";
 import { FreLangExp, FreMetaProperty, MetaElementReference } from "../../../languagedef/metalanguage/index.js";
-import { FreEditBoolKeywords, DisplayType, FreEditListInfo, FreEditExternalInfo } from "./internal.js";
+import { FreEditBoolKeywords } from "./FreEditBoolKeywords.js";
+import { DisplayType } from "./FreEditEnums.js";
+import { FreEditListInfo } from "./FreEditListInfo.js";
+import { FreEditExternalInfo } from "./FreEditExternalInfo.js";
 
 /**
  * An element of a line in a projection definition that represents the projection of a property.
@@ -41,7 +44,7 @@ export class FreEditPropertyProjection extends FreMetaDefinitionElement {
         }
         let nameText: string | undefined = this.expression?.toFreString();
         if (!nameText || nameText.length === 0) {
-            nameText = this.property?.name;
+            nameText = this.property?.referred?.name;
         }
         return `\${ ${nameText} }${extraText}`;
     }

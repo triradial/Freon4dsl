@@ -1,23 +1,13 @@
 import { LangUtil, ParseLocation } from "../../utils/index.js";
-import { MetaElementReference } from "./internal.js";
+import { MetaElementReference } from "./MetaElementReference.js";
 // This import cannot be shortened. Importing "../../utils" results in circular dependencies
-import { FreMetaDefinitionElement } from "../../utils/FreMetaDefinitionElement.js";
+import { FreMetaDefinitionElement } from '../../utils/FreMetaDefinitionElement.js';
+import { FreMetaLangElement } from './FreMetaLangElement.js';
 
 // Some properties of the classes defined here are marked @ts-ignore to avoid the error:
 // TS2564: ... has no initializer and is not definitely assigned in the constructor.
 // These properties need to be undefined during parsing and checking. After the checking process
 // has been executed without errors, we can assume that these properties are initialized.
-
-// root of the inheritance structure of all elements in a language definition
-export abstract class FreMetaLangElement extends FreMetaDefinitionElement {
-    protected _name: string = "";
-    get name(): string {
-        return this._name;
-    }
-    set name(v: string) {
-        this._name = v;
-    }
-}
 
 export class FreMetaLanguage extends FreMetaLangElement {
     concepts: FreMetaConcept[] = [];
@@ -643,7 +633,7 @@ export class FreMetaProperty extends FreMetaLangElement {
         this.$type.owner = this;
     }
     toFreString(): string {
-        return this.name + ": " + this.$type.name + `${this.isList ? `[]` : ``}`;
+        return this.name + ": " + this.$type.referred.name + `${this.isList ? `[]` : ``}`;
     }
 }
 

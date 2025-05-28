@@ -3,7 +3,7 @@
   "version": "1.1.0-beta.3",
   "license": "MIT",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
@@ -11,8 +11,8 @@
     "test:watch": "vitest -c ./vitest.config.ts",
     "coverage": "vitest run --coverage -c ./vitest.config.ts",
     "clean": "rm -rf node_modules/",
-    "build": "npm run generate && tsc && rollup --config",
-    "nogen": "tsc && rollup --config",
+    "build": "npm run generate && tsc && vite build",
+    "nogen": "tsc && vite build",
     "install-local": "npm install --registry http://localhost:4873",
     "generate": "bash ../../../scripts/freon-samples-dev.sh -v all -d src/defs -o src/",
     "clean-gen": "bash ../../../scripts/freon-samples-dev.sh clean-it -d src/defs -o src/",
@@ -40,6 +40,7 @@
     "jsdom": "^25.0.1",
     "ts-jest": "^29.1.5",
     "typescript": "^5.5.3",
+    "vite": "^6.0.0",
     "vitest": "^2.1.3"
   }
 }

@@ -1,4 +1,4 @@
-import { FreMetaLangElement } from "../../metalanguage/index.js";
+import { FreMetaLangElement } from "../../metalanguage/FreMetaLangElement.js";
 
 interface InternalElement<T> {
     name: string;

@@ -1,11 +1,9 @@
-import {
-    FreEditSimpleExternal,
-    FreEditParsedNewline,
-    FreEditParsedProjectionIndent,
-    FreEditProjectionText,
-    FreEditPropertyProjection,
-    FreEditSuperProjection,
-} from "./internal.js";
+import { FreEditSimpleExternal } from "./FreEditSimpleExternal.js";
+import { FreEditParsedNewline } from "./FreEditParsedClasses.js";
+import { FreEditParsedProjectionIndent } from "./FreEditParsedClasses.js";
+import { FreEditProjectionText } from "./FreEditProjectionText.js";
+import { FreEditPropertyProjection } from "./FreEditPropertyProjection.js";
+import { FreEditSuperProjection } from "./FreEditSuperProjection.js";
 import { FreEditFragmentProjection } from "./FreEditFragmentProjection.js";
 
 /**
