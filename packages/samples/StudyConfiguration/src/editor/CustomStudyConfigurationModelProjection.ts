@@ -206,6 +206,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectEvent(event: Event): Box {
         const element: Event = event;
         const showScheduling = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showScheduling;
+        const showSchedulingDetails = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showSchedulingDetails;
         const showChecklists = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showChecklists;
         const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
         let box: Box = BoxUtil.itemGroupBox(
@@ -233,8 +234,12 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 LimitedDisplay.SELECT,
                                 StudyConfigurationModelEnvironment.getInstance().scoper,
                             ),
-                            BoxUtil.labelBox(element as Event, "that is also referred to as", "top-1-line-1-item-2"),
-                            BoxUtil.textBox(element as Event, "alternativeName"),
+                            ...(showSchedulingDetails === true
+                                ? [
+                                      BoxUtil.labelBox(element as Event, "that is also referred to as", "top-1-line-1-item-2"),
+                                      BoxUtil.textBox(element as Event, "alternativeName"),
+                                  ]
+                                : []),
                         ],
                         { selectable: false },
                     ),

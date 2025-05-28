@@ -30,6 +30,7 @@
 
     let footerItems = [
         { id: "showScheduling", label: "Scheduling", visible: true },
+        { id: "showSchedulingDetails", label: "Details", visible: false, parent: "showChecklists" },
         { id: "showChecklists", label: "Checklists", visible: false },
         { id: "showReferences", label: "References", visible: false, parent: "showChecklists" },
         { id: "showSystems", label: "Systems", visible: false, parent: "showChecklists" },

@@ -195,26 +195,17 @@
   },
   {
     "id": "65a6658b-5772-4ee9-a139-4fd7c792291a",
-    "name": "ALLIANCE A022104",
-    "title": "THE JANUS RECTAL CANCER TRIAL: A RANDOMIZED PHASE II/III TRIAL TESTING THE EFFICACY OF TRIPLET VERSUS DOUBLET CHEMOTHERAPY REGARDING CLINICAL COMPLETE RESPONSE AND DISEASE-FREE SURVIVAL IN PATIENTS WITH LOCALLY ADVANCED RECTAL CANCER",
+    "name": "No Tasks A022104",
+    "title": "No tasks from the checklists. Names don't match checklist",
     "status": "Planning",
     "phase": "II/III",
     "therapeuticArea": "Oncology",
     "currentProtocol": ""
   },
   {
-    "id": "5688359e-1c73-42ed-a18d-5a379363748a",
-    "name": "demo2",
-    "title": "flwkjdffljsdf ",
-    "status": "Planning",
-    "phase": "",
-    "therapeuticArea": "",
-    "currentProtocol": ""
-  },
-  {
     "id": "5069dcf5-efea-429c-bc23-1d934fa5b7a9",
-    "name": "A022104 Checklist",
-    "title": "Example Oncology Study from MD Anderson Cancer Center at Cooper",
+    "name": "No Tasks A022104",
+    "title": "Another copy that does not have tasks from checklist",
     "status": "Planning",
     "phase": "Phase I",
     "therapeuticArea": "Oncology",
@@ -222,8 +213,8 @@
   },
   {
     "id": "19e0d795-364e-49cf-aa09-f5ee808b4743",
-    "name": "A022104",
-    "title": "A022104 Checklist Template",
+    "name": "ALLIANCE A022104",
+    "title": "THE JANUS RECTAL CANCER TRIAL",
     "status": "Planning",
     "phase": "Phase I",
     "therapeuticArea": "Oncology",
