@@ -1,14 +1,15 @@
 <script lang="ts">
-    import { afterUpdate, onMount } from "svelte";
-    import { ExternalPartBox, FreEditor, FreNode } from "@freon4dsl/core";
-    import { BB } from "@freon4dsl/samples-external-tester";
-    export let box: ExternalPartBox;
-    export let editor: FreEditor;
+    import { ExternalPartBox, type FreNode} from "@freon4dsl/core";
+    import {BB} from "@freon4dsl/samples-external-tester";
+    import type {FreComponentProps} from "@freon4dsl/core-svelte";
 
-    let inputElement;
-    let value: BB;
-    let nameOfValue: string;
-    let numberOfValue: string;
+    // Props
+    let { editor, box }: FreComponentProps<ExternalPartBox> = $props();
+
+    let inputElement: HTMLInputElement;
+    let value: BB = $state()!;
+    let nameOfValue: string = $state('');
+    let numberOfValue: string = $state('');
 
     function getValue() {
         let startVal: FreNode | undefined = box.getPropertyValue();
@@ -20,9 +21,8 @@
             // in this case we are showing its 'name' and 'numberProp'
             nameOfValue = value.name;
             numberOfValue = value.numberProp.toString();
-        } else {
-            // the default
-            value = null;
+        } else { // the default
+            value = BB.create({name: 'noBB'});
             nameOfValue = "<unknown>";
             numberOfValue = "0";
         }
@@ -43,7 +43,7 @@
         // box.setPropertyValue(otherValue);
     };
 
-    // The following four functions need to be included for the editor to function properly.
+    // The following three functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
         inputElement.focus();
@@ -52,12 +52,7 @@
         // do whatever needs to be done to refresh the elements that show information from the model
         getValue();
     };
-    onMount(() => {
-        getValue();
-        box.setFocus = setFocus;
-        box.refreshComponent = refresh;
-    });
-    afterUpdate(() => {
+    $effect(() => {
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
@@ -65,6 +60,8 @@
 </script>
 
 <div class="replacer">
-    The replacer is showing the name <input bind:value={nameOfValue} bind:this={inputElement} on:change={onChange} /> and numberProp:
-    <input bind:value={numberOfValue} on:change={onChange} />
+    The replacer is showing the name
+    <input bind:value={nameOfValue} bind:this={inputElement} onchange={onChange}/>
+    and numberProp:
+    <input bind:value={numberOfValue} onchange={onChange}/>
 </div>

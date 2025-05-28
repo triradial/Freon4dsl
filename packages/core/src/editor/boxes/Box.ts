@@ -9,6 +9,7 @@ import { FreEditor } from "../FreEditor.js";
 
 const LOGGER = new FreLogger("Box");
 
+
 /**
  * The root of the Box class hierarchy, contains all generic properties and a number of navigation/search functions.
  */
@@ -101,14 +102,6 @@ export abstract class Box {
         this._errorMessages = [];
         this.isDirty();
     }
-
-    // Never set these manually, these properties are set after rendering to get the
-    // actual coordinates as rendered in the browser,
-    // TODO see whether these can be set on demand and whether this is useful ??? Probably yes.
-    actualX: number = -1;
-    actualY: number = -1;
-    actualWidth: number = -1;
-    actualHeight: number = -1;
 
     protected constructor(node: FreNode, role: string) {
         FreUtils.CHECK(!!node, "Element cannot be empty in Box constructor");

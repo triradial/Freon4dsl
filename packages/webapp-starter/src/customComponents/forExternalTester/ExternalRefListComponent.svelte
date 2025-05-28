@@ -1,13 +1,14 @@
 <script lang="ts">
-    import {afterUpdate, onMount} from "svelte";
-    import { AST, Box, ExternalRefListBox, FreEditor, FreNodeReference } from "@freon4dsl/core";
+    import {AST, ExternalRefListBox, FreNodeReference} from "@freon4dsl/core";
     import {CC} from "@freon4dsl/samples-external-tester";
-    import {RenderComponent} from "@freon4dsl/core-svelte";
-    export let box: ExternalRefListBox;
-    export let editor: FreEditor;
+    import {type FreComponentProps, RenderComponent} from "@freon4dsl/core-svelte";
 
-    let button;
+    // Props
+    let { editor, box }: FreComponentProps<ExternalRefListBox> = $props();
+
+    let button: HTMLButtonElement;
     let value: FreNodeReference<CC>[];
+    let count: number = $state(5);
 
     function getValue() {
         let startVal: FreNodeReference<any>[] | undefined = box.getPropertyValue();
@@ -18,19 +19,18 @@
         // but you also have access to the native boxes that project the elements in the list.
         // We will be projecting the native boxes using the native RenderComponent.
     }
-    // getValue();
 
     const addChild = () => {
-        let newRef: FreNodeReference<CC> = FreNodeReference.create<CC>("nameOfReferedNode", "CC");
-        // Note that you need to put any changes to the actual model in a 'runInAction',
+        // Note that you need to put any changes to the actual model in a 'AST.change' or 'AST.changeNamed',
         // because all elements in the model are reactive using mobx.
         AST.changeNamed("ExternalRefListComponent.addChild", () => {
+            let newRef: FreNodeReference<CC> = FreNodeReference.create<CC>("nameOfReferedNode" + count++, "CC");
             value.push(newRef);
             // or use: box.getPropertyValue().push(newRef);
         });
     };
 
-    // The following four functions need to be included for the editor to function properly.
+    // The following three functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
         if (!!box.children && box.children.length > 0) {
@@ -43,12 +43,7 @@
         // do whatever needs to be done to refresh the elements that show information from the model
         getValue();
     };
-    onMount(() => {
-        getValue();
-        box.setFocus = setFocus;
-        box.refreshComponent = refresh;
-    });
-    afterUpdate(() => {
+    $effect(() => {
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
@@ -62,5 +57,5 @@
             <li><RenderComponent box={childBox} {editor} /></li>
         {/each}
     </ol>
-    <button on:click={addChild} bind:this={button}>Add reference</button>
+    <button onclick={addChild} bind:this={button}>Add reference</button>
 </div>

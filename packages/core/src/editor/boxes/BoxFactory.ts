@@ -96,10 +96,6 @@ let cacheMultilineTextOff: boolean = false;
 let cacheListGroupOff: boolean = false;
 let cacheItemGroupOff: boolean = false;
 let cacheItemGroupOff2: boolean = false;
-let cacheItemGroupBoxOff: boolean = false;
-let cacheItemGroupBox2Off: boolean = false;
-let cacheListGroupBoxOff: boolean = false;
-let cacheMultiLineTextBox2Off: boolean = false;
 /** END - M+G */
 
 /**

@@ -2,6 +2,7 @@ import { FreLangExp } from "./FreLangBaseExp.js";
 import type { FreLangAppliedFeatureExp } from "./FreLangAppliedFeatureExp.js";
 import { FreMetaProperty, FreMetaClassifier, FreMetaInstance } from "./FreMetaLanguage.js";
 import { MetaElementReference } from "./MetaElementReference.js";
+import { Names } from "../../utils/index.js";
 
 /** This module contains classes that implement Expressions over the FreLanguage structure.
  *  There are five types of Expressions:
@@ -70,24 +71,10 @@ export class FreLangFunctionCallExp extends FreLangExp<FreMetaProperty> {
     }
 
     toFreString(): string {
-        let actualPars: string = "( ";
-        if (!!this.actualparams) {
-            for (const actual of this.actualparams) {
-                actualPars = actualPars.concat(actual.toFreString());
-                if (this.actualparams.indexOf(actual) !== this.actualparams.length - 1) {
-                    actualPars = actualPars.concat(", ");
-                }
-            }
-        }
-        actualPars = actualPars.concat(` )`);
-        return this.sourceName + actualPars + (this.appliedfeature ? "." + this.appliedfeature.toFreString() : "");
-    }
-
-    findRefOfLastAppliedFeature(): FreMetaProperty | undefined {
-        if (this.appliedfeature !== undefined) {
-            return this.appliedfeature.findRefOfLastAppliedFeature();
+        if (!!this.sourceName && this.sourceName !== Names.nameForSelf) {
+            return this.sourceName + (this.appliedfeature ? "." + this.appliedfeature.toFreString() : "");
         } else {
-            return undefined;
+            return this.appliedfeature ? this.appliedfeature.toFreString() : "";
         }
     }
 }

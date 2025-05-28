@@ -1,12 +1,12 @@
 <script lang="ts">
-    import {afterUpdate, onMount} from "svelte";
-    import { AST, ExternalPartListBox, FreEditor, FreNode } from "@freon4dsl/core";
+    import {AST, ExternalPartListBox, type FreNode} from "@freon4dsl/core";
     import {BB} from "@freon4dsl/samples-external-tester";
-    import {RenderComponent} from "@freon4dsl/core-svelte";
-    export let box: ExternalPartListBox;
-    export let editor: FreEditor;
+    import {type FreComponentProps, RenderComponent} from "@freon4dsl/core-svelte";
 
-    let button;
+    // Props
+    let { editor, box }: FreComponentProps<ExternalPartListBox> = $props();
+
+    let button: HTMLButtonElement;
     let value: BB[];
 
     function getValue() {
@@ -21,15 +21,15 @@
     getValue();
 
     const addChild = () => {
-        let newBB: BB = BB.create({name: "new element", numberProp: 100, booleanProp: true});
         // Note that you need to put any changes to the actual model in a 'AST.change or AST.changeNamed',
         // because all elements in the model are reactive using mobx.
         AST.changeNamed("ExternalPartListComponent.addChild", () => {
+            let newBB: BB = BB.create({name: "new element", numberProp: 100, booleanProp: true});
             value.push(newBB);
         });
     };
 
-    // The following four functions need to be included for the editor to function properly.
+    // The following three functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
         if (!!box.children && box.children.length > 0) {
@@ -42,12 +42,7 @@
         // do whatever needs to be done to refresh the elements that show information from the model
         getValue();
     };
-    onMount(() => {
-        getValue();
-        box.setFocus = setFocus;
-        box.refreshComponent = refresh;
-    });
-    afterUpdate(() => {
+    $effect(() => {
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
@@ -61,5 +56,5 @@
             <li><RenderComponent box={childBox} {editor} /></li>
         {/each}
     </ol>
-    <button on:click={addChild} bind:this={button}>Add child</button>
+    <button onclick={addChild} bind:this={button}>Add child</button>
 </div>

@@ -4,6 +4,7 @@
     /**
      *  This component combines a menu with a submenu. The positions of both the menu and the submenu are determined
      *  such that the complete menu stays within the boundaries of the editor viewport. The state of the editor
+     *  such that the complete menu stays within the boundaries of the editor viewport. The state of the editor
      *  viewport is stored in the EditorViewportStore (by FreonComponent).
      */
     import { calculatePos } from './svelte-utils/CommonFunctions.js';

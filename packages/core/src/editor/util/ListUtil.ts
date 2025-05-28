@@ -497,7 +497,7 @@ export type PropertyInfo = {
  * @param propertyName
  */
 function getPropertyInfo(element: FreNode, propertyName: string): PropertyInfo {
-    // console.log(`element: ${element.freId()}, element type: ${element.freLanguageConcept()}, propertyName: ${propertyName}`)
+    console.log(`element: ${element.freId()}, element type: ${element.freLanguageConcept()}, propertyName: ${propertyName}`)
     const property = element[propertyName];
     const propInfo = FreLanguage.getInstance().classifierProperty(element.freLanguageConcept(), propertyName);
     const isList: boolean = propInfo.isList;

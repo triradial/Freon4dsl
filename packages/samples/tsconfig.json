@@ -4,18 +4,18 @@
     "noEmit": false
   },
   "exclude": [
-    //    "Calculator",
-    //    "RulesLanguage",
-    //    "DocuProject",
-    //    "Education",
-    //    "Calculator",
-    //    "Examples",
-    //    "ExpressionLibrary",
-    //    "ExpTest",
-    //    "UnusedOrInvalid/*",
-    //    "heat",
-    //    "Json",
-    //    "MpsExpressions",
-    //    "Octopus"
+//    "Calculator",
+//    "RulesLanguage",
+//    "InsuranceModel",
+//    "Education",
+//    "Calculator",
+//    "Examples",
+//    "ExpressionLibrary",
+//    "ExpTest",
+    "UnusedOrInvalid/*",
+//    "heat",
+//    "Json",
+//    "MpsExpressions",
+//    "Octopus"
   ]
 }

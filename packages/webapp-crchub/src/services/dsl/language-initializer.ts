@@ -4,10 +4,23 @@ import {
     projectionNames,
     projectionsShown,
     unitTypes,
+<<<<<<< HEAD:packages/webapp-crchub/src/services/dsl/language-initializer.ts
 } from "./language-store.js";
 import { FreProjectionHandler, FreLanguage, FreUndoManager, type FreEnvironment } from "@freon4dsl/core";
 import { setUserMessage } from "./usermessage-store.js";
 import { WebappConfigurator } from "./webapp-configurator.js";
+=======
+} from "../components/stores/LanguageStore.svelte";
+import {
+    FreProjectionHandler,
+    FreLanguage,
+    FreUndoManager,
+    type FreEnvironment,
+    isNullOrUndefined
+} from "@freon4dsl/core";
+import { setUserMessage } from "../components/stores/UserMessageStore.svelte";
+import { WebappConfigurator } from "$lib";
+>>>>>>> upstream/development:packages/webapp-lib/src/lib/language/LanguageInitializer.ts
 
 export class LanguageInitializer {
     /**
@@ -15,12 +28,15 @@ export class LanguageInitializer {
      * and make sure that the editor is able to get user message to the webapp.
      */
     static initialize(): void {
-        let langEnv: FreEnvironment = WebappConfigurator.getInstance().editorEnvironment;
+        let langEnv: FreEnvironment | undefined = WebappConfigurator.getInstance().editorEnvironment;
+        if (isNullOrUndefined(langEnv)) {
+            return;
+        }
         // the language name
-        languageName.set(langEnv.languageName);
+        languageName.value = langEnv.languageName;
 
         // the names of the unit types
-        unitTypes.set(FreLanguage.getInstance().getUnitNames());
+        unitTypes.list = FreLanguage.getInstance().getUnitNames();
 
         // the file extensions for all unit types
         // because 'langEnv.fileExtensions.values()' is not an Array but an IterableIterator,
@@ -29,13 +45,13 @@ export class LanguageInitializer {
         for (const val of langEnv.fileExtensions.values()) {
             tmp.push(val);
         }
-        fileExtensions.set(tmp);
+        fileExtensions.list = tmp;
 
         // the names of the projections / views
-        const proj = langEnv.editor.projection;
-        let nameList: string[] = proj instanceof FreProjectionHandler ? proj.projectionNames() : ["default"];
-        projectionNames.set(nameList);
-        projectionsShown.set(nameList); // initialy, all projections are shown
+        const proj: FreProjectionHandler = langEnv.editor.projection;
+        let nameList: string[] = proj.projectionNames();
+        projectionNames.list = nameList;
+        projectionsShown.list = nameList; // initially, all projections are shown
 
         // let the editor know how to set the user message,
         // we do this by assigning our own method to the editor's method

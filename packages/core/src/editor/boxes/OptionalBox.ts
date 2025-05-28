@@ -10,7 +10,7 @@ export type BoolFunctie = () => boolean;
  * present in the FreElement model.
  * The attributes 'mustShow' and 'condition' determine which of the pair [content, placeholder] is shown. If the 'condition'
  * results in true, then the content box is shown. If 'mustShow' is true, then the content box is also shown, even though
- * there may not be actual content within the FreElement model. The latter is set by the custom action, that is coupled
+ * there may not be actual content within the FreNode model. The latter is set by the custom action, that is coupled
  * to this OptionalBox, which is triggered by the user.
  */
 export class OptionalBox extends Box {

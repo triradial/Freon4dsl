@@ -1,30 +1,39 @@
 [![Build Status](https://github.com/freon4dsl/freon4dsl/actions/workflows/node.js.yml/badge.svg)]
 
-# Freon, previously know as ProjectIt
-Projectional Editor for the Web. The current release (version 0.7.0-beta4) can be found on npm.
+# Freon, the Language Workbench for the Web
+Web-native Language Workbench with projectional editor. 
+The current release (version 1.0.0) can be found on npm.
 
-This beta release supports [LionWeb](https://github.com/LionWeb-io) (de)serialization. 
-As LionWeb is in motion, expect this release to change according to LionWeb changes before it becomes final. 
+**May 13, 2025: Version 1.1.0-beta.3 released**
 
-This release also supports external editor component, as an experimental feature.
+- Updated to use Svelte 5 instead of Svelte 4.
+- Performance improvements in generation and really fast hot reloading thanks to vite.
+
+**May 13, 2025: IDE plugin version 0.0.4 released**
+- See [https://github.com/freon4dsl/freon-ide/blob/main/README.md](https://github.com/freon4dsl/freon-ide/blob/main/README.md)
 
 ## What is Freon
 
-Freon is a TypeScript/JavaScript framework to create and implement projectional editors for Domain-Specific Languages (DSLs). 
+Freon is a TypeScript/JavaScript framework to create and implement projectional editors for Domain-Specific Languages (DSLs) running natively in the browser. 
 Additional to the core framework, there are generators for many parts of the work environment for your DSL.
 
 For more information see the <a href="https://www.freon4dsl.dev" target="_blank">Freon</a> website.
+
+## Using Freon
+
+If you want to use Freon to develop a DSL on the Web, goto the [Freon Documentation](https://www.freon4dsl.dev),
+this repository is meant for developing Freon itself.
 
 ## Developing Freon
 
 The main prerequisites are: [Node.js](https://nodejs.org/) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/).
 We are typically using the latest versions of both, although older versions likely work just as well.
 
-Clone or fork this github project, check out the `development` branch, and install dependencies:
+Clone or fork this GitHub project, check out the `development` branch, and install dependencies:
 ```bash
   git clone https://github.com/freon4dsl/Freon4dsl.git
 ```
-Setup the multirepo and install all dependencies:
+Set up the multirepo and install all dependencies:
 ```bash
   npm install
 ```
