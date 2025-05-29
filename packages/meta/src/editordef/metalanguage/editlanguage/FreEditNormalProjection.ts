@@ -1,8 +1,10 @@
-import { FreEditClassifierProjection } from "./FreEditClassifierProjection.js";
-import { FreEditExternalInfo } from "./FreEditExternalInfo.js";
-import { FreEditSimpleExternal } from "./FreEditSimpleExternal.js";
-import { FreEditProjectionLine } from "./FreEditProjectionLine.js";
-import { FreEditPropertyProjection } from "./FreEditPropertyProjection.js";
+import {
+    FreEditClassifierProjection,
+    FreEditExternalInfo,
+    FreEditSimpleExternal,
+    FreEditProjectionLine,
+    FreEditPropertyProjection,
+} from "./internal.js";
 import { FreEditFragmentProjection } from "./FreEditFragmentProjection.js";
 
 /**
@@ -68,7 +70,7 @@ export class FreEditNormalProjection extends FreEditClassifierProjection {
     }
 
     toString() {
-        return `${this.classifier?.referred?.name ? `${this.classifier?.referred?.name}` : ``} {
+        return `${this.classifier?.name ? `${this.classifier?.name}` : ``} {
         [ // #lines: ${this.lines.length}
         ${this.lines.map((line) => line.toString()).join("\n")}
         ]}`;

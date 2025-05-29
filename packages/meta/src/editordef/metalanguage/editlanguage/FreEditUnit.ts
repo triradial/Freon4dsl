@@ -1,9 +1,11 @@
 import { FreMetaClassifier, FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
 import { Names, FreMetaDefinitionElement } from "../../../utils/index.js";
-import { FreEditProjectionGroup } from "./FreEditProjectionGroup.js";
-import { FreEditClassifierProjection } from "./FreEditClassifierProjection.js";
-import { FreEditTableProjection } from "./FreEditTableProjection.js";
-import { FreEditExtraClassifierInfo } from "./FreEditExtraClassifierInfo.js";
+import {
+    FreEditProjectionGroup,
+    FreEditClassifierProjection,
+    FreEditTableProjection,
+    FreEditExtraClassifierInfo,
+} from "./internal.js";
 
 /**
  * The root of the complete editor definition

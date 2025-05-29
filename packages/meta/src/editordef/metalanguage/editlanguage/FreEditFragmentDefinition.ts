@@ -1,6 +1,5 @@
 import { FreMetaDefinitionElement } from "../../../utils/index.js";
-import { FreEditClassifierProjection } from "./FreEditClassifierProjection.js";
-import { FreEditNormalProjection } from "./FreEditNormalProjection.js";
+import { FreEditClassifierProjection, FreEditNormalProjection } from "./internal.js";
 
 export class FreEditFragmentDefinition extends FreMetaDefinitionElement {
     name: string = "";

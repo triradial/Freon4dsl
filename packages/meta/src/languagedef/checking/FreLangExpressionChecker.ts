@@ -5,18 +5,16 @@ import {
     FreMetaClassifier,
     FreMetaLimitedConcept,
     FreMetaInstance,
-    FreMetaEnvironment,
-    MetaElementReference,
-} from "../metalanguage/index.js";
-import { FreLangExp } from "../metalanguage/FreLangBaseExp.js";
-import { FreLangAppliedFeatureExp } from "../metalanguage/FreLangAppliedFeatureExp.js";
-import {
+    FreLangExp,
     FreLangSelfExp,
+    FreLangAppliedFeatureExp,
     FreLangConceptExp,
     FreLangFunctionCallExp,
     FreInstanceExp,
     FreLangSimpleExp,
-} from "../metalanguage/FreLangExpressions.js";
+    FreMetaEnvironment,
+    MetaElementReference,
+} from "../metalanguage/index.js";
 import { CommonChecker } from "./CommonChecker.js";
 
 const LOGGER = new MetaLogger("FreLangExpressionChecker").mute();
@@ -240,7 +238,7 @@ export class FreLangExpressionChecker extends Checker<LanguageExpressionTester> 
     }
 
     // .XXX
-    private checkAppliedFeatureExp(feat: FreLangExp, enclosingConcept: FreMetaClassifier) {
+    private checkAppliedFeatureExp(feat: FreLangAppliedFeatureExp, enclosingConcept: FreMetaClassifier) {
         LOGGER.log("checkAppliedFeatureExp " + feat?.toFreString());
         if (!enclosingConcept) {
             LOGGER.error("enclosingConcept is null in 'checkAppliedFeatureExp'.");
@@ -248,21 +246,21 @@ export class FreLangExpressionChecker extends Checker<LanguageExpressionTester> 
         }
         for (const e of enclosingConcept.allProperties()) {
             if (e.name === feat.sourceName) {
-                (feat as any).referredElement = e;
+                feat.referredElement = e;
             }
         }
         this.runner.nestedCheck({
-            check: !!(feat as any).referredElement,
+            check: !!feat.referredElement,
             error: `Cannot find property '${feat.sourceName}' in '${enclosingConcept.name}' ${ParseLocationUtil.location(feat)}.`,
             whenOk: () => {
-                if (!!(feat as any).appliedfeature) {
+                if (!!feat.appliedfeature) {
                     this.runner.simpleCheck(
-                        !(feat as any).referredElement.isList,
-                        `List property '${(feat as any).referredElement.name}' should not have an applied expression (.${(feat as any).appliedfeature.toFreString()})` +
+                        !feat.referredElement.isList,
+                        `List property '${feat.referredElement.name}' should not have an applied expression (.${feat.appliedfeature.toFreString()})` +
                             ` ${ParseLocationUtil.location(feat)}.`,
                     );
-                    (feat as any).appliedfeature.language = feat.language;
-                    this.checkAppliedFeatureExp((feat as any).appliedfeature, (feat as any).referredElement.type);
+                    feat.appliedfeature.language = feat.language;
+                    this.checkAppliedFeatureExp(feat.appliedfeature, feat.referredElement.type);
                 }
             },
         });

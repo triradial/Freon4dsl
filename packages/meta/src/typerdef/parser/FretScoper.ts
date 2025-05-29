@@ -1,6 +1,5 @@
 import { FreMetaScoper } from "../../languagedef/metalanguage/FreLangScoper.js";
-import { FreMetaClassifier } from "../../languagedef/metalanguage/FreMetaLanguage.js";
-import { FreMetaLangElement } from "../../languagedef/metalanguage/FreMetaLangElement.js";
+import { FreMetaClassifier, FreMetaLangElement } from "../../languagedef/metalanguage/index.js";
 import { FretCreateExp, FretPropertyCallExp, FretVarCallExp, FretWhereExp } from "../metalanguage/expressions/index.js";
 import { FretProperty, TyperDef, FreTyperElement } from "../metalanguage/index.js";
 import { FreMetaDefinitionElement, Names } from "../../utils/index.js";

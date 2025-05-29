@@ -111,11 +111,11 @@ export class InterpreterTracer {
     }
 
     push(node: Object, value: RtObject) {
-        // if (this.current.node !== node) {
-        //     console.error("INCORRECT ELEMENT IN TRACE");
-        //     throw new Error("INCORRECT ELEMENT IN TRACE");
-        // }
-        // this.current.value = value;
+        if (this.current.node !== node) {
+            console.error("INCORRECT ELEMENT IN TRACE");
+            throw new Error("INCORRECT ELEMENT IN TRACE");
+        }
+        this.current.value = value;
     }
 
     /**

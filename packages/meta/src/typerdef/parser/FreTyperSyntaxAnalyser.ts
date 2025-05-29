@@ -9,8 +9,7 @@ import { SPPTBranch, SpptDataNode } from "net.akehurst.language-agl-processor";
 import { FreTyperDefSyntaxAnalyserPart } from "./index.js";
 import { FreParseLocation } from "../../utils/index.js";
 import { TyperDef } from '../metalanguage/index.js';
-import { MetaElementReference } from '../../languagedef/metalanguage/MetaElementReference.js';
-import { FreMetaLangElement } from '../../languagedef/metalanguage/FreMetaLangElement.js';
+import { FreMetaLangElement, MetaElementReference } from '../../languagedef/metalanguage/index.js';
 
 export enum PrimValueType {
     "string",

@@ -8,6 +8,6 @@ export class FreEditSuperProjection extends FreMetaDefinitionElement {
     superRef?: MetaElementReference<FreMetaClassifier> = undefined;
     projectionName: string = "";
     toString(): string {
-        return `[=> ${this.superRef?.referred?.name} /* found ${this.superRef?.referred?.name} */ ${this.projectionName.length > 0 ? `:${this.projectionName}` : ``}]`;
+        return `[=> ${this.superRef?.name} /* found ${this.superRef?.referred?.name} */ ${this.projectionName.length > 0 ? `:${this.projectionName}` : ``}]`;
     }
 }

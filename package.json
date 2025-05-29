@@ -6,7 +6,7 @@
     "packages/core",
     "packages/core-svelte",
     "packages/meta",
-    "packages/samples/studyConfiguration",
+    "packages/languages/study-configuration",
     "packages/server-crchub",
     "packages/webapp-crchub"
   ],

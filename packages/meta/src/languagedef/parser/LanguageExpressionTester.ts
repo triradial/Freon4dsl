@@ -1,7 +1,7 @@
-import { FreLangExp } from "../metalanguage/FreLangBaseExp.js";
+import { FreLangExp } from "../metalanguage/FreLangExpressions.js";
 // import { ParseLocation } from "../../utils";
 import { FreMetaConcept, FreMetaLanguage } from "../metalanguage/index.js";
-import { FreMetaLangElement } from "../metalanguage/FreMetaLangElement.js";
+import { FreMetaLangElement } from "../metalanguage/FreMetaLanguage.js";
 // The next import should be separate and the last of the imports.
 // Otherwise, the run-time error 'Cannot read property 'create' of undefined' occurs.
 // See: https://stackoverflow.com/questions/48123645/error-when-accessing-static-properties-when-services-include-each-other

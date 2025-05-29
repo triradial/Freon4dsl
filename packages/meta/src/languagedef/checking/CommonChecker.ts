@@ -22,12 +22,12 @@ export class CommonChecker {
         }
 
         runner.nestedCheck({
-            check: reference.referred?.name !== undefined,
-            error: `Classifier reference should have a name ${ParseLocationUtil.location(reference.referred)}.`,
+            check: reference.name !== undefined,
+            error: `Classifier reference should have a name ${ParseLocationUtil.location(reference)}.`,
             whenOk: () => {
                 runner.nestedCheck({
                     check: reference.referred !== undefined,
-                    error: `Reference to classifier '${reference.referred?.name}' cannot be resolved ${ParseLocationUtil.location(reference.referred)}.`,
+                    error: `Reference to classifier '${reference.name}' cannot be resolved ${ParseLocationUtil.location(reference)}.`,
                 });
             },
         });

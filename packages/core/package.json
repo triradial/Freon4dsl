@@ -1,7 +1,7 @@
 {
   "name": "@freon4dsl/core",
   "version": "1.1.0-beta.3",
-  "description": "The uttermost core part of the Freon library, which enables you to build editors for the web",
+  "description": "The core part of the Freon library, which enables you to build editors for the web",
   "publishConfig": {
     "access": "public"
   }, 
@@ -20,7 +20,8 @@
   ],
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "rm -f tsconfig.tsbuildinfo && tsc --declaration --declarationDir dist && vite build --debug",
+    "build:verbose": "tsc --emitDeclarationOnly && vite build --debug --logLevel debug",
     "preview": "vite preview",
     "prepare": "npm run build",
     "check": "tsc --noEmit",
@@ -43,6 +44,74 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./ast": {
+      "types": "./dist/ast/index.d.ts",
+      "import": "./dist/ast/index.js"
+    },
+    "./ast-utils": {
+      "types": "./dist/ast-utils/index.d.ts",
+      "import": "./dist/ast-utils/index.js"
+    },
+    "./editor": {
+      "types": "./dist/editor/index.d.ts",
+      "import": "./dist/editor/index.js"
+    },
+    "./environment": {
+      "types": "./dist/environment/index.d.ts",
+      "import": "./dist/environment/index.js"
+    },
+    "./language": {
+      "types": "./dist/language/index.d.ts",
+      "import": "./dist/language/index.js"
+    },
+    "./logging": {
+      "types": "./dist/logging/index.d.ts",
+      "import": "./dist/logging/index.js"
+    },
+    "./reader": {
+      "types": "./dist/reader/index.d.ts",
+      "import": "./dist/reader/index.js"
+    },
+    "./scoper": {
+      "types": "./dist/scoper/index.d.ts",
+      "import": "./dist/scoper/index.js"
+    },
+    "./searchers": {
+      "types": "./dist/searchers/index.d.ts",
+      "import": "./dist/searchers/index.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.js"
+    },
+    "./stdlib": {
+      "types": "./dist/stdlib/index.d.ts",
+      "import": "./dist/stdlib/index.js"
+    },
+    "./typer": {
+      "types": "./dist/typer/index.d.ts",
+      "import": "./dist/typer/index.js"
+    },
+    "./util": {
+      "types": "./dist/util/index.d.ts",
+      "import": "./dist/util/index.js"
+    },
+    "./validator": {
+      "types": "./dist/validator/index.d.ts",
+      "import": "./dist/validator/index.js"
+    },
+    "./writer": {
+      "types": "./dist/writer/index.d.ts",
+      "import": "./dist/writer/index.js"
+    },
+    "./change-manager": {
+      "types": "./dist/change-manager/index.d.ts",
+      "import": "./dist/change-manager/index.js"
+    },
+    "./interpreter": {
+      "types": "./dist/interpreter/index.d.ts",
+      "import": "./dist/interpreter/index.js"
     }
   },
   "peerDependencies": {

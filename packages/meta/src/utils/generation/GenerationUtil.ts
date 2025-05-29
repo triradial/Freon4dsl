@@ -3,16 +3,18 @@ import {
     FreMetaConcept,
     FreMetaConceptProperty,
     FreMetaExpressionConcept,
+    FreMetaLangElement,
     FreMetaLanguage,
     FreMetaPrimitiveProperty,
     FreMetaProperty,
+    FreInstanceExp,
+    FreLangAppliedFeatureExp,
+    FreLangExp,
+    FreLangFunctionCallExp,
+    FreLangSelfExp,
+    MetaElementReference,
     FreMetaPrimitiveType,
-} from "../../languagedef/metalanguage/FreMetaLanguage.js";
-import { FreMetaLangElement } from "../../languagedef/metalanguage/FreMetaLangElement.js";
-import { MetaElementReference } from "../../languagedef/metalanguage/MetaElementReference.js";
-import { FreInstanceExp, FreLangFunctionCallExp, FreLangSelfExp } from "../../languagedef/metalanguage/FreLangExpressions.js";
-import { FreLangExp } from "../../languagedef/metalanguage/FreLangBaseExp.js";
-import { FreLangAppliedFeatureExp } from "../../languagedef/metalanguage/FreLangAppliedFeatureExp.js";
+} from "../../languagedef/metalanguage/index.js";
 import { Names } from "./Names.js";
 import { LangUtil } from "./LangUtil.js";
 

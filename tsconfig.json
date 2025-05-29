@@ -76,7 +76,7 @@
         "packages/core-svelte/src"
       ],
       "@freon4dsl/samples-study-configuration": [
-        "packages/samples/StudyConfiguration/src"
+        "packages/languages/StudyConfiguration/src"
       ],
       "@freon4dsl/server": [
         "packages/server/src"

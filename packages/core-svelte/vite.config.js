@@ -23,13 +23,19 @@ export default defineConfig({
         '@material/web',
         '@material/slider',
         '@material/switch'
-      ],
-      output: {
-        format: 'es'
-      }
+      ]
+    }
+  },
+  esbuild: {
+    target: 'esnext',
+    supported: {
+      'top-level-await': true
     }
   },
   optimizeDeps: {
-    exclude: ['@freon4dsl/core']
+    exclude: ['@freon4dsl/core'],
+    esbuildOptions: {
+      target: 'esnext'
+    }
   }
 }); 

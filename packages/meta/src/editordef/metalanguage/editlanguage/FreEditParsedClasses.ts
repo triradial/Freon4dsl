@@ -1,7 +1,9 @@
-import { FreEditExtraClassifierInfo } from "./FreEditExtraClassifierInfo.js";
-import { FreEditClassifierProjection } from "./FreEditClassifierProjection.js";
-import { FreEditNormalProjection } from "./FreEditNormalProjection.js";
-import { FreEditTableProjection } from "./FreEditTableProjection.js";
+import {
+    FreEditExtraClassifierInfo,
+    FreEditClassifierProjection,
+    FreEditNormalProjection,
+    FreEditTableProjection,
+} from "./internal.js";
 import { FreMetaDefinitionElement } from "../../../utils/index.js";
 
 /**
@@ -12,7 +14,7 @@ export class FreEditParsedClassifier extends FreEditClassifierProjection {
     tableProjection?: FreEditTableProjection = undefined;
     classifierInfo?: FreEditExtraClassifierInfo = undefined;
     toString(): string {
-        return `ParsedClassifier ${this.classifier?.referred?.name}`;
+        return `ParsedClassifier ${this.classifier?.name}`;
     }
 }
 /**

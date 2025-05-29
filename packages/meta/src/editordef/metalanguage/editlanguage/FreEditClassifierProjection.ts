@@ -1,8 +1,6 @@
 import { FreMetaDefinitionElement } from "../../../utils/index.js";
 import { FreMetaClassifier, MetaElementReference } from "../../../languagedef/metalanguage/index.js";
-import { FreEditFragmentDefinition } from "./FreEditFragmentDefinition.js";
-import { FreEditExternalInfo } from "./FreEditExternalInfo.js";
-import { FreEditPropertyProjection } from "./FreEditPropertyProjection.js";
+import { FreEditFragmentDefinition, FreEditExternalInfo, FreEditPropertyProjection } from "./internal.js";
 import { FreEditFragmentProjection } from "./FreEditFragmentProjection.js";
 
 /**

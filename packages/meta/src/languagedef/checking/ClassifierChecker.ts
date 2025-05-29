@@ -47,7 +47,7 @@ export class ClassifierChecker {
                             const bPartType = bPart.type;
                             runner.simpleCheck(
                                 bPartType !== classifier,
-                                `Language contains an infinite loop: mandatory part '${aPart.name}' has mandatory property '${bPart.name}' of type ${bPart.typeReference.referred?.name} ${ParseLocationUtil.location(aPart)}.`,
+                                `Language contains an infinite loop: mandatory part '${aPart.name}' has mandatory property '${bPart.name}' of type ${bPart.typeReference.name} ${ParseLocationUtil.location(aPart)}.`,
                             );
                         }
                     });
@@ -88,7 +88,7 @@ export class ClassifierChecker {
                         // @ts-ignore Todo find out why this error occurs. Imho, it shouldn't.
                         this.runner!.simpleCheck(
                             LangUtil.compareTypes(prop, inSuper),
-                            `Property '${prop.name}' with non conforming type already exists in base interface '${intfRef.referred?.name}' ${ParseLocationUtil.location(prop)} and ${ParseLocationUtil.location(inSuper)}.`,
+                            `Property '${prop.name}' with non conforming type already exists in base interface '${intfRef.name}' ${ParseLocationUtil.location(prop)} and ${ParseLocationUtil.location(inSuper)}.`,
                         );
                     }
                 });

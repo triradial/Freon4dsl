@@ -1,5 +1,4 @@
-import { FreEditClassifierProjection } from "./FreEditClassifierProjection.js";
-import { FreEditPropertyProjection } from "./FreEditPropertyProjection.js";
+import { FreEditClassifierProjection, FreEditPropertyProjection } from "./internal.js";
 
 /**
  * A table projection for a concept or interface
@@ -16,7 +15,7 @@ export class FreEditTableProjection extends FreEditClassifierProjection {
     }
 
     toString() {
-        return `${this.classifier?.referred?.name} {
+        return `${this.classifier?.name} {
         table [
         ${this.headers.map((head) => `"${head}"`).join(" | ")}
         ${this.cells.map((it) => it.toString()).join(" | ")}

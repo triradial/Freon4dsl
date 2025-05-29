@@ -1,8 +1,0 @@
-PitExpTest NAME {
-	 value where {
-	 // expression list with separator
-	 self == self #
-	 anytype == anytype #
-	 self == anytype
-	 }
-}

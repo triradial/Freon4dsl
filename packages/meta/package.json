@@ -75,7 +75,6 @@
     "@prettier/sync": "^0.5.2",
     "@rushstack/ts-command-line": "^4.22.0",
     "kotlin": "^1.5.21",
-    "@lionweb/validation": "^0.6.3",
     "net.akehurst.language-agl-processor": "4.2.1-20-RC2",
     "peggy": "^4.0.3",
     "pegjs": "0.10.0",

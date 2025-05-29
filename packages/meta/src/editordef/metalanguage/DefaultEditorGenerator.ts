@@ -218,7 +218,7 @@ export class DefaultEditorGenerator {
     ): FreEditNormalProjection {
         const projection = new FreEditNormalProjection();
         projection.name = Names.defaultProjectionName;
-        projection.classifier = MetaElementReference.create<FreMetaClassifier>(con, "FreClassifier");
+        projection.classifier = MetaElementReference.create<FreMetaClassifier>(con.name, "FreClassifier");
         projection.classifier.owner = language;
         // add first line with type name - object name - start bracket: "Dog Jack {"
         const startLine = new FreEditProjectionLine();

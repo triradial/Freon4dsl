@@ -1,17 +1,16 @@
 import { LanguageExpressionTester, TestExpressionsForConcept } from "./LanguageExpressionTester.js";
-import { FreLangExp } from "../metalanguage/FreLangBaseExp.js";
 import {
     FreLangSelfExp,
+    FreLangAppliedFeatureExp,
+    FreLangExp,
     FreLangFunctionCallExp,
     FreInstanceExp,
     FreLangConceptExp,
     FreLangSimpleExp,
 } from "../metalanguage/FreLangExpressions.js";
-import { FreLangAppliedFeatureExp } from "../metalanguage/FreLangAppliedFeatureExp.js";
 import { MetaLogger } from "../../utils/MetaLogger.js";
 import { Names } from "../../utils/index.js";
 import { FreMetaClassifier } from "../metalanguage/FreMetaLanguage.js";
-import { FreMetaConcept } from "../metalanguage/FreMetaLanguage.js";
 // The next import should be separate and the last of the imports.
 // Otherwise, the run-time error 'Cannot read property 'create' of undefined' occurs.
 // See: https://stackoverflow.com/questions/48123645/error-when-accessing-static-properties-when-services-include-each-other
@@ -63,10 +62,8 @@ export function createClassifierReference(
     data: Partial<MetaElementReference<FreMetaClassifier>>,
 ): MetaElementReference<FreMetaClassifier> {
     LOGGER.log("createClassifierReference " + data.name);
-    const classifier = new FreMetaConcept();
-    classifier.name = data.name || "";
-    const result = MetaElementReference.create<FreMetaClassifier>(classifier, "FreClassifier");
-    if (data.location) {
+    const result = MetaElementReference.create<FreMetaClassifier>(data.name ? data.name : "", "FreClassifier");
+    if (!!data.location) {
         result.location = data.location;
         result.location.filename = currentFileName;
     }
@@ -158,8 +155,7 @@ export function createFunctionCall(data: Partial<FreLangFunctionCallExp>): FreLa
 export function createSimpleExpression(data: Partial<FreLangSimpleExp>): FreLangSimpleExp {
     LOGGER.log("createSimpleExpression");
     const result: FreLangSimpleExp = new FreLangSimpleExp();
-    if (data.sourceName !== undefined) {
-        result.sourceName = data.sourceName;
-    }
+    // when the normal check is present, a value of 0 will not be passed to result
+    result.value = data.value ? data.value : 0;
     return result;
 }

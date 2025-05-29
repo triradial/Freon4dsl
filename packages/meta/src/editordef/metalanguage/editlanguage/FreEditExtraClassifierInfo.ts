@@ -21,10 +21,10 @@ export class FreEditExtraClassifierInfo extends FreMetaDefinitionElement {
     symbol: string = "";
 
     toString(): string {
-        return `${this.classifier?.referred?.name} {
+        return `${this.classifier?.name} {
             trigger = ${this.trigger}
             symbol = ${this.symbol}
-            referenceShortcut = ${this.referenceShortCut ? this.referenceShortCut.referred?.name : this.referenceShortcutExp}
+            referenceShortcut = ${this.referenceShortCut ? this.referenceShortCut.name : this.referenceShortcutExp}
         }`;
     }
 }
