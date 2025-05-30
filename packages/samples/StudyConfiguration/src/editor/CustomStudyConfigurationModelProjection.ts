@@ -104,24 +104,25 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         const element: StudyConfiguration = studyconfig;
         return BoxFactory.verticalLayout(element, "StudyConfiguration-overall", "", [
             ...(element.showNotes === true
-                ? [BoxUtil.listGroupBox(element, "notes", "Notes",                  
-                    BoxFactory.verticalLayout(
-                            element,
-                            "Event-hlist-line-1",
-                            "",
-                        [
-                            BoxUtil.labelBox(element, "Notes about / Overview of the study", "top-1-line-1-item-2"),
-                              BoxFactory.horizontalLayout(
-                                  element,
-                                  "period-hlist-line-1",
-                                  "",
-                                  [BoxUtil.getBoxOrAction(element, "notes", "Description", this.handler)],
-                                  { selectable: false, cssClass: "w-full mt-1 align-top" },
-                              ),
-                        ],
-                        { selectable: false },
-                    ),{ cssClass: "type1 mt-2", isExpanded: true, canAdd: false },),
-                ] : []),
+                ? [
+                      BoxUtil.listGroupBox(
+                          element,
+                          "notes-details",
+                          "Notes",
+                          BoxFactory.verticalLayout(
+                              element,
+                              "notes",
+                              "",
+                              [
+                                  BoxUtil.labelBox(element, "Notes about the study", "top-1-line-1-item-2"),
+                                  BoxUtil.getBoxOrAction(element, "notes", "Description", this.handler),
+                              ],
+                              { cssClass: "ml-8 mb-2" },
+                          ),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: false },
+                      ),
+                  ]
+                : []),
             BoxUtil.listGroupBox(
                 element,
                 "periods",
@@ -169,6 +170,9 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectDescription(description: Description): Box {
         const element: Description = description;
+        if (element.$$propertyName === "notes") {
+            console.log("property name:" + element.$$propertyName);
+        }
         const ph = "<" + element.$$propertyName + ">";
         return new MultiLineTextBox2(
             element,

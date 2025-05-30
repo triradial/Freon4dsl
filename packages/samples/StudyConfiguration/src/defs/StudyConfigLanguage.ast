@@ -21,7 +21,7 @@ modelunit StudyConfiguration {
     tasks: Task[];
     systemAccesses: SystemAccess[];
     staffing: Staffing;
-    description: Description;
+    notes: Description;
 }
 
 concept Period {
