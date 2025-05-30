@@ -38,6 +38,14 @@
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-showSchedulingDetails"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showChecklists"
                },
                "value": "true"
@@ -855,7 +863,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "7"
+               "value": "1"
             }
          ],
          "containments": [],
@@ -877,7 +885,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "7"
+               "value": "0"
             }
          ],
          "containments": [],
@@ -1336,7 +1344,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "1"
             }
          ],
          "containments": [],
@@ -2348,8 +2356,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Informed Consent",
-                     "reference": "ID-220"
+                     "resolveInfo": "Pre-Screening",
+                     "reference": "ID-209"
                   }
                ]
             },
@@ -2418,7 +2426,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "0"
+               "value": "1"
             }
          ],
          "containments": [],
@@ -2440,7 +2448,7 @@
                   "version": "2023.1",
                   "key": "-default-key-Days-count"
                },
-               "value": "2"
+               "value": "0"
             }
          ],
          "containments": [],
@@ -2657,6 +2665,16 @@
                "containment": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-default-key-EventSchedule-eventStart"
+               },
+               "children": [
+                  "ID-139"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-default-key-EventSchedule-eventWindow"
                },
                "children": [
@@ -2667,6 +2685,70 @@
          "references": [],
          "annotations": [],
          "parent": "ID-108"
+      },
+      {
+         "id": "ID-139",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-When"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-When-startWhen"
+               },
+               "children": [
+                  "ID-140"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-110"
+      },
+      {
+         "id": "ID-140",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-EventReference"
+         },
+         "properties": [],
+         "containments": [],
+         "references": [
+            {
+               "reference": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventReference-event"
+               },
+               "targets": [
+                  {
+                     "resolveInfo": "Registration/Randomization",
+                     "reference": "ID-69"
+                  }
+               ]
+            },
+            {
+               "reference": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventReference-eventState"
+               },
+               "targets": [
+                  {
+                     "resolveInfo": "completed",
+                     "reference": "ID-23"
+                  }
+               ]
+            }
+         ],
+         "annotations": [],
+         "parent": "ID-139"
       },
       {
          "id": "ID-111",

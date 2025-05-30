@@ -15,11 +15,13 @@ modelunit StudyConfiguration {
     showSystems: boolean = false;
     showPeople: boolean = false;
     showDescriptions: boolean = false;
+    showNotes: boolean = true;
     studyStartDayNumber: number = 0;
     periods: Period[];
     tasks: Task[];
     systemAccesses: SystemAccess[];
     staffing: Staffing;
+    description: Description;
 }
 
 concept Period {

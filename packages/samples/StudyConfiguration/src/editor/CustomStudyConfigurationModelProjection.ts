@@ -103,6 +103,25 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectStudyConfiguration(studyconfig: StudyConfiguration): Box {
         const element: StudyConfiguration = studyconfig;
         return BoxFactory.verticalLayout(element, "StudyConfiguration-overall", "", [
+            ...(element.showNotes === true
+                ? [BoxUtil.listGroupBox(element, "notes", "Notes",                  
+                    BoxFactory.verticalLayout(
+                            element,
+                            "Event-hlist-line-1",
+                            "",
+                        [
+                            BoxUtil.labelBox(element, "Notes about / Overview of the study", "top-1-line-1-item-2"),
+                              BoxFactory.horizontalLayout(
+                                  element,
+                                  "period-hlist-line-1",
+                                  "",
+                                  [BoxUtil.getBoxOrAction(element, "notes", "Description", this.handler)],
+                                  { selectable: false, cssClass: "w-full mt-1 align-top" },
+                              ),
+                        ],
+                        { selectable: false },
+                    ),{ cssClass: "type1 mt-2", isExpanded: true, canAdd: false },),
+                ] : []),
             BoxUtil.listGroupBox(
                 element,
                 "periods",
@@ -179,13 +198,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 [
                     ...(showDescriptions
                         ? [
-                              BoxFactory.horizontalLayout(
-                                  element,
-                                  "period-hlist-line-1",
-                                  "",
-                                  [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
-                                  { selectable: false, cssClass: "w-full mt-1 align-top" },
-                              ),
+                              BoxUtil.getBoxOrAction(element, "description", "Description", this.handler),
+
                           ]
                         : []),
                     BoxUtil.listGroupBox(

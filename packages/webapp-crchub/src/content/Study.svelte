@@ -29,6 +29,7 @@
     let unit: StudyConfiguration;
 
     let footerItems = [
+        { id: "showNotes", label: "Notes", visible: false },
         { id: "showScheduling", label: "Scheduling", visible: true },
         { id: "showSchedulingDetails", label: "Details", visible: false, parent: "showChecklists" },
         { id: "showChecklists", label: "Checklists", visible: false },
