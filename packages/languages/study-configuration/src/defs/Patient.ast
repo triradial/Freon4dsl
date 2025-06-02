@@ -1,7 +1,7 @@
 language StudyConfigurationModel
 
-modelunit Availability { //TODO: rename StaffAvailability
-  name: identifier = "Availability";
+modelunit StaffAvailability {
+  name: identifier = "StaffAvailability";
   baselineStaff: string;
   staffLevels: StaffLevel[];
 }

@@ -1,6 +1,6 @@
 import { FreUtils } from "../../util/index.js";
 import { FreCaret, FreCaretPosition } from "../util/index.js";
-import { FreNode } from "../../ast/index.js";
+import type { FreNode } from "../../ast/index.js";
 import { Box } from "./Box.js";
 import { FreLogger } from "../../logging/index.js";
 import { CharAllowed } from "./CharAllowed.js";

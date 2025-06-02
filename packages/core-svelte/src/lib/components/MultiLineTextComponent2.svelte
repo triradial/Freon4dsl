@@ -3,7 +3,7 @@
 <!-- (cursor or selected text), when the switch is being made. -->
 
 <script lang="ts">
-    import { afterUpdate, onMount } from "svelte";
+    import { onMount } from "svelte";
     import { componentId } from "./svelte-utils/index.js";
     import { FreEditor, FreLogger, MultiLineTextBox2 } from "@freon4dsl/core";
     import { ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BACKSPACE, CONTROL, DELETE, ENTER, ESCAPE, SHIFT, TAB } from "@freon4dsl/core";
@@ -83,7 +83,7 @@
 
     /**
      */
-    afterUpdate(() => {
+    $effect(() => {
         placeholder = box.placeHolder;
         box.setFocus = setFocus;
         box.refreshComponent = refresh;

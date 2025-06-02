@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { IconBox } from "@freon4dsl/core";
-    import { afterUpdate, onMount } from "svelte";
+    import { onMount } from "svelte";
     import { componentId } from "./svelte-utils/index.js";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
    
@@ -15,9 +15,11 @@
     onMount( () => {
         box.refreshComponent = refresh;
     });
-    afterUpdate(() => {
+
+    $effect(() => {
         box.refreshComponent = refresh;
     });
+    
     const refresh = (why?: string) => {
         id = !!box ? componentId(box) : 'icon-for-unknown-box';
         iconDef = box.iconDef;

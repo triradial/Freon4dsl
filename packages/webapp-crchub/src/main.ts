@@ -1,7 +1,8 @@
-import App from "./App.svelte";
+import './app.css';
+import { initializeApp } from './services/initialization/app-initialization.js';
 
 import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
-import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-configuration";
+import { LanguageEnvironment } from "@freon4dsl/study-configuration";
 import { ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
 import { env } from "./config/env.js";
@@ -19,7 +20,7 @@ serverComm.setServerConfig({
 
 // Configure the editor environment
 const webappConfigurator = WebappConfigurator.getInstance();
-const editorEnvironment = StudyConfigurationModelEnvironment.getInstance();
+const editorEnvironment = LanguageEnvironment.getInstance();
 webappConfigurator.setEditorEnvironment(editorEnvironment);
 webappConfigurator.setServerCommunication(serverComm);
 
@@ -29,14 +30,5 @@ setCustomComponents([
     { component: TimePicker, knownAs: "TimePicker" },
 ]);
 
-async function initializeApp() {
-
-    const app = new App({
-        target: document.body,
-        props: {},
-    });
-
-    return app;
-}
-
-export default initializeApp();
+// Initialize the application
+initializeApp();

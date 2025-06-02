@@ -26,6 +26,7 @@ modelunit Availability {
     description: Description;
     availableDays: AvailableDay[];
     exceptions: AvailabilityException[];
+    staffLevels: StaffLevel[];
 }
 
 concept AvailableDay {
@@ -183,4 +184,7 @@ concept Person {
     phoneNumber: string;
     role: StaffRole;
 }
+
+
+
  

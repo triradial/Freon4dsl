@@ -5,7 +5,7 @@
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { FreEditor } from "@freon4dsl/core";
 
-    import { type Availability } from "@freon4dsl/samples-study-configuration";
+    import { type Availability } from "@freon4dsl/study-configuration";
 
     import { ListPlaceholder } from "flowbite-svelte";
 

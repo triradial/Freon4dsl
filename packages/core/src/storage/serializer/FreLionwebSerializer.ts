@@ -1,17 +1,13 @@
 // import { astToString } from "../../ast-utils/index.js";
-import {
-    LionWebJsonChunk,
-    LionWebJsonContainment,
-    LionWebJsonMetaPointer,
-    LionWebJsonNode,
-    LionWebJsonReference,
-} from "@lionweb/validation";
+import type { LionWebJsonChunk, LionWebJsonContainment, LionWebJsonMetaPointer, LionWebJsonNode, LionWebJsonReference } from "@lionweb/validation";
 import { runInAction } from "mobx";
-import { FreNamedNode, FreNode, FreNodeReference } from "../../ast/index.js";
-import { FreLanguage, FreLanguageProperty } from "../../language/index.js";
+import type { FreNamedNode, FreNode } from "../../ast/index.js";
+import { FreNodeReference } from "../../ast/index.js";
+import { FreLanguage } from "../../language/index.js";
+import type { FreLanguageProperty } from "../../language/index.js";
 import { FreLogger } from "../../logging/index.js";
 import { FreUtils, isNullOrUndefined } from "../../util/index.js";
-import { FreSerializer } from "./FreSerializer.js";
+import type { FreSerializer } from "./FreSerializer.js";
 import { createLionWebJsonNode, isLionWebJsonChunk } from "./NewLionwebM3.js";
 
 const LOGGER = new FreLogger("FreLionwebSerializer");

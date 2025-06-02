@@ -3,25 +3,20 @@ const { isEqual } = pkg;
 
 import { autorun, makeObservable, observable } from "mobx";
 import { AST } from "../change-manager/index.js";
-import { FreEnvironment } from "../environment/index.js";
-import { FreOwnerDescriptor, FreNode, FreNodeReference } from "../ast/index.js";
-import { FreLanguage, FreLanguageClassifier, FreLanguageProperty } from "../language/index.js";
+import type { FreEnvironment } from "../environment/index.js";
+import { FreNodeReference } from "../ast/index.js";
+import type { FreOwnerDescriptor, FreNode } from "../ast/index.js";
+import { FreLanguage } from "../language/index.js";
+import type { FreLanguageClassifier, FreLanguageProperty } from "../language/index.js";
 import { FreLogger } from "../logging/index.js";
 import { FreAction } from "./actions/index.js";
-import {
-    Box,
-    FreCombinedActions,
-    FreCaret,
-    FreProjectionHandler,
-    // wait,
-    isTextBox,
-    ElementBox,
-    RoleProvider
-} from "./index.js";
+import type { FreCombinedActions } from "./FreCombinedActions.js";
+import { Box, FreCaret, FreProjectionHandler, isTextBox, ElementBox, RoleProvider } from "./index.js";
+import type { ClientRectangle } from "./ClientRectangleTypes.js";
+import { UndefinedRectangle } from "./ClientRectangleTypes.js";
 import { FreError, FreErrorSeverity } from "../validator/index.js";
 import { isExpressionPreOrPost, isNullOrUndefined, LEFT_MOST } from "../util/index.js";
 import {FreErrorDecorator} from "./FreErrorDecorator.js";
-import {ClientRectangle, UndefinedRectangle} from "./ClientRectangleTypes.js";
 
 const LOGGER = new FreLogger("FreEditor").mute();
 

@@ -8,7 +8,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/triradial/Freon4dsl"
+    "url": "https://github.com/triradial/CRCHub"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -44,7 +44,7 @@
     "@azure/storage-blob": "^12.25.0",
     "@azure/storage-file-share": "^12.25.0",
     "@freon4dsl/core": "1.1.0-beta.3",
-    "@freon4dsl/samples-study-configuration": "1.1.0-beta.3",
+    "@freon4dsl/study-configuration": "1.1.0-beta.3",
     "@lionweb/validation": "^0.6.3",
     "@types/koa": "^2.13.4",
     "cross-env": "^7.0.3",

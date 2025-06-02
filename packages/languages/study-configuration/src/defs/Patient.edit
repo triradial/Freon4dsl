@@ -8,14 +8,13 @@ global {
     }
 }
 
-Availability {
+StaffAvailability {
   [
     STAFFING
       Number of CRCs Normally Available: ${baselineStaff}
 
       Staffing Level Changes:
       ${staffLevels}
-
   ]
 }
 

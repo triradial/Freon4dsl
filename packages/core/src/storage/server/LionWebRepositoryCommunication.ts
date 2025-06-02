@@ -1,7 +1,9 @@
-import { ClientResponse, ListPartitionsResponse, RepositoryClient } from "@lionweb/repository-client";
-import { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
+import { RepositoryClient } from "@lionweb/repository-client";
+import type { ClientResponse, ListPartitionsResponse } from "@lionweb/repository-client";
+import type { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreLogger } from "../../logging/index.js";
-import { createLionWebJsonNode, FreLionwebSerializer, FreSerializer } from "../index.js";
+import { createLionWebJsonNode, FreLionwebSerializer } from "../index.js";
+import type { FreSerializer } from "../index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
 import type { IServerCommunication, FreUnitIdentifier } from "./IServerCommunication.js";
 import { collectUsedLanguages } from "./UsedLanguages.js";

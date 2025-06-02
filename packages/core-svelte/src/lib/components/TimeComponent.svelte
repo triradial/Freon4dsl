@@ -3,8 +3,8 @@
 <!-- (cursor or selected text), when the switch is being made. -->
 
 <script lang="ts">
-    import { afterUpdate, beforeUpdate, createEventDispatcher, onMount } from "svelte";
-    import { componentId, executeCustomKeyboardShortCut, setBoxSizes } from "./svelte-utils/index.js";
+    import { onMount } from "svelte";
+    import { componentId, executeCustomKeyboardShortCut } from "./svelte-utils/index.js";
     import {
         ActionBox,
         ALT,
@@ -422,14 +422,14 @@
      * When setting the focus programmatically, the 'inputElement' variable is not immediately set.
      * It may be null or undefined! Therefore, we need this check to set the focus.
      */
-    beforeUpdate(() => {
-        if (editStart && !!inputElement) {
-            LOGGER.log("Before update : " + id + ", " + inputElement);
-            setInputWidth();
-            inputElement.focus();
-            editStart = false;
-        }
-    });
+    // beforeUpdate(() => {
+    //     if (editStart && !!inputElement) {
+    //         LOGGER.log("Before update : " + id + ", " + inputElement);
+    //         setInputWidth();
+    //         inputElement.focus();
+    //         editStart = false;
+    //     }
+    // });
 
     /**
      * When the HTML is updated, and the switch is made from <span> to <input>,
@@ -438,7 +438,7 @@
      * When the switch from <input> to <span> is made, this function sets the
      * box sizes in the textbox.
      */
-    afterUpdate(() => {
+     $effect(() => {
         // LOGGER.log("Start afterUpdate  " + from + ", " + to + " id: " + id);
         if (editStart && !!inputElement) {
             LOGGER.log("    editStart in afterupdate for " + id);

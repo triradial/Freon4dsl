@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { afterUpdate, onMount } from "svelte";
+    import { onMount } from "svelte";
     import { FreEditor, FreUtils, PartWrapperBox } from "@freon4dsl/core";
     import { RenderComponent } from "@freon4dsl/core-svelte";
-    import { EventSchedule } from "@freon4dsl/samples-study-configuration/dist/language/gen";
-    export let box: PartWrapperBox;
-    export let editor: FreEditor;
+    
+    const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
 
     let inputElement: any;
     let msg: string;
@@ -18,7 +17,7 @@
         // do whatever needs to be done to refresh the elements that show information from the model
     };
 
-    $: {
+    $effect(() => {
         msg = "Expand/Collapse Wrapper children:";
         if (box?.children && Array.isArray(box.children)) {
             let verticalBox = box.children[0];
@@ -40,13 +39,13 @@
         } else {
             msg += " No children or invalid children property";
         }
-    }
+    });
 
     onMount(() => {
         let verticalBox = box.childBox.children[0];
         const extendedCssClass = verticalBox.cssClass + " ml-5";
         FreUtils.initializeObject(verticalBox, { selectable: false, cssClass: extendedCssClass });
-        verticalBox.children.forEach((childBox) => {
+        verticalBox.children.forEach((childBox: any) => {
             let childExtendedCssClass = verticalBox.cssClass + " align-top";
             FreUtils.initializeObject(childBox, { selectable: true, cssClass: childExtendedCssClass });
         });
@@ -54,7 +53,7 @@
         box.refreshComponent = refresh;
     });
 
-    afterUpdate(() => {
+    $effect(() => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });

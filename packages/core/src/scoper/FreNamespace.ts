@@ -2,7 +2,7 @@
  * Class Namespace is a wrapper for a model element that is a namespace (as defined in the scoper definition).
  * It provides the implementation of the algorithm used to search for all names that are visible in the namespace.
  */
-import { FreNode, FreModelUnit, FreNamedNode } from "../ast/index.js";
+import type { FreNode, FreModelUnit, FreNamedNode } from "../ast/index.js";
 import { AstWalker, modelUnit } from "../ast-utils/index.js";
 import { FreLanguage } from "../language/index.js";
 import { FreLogger } from "../logging/index.js";

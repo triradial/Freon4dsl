@@ -4,7 +4,7 @@
      * This component expands/collapses the child of its (Expandable)Box.
      * with non-editable text
      */
-    import { onMount, afterUpdate } from "svelte";
+    import { onMount } from "svelte";
     import { Box, FreLogger, ListGroupBox, FreEditor } from "@freon4dsl/core";
     import { componentId } from "./svelte-utils/index.js";
     import RenderComponent from "./RenderComponent.svelte";
@@ -43,7 +43,7 @@
         }
     });
 
-    afterUpdate( () => {
+    $effect(() => {
         if (!!box) {
             box.refreshComponent = refresh;
         }

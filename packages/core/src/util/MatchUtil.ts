@@ -1,4 +1,5 @@
-import { FreTriggerType, isProKey, isRegExp, isString } from "../editor/index.js";
+import type { FreTriggerType } from "../editor/index.js";
+import { isProKey, isRegExp, isString } from "../editor/index.js";
 import { isNullOrUndefined } from "./FreUtils.js";
 
 export function isIdentifier(str: string): boolean {

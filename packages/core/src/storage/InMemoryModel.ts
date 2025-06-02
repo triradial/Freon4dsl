@@ -1,10 +1,10 @@
 import { autorun, makeObservable, observable, runInAction } from 'mobx';
-import {FreModel, FreModelUnit} from "../ast/index.js";
+import type {FreModel, FreModelUnit} from "../ast/index.js";
 import {AST} from "../change-manager/index.js";
-import {FreEnvironment} from "../environment/index.js";
+import type {FreEnvironment} from "../environment/index.js";
 import {FreLogger} from "../logging/index.js";
 import {isNullOrUndefined} from "../util/index.js";
-import {IServerCommunication, FreUnitIdentifier} from "./server/index.js";
+import type {IServerCommunication, FreUnitIdentifier} from "./server/index.js";
 
 export type ModelChangedCallbackFunction = (m: InMemoryModel) => void;
 

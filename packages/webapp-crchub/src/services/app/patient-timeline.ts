@@ -1,7 +1,7 @@
-import { Simulator, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/samples-study-configuration";
-import * as Sim from "@freon4dsl/samples-study-configuration/dist/custom/simjs/sim.js";
+import { Simulator, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/study-configuration";
+import * as Sim from "@freon4dsl/study-configuration";
 import { RtString } from "@freon4dsl/core";
-import type { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+import type { Timeline } from "@freon4dsl/study-configuration";
 
 export function getTimelineTable(node: StudyConfiguration) {
     let timeline = getTimeline(node);

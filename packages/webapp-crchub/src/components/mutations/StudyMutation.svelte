@@ -13,18 +13,23 @@
     let rows: number = 6;
     const dispatch = createEventDispatcher();
 
-    $: statusColor = getStatusColor(mutatedStudy.status);
-    $: getInputClass = (field: keyof typeof errors) => {
+    let statusColor = $derived(getStatusColor(mutatedStudy.status));
+    
+    function getInputClass(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";
-    };
-    $: if (action === "edit" && study) {
-        validateAllFields();
     }
+
+    $effect(() => {
+        if (action === "edit" && study) {
+            validateAllFields();
+        }
+    });
+
     let errors = {
         name: "",
     };
-    $: errorState = { ...errors };
-    $: hasErrors = Object.values(errorState).some((error) => error !== "");
+    let errorState = { ...errors };
+    let hasErrors = $derived(Object.values(errorState).some((error) => error !== ""));
 
     function saveChanges() {
         validateAllFields();

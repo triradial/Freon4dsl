@@ -1,12 +1,13 @@
 import { modelUnit } from "../ast-utils/index.js";
-import { FreNode, FreNodeReference, FreModelUnit, FreNamedNode } from "../ast/index.js";
+import type { FreNode, FreModelUnit, FreNamedNode } from "../ast/index.js";
+import { FreNodeReference } from "../ast/index.js";
 import { FreLanguageEnvironment } from "../environment/index.js";
 import { FreLanguage } from "../language//index.js";
 import { FreLogger } from "../logging/index.js";
 import { FreCompositeTyper } from "../typer/index.js";
 import { FreScoperComposite } from "./FreScoperComposite.js";
+import type { FreScoper } from "./FreScoper.js";
 import { FreNamespace } from "./FreNamespace.js";
-import { FreScoper } from "./FreScoper.js";
 
 const LOGGER = new FreLogger("FreScoperBase");
 

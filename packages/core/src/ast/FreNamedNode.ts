@@ -1,5 +1,6 @@
-import { FreNode } from "./FreNode.js";
-import { FreLanguage, FreLanguageClassifier } from '../language/index.js';
+import type { FreNode } from "./FreNode.js";
+import { FreLanguage, } from '../language/index.js';
+import type { FreLanguageClassifier } from '../language/index.js';
 import { isNullOrUndefined } from '../util/index.js';
 
 export interface FreNamedNode extends FreNode {

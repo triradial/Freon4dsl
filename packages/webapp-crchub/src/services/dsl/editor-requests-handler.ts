@@ -1,11 +1,4 @@
-import {
-    FreProjectionHandler,
-    FreError,
-    FreLogger,
-    FreSearcher,
-    type FreEnvironment,
-    AstActionExecutor,
-} from "@freon4dsl/core";
+import { FreProjectionHandler, FreLogger, type FreEnvironment, AstActionExecutor } from "@freon4dsl/core";
 import { runInAction } from "mobx";
 import { WebappConfigurator } from "./webapp-configurator.js";
 

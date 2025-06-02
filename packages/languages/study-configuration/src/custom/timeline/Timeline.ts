@@ -1,6 +1,6 @@
 import { RtBoolean, RtObject } from "@freon4dsl/core";
-import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
-import { Availability, Event, PatientHistory, PatientVisit } from "../../language/gen/index.js";
+import { ScheduledEvent } from "./ScheduledEvent.js";
+import { Availability, Event, PatientHistory } from "../../language/gen/index.js";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
 import { PeriodEventInstance } from "./PeriodEventInstance.js";
 import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
@@ -385,7 +385,7 @@ export class Timeline extends RtObject {
         console.log("Adding Staff Availability to Timeline");
         this.availability = availability;
 
-        availability.staffLevels.forEach((staffLevel) => {
+        (availability as any).staffLevels.forEach((staffLevel) => {
             const startDateAsDate = this.dateStringsToDate(
                 staffLevel.dateOrRange.startDate.day,
                 staffLevel.dateOrRange.startDate.month.name,
@@ -412,7 +412,7 @@ export class Timeline extends RtObject {
     }
 
     getBaselineStaff(): number {
-        return Number(this.availability.baselineStaff);
+        return Number((this.availability as any).baselineStaff);
     }
 
     anyPatientEventInstances(): boolean {

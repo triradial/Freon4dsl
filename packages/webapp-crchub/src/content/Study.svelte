@@ -14,7 +14,7 @@
 
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { FreEditor } from "@freon4dsl/core";
-    import { type StudyConfiguration } from "@freon4dsl/samples-study-configuration";
+    import { type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";

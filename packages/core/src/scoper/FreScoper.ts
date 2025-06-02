@@ -1,6 +1,6 @@
-import { FreNode, FreNamedNode, FreNodeReference } from '../ast/index.js';
+import type { FreNode, FreNamedNode, FreNodeReference } from '../ast/index.js';
 import { FreScoperComposite } from "./FreScoperComposite.js";
-import { FreNamespace } from './FreNamespace.js';
+import type { FreNamespace } from './FreNamespace.js';
 
 // Part of the Freon Framework
 

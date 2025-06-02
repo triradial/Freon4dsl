@@ -20,16 +20,16 @@
     let gridApi: GridApi;
     let patientsData: any[] = [];
 
-    // React to changes in studyId
-    $: if (studyId) {
-        fetchStudyPatients();
-    }
+    $effect(() => {
+        if (studyId) {
+            fetchStudyPatients();
+        }
+    });
 
-    // React to changes in $studyPatients, but only update local data
-    $: {
+    $effect(() => {
         patientsData = $dataStore.studyPatients;
         updateGridData();
-    }
+    });
 
     // $: if ($studyPatients) {
     //     patientsData = $studyPatients;
@@ -50,7 +50,13 @@
         }
     }
 
-    $: gridTheme = $theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz";
+    let gridTheme = $derived(() => $theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
+
+    $effect(() => {
+        if (objectToDelete) {
+            console.log("Object to delete:", objectToDelete);
+        }
+    });
 
     onMount(async () => {
         gridOptions = {
@@ -150,10 +156,6 @@
         if (objectToDelete) {
             deleteDialogOpen = true;
         }
-    }
-
-    $: if (objectToDelete) {
-        console.log("Object to delete:", objectToDelete);
     }
 
     function onEditClick(patientId: string) {

@@ -26,7 +26,9 @@
     }
 
     let selected: number = 0;
-    $: handleClick(selected);
+    $effect(() => {
+        handleClick(selected);
+    });
 
     const handleClick = (index: number) => {
         if (!!modelErrors && modelErrors.length > 0) {

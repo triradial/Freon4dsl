@@ -1,8 +1,8 @@
-import { FreNamedNode, FreNode } from "../../ast/index.js";
+import type { FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreLogger } from "../../logging/index.js";
 import { FreLionwebSerializer } from "../index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
-import { IServerCommunication, FreUnitIdentifier } from "./IServerCommunication.js";
+import type { IServerCommunication, FreUnitIdentifier } from "./IServerCommunication.js";
 import { ServerCommunication } from "./ServerCommunication.js";
 // import * as process from "process";
 

@@ -5,7 +5,7 @@
     import { faHeart, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { type FreEnvironment, RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
+    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { getChecklistAsMarkdown, getTimelineTable } from "../../services/app/study-timeline.js";
     import { marked } from "marked";
 
@@ -30,13 +30,13 @@
         loadChecklistAsMarkdown(studyId);
     }
 
-    $: {
+    $effect(() => {
         if (studyId) {
             console.log("studyId", studyId);
             loadTable(studyId);
             loadChecklistAsMarkdown(studyId);
         }
-    }
+    });
 
     async function loadChecklistAsMarkdown(id: string) {
         console.log("loadChecklistAsMarkdown: ", id);

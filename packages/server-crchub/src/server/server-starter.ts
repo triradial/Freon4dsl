@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 
 import Koa from 'koa';
-import cors from '@koa/cors';
+import cors from 'koa2-cors';
 import router from './routes.js';
 import bodyParser from 'koa-bodyparser';
 import { type Environment, environments } from '../config/environments.js';

@@ -1,6 +1,3 @@
-<script>
-</script>
-
 <div class="not-found">
   <h1>404 - Page Not Found</h1>
   <p>Oops! We couldn't find the page you're looking for.</p>

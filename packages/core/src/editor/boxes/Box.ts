@@ -1,9 +1,10 @@
-import { FreNode } from "../../ast/index.js";
+import type { FreNode } from "../../ast/index.js";
 import { isNullOrUndefined, FreUtils, FRE_BINARY_EXPRESSION_LEFT, FRE_BINARY_EXPRESSION_RIGHT } from "../../util/index.js";
 import { FreLogger } from "../../logging/index.js";
-import {ClientRectangle, UndefinedRectangle} from "../ClientRectangleTypes.js";
+import type { ClientRectangle } from "../ClientRectangleTypes.js";
+import { UndefinedRectangle } from "../ClientRectangleTypes.js";
 import { BehaviorExecutionResult } from "../util/index.js";
-import { FrePostAction } from "../actions/index.js";
+import type { FrePostAction } from "../actions/index.js";
 import { runInAction } from "mobx";
 import { FreEditor } from "../FreEditor.js";
 

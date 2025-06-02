@@ -28,14 +28,8 @@
         userStore.clearUser();
     }
 
-    let isDark = true;
-
-    function themeToggle() {
-        theme.update((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
-    }
-
-    $: isDark = $theme === "dark";
-    $: icon = isDark ? faSun : faMoon;
+    let isDark = $derived($theme === "dark");
+    let icon = $derived(isDark ? faSun : faMoon);
 
     $: userInitials = user
         ? user.name

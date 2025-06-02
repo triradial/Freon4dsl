@@ -11,21 +11,28 @@
     let mutatedPatient = { ...patient };
     const dispatch = createEventDispatcher();
 
-    $: getInputClass = (field: keyof typeof errors) => {
+    function getInputClass(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";
-    };
-    $: if (action === "edit" && patient) {
-        validateAllFields();
     }
-    $: if (action === "add" && patient) {
-        mutatedPatient.studyId = study.id;
-        mutatedPatient.study = study.name;
-    }
+
+    $effect(() => {
+        if (action === "edit" && patient) {
+            validateAllFields();
+        }
+    });
+
+    $effect(() => {
+        if (action === "add" && patient) {
+            mutatedPatient.studyId = study.id;
+            mutatedPatient.study = study.name;
+        }
+    });
+
     let errors = {
         patientNumber: "",
     };
-    $: errorState = { ...errors };
-    $: hasErrors = Object.values(errorState).some((error) => error !== "");
+    let errorState = { ...errors };
+    let hasErrors = Object.values(errorState).some((error) => error !== "");
 
     function saveChanges() {
         validateAllFields();

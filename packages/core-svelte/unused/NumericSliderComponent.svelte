@@ -2,11 +2,11 @@
 and stripped down to the parts that Freon needs. -->
 
 <script lang="ts">
-    import {FreEditor, FreLogger, NumberControlBox} from "@freon4dsl/core";
-    import {MDCSliderFoundation, Thumb, TickMark} from '@material/slider';
-    import {afterUpdate, onMount} from 'svelte';
+    import { FreEditor, FreLogger, NumberControlBox } from "@freon4dsl/core";
+    import { MDCSliderFoundation, Thumb, TickMark } from '@material/slider';
+    import { onMount } from 'svelte';
     import Ripple from '@smui/ripple';
-    import {classMap} from "@smui/common/internal";
+    import { classMap } from "@smui/common/internal";
 
     const LOGGER = new FreLogger("SwitchComponent");
 
@@ -77,7 +77,7 @@ and stripped down to the parts that Freon needs. -->
         LOGGER.log("REFRESH NumberControlBox: " + why);
         value = box.getNumber();
     };
-    afterUpdate(() => {
+    $effect(() => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });

@@ -1,4 +1,4 @@
-import { FreNode } from "../../ast/index.js";
+import type { FreNode } from "../../ast/index.js";
 import { BehaviorExecutionResult } from "../util/index.js";
 // import { FreLogger } from "../../logging";
 import { isNullOrUndefined, FreUtils } from "../../util/index.js";
@@ -10,13 +10,11 @@ import {
     ActionBox,
     LabelBox,
     TextBox,
-    SelectOption,
     SelectBox,
     IndentBox,
     OptionalBox,
     HorizontalListBox,
     VerticalListBox,
-    BoolFunctie,
     GridCellBox,
     HorizontalLayoutBox,
     VerticalLayoutBox,
@@ -36,6 +34,8 @@ import {
     MultiLineTextBox2,
     /** END - M+G */
 } from "./internal.js";
+import type { SelectOption } from "./internal.js";
+import type { BoolFunctie } from "./internal.js";
 
 type RoleCache<T extends Box> = {
     [role: string]: T;

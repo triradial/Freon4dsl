@@ -8,7 +8,7 @@
   // within the text.
   import TextComponent from "./TextComponent.svelte";
   import DropdownComponent from "./DropdownComponent.svelte";
-  import { clickOutsideConditional, componentId, selectedBoxes } from "./svelte-utils/index.js";
+  import { clickOutsideConditional, componentId } from "./svelte-utils/index.js";
   import {
       type ItemGroupBox2,
       ARROW_DOWN,
@@ -28,7 +28,7 @@
   import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes, faSquareArrowUpRight, faLinkSlash } from '@fortawesome/free-solid-svg-icons';
 
   import { runInAction } from "mobx"
-  import { afterUpdate, onMount } from "svelte";
+  import { onMount } from "svelte";
 
   const LOGGER = new FreLogger("ItemGroupComponent2"); // .mute(); muting done through webapp/logging/LoggerSettings
 
@@ -47,9 +47,9 @@
   let allOptions: SelectOption[];             // all options as calculated by the editor
   let textComponent: any;
   let cssClass: string = '';
-	let style: string;
+	let style: string = '';
 
-  let contentElement: HTMLDivElement = null;
+  let contentElement: HTMLDivElement | null = null;
   let label: string;
   let child: Box;
   let isExpanded: boolean = false; 
@@ -115,7 +115,7 @@
         // box.setFocus = setFocus; todo remove?
     }
 
-    afterUpdate( () => {
+    $effect(() => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
         box.triggerKeyPressEvent = triggerKeyPressEvent
@@ -404,7 +404,7 @@
 
     const onBlur = () => {
         LOGGER.log("onBlur " + id);
-        if (!document.hasFocus() || !$selectedBoxes.includes(box)) {
+        if (!document.hasFocus()) {
             endEditing();
         }
     };
@@ -430,7 +430,9 @@
     }
 
 	function toggleExpanded() {
-    	contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
+        if (contentElement) {
+            contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
+        }
         isExpanded = !isExpanded;
 		contentStyle = isExpanded ? 'display:block;' : 'display:none;';
     }

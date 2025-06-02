@@ -1,8 +1,8 @@
-import { FreNode, FreNamedNode, FreNodeReference } from '../ast/index.js';
+import type { FreNode, FreNamedNode, FreNodeReference } from '../ast/index.js';
 import { FreLogger } from "../logging/index.js";
-import { FreScoper } from "./FreScoper.js";
+import type { FreScoper } from "./FreScoper.js";
 import { isNullOrUndefined } from '../util/index.js';
-import { FreNamespace } from './FreNamespace.js';
+import type { FreNamespace } from './FreNamespace.js';
 
 const LOGGER = new FreLogger("FreScoperComposite").mute();
 

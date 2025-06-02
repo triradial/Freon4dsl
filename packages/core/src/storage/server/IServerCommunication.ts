@@ -1,5 +1,5 @@
-import { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
-import { FreErrorSeverity } from "../../validator/index.js";
+import type { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
+import type { FreErrorSeverity } from "../../validator/index.js";
 
 export type OnError = (errorMsg: string, severity: FreErrorSeverity) => void;
 /**

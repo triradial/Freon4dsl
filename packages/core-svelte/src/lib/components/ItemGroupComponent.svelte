@@ -3,7 +3,7 @@
 <!-- (cursor or selected text), when the switch is being made. -->
 
 <script lang="ts">
-    import { afterUpdate, beforeUpdate, createEventDispatcher, onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { componentId, executeCustomKeyboardShortCut, setBoxSizes } from "./svelte-utils/index.js";
     import {
         ActionBox,
@@ -77,10 +77,10 @@
     let from = -1; // the cursor position, or when different from 'to', the start of the selected text
     let to = -1; // the cursor position, or when different from 'from', the end of the selected text
     let cssClass: string = "";
-    let style: string;
+    let style: string = "";
 
     // let element: HTMLDivElement = null;
-    let contentElement: HTMLDivElement = null;
+    let contentElement: HTMLDivElement | null = null;
 
     let label: string;
     let child: Box;
@@ -207,7 +207,7 @@
             isEditing = true;
             editStart = true;
             originalText = text;
-            let { anchorOffset, focusOffset } = document.getSelection();
+            let { anchorOffset, focusOffset } = document.getSelection() || { anchorOffset: 0, focusOffset: 0 };
             setFromAndTo(anchorOffset, focusOffset);
         }
         event.preventDefault();
@@ -226,7 +226,7 @@
     function onClick(event: MouseEvent) {
         if (!!inputElement) {
             //LOGGER.log('onClick: ' + id + ', ' + inputElement?.selectionStart + ", " + inputElement?.selectionEnd);
-            setFromAndTo(inputElement.selectionStart, inputElement.selectionEnd);
+            setFromAndTo(inputElement.selectionStart || 0, inputElement.selectionEnd || 0);
         }
         if (partOfActionBox) {
             // let TextDropdownComponent know, dropdown menu needs to be altered
@@ -275,7 +275,7 @@
     function getCaretPosition(event: KeyboardEvent) {
         // the following type cast satisfies the type checking, as the event can only be generated from the <input> element
         const target = event.target as HTMLInputElement;
-        setFromAndTo(target.selectionStart, target.selectionEnd);
+        setFromAndTo(target.selectionStart ?? 0, target.selectionEnd ?? 0);
     }
 
     /**
@@ -461,7 +461,7 @@
                             // afterUpdate handles the dispatch of the textUpdate to the TextDropdown Component, if needed
                             if (editor.selectedBox.kind === "ActionBox") {
                                 // TODO This matches one character regular expressions only
-                                const matchingOption = (editor.selectedBox as ActionBox).getOptions(editor).find((option) => {
+                                const matchingOption = (editor.selectedBox as ActionBox).getOptions(editor).find((option: { action: { trigger: RegExp } }) => {
                                     if (isRegExp(option.action.trigger)) {
                                         if (option.action.trigger.test(event.key)) {
                                             LOGGER.log("Matching regexp" + triggerTypeToString(option.action.trigger));
@@ -522,7 +522,7 @@
     /**
      * When this component loses focus, do everything that is needed to end the editing state.
      */
-    const onFocusOut = (e) => {
+    const onFocusOut = () => {
         //LOGGER.log("onFocusOut " + id + " partof:" + partOfActionBox + " isEditing:" + isEditing)
         if (!partOfActionBox && isEditing) {
             endEditing();
@@ -556,14 +556,14 @@
      * When setting the focus programmatically, the 'inputElement' variable is not immediately set.
      * It may be null or undefined! Therefore, we need this check to set the focus.
      */
-    beforeUpdate(() => {
-        if (editStart && !!inputElement) {
-            //LOGGER.log('Before update : ' + id + ", " + inputElement);
-            setInputWidth();
-            inputElement.focus();
-            editStart = false;
-        }
-    });
+    // beforeUpdate(() => {
+    //     if (editStart && !!inputElement) {
+    //         //LOGGER.log('Before update : ' + id + ", " + inputElement);
+    //         setInputWidth();
+    //         inputElement.focus();
+    //         editStart = false;
+    //     }
+    // });
 
     /**
      * When the HTML is updated, and the switch is made from <span> to <input>,
@@ -572,7 +572,7 @@
      * When the switch from <input> to <span> is made, this function sets the
      * box sizes in the textbox.
      */
-    afterUpdate(() => {
+     $effect(() => {
         // LOGGER.log("Start afterUpdate  " + from + ", " + to + " id: " + id);
         if (editStart && !!inputElement) {
             //LOGGER.log('    editStart in afterupdate for ' + id)
@@ -624,7 +624,7 @@
      * Note that if the input element is not defined as 'draggable="true"', this function will never be called.
      * @param event
      */
-    function onDragStart(event) {
+    function onDragStart(event: DragEvent) {
         //LOGGER.log('on drag start');
         event.stopPropagation();
         event.preventDefault();
@@ -632,7 +632,7 @@
 
     let widthSpan: HTMLSpanElement;
 
-    function onInput(event: InputEvent & { currentTarget: HTMLInputElement }) {
+    function onInput(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
         setInputWidth();
     }
 
@@ -645,7 +645,9 @@
     };
 
     function toggleExpanded() {
-        contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
+        if (contentElement) {
+            contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
+        }
         isExpanded = !isExpanded;
         contentStyle = isExpanded ? "display:block;" : "display:none;";
     }

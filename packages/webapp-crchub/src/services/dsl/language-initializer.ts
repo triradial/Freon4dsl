@@ -1,26 +1,7 @@
-import {
-    fileExtensions,
-    languageName,
-    projectionNames,
-    projectionsShown,
-    unitTypes,
-<<<<<<< HEAD:packages/webapp-crchub/src/services/dsl/language-initializer.ts
-} from "./language-store.js";
+import { fileExtensions, languageName, projectionNames, projectionsShown, unitTypes } from "./language-store.js";
 import { FreProjectionHandler, FreLanguage, FreUndoManager, type FreEnvironment } from "@freon4dsl/core";
 import { setUserMessage } from "./usermessage-store.js";
 import { WebappConfigurator } from "./webapp-configurator.js";
-=======
-} from "../components/stores/LanguageStore.svelte";
-import {
-    FreProjectionHandler,
-    FreLanguage,
-    FreUndoManager,
-    type FreEnvironment,
-    isNullOrUndefined
-} from "@freon4dsl/core";
-import { setUserMessage } from "../components/stores/UserMessageStore.svelte";
-import { WebappConfigurator } from "$lib";
->>>>>>> upstream/development:packages/webapp-lib/src/lib/language/LanguageInitializer.ts
 
 export class LanguageInitializer {
     /**
@@ -29,7 +10,7 @@ export class LanguageInitializer {
      */
     static initialize(): void {
         let langEnv: FreEnvironment | undefined = WebappConfigurator.getInstance().editorEnvironment;
-        if (isNullOrUndefined(langEnv)) {
+        if (!langEnv) {
             return;
         }
         // the language name

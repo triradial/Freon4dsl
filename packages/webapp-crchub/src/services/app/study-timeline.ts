@@ -4,8 +4,8 @@ import {
     StudyConfiguration,
     TimelineChartTemplate,
     TimelineTableTemplate,
-} from "@freon4dsl/samples-study-configuration";
-import * as Sim from "@freon4dsl/samples-study-configuration/dist/custom/simjs/sim.js";
+} from "@freon4dsl/study-configuration";
+import * as Sim from "@freon4dsl/study-configuration";
 import { RtString } from "@freon4dsl/core";
 
 export function getTimelineTable(node: StudyConfiguration) {

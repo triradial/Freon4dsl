@@ -9,10 +9,12 @@
 
     const dispatch = createEventDispatcher();
 
-    $: title = "Delete " + toProperCase(objectType);
-    $: if (open) {
-        console.log("Dialog opened for", objectType, object);
-    }
+    let title = $derived(() => "Delete " + toProperCase(objectType));
+    $effect(() => {
+        if (open) {
+            console.log("Dialog opened for", objectType, object);
+        }
+    });
 
     function handleDelete() {
         if (objectType === "study") {

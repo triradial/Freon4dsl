@@ -10,8 +10,8 @@
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
     import { FreNodeReference } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
+    import { Timeline } from "@freon4dsl/study-configuration";
     import { getTimelineChart } from "../services/app/patient-timeline.js";
     import { getTimelineChartHtml } from "../services/app/patient-timeline.js";
     import { getTimeline } from "../services/app/patient-timeline.js";
@@ -29,7 +29,7 @@
         PatientNotAvailable,
         PatientHistory,
         StudyConfiguration,
-    } from "@freon4dsl/samples-study-configuration/dist/language/gen";
+    } from "@freon4dsl/study-configuration";
     import { getChartWithPatientHistory } from "../services/utils.js";
 
     export let id: string;

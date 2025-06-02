@@ -3,7 +3,7 @@
     import { ListPlaceholder } from "flowbite-svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
+    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { getTimelineChart } from "../../services/app/study-timeline.js";
 
     export let studyId: string;
@@ -24,12 +24,12 @@
         loadChart(studyId);
     }
 
-    $: {
+    $effect(() => {
         if (studyId) {
             console.log("studyId", studyId);
             loadChart(studyId);
         }
-    }
+    });
 
     async function loadChart(id: string) {
         isLoading = true;

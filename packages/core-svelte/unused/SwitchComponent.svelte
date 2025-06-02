@@ -2,11 +2,11 @@
 and stripped down to the parts that Freon needs. -->
 
 <script lang="ts">
-    import {type MDCSwitchRenderAdapter, MDCSwitchRenderFoundation, type MDCSwitchState} from '@material/switch';
-    import {afterUpdate, onMount} from 'svelte';
+    import {type MDCSwitchRenderAdapter, MDCSwitchRenderFoundation, type MDCSwitchState } from '@material/switch';
+    import { onMount} from 'svelte';
     import Ripple from '@smui/ripple';
-    import {BooleanControlBox, FreEditor, FreLogger} from "@freon4dsl/core";
-    import {classMap} from "@smui/common/internal";
+    import { BooleanControlBox, FreEditor, FreLogger } from "@freon4dsl/core";
+    import { classMap } from "@smui/common/internal";
 
     const LOGGER = new FreLogger("RadioComponent");
 
@@ -56,7 +56,7 @@ and stripped down to the parts that Freon needs. -->
         LOGGER.log("REFRESH BooleanControlBox: " + why);
         checked = box.getBoolean();
     };
-    afterUpdate(() => {
+    $effect(() => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });

@@ -1,34 +1,5 @@
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { FirstDayOfStudy, StudyConfiguration } from "../../language/gen/index.js";
-import { Period } from "../../language/gen/index.js";
-import { Event } from "../../language/gen/index.js";
-import { EventSchedule } from "../../language/gen/index.js";
-import { Day } from "../../language/gen/index.js";
-import { PlusExpression } from "../../language/gen/index.js";
-import { When } from "../../language/gen/index.js";
-import { NumberLiteralExpression } from "../../language/gen/index.js";
-import { EventReference } from "../../language/gen/index.js";
-import { RepeatCondition } from "../../language/gen/index.js";
-import { RepeatUnit } from "../../language/gen/index.js";
-import { Days } from "../../language/gen/index.js";
-import { EventWindow } from "../../language/gen/index.js";
-import { EventState } from "../../language/gen/index.js";
-import { SimpleOperators } from "../../language/gen/index.js";
-import { TimeAmount } from "../../language/gen/index.js";
-import { StudyStart } from "../../language/gen/index.js";
-import { TimeUnit } from "../../language/gen/index.js";
-import { Weekly } from "../../language/gen/index.js";
-import { PatientVisit } from "../../language/gen/index.js";
-import { PatientHistory } from "../../language/gen/index.js";
-import { PatientInfo } from "../../language/gen/index.js";
-import { VisitDate } from "../../language/gen/index.js";
-import { Month } from "../../language/gen/index.js";
-import { PatientVisitStatus } from "../../language/gen/index.js";
-import { Availability } from "../../language/gen/index.js";
-import { StaffLevel } from "../../language/gen/index.js";
-import { DateRange } from "../../language/gen/index.js";
-import { StartRangeDate } from "../../language/gen/index.js";
-import { TimeAmountPart } from "../../language/gen/index.js";
+import { FirstDayOfStudy, StudyConfiguration, Period, Event, EventSchedule, Day, PlusExpression, When, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly, PatientVisit, PatientHistory, PatientInfo, VisitDate, Month, PatientVisitStatus, Availability, StaffLevel, DateRange, StartRangeDate, TimeAmountPart, Description } from "../../language/gen/index.js";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
 import { Timeline } from "../timeline/Timeline.js";
 import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
@@ -602,7 +573,13 @@ export function createPatientNotAvailableDateRange(
 
 export function createOneDayAvailability(day: string, month: string, year: string): Availability {
     const staffLevel = createStaffLevel("3", day, month, year);
-    const availability = Availability.create({ baselineStaff: "4", staffLevels: [staffLevel] });
+    const availability = Availability.create({ 
+        name: "Availability",
+        description: Description.create({}),
+        availableDays: [],
+        exceptions: [],
+        staffLevels: [staffLevel]
+    });
     return availability;
 }
 
@@ -613,6 +590,12 @@ export function createAvailability(): Availability {
     staffLevels.push(createStaffLevel("3", "-27", month, year, "-25", month, year));
     staffLevels.push(createStaffLevel("2", "11", month, year));
     staffLevels.push(createStaffLevel("2", "19", month, year));
-    const availability = Availability.create({ baselineStaff: "4", staffLevels: staffLevels });
+    const availability = Availability.create({ 
+        name: "Availability",
+        description: Description.create({}),
+        availableDays: [],
+        exceptions: [],
+        staffLevels: staffLevels
+    });
     return availability;
 }

@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { afterUpdate, onMount } from "svelte";
+    import { onMount } from "svelte";
     import { ExternalStringBox, FreEditor } from "@freon4dsl/core";
-    export let box: ExternalStringBox;
+    
+    const { box } = $props<{ box: ExternalStringBox }>();
 
     let inputElement: any;
-    let value: string = "";
+    let value = $state("");
     getValue();
 
     const onClick = (event: MouseEvent & { currentTarget: EventTarget & HTMLInputElement }) => {
@@ -65,7 +66,7 @@
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
-    afterUpdate(() => {
+    $effect(() => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
@@ -78,8 +79,8 @@
         bind:value
         class="timepicker-input"
         placeholder="Select time"
-        on:click={onClick}
-        on:change={onChange}
+        onclick={onClick}
+        onchange={onChange}
         bind:this={inputElement}
     />
 </div>
