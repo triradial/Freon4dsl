@@ -219,5 +219,14 @@
     "phase": "Phase I",
     "therapeuticArea": "Oncology",
     "currentProtocol": ""
+  },
+  {
+    "id": "b8f0cb59-fae8-4546-8dd4-3873a53276ba",
+    "name": "TwoP3V",
+    "title": "Test Study...",
+    "status": "Planning",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
   }
 ]

@@ -322,7 +322,7 @@ export function addEventAndInstanceToTimeline(
 
 export function loadModelUnit(modelFolderName: string, modelUnitName: string, alternateStudyFolderPath?: string): FreModelUnit {
     FreLogger.muteAllLogs();
-    var studyFolderPath: string = path.resolve(__dirname, "..", "..", "..", "..", "..", "server", "modelstore", modelFolderName);
+    var studyFolderPath: string = path.resolve(__dirname, "modelstore", modelFolderName);
 
     if (alternateStudyFolderPath) {
         studyFolderPath = alternateStudyFolderPath;

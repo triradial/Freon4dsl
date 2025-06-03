@@ -119,8 +119,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                               ],
                               { cssClass: "ml-8 mb-2" },
                           ),
-                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: false },
-                      ),
+                          { cssClass: "type1 mt-2", isExpanded: true, canAdd: false, selectable: false },
+                    ),
                   ]
                 : []),
             BoxUtil.listGroupBox(
@@ -189,7 +189,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectPeriod(period: Period): Box {
         const element: Period = period;
-        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
+        const showDescriptions = (element.freOwner() as StudyConfiguration).showDescriptions;
         let box: Box = BoxUtil.itemGroupBox(
             element,
             "period",
@@ -200,10 +200,9 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 "period-detail",
                 "",
                 [
-                    ...(showDescriptions
+                    ...(showDescriptions === true
                         ? [
                               BoxUtil.getBoxOrAction(element, "description", "Description", this.handler),
-
                           ]
                         : []),
                     BoxUtil.listGroupBox(
@@ -375,7 +374,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         4,
                         "it2",
                         BoxFactory.verticalLayout(element, "task-overall", "", [
-                            ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                            ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                             BoxUtil.listGroupBox(
                                 element,
                                 "steps",

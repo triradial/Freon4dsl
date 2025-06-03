@@ -24,7 +24,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showSharedTasks"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -40,7 +40,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showChecklists"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -48,7 +48,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showReferences"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -56,7 +56,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showSystems"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -64,7 +64,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showPeople"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -72,7 +72,7 @@
                   "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showDescriptions"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -348,6 +348,16 @@
                "children": [
                   "ID-179"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-EventSchedule-eventRepeat"
+               },
+               "children": [
+                  "ID-201"
+               ]
             }
          ],
          "references": [],
@@ -529,6 +539,28 @@
          "references": [],
          "annotations": [],
          "parent": "ID-179"
+      },
+      {
+         "id": "ID-201",
+         "classifier": {
+            "language": "-default-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-default-key-RepeatCondition"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-RepeatCondition-maxRepeats"
+               },
+               "value": "0"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-177"
       },
       {
          "id": "ID-183",

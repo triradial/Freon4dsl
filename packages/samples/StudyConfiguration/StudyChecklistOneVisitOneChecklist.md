@@ -68,7 +68,7 @@ To view the interactive chart you must have downloaded it.
 <li>They are documented as separate steps in the checklist</li>
 </ul>
 
-This event is first scheduled on the start day of the Study - 4 weeks
+This event is first scheduled on the start day of the study - 4 weeks
 with a window of 8 day(s) before and 0 day(s) after and a compliance window of no extra window  
 
 
@@ -109,7 +109,7 @@ with a window of 2 day(s) before and 2 day(s) after and a compliance window of n
 
 
 
-This event is first scheduled on the start day of the Study - 2 weeks
+This event is first scheduled on the start day of the study - 2 weeks
 with a window of 0 day(s) before and 0 day(s) after and a compliance window of no extra window  
 
 
@@ -133,7 +133,7 @@ with a window of 2 day(s) before and 2 day(s) after and a compliance window of n
 
 
 
-This event is first scheduled as the start day of the Study
+This event is first scheduled as the start day of the study
 with a window of 0 day(s) before and 0 day(s) after and a compliance window of no extra window  
 
 
