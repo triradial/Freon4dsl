@@ -38,6 +38,14 @@
                "property": {
                   "language": "-default-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-showSchedulingDetails"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-default-key-StudyConfiguration-showChecklists"
                },
                "value": "false"
@@ -73,6 +81,14 @@
                   "key": "-default-key-StudyConfiguration-showDescriptions"
                },
                "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-default-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-default-key-StudyConfiguration-showNotes"
+               },
+               "value": "true"
             },
             {
                "property": {
