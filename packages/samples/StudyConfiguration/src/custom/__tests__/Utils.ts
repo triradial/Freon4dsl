@@ -573,6 +573,11 @@ function createStaffLevel(
     return staffLevel;
 }
 
+function createDate(day: number, month: string, year: number): Date {
+    const monthIndex = new Date(`${month} 1, 2000`).getMonth();
+    return new Date(year, monthIndex, day);
+}
+
 export function createPatientNotAvailableDateRange(
     startDay: string,
     startMonth: string,
@@ -580,22 +585,51 @@ export function createPatientNotAvailableDateRange(
     endDay?: string,
     endMonth?: string,
     endYear?: string,
+    dayOffsetOfFirstEventInstance?: number,
 ) {
-    const startDateInRange = StartRangeDate.create({
-        day: startDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
-        year: startYear,
-    });
-    if (!endDay) {
-        endDay = startDay;
-        endMonth = startMonth;
-        endYear = startYear;
+    let adjustedStartDay = startDay;
+    let adjustedStartMonth = startMonth;
+    let adjustedStartYear = startYear;
+    let adjustedEndDay = endDay;
+    let adjustedEndMonth = endMonth;
+    let adjustedEndYear = endYear;
+
+    if (dayOffsetOfFirstEventInstance) {
+        const startDate = createDate(parseInt(startDay), startMonth, parseInt(startYear));
+        let endDate = undefined;
+        if (endDay) {
+            endDate = createDate(parseInt(endDay), endMonth, parseInt(endYear));
+        } else {
+            endDate = startDate;
+        }
+        startDate.setDate(startDate.getDate() - dayOffsetOfFirstEventInstance);
+        endDate.setDate(endDate.getDate() - dayOffsetOfFirstEventInstance);
+        adjustedStartDay = startDate.getDate().toString();
+        adjustedStartMonth = startDate.toLocaleString('default', { month: 'long' });
+        adjustedStartYear = startDate.getFullYear().toString();
+        adjustedEndDay = endDate.getDate().toString();
+        adjustedEndMonth = endDate.toLocaleString('default', { month: 'long' });
+        adjustedEndYear = endDate.getFullYear().toString();
     }
-    const endDateInRange = StartRangeDate.create({
-        day: endDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
-        year: endYear,
+
+    const startDateInRange = StartRangeDate.create({
+        day: adjustedStartDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(adjustedStartMonth), "Month"),
+        year: adjustedStartYear,
     });
+
+    if (!adjustedEndDay) {
+        adjustedEndDay = adjustedStartDay;
+        adjustedEndMonth = adjustedStartMonth;
+        adjustedEndYear = adjustedStartYear;
+    }
+
+    const endDateInRange = StartRangeDate.create({
+        day: adjustedEndDay,
+        month: FreNodeReference.create<Month>(getMonthFromString(adjustedEndMonth), "Month"),
+        year: adjustedEndYear,
+    });
+
     const dateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
     return dateOrRange;
 }
