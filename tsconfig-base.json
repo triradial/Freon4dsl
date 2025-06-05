@@ -11,12 +11,6 @@
       "@freon4dsl/meta/*": [
         "packages/meta/src/*"
       ],
-      "@freon4dsl/playground/*": [
-        "packages/playground/src/*"
-      ],
-      "@freon4dsl/server/*": [
-        "packages/server/src/*"
-      ],
       "@freon4dsl/server-crchub/*": [
         "packages/server-crchub/src/*"
       ]

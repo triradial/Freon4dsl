@@ -1,5 +1,5 @@
-import { navigate } from 'svelte-routing';
 import { currentRoute } from './route-store.js';
+import { goto } from '$app/navigation';
 
 export function updateCurrentRoute(routeName: string, id?: string) {
     // if routeName contains ?id= then split it into routeName and id
@@ -18,5 +18,5 @@ export function navigateTo(routeName: string, id?: string) {
         url += `?id=${id}`;
     }
     console.log("Navigating to:", url);
-    navigate(url);
+    goto(url);
 }

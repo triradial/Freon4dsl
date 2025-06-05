@@ -1,7 +1,5 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
-    import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faHeart, faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 
     const dispatch = createEventDispatcher();
 

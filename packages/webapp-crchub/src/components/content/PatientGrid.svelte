@@ -11,10 +11,10 @@
     import { editObject } from "../../services/stores/object-drawer-store.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
-    export let studyId: string;
+    const { studyId } = $props<{ studyId: string }>();
 
-    let deleteDialogOpen = false;
-    let objectToDelete: any = null;
+    let deleteDialogOpen = $state(false);
+    let objectToDelete = $state<any>(null);
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;

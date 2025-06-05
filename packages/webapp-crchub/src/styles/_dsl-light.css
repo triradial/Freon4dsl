@@ -431,9 +431,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background: white;
   color: black;
 }
-
 /* #endregion */
 
+/* #region Render Component */
 .render-component-selected {
   background-color: var(--black-2t);
 }
+/* #endregion */
+
+/* #region Drag Handle */
+.drag-handle-icon {
+  fill: var(--freon-light-base-250);
+}
+/* #endregion */

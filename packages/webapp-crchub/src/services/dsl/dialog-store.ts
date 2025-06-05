@@ -1,19 +1,21 @@
 // info about dialogs: whether they are open or closed
 
 // indicates whether the application is initializing
-export let initializing = $state(true);
+import { writable } from 'svelte/store';
+
+export const initializing = writable(true);
 
 // variables for the FileMenu
-export let openModelDialogVisible = $state(false);
-export let deleteModelDialogVisible = $state(false);
-export let deleteUnitDialogVisible = $state(false);
-export let newUnitDialogVisible = $state(false);
-export let renameUnitDialogVisible = $state(false);
+export const openModelDialogVisible = writable(false);
+export const deleteModelDialogVisible = writable(false);
+export const deleteUnitDialogVisible = writable(false);
+export const newUnitDialogVisible = writable(false);
+export const renameUnitDialogVisible = writable(false);
 
 // variables for the EditMenu
-export let findTextDialogVisible = $state(false);
-export let findStructureDialogVisible = $state(false);
-export let findNamedDialogVisible = $state(false);
+export const findTextDialogVisible = writable(false);
+export const findStructureDialogVisible = writable(false);
+export const findNamedDialogVisible = writable(false);
 
 // variables for the HelpButton
-export let helpDialogVisible = $state(false);
+export const helpDialogVisible = writable(false);

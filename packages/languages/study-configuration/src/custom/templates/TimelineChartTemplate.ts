@@ -1,7 +1,7 @@
 import { Timeline } from "../timeline/Timeline.js";
 import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
-import { nodent, undent } from "@bscotch/utility";
+import { dedent } from "../utils/dedent.js";
 
 let uniqueCounter = 0;
 
@@ -18,7 +18,7 @@ export class TimelineChartTemplate {
         let writer = new StudyConfigurationModelModelUnitWriter();
 
         //TODO: determine why the not-available-row-label class doesn't change the color of the text to red or find another way to highlight the differences in the cells in the row, e.g., adding a legend or changing the row label text.
-        var template = nodent`var groups = new vis.DataSet([
+        var template = dedent`var groups = new vis.DataSet([
             { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
             ${timeline
                 .getUniqueEventInstanceNames()
@@ -55,7 +55,7 @@ export class TimelineChartTemplate {
                             (
                                 eventInstance,
                                 index,
-                            ) => nodent`${eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },` : ""}
+                            ) => dedent`${eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },` : ""}
                                 { start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "scheduled-event", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/"/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
                                 ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },` : ""}`,
                         )
@@ -101,7 +101,7 @@ export class TimelineChartTemplate {
     static getTimelineVisualizationHTML(timeline: Timeline): string {
         var template =
             "\n" +
-            undent`
+            dedent`
           // create visualization
           var container = document.getElementById('visualization');
             ${timeline.getOptions(timeline)}
@@ -110,7 +110,7 @@ export class TimelineChartTemplate {
     }
 
     static getTimelineAsHTMLPage(timelineDataAsScript: string): string {
-        return undent`<!DOCTYPE HTML>
+        return dedent`<!DOCTYPE HTML>
           <html>
           <head>
           ${TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript)}
@@ -120,7 +120,7 @@ export class TimelineChartTemplate {
     }
 
     static getTimelineAsHTMLBlock(timelineDataAsScript: string): string {
-        return undent`
+        return dedent`
       <title>Timeline Chart</title>
       <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
       <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />

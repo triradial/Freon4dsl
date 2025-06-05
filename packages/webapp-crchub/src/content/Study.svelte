@@ -3,15 +3,12 @@
     import StudyCard from "../components/cards/StudyCard.svelte";
     import PatientGrid from "../components/content/PatientGrid.svelte";
     import DSLFooter from "../components/common/DSLFooter.svelte";
-
     import { Tabs, TabItem } from "flowbite-svelte";
     import { ListPlaceholder, Skeleton } from "flowbite-svelte";
     import { Toolbar, ToolbarButton } from "flowbite-svelte";
-
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "../components/common/FontAwesomeIcon.svelte";
     import { faUser, faSwatchbook, faSave, faRedo, faUndo } from "@fortawesome/free-solid-svg-icons";
     import { dataStore, type Study } from "../services/data/data-store.js";
-
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { FreEditor } from "@freon4dsl/core";
     import { type StudyConfiguration } from "@freon4dsl/study-configuration";
@@ -20,15 +17,15 @@
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/stores/side-drawer-store.js";
 
-    export let id: string;
+    let { id } = $props<{ id: string }>();
 
-    let study: Study | undefined;
-    let editorLoaded = false;
+    let study = $state<Study | undefined>(undefined);
+    let editorLoaded = $state(false);
 
-    let dslEditor: FreEditor;
-    let unit: StudyConfiguration;
+    let dslEditor = $state<FreEditor | undefined>(undefined);
+    let unit = $state<StudyConfiguration | undefined>(undefined);
 
-    let footerItems = [
+    let footerItems = $state([
         { id: "showScheduling", label: "Scheduling", visible: true },
         { id: "showChecklists", label: "Checklists", visible: false },
         { id: "showReferences", label: "References", visible: false, parent: "showChecklists" },
@@ -36,7 +33,7 @@
         { id: "showPeople", label: "People", visible: false, parent: "showChecklists" },
         { id: "showDescriptions", label: "Descriptions", visible: false },
         { id: "showSharedTasks", label: "Shared Tasks", visible: false },
-    ];
+    ]);
 
     onMount(async () => {
         // get the study data

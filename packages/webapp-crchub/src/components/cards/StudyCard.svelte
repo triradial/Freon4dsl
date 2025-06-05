@@ -2,12 +2,11 @@
     import { Card, Badge, Button } from "flowbite-svelte";
     import { type Study } from "../../services/data/data-store.js";
     import { editObject } from "../../services/stores/object-drawer-store.js";
-    // import type { ColorVariant } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
     import { faPencil } from "@fortawesome/free-solid-svg-icons";
     import { getStatusColor } from "../../services/utils.js";
 
-    export let study: Study;
+    const { study } = $props<{ study: Study }>();
 
     let statusColor = getStatusColor(study.status);
 

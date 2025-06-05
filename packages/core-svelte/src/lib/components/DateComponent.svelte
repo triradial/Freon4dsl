@@ -499,6 +499,3 @@
 		</span>
 	{/if}
 </span>
-
-<style>
-</style>

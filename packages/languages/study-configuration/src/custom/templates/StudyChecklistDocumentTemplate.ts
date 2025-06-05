@@ -1,11 +1,11 @@
-import { nodent } from "@bscotch/utility";
+import { dedent } from "../utils/dedent.js";
 import { Timeline } from "../timeline/Timeline.js";
 import { AbstractTask, ComplianceWindowOf, NoComplianceWindow, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
 export class StudyChecklistDocumentTemplate {
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
-        var template = nodent`
+        var template = dedent`
       ## Table
       | Visit Name | Alternative Name | Phase | Window (-) | Day/Date | Window (+) |
       | :---------------------- | :--------------- | :-------- | :--------- | :------- | :--------- |
@@ -16,7 +16,7 @@ export class StudyChecklistDocumentTemplate {
                   .getEventInstances()
                   .map(
                       (eventInstance, index) =>
-                          nodent`| ${eventInstance.getName()} | ${eventInstance.getScheduledEvent().configuredEvent.alternativeName} | ${((eventInstance.getScheduledEvent().configuredEvent as any).freOwner() as Period).name} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""} | ${(eventInstance.getStartDay() + 1).toString() ?? ""} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""} |`,
+                          dedent`| ${eventInstance.getName()} | ${eventInstance.getScheduledEvent().configuredEvent.alternativeName} | ${((eventInstance.getScheduledEvent().configuredEvent as any).freOwner() as Period).name} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""} | ${(eventInstance.getStartDay() + 1).toString() ?? ""} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""} |`,
                   )
                   .join(""),
           )
@@ -55,7 +55,7 @@ export class StudyChecklistDocumentTemplate {
 
         var template = studyConfiguration.periods
             .map(
-                (period, periodCounter) => nodent`
+                (period, periodCounter) => dedent`
                 # ${period.name}
                     ${period.events
                         .map((event, eventCounter) => {
@@ -90,7 +90,7 @@ export class StudyChecklistDocumentTemplate {
 
                                             ${t.steps
                                                 .map(
-                                                    (step, stepCounter) => nodent`#### Step ${stepCounter + 1}: ${step.title}
+                                                    (step, stepCounter) => dedent`#### Step ${stepCounter + 1}: ${step.title}
 
                                                     ${step.detailsDescription.text}
 
@@ -115,7 +115,7 @@ export class StudyChecklistDocumentTemplate {
     }
 
     static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline): string {
-        var template = nodent`Study ${"STUDY-NAME"} 
+        var template = dedent`Study ${"STUDY-NAME"} 
 
 ---
 

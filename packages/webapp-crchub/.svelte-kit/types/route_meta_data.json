@@ -1,0 +1,15 @@
+{
+	"/": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.ts"
+	],
+	"/login": [
+		"src/routes/+layout.ts"
+	],
+	"/patient/[id]": [
+		"src/routes/+layout.ts"
+	],
+	"/study/[id]": [
+		"src/routes/+layout.ts"
+	]
+}

@@ -3,9 +3,7 @@
     import { createEventDispatcher } from "svelte";
     import { dataStore } from "../../services/data/data-store.js";
 
-    export let open = false;
-    export let objectType: "study" | "patient";
-    export let object: any;
+    const { open = false, objectType, object } = $props<{ open?: boolean; objectType: "study" | "patient"; object: any }>();
 
     const dispatch = createEventDispatcher();
 
@@ -23,11 +21,9 @@
             dataStore.deletePatient(object.id);
         }
         dispatch("delete");
-        open = false;
     }
 
     function handleCancel() {
-        open = false;
         dispatch("cancel");
     }
 
@@ -40,7 +36,7 @@
 
 <Modal
     {title}
-    bind:open
+    open={open}
     class="dialog"
     backdropClass="dialog-backdrop fixed inset-0 bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
     dialogClass="dialog-content fixed top-0 start-0 end-0 h-modal md:inset-0 md:h-full p-2 flex"

@@ -1,10 +1,5 @@
-import {
-    Simulator,
-    StudyChecklistDocumentTemplate,
-    StudyConfiguration,
-    TimelineChartTemplate,
-    TimelineTableTemplate,
-} from "@freon4dsl/study-configuration";
+import { StudyConfiguration } from "@freon4dsl/study-configuration";
+import { Simulator, StudyChecklistDocumentTemplate, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/study-configuration";
 import * as Sim from "@freon4dsl/study-configuration";
 import { RtString } from "@freon4dsl/core";
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
+    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
     import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
     import { Toast } from "flowbite-svelte";
     import { createEventDispatcher } from 'svelte';

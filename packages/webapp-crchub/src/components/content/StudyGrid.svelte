@@ -11,17 +11,17 @@
     import { getSVGIcon } from "../../services/utils.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
-    let deleteDialogOpen = false;
-    let objectToDelete: any = null;
+    let deleteDialogOpen = $state(false);
+    let objectToDelete = $state<any>(null);
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
-    let studiesData: any[] = [];
+    let studiesData = $state<any[]>([]);
 
-    $: {
+    $effect(() => {
         studiesData = $dataStore.studies;
         updateGridData();
-    }
+    });
 
     function updateGridData() {
         if (gridApi && studiesData) {
@@ -33,7 +33,7 @@
         }
     }
 
-    $: gridTheme = $theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz";
+    let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
 
     onMount(async () => {
         gridOptions = {
@@ -130,9 +130,11 @@
         }
     }
 
-    $: if (objectToDelete) {
-        console.log("Object to delete:", objectToDelete);
-    }
+    $effect(() => {
+        if (objectToDelete) {
+            console.log("Object to delete:", objectToDelete);
+        }
+    });
 
     function onEditClick(studyId: string) {
         console.log("Edit clicked for study:", studyId);

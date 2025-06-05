@@ -427,6 +427,14 @@
 
 /* #endregion */
 
+/* #region Render Component */
 .render-component-selected {
   background-color: var(--white-5t);
 }
+/* #endregion */
+
+/* #region Drag Handle */
+.drag-handle-icon {
+  fill: var(--freon-dark-base-150);
+}
+/* #endregion */

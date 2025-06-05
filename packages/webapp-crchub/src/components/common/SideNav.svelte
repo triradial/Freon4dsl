@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Sidebar, SidebarBrand, SidebarCta, SidebarDropdownItem, SidebarDropdownWrapper, SidebarGroup, SidebarItem, SidebarWrapper } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
     import { faHome, faMicroscope, faHospitalUser } from "@fortawesome/free-solid-svg-icons";
     import { navigateTo } from "../../services/routing/route-action.js";
     import { ROUTE } from "../../constants/route-constants.js";

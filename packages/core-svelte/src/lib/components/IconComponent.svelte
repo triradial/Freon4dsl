@@ -31,7 +31,3 @@
 </script>
 
 <FontAwesomeIcon class="w-3 h-3" style="cursor: {cursorStyle};" icon={iconDef} />
-
-<style>
-
-</style>

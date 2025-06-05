@@ -4,14 +4,15 @@
     import PatientMutation from "../mutations/PatientMutation.svelte";
     import { drawerStore, closeDrawer, saveObject } from "../../services/stores/object-drawer-store.js";
     import { sineIn } from "svelte/easing";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
     import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-    let activeDrawerInstance: any;
-    let currentInstanceId: string | null = null;
-    $: title = $drawerStore.action === "add" ? `Add ${toProperCase($drawerStore.objectType ?? "")}` : `Edit ${toProperCase($drawerStore.objectType ?? "")}`;
-    $: hidden = !$drawerStore.open;
-    $: {
+    let activeDrawerInstance = $state<any>(null);
+    let currentInstanceId = $state<string | null>(null);
+
+    const title = $derived($drawerStore.action === "add" ? `Add ${toProperCase($drawerStore.objectType ?? "")}` : `Edit ${toProperCase($drawerStore.objectType ?? "")}`);
+
+    $effect(() => {
         if ($drawerStore.instanceId !== currentInstanceId) {
             currentInstanceId = $drawerStore.instanceId;
             if ($drawerStore.open) {
@@ -20,7 +21,7 @@
                 activeDrawerInstance = null;
             }
         }
-    }
+    });
 
     let transitionParams = {
         x: 320,
@@ -43,7 +44,7 @@
     }
 </script>
 
-<Drawer id="generic-drawer" class="object-drawer" transitionType="fly" {transitionParams} placement="left" backdrop={true} bind:hidden>
+<Drawer id="generic-drawer" class="object-drawer" transitionType="fly" {transitionParams} placement="left" backdrop={true} hidden={!$drawerStore.open}>
     <div class="drawer-header">
         <div class="drawer-title-container">
             <h5 class="text-lg font-bold">{title}</h5>
@@ -53,12 +54,12 @@
         </Button>
     </div>
     {#if activeDrawerInstance}
-        <svelte:component
-            this={activeDrawerInstance}
-            {...$drawerStore.objectType === "study" ? { study: $drawerStore.object } : { patient: $drawerStore.object }}
-            isEditing={true}
-            on:save={handleSave}
-            on:close={handleClose}
-        />
+        {#key activeDrawerInstance}
+            {#if $drawerStore.objectType === "study"}
+                <StudyMutation study={$drawerStore.object} isEditing={true} on:save={handleSave} on:close={handleClose} />
+            {:else}
+                <PatientMutation patient={$drawerStore.object} isEditing={true} on:save={handleSave} on:close={handleClose} />
+            {/if}
+        {/key}
     {/if}
 </Drawer>

@@ -14,10 +14,10 @@ export class LanguageInitializer {
             return;
         }
         // the language name
-        languageName.value = langEnv.languageName;
+        languageName.set(langEnv.languageName);
 
         // the names of the unit types
-        unitTypes.list = FreLanguage.getInstance().getUnitNames();
+        unitTypes.set({ list: FreLanguage.getInstance().getUnitNames() });
 
         // the file extensions for all unit types
         // because 'langEnv.fileExtensions.values()' is not an Array but an IterableIterator,
@@ -26,13 +26,13 @@ export class LanguageInitializer {
         for (const val of langEnv.fileExtensions.values()) {
             tmp.push(val);
         }
-        fileExtensions.list = tmp;
+        fileExtensions.set({ list: tmp });
 
         // the names of the projections / views
         const proj: FreProjectionHandler = langEnv.editor.projection;
         let nameList: string[] = proj.projectionNames();
-        projectionNames.list = nameList;
-        projectionsShown.list = nameList; // initially, all projections are shown
+        projectionNames.set({ list: nameList });
+        projectionsShown.set({ list: nameList }); // initially, all projections are shown
 
         // let the editor know how to set the user message,
         // we do this by assigning our own method to the editor's method

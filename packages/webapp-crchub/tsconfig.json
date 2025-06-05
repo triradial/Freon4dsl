@@ -1,5 +1,5 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
     /* Basic Options */
@@ -44,12 +44,12 @@
     // "noPropertyAccessFromIndexSignature": true,  /* Require undeclared properties from index signatures to use element accesses. */
     /* Module Resolution Options */
     "moduleResolution": "nodenext", /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-    "baseUrl": "./src", /* Base directory to resolve non-absolute module names. */
-    "paths": {
-      "@freon4dsl/core": ["../core/src"],
-      "@freon4dsl/core-svelte": ["../core-svelte/src"],
-      "@freon4dsl/study-configuration": ["../languages/study-configuration/src"]
-    },
+    // "baseUrl": "./src", /* Base directory to resolve non-absolute module names. */
+    // "paths": {
+    //   "@freon4dsl/core": ["../core/src"],
+    //   "@freon4dsl/core-svelte": ["../core-svelte/src"],
+    //   "@freon4dsl/study-configuration": ["../languages/study-configuration/src"]
+    // },
     // "rootDirs": [],                              /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                             /* List of folders to include type definitions from. */
     "types": [ /* Type declaration files to be included in compilation. */

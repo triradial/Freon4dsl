@@ -1,22 +1,20 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { Skeleton, ListPlaceholder } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faHeart, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+    import { ListPlaceholder } from "flowbite-svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { type FreEnvironment, RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { getChecklistAsMarkdown, getTimelineTable } from "../../services/app/study-timeline.js";
     import { marked } from "marked";
 
-    export let studyId: string;
-    let isLoading = true;
-    let tableHtml: string = "";
-    let checklistHtml: string = "";
-    let error: string | null = null;
+    let { studyId } = $props<{ studyId: string }>();
+    let isLoading = $state(true);
+    let tableHtml = $state<string>("");
+    let checklistHtml = $state<string>("");
+    let error = $state<string | null>(null);
     let container: HTMLElement | null = null;
     let container2: HTMLElement | null = null;
-    let showTable = false;
+    let showTable = $state(false);
 
     const dispatch = createEventDispatcher();
 

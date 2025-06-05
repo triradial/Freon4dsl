@@ -3,7 +3,7 @@
     import PatientCard from "../components/cards/PatientCard.svelte";
 
     import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "../components/common/FontAwesomeIcon.svelte";
     import { faListCheck, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
     import { dataStore, type Patient } from "../services/data/data-store.js";
 
@@ -32,14 +32,14 @@
     } from "@freon4dsl/study-configuration";
     import { getChartWithPatientHistory } from "../services/utils.js";
 
-    export let id: string;
-    let patient: Patient | undefined;
+    let { id } = $props<{ id: string }>();
 
-    let isLoading = true;
-    let showChart = false;
-    let chartHtml: string = "";
-    let error: string | null = null;
-    let container: HTMLElement | null = null;
+    let patient = $state<Patient | undefined>(undefined);
+    let isLoading = $state(true);
+    let showChart = $state(false);
+    let chartHtml = $state<string>("");
+    let error = $state<string | null>(null);
+    let container = $state<HTMLElement | null>(null);
 
     onMount(async () => {
         const fetchedPatient = await dataStore.getPatient(id);

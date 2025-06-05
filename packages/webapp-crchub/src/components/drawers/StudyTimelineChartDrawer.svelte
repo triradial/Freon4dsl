@@ -6,11 +6,11 @@
     import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { getTimelineChart } from "../../services/app/study-timeline.js";
 
-    export let studyId: string;
-    let isLoading = true;
-    let showChart = false;
-    let chartHtml: string = "";
-    let error: string | null = null;
+    let { studyId } = $props<{ studyId: string }>();
+    let isLoading = $state(true);
+    let showChart = $state(false);
+    let chartHtml = $state<string>("");
+    let error = $state<string | null>(null);
     let container: HTMLElement | null = null;
 
     const dispatch = createEventDispatcher();

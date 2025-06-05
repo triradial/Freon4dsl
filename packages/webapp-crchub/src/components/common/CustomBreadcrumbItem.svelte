@@ -1,9 +1,11 @@
 <script lang="ts">
-    import { BreadcrumbItem } from 'flowbite-svelte';
+    import { BreadcrumbItem } from "flowbite-svelte";
     import { createEventDispatcher } from 'svelte';
 
-    export let href: string = '#';
-    export let home: boolean = false;
+    const { href = '#', home = false } = $props<{
+        href?: string;
+        home?: boolean;
+    }>();
 
     const dispatch = createEventDispatcher();
 
@@ -14,9 +16,9 @@
     }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
-<span on:click={handleClick} class="h-full inline-flex items-center">
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<span onclick={handleClick} class="h-full inline-flex items-center" role="button" tabindex="0">
     <BreadcrumbItem {href} {home}>
         <slot></slot>
     </BreadcrumbItem>

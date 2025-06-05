@@ -1,13 +1,16 @@
 <script lang="ts">
     import { Card, Button, Input, Select, Helper } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
     import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
     import { type Study, type Patient } from "../../services/data/data-store.js";
     import { createEventDispatcher } from "svelte";
 
-    export let study: Study;
-    export let patient: Patient;
-    export let action: "add" | "edit";
+    const { study, patient, action } = $props<{
+        study: Study;
+        patient: Patient;
+        action: "add" | "edit";
+    }>();
+
     let mutatedPatient = { ...patient };
     const dispatch = createEventDispatcher();
 

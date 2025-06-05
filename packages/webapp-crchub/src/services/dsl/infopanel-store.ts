@@ -1,20 +1,18 @@
+import { writable } from 'svelte/store';
 import type { FreError } from "@freon4dsl/core";
 
-export let errorsLoaded = $state(true);
-export let searchResultLoaded = $state(true);
+export const errorsLoaded = writable(true);
+export const searchResultLoaded = writable(true);
+export const modelErrors = writable({list: []});
+export const activeTab = writable('errorTab');
+export const searchResults = writable({list: []});
+export const interpreterTrace = writable({value: "no trace"});
 
 export interface ErrorInfoInterface {
     list: FreError[];
 }
-// the current list of search results that is shown in the editor
-export let searchResults: ErrorInfoInterface = $state({list: []});
-// the current list of errors in the model unit that is shown in the editor
-export let modelErrors: ErrorInfoInterface = $state({list: []});
-// the trace of the last call to the interpreter
-export let interpreterTrace = $state({value: "no trace"});
 
 // the currently active tab and constants to indicate the tabs
 export const errorTab = "Errors";
 export const searchTab = "Search";
 export const interpreterTab = "Interpreter";
-export let activeTab = $state(errorTab);

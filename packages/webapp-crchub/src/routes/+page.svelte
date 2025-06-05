@@ -184,9 +184,9 @@
                 <p>Loading...</p>
             {:then Component}
                 {#if $currentRoute.params?.id}
-                    <svelte:component this={Component} id={$currentRoute.params.id} />
+                    <Component id={$currentRoute.params.id} />
                 {:else}
-                    <svelte:component this={Component} />
+                    <Component />
                 {/if}
             {:catch error}
                 <p>Error loading content: {error.message}</p>

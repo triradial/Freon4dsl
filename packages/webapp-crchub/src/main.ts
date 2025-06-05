@@ -1,6 +1,3 @@
-import './app.css';
-import { initializeApp } from './services/initialization/app-initialization.js';
-
 import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 import { LanguageEnvironment } from "@freon4dsl/study-configuration";
 import { ServerCommunication } from "@freon4dsl/core";
@@ -11,24 +8,30 @@ import DatePicker from "./components/custom/DatePicker.svelte";
 import ExpandCollapseWrapperComponent from "./components/custom/ExpandCollapseWrapperComponent.svelte";
 import TimePicker from "./components/custom/TimePicker.svelte";
 
+console.log('Starting main.ts initialization');
+
 // Configure the server connection settings
 const serverComm = ServerCommunication.getInstance();
-serverComm.setServerConfig({
-    serverUrl: env.serverUrl,
-    serverTimeout: env.serverTimeout
-});
+console.log('ServerCommunication instance created');
+serverComm.SERVER_URL = env.serverUrl;
+serverComm.nodePort = parseInt(env.serverTimeout.toString());
+console.log('Server settings configured:', { url: env.serverUrl, timeout: env.serverTimeout });
 
 // Configure the editor environment
+console.log('Creating editor environment');
 const webappConfigurator = WebappConfigurator.getInstance();
 const editorEnvironment = LanguageEnvironment.getInstance();
+console.log('Editor environment created');
 webappConfigurator.setEditorEnvironment(editorEnvironment);
 webappConfigurator.setServerCommunication(serverComm);
+console.log('Editor environment configured');
 
 setCustomComponents([
     { component: DatePicker, knownAs: "DatePicker" },
     { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
     { component: TimePicker, knownAs: "TimePicker" },
 ]);
+console.log('Custom components set');
 
-// Initialize the application
-initializeApp();
+console.log('main.ts initialization complete');
+// Initialize the application done by the +layout.svelte

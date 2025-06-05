@@ -4,17 +4,15 @@
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { FreEditor } from "@freon4dsl/core";
-
     import { type Availability } from "@freon4dsl/study-configuration";
-
     import { ListPlaceholder } from "flowbite-svelte";
 
     let modelname = "11119f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f";
 
     let modelManager: ModelManager = ModelManager.getInstance();
-    let dslEditor: FreEditor;
+    let dslEditor = $state<FreEditor>();
     let unit: Availability;
-    let editorLoaded = false;
+    let editorLoaded = $state(false);
 
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;

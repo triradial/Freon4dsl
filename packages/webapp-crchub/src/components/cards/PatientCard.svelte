@@ -2,11 +2,10 @@
     import { Card, Badge, Button } from "flowbite-svelte";
     import { type Patient } from "../../services/data/data-store.js";
     import { editObject } from "../../services/stores/object-drawer-store.js";
-
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
     import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
-    export let patient: Patient;
+    const { patient } = $props<{ patient: Patient }>();
 
     function onEditClick() {
         editObject("patient", patient.id);

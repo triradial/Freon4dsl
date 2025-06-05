@@ -642,6 +642,28 @@ span:has(> .tinymce-wrapper) {
   margin: 0 0 0.125rem 0;
 }
 
+.dropdown-component-container {
+  position: relative;
+}
+
+.dropdown-entry-with-additional-label {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.column-for-dropdown-entry-with-additional-label {
+  display: flex;
+  flex-direction: column;
+  /*flex: 1;*/
+}
+
+.gap-for-dropdown-entry-with-additional-label {
+  margin: 0 0.7rem 0 0.7rem;
+  flex: 1;
+}
 /* #endregion */
 
 /* #region Table Component */
@@ -847,4 +869,16 @@ select:focus {
   align-items: flex-end;
 }
 
+/* #endregion */
+
+/* #region Expandable Component */
+.expandable-component {
+  display: flex;
+}
+/* #endregion */
+
+/* #region Drag Handle */
+.drag-handle-svg {
+  vertical-align: text-bottom;
+}
 /* #endregion */

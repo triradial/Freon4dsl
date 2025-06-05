@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
     import { onMount } from 'svelte';
+    
     let helpHtml: string = "";
     let container: HTMLDivElement;
     let shadowRoot: ShadowRoot;

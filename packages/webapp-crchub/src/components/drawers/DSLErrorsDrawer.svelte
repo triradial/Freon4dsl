@@ -4,11 +4,11 @@
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { onMount } from "svelte";
     import { Button, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
     import { faSquareUpRight } from "@fortawesome/free-solid-svg-icons";
 
     const dispatch = createEventDispatcher();
-    let modelErrors: FreError[] = [];
+    let modelErrors = $state<FreError[]>([]);
 
     onMount(() => {
         modelErrors = ModelManager.getInstance().runValidator();

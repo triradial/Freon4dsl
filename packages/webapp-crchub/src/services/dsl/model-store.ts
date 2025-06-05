@@ -1,78 +1,78 @@
-// info about the model and model unit shown
+import { writable } from 'svelte/store';
 import type {UnitInfo, UnitList} from "./store-interfaces.js";
 
 // Core model state
-export let currentModelName = $state('');
-export let currentUnitName = $state('');
+export const currentModelName = writable('');
+export const currentUnitName = writable('');
 
 // UI state
-export let noUnitAvailable = $state(true);
-export let editorProgressShown = $state(true);
-export let unsavedChanges = $state(true);
+export const noUnitAvailable = writable(true);
+export const editorProgressShown = writable(true);
+export const unsavedChanges = writable(true);
 
 // Unit state
-export let currentUnit = $state<UnitInfo>({id: undefined, ref: undefined});
-export let toBeDeleted = $state<UnitInfo>({id: undefined, ref: undefined});
-export let toBeRenamed = $state<UnitInfo>({id: undefined, ref: undefined});
+export const currentUnit = writable<UnitInfo>({id: undefined, ref: undefined});
+export const toBeDeleted = writable<UnitInfo>({id: undefined, ref: undefined});
+export const toBeRenamed = writable<UnitInfo>({id: undefined, ref: undefined});
 
 // Unit lists
-export let unitNames = $state<UnitList>({ids: [], refs: []});
-export let units = $state<UnitList>({ids: [], refs: []});
+export const unitNames = writable<UnitList>({ids: [], refs: []});
+export const units = writable<UnitList>({ids: [], refs: []});
 
 // Update functions - keeping these for backward compatibility
 export function setCurrentModelName(name: string) {
-    currentModelName = name;
+    currentModelName.set(name);
 }
 
 export function setCurrentUnitName(name: string) {
-    currentUnitName = name;
+    currentUnitName.set(name);
 }
 
 export function setNoUnitAvailable(value: boolean) {
-    noUnitAvailable = value;
+    noUnitAvailable.set(value);
 }
 
 export function setEditorProgressShown(value: boolean) {
-    editorProgressShown = value;
+    editorProgressShown.set(value);
 }
 
 export function setUnsavedChanges(value: boolean) {
-    unsavedChanges = value;
+    unsavedChanges.set(value);
 }
 
 export function setToBeDeleted(value: UnitInfo) {
-    toBeDeleted = value;
+    toBeDeleted.set(value);
 }
 
 export function setToBeRenamed(value: UnitInfo) {
-    toBeRenamed = value;
+    toBeRenamed.set(value);
 }
 
 export function setUnitNames(value: UnitList) {
-    unitNames = value;
+    unitNames.set(value);
 }
 
 export function updateUnits(value: UnitList) {
-    units = value;
+    units.set(value);
 }
 
 // New functions for better type safety and state management
 export function updateModelState(modelName: string, unitName: string) {
-    currentModelName = modelName;
-    currentUnitName = unitName;
+    currentModelName.set(modelName);
+    currentUnitName.set(unitName);
 }
 
 export function updateEditorState(progressShown: boolean, unitAvailable: boolean, hasUnsavedChanges: boolean) {
-    editorProgressShown = progressShown;
-    noUnitAvailable = unitAvailable;
-    unsavedChanges = hasUnsavedChanges;
+    editorProgressShown.set(progressShown);
+    noUnitAvailable.set(unitAvailable);
+    unsavedChanges.set(hasUnsavedChanges);
 }
 
 export function updateUnitState(unit: UnitInfo) {
-    currentUnit = unit;
+    currentUnit.set(unit);
 }
 
 export function updateUnitLists(names: UnitList, unitList: UnitList) {
-    unitNames = names;
-    units = unitList;
+    unitNames.set(names);
+    units.set(unitList);
 }

@@ -1,11 +1,12 @@
 <script lang="ts">
-    import { Button, Checkbox, Input } from "flowbite-svelte";
     import { authenticate, isAuthenticated, redirectUrl } from "../../services/security/auth.js";
     import { writable } from "svelte/store";
     import ToastWarning from "../common/ToastWarning.svelte";
+    import { Button, Checkbox, Input } from "flowbite-svelte";
+    import { goto } from '$app/navigation';
 
-    let username = "";
-    let password = "";
+    let username = $state("");
+    let password = $state("");
     let showError = writable(false);
 
     const submitForm = async (event: Event) => {
@@ -21,6 +22,14 @@
         } else {
             sessionStorage.setItem("auth", "true");
             isAuthenticated.set(true);
+            // Restore intended route if present
+            const intended = sessionStorage.getItem('intendedRoute');
+            if (intended && intended !== '/login') {
+                sessionStorage.removeItem('intendedRoute');
+                goto(intended);
+            } else {
+                goto(url);
+            }
         }
     };
 
@@ -42,7 +51,7 @@
             </h1>
         </div>
         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <form class="flex flex-col space-y-6" on:submit={submitForm}>
+            <form class="flex flex-col space-y-6" onsubmit={submitForm}>
                 <Input bind:value={username} type="text" name="username" placeholder="username" required on:input={resetError} />
                 <Input bind:value={password} type="password" name="password" placeholder="password" required on:input={resetError} />
                 <div class="flex items-start">

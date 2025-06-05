@@ -6,23 +6,25 @@
     "type": "module",
     "scripts": {
         "clean": "rm -rf node_modules/",
-        "build": "vite build",
-        "build-app": "vite build",
         "dev": "vite dev",
+        "build": "vite build",
         "preview": "vite preview",
-        "start": "sirv public --port 8004 --single",
+        "prepare": "svelte-kit sync || echo ''",
+        "start": "sirv dist --port 8004 --single",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
         "prepare-app": "npx gulp"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.6.0",
+        "@fortawesome/free-solid-svg-icons": "^6.6.0",
         "@freon4dsl/core": "1.1.0-beta.3",
         "@freon4dsl/core-svelte": "1.1.0-beta.3",
         "@freon4dsl/study-configuration": "1.1.0-beta.3",
         "@tinymce/tinymce-svelte": "^3.0.0",
         "@types/node": "^20.14.1",
         "dotenv": "^16.4.5",
-        "flowbite-svelte": "^1.5.0",
+        "flowbite-svelte": "^1.5.3",
         "github-markdown-css": "^5.8.0",
         "koa2-ratelimit": "^1.1.3",
         "kotlin": "^1.5.21",
@@ -32,15 +34,15 @@
         "mobx-utils": "^6.0.8",
         "net.akehurst.language-agl-processor": "4.0.0-rc.5",
         "sirv-cli": "^2.0.2",
-        "tslib": "^2.6.2",
         "svelte": "^5.0.0-next.1",
-        "@sveltejs/kit": "^2.0.0",
-        "@sveltejs/adapter-auto": "^3.0.0"
+        "tslib": "^2.6.2"
     },
     "devDependencies": {
         "@smui/common": "^7.0.0",
         "@smui/textfield": "^7.0.0",
-        "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
+        "@sveltejs/adapter-auto": "^6.0.0",
+        "@sveltejs/kit": "^2.16.0",
+        "@sveltejs/vite-plugin-svelte": "^5.0.0",
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/postcss": "^4.1.8",
         "@types/dotenv": "^6.1.1",
@@ -48,24 +50,21 @@
         "constructs": "^10.3.0",
         "cssnano": "^7.0.6",
         "esbuild": "^0.23.1",
+        "flowbite": "^2.3.0",
         "gulp": "^5.0.0",
         "gulp-postcss": "^10.0.0",
         "gulp-rename": "^2.0.0",
         "gulp-sass": "^5.1.0",
         "sass": "^1.78.0",
+        "svelte-check": "^3.6.0",
         "svelte-preprocess": "^6.0.2",
         "tailwindcss": "^4.1.8",
         "tsx": "^4.19.1",
         "typescript": "^5.0.0",
-        "vite": "^5.0.0",
-        "svelte-check": "^3.6.0"
+        "vite": "^5.0.0"
     },
     "peerDependencies": {
         "ag-grid-community": "^32.2.0",
-        "ag-grid-enterprise": "^32.2.0",
-        "svelte-routing": "^2.13.0"
-    },
-    "overrides": {
-        "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6"
+        "ag-grid-enterprise": "^32.2.0"
     }
 }

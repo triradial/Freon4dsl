@@ -4,7 +4,7 @@
     import { LABEL } from "../../constants/label-constants.js";
     import { navigateTo } from "../../services/routing/route-action.js";
 
-    export let items: Array<{ label: string; href?: string }> = [];
+    let { items = [] } = $props<{ items?: Array<{ label: string; href?: string }> }>();
 
     function handleClick(event: CustomEvent<{ event: MouseEvent; href: string }>) {
         const { href } = event.detail;

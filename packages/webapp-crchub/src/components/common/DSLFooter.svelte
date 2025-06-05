@@ -1,13 +1,21 @@
 <script lang="ts">
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
     import { faGlasses, faTimes } from "@fortawesome/free-solid-svg-icons";
     import { Popover, Button, Tooltip, Checkbox } from "flowbite-svelte";
     import { slide } from "svelte/transition";
+    import { onMount } from "svelte";
 
-    export let onCheckboxChange: (key: string, value: boolean) => void;
-    export let items: Array<{ id: string; label: string; visible: boolean; parent?: string }>;
+    const { onCheckboxChange, items: initialItems } = $props<{
+        onCheckboxChange: (key: string, value: boolean) => void;
+        items: Array<{ id: string; label: string; visible: boolean; parent?: string }>;
+    }>();
+    let items = $state<Array<{ id: string; label: string; visible: boolean; parent?: string }>>([...initialItems]);
 
-    $: hiddenItems = items.filter((item) => !item.visible);
+    onMount(() => {
+        items = [...initialItems];
+    });
+
+    let hiddenItems = $derived(items.filter((item) => !item.visible));
 
     // function handleItemToggle(id: string) {
     //     const index = items.findIndex((item) => item.id === id);
@@ -66,8 +74,8 @@
         {hiddenItems.length > 0 ? `Hidden: ${hiddenItems.map((item) => item.label).join(", ")}` : ""}
     </span>
     <Popover title="Display Options" transition={slide} placement="right" class="editor-display-options-popover w-40" triggeredBy="#editoritems" trigger="click">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div on:click|stopPropagation>
             {#each items as item}
                 <div class="flex items-center editor-display-options {item.parent ? 'ml-6' : ''}">

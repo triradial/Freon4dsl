@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Avatar, Dropdown, DropdownItem, DropdownHeader, DropdownDivider, Button } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Avatar, Dropdown, DropdownItem, DropdownHeader, DropdownDivider, Button } from 'flowbite-svelte';
+    import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
     import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
     import { isAuthenticated } from "../../services/security/auth.js";
     import { navigateTo } from "../../services/routing/route-action.js";
@@ -9,7 +9,7 @@
     import { LABEL } from "../../constants/label-constants.js";
     import { userStore, type User } from "../../services/stores/users-store.js";
 
-    let user: User | null;
+    let user = $state<User | null>(null);
     userStore.subscribe((value) => {
         user = value;
     });
@@ -31,13 +31,12 @@
     let isDark = $derived($theme === "dark");
     let icon = $derived(isDark ? faSun : faMoon);
 
-    $: userInitials = user
+    let userInitials = $derived(user
         ? user.name
               .split(" ")
               .map((n) => n[0])
               .join("")
-              .toUpperCase()
-        : "";
+        : "");
 </script>
 
 <Navbar class="navbar-component">
@@ -57,7 +56,7 @@
         <NavLi href="#" on:click={(event) => loadContent(event, ROUTE.STUDIES)}>{LABEL.STUDIES}</NavLi>
         <NavLi href="#" on:click={(event) => loadContent(event, ROUTE.AVAILABILITY)}>{LABEL.AVAILABILITY}</NavLi>
     </NavUl>
-    <div class="grow" />
+    <div class="grow"></div>
     <div class="flex items-center gap-2 mr-2">
         <Button pill={true} outline={true} class="navbar-button" size="md" on:click={themeToggle}>
             {#key icon}

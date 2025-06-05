@@ -3,9 +3,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     build: {
         lib: {
-            entry: 'src/index.ts',
+            entry: 'src/index.custom.ts',
             formats: ['es'],
-            fileName: 'index'
+            fileName: 'index.custom'
         },
         sourcemap: true,
         rollupOptions: {

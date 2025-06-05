@@ -1,13 +1,10 @@
 <script lang="ts">
     import { addObject } from "../../services/stores/object-drawer-store.js";
-    import { Button } from "flowbite-svelte";
-    import { Card } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import { Button, Card } from "flowbite-svelte";
+    import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
     import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
-    export let parentId: string | null = null;
-    export let objectType: string;
-    export let title: string;
+    const { parentId = null, objectType, title } = $props<{ parentId?: string | null; objectType: string; title: string }>();
     const onAddObject = () => {
         addObject(objectType as "study" | "patient", parentId ?? undefined);
     };

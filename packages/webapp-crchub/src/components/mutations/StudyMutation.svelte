@@ -1,14 +1,16 @@
 <script lang="ts">
     import { Card, Button, Input, Select, Textarea, Helper } from "flowbite-svelte";
-    // import type { ColorVariant } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
     import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
     import { getStatusColor } from "../../services/utils.js";
     import { type Study } from "../../services/data/data-store.js";
     import { createEventDispatcher } from "svelte";
 
-    export let study: Study;
-    export let action: "add" | "edit";
+    const { study, action } = $props<{
+        study: Study;
+        action: "add" | "edit";
+    }>();
+
     let mutatedStudy = { ...study };
     let rows: number = 6;
     const dispatch = createEventDispatcher();
@@ -31,14 +33,14 @@
     let errorState = { ...errors };
     let hasErrors = $derived(Object.values(errorState).some((error) => error !== ""));
 
-    function saveChanges() {
+    function handleSave() {
         validateAllFields();
         if (Object.values(errorState).every((error) => error === "")) {
             dispatch("save", mutatedStudy);
         }
     }
 
-    function cancelEdit() {
+    function handleClose() {
         dispatch("close");
     }
 
@@ -101,11 +103,11 @@
         </div>
     </div>
     <div class="flex items-center justify-center mt-4">
-        <Button size="xs" color="primary" class="mr-2" on:click={saveChanges} disabled={hasErrors}>
+        <Button size="xs" color="primary" class="mr-2" on:click={handleSave} disabled={hasErrors}>
             <FontAwesomeIcon icon={faSave} class="mr-2" />
             Save
         </Button>
-        <Button size="xs" color="light" on:click={cancelEdit}>
+        <Button size="xs" color="light" on:click={handleClose}>
             <FontAwesomeIcon icon={faTimes} class="mr-2" />
             Cancel
         </Button>

@@ -32,9 +32,3 @@
         </div>
     {/key}
 </span>
-
-<style>
-    .expandable-component {
-        display: flex;
-    }
-</style>
