@@ -341,9 +341,14 @@ export function loadModelUnit(modelFolderName: string, modelUnitName: string, al
     return modelUnit;
 }
 
+export function saveChecklistDocument(stringToSave: string) {
+    const filename = "../../../tmp/StudyChecklistOneVisitOneChecklist.md";
+    this.saveToFile(stringToSave, filename);
+}
+
 export function saveTimelineTable(timelineTableAsScript: string) {
-    let filename = "timeline-table.html";
-    let timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
+    const filename = "../../../tmp/timeline-table.html";
+    const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
 
     this.saveToFile(timelineTableAsHTML, filename);
 }
@@ -359,8 +364,8 @@ export function saveToFile(stringToSave: string, filename: string) {
 
 export function saveTimeline(timelineDataAsScript: string) {
     // console.log(process.cwd());
-    let filename = "../../../tmp/timeline.html";
-    let timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
+    const filename = "../../../tmp/timeline.html";
+    const timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
     saveToFile(timelineDataAsHTML, filename);
 }
