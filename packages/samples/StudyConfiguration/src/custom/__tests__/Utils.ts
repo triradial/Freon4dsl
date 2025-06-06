@@ -544,7 +544,7 @@ function addDays(date: Date, days: number): Date {
     return result;
 }
 
-function createStaffLevel(
+export function createStaffLevel(
     staffAvailable: string,
     startDay: string,
     startMonth: string,
@@ -640,13 +640,3 @@ export function createOneDayAvailability(day: string, month: string, year: strin
     return availability;
 }
 
-export function createAvailability(): Availability {
-    let month = "January";
-    const year = "2024";
-    let staffLevels = [];
-    staffLevels.push(createStaffLevel("3", "-27", month, year, "-25", month, year));
-    staffLevels.push(createStaffLevel("2", "11", month, year));
-    staffLevels.push(createStaffLevel("2", "19", month, year));
-    const availability = Availability.create({ baselineStaff: "4", staffLevels: staffLevels });
-    return availability;
-}
