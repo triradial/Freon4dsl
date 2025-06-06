@@ -1138,6 +1138,9 @@ describe("Study Simulation", () => {
             simulator.run();
             let timeline = simulator.timeline;
 
+            // TODO: investigate whether patient availability should be added before the simulator is run.
+            // This is how it's done for Staff Availability. Maybe it should be done that way via UI but for tests
+            // where we shift from the planned visits this is necessary. 
             let shiftsFromScheduledVisit: utils.ShiftsFromScheduledVisit[] = [
                 { name: "V2 Randomization", instance: 1, shift: -1, numberFound: 0, foundThisInstance: false },
                 { name: "V4-V7 Randomization", instance: 1, shift: -3, numberFound: 0, foundThisInstance: false },
