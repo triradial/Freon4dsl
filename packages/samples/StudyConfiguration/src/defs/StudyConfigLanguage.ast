@@ -3,6 +3,8 @@ language StudyConfigurationModel
 model StudyConfigurationModel {
     configuration: StudyConfiguration;
     availability: Availability;
+    patients: PatientInfo;
+    currentPatient: PatientHistoryUnit;
 }
 
 modelunit StudyConfiguration {

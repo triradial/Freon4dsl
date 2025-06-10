@@ -11,6 +11,11 @@ modelunit PatientInfo {  // TODO: Change to Patients
   patientHistories: PatientHistory[];
 }
 
+// TODO: Remove this temporary hack to allow editing of a patient history for a patient in the database.
+modelunit PatientHistoryUnit {
+  patientHistory: PatientHistory;
+}
+
 concept PatientHistory {
   id: string; // initials or whatever the specific study uses to identify the patient in a secure way; No sharing patients across studies
   patientVisits: PatientVisit[];

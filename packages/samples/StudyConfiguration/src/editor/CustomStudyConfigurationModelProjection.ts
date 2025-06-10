@@ -603,12 +603,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectPatientHistory(patientHistory: PatientHistory) {
         const element: PatientHistory = patientHistory;
-        let box: Box = BoxUtil.itemGroupBox(
-            element,
-            "patientHistory",
-            "Patient:",
-            "id",
-            BoxFactory.verticalLayout(
+        let box: Box = BoxFactory.verticalLayout(
                 element,
                 "PatientHistory-overall",
                 "",
@@ -649,9 +644,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         },
                     ),
                 ],
-                { cssClass: "w-full ml-8" },
-            ),
-            { cssClass: "type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true },
+            { cssClass: "w-full ml-8" },
         );
         return box;
     }

@@ -133,6 +133,7 @@ export class ModelManager {
         // create new model instance in memory and set its name
         await this.modelStore.openModel(modelName);
         const unit = this.modelStore.getUnitByName(unitName);
+        console.log("openModelUnit unit:", unit);
         if (unit) {
             this.setCurrentUnit(unit);
             BoxFactory.clearCaches();

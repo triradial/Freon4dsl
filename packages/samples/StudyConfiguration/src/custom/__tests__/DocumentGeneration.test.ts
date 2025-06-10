@@ -23,7 +23,7 @@ import { EventsToAdd, addEventAndInstanceToTimeline } from "./Utils";
 import { ScheduledEventState } from "../timeline/ScheduledEvent.js";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
 import { Sim } from "../simjs/sim.js";
-import path from "path";
+import * as path from "path";
 
 describe("Generating Documents", () => {
     let simulator;
@@ -44,8 +44,8 @@ describe("Generating Documents", () => {
     describe("Generation of Study Checklists Document", () => {
         it("generate a document for a one visit,one checklist, one task study", () => {
             // GIVEN a study configuration loaded from a file and the study is simulated
-            const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "OneVisitOneChecklist");
-            // const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "ScheduleExample2");
+            // const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "OneVisitOneChecklist");
+            const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "ScheduleExample2");
             // const studyConfigurationUnit = utils.loadModelUnit("OneVisitOneChecklist", "StudyConfiguration", studyFolderPath) as StudyConfiguration;
             const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration", studyFolderPath) as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);

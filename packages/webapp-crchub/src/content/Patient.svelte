@@ -10,42 +10,83 @@
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
     import { FreNodeReference } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
+    import { type StudyConfigurationModel, StudyConfiguration, PatientInfo, PatientHistory, PatientHistoryUnit, PatientNotAvailable } from "@freon4dsl/samples-study-configuration";
     import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
     import { getTimelineChart } from "../services/app/patient-timeline.js";
     import { getTimelineChartHtml } from "../services/app/patient-timeline.js";
     import { getTimeline } from "../services/app/patient-timeline.js";
+    import { FreonComponent } from "@freon4dsl/core-svelte";
+    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
+    import { FreEditor } from "@freon4dsl/core";
+    import { type Study } from "../services/data/data-store.js";
+    import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
+    import { Toolbar, ToolbarButton } from "flowbite-svelte";
+    import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
 
-    import {
-        Availability,
-        DateRange,
-        Month,
-        PatientVisit,
-        PatientVisitStatus,
-        StaffLevel,
-        StartRangeDate,
-        Event,
-        VisitDate,
-        PatientNotAvailable,
-        PatientHistory,
-        StudyConfiguration,
-    } from "@freon4dsl/samples-study-configuration/dist/language/gen";
     import { getChartWithPatientHistory } from "../services/utils.js";
 
     export let id: string;
     let patient: Patient | undefined;
+    let study: Study | undefined;
+    let patientInfo: PatientInfo | undefined;
+    let editorLoaded = false;
+    let dslEditor: FreEditor;
 
     let isLoading = true;
     let showChart = false;
     let chartHtml: string = "";
     let error: string | null = null;
     let container: HTMLElement | null = null;
+    let unit: PatientHistoryUnit | undefined;
 
     onMount(async () => {
         const fetchedPatient = await dataStore.getPatient(id);
+        if (!fetchedPatient) {
+            console.error(`Patient with id ${id} not found`);
+            return;
+        }
+        console.log("fetchedPatient:", fetchedPatient);
+        dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+        const modelManager = ModelManager.getInstance();
+        // Create the PatientHistoryUnit to use for editing
+        await modelManager.createModelUnit("PatientHistoryUnit", "PatientHistoryUnit");
+        var patientHistoryUnit =  modelManager.modelStore.getUnitByName("PatientHistoryUnit") as PatientHistoryUnit;
+
+        // Get the model data for all the Patients
+        var patientInfo = await modelManager.openModelUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
+        console.log("PatientInfo:", patientInfo);
+        if (patientInfo === null || patientInfo === undefined) {
+            //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
+            await modelManager.createModelUnit("PatientInfo", "PatientInfo");
+            patientInfo =  modelManager.modelStore.getUnitByName("PatientInfo") as PatientInfo;
+            await modelManager.setCurrentUnit(patientInfo);
+            await modelManager.saveCurrentUnit();
+        } else {
+            var found = false;
+            patientInfo.patientHistories.forEach(aPatientHistory => {
+                if (!found && aPatientHistory.id === fetchedPatient.id) {
+                    console.log("found patientHistory: ", aPatientHistory);
+                    patientHistoryUnit.patientHistory = aPatientHistory;
+                    found = true;
+                    console.log("found should be true: ", found)
+                };
+            });
+            patientHistoryUnit.patientHistory.id = fetchedPatient.id;
+        }
+        await modelManager.setCurrentUnit(patientHistoryUnit);
+        await modelManager.saveCurrentUnit();
+        const curUnit = modelManager.getCurrentUnit();
+        console.log("curUnit: ", curUnit);
+        console.log("unit: ", patientHistoryUnit);
+        await modelManager.openModelUnit(fetchedPatient.studyId, "PatientHistoryUnit");
+        unit = patientHistoryUnit;
+        setTimeout(() => {
+            editorLoaded = true;
+        }, 3000);
+
         if (fetchedPatient) {
             patient = fetchedPatient;
-            await loadChart(patient.studyId);
+            // await loadChart(patient.studyId);
         } else {
             console.error(`Patient with id ${id} not found`);
         }
@@ -96,6 +137,25 @@
         });
     }
 
+    function handleSaveStudy() {
+        const currentUnit: PatientHistoryUnit = ModelManager.getInstance().getCurrentUnit() as PatientHistoryUnit;
+        if (currentUnit) {
+            currentUnit.patientHistory = unit?.patientHistory as PatientHistory;
+        }
+        ModelManager.getInstance().saveCurrentUnit();
+        console.log("PatientInfo.Saved");
+    }
+
+    function handleUndoAction() {
+        EditorRequestsHandler.getInstance().undo();
+        console.log("Undo action");
+    }
+
+    function handleRedoAction() {
+        EditorRequestsHandler.getInstance().redo();
+        console.log("Redo action");
+    }
+
     function executeScripts() {
         if (container) {
             const scripts = container.querySelectorAll("script");
@@ -130,7 +190,34 @@
 
         <div class="crc-content">
             <Tabs tabStyle="pill" class="crc-tab">
-                <TabItem open title="Schedule" on:click={() => patient && loadChart(patient.studyId)}>
+                <TabItem title="Visits" >
+                    <div slot="title" class="flex items-center gap-2">
+                        <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Visits
+                    </div>
+                    <div class="crc-grid"></div>
+                </TabItem>
+                <TabItem open title="Unavailable">
+                    <div slot="title" class="flex items-center gap-2">
+                        <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Unavailable
+                    </div>
+                    {#if editorLoaded}
+                        <Toolbar class="toolbar">
+                            <ToolbarButton class="toolbar-button" on:click={handleSaveStudy}><FontAwesomeIcon icon={faSave} /></ToolbarButton>
+                            <ToolbarButton class="toolbar-button" on:click={handleUndoAction}><FontAwesomeIcon icon={faUndo} /></ToolbarButton>
+                            <ToolbarButton class="toolbar-button" on:click={handleRedoAction}><FontAwesomeIcon icon={faRedo} /></ToolbarButton>
+                        </Toolbar>
+                        <div class="crc-editor crc-content-width">
+                            <FreonComponent editor={dslEditor} />
+                        </div>
+                    {:else}
+                        <div class="h-full crc-content-width">
+                            <ListPlaceholder
+                                divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
+                            />
+                        </div>
+                    {/if}
+                </TabItem>
+                <TabItem title="Schedule" on:click={() => patient && loadChart(patient.studyId)}>
                     <div slot="title" class="flex items-center gap-2">
                         <FontAwesomeIcon icon={faCalendarDays} class="w-4 h-4" />Schedule
                     </div>
@@ -142,12 +229,6 @@
                             {@html chartHtml}
                         </div>
                     </div>
-                </TabItem>
-                <TabItem title="Tasks">
-                    <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Tasks
-                    </div>
-                    <div class="crc-grid"></div>
                 </TabItem>
             </Tabs>
         </div>
