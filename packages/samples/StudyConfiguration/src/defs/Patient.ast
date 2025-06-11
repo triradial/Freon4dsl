@@ -17,7 +17,8 @@ modelunit PatientHistoryUnit {
 }
 
 concept PatientHistory {
-  id: string; // initials or whatever the specific study uses to identify the patient in a secure way; No sharing patients across studies
+  patient_id: string;// initials or whatever the specific study uses to identify the patient in a secure way; No sharing patients across studies
+  id: string; // TODO: DELETE this and switch to patient_id; 
   patientVisits: PatientVisit[];
   patientNotAvailableDates: PatientNotAvailable;
 }

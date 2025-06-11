@@ -143,6 +143,16 @@ export class ModelManager {
         return unit;
     }
 
+    async openModelUnitWithoutSavingCurrentUnit(unit: FreModelUnit) {
+        LOGGER.log("ModelHandler.openModelUnitWithoutSavingCurrentUnit unit: " + unit.name);
+        editorProgressShown.set(true);
+        this.resetGlobalVariables();
+        this.setCurrentUnit(unit);
+        BoxFactory.clearCaches();
+        this.langEnv.projectionHandler.clear();
+        this.showModelUnit(unit);
+     }
+
     /**
      * Parses the string 'content' to create a model unit. If the parsing is ok,
      * then the unit is added to the current model.
@@ -268,7 +278,7 @@ export class ModelManager {
      * @param unitType
      * @private
      */
-    private async createNewUnit(newName: string, unitType: string) {
+    async createNewUnit(newName: string, unitType: string) {
         LOGGER.log("private createNewUnit called, unitType: " + unitType + " name: " + newName);
         const newUnit = await this.modelStore.createUnit(newName, unitType);
         if (!!newUnit) {
@@ -375,7 +385,7 @@ export class ModelManager {
      * @param newUnit
      * @private
      */
-    private showModelUnit(unit: FreModelUnit) {
+    showModelUnit(unit: FreModelUnit) {
         LOGGER.log("ModelHandler.showUnitAndErrors called, unitName: " + unit?.name);
         if (!!unit) {
             noUnitAvailable.set(false);

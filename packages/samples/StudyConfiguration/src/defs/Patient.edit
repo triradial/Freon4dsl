@@ -52,19 +52,17 @@ PatientInfo {
 
 PatientHistory {
   [
-   ID ${id} 
+   ID ${patient_id} 
    Patient completed: 
    ${patientVisits} 
    Not Available ${patientNotAvailableDates}
   ]
-  trigger = "Patient"
 }
 
 PatientVisit {
   [
       '${visit}' on  ${actualVisitDateAsString replace=DatePicker startDate="30/09/2024"}
   ]
-  trigger = "Visit"
 }
 
 PatientHistoryUnit {

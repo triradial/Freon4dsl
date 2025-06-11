@@ -10,7 +10,7 @@
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
     import { FreNodeReference } from "@freon4dsl/core";
-    import { type StudyConfigurationModel, StudyConfiguration, PatientInfo, PatientHistory, PatientHistoryUnit, PatientNotAvailable } from "@freon4dsl/samples-study-configuration";
+    import { type StudyConfigurationModel, StudyConfiguration, PatientInfo, PatientHistory, PatientVisit, PatientHistoryUnit, PatientNotAvailable } from "@freon4dsl/samples-study-configuration";
     import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
     import { getTimelineChart } from "../services/app/patient-timeline.js";
     import { getTimelineChartHtml } from "../services/app/patient-timeline.js";
@@ -27,8 +27,6 @@
 
     export let id: string;
     let patient: Patient | undefined;
-    let study: Study | undefined;
-    let patientInfo: PatientInfo | undefined;
     let editorLoaded = false;
     let dslEditor: FreEditor;
 
@@ -38,6 +36,12 @@
     let error: string | null = null;
     let container: HTMLElement | null = null;
     let unit: PatientHistoryUnit | undefined;
+    let patientInfo: PatientInfo | undefined;
+
+    function clearPatientHistory(patientHistory: PatientHistory) {
+        patientHistory.patientVisits.length = 0;
+        patientHistory.patientNotAvailableDates = PatientNotAvailable.create({});
+    }
 
     onMount(async () => {
         const fetchedPatient = await dataStore.getPatient(id);
@@ -49,40 +53,39 @@
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         const modelManager = ModelManager.getInstance();
         // Create the PatientHistoryUnit to use for editing
-        await modelManager.createModelUnit("PatientHistoryUnit", "PatientHistoryUnit");
+        await modelManager.createNewUnit("PatientHistoryUnit", "PatientHistoryUnit");
         var patientHistoryUnit =  modelManager.modelStore.getUnitByName("PatientHistoryUnit") as PatientHistoryUnit;
+        // clearPatientHistory(patientHistoryUnit.patientHistory);
+        //TODO: Talk to Graham about changing patientNumber to patient_id or something else that can be initials, etc. 
+        patientHistoryUnit.patientHistory.patient_id = fetchedPatient.patientNumber;
 
         // Get the model data for all the Patients
-        var patientInfo = await modelManager.openModelUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
+        patientInfo = await modelManager.openModelUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
         console.log("PatientInfo:", patientInfo);
         if (patientInfo === null || patientInfo === undefined) {
             //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
-            await modelManager.createModelUnit("PatientInfo", "PatientInfo");
-            patientInfo =  modelManager.modelStore.getUnitByName("PatientInfo") as PatientInfo;
-            await modelManager.setCurrentUnit(patientInfo);
-            await modelManager.saveCurrentUnit();
+            console.log("Creating PatientInfo");
+            await modelManager.modelStore.createUnit("PatientInfo", "PatientInfo");
         } else {
             var found = false;
+            console.log("Found patientInfo with patientHistories: ", patientInfo.patientHistories);
+            console.log("length of patientHistories: ", patientInfo.patientHistories.length);
             patientInfo.patientHistories.forEach(aPatientHistory => {
-                if (!found && aPatientHistory.id === fetchedPatient.id) {
-                    console.log("found patientHistory: ", aPatientHistory);
-                    patientHistoryUnit.patientHistory = aPatientHistory;
+                console.log("aPatientHistory.patient_id: ", aPatientHistory.patient_id);
+                if (!found && aPatientHistory.patient_id === fetchedPatient.patientNumber) {
+                    console.log("found patientHistory for patientNumber: ", fetchedPatient.patientNumber, " patientHistory: ", aPatientHistory);
+                    patientHistoryUnit.patientHistory = aPatientHistory.copy();
                     found = true;
                     console.log("found should be true: ", found)
                 };
             });
-            patientHistoryUnit.patientHistory.id = fetchedPatient.id;
         }
         await modelManager.setCurrentUnit(patientHistoryUnit);
-        await modelManager.saveCurrentUnit();
-        const curUnit = modelManager.getCurrentUnit();
-        console.log("curUnit: ", curUnit);
-        console.log("unit: ", patientHistoryUnit);
-        await modelManager.openModelUnit(fetchedPatient.studyId, "PatientHistoryUnit");
+        await modelManager.openModelUnitWithoutSavingCurrentUnit(patientHistoryUnit);
         unit = patientHistoryUnit;
         setTimeout(() => {
             editorLoaded = true;
-        }, 3000);
+        }, 300);
 
         if (fetchedPatient) {
             patient = fetchedPatient;
@@ -137,12 +140,46 @@
         });
     }
 
-    function handleSaveStudy() {
-        const currentUnit: PatientHistoryUnit = ModelManager.getInstance().getCurrentUnit() as PatientHistoryUnit;
-        if (currentUnit) {
-            currentUnit.patientHistory = unit?.patientHistory as PatientHistory;
+    async function handleSaveStudy() {
+        console.log("saving patientInfo");
+        var patientNumber: string;
+        var study_id: string;
+        const modelManager = ModelManager.getInstance();
+        if (!patient) {
+            console.error("Patient object is undefined");
+            return;
+        } else {
+            patientNumber = patient.patientNumber;
+            study_id = patient.studyId;
         }
-        ModelManager.getInstance().saveCurrentUnit();
+        console.log("patient_id: ", patientNumber);
+        // var patientHistoryUnit = modelManager.getCurrentUnit() as PatientHistoryUnit;
+        var patientHistoryUnit = unit as PatientHistoryUnit;
+        console.log("patientHistoryUnit.patientHistory: ", patientHistoryUnit?.patientHistory);
+        const patientInfo = await modelManager.modelStore.getUnitByName("PatientInfo") as PatientInfo;
+        var found = false;
+        console.log("handleSaveStudy patientInfo.patientHistories: ", patientInfo.patientHistories);
+        console.log("handleSaveStudypatientInfo.patientHistories.length: ", patientInfo.patientHistories.length);
+        patientInfo.patientHistories.forEach(aPatientHistory => {
+            console.log("handleSaveStudyaPatientHistory.patient_id: ", aPatientHistory.patient_id);
+            if (aPatientHistory.patient_id === patientNumber) {
+                found = true;
+                console.log("handleSaveStudy found patientHistory: ", aPatientHistory);
+                aPatientHistory.patientVisits.length = 0;
+                patientHistoryUnit?.patientHistory.patientVisits.forEach(visit => aPatientHistory.patientVisits.push(visit.copy()));
+                aPatientHistory.patientNotAvailableDates = patientHistoryUnit?.patientHistory.patientNotAvailableDates.copy();
+                console.log("set history...");
+            }
+        });
+        if (!found) {
+            console.log("Not found so setting history...");
+            patientInfo.patientHistories.push(patientHistoryUnit?.patientHistory.copy() as PatientHistory);
+        }
+        console.log("before save patientInfo.patientHistories: ", patientInfo.patientHistories);
+        await modelManager.modelStore.saveUnit(patientInfo);
+        console.log("after save patientHistoryUnit: ", patientHistoryUnit);
+        unit = patientHistoryUnit;
+        await modelManager.openModelUnitWithoutSavingCurrentUnit(patientHistoryUnit);
         console.log("PatientInfo.Saved");
     }
 

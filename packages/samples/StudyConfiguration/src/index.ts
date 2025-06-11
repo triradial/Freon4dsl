@@ -11,6 +11,7 @@ export {
     PatientHistory,
     PatientHistoryUnit,
     PatientNotAvailable,
+    PatientVisit,
 } from "./language/gen/index.js";
 export { extendToSupportSmartDuplication } from "./custom/extensions/ExtensionLib.js";
 export { Simulator } from "./custom/timeline/Simulator.js";
