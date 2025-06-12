@@ -23,7 +23,7 @@
     import { Toolbar, ToolbarButton } from "flowbite-svelte";
     import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
 
-    import { getChartWithPatientHistory } from "../services/utils.js";
+    import { getChartWithPatientHistory, getMonthFromString } from "../services/utils.js";
 
     export let id: string;
     let patient: Patient | undefined;
@@ -49,37 +49,32 @@
             console.error(`Patient with id ${id} not found`);
             return;
         }
-        console.log("fetchedPatient:", fetchedPatient);
+        patient = fetchedPatient;
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         const modelManager = ModelManager.getInstance();
-        // Create the PatientHistoryUnit to use for editing
+
+        // Create the PatientHistoryUnit to use just for editing of one patient at a time
         await modelManager.createNewUnit("PatientHistoryUnit", "PatientHistoryUnit");
         var patientHistoryUnit =  modelManager.modelStore.getUnitByName("PatientHistoryUnit") as PatientHistoryUnit;
-        // clearPatientHistory(patientHistoryUnit.patientHistory);
+        clearPatientHistory(patientHistoryUnit.patientHistory);
         //TODO: Talk to Graham about changing patientNumber to patient_id or something else that can be initials, etc. 
         patientHistoryUnit.patientHistory.patient_id = fetchedPatient.patientNumber;
-
         // Get the model data for all the Patients
         patientInfo = await modelManager.openModelUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
-        console.log("PatientInfo:", patientInfo);
         if (patientInfo === null || patientInfo === undefined) {
             //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
-            console.log("Creating PatientInfo");
             await modelManager.modelStore.createUnit("PatientInfo", "PatientInfo");
         } else {
+            // The PatientInfo already exists, we need to setup the patientHistory for editing
             var found = false;
-            console.log("Found patientInfo with patientHistories: ", patientInfo.patientHistories);
-            console.log("length of patientHistories: ", patientInfo.patientHistories.length);
             patientInfo.patientHistories.forEach(aPatientHistory => {
-                console.log("aPatientHistory.patient_id: ", aPatientHistory.patient_id);
                 if (!found && aPatientHistory.patient_id === fetchedPatient.patientNumber) {
-                    console.log("found patientHistory for patientNumber: ", fetchedPatient.patientNumber, " patientHistory: ", aPatientHistory);
                     patientHistoryUnit.patientHistory = aPatientHistory.copy();
                     found = true;
-                    console.log("found should be true: ", found)
                 };
             });
         }
+        // Display the patientHistory for editing
         await modelManager.setCurrentUnit(patientHistoryUnit);
         await modelManager.openModelUnitWithoutSavingCurrentUnit(patientHistoryUnit);
         unit = patientHistoryUnit;
@@ -88,13 +83,50 @@
         }, 300);
 
         if (fetchedPatient) {
-            patient = fetchedPatient;
             // await loadChart(patient.studyId);
         } else {
             console.error(`Patient with id ${id} not found`);
         }
     });
 
+
+    async function getChartWithPatientHistory2() {
+        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+        const unit = model.configuration;
+
+        const fetchedPatient = await dataStore.getPatient(id);
+        var patientInfo = await ModelManager.getInstance().openModelUnit(fetchedPatient!.studyId, "PatientInfo") as PatientInfo;
+        let timeline = getTimeline(unit) as Timeline;
+
+        var found = false;
+        var patientHistory: PatientHistory = PatientHistory.create({});
+        patientInfo.patientHistories.forEach(aPatientHistory => {
+            if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
+                aPatientHistory.patientVisits.forEach(visit => {
+                    console.log("visit: ", visit);
+                    console.log("visit.actualVisitDateAsString: ", visit.actualVisitDateAsString);
+                    const actualVisitDate = new Date(visit.actualVisitDateAsString);
+                    console.log("actualVisitDate as Date: ", actualVisitDate);
+                    visit.actualVisitDate.day = actualVisitDate.getDate().toString();
+                    console.log("visit.actualVisitDate.day: ", visit.actualVisitDate.day);
+                    console.log("actualVisitDate.toLocaleString('en-US', { month: 'long' }): ", actualVisitDate.toLocaleString('en-US', { month: 'long' }));
+                    visit.actualVisitDate.month = getMonthFromString(actualVisitDate.toLocaleString('en-US', { month: 'long' }));
+                    console.log("visit.actualVisitDate.month: ", visit.actualVisitDate.month);
+                    visit.actualVisitDate.year = actualVisitDate.getFullYear().toString();
+                    console.log("visit.actualVisitDate.year: ", visit.actualVisitDate.year);
+                    patientHistory.patientVisits.push(visit.copy());
+                });
+                patientHistory.patientNotAvailableDates = aPatientHistory.patientNotAvailableDates.copy();
+                found = true;
+            };
+        });
+        timeline.setPatientHistory(patientHistory!);
+        timeline.addPatientEvents(patientHistory!);
+        const rtObject = getTimelineChartHtml(timeline) as RtString;
+        return rtObject.asString();
+   }
+
+ 
     async function loadChart(id: string) {
         isLoading = true;
         showChart = false;
@@ -102,7 +134,7 @@
         try {
             const startTime = Date.now();
             console.log("calling getChartWithPatientHistory");
-            chartHtml = await getChartWithPatientHistory(id);
+            chartHtml = await getChartWithPatientHistory2();
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
             if (container) {
                 await loadChartData();
@@ -141,46 +173,28 @@
     }
 
     async function handleSaveStudy() {
-        console.log("saving patientInfo");
-        var patientNumber: string;
-        var study_id: string;
         const modelManager = ModelManager.getInstance();
-        if (!patient) {
-            console.error("Patient object is undefined");
-            return;
-        } else {
-            patientNumber = patient.patientNumber;
-            study_id = patient.studyId;
-        }
-        console.log("patient_id: ", patientNumber);
-        // var patientHistoryUnit = modelManager.getCurrentUnit() as PatientHistoryUnit;
-        var patientHistoryUnit = unit as PatientHistoryUnit;
-        console.log("patientHistoryUnit.patientHistory: ", patientHistoryUnit?.patientHistory);
+        var patientNumber = patient!.patientNumber;
         const patientInfo = await modelManager.modelStore.getUnitByName("PatientInfo") as PatientInfo;
+        
         var found = false;
-        console.log("handleSaveStudy patientInfo.patientHistories: ", patientInfo.patientHistories);
-        console.log("handleSaveStudypatientInfo.patientHistories.length: ", patientInfo.patientHistories.length);
+        // If the patientHistory for this patient was previously entered we need to replace it with the current value
         patientInfo.patientHistories.forEach(aPatientHistory => {
-            console.log("handleSaveStudyaPatientHistory.patient_id: ", aPatientHistory.patient_id);
             if (aPatientHistory.patient_id === patientNumber) {
                 found = true;
-                console.log("handleSaveStudy found patientHistory: ", aPatientHistory);
                 aPatientHistory.patientVisits.length = 0;
-                patientHistoryUnit?.patientHistory.patientVisits.forEach(visit => aPatientHistory.patientVisits.push(visit.copy()));
-                aPatientHistory.patientNotAvailableDates = patientHistoryUnit?.patientHistory.patientNotAvailableDates.copy();
-                console.log("set history...");
+                unit?.patientHistory.patientVisits.forEach(visit => aPatientHistory.patientVisits.push(visit.copy()));
+                aPatientHistory.patientNotAvailableDates = unit!.patientHistory.patientNotAvailableDates.copy();
             }
         });
+        // If the patientHistory for this patient was not previously entered we need to add it to the list of all patientHistories in the PatientInfo
         if (!found) {
-            console.log("Not found so setting history...");
-            patientInfo.patientHistories.push(patientHistoryUnit?.patientHistory.copy() as PatientHistory);
+            patientInfo.patientHistories.push(unit?.patientHistory.copy() as PatientHistory);
         }
-        console.log("before save patientInfo.patientHistories: ", patientInfo.patientHistories);
+        // Saving all the patientHistories stored in the PatientInfo even though we are only editing one patient at a time
         await modelManager.modelStore.saveUnit(patientInfo);
-        console.log("after save patientHistoryUnit: ", patientHistoryUnit);
-        unit = patientHistoryUnit;
-        await modelManager.openModelUnitWithoutSavingCurrentUnit(patientHistoryUnit);
-        console.log("PatientInfo.Saved");
+        // Force the editor to reload the patientHistoryUnit
+        await modelManager.openModelUnitWithoutSavingCurrentUnit(unit!);
     }
 
     function handleUndoAction() {
@@ -227,15 +241,9 @@
 
         <div class="crc-content">
             <Tabs tabStyle="pill" class="crc-tab">
-                <TabItem title="Visits" >
+                <TabItem open title="Patient Info">
                     <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Visits
-                    </div>
-                    <div class="crc-grid"></div>
-                </TabItem>
-                <TabItem open title="Unavailable">
-                    <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Unavailable
+                        <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Patient Info
                     </div>
                     {#if editorLoaded}
                         <Toolbar class="toolbar">

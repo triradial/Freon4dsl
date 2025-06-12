@@ -57,7 +57,7 @@ export function getSVGIcon(iconName: string): string {
     return svg;
 }
 
-function getMonthFromString(month: string): Month {
+export function getMonthFromString(month: string): Month {
     switch (month.toLowerCase()) {
         case "january":
             return Month.January;

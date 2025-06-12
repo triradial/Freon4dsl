@@ -69,9 +69,7 @@
                },
                "children": [
                   "ID-137",
-                  "ID-139",
-                  "ID-141",
-                  "ID-148"
+                  "ID-139"
                ]
             },
             {
@@ -81,7 +79,7 @@
                   "key": "-default-key-PatientHistory-patientNotAvailableDates"
                },
                "children": [
-                  "ID-150"
+                  "ID-141"
                ]
             }
          ],
@@ -171,7 +169,7 @@
                   "version": "2023.1",
                   "key": "-default-key-VisitDate-day"
                },
-               "value": ""
+               "value": "NaN"
             },
             {
                "property": {
@@ -290,202 +288,6 @@
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-PatientVisit"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-visitInstanceNumber"
-               },
-               "value": "1"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-actualVisitDateAsString"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-actualVisitDate"
-               },
-               "children": [
-                  "ID-147"
-               ]
-            }
-         ],
-         "references": [
-            {
-               "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-visit"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "V3",
-                     "reference": "ID-221"
-                  }
-               ]
-            },
-            {
-               "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-status"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "completed",
-                     "reference": "ID-1"
-                  }
-               ]
-            }
-         ],
-         "annotations": [],
-         "parent": "ID-103"
-      },
-      {
-         "id": "ID-147",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-VisitDate"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-VisitDate-day"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-VisitDate-year"
-               },
-               "value": "2025"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-141"
-      },
-      {
-         "id": "ID-148",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-PatientVisit"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-visitInstanceNumber"
-               },
-               "value": "1"
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-actualVisitDateAsString"
-               },
-               "value": ""
-            }
-         ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-actualVisitDate"
-               },
-               "children": [
-                  "ID-149"
-               ]
-            }
-         ],
-         "references": [
-            {
-               "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-visit"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "V4",
-                     "reference": "ID-234"
-                  }
-               ]
-            },
-            {
-               "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-PatientVisit-status"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "completed",
-                     "reference": "ID-1"
-                  }
-               ]
-            }
-         ],
-         "annotations": [],
-         "parent": "ID-103"
-      },
-      {
-         "id": "ID-149",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-default-key-VisitDate"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-VisitDate-day"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-default-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-default-key-VisitDate-year"
-               },
-               "value": "2025"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-148"
-      },
-      {
-         "id": "ID-150",
-         "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
-            "version": "2023.1",
             "key": "-default-key-PatientNotAvailable"
          },
          "properties": [],
@@ -497,7 +299,7 @@
                   "key": "-default-key-PatientNotAvailable-dates"
                },
                "children": [
-                  "ID-151"
+                  "ID-147"
                ]
             }
          ],
@@ -506,7 +308,7 @@
          "parent": "ID-103"
       },
       {
-         "id": "ID-151",
+         "id": "ID-147",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -521,16 +323,16 @@
                   "key": "-default-key-DateRange-startDate"
                },
                "children": [
-                  "ID-152"
+                  "ID-148"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-150"
+         "parent": "ID-141"
       },
       {
-         "id": "ID-152",
+         "id": "ID-148",
          "classifier": {
             "language": "-default-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -565,7 +367,7 @@
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-151"
+         "parent": "ID-147"
       }
    ]
 }
