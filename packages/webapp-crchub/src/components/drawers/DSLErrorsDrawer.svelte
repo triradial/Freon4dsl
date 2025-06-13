@@ -1,18 +1,17 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import type { FreError } from "@freon4dsl/core";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { onMount } from "svelte";
-    import { Button, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
-    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
-    import { faSquareUpRight } from "@fortawesome/free-solid-svg-icons";
+    import type { FreError } from "@freon4dsl/core";
+    // @ts-ignore
+    import { ArrowUpRight as IconArrowUpRight, X as IconX } from '@lucide/svelte';
 
     const dispatch = createEventDispatcher();
     let modelErrors = $state<FreError[]>([]);
 
     onMount(() => {
         modelErrors = ModelManager.getInstance().runValidator();
-        console.log("DSLErrorsDrawer errors", modelErrors.length);
+        console.log("[DSLErrorsDrawer] onMount modelErrors:", modelErrors.length);
     });
 
     function closeDrawer() {
@@ -27,6 +26,7 @@
 
     let selected: number = 0;
     $effect(() => {
+        console.log("[DSLErrorsDrawer] $effect handleClick, selected:", selected);
         handleClick(selected);
     });
 
@@ -44,23 +44,27 @@
 </script>
 
 <div class="drawer-content-area">
-    <Table striped={true} class="error-drawer">
-        <TableHead class="error-drawer-row">
-            <TableHeadCell class="error-drawer-head">Message</TableHeadCell>
-            <TableHeadCell class="error-drawer-head">Severity</TableHeadCell>
-        </TableHead>
-        <TableBody>
-            {#each modelErrors as error, index}
-                <TableBodyRow class="error-drawer-row">
-                    <TableBodyCell class="error-drawer-cell">
-                        <Button color="dark" size="xs" class="error-drawer-button" on:click={() => handleClick(index)}>
-                            <FontAwesomeIcon icon={faSquareUpRight} />
-                        </Button>
-                        {error.message}
-                    </TableBodyCell>
-                    <TableBodyCell class="error-drawer-cell">{error.severity}</TableBodyCell>
-                </TableBodyRow>
-            {/each}
-        </TableBody>
-    </Table>
+    <div class="table-wrap">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th class="bg-surface-500-900">Message</th>
+                    <th class="bg-surface-500-900">Severity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each modelErrors as error, index}
+                    <tr class="hover:bg-surface-500-900/50">
+                        <td>
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="icon-button btn-sm" onclick={() => handleClick(index)}><IconArrowUpRight /></button>
+                                <span>{error.message}</span>
+                            </div>
+                        </td>
+                        <td>{error.severity}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    </div>
 </div>

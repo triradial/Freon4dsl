@@ -1,65 +1,60 @@
 <script lang="ts">
-    import { Drawer, Button } from "flowbite-svelte";
-    import StudyMutation from "../mutations/StudyMutation.svelte";
-    import PatientMutation from "../mutations/PatientMutation.svelte";
-    import { drawerStore, closeDrawer, saveObject } from "../../services/stores/object-drawer-store.js";
-    import { sineIn } from "svelte/easing";
-    import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
-    import { faTimes } from "@fortawesome/free-solid-svg-icons";
+    import { Popover } from '@skeletonlabs/skeleton-svelte';
+    import { objectDrawerStore, closeObjectDrawer } from '../../services/stores/object-drawer-store.js';
+    import StudyMutation from '../mutations/StudyMutation.svelte';
+    import PatientMutation from '../mutations/PatientMutation.svelte';
+    import IconX from '@lucide/svelte/icons/x';
 
-    let activeDrawerInstance = $state<any>(null);
-    let currentInstanceId = $state<string | null>(null);
-
-    const title = $derived($drawerStore.action === "add" ? `Add ${toProperCase($drawerStore.objectType ?? "")}` : `Edit ${toProperCase($drawerStore.objectType ?? "")}`);
-
-    $effect(() => {
-        if ($drawerStore.instanceId !== currentInstanceId) {
-            currentInstanceId = $drawerStore.instanceId;
-            if ($drawerStore.open) {
-                activeDrawerInstance = $drawerStore.objectType === "study" ? StudyMutation : PatientMutation;
-            } else {
-                activeDrawerInstance = null;
-            }
-        }
-    });
-
-    let transitionParams = {
-        x: 320,
-        duration: 200,
-        easing: sineIn,
-    };
-
-    function handleSave(event: CustomEvent) {
-        saveObject(event.detail);
-    }
+    let openState = $derived($objectDrawerStore.open);
+    let type = $derived($objectDrawerStore.type);
+    let action = $derived($objectDrawerStore.action);
+    let data = $derived($objectDrawerStore.data);
 
     function handleClose() {
-        closeDrawer();
-    }
-
-    function toProperCase(str: string) {
-        return str.replace(/\w\S*/g, function (txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        });
+        console.log('[ObjectDrawerSystem] handleClose called');
+        closeObjectDrawer();
     }
 </script>
 
-<Drawer id="generic-drawer" class="object-drawer" transitionType="fly" {transitionParams} placement="left" backdrop={true} hidden={!$drawerStore.open}>
-    <div class="drawer-header">
-        <div class="drawer-title-container">
-            <h5 class="text-lg font-bold">{title}</h5>
-        </div>
-        <Button class="drawer-header-button" on:click={handleClose}>
-            <FontAwesomeIcon icon={faTimes} />
-        </Button>
-    </div>
-    {#if activeDrawerInstance}
-        {#key activeDrawerInstance}
-            {#if $drawerStore.objectType === "study"}
-                <StudyMutation study={$drawerStore.object} isEditing={true} on:save={handleSave} on:close={handleClose} />
-            {:else}
-                <PatientMutation patient={$drawerStore.object} isEditing={true} on:save={handleSave} on:close={handleClose} />
+<Popover
+    open={openState}
+    onOpenChange={(e) => e.open ? null : handleClose()}
+    positioning={{
+        placement: 'left',
+        strategy: 'fixed',
+        offset: { mainAxis: 0, crossAxis: 0 },
+        gutter: 0
+    }}
+    zIndex="50"
+    contentBackground="object-drawer"
+    contentBase="fixed inset-y-0 left-0 w-full max-w-md shadow-xl transition-transform duration-200 transform-gpu translate-x-0"
+    triggerBase=""
+>
+    {#snippet content()}
+        <header class="drawer-header">
+            <div class="drawer-title-container">
+            <h2>
+                {action === 'add' ? 'Add' : 'Edit'} {type === 'study' ? 'Study' : type === 'patient' ? 'Patient' : ''}
+            </h2>         
+            </div>
+            <button class="icon-button drawer-header-button" onclick={handleClose}><IconX size="16" /></button>
+        </header>
+        <div class="drawer-content">
+            {#if type === 'study'}
+                <StudyMutation 
+                    study={data} 
+                    {action} 
+                    onsave={(study) => { handleClose(); }} 
+                    onclose={() => { handleClose(); }} 
+                />
+            {:else if type === 'patient'}
+                <PatientMutation 
+                    patient={data} 
+                    {action} 
+                    onsave={(patient) => { handleClose(); }} 
+                    onclose={() => { handleClose(); }} 
+                />
             {/if}
-        {/key}
-    {/if}
-</Drawer>
+        </div>
+    {/snippet}
+</Popover>

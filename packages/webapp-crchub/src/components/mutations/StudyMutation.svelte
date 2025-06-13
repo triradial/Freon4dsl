@@ -1,47 +1,55 @@
 <script lang="ts">
-    import { Card, Button, Input, Select, Textarea, Helper } from "flowbite-svelte";
-    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
-    import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
     import { getStatusColor } from "../../services/utils.js";
     import { type Study } from "../../services/data/data-store.js";
-    import { createEventDispatcher } from "svelte";
+    // @ts-ignore
+    import { Save as IconSave, X as IconX } from '@lucide/svelte';
 
-    const { study, action } = $props<{
+    const { study, action, onsave, onclose } = $props<{
         study: Study;
         action: "add" | "edit";
+        onsave?: (study: Study) => void;
+        onclose?: () => void;
     }>();
 
     let mutatedStudy = { ...study };
     let rows: number = 6;
-    const dispatch = createEventDispatcher();
 
     let statusColor = $derived(getStatusColor(mutatedStudy.status));
     
-    function getInputClass(field: keyof typeof errors) {
+    function getErrorState(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";
     }
 
     $effect(() => {
+        console.log("[StudyMutation] $effect action:", action, "study:", study);
         if (action === "edit" && study) {
             validateAllFields();
         }
     });
 
-    let errors = {
+    const errors = $state({
         name: "",
-    };
-    let errorState = { ...errors };
+    });
+    const errorState = $state({ ...errors });
     let hasErrors = $derived(Object.values(errorState).some((error) => error !== ""));
+
+    $effect(() => {
+        validateAllFields();
+        console.log("[StudyMutation] errors:", errors);
+        console.log("[StudyMutation] errorState:", errorState);
+    });
 
     function handleSave() {
         validateAllFields();
         if (Object.values(errorState).every((error) => error === "")) {
-            dispatch("save", mutatedStudy);
+            console.log("[StudyMutation] calling onsave prop", mutatedStudy);
+            onsave?.(mutatedStudy);
         }
     }
 
     function handleClose() {
-        dispatch("close");
+        console.log("[StudyMutation] calling onclose prop");
+        onclose?.();
     }
 
     function handleInput(field: keyof typeof errors) {
@@ -54,9 +62,16 @@
     function validateAllFields() {
         (Object.keys(mutatedStudy) as Array<keyof typeof errors>).forEach((key) => {
             if (key in errors) {
-                validateField(key, mutatedStudy[key]);
+                if (key === "name" && !mutatedStudy[key].trim()) {
+                    errors[key] = "Study name is required";
+                } else {
+                    errors[key] = "";
+                }
+                errorState[key] = errors[key];
             }
         });
+        console.log("[StudyMutation] After validateAllFields errors:", errors);
+        console.log("[StudyMutation] After validateAllFields errorState:", errorState);
     }
 
     function validateField(field: keyof typeof errors, value: string) {
@@ -65,59 +80,48 @@
         } else {
             errors[field] = "";
         }
-        errorState = { ...errors }; // Update reactive error state
+        errorState[field] = errors[field];
+        console.log(`[StudyMutation] validateField '${field}':`, errors[field]);
+        console.log("[StudyMutation] errors after validateField:", errors);
+        console.log("[StudyMutation] errorState after validateField:", errorState);
     }
 </script>
 
-<Card class="crc-mutation-area max-w-sm">
-    <div class="space-y-2">
+<div class="mutation-area max-w-sm">
+    <div class="space-y-4">
         <div>
-            <h4 class="card-label-text">Name</h4>
-            <Input type="text" bind:value={mutatedStudy.name} on:input={handleInput("name")} class="crc-field {getInputClass('name')}" />
+            <div class="small-label-text">Name {#if errors.name}<span class="text-red-500">*</span>{/if}</div>        
+            <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} />
         </div>
         <div>
-            <h4 class="card-label-text">Title</h4>
-            <Textarea class="crc-field min-h-[5rem]" {rows} bind:value={mutatedStudy.title} />
+            <div class="small-label-text">Title</div>
+            <textarea class="textarea-field min-h-[5rem]" rows={rows} bind:value={mutatedStudy.title}></textarea>
         </div>
         <div>
-            <h4 class="card-label-text">Status</h4>
-            <Select class="crc-field" bind:value={mutatedStudy.status}>
+            <div class="small-label-text">Status</div>
+            <select class="select-field" bind:value={mutatedStudy.status}>
                 <option value="Planning">Planning</option>
                 <option value="Active">Active</option>
                 <option value="Completed">Completed</option>
                 <option value="Suspended">Suspended</option>
                 <option value="Withdrawn">Withdrawn</option>
-            </Select>
+            </select>
         </div>
         <div>
-            <h4 class="card-label-text">Phase</h4>
-            <Input type="text" bind:value={mutatedStudy.phase} class="crc-field" />
+            <div class="small-label-text">Phase</div>
+            <input class="input-field" type="text" bind:value={mutatedStudy.phase}  />
         </div>
         <div>
-            <h4 class="card-label-text">Therapeutic Area</h4>
-            <Input type="text" bind:value={mutatedStudy.therapeuticArea} class="crc-field" />
+            <div class="small-label-text">Therapeutic Area</div>
+            <input class="input-field" type="text" bind:value={mutatedStudy.therapeuticArea}  />
         </div>
         <div>
-            <h4 class="card-label-text text-gray-700">Current Protocol</h4>
-            <Input type="text" bind:value={mutatedStudy.currentProtocol} class="crc-field" />
+            <div class="small-label-text">Current Protocol</div>
+            <input class="input-field" type="text" bind:value={mutatedStudy.currentProtocol}  />
         </div>
     </div>
-    <div class="flex items-center justify-center mt-4">
-        <Button size="xs" color="primary" class="mr-2" on:click={handleSave} disabled={hasErrors}>
-            <FontAwesomeIcon icon={faSave} class="mr-2" />
-            Save
-        </Button>
-        <Button size="xs" color="light" on:click={handleClose}>
-            <FontAwesomeIcon icon={faTimes} class="mr-2" />
-            Cancel
-        </Button>
+    <div class="flex items-center justify-center mt-8">
+        <button class="standard-button primary" onclick={handleSave} disabled={hasErrors}><IconSave size="16" />Save</button>
+        <button class="standard-button secondary" onclick={handleClose}><IconX size="16" />Cancel</button>
     </div>
-</Card>
-
-<style>
-    :global(.card) {
-        border-radius: 0;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-    }
-</style>
+</div>

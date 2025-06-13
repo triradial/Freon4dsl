@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { Card, Button, Input, Select, Helper } from "flowbite-svelte";
-    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
-    import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
     import { type Study, type Patient } from "../../services/data/data-store.js";
     import { createEventDispatcher } from "svelte";
+    // @ts-ignore
+    import { Save as IconSave, X as IconX } from '@lucide/svelte';
 
     const { study, patient, action } = $props<{
         study: Study;
@@ -12,19 +11,24 @@
     }>();
 
     let mutatedPatient = { ...patient };
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{
+        save: Patient;
+        close: void;
+    }>();
 
     function getInputClass(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";
     }
 
     $effect(() => {
+        console.log("[PatientMutation] $effect edit:", action, patient);
         if (action === "edit" && patient) {
             validateAllFields();
         }
     });
 
     $effect(() => {
+        console.log("[PatientMutation] $effect add:", action, patient);
         if (action === "add" && patient) {
             mutatedPatient.studyId = study.id;
             mutatedPatient.study = study.name;
@@ -73,50 +77,36 @@
     }
 </script>
 
-<Card class="crc-mutation-area max-w-sm">
+<div class="card crc-mutation-area max-w-sm">
     <div class="space-y-2">
         <div>
             <h4 class="card-label-text">Patient Number</h4>
-            <Input
+            <input
                 type="text"
                 bind:value={mutatedPatient.patientNumber}
-                on:input={handleInput("patientNumber")}
+                oninput={handleInput("patientNumber")}
                 class="crc-field {getInputClass('patientNumber')}"
             />
         </div>
         <div>
             <h4 class="card-label-text">Initials</h4>
-            <Input type="text" bind:value={mutatedPatient.initials} class="crc-field" />
+            <input type="text" bind:value={mutatedPatient.initials} class="crc-field" />
         </div>
         <div>
             <h4 class="card-label-text">YOB</h4>
-            <Input type="number" bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} class="crc-field" />
+            <input type="number" bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} class="crc-field" />
         </div>
         <div>
             <h4 class="card-label-text">Gender</h4>
-            <Select bind:value={mutatedPatient.gender} class="crc-field">
+            <select bind:value={mutatedPatient.gender} class="select crc-field">
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
-            </Select>
+            </select>
         </div>
     </div>
     <div class="flex items-center justify-center mt-4">
-        <Button size="xs" color="primary" class="mr-2" on:click={saveChanges} disabled={hasErrors}>
-            <FontAwesomeIcon icon={faSave} class="mr-2" />
-            Save
-        </Button>
-        <Button size="xs" color="light" on:click={cancelEdit}>
-            <FontAwesomeIcon icon={faTimes} class="mr-2" />
-            Cancel
-        </Button>
+        <button class="btn btn-sm preset-filled primary-button mr-2" onclick={saveChanges} disabled={hasErrors}><IconSave />Save</button>
+        <button class="btn btn-sm preset-filled secondary-button" onclick={cancelEdit}><IconX />Cancel</button>
     </div>
-</Card>
-
-<style>
-    :global(.card) {
-        border-radius: 0;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-    }
-</style>
+</div>

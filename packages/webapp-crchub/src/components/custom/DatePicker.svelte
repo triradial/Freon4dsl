@@ -66,8 +66,10 @@
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+        console.log("[DatePicker] onMount value:", value);
     });
     $effect(() => {
+        console.log("[DatePicker] $effect setFocus/refresh assignment");
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });

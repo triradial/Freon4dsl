@@ -18,9 +18,10 @@ type DrawerStore = {
     activeDrawer: string | null;
 };
 
-export const drawerStore = writable<DrawerStore>({
+export const drawerStore = writable<DrawerStore & { drawerOrder: string[] }>({
     drawers: {},
-    activeDrawer: null
+    activeDrawer: null,
+    drawerOrder: []
 });
 
 export function setDrawerProps(drawerKey: string, props: Record<string, any>) {
@@ -37,17 +38,24 @@ export function setDrawerProps(drawerKey: string, props: Record<string, any>) {
 }
 
 export function addDrawer(drawer: Omit<Drawer, 'width' | 'isVisible'>) {
-    drawerStore.update(store => ({
-        ...store,
-        drawers: {
-            ...store.drawers,
-            [drawer.key]: {
-                ...drawer,
-                width: drawer.defaultWidth,
-                isVisible: false
-            }
-        }
-    }));
+    drawerStore.update(store => {
+        // Only add to order if not present
+        const newOrder = store.drawerOrder.includes(drawer.key)
+            ? store.drawerOrder
+            : [...store.drawerOrder, drawer.key];
+        return {
+            ...store,
+            drawers: {
+                ...store.drawers,
+                [drawer.key]: {
+                    ...drawer,
+                    width: drawer.defaultWidth,
+                    isVisible: false
+                }
+            },
+            drawerOrder: newOrder
+        };
+    });
 }
 
 export function setDrawerWidth(drawerKey: string, width: number) {
@@ -63,6 +71,13 @@ export function setDrawerWidth(drawerKey: string, width: number) {
 export function getDrawerWidth(drawerKey: string): number {
     const store = get(drawerStore);
     return store.drawers[drawerKey]?.width ?? store.drawers[drawerKey]?.defaultWidth ?? 400;
+}
+
+export function setAllDrawersVisibility(isVisible: boolean) {
+    drawerStore.update(store => ({
+        ...store,
+        drawers: Object.fromEntries(Object.entries(store.drawers).map(([key, drawer]) => [key, { ...drawer, isVisible }]))
+    }));
 }
 
 export function setDrawerVisibility(drawerKey: string, isVisible: boolean) {
@@ -97,4 +112,8 @@ export function getDrawer(drawerKey: string): Drawer | undefined {
 export function getDrawerComponent(drawerKey: string): any | undefined {
     const store = get(drawerStore);
     return store.drawers[drawerKey]?.component;
+}
+
+export function getDrawerOrder(): string[] {
+    return get(drawerStore).drawerOrder;
 }

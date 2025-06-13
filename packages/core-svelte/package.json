@@ -15,39 +15,38 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && npm run prepack",
+    "build": "npm run clean && vite build",
     "build:verbose": "vite build --debug --logLevel debug && npm run prepack",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "prepack": "svelte-kit sync && svelte-package && publint",
-    "check": "svelte-kit sync && svelte-check --tsconfig tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig tsconfig.json --watch",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",
     "build-dev": "tsc --noEmit && vite build && npm run prepack",
-    "clean": "rm -rf node_modules/ && rm -rf dist/",
+    "clean": "rm -rf dist",
     "build-release": "npm run build",
     "errors-only": "svelte-check --threshold error --tsconfig ./tsconfig.json",
     "install-local": "npm install --registry http://localhost:4873",
     "republish-local": "npm run unpublish-local && npm run publish-local",
     "release": "npm publish",
     "publish-local": "npm publish --registry http://localhost:4873",
-    "unpublish-local": "npm unpublish --force --registry http://localhost:4873"
+    "unpublish-local": "npm unpublish --force --registry http://localhost:4873",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "files": [
-    "dist",
-    "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
+    "dist"
   ],
   "sideEffects": [
     "**/*.css"
   ],
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
-      "svelte": "./dist/index.js",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "default": "./dist/index.js"
+      "import": "./dist/index.js"
     }
   },
   "peerDependencies": {
@@ -55,13 +54,12 @@
   },
   "devDependencies": {
     "@material/web": "^2.2.0",
-    "@sveltejs/adapter-auto": "^3.0.0",
+    "@skeletonlabs/skeleton": "^3.1.3",
+    "@skeletonlabs/skeleton-svelte": "^1.2.3",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/package": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
-    "@tailwindcss/postcss": "^4.1.8",
     "autoprefixer": "^10.4.20",
-    "flowbite": "^2.3.0",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
     "prettier-plugin-svelte": "^3.3.3",
@@ -71,21 +69,21 @@
     "svelte-check": "^3.6.0",
     "typescript": "^5.0.0",
     "vite": "^6.0.0",
-    "vitest": "^2.1.4",
-    "svelte-preprocess": "^6.0.2"
+    "vitest": "^2.1.4"
   },
   "dependencies": {
+    "@lucide/svelte": "^0.513.0",
     "@freon4dsl/core": "1.1.0-beta.3",
     "@lionweb/repository-client": "0.2.2",
     "@lionweb/validation": "0.6.2",
     "@material/slider": "^14.0.0",
     "@material/switch": "^14.0.0",
     "@material/web": "^2.2.0",
+    "bits-ui": "^2.4.1",
     "debug": "^4.3.4",
     "lodash": "^4.17.21",
     "mobx": "^6.12.3",
     "reflect-metadata": "^0.2.2",
-    "tslib": "^2.6.3",
-    "flowbite-svelte": "^1.5.3"
+    "tslib": "^2.6.3"
   }
 }

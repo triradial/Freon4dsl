@@ -18,6 +18,7 @@
     };
 
     $effect(() => {
+        console.log("[ExpandCollapseWrapperComponent] $effect box.children:", box?.children);
         msg = "Expand/Collapse Wrapper children:";
         if (box?.children && Array.isArray(box.children)) {
             let verticalBox = box.children[0];
@@ -51,9 +52,11 @@
         });
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+        console.log("[ExpandCollapseWrapperComponent] onMount verticalBox:", verticalBox);
     });
 
     $effect(() => {
+        console.log("[ExpandCollapseWrapperComponent] $effect setFocus/refresh assignment");
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });

@@ -2110,3 +2110,118 @@ input:checked + .toggle-bg {
   margin-right: calc(1rem * var(--tw-space-x-reverse));
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }
+
+/* Tailwind 4 */
+
+/* Components: Buttons */
+
+button.btn {
+	border-radius: var(--radius-base);
+
+	/* Icon Spacing */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 0.25rem;
+
+	/* Typography */
+	text-decoration-line: none;
+	white-space: nowrap;
+
+	/* Size */
+	font-size: var(--text-base);
+	line-height: var(--text-base--line-height);
+	padding-block: 0.25rem;
+	padding-inline: 1rem;
+
+	/* Transitions */
+	transition-property: all;
+	transition-timing-function: var(--default-transition-timing-function);
+	transition-duration: var(--default-transition-duration);
+
+	hover {
+		filter: brightness(125%);
+		dark {
+			filter: brightness(75%);
+		}
+	}
+}
+
+/* button.icon-button {
+	box-sizing: content-box;
+	border-radius: var(--radius-base);
+
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+
+	text-decoration-line: none;
+	white-space: nowrap;
+
+	font-size: var(--text-base);
+	width: var(--text-base);
+	height: var(--text-base);
+	padding: 0.5rem;
+
+	hover {
+		filter: brightness(125%);
+		dark {
+			filter: brightness(75%);
+		}
+	}
+} */
+
+/* Sizes --- */
+
+/* Button */
+/* button.btn-sm {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	padding-block: 0.25rem;
+	padding-inline: 0.75rem;
+} */
+button.btn-base {
+	font-size: var(--text-base);
+	line-height: var(--text-base--line-height);
+	padding-block: 0.25rem;
+	padding-inline: 1rem;
+}
+button.btn-lg {
+	font-size: var(--text-xl);
+	line-height: var(--text-xl--line-height);
+	padding-block: 0.5rem;
+	padding-inline: 1.25rem;
+}
+
+/* Button Icon */
+button.icon-button-sm {
+	font-size: var(--text-xs);
+	width: var(--text-xs);
+	height: var(--text-xs);
+	padding: 0.375rem;
+}
+button.icon-button-base {
+	font-size: var(--text-base);
+	width: var(--text-base);
+	height: var(--text-base);
+	padding: 0.5rem;
+}
+button.icon-button-lg {
+	font-size: var(--text-xl);
+	width: var(--text-xl);
+	height: var(--text-xl);
+	padding: 0.75rem;
+}
+
+/* Group --- */
+
+button.btn-group {
+	border-radius: var(--radius-container);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	overflow: hidden;
+}
+

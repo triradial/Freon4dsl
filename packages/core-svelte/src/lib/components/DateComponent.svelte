@@ -7,11 +7,11 @@
 	import { componentId, executeCustomKeyboardShortCut } from "./svelte-utils/index.js";
 	import { ActionBox, ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BACKSPACE, CONTROL, DELETE, ENTER, ESCAPE, isActionBox, isSelectBox, FreCaret, FreCaretPosition, FreEditor, FreLogger, SelectBox, FreErrorSeverity, SHIFT, TAB, DateBox, isRegExp, triggerTypeToString, type FrePostAction } from "@freon4dsl/core";
 	import { CharAllowed} from "@freon4dsl/core";
-
+	import { DatePicker } from "bits-ui";
+	import { type DateValue } from "@internationalized/date";
 	import { runInAction } from "mobx";
 	import { replaceHTML } from "./svelte-utils/index.js";
 
-	import { Datepicker } from 'flowbite-svelte';
 
 	// TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("DateComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -26,7 +26,7 @@
     let id: string;                         // an id for the html element
     id = !!box ? componentId(box) : 'text-with-unknown-box';
     let spanElement: HTMLSpanElement;       // the <span> element on the screen
-    let inputElement: HTMLInputElement; 	// the <input> element on the screen
+    let inputElement: HTMLInputElement | null = null; 	// the <input> element on the screen
     let placeholder: string = '<..>';       // the placeholder when value of text component is not present
     let originalText: string;               // variable to remember the text that was in the box previously
     let editStart = false;					// indicates whether we are just starting to edit, so we need to set the cursor in the <input>
@@ -34,6 +34,7 @@
     let to = -1;							// the cursor position, or when different from 'from', the end of the selected text
 	let cssClass: string = '';
 	let placeHolderStyle: string = "datecomponent-placeholder";
+	let dateValue: DateValue | undefined = undefined;
 
     /**
      * This function sets the focus on this element programmatically.
@@ -90,11 +91,12 @@
 				from = to = 0;
                 break;
         }
-        if (isEditing && !!inputElement) {
-			inputElement.selectionStart = from >= 0 ? from : 0;
-            inputElement.selectionEnd = to >= 0 ? to : 0;
-            inputElement.focus();
-        }
+        if (isEditing && inputElement) {
+			const input = inputElement as HTMLInputElement;
+			input.selectionStart = from >= 0 ? from : 0;
+			input.selectionEnd = to >= 0 ? to : 0;
+			input.focus();
+		}
     };
 
     /**
@@ -110,9 +112,12 @@
         isEditing = true;
         editStart = true;
         originalText = text;
-        let {anchorOffset, focusOffset} = document.getSelection();
-		setFromAndTo(anchorOffset, focusOffset);
-	    event.preventDefault();
+        const selection = document.getSelection();
+        if (selection) {
+            const range = selection.getRangeAt(0);
+            setFromAndTo(range.startOffset, range.endOffset);
+        }
+        event.preventDefault();
         event.stopPropagation();
     }
 
@@ -123,9 +128,9 @@
      * @param event
      */
     function onClick(event: MouseEvent) {
-		if (!!inputElement) {
+		if (inputElement) {
 			LOGGER.log('onClick: ' + id + ', ' + inputElement?.selectionStart + ", " + inputElement?.selectionEnd);
-			setFromAndTo(inputElement.selectionStart, inputElement.selectionEnd);
+			setFromAndTo(inputElement.selectionStart ?? 0, inputElement.selectionEnd ?? 0);
 		}
         event.stopPropagation();
     }
@@ -163,9 +168,8 @@
      * @param event
      */
     function getCaretPosition(event: KeyboardEvent) {
-        // the following type cast satisfies the type checking, as the event can only be generated from the <input> element
         const target = event.target as HTMLInputElement;
-        setFromAndTo(target.selectionStart, target.selectionEnd);
+        setFromAndTo(target.selectionStart ?? 0, target.selectionEnd ?? 0);
     }
 
     /**
@@ -339,7 +343,7 @@
     /**
      * When this component loses focus, do everything that is needed to end the editing state.
      */
-	const onFocusOut = (e) => {
+	const onFocusOut = (e: FocusEvent) => {
 		LOGGER.log("onFocusOut " + id + " isEditing:" + isEditing)
 		if (isEditing) {
 			endEditing();
@@ -379,14 +383,15 @@
      */
 	 $effect(() => {
         // LOGGER.log("Start afterUpdate  " + from + ", " + to + " id: " + id);
-		if (editStart && !!inputElement) {
+		if (editStart && inputElement) {
 			LOGGER.log('    editStart in afterupdate for ' + id)
-            inputElement.selectionStart = from >= 0 ? from : 0;
-            inputElement.selectionEnd = to >= 0 ? to : 0;
+			const input = inputElement as HTMLInputElement;
+			input.selectionStart = from >= 0 ? from : 0;
+			input.selectionEnd = to >= 0 ? to : 0;
 			setInputWidth();
-			inputElement.focus();
-            editStart = false;
-        }
+			input.focus();
+			editStart = false;
+		}
 		// Always set the input width explicitly.
 		setInputWidth();
 		placeholder = box.placeHolder
@@ -440,7 +445,7 @@
 	 * Note that if the input element is not defined as 'draggable="true"', this function will never be called.
 	 * @param event
 	 */
-	function onDragStart(event) {
+	function onDragStart(event: DragEvent) {
 		LOGGER.log('on drag start');
 		event.stopPropagation();
 		event.preventDefault();
@@ -452,31 +457,86 @@
 		setInputWidth();
 	}
 
+	function onDateSelect(value: DateValue | undefined) {
+		if (value) {
+			text = `${value.year}-${String(value.month).padStart(2, '0')}-${String(value.day).padStart(2, '0')}`;
+			endEditing();
+		}
+	}
+
 	refresh();
 </script>
 
 <!-- todo there is a double selection here: two borders are showing -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
-<span id="{id}" on:click={onClick} role="none" class="{cssClass}">
+<span id="{id}" onclick={onClick} role="none" class="{cssClass}">
 	{#if isEditing}
 		<span id="{id}">
-			<!-- <input type="text"
-                   class="textcomponent-inputtext"
-				   id="{id}-input"
-                   bind:this={inputElement}
-				   on:input={onInput}
-                   bind:value={text}
-                   on:focusout={onFocusOut}
-                   on:keydown={onKeyDown}
-				   draggable="true"
-				   on:dragstart={onDragStart}
-                   placeholder="{placeholder}"/> -->
-			<Datepicker name="start" 
-				id="{id}-input"
-				datepickerButtons 
-				inputClass="datecomponent-inputtext" 
-				on:focusout={onFocusOut}
-				/>
+			<DatePicker.Root
+				onValueChange={onDateSelect}
+				bind:value={dateValue}
+			>
+				<DatePicker.Input class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover flex w-full select-none items-center border px-2 py-3 text-sm tracking-[0.01em]">
+					{#snippet children({ segments })}
+						{#each segments as { part, value }, i (part + i)}
+							<div class="inline-block select-none">
+								{#if part === "literal"}
+									<DatePicker.Segment {part} class="text-muted-foreground p-1">
+										{value}
+									</DatePicker.Segment>
+								{:else}
+									<DatePicker.Segment
+										{part}
+										class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1"
+									>
+										{value}
+									</DatePicker.Segment>
+								{/if}
+							</div>
+						{/each}
+					{/snippet}
+				</DatePicker.Input>
+				<DatePicker.Content sideOffset={6} class="z-50">
+					<DatePicker.Calendar class="border-dark-10 bg-background-alt shadow-popover rounded-[15px] border p-[22px]">
+						{#snippet children({ months, weekdays })}
+							<DatePicker.Header class="flex items-center justify-between">
+								<DatePicker.PrevButton class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]" />
+								<DatePicker.Heading class="text-[15px] font-medium" />
+								<DatePicker.NextButton class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]" />
+							</DatePicker.Header>
+							<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+								{#each months as month (month.value)}
+									<DatePicker.Grid class="w-full border-collapse select-none space-y-1">
+										<DatePicker.GridHead>
+											<DatePicker.GridRow class="mb-1 flex w-full justify-between">
+												{#each weekdays as day (day)}
+													<DatePicker.HeadCell class="text-muted-foreground font-normal! w-10 rounded-md text-xs">
+														<div>{day.slice(0, 2)}</div>
+													</DatePicker.HeadCell>
+												{/each}
+											</DatePicker.GridRow>
+										</DatePicker.GridHead>
+										<DatePicker.GridBody>
+											{#each month.weeks as weekDates (weekDates)}
+												<DatePicker.GridRow class="flex w-full">
+													{#each weekDates as date (date)}
+														<DatePicker.Cell {date} month={month.value} class="p-0! relative size-10 text-center text-sm">
+															<DatePicker.Day class="rounded-9px text-foreground hover:border-foreground data-selected:bg-foreground data-disabled:text-foreground/30 data-selected:text-background data-unavailable:text-muted-foreground data-disabled:pointer-events-none data-outside-month:pointer-events-none data-selected:font-medium data-unavailable:line-through group relative inline-flex size-10 items-center justify-center whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal transition-all">
+																<div class="bg-foreground group-data-selected:bg-background group-data-today:block absolute top-[5px] hidden size-1 rounded-full transition-all"></div>
+																{date.day}
+															</DatePicker.Day>
+														</DatePicker.Cell>
+													{/each}
+												</DatePicker.GridRow>
+											{/each}
+										</DatePicker.GridBody>
+									</DatePicker.Grid>
+								{/each}
+							</div>
+						{/snippet}
+					</DatePicker.Calendar>
+				</DatePicker.Content>
+			</DatePicker.Root>
 			<span class="datecomponent-inputttext datecomponent-width" bind:this={widthSpan}></span>
 		</span>
 	{:else}
@@ -485,7 +545,7 @@
 		-->
 		<!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
 		<span class="{box.role} date-box datecomponent-text"
-              on:click={startEditing}
+              onclick={startEditing}
               bind:this={spanElement}
 			  contenteditable=true
 			  spellcheck=false

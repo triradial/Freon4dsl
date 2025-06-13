@@ -3,11 +3,7 @@
     import StudyCard from "../components/cards/StudyCard.svelte";
     import PatientGrid from "../components/content/PatientGrid.svelte";
     import DSLFooter from "../components/common/DSLFooter.svelte";
-    import { Tabs, TabItem } from "flowbite-svelte";
-    import { ListPlaceholder, Skeleton } from "flowbite-svelte";
-    import { Toolbar, ToolbarButton } from "flowbite-svelte";
-    import FontAwesomeIcon from "../components/common/FontAwesomeIcon.svelte";
-    import { faUser, faSwatchbook, faSave, faRedo, faUndo } from "@fortawesome/free-solid-svg-icons";
+    import { Tabs, AppBar } from "@skeletonlabs/skeleton-svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { FreEditor } from "@freon4dsl/core";
@@ -16,11 +12,14 @@
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/stores/side-drawer-store.js";
+    // @ts-ignore
+    import { User as IconUser, PencilRuler as IconPencilRuler, Save as IconSave, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
 
     let { id } = $props<{ id: string }>();
 
     let study = $state<Study | undefined>(undefined);
     let editorLoaded = $state(false);
+    let activeTab = $state('patients');
 
     let dslEditor = $state<FreEditor | undefined>(undefined);
     let unit = $state<StudyConfiguration | undefined>(undefined);
@@ -38,6 +37,7 @@
     onMount(async () => {
         // get the study data
         study = await dataStore.getStudy(id);
+        await dataStore.getStudyPatients(id);
         if (!study) {
             console.error(`Study with id ${id} not found`);
             return;
@@ -104,46 +104,55 @@
 
 {#if study}
     <div class="crc-container">
-        <div class="crc-card">
+        <div class="card-container">
             <StudyCard {study} />
         </div>
         <div class="crc-content">
-            <Tabs tabStyle="underline" class="crc-tab">
-                <TabItem open title="Patients" class="tab-item">
-                    <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faUser} class="w-4 h-4" />Patients
-                    </div>
-                    <div class="crc-grid inside-tab">
-                        <PatientGrid studyId={study.id} />
-                    </div>
-                </TabItem>
-                <TabItem title="Study Design" class="tab-item">
-                    <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faSwatchbook} class="w-4 h-4" />Study Design
-                    </div>
-                    {#if editorLoaded}
-                        <Toolbar class="toolbar">
-                            <ToolbarButton class="toolbar-button" on:click={handleSaveStudy}><FontAwesomeIcon icon={faSave} /></ToolbarButton>
-                            <ToolbarButton class="toolbar-button" on:click={handleUndoAction}><FontAwesomeIcon icon={faUndo} /></ToolbarButton>
-                            <ToolbarButton class="toolbar-button" on:click={handleRedoAction}><FontAwesomeIcon icon={faRedo} /></ToolbarButton>
-                        </Toolbar>
-                        <div class="crc-editor crc-content-width">
-                            <FreonComponent editor={dslEditor} />
+            <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" base="mt-4">
+                {#snippet list()}
+                    <Tabs.Control value="patients">
+                        <div class="tab-item"><IconUser size="16" />Patients</div>
+                    </Tabs.Control>
+                    <Tabs.Control value="design">
+                        <div class="tab-item"><IconPencilRuler size="16" />Study Design</div> 
+                    </Tabs.Control>
+                {/snippet}
+
+                {#snippet content()}
+                    <Tabs.Panel value="patients">
+                        <div class="crc-grid inside-tab">
+                            <PatientGrid studyId={study.id} />
                         </div>
-                        <div class="crc-editor-footer h-8 crc-content-width">
-                            <DSLFooter items={footerItems} onCheckboxChange={handleCheckboxChange} />
-                        </div>
-                    {:else}
-                        <div class="h-full crc-content-width">
-                            <ListPlaceholder
-                                divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
-                            />
-                        </div>
-                    {/if}
-                </TabItem>
+                    </Tabs.Panel>
+                    <Tabs.Panel value="design">
+                        {#if editorLoaded}
+                            <AppBar>
+                                {#snippet lead()}
+                                    <div class="flex gap-2">
+                                        <button class="icon-button" onclick={handleSaveStudy}><IconSave /></button>
+                                        <button class="icon-button" onclick={handleUndoAction}><IconUndo /></button>
+                                        <button class="icon-button" onclick={handleRedoAction}><IconRedo /></button>
+                                    </div>
+                                {/snippet}
+                            </AppBar>
+                            <div class="crc-editor crc-content-width">
+                                <FreonComponent editor={dslEditor} />
+                            </div>
+                            <div class="crc-editor-footer h-8 crc-content-width">
+                                <DSLFooter items={footerItems} onCheckboxChange={handleCheckboxChange} />
+                            </div>
+                        {:else}
+                            <div class="h-full crc-content-width">
+                                <div class="placeholder animate-pulse"></div>
+                            </div>
+                        {/if}
+                    </Tabs.Panel>
+                {/snippet}
             </Tabs>
         </div>
     </div>
 {:else}
-    <Skeleton size="sm" divClass="my-8" />
+    <div class="h-full crc-content-width">
+        <div class="placeholder animate-pulse"></div>
+    </div>
 {/if}

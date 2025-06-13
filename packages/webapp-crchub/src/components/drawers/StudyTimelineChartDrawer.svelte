@@ -1,6 +1,5 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { ListPlaceholder } from "flowbite-svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
@@ -25,6 +24,7 @@
     }
 
     $effect(() => {
+        console.log("[StudyTimelineChartDrawer] $effect studyId:", studyId);
         if (studyId) {
             console.log("studyId", studyId);
             loadChart(studyId);
@@ -54,7 +54,7 @@
     }
 
     function getChart(id: string) {
-        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+        const model = ModelManager.getInstance().openModel(id) as StudyConfigurationModel;
         const unit = model.configuration;
         const rtObject = getTimelineChart(unit) as RtString;
         return rtObject.asString();
@@ -96,7 +96,7 @@
 
 <div class="drawer-content-area p-2">
     <div style="display: {isLoading || !showChart ? 'block' : 'none'}">
-        <ListPlaceholder divClass="mb-4" />
+        <div class="placeholder animate-pulse mb-4"></div>
     </div>
     <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
         <div bind:this={container}>

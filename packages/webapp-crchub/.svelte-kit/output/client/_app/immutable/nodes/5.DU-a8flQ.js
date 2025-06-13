@@ -1,1 +1,0 @@
-import"../chunks/Be_T-w2D.js";import{p as a,b as e}from"../chunks/Dh7Pzdlt.js";import{s as m,a as i}from"../chunks/B1fNL_sw.js";import{p as n}from"../chunks/Dn8sL1fo.js";import{S as u}from"../chunks/DksSyUTr.js";function _(o,p){a(p,!0);const[t,s]=m(),r=()=>i(n,"$page",t);u(o,{get id(){return r().params.id}}),e(),s()}export{_ as component};

@@ -10,7 +10,7 @@
 
     onMount(async () => {
         try {
-            const response = await fetch('/assets/help/help.html');
+            const response = await fetch('/help/help.html');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

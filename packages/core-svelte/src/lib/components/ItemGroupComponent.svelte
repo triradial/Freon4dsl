@@ -36,23 +36,10 @@
     } from "@freon4dsl/core";
     import { CharAllowed } from "@freon4dsl/core";
     import RenderComponent from "./RenderComponent.svelte";
-
     import { runInAction } from "mobx";
     import { replaceHTML } from "./svelte-utils/index.js";
-
     import { Button } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import {
-        faGripVertical,
-        faEllipsis,
-        faXmark,
-        faCaretRight,
-        faCaretDown,
-        faShareNodes,
-        faSquareArrowUpRight,
-        faLinkSlash,
-        faAnglesDown,
-    } from "@fortawesome/free-solid-svg-icons";
+    import { GripVertical as IconGripVertical, CaretDown as IconCaretDown, CaretRight as IconCaretRight, EllipsisVertical as IconEllipsisVertical, ShareNodes as IconShareNodes, SquareArrowUpRight as IconSquareArrowUpRight, LinkSlash as IconLinkSlash, AnglesDown as IconAnglesDown, Trash2 as IconTrash2 } from '@lucide/svelte';      
 
     // TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -667,21 +654,21 @@
 
 <!-- todo there is a double selection here: two borders are showing -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events a11y-interactive-supports-focus -->
-<div id="{id}-group" class="item-group {cssClass} w-full" {style} on:click={selectItem} role="button">
+<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} role="button">
     {#key isDraggable}
-        <FontAwesomeIcon class="w-3 h-3 ml-1 drag-button" style="cursor: grab;" icon={faGripVertical} />
+        <IconGripVertical />
     {/key}
     {#key isExpanded}
         {#if canExpand}
-            <Button pill={true} class="w-4 h-4 p-0 ml-1 toggle-button" color="none" size="xs" on:click={toggleExpanded}>
-                <FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
-            </Button>
+            <button class="icon-button btn-sm w-4 h-4 p-0 ml-1 toggle-button" onclick={toggleExpanded}>
+                {#if isExpanded}<IconCaretDown />{:else}<IconCaretRight />{/if}
+            </button>
         {:else}
             <span class="w-5" />
         {/if}
     {/key}
     <span class="item-group-label">{label}</span>
-    <span {id} on:click={onClick} role="none">
+    <span {id} onclick={onClick} role="none">
         {#if isEditing}
             <span {id}>
                 <input
@@ -689,12 +676,12 @@
                     class="text-component-input"
                     id="{id}-input"
                     bind:this={inputElement}
-                    on:input={onInput}
+                    oninput={onInput}
                     bind:value={text}
-                    on:focusout={onFocusOut}
-                    on:keydown={onKeyDown}
+                    onfocusout={onFocusOut}
+                    onkeydown={onKeyDown}
                     draggable="true"
-                    on:dragstart={onDragStart}
+                    ondragstart={onDragStart}
                     {placeholder}
                 />
                 <span class="text-component-width" bind:this={widthSpan}></span>
@@ -706,7 +693,7 @@
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
             <span
                 class="{box.role} text-box-{boxType} text-component-text"
-                on:click={startEditing}
+                onclick={startEditing}
                 bind:this={spanElement}
                 contenteditable="true"
                 spellcheck="false"
@@ -714,7 +701,7 @@
                 role="none"
             >
                 {#if !!text && text.length > 0}
-                    {text}{#if canUnlink}<FontAwesomeIcon class="w-3 h-3" icon={faSquareArrowUpRight} />{/if}
+                    {text}{#if canUnlink}<IconSquareArrowUpRight />{/if}
                 {:else}
                     <span class="{placeHolderStyle} {isRequired ? 'required' : ''}">{placeholder}</span>
                 {/if}
@@ -722,29 +709,29 @@
         {/if}
     </span>
     {#if canCRUD}
-        <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline>
-            <FontAwesomeIcon class="w-3 h-3" icon={faEllipsis} />
-        </Button>
+        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={shareItem}>
+            <IconEllipsisVertical />
+        </button>
     {/if}
     {#if canShare}
-        <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={shareItem}>
-            <FontAwesomeIcon class="w-3 h-3" icon={faShareNodes} />
-        </Button>
+        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={shareItem}>
+            <IconShareNodes />
+        </button>
     {/if}
     {#if canUnlink}
-        <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={shareItem}>
-            <FontAwesomeIcon class="w-3 h-3" icon={faLinkSlash} />
-        </Button>
+        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={shareItem}>
+            <IconLinkSlash />
+        </button>
     {/if}
     {#if canDuplicate}
-        <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={duplicateItem}>
-            <FontAwesomeIcon class="w-3 h-3" icon={faAnglesDown} />
-        </Button>
+        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={duplicateItem}>
+            <IconAnglesDown />
+        </button>
     {/if}
     {#if canDelete}
-        <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={deleteItem}>
-            <FontAwesomeIcon class="w-3 h-3" icon={faXmark} />
-        </Button>
+        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={deleteItem}>
+            <IconTrash2 />
+        </button>
     {/if}
 </div>
 {#key contentStyle}

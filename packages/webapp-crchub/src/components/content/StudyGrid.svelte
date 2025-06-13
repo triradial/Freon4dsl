@@ -16,11 +16,19 @@
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
-    let studiesData = $state<any[]>([]);
+    let studiesData = $derived($dataStore.studies);
+    let canManageStudies = true;
+    let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
 
     $effect(() => {
-        studiesData = $dataStore.studies;
+        console.log("[StudyGrid] $effect studiesData:", studiesData);
         updateGridData();
+    });
+    
+    $effect(() => {
+        if (objectToDelete) {
+            console.log("Object to delete:", objectToDelete);
+        }
     });
 
     function updateGridData() {
@@ -32,8 +40,6 @@
             }, 100);
         }
     }
-
-    let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
 
     onMount(async () => {
         gridOptions = {
@@ -50,9 +56,7 @@
                     field: "name",
                     tooltipField: "title",
                     cellRenderer: (params: any) => {
-                        const studyId = params.data.id;
-                        const studyName = params.data.name;
-                        return `<a href="#" data-study-id="${studyId}">${studyName}</a>`;
+                        return createNameCell(params);
                     },
                 },
                 {
@@ -76,27 +80,12 @@
                     filterParams: {
                         excelMode: "mac",
                     },
-                },
-                {
-                    headerName: "Actions",
-                    field: "actions",
-                    cellRenderer: (params: any) => {
-                        return createActionButtons(params, [
-                            { type: "edit", icon: "edit", onClick: onEditClick },
-                            { type: "delete", icon: "delete", onClick: onDeleteClick },
-                        ]);
-                    },
-                    width: 100,
-                    sortable: false,
-                    filter: false,
-                },
+                }
             ],
             groupDisplayType: "groupRows",
             rowGroupPanelShow: "always",
             onGridReady: (params) => {
                 if (studiesData.length > 0) {
-                    // gridApi.setGridOption("rowData", studiesData);
-                    // resizeColumns();
                     updateGridData();
                 }
             },
@@ -130,29 +119,65 @@
         }
     }
 
-    $effect(() => {
-        if (objectToDelete) {
-            console.log("Object to delete:", objectToDelete);
-        }
-    });
-
     function onEditClick(studyId: string) {
         console.log("Edit clicked for study:", studyId);
         editObject("study", studyId);
     }
 
-    function createActionButtons(params: any, buttonConfigs: any) {
+    function createNameCell(params: any) {
+        const name = `<a href="#" data-study-id="${params.data.id}">${params.data.name}</a>`;
+        //const projects = params.data.projects;
         const span = document.createElement("span");
-        span.classList.add("grid-button-group");
+        span.classList.add("grid-cell");
+        span.innerHTML = name;
 
+        const buttonConfigs = [
+        {
+            type: "edit",
+            icon: "edit",
+            level: "primary",
+            onClick: onEditClick,
+            isVisible: () => {
+                return canManageStudies;
+            },
+        },
+        {
+            type: "delete",
+            icon: "delete",
+            level: "secondary",
+            onClick: onDeleteClick,
+            isVisible: () => {
+                return canManageStudies;
+            },
+        },
+        ];
+
+        // Filter buttons based on visibility rules
+        const visibleButtons = buttonConfigs.filter((btn) => btn.isVisible());
+        // Only create button group if there are visible buttons
+        if (visibleButtons.length > 0) {
+            const buttonGroup = document.createElement("span");
+            buttonGroup.classList.add("grid-button-group");
+            addActionButtons(buttonGroup, params, visibleButtons);
+            span.appendChild(buttonGroup);
+        }
+        return span;
+    }
+
+    function addActionButtons(span: any, params: any, buttonConfigs: any) {
         buttonConfigs.forEach((config: any) => {
-            if (shouldRenderButton(params.data, config.type)) {
-                const button = document.createElement("button");
-                button.classList.add("grid-button", `${config.type}-button`);
-                button.innerHTML = getSVGIcon(config.icon);
-                button.addEventListener("click", () => config.onClick(params.data.id));
-                span.appendChild(button);
+            const button = document.createElement("button");
+            button.classList.add("icon-button", `${config.level}`, "inverted");
+            // button.setAttribute("data-testid", `study-name-${params.data.code}`);
+            button.innerHTML = getSVGIcon(config.icon);
+            if (config.text) {
+                button.innerHTML += config.text;
+                button.classList.add("text");
             }
+            button.addEventListener("click", () =>
+                config.onClick(params.data.id)
+            );
+            span.appendChild(button);
         });
         return span;
     }

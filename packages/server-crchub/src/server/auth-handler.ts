@@ -11,9 +11,11 @@ export class AuthHandler {
             if (token) {
                 ctx.status = 200;
                 ctx.response.body = { token: token, username: username };
+                console.log(`[AUTH] Sign in successful for user: ${username}`);
             } else {
                 ctx.status = 404;
                 ctx.response.body = { error: "Authentication failed", username };
+                console.log(`[AUTH] Sign in failed for user: ${username}`);
             }
         } catch (e) {
             ctx.status = 500;

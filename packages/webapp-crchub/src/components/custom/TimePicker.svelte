@@ -65,8 +65,10 @@
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+        console.log("[TimePicker] onMount value:", value);
     });
     $effect(() => {
+        console.log("[TimePicker] $effect setFocus/refresh assignment");
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });

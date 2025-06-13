@@ -1,12 +1,12 @@
 import { g, o, e, a, b, d, c } from "./chunks/internal.js";
-import { M, N, O } from "./chunks/environment.js";
+import { s, d as d2, e as e2 } from "./chunks/environment.js";
 export {
   g as get_hooks,
   o as options,
-  M as set_assets,
-  N as set_building,
+  s as set_assets,
+  d2 as set_building,
   e as set_manifest,
-  O as set_prerendering,
+  e2 as set_prerendering,
   a as set_private_env,
   b as set_public_env,
   d as set_read_implementation,

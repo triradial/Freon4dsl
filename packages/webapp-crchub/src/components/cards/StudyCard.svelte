@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { Card, Badge, Button } from "flowbite-svelte";
     import { type Study } from "../../services/data/data-store.js";
     import { editObject } from "../../services/stores/object-drawer-store.js";
-    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
-    import { faPencil } from "@fortawesome/free-solid-svg-icons";
     import { getStatusColor } from "../../services/utils.js";
+    // @ts-ignore
+    import { Pencil as IconPencil } from '@lucide/svelte';
 
     const { study } = $props<{ study: Study }>();
 
@@ -15,45 +14,35 @@
     }
 </script>
 
-<Card class="crc-card-area max-w-sm h-full">
+<div class="card crc-card-area max-w-sm h-full">
     <div class="flex items-center justify-left mb-4">
-        <h3 class="text-base font-bold">Study</h3>
-        <Button pill={true} outline={true} class="grid-header-button" size="sm" on:click={onEditClick}>
-            <FontAwesomeIcon icon={faPencil} />
-        </Button>
+        <h3 class="main-label-text mr-2">Study</h3>
+        <button type="button" class="icon-button primary inverted" onclick={onEditClick}><IconPencil /></button>
     </div>
-    <div class="space-y-2">
+    <div class="space-y-4">
         <div>
-            <h4 class="card-label-text">Name</h4>
-            <p class="text-sm">{study.name}</p>
+            <div class="small-label-text">Name</div>
+            <p class="standard-text">{study.name}</p>
         </div>
         <div>
-            <h4 class="card-label-text">Title</h4>
-            <p class="text-xs">{study.title}</p>
+            <div class="small-label-text">Title</div>
+            <p class="standard-text">{study.title}</p>
         </div>
         <div>
-            <h4 class="card-label-text">Status</h4>
-            <Badge color={statusColor} class="text-xs">{study.status}</Badge>
+            <div class="small-label-text">Status</div>
+            <span class="badge {statusColor} text-xs">{study.status}</span>
         </div>
         <div>
-            <h4 class="card-label-text">Phase</h4>
-            <p class="text-sm">{study.phase}</p>
+            <div class="small-label-text">Phase</div>
+            <p class="standard-text">{study.phase}</p>
         </div>
         <div>
-            <h4 class="card-label-text">Therapeutic Area</h4>
-            <p class="text-sm">{study.therapeuticArea}</p>
+            <div class="small-label-text">Therapeutic Area</div>
+            <p class="standard-text">{study.therapeuticArea}</p>
         </div>
         <div>
-            <h4 class="card-label-text text-gray-700">Current Protocol</h4>
-            <p class="text-sm">{study.currentProtocol}</p>
+            <div class="small-label-text">Current Protocol</div>
+            <p class="standard-text">{study.currentProtocol}</p>
         </div>
     </div>
-</Card>
-
-<style>
-    :global(.card) {
-        border-radius: 0;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-    }
-</style>
+</div>

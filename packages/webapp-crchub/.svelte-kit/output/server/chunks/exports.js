@@ -1,5 +1,4 @@
 import { H as HttpError, S as SvelteKitError } from "./control.js";
-import { a3 as noop, a4 as subscribe_to_store, a5 as safe_not_equal } from "./environment.js";
 const DATA_SUFFIX = "/__data.json";
 const HTML_DATA_SUFFIX = ".html__data.json";
 function has_data_suffix(pathname) {
@@ -159,64 +158,6 @@ function get_relative_path(from, to) {
   while (i--) from_parts[i] = "..";
   return from_parts.concat(to_parts).join("/");
 }
-const subscriber_queue = [];
-function readable(value, start) {
-  return {
-    subscribe: writable(value, start).subscribe
-  };
-}
-function writable(value, start = noop) {
-  let stop = null;
-  const subscribers = /* @__PURE__ */ new Set();
-  function set(new_value) {
-    if (safe_not_equal(value, new_value)) {
-      value = new_value;
-      if (stop) {
-        const run_queue = !subscriber_queue.length;
-        for (const subscriber of subscribers) {
-          subscriber[1]();
-          subscriber_queue.push(subscriber, value);
-        }
-        if (run_queue) {
-          for (let i = 0; i < subscriber_queue.length; i += 2) {
-            subscriber_queue[i][0](subscriber_queue[i + 1]);
-          }
-          subscriber_queue.length = 0;
-        }
-      }
-    }
-  }
-  function update(fn) {
-    set(fn(
-      /** @type {T} */
-      value
-    ));
-  }
-  function subscribe(run, invalidate = noop) {
-    const subscriber = [run, invalidate];
-    subscribers.add(subscriber);
-    if (subscribers.size === 1) {
-      stop = start(set, update) || noop;
-    }
-    run(
-      /** @type {T} */
-      value
-    );
-    return () => {
-      subscribers.delete(subscriber);
-      if (subscribers.size === 0 && stop) {
-        stop();
-        stop = null;
-      }
-    };
-  }
-  return { set, update, subscribe };
-}
-function get(store) {
-  let value;
-  subscribe_to_store(store, (_) => value = _)();
-  return value;
-}
 function hash(...values) {
   let hash2 = 5381;
   for (const value of values) {
@@ -297,10 +238,7 @@ const validate_layout_server_exports = validator(valid_layout_server_exports);
 const validate_page_server_exports = validator(valid_page_server_exports);
 const validate_server_exports = validator(valid_server_exports);
 export {
-  decode_pathname as A,
-  validate_server_exports as B,
-  get as C,
-  b64_decode as D,
+  b64_decode as A,
   INVALIDATED_PARAM as I,
   TRAILING_SLASH_PARAM as T,
   get_message as a,
@@ -320,13 +258,13 @@ export {
   validate_page_exports as o,
   normalize_path as p,
   add_data_suffix as q,
-  readable as r,
-  compact as s,
-  resolve as t,
-  has_resolution_suffix as u,
+  compact as r,
+  resolve as s,
+  has_resolution_suffix as t,
+  has_data_suffix as u,
   validate_depends as v,
-  writable as w,
-  has_data_suffix as x,
-  strip_resolution_suffix as y,
-  strip_data_suffix as z
+  strip_resolution_suffix as w,
+  strip_data_suffix as x,
+  decode_pathname as y,
+  validate_server_exports as z
 };

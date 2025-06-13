@@ -1,6 +1,5 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { ListPlaceholder } from "flowbite-svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { type FreEnvironment, RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
@@ -29,6 +28,7 @@
     }
 
     $effect(() => {
+        console.log("[StudyTimelineTableDrawer] $effect studyId:", studyId);
         if (studyId) {
             console.log("studyId", studyId);
             loadTable(studyId);
@@ -38,7 +38,7 @@
 
     async function loadChecklistAsMarkdown(id: string) {
         console.log("loadChecklistAsMarkdown: ", id);
-        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+        const model = ModelManager.getInstance().openModel(id) as StudyConfigurationModel;
         const unit = model.configuration;
         const checklistAsMarkdown = getChecklistAsMarkdown(unit);
         const htmlContent = marked(checklistAsMarkdown);
@@ -69,7 +69,7 @@
     }
 
     function loadTableData(id: string) {
-        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+        const model = ModelManager.getInstance().openModel(id) as StudyConfigurationModel;
         const unit = model.configuration;
         const rtObject = getTimelineTable(unit) as RtString;
         return rtObject.asString();
@@ -78,7 +78,7 @@
 
 <div class="drawer-content-area p-2">
     <div style="display: {isLoading || !showTable ? 'block' : 'none'}">
-        <ListPlaceholder divClass="mb-4" />
+        <div class="placeholder animate-pulse mb-4"></div>
     </div>
     <div style="display: {!isLoading && showTable ? 'block' : 'none'}">
         <div bind:this={container}>

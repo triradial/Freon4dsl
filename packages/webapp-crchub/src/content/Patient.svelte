@@ -1,35 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import PatientCard from "../components/cards/PatientCard.svelte";
-
-    import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
-    import FontAwesomeIcon from "../components/common/FontAwesomeIcon.svelte";
-    import { faListCheck, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
+    import { Tabs } from '@skeletonlabs/skeleton-svelte';
+    import { CalendarDays as IconCalendarDays, ListTodo as IconListTodo } from '@lucide/svelte';
     import { dataStore, type Patient } from "../services/data/data-store.js";
-
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
-    import { FreNodeReference } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
-    import { Timeline } from "@freon4dsl/study-configuration";
     import { getTimelineChart } from "../services/app/patient-timeline.js";
-    import { getTimelineChartHtml } from "../services/app/patient-timeline.js";
-    import { getTimeline } from "../services/app/patient-timeline.js";
-
-    import {
-        Availability,
-        DateRange,
-        Month,
-        PatientVisit,
-        PatientVisitStatus,
-        StaffLevel,
-        StartRangeDate,
-        Event,
-        VisitDate,
-        PatientNotAvailable,
-        PatientHistory,
-        StudyConfiguration,
-    } from "@freon4dsl/study-configuration";
+    import { StudyConfiguration } from "@freon4dsl/study-configuration";
     import { getChartWithPatientHistory } from "../services/utils.js";
 
     let { id } = $props<{ id: string }>();
@@ -40,6 +18,7 @@
     let chartHtml = $state<string>("");
     let error = $state<string | null>(null);
     let container = $state<HTMLElement | null>(null);
+    let activeTab = $state('schedule');
 
     onMount(async () => {
         const fetchedPatient = await dataStore.getPatient(id);
@@ -129,29 +108,41 @@
         </div>
 
         <div class="crc-content">
-            <Tabs tabStyle="pill" class="crc-tab">
-                <TabItem open title="Schedule" on:click={() => patient && loadChart(patient.studyId)}>
-                    <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faCalendarDays} class="w-4 h-4" />Schedule
-                    </div>
-                    <div style="display: {isLoading || !showChart ? 'block' : 'none'}">
-                        <ListPlaceholder divClass="mb-4" />
-                    </div>
-                    <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
-                        <div bind:this={container}>
-                            {@html chartHtml}
+            <Tabs value={activeTab} onValueChange={(e) => {
+                activeTab = e.value;
+                if (e.value === 'schedule' && patient) {
+                    loadChart(patient.studyId);
+                }
+            }}>
+                {#snippet list()}
+                    <Tabs.Control value="schedule">
+                        <div class="flex items-center gap-2"><IconCalendarDays />Schedule</div>
+                    </Tabs.Control>
+                    <Tabs.Control value="tasks">
+                        <div class="flex items-center gap-2"><IconListTodo />Tasks</div>
+                    </Tabs.Control>
+                {/snippet}
+
+                {#snippet content()}
+                    <Tabs.Panel value="schedule">
+                        <div style="display: {isLoading || !showChart ? 'block' : 'none'}">
+                            <div class="placeholder animate-pulse mb-4"></div>
                         </div>
-                    </div>
-                </TabItem>
-                <TabItem title="Tasks">
-                    <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Tasks
-                    </div>
-                    <div class="crc-grid"></div>
-                </TabItem>
+                        <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
+                            <div bind:this={container}>
+                                {@html chartHtml}
+                            </div>
+                        </div>
+                    </Tabs.Panel>
+                    <Tabs.Panel value="tasks">
+                        <div class="crc-grid"></div>
+                    </Tabs.Panel>
+                {/snippet}
             </Tabs>
         </div>
     </div>
 {:else}
-    <p>Loading patient...</p>
+    <div class="h-full crc-content-width">
+        <div class="placeholder animate-pulse"></div>
+    </div>
 {/if}

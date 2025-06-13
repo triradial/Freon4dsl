@@ -1,4 +1,4 @@
-import { w as writable } from "./exports.js";
+import { w as writable } from "./index3.js";
 const storedTheme = localStorage.getItem("theme") || "dark";
 const theme = writable(storedTheme);
 theme.subscribe((value) => {

@@ -1,15 +1,25 @@
 {
 	"/": [
+		"src/routes/+page.ts",
 		"src/routes/+layout.ts",
+		"src/routes/+layout.ts"
+	],
+	"/availability": [
+		"src/routes/+layout.ts"
+	],
+	"/home": [
 		"src/routes/+layout.ts"
 	],
 	"/login": [
 		"src/routes/+layout.ts"
 	],
-	"/patient/[id]": [
+	"/patient": [
 		"src/routes/+layout.ts"
 	],
-	"/study/[id]": [
+	"/studies": [
+		"src/routes/+layout.ts"
+	],
+	"/study": [
 		"src/routes/+layout.ts"
 	]
 }

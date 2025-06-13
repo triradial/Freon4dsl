@@ -12,12 +12,11 @@ export default defineConfig({
       external: [
         'lodash',
         'mobx',
-        'tslib',
-        'flowbite-svelte'
+        'tslib'
       ]
     }
   },
   optimizeDeps: {
-    exclude: ['@freon4dsl/core', 'flowbite-svelte']
+    exclude: ['@freon4dsl/core']
   }
 }); 

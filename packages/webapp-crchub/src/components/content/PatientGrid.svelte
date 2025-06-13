@@ -18,27 +18,20 @@
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
-    let patientsData: any[] = [];
+    let patientsData = $derived($dataStore.studyPatients);
+    let canManageStudies = true;
+    let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
 
     $effect(() => {
-        if (studyId) {
-            fetchStudyPatients();
-        }
-    });
-
-    $effect(() => {
-        patientsData = $dataStore.studyPatients;
+        console.log("[PatientGrid] $effect patientsData:", patientsData);
         updateGridData();
     });
 
-    // $: if ($studyPatients) {
-    //     patientsData = $studyPatients;
-    //     updateGridData();
-    // }
-
-    async function fetchStudyPatients() {
-        await dataStore.getStudyPatients(studyId);
-    }
+    $effect(() => {
+        if (objectToDelete) {
+            console.log("[PatientGrid] $effect objectToDelete:", objectToDelete);
+        }
+    });
 
     function updateGridData() {
         if (gridApi && patientsData) {
@@ -49,14 +42,6 @@
             }, 100);
         }
     }
-
-    let gridTheme = $derived(() => $theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
-
-    $effect(() => {
-        if (objectToDelete) {
-            console.log("Object to delete:", objectToDelete);
-        }
-    });
 
     onMount(async () => {
         gridOptions = {
@@ -73,10 +58,13 @@
                     field: "patientNumber",
                     headerName: "Number",
                     cellRenderer: (params: any) => {
-                        const patientId = params.data.id;
-                        const patientNumber = params.data.patientNumber;
-                        return `<a href="#" data-patient-id="${patientId}">${patientNumber}</a>`;
+                        return createNameCell(params);
                     },
+                    // cellRenderer: (params: any) => {
+                    //     const patientId = params.data.id;
+                    //     const patientNumber = params.data.patientNumber;
+                    //     return `<a href="#" data-patient-id="${patientId}">${patientNumber}</a>`;
+                    // },
                     filter: "agSetColumnFilter",
                     filterParams: {
                         excelMode: "mac",
@@ -105,27 +93,12 @@
                     filterParams: {
                         excelMode: "mac",
                     },
-                },
-                {
-                    headerName: "Actions",
-                    field: "actions",
-                    cellRenderer: (params: any) => {
-                        return createActionButtons(params, [
-                            { type: "edit", icon: "edit", onClick: onEditClick },
-                            { type: "delete", icon: "delete", onClick: onDeleteClick },
-                        ]);
-                    },
-                    width: 100,
-                    sortable: false,
-                    filter: false,
-                },
+                }
             ],
             groupDisplayType: "groupRows",
             rowGroupPanelShow: "always",
             onGridReady: (params) => {
                 if (patientsData.length > 0) {
-                    // gridApi.setGridOption("rowData", studiesData);
-                    // resizeColumns();
                     updateGridData();
                 }
             },
@@ -162,18 +135,58 @@
         editObject("patient", patientId);
     }
 
-    function createActionButtons(params: any, buttonConfigs: any) {
+    function createNameCell(params: any) {
+        const name = `<a href="#" data-patient-id="${params.data.id}">${params.data.patientNumber}</a>`;
         const span = document.createElement("span");
-        span.classList.add("grid-button-group");
+        span.classList.add("grid-cell");
+        span.innerHTML = name;
 
+        const buttonConfigs = [
+        {
+            type: "edit",
+            icon: "edit",
+            level: "primary",
+            onClick: onEditClick,
+            isVisible: () => {
+                return canManageStudies;
+            },
+        },
+        {
+            type: "delete",
+            icon: "delete",
+            level: "secondary",
+            onClick: onDeleteClick,
+            isVisible: () => {
+                return canManageStudies;
+            },
+        },
+        ];
+
+        // Filter buttons based on visibility rules
+        const visibleButtons = buttonConfigs.filter((btn) => btn.isVisible());
+        // Only create button group if there are visible buttons
+        if (visibleButtons.length > 0) {
+            const buttonGroup = document.createElement("span");
+            buttonGroup.classList.add("grid-button-group");
+            addActionButtons(buttonGroup, params, visibleButtons);
+            span.appendChild(buttonGroup);
+        }
+        return span;
+    }
+
+    function addActionButtons(span: any, params: any, buttonConfigs: any) {
         buttonConfigs.forEach((config: any) => {
-            if (shouldRenderButton(params.data, config.type)) {
-                const button = document.createElement("button");
-                button.classList.add("grid-button", `${config.type}-button`);
-                button.innerHTML = getSVGIcon(config.icon);
-                button.addEventListener("click", () => config.onClick(params.data.id));
-                span.appendChild(button);
+            const button = document.createElement("button");
+            button.classList.add("icon-button", `${config.level}`, "inverted");
+            button.innerHTML = getSVGIcon(config.icon);
+            if (config.text) {
+                button.innerHTML += config.text;
+                button.classList.add("text");
             }
+            button.addEventListener("click", () =>
+                config.onClick(params.data.id)
+            );
+            span.appendChild(button);
         });
         return span;
     }

@@ -116,7 +116,7 @@
   ],
   "exclude": [
     "node_modules",
-    "public/*",
+    "static/*",
     "dist",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",

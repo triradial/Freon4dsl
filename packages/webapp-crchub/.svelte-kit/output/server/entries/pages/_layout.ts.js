@@ -1,4 +1,4 @@
-import { r as redirect } from "../../chunks/index.js";
+import { r as redirect } from "../../chunks/index2.js";
 const ssr = false;
 const load = async ({ url }) => {
   if (typeof window !== "undefined") {

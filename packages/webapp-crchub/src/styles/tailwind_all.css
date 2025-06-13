@@ -30258,3 +30258,121 @@ input[type="range"]::-ms-fill-lower {
     background-color: rgb(76 92 150 / 0.95);
   }
 }
+
+/* Tailwind 4 */
+
+/* Components: Buttons */
+
+button.btn {
+	border-radius: var(--radius-base);
+
+	/* Icon Spacing */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: --spacing(2);
+
+	/* Typography */
+	text-decoration-line: none;
+	white-space: nowrap;
+
+	/* Size */
+	font-size: var(--text-base);
+	line-height: var(--text-base--line-height);
+	padding-block: --spacing(1);
+	padding-inline: --spacing(4);
+
+	/* Transitions */
+	transition-property: all;
+	transition-timing-function: var(--default-transition-timing-function);
+	transition-duration: var(--default-transition-duration);
+
+	@variant hover {
+		filter: brightness(125%);
+		@variant dark {
+			filter: brightness(75%);
+		}
+	}
+}
+
+button.icon-button {
+	box-sizing: content-box;
+	border-radius: var(--radius-base);
+
+	/* Center Icons */
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+
+	/* Typography */
+	text-decoration-line: none;
+	white-space: nowrap;
+
+	/* Size */
+	font-size: var(--text-base);
+	width: var(--text-base);
+	height: var(--text-base);
+	padding: --spacing(2);
+
+	@variant hover {
+		filter: brightness(125%);
+		@variant dark {
+			filter: brightness(75%);
+		}
+	}
+}
+
+/* Sizes --- */
+
+/* Button */
+button.btn-sm {
+	font-size: var(--text-xs);
+	line-height: var(--text-xs--line-height);
+	padding-block: --spacing(1);
+	padding-inline: --spacing(3);
+}
+button.btn-base {
+	font-size: var(--text-base);
+	line-height: var(--text-base--line-height);
+	padding-block: --spacing(1);
+	padding-inline: --spacing(4);
+}
+button.btn-lg {
+	font-size: var(--text-xl);
+	line-height: var(--text-xl--line-height);
+	padding-block: --spacing(2);
+	padding-inline: --spacing(5);
+}
+
+/* Button Icon */
+button.icon-button-sm {
+	font-size: var(--text-xs);
+	width: var(--text-xs);
+	height: var(--text-xs);
+	padding: --spacing(1.5);
+}
+button.icon-button-base {
+	font-size: var(--text-base);
+	width: var(--text-base);
+	height: var(--text-base);
+	padding: --spacing(2);
+}
+button.icon-button-lg {
+	font-size: var(--text-xl);
+	width: var(--text-xl);
+	height: var(--text-xl);
+	padding: --spacing(3);
+}
+
+/* Group --- */
+
+button.btn-group {
+	border-radius: var(--radius-container);
+	display: inline-flex;
+	align-items: center;
+	gap: --spacing(2);
+	padding: --spacing(2);
+	overflow: hidden;
+}
+

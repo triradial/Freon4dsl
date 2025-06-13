@@ -23,10 +23,7 @@
       TextBox, isRegExp, triggerTypeToString, isActionBox, type FrePostAction, FreCaretPosition, FreCaret
   } from "@freon4dsl/core";
   import RenderComponent from "./RenderComponent.svelte";
-  import { Button } from 'flowbite-svelte';
-  import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-  import { faGripVertical, faEllipsis, faXmark, faCaretRight, faCaretDown, faShareNodes, faSquareArrowUpRight, faLinkSlash } from '@fortawesome/free-solid-svg-icons';
-
+  import { GripVertical as IconGripVertical, CaretDown as IconCaretDown, CaretRight as IconCaretRight, EllipsisVertical as IconEllipsisVertical, ShareNodes as IconShareNodes, SquareArrowUpRight as IconSquareArrowUpRight, LinkSlash as IconLinkSlash, AnglesDown as IconAnglesDown, Trash2 as IconTrash2 } from '@lucide/svelte';
   import { runInAction } from "mobx"
   import { onMount } from "svelte";
 
@@ -454,15 +451,19 @@
 
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events a11y-interactive-supports-focus -->
-<div id="{id}-group" class="item-group {cssClass} w-full" style="{style}" on:click={selectItem} role="button">
+<div id="{id}-group" class="item-group {cssClass} w-full" style="{style}" onclick={selectItem} role="button">
 	{#key isDraggable}
-		<FontAwesomeIcon class="w-3 h-3 ml-1 drag-button" style="cursor: grab;" icon={faGripVertical} />
+		<IconGripVertical />
 	{/key}
 	{#key isExpanded}
 		{#if canExpand}
-			<Button pill={true} class="w-4 h-7 p-0 ml-1 toggle-button" color="none" size="xs" on:click={toggleExpanded}>
-				<FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
-			</Button>
+			<button class="btn btn-sm preset-filled w-4 h-7 p-0 ml-1 toggle-button" onclick={toggleExpanded}>
+				{#if isExpanded}
+					<IconCaretDown />
+				{:else}
+					<IconCaretRight />
+				{/if}
+			</button>
 		{:else}
 			<span class="w-5" />
 		{/if}
@@ -471,9 +472,9 @@
 
 <span id="{id}"
       use:clickOutsideConditional={{enabled: dropdownShown}}
-      on:click_outside={onClickOutside}
-      on:blur={onBlur}
-      on:contextmenu={(event) => endEditing()}
+      onclick_outside={onClickOutside}
+      onblur={onBlur}
+      oncontextmenu={(event) => endEditing()}
       class="text-dropdown-component"
       role="none"
 >
@@ -486,27 +487,27 @@
       editor={editor}
       textUpdateFunction={textUpdateFunction}
       endEditingParentFunction={endEditing}
-      on:keydown={onTextKeyDown}
-      on:startEditing={startEditing}
-      on:endEditing={endEditing}
-      on:onFocusOutText={onFocusOutText}
+      onkeydown={onTextKeyDown}
+      onstartEditing={startEditing}
+      onendEditing={endEditing}
+      ononFocusOutText={onFocusOutText}
     />
     {#if dropdownShown}
         <DropdownComponent
                 bind:selectedId={selectedId}
                 bind:options={filteredOptions}
-                on:freItemSelected={itemSelected}/>
+                onfreItemSelected={itemSelected}/>
     {/if}
 </span>
 {#if canUnlink}
-<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click="{shareItem}">
-    <FontAwesomeIcon class="w-3 h-3" icon={faLinkSlash} />
-</Button>
+<button class="btn btn-sm preset-filled w-7 h-7 p-0 action-button" onclick="{shareItem}">
+    <IconLinkSlash />
+</button>
 {/if}
 {#if canDelete}
-<Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={deleteItem} >
-    <FontAwesomeIcon class="w-3 h-3" icon={faXmark} />
-</Button> 
+<button class="btn btn-sm preset-filled w-7 h-7 p-0 action-button" onclick={deleteItem} >
+    <IconTrash2 />
+</button> 
 {/if}
 </div>
 {#key contentStyle}

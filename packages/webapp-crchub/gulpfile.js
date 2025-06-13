@@ -2,7 +2,7 @@ import gulp from 'gulp';
 import gulpSass from 'gulp-sass';
 import * as dartSass from 'sass';
 import postcss from 'gulp-postcss';
-import tailwindcss from 'tailwindcss';
+import tailwindcssPostcss from '@tailwindcss/postcss';
 import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
 import rename from 'gulp-rename';
@@ -15,12 +15,12 @@ const createBundle = (theme) => {
     ])
         .pipe(sass().on('error', sass.logError))
         .pipe(postcss([
-            tailwindcss('./tailwind.config.cjs'),
+            tailwindcssPostcss({ config: './tailwind.config.cjs' }),
             autoprefixer(),
             cssnano()
         ]))
         .pipe(rename(`bundle-${theme}.css`))
-        .pipe(gulp.dest('public/assets/styles'));
+        .pipe(gulp.dest('static/styles'));
 };
 
 gulp.task('bundle-light', () => createBundle('light'));

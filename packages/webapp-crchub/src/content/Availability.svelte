@@ -1,11 +1,10 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-    import { FreonComponent } from "@freon4dsl/core-svelte";
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
+    import { FreonComponent } from "@freon4dsl/core-svelte";
     import { FreEditor } from "@freon4dsl/core";
     import { type Availability } from "@freon4dsl/study-configuration";
-    import { ListPlaceholder } from "flowbite-svelte";
 
     let modelname = "11119f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f";
 
@@ -37,9 +36,7 @@
         <FreonComponent editor={dslEditor} />
     {:else}
         <div class="h-full crc-content-width">
-            <ListPlaceholder
-                divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
-            />
+            <div class="placeholder animate-pulse"></div>
         </div>
     {/if}
 </div>

@@ -1,16 +1,22 @@
-import { get, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
 import { dataStore } from '../data/data-store.js';
 import type { Study } from '../data/data-store.js';
 
-export const drawerStore = writable({
-    instanceId: uuidv4(),
+export const objectDrawerStore = writable({
     open: false,
-    objectType: null as 'study' | 'patient' | null,
-    action: null as 'add' | 'edit' | null,
-    id: null as string | null,
-    object: null as any
+    type: null, // 'study' | 'patient'
+    action: null, // 'add' | 'edit'
+    data: null
 });
+
+export function openObjectDrawer(type: 'study' | 'patient', action: 'add' | 'edit', data: any) {
+    objectDrawerStore.set({ open: true, type, action, data });
+}
+
+export function closeObjectDrawer() {
+    objectDrawerStore.set({ open: false, type: null, action: null, data: null });
+}
 
 export async function addObject(type: 'study' | 'patient', parentId?: string) {
     let parentName = '';
@@ -23,7 +29,7 @@ export async function addObject(type: 'study' | 'patient', parentId?: string) {
     const object = type === 'study'
         ? { id: uuidv4(), name: '', title: '', status: '', phase: '', therapeuticArea: '', currentProtocol: '' }
         : { id: uuidv4(), patientNumber: '', displayName: '', name: '', dob: '', gender: '', studyId: parentId, study: parentName };
-    drawerStore.set({ instanceId: uuidv4(), open: true, objectType: type, action: 'add', id: null, object });
+    objectDrawerStore.set({ open: true, type, action: 'add', data: object });
 }
 
 export async function editObject(type: 'study' | 'patient', id: string) {
@@ -41,20 +47,20 @@ export async function editObject(type: 'study' | 'patient', id: string) {
         console.error(`${type} with id ${id} not found`);
     } else {
         console.error(`${type} with id ${id} found`);
-        drawerStore.set({ instanceId: uuidv4(), open: true, objectType: type, action: 'edit', id, object });
+        objectDrawerStore.set({ open: true, type, action: 'edit', data: object });
     }
 }
 
 export async function saveObject(updatedObject: any) {
-    drawerStore.update(store => {
-        if (store.objectType === 'study') {
-            if (store.action === 'add') {
+    objectDrawerStore.update(store => {
+        if (store.type === 'study') {
+            if (store.data.action === 'add') {
                 dataStore.addStudy(updatedObject);
             } else {
                 dataStore.updateStudy(updatedObject);
             }
         } else {
-            if (store.action === 'add') {
+            if (store.data.action === 'add') {
                 dataStore.addPatient(updatedObject);
             } else {
                 dataStore.updatePatient(updatedObject);
@@ -62,8 +68,4 @@ export async function saveObject(updatedObject: any) {
         }
         return { ...store, open: false };
     });
-}
-
-export function closeDrawer() {
-    drawerStore.update(store => ({ ...store, open: false }));
 }

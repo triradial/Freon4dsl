@@ -37,9 +37,10 @@
   --navbar-text-hover: var(--text-hover);
 
   --breadcrumb-background: #cfd6e0;
-  --breadcrumb-text: #353535;
-  --breadcrumb-text-hover: var(--text-hover);
+  --breadcrumb-link: #000000;
+  --breadcrumb-link-hover: var(--text-hover);
   --breadcrumb-border: #4a5568;
+  --breadcrumb-text: #525252;
 
   --drawer-background: #cfd6e0;
   --drawer-handle: #b6b6b6;
@@ -185,22 +186,22 @@ input:disabled {
   color: #ccc;
 }
 
-button {
-  color: #333;
-  background-color: #f4f4f4;
-}
+// button {
+//   color: #333;
+//   background-color: #f4f4f4;
+// }
 
-button:disabled {
-  color: #999;
-}
+// button:disabled {
+//   color: #999;
+// }
 
-button:not(:disabled):active {
-  background-color: #ddd;
-}
+// button:not(:disabled):active {
+//   background-color: #ddd;
+// }
 
-button:focus {
-  border-color: #666;
-}
+// button:focus {
+//   border-color: #666;
+// }
 
 .login-container a {
   color: #9bcbff;
@@ -256,6 +257,23 @@ appnav a:visited {
   color: var(--navbar-text);
 }
 
+.standard-button {
+  color: var(--primary-600);
+  background-color: transparent;
+  border-color: var(--primary-600);
+  transition: color 0.3s ease;
+}
+
+.standard-button:hover {
+  color: var(--white);
+  background-color: var(--primary-600);
+}
+
+.standard-button:active {
+  color: var(--white);
+  background-color: var(--primary-800);
+}
+
 /* #region Dialog */
 .dialog-content .primary-button {
   background-color: var(--primary-800) !important;
@@ -291,7 +309,7 @@ appnav a:visited {
 /* #region Navbar */
 .navbar-component {
   background-color: var(--navbar-background) !important;
-  background-image: url('/assets/images/navbar_background.svg');
+  background-image: url('/images/navbar_background.svg');
   background-repeat: no-repeat;
   background-position: left;
 }
@@ -319,26 +337,28 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Breadcrumb */
-.crc-breadcrumb {
+.breadcrumb {
   background-color: var(--breadcrumb-background) !important;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
 }
 
-.crc-breadcrumb a {
+.breadcrumb li {
   color: var(--breadcrumb-text) !important;
 }
 
-.crc-breadcrumb a:hover {
-  color: var(--breadcrumb-text-hover) !important;
+.breadcrumb a {
+  color: var(--breadcrumb-link) !important;
 }
 
+.breadcrumb a:hover {
+  color: var(--breadcrumb-link-hover) !important;
+}
 /* #endregion */
 
 /* #region AppNav */
 #appnav-component a:hover {
   color: var(--navbar-background) !important;
 }
-
 /* #endregion */
 
 /* #region Editor */
@@ -361,31 +381,26 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Toolbar */
-
 .toolbar-button{
-  background: none;
-  color: var(--drawer-button);
+  background: var(--toolbar-button-background) !important;
+  color: var(--toolbar-button) !important;
 }
 
 .toolbar-button:hover {
-  background: none; 
-  color: var(--drawer-button-hover);
-}
+  background: var(--toolbar-button-hover-background) !important;
+  color: var(--toolbar-button-hover) !important;
+} 
 
 .toolbar-button:active {
-  background: none; 
-  color: var(--drawer-button-active);
-}
-
+  background: var(--toolbar-button-active-background) !important;
+  color: var(--toolbar-button-active) !important;
+} 
 /* #endregion */
+
 /* #region Grid */
-.crc-grid-header {
+.grid-header {
   background-color: var(--card-background);
   box-shadow: none;
-}
-
-.crc-grid-header h3 {
-  color: var(--text-primary-500);
 }
 
 .crc-grid {
@@ -436,15 +451,7 @@ appnav a:visited {
   background-color: var(--content-background);
 }
 
-.crc-card h3 {
-  color: var(--text-primary-900);
-}
-
-.crc-card h4 {
-  color: var(--gray-700);
-}
-
-.crc-card p {
+.standard-text {
   color: var(--black);
 }
 
@@ -473,27 +480,44 @@ appnav a:visited {
 .drawer-system {
   box-shadow: -20px 0 20px -20px rgba(0, 0, 0, 0.5);
 }
+
 .drawer-buttons {
   background-color: var(--drawer-background);
 }
+
 .drawer-button {
   background: none;
   color: var(--drawer-button);
 }
+
 .drawer-header {
   background-color: var(--drawer-header-background);
   color: var(--drawer-header-text);
 }
+
 .drawer-header-button {
   background: none;
   color: var(--drawer-header-text);
 }
+
+.drawer-header-button:hover {
+  background: var(--black-5t) !important;
+  color: var(--black) !important;
+}
+
+.drawer-header-button:active {
+  background: var(--black-10t) !important;
+  color: var(--black) !important;
+}
+
 .resize-handle {
   background-color: var(--drawer-handle);
 }
+
 .grip-icon {
   color: #2e2e2e;
 }
+
 .drawer-content,
 .drawer-content-area {
   background-color: var(--drawer-content-area);
@@ -642,3 +666,15 @@ appnav a:visited {
   color: var(--toolbar-button-active) !important;
 } 
 /* #endregion */
+
+/* #region Labels */
+.small-label-text {
+  color: var(--primary-900);
+}
+
+.main-label-text {
+  color: var(--text-primary-500) !important;
+}
+/* #endregion */
+
+/* #region Inputs */

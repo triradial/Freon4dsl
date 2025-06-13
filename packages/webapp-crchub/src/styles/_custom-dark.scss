@@ -37,9 +37,10 @@
   --navbar-text-hover: var(--text-hover);
 
   --breadcrumb-background: #22272e;
-  --breadcrumb-text: #fcfcfc;
-  --breadcrumb-text-hover: var(--text-hover);
+  --breadcrumb-link: #fcfcfc;
+  --breadcrumb-link-hover: var(--text-hover);
   --breadcrumb-border: #4a5568;
+  --breadcrumb-text: #a8a8a8;
 
   --drawer-background: #22272e;
   --drawer-handle: #4a5568;
@@ -72,11 +73,19 @@
   --popup-text: #000000;
   --popup-text2: #313131;
 
+  --mutation-background: #22272e;
+
   --button-background: var(--primary-800);
   --button-text: #ffffff;
   --button-border: #454d59;
   --button-hover: #304562;
   --button-active: #1f2d40;
+
+  --input-background: #4B5563;
+  --input-text: var(--white);
+  --input-border: #6B7280;
+
+
 
   --background-color: white;
   --background-value1: #333;
@@ -172,7 +181,7 @@
   --text-hover: #a971c3;
 
   --error-background: #fae4e7;
-  --error-color: #ae2b22;
+  --error-color: #9b2a22;
 }
 
 body {
@@ -192,22 +201,22 @@ input:disabled {
   color: #ccc;
 }
 
-button {
-  color: #333;
-  background-color: #f4f4f4;
-}
+// button {
+//   color: #333;
+//   background-color: #f4f4f4;
+// }
 
-button:disabled {
-  color: #999;
-}
+// button:disabled {
+//   color: #999;
+// }
 
-button:not(:disabled):active {
-  background-color: #ddd;
-}
+// button:not(:disabled):active {
+//   background-color: #ddd;
+// }
 
-button:focus {
-  border-color: #666;
-}
+// button:focus {
+//   border-color: #666;
+// }
 
 .login-container a {
   color: #9bcbff;
@@ -298,7 +307,7 @@ appnav a:visited {
 /* #region Navbar */
 .navbar-component {
   background-color: var(--navbar-background) !important;
-  background-image: url('/assets/images/navbar_background.svg');
+  background-image: url('/images/navbar_background.svg');
   background-repeat: no-repeat;
   background-position: left;
 }
@@ -326,26 +335,28 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Breadcrumb */
-.crc-breadcrumb {
+.breadcrumb {
   background-color: var(--breadcrumb-background) !important;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
 }
 
-.crc-breadcrumb a {
+.breadcrumb li {
   color: var(--breadcrumb-text) !important;
 }
 
-.crc-breadcrumb a:hover {
-  color: var(--breadcrumb-text-hover) !important;
+.breadcrumb a {
+  color: var(--breadcrumb-link) !important;
 }
 
+.breadcrumb a:hover {
+  color: var(--breadcrumb-link-hover) !important;
+}
 /* #endregion */
 
 /* #region AppNav */
 #appnav-component a:hover {
   color: var(--navbar-background) !important;
 }
-
 /* #endregion */
 
 /* #region Editor */
@@ -385,14 +396,9 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Grid */
-
-.crc-grid-header {
+.grid-header {
   background-color: var(--card-background);
   box-shadow: none;
-}
-
-.crc-grid-header h3 {
-  color: var(--text-primary-500);
 }
 
 .crc-grid {
@@ -406,18 +412,6 @@ appnav a:visited {
 
 .crc-grid a:hover {
   color: var(--text-hover);
-}
-
-.grid-header-button {
-  color: var(--primary-600);
-  background-color: transparent;
-  border-color: var(--primary-600);
-  transition: color 0.3s ease;
-}
-
-.grid-header-button:hover {
-  color: var(--white);
-  background-color: var(--primary-600);
 }
 
 .grid-button {
@@ -455,26 +449,15 @@ appnav a:visited {
   background-color: var(--content-background);
 }
 
-.crc-card h3 {
-  color: var(--text-primary-500);
-}
-
-.crc-card h4 {
-  color: var(--gray-600);
-}
-
-.crc-card p {
+.standard-text {
   color: var(--white);
 }
 
 /* #endregion */
 
 /* #region Tab */
-.crc-tab {
-  background-color: var(--content-background);
-}
 
-.crc-tab .tab-item {
+.tab-item {
   color: var(--white);
   background-color: transparent;
 }
@@ -496,17 +479,29 @@ appnav a:visited {
   background-color: var(--drawer-background);
 }
 .drawer-button {
-  background: none;
-  color: var(--drawer-button);
+  background: none !important;
+  color: var(--drawer-button) !important;
 }
 .drawer-header {
   background-color: var(--drawer-header-background);
   color: var(--drawer-header-text);
 }
+
 .drawer-header-button {
-  background: none;
-  color: var(--drawer-header-text);
+  background: none !important;
+  color: var(--drawer-header-text) !important;
 }
+
+.drawer-header-button:hover {
+  background: var(--white-5t) !important;
+  color: var(--white) !important;
+}
+
+.drawer-header-button:active {
+  background: var(--white-10t) !important;
+  color: var(--white) !important;
+}
+
 .resize-handle {
   background-color: var(--drawer-handle);
 }
@@ -661,4 +656,139 @@ border-bottom: 1px solid var(--white-5t) !important;
   background: var(--toolbar-button-active-background) !important;
   color: var(--toolbar-button-active) !important;
 } 
+/* #endregion */
+
+/* #region Object Drawer */
+.object-drawer {
+  background-color: var(--mutation-background) !important;
+}
+
+.object-drawer-area {
+  background-color: var(--content-background) !important;
+}
+
+.mutation-area {
+  }
+/* #endregion */
+
+/* #region Buttons */
+.standard-button.primary:not(:disabled),
+.icon-button.primary:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-600) !important;
+  border-color: var(--primary-600) !important;
+  transition: color 0.3s ease !important;
+}
+
+.standard-button.primary:hover:not(:disabled),
+.icon-button.primary:hover:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-600) !important;
+  border-color: var(--white) !important;
+}
+
+.standard-button.primary:active:not(:disabled),
+.icon-button.primary:active:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-800) !important;
+  border-color: var(--white) !important;
+}
+
+.standard-button.primary.inverted:not(:disabled),
+.icon-button.primary.inverted:not(:disabled) {
+  color: var(--primary-600) !important;
+  background-color: transparent !important;
+  border-color: var(--primary-600) !important;
+  transition: color 0.3s ease !important;
+}
+
+.standard-button.primary.inverted:hover:not(:disabled),
+.icon-button.primary.inverted:hover:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-600) !important;
+  border-color: var(--primary-600) !important;
+}
+
+.standard-button.primary.inverted:active:not(:disabled),
+.icon-button.primary.inverted:active:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-800) !important;
+  border-color: var(--primary-800) !important;
+}
+
+.standard-button:disabled,
+.icon-button:disabled {
+  color: var(--gray-700) !important;
+  background-color: transparent !important;
+  border-color: var(--gray-600) !important;
+  cursor: not-allowed !important;
+}
+
+.standard-button.secondary:not(:disabled),
+.icon-button.secondary:not(:disabled) {
+  color: var(--gray-400) !important;
+  background-color: transparent !important;
+  border-color: var(--gray-400) !important;
+  transition: color 0.3s ease !important;
+}
+
+.standard-button.secondary:hover:not(:disabled),
+.icon-button.secondary:hover:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--gray-600) !important;
+  border-color: var(--gray-600) !important;
+}
+
+.standard-button.secondary:active:not(:disabled),
+.icon-button.secondary:active:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--gray-800) !important;
+}
+
+.standard-button.tertiary,
+.icon-button.tertiary {
+  color: var(--gray-400) !important;
+  background-color: transparent !important;
+  border-color: var(--gray-400) !important;
+  transition: color 0.3s ease !important;
+}
+
+.standard-button.tertiary:hover,
+.icon-button.tertiary:hover {
+  color: var(--white) !important;
+  background-color: var(--gray-400) !important;
+}
+
+.standard-button.tertiary:active,
+.icon-button.tertiary:active {
+  color: var(--white) !important;
+  background-color: var(--gray-600) !important;
+}
+/* #endregion */
+
+/* #region Labels */
+.small-label-text {
+  color: var(--primary-300);
+}
+
+.main-label-text {
+  color: var(--text-primary-500) !important;
+}
+/* #endregion */
+
+/* #region Inputs */
+.input-field:not(.error),
+.textarea-field:not(.error),
+.select-field:not(.error) {
+  background-color: var(--input-background);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
+}
+
+.input-field.error {
+  border-color: var(--error-color);
+  background-color: var(--error-background);
+  color: var(--error-color);
+}
+
 /* #endregion */

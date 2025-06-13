@@ -1,7 +1,7 @@
 import { type Environment, environments } from './environments.js';
 
 // Get environment from Azure App Service or default to 'local'
-const currentEnv = (process.env.AZURE_ENVIRONMENT || 'local') as Environment;
+const currentEnv = (import.meta.env.VITE_AZURE_ENVIRONMENT || 'local') as Environment;
 
 if (!Object.keys(environments).includes(currentEnv)) {
     throw new Error(`Invalid environment: ${currentEnv}`);

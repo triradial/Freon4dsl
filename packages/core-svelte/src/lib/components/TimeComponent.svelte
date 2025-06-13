@@ -33,7 +33,6 @@
         type FrePostAction,
     } from "@freon4dsl/core";
     import { CharAllowed } from "@freon4dsl/core";
-
     import { runInAction } from "mobx";
     import { replaceHTML } from "../index.js";
 

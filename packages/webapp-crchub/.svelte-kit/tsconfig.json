@@ -24,12 +24,6 @@
 			],
 			"$content/*": [
 				"../src/content/*"
-			],
-			"flowbite-svelte": [
-				"../flowbite-svelte/dist"
-			],
-			"flowbite-svelte/*": [
-				"../flowbite-svelte/dist/*"
 			]
 		},
 		"rootDirs": [

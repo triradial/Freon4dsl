@@ -1,5 +1,6 @@
-import { H as HYDRATION_ERROR, g as get_next_sibling, d as define_property, s as set_active_reaction, e as set_active_effect, i as is_array, f as active_reaction, h as active_effect, j as init_operations, k as get_first_child, l as HYDRATION_START, m as HYDRATION_END, n as hydration_failed, q as clear_text_content, t as array_from, u as component_root, v as create_text, w as branch, x as push, y as pop, z as component_context, A as get, L as LEGACY_PROPS, B as set, C as flushSync, E as mutable_source, F as push$1, G as onMount, I as pop$1, J as tick, K as escape_html } from "./environment.js";
+import { H as HYDRATION_ERROR, g as get_next_sibling, d as define_property, s as set_active_reaction, a as set_active_effect, i as is_array, b as active_reaction, c as active_effect, e as init_operations, f as get_first_child, h as HYDRATION_START, j as HYDRATION_END, k as hydration_failed, l as clear_text_content, m as array_from, n as component_root, o as create_text, p as branch, q as is_passive_event, r as push, t as pop, u as component_context, v as get, L as LEGACY_PROPS, w as set, x as flushSync, y as mutable_source, z as push$1, A as onMount, B as pop$1, C as tick, E as escape_html } from "./index.js";
 import "clsx";
+import "./environment.js";
 let public_env = {};
 let safe_public_env = {};
 function set_private_env(environment) {
@@ -32,10 +33,6 @@ function hydrate_next() {
     /** @type {TemplateNode} */
     get_next_sibling(hydrate_node)
   );
-}
-const PASSIVE_EVENTS = ["touchstart", "touchmove"];
-function is_passive_event(name) {
-  return PASSIVE_EVENTS.includes(name);
 }
 const all_registered_events = /* @__PURE__ */ new Set();
 const root_event_handles = /* @__PURE__ */ new Set();
@@ -537,7 +534,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1nvxsk8"
+  version_hash: "1hwt5dh"
 };
 async function get_hooks() {
   let handle;

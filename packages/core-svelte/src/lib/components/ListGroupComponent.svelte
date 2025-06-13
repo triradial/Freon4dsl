@@ -8,19 +8,16 @@
     import { Box, FreLogger, ListGroupBox, FreEditor } from "@freon4dsl/core";
     import { componentId } from "./svelte-utils/index.js";
     import RenderComponent from "./RenderComponent.svelte";
-
-    import { Button } from 'flowbite-svelte';
-    import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-    import { faChevronDown, faChevronUp, faPlus, faEllipsis, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+    import { CaretDown as IconCaretDown, CaretRight as IconCaretRight, Plus as IconPlus, EllipsisVertical as IconEllipsisVertical } from '@lucide/svelte';
 
     export let box: ListGroupBox;
     export let editor: FreEditor;
 
-    const LOGGER = new FreLogger("ListGroupBoxComponent");
+    const LOGGER = new FreLogger("ListGroupComponent");
 
     let id: string = !!box ? componentId(box) : 'group-for-unknown-box';
     // let element: HTMLDivElement = null;
-    let contentElement: HTMLDivElement = null;
+    let contentElement: HTMLDivElement | null = null;
     let style: string;
     let cssClass: string = '';
     let label: string;
@@ -64,9 +61,11 @@
     }
 
     function toggleExpanded() {
-        contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
-        isExpanded = !isExpanded;
-        contentStyle = isExpanded ? 'display:block;' : 'display:none;';
+        if (contentElement) {
+            contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
+            isExpanded = !isExpanded;
+            contentStyle = isExpanded ? 'display:block;' : 'display:none;';
+        }
     }
 
     function addItem() {
@@ -77,20 +76,24 @@
 
 <div id="{id}" class="list-group {cssClass}" style="{style}">
     {#key isExpanded}
-        <Button pill={true} class="w-4 h-4 p-0 ml-1 mr-1 toggle-button" color="none" size="xs" on:click={toggleExpanded}>
-            <FontAwesomeIcon class="w-3 h-3" icon={isExpanded ? faCaretDown : faCaretRight} />
-        </Button>
+        <button class="btn btn-sm preset-filled w-4 h-4 p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded}>
+            {#if isExpanded}
+                <IconCaretDown />
+            {:else}
+                <IconCaretRight />
+            {/if}
+        </button>
     {/key}
     <span class="list-group-label">{label}</span>
     {#if canAdd}
-    <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline on:click={addItem}>
-        <FontAwesomeIcon class="w-3 h-3" icon={faPlus} />
-    </Button>
+    <button class="btn btn-sm preset-filled w-7 h-7 p-0 action-button" onclick={addItem}>
+        <IconPlus />
+    </button>
     {/if}
     {#if canCRUD}
-    <Button pill={true} size="xs" class="w-7 h-7 p-0 action-button" outline>
-        <FontAwesomeIcon class="w-3 h-3" icon={faEllipsis} />
-    </Button> 
+    <button class="btn btn-sm preset-filled w-7 h-7 p-0 action-button">
+        <IconEllipsisVertical />
+    </button> 
     {/if}
 </div>
 {#key contentStyle}

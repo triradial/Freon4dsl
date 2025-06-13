@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { Card, Badge, Button } from "flowbite-svelte";
     import { type Patient } from "../../services/data/data-store.js";
     import { editObject } from "../../services/stores/object-drawer-store.js";
-    import FontAwesomeIcon from "../common/FontAwesomeIcon.svelte";
-    import { faPencil } from "@fortawesome/free-solid-svg-icons";
+    // @ts-ignore
+    import { Pencil as IconPencil } from '@lucide/svelte';
 
     const { patient } = $props<{ patient: Patient }>();
 
@@ -12,12 +11,10 @@
     }
 </script>
 
-<Card class="crc-card-area max-w-sm h-full">
+<div class="card crc-card-area max-w-sm h-full">
     <div class="flex items-center justify-left mb-4">
         <h3 class="text-base font-bold mr-2">Patient</h3>
-        <Button pill={true} outline={true} class="grid-header-button" size="sm" on:click={onEditClick}>
-            <FontAwesomeIcon icon={faPencil} />
-        </Button>
+        <button type="button" class="icon-button btn-sm grid-header-button" onclick={onEditClick}><IconPencil /></button>
     </div>
     <div class="space-y-2">
         <div>
@@ -37,12 +34,4 @@
             <p class="text-xs">{patient.gender}</p>
         </div>
     </div>
-</Card>
-
-<style>
-    :global(.card) {
-        border-radius: 0;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-    }
-</style>
+</div>

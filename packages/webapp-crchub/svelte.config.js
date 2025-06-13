@@ -14,7 +14,6 @@ const config = {
       $components: 'src/components',
       $services: 'src/services',
       $content: 'src/content',
-      'flowbite-svelte': 'flowbite-svelte/dist'
     }
   }
 };

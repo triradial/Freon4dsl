@@ -2,7 +2,7 @@
     import type { IconBox } from "@freon4dsl/core";
     import { onMount } from "svelte";
     import { componentId } from "./svelte-utils/index.js";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import { Icon } from '@lucide/svelte';
    
     export let box: IconBox;
 
@@ -30,4 +30,4 @@
     refresh();
 </script>
 
-<FontAwesomeIcon class="w-3 h-3" style="cursor: {cursorStyle};" icon={iconDef} />
+<Icon class="w-3 h-3" style="cursor: {cursorStyle};" name={iconDef} />

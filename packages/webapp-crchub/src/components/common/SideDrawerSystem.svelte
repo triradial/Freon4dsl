@@ -1,16 +1,19 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { Button } from "flowbite-svelte";
-    import FontAwesomeIcon from "./FontAwesomeIcon.svelte";
-    import { faTimes, faGripLinesVertical, faRotateRight } from "@fortawesome/free-solid-svg-icons";
-    import { getDrawer, drawerStore, setDrawerWidth, setActiveDrawer, getDrawerWidth, type Drawer } from "../../services/stores/side-drawer-store.js";
+    import { getDrawer, drawerStore, setDrawerWidth, setActiveDrawer, getDrawerWidth, type Drawer, getDrawerOrder } from "../../services/stores/side-drawer-store.js";
+    // @ts-ignore
+    import { GripVertical as IconGripVertical, RefreshCw as IconRefreshCw, X as IconX } from '@lucide/svelte';
 
     let { isOpen = false } = $props<{ isOpen?: boolean }>();
 
     let activeDrawer = $derived($drawerStore.activeDrawer);
     let drawerWidth = $derived(activeDrawer ? getDrawerWidth(activeDrawer) : 400);
-    let drawers = $derived(Object.values($drawerStore.drawers) as Drawer[]);
+    let drawerOrder = $derived(getDrawerOrder());
+    let drawers = $derived(
+        $drawerStore.drawerOrder.map(key => $drawerStore.drawers[key]).filter(Boolean)
+    );
     $effect(() => {
+        console.log("[SideDrawerSystem] $effect activeDrawer:", activeDrawer, "activeDrawerKey:", activeDrawerKey);
         if (activeDrawer !== activeDrawerKey) {
             activeDrawerKey = activeDrawer;
             activeDrawerInstance = null;
@@ -78,7 +81,12 @@
 
     let DrawerComponent = $state(null);
     $effect(() => {
+        console.log("[SideDrawerSystem] $effect DrawerComponent:", DrawerComponent);
         DrawerComponent = getDrawer(activeDrawer)?.component ?? null;
+    });
+
+    $effect(() => {
+        console.log("Rendering drawers:", drawers);
     });
 </script>
 
@@ -86,9 +94,8 @@
     <div class="drawer-buttons">
         {#each drawers as drawer}
             {#if drawer.isVisible}
-                <Button id={drawer.key} class="toolbar-button" on:click={() => toggleDrawer(drawer.key)}>
-                    <FontAwesomeIcon icon={drawer.icon} />
-                </Button>
+                {@const Icon = drawer.icon}
+                <button id={drawer.key} class="icon-button toolbar-button" onclick={() => toggleDrawer(drawer.key)}><Icon size={20} /></button>
                 <!-- <Tooltip class="tooltip-popover" triggeredBy="#{drawer.key}" placement="left">{drawer.description}</Tooltip> -->
             {/if}
         {/each}
@@ -96,22 +103,16 @@
     {#if isOpen && activeDrawer}
         <div class="drawer-content-wrapper" style="width: {drawerWidth}px">
             <!-- svelte-ignore a11y_no_static_element_interactions -->
-            <div class="resize-handle" role="button" tabindex="0" onmousedown={startResize}>
-                <FontAwesomeIcon icon={faGripLinesVertical} class="grip-icon" />
-            </div>
+            <div class="resize-handle" role="button" tabindex="0" onmousedown={startResize}><IconGripVertical /></div>
             <div class="drawer-content">
                 <div class="drawer-header">
                     <div class="drawer-title-container">
                         <h2>{getDrawer(activeDrawer)?.title ?? ""}</h2>
                         {#if getDrawer(activeDrawer)?.supportsRefresh}
-                            <Button class="drawer-header-button" on:click={refreshDrawer}>
-                                <FontAwesomeIcon icon={faRotateRight} />
-                            </Button>
+                            <button class="icon-button drawer-header-button" onclick={refreshDrawer}><IconRefreshCw size={16} /></button>
                         {/if}
                     </div>
-                    <Button class="drawer-header-button" on:click={closeDrawer}>
-                        <FontAwesomeIcon icon={faTimes} />
-                    </Button>
+                    <button class="icon-button drawer-header-button" onclick={closeDrawer}><IconX size={16} /></button>
                 </div>
                 {#if DrawerComponent}
                     <DrawerComponent {...getDrawer(activeDrawer)?.props} bind:this={activeDrawerInstance} />

@@ -1,16 +1,14 @@
 import { FreUtils } from "../../util/index.js";
 import type { FreNode } from "../../ast/index.js";
 import { Box } from "./Box.js";
-import { faQuestion } from '@fortawesome/free-solid-svg-icons';
-import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 export class IconBox extends Box {
     readonly kind = "IconBox";
 
-    iconDef: IconDefinition = faQuestion;
+    iconDef: any = null;
     cursorStyle: string = "default";
 
-    constructor(node: FreNode, role: string, iconDef: IconDefinition, cursorStyle?: string, initializer?: Partial<IconBox>) {
+    constructor(node: FreNode, role: string, iconDef: any, cursorStyle?: string, initializer?: Partial<IconBox>) {
         super(node, role);
         FreUtils.initializeObject(this, initializer);
         this.iconDef = iconDef;

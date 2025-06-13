@@ -1,18 +1,24 @@
 <script lang="ts">
-    import FontAwesomeIcon from './FontAwesomeIcon.svelte';
-    import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-    import { Toast } from "flowbite-svelte";
-    import { createEventDispatcher } from 'svelte';
+    import { getContext } from 'svelte';
+    import { type ToastContext } from '@skeletonlabs/skeleton-svelte';
 
-    const dispatch = createEventDispatcher();
+    const toast: ToastContext = getContext('toast');
 
-    const handleResetError = () => {
-        dispatch('resetError');
-    };
+    const props = $props<{
+        message?: string;
+        type?: 'info' | 'success' | 'warning' | 'error';
+    }>();
 
+    const message = $derived(props.message ?? 'Incorrect username or password. Please try again.');
+    const type = $derived(props.type ?? 'error');
+
+    function showToast() {
+        toast.create({
+            title: message,
+            type
+        });
+    }
+
+    // Show toast immediately when component is mounted
+    showToast();
 </script>
-
-<Toast on:close={handleResetError}>
-    <FontAwesomeIcon icon={faCircleExclamation} class="w-5 h-5" />
-    Incorrect username or password. Please try again.
-</Toast>
