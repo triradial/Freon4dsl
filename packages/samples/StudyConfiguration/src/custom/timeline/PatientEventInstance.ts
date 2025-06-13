@@ -43,28 +43,17 @@ export class PatientVisitEventInstance extends PatientEventInstance {
                 classForDisplay = "in-window";
             }
         }
-        // console.log(
-        //     "getClassForDisplay " +
-        //         scheduledEventInstance.getName() +
-        //         " visitInstanceNumber:" +
-        //         this.visitInstanceNumber +
-        //         " scheduled day:" +
-        //         scheduledEventInstance.startDay +
-        //         " window:" +
-        //         scheduledEventInstance.getStartDayOfWindow() +
-        //         "-" +
-        //         scheduledEventInstance.getEndDayOfWindow() +
-        //         " patient startDay " +
-        //         this.startDay +
-        //         " classForDisplay:" +
-        //         classForDisplay,
-        // );
         return classForDisplay;
     }
 
     getTitle() {
         const visitInstanceNumber = this.getVisitInstanceNumber() > 1 ? " #" + this.getVisitInstanceNumber() : "";
         return "Patient visit:" + this.getName() + "'" + visitInstanceNumber;
+    }
+
+    getStartDayAsDateString(timeline: Timeline): string {
+        console.log("getStartDayAsDateString: " + this.startDay);
+        return TimelineEventInstance.formatDate(this.getDayAsDate(this.startDay, timeline));
     }
 }
 

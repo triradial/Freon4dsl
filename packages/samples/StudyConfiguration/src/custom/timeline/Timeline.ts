@@ -344,11 +344,7 @@ export class Timeline extends RtObject {
                 patientVisit.actualVisitDate.month.name,
                 patientVisit.actualVisitDate.year,
             );
-            // Convert from the date given as when the visit happened to the day of the event on the timeline
-            const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
-            const time2 = actualVisitDateAsDate.getTime();
-            const diffInMilliseconds = time2 - time1;
-            const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
+            const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
             this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
         });
         patientHistory.patientNotAvailableDates.dates.forEach((patientNotAvailableDate) => {

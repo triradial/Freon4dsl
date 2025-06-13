@@ -1,5 +1,6 @@
 <script lang="ts">
     import { afterUpdate, onMount } from "svelte";
+    //TODO: Switch to ExternalPartBox so can access the entire concept instead of just the date as string; Update the day, month, year instead of the string.
     import { ExternalStringBox, FreEditor } from "@freon4dsl/core";
     export let box: ExternalStringBox;
     // export let editor: FreEditor;

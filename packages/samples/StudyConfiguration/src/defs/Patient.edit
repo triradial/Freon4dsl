@@ -33,15 +33,6 @@ StaffLevel {
 
 DateRange {
   [${startDate} thru:${endDate}]
-  trigger = "Date or Date Range"
-}
-
-StartRangeDate {
-  [${dateAsString replace=DatePicker startDate="30/09/2024"}]
-}
-
-EndRangeDate {
-  [${dateAsString replace=DatePicker startDate="30/09/2024"}]
 }
 
 PatientInfo {
@@ -61,7 +52,7 @@ PatientHistory {
 
 PatientVisit {
   [
-      '${visit}' on  ${actualVisitDateAsString replace=DatePicker startDate="30/09/2024"}
+      Visit: '${visit}' on  ${actualVisitDateAsString replace=DatePicker startDate="30/09/2024"}
   ]
 }
 

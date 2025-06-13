@@ -9,13 +9,13 @@ import {
     PatientVisit,
     PatientVisitStatus,
     StaffLevel,
-    StartRangeDate,
     StudyConfigurationModel,
     VisitDate,
+    DateConcept,
 } from "@freon4dsl/samples-study-configuration/dist/language/gen";
 import { ModelManager } from "./dsl/model-manager.js";
 import type { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-import { getTimeline, getTimelineChartHtml } from "./app/patient-timeline.js";
+import { getTimelineAsOfADate, getTimelineChartHtml } from "./app/patient-timeline.js";
 import type { TimelineEventInstance } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/TimelineEventInstance.js";
 import type { ScheduledEventInstance } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/ScheduledEventInstance.js";
 
@@ -57,35 +57,43 @@ export function getSVGIcon(iconName: string): string {
     return svg;
 }
 
-export function getMonthFromString(month: string): Month {
+export function getMonthFromString(month: string): FreNodeReference<Month> {
     switch (month.toLowerCase()) {
         case "january":
-            return Month.January;
+            return FreNodeReference.create<Month>(Month.January, "Month");
         case "february":
-            return Month.February;
+            return FreNodeReference.create<Month>(Month.February, "Month");
         case "march":
-            return Month.March;
+            return FreNodeReference.create<Month>(Month.March, "Month");
         case "april":
-            return Month.April;
+            return FreNodeReference.create<Month>(Month.April, "Month");
         case "may":
-            return Month.May;
+            return FreNodeReference.create<Month>(Month.May, "Month");
         case "june":
-            return Month.June;
+            return FreNodeReference.create<Month>(Month.June, "Month");
         case "july":
-            return Month.July;
+            return FreNodeReference.create<Month>(Month.July, "Month");
         case "august":
-            return Month.August;
+            return FreNodeReference.create<Month>(Month.August, "Month");
         case "september":
-            return Month.September;
+            return FreNodeReference.create<Month>(Month.September, "Month");
         case "october":
-            return Month.October;
+            return FreNodeReference.create<Month>(Month.October, "Month");
         case "november":
-            return Month.November;
+            return FreNodeReference.create<Month>(Month.November, "Month");
         case "december":
-            return Month.December;
+            return FreNodeReference.create<Month>(Month.December, "Month");
         default:
             throw new Error(`Invalid month: ${month}`);
     }
+}
+
+// The DateConcept is updated inline hence no return value.
+export function fillDateConceptFromAsString(dateConcept: DateConcept) {
+    const actualDate = new Date(dateConcept.dateAsString);
+    dateConcept.day = actualDate.getDate().toString();
+    dateConcept.month = getMonthFromString(actualDate.toLocaleString('en-US', { month: 'long' }));
+    dateConcept.year = actualDate.getFullYear().toString();
 }
 
 function createOneDayAvailability(day: string, month: string, year: string): Availability {
@@ -103,9 +111,10 @@ function createStaffLevel(
     endMonth?: string,
     endYear?: string,
 ) {
-    const startDateInRange = StartRangeDate.create({
+    const startDateInRange = DateConcept.create({
+        dateAsString: startDay + "/" + startMonth + "/" + startYear,
         day: startDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
+        month: getMonthFromString(startMonth),
         year: startYear,
     });
     let endMonthString = "";
@@ -120,9 +129,10 @@ function createStaffLevel(
         endMonthString = startMonth;
         endYear = startYear;
     }
-    const endDateInRange = StartRangeDate.create({
+    const endDateInRange = DateConcept.create({
+        dateAsString: endDay + "/" + endMonthString + "/" + endYear,
         day: endDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(endMonthString), "Month"),
+        month: getMonthFromString(endMonthString),
         year: endYear,
     });
     const staffDateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
@@ -150,7 +160,7 @@ function addDays(date: Date, days: number): Date {
 function createACompletedPatientVisit(visitName: string, day: string, month: string, year: string, visitInstanceNumber: number): PatientVisit {
     // console.log("createACompletedPatientVisit visitName: " + visitName + " day: " + day + " month: " + month + " year: " + year);
     const referencedEvent = FreNodeReference.create<Event>(visitName, "Event");
-    const visitDate = VisitDate.create({ day: day, month: FreNodeReference.create<Month>(getMonthFromString(month), "Month"), year: year });
+    const visitDate = VisitDate.create({ day: day, month: getMonthFromString(month), year: year });
     const completedVisitStatus = FreNodeReference.create<PatientVisitStatus>(PatientVisitStatus.completed, "completed");
     let patientVisit = PatientVisit.create({
         visit: referencedEvent,
@@ -162,9 +172,10 @@ function createACompletedPatientVisit(visitName: string, day: string, month: str
 }
 
 function createPatientNotAvailableDateRange(startDay: string, startMonth: string, startYear: string, endDay?: string, endMonth?: string, endYear?: string) {
-    const startDateInRange = StartRangeDate.create({
+    const startDateInRange = DateConcept.create({
+        dateAsString: startDay + "/" + startMonth + "/" + startYear,
         day: startDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
+        month: getMonthFromString(startMonth),
         year: startYear,
     });
     if (!endDay) {
@@ -180,9 +191,10 @@ function createPatientNotAvailableDateRange(startDay: string, startMonth: string
         endMonthString = startMonth;
     }
 
-    const endDateInRange = StartRangeDate.create({
+    const endDateInRange = DateConcept.create({
+        dateAsString: endDay + "/" + endMonthString + "/" + endYear,
         day: endDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(endMonthString), "Month"),
+        month: getMonthFromString(endMonthString),
         year: endYear,
     });
     const dateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
@@ -246,7 +258,7 @@ export async function getChartWithPatientHistory(id: string) {
     // createAvailability();
 
     // Adding after simulation because the timeline is used to find the visits to complete.
-    let timeline = getTimeline(unit) as Timeline;
+    let timeline = getTimelineAsOfADate(unit) as Timeline;
     let shiftsFromScheduledVisit: ShiftsFromScheduledVisit[] = [
         { name: "V2 Randomization", instance: 1, shift: -1, numberFound: 0, foundThisInstance: false },
         { name: "V4-V7 Randomization", instance: 1, shift: -4, numberFound: 0, foundThisInstance: false },

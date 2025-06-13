@@ -27,7 +27,7 @@ import { PatientVisitStatus } from "../../language/gen/index.js";
 import { Availability } from "../../language/gen/index.js";
 import { StaffLevel } from "../../language/gen/index.js";
 import { DateRange } from "../../language/gen/index.js";
-import { StartRangeDate } from "../../language/gen/index.js";
+import { DateConcept } from "../../language/gen/index.js";
 import { TimeAmountPart } from "../../language/gen/index.js";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
 import { Timeline } from "../timeline/Timeline.js";
@@ -558,7 +558,8 @@ export function createStaffLevel(
     endMonth?: string,
     endYear?: string,
 ) {
-    const startDateInRange = StartRangeDate.create({
+    const startDateInRange = DateConcept.create({
+        dateAsString: startDay + "/" + startMonth + "/" + startYear,
         day: startDay,
         month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
         year: startYear,
@@ -568,7 +569,8 @@ export function createStaffLevel(
         endMonth = startMonth;
         endYear = startYear;
     }
-    const endDateInRange = StartRangeDate.create({
+    const endDateInRange = DateConcept.create({
+        dateAsString: endDay + "/" + endMonth + "/" + endYear,
         day: endDay,
         month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
         year: endYear,
@@ -617,7 +619,8 @@ export function createPatientNotAvailableDateRange(
         adjustedEndYear = endDate.getFullYear().toString();
     }
 
-    const startDateInRange = StartRangeDate.create({
+    const startDateInRange = DateConcept.create({
+        dateAsString: adjustedStartDay + "/" + adjustedStartMonth + "/" + adjustedStartYear,
         day: adjustedStartDay,
         month: FreNodeReference.create<Month>(getMonthFromString(adjustedStartMonth), "Month"),
         year: adjustedStartYear,
@@ -629,7 +632,8 @@ export function createPatientNotAvailableDateRange(
         adjustedEndYear = adjustedStartYear;
     }
 
-    const endDateInRange = StartRangeDate.create({
+    const endDateInRange = DateConcept.create({
+        dateAsString: adjustedEndDay + "/" + adjustedEndMonth + "/" + adjustedEndYear,
         day: adjustedEndDay,
         month: FreNodeReference.create<Month>(getMonthFromString(adjustedEndMonth), "Month"),
         year: adjustedEndYear,

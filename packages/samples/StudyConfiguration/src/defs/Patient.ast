@@ -19,6 +19,7 @@ modelunit PatientHistoryUnit {
 concept PatientHistory {
   patient_id: string;// initials or whatever the specific study uses to identify the patient in a secure way; No sharing patients across studies
   id: string; // TODO: DELETE this and switch to patient_id; 
+  startOfStudyDate: DateConcept;
   patientVisits: PatientVisit[];
   patientNotAvailableDates: PatientNotAvailable;
 }
@@ -44,21 +45,8 @@ concept StaffLevel {
   dateOrRange: DateRange;
 }
 
-concept DateRange {
-  startDate: StartRangeDate;
-  endDate?: EndRangeDate;
-}
-
 limited Month {
     January; February; March; April; May; June; July; August; September; October; November; December;
-}
-
-// TODO: use a different name to avoid conflicts with TypeScript Date
-concept Date {
-  dateAsString: string;
-  day: string;
-  month: Month;
-  year: string = "2025";
 }
 
 concept VisitDate {
@@ -67,6 +55,18 @@ concept VisitDate {
   year: string = "2025";
 }
 
+concept DateRange {
+  startDate: DateConcept;
+  endDate?: DateConcept;
+}
 
-concept EndRangeDate base Date {}
-concept StartRangeDate base Date {}
+// This is called DateConcept to avoid conflict with the TypeScript Date class. 
+// It represents a date in the language.
+// dataAsString is only here because the DatePicker component needs to set the date as a string. 
+// DatePicker needs to be updated to directly set the day, month, year.
+concept DateConcept {
+  dateAsString: string;
+  day: string;
+  month: Month;
+  year: string = "2025";
+}
