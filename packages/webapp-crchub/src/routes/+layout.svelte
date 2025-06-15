@@ -1,4 +1,5 @@
 <script lang="ts">
+    import "../init.ts";
     import { onMount } from "svelte";
     import { get } from 'svelte/store';
     import { isAuthenticated } from "../services/security/auth.js";

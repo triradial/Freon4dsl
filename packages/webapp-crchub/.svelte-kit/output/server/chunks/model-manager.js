@@ -7213,32 +7213,11 @@ class MainInterpreter {
     return value;
   }
 }
-const currentModelName = writable("");
-const currentUnitName = writable("");
-const noUnitAvailable = writable(true);
-const editorProgressShown = writable(true);
-const unsavedChanges = writable(true);
-const unitNames = writable({ ids: [], refs: [] });
-const units = writable({ ids: [], refs: [] });
-function setCurrentModelName(name) {
-  currentModelName.set(name);
-}
-function setCurrentUnitName(name) {
-  currentUnitName.set(name);
-}
-function updateModelState(modelName, unitName) {
-  currentModelName.set(modelName);
-  currentUnitName.set(unitName);
-}
-function updateEditorState(progressShown, unitAvailable, hasUnsavedChanges) {
-  editorProgressShown.set(progressShown);
-  noUnitAvailable.set(unitAvailable);
-  unsavedChanges.set(hasUnsavedChanges);
-}
-function updateUnitLists(names, unitList) {
-  unitNames.set(names);
-  units.set(unitList);
-}
+const languageName = writable("FreLanguage ...");
+const unitTypes = writable({ list: [] });
+const fileExtensions = writable({ list: [] });
+const projectionNames = writable({ list: ["default"] });
+const projectionsShown = writable({ list: ["default"] });
 const severity = writable({ value: FreErrorSeverity.Error });
 const userMessage = writable({ value: "This is an important message. Once you've read it, you can dismiss it." });
 const userMessageOpen = writable(false);
@@ -7252,11 +7231,6 @@ function setUserMessage(message, sever) {
   console.log("Freon User Message: " + message + ", " + (sever ?? FreErrorSeverity.Error));
   userMessageOpen.set(true);
 }
-const languageName = writable("FreLanguage ...");
-const unitTypes = writable({ list: [] });
-const fileExtensions = writable({ list: [] });
-const projectionNames = writable({ list: ["default"] });
-const projectionsShown = writable({ list: ["default"] });
 class LanguageInitializer {
   /**
    * Fills the Webapp Stores with initial values that describe the language,
@@ -88546,6 +88520,32 @@ ${Hd.getVisitsByPeriodAsMarkdown(e)}
     return n;
   }
 }
+const currentModelName = writable("");
+const currentUnitName = writable("");
+const noUnitAvailable = writable(true);
+const editorProgressShown = writable(true);
+const unsavedChanges = writable(true);
+const unitNames = writable({ ids: [], refs: [] });
+const units = writable({ ids: [], refs: [] });
+function setCurrentModelName(name) {
+  currentModelName.set(name);
+}
+function setCurrentUnitName(name) {
+  currentUnitName.set(name);
+}
+function updateModelState(modelName, unitName) {
+  currentModelName.set(modelName);
+  currentUnitName.set(unitName);
+}
+function updateEditorState(progressShown, unitAvailable, hasUnsavedChanges) {
+  editorProgressShown.set(progressShown);
+  noUnitAvailable.set(unitAvailable);
+  unsavedChanges.set(hasUnsavedChanges);
+}
+function updateUnitLists(names, unitList) {
+  unitNames.set(names);
+  units.set(unitList);
+}
 const LOGGER = new FreLogger("EditorState").mute();
 class ModelManager {
   static instance = null;
@@ -88629,7 +88629,6 @@ class ModelManager {
     LOGGER.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
     updateEditorState(true, true, false);
     this.resetGlobalVariables();
-    await this.saveCurrentUnit();
     await this.modelStore.openModel(modelName);
     const unit = this.modelStore.getUnitByName(unitName);
     if (unit) {
@@ -88831,67 +88830,68 @@ class ModelManager {
   }
 }
 export {
-  CharAllowed as $,
+  FreCaretPosition as $,
   AST as A,
   BoolDisplay as B,
-  isLayoutBox as C,
-  FreEditorUtil as D,
+  Ct as C,
+  isLabelBox as D,
   ElementBox as E,
-  FreLogger as F,
-  ListDirection as G,
+  FreLanguage as F,
+  isLayoutBox as G,
   Hd as H,
-  isOptionalBox2 as I,
-  moveListElement as J,
-  dropListElement as K,
+  FreEditorUtil as I,
+  ListDirection as J,
+  isOptionalBox2 as K,
   LOe as L,
   ModelManager as M,
   NN as N,
-  MenuOptionsType as O,
-  FreCreatePartAction as P,
-  isTableBox as Q,
+  moveListElement as O,
+  dropListElement as P,
+  MenuOptionsType as Q,
   RtString as R,
-  BehaviorExecutionResult as S,
-  TableDirection as T,
+  FreCreatePartAction as S,
+  isTableBox as T,
   UndefinedRectangle as U,
-  FreCaret as V,
+  TableDirection as V,
   WebappConfigurator as W,
-  ActionBox as X,
-  SelectBox as Y,
-  FreCaretPosition as Z,
-  isEmptyLineBox as _,
-  FreUndoManager as a,
-  lf as a0,
-  jo as a1,
-  Sf as a2,
-  FreNodeReference as a3,
-  of as a4,
-  lt as a5,
-  uf as a6,
-  Jr as a7,
-  em as a8,
-  FreErrorSeverity as b,
-  isActionBox as c,
-  FreLanguage as d,
-  isListBox as e,
-  isFreNodeReference as f,
-  MobxModelElementImpl as g,
-  FreUtils as h,
-  isActionTextBox as i,
-  isExternalBox as j,
-  isSelectBox as k,
-  isReferenceBox as l,
-  isBooleanControlBox as m,
-  isLimitedControlBox as n,
+  BehaviorExecutionResult as X,
+  FreCaret as Y,
+  ActionBox as Z,
+  SelectBox as _,
+  FreLogger as a,
+  isEmptyLineBox as a0,
+  CharAllowed as a1,
+  lf as a2,
+  jo as a3,
+  Sf as a4,
+  of as a5,
+  lt as a6,
+  uf as a7,
+  Jr as a8,
+  em as a9,
+  FreNodeReference as b,
+  FreUtils as c,
+  FreErrorSeverity as d,
+  FreUndoManager as e,
+  isActionTextBox as f,
+  isActionBox as g,
+  isListBox as h,
+  isNullOrUndefined as i,
+  isFreNodeReference as j,
+  MobxModelElementImpl as k,
+  isExternalBox as l,
+  isSelectBox as m,
+  isReferenceBox as n,
   observableprim as o,
-  isNullOrUndefined as p,
-  isTextBox as q,
+  isBooleanControlBox as p,
+  isLimitedControlBox as q,
   rv as r,
-  isTableRowBox as s,
+  isTextBox as s,
   tv as t,
   isElementBox as u,
-  isNumberControlBox as v,
-  LimitedDisplay as w,
-  isButtonBox as x,
-  isIndentBox as y,
-  isLabelBox as z
+  isTableRowBox as v,
+  isNumberControlBox as w,
+  LimitedDisplay as x,
+  isButtonBox as y,
+  isIndentBox as z
 };

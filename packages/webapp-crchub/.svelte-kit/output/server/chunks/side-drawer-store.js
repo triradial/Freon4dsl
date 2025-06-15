@@ -1,4 +1,4 @@
-import { M as attr_class, N as stringify, V as props_id, W as spread_attributes, B as pop, z as push, F as spread_props } from "./index.js";
+import { M as attr_class, N as stringify, V as props_id, W as spread_attributes, B as pop, z as push, G as spread_props } from "./index.js";
 import * as popover from "@zag-js/popover";
 import { t as toStyleString, u as useMachine, n as normalizeProps } from "./Tooltip.svelte_svelte_type_style_lang.js";
 import { mergeProps as mergeProps$1 } from "@zag-js/core";

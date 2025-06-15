@@ -1,6 +1,6 @@
 import { C as tick, A as onMount } from "./index.js";
 import { __decorate } from "tslib";
-import { F as FreLogger, a as FreUndoManager, b as FreErrorSeverity, i as isActionTextBox, c as isActionBox, d as FreLanguage, e as isListBox, A as AST, f as isFreNodeReference, g as MobxModelElementImpl, E as ElementBox, h as FreUtils, o as observableprim, j as isExternalBox, k as isSelectBox, l as isReferenceBox, m as isBooleanControlBox, n as isLimitedControlBox, p as isNullOrUndefined, q as isTextBox, s as isTableRowBox, u as isElementBox, U as UndefinedRectangle, B as BoolDisplay, v as isNumberControlBox, w as LimitedDisplay, x as isButtonBox, y as isIndentBox, z as isLabelBox, C as isLayoutBox, D as FreEditorUtil, G as ListDirection, I as isOptionalBox2, J as moveListElement, K as dropListElement, O as MenuOptionsType, P as FreCreatePartAction, Q as isTableBox, T as TableDirection, S as BehaviorExecutionResult, V as FreCaret, X as ActionBox, Y as SelectBox, Z as FreCaretPosition, _ as isEmptyLineBox, $ as CharAllowed } from "./model-manager.js";
+import { a as FreLogger, e as FreUndoManager, d as FreErrorSeverity, f as isActionTextBox, g as isActionBox, F as FreLanguage, h as isListBox, A as AST, j as isFreNodeReference, k as MobxModelElementImpl, E as ElementBox, c as FreUtils, o as observableprim, l as isExternalBox, m as isSelectBox, n as isReferenceBox, p as isBooleanControlBox, q as isLimitedControlBox, i as isNullOrUndefined, s as isTextBox, U as UndefinedRectangle, u as isElementBox, v as isTableRowBox, B as BoolDisplay, w as isNumberControlBox, x as LimitedDisplay, y as isButtonBox, z as isIndentBox, D as isLabelBox, G as isLayoutBox, I as FreEditorUtil, J as ListDirection, K as isOptionalBox2, O as moveListElement, P as dropListElement, Q as MenuOptionsType, S as FreCreatePartAction, T as isTableBox, V as TableDirection, X as BehaviorExecutionResult, Y as FreCaret, Z as ActionBox, _ as SelectBox, $ as FreCaretPosition, a0 as isEmptyLineBox, a1 as CharAllowed } from "./model-manager.js";
 import { runInAction } from "mobx";
 function isFreNode(node) {
   return node?.freLanguageConcept !== void 0;
@@ -11775,6 +11775,9 @@ class Mm {
   }
 }
 const Jn = /* @__PURE__ */ new Map();
+function Fg(o) {
+  o.forEach((e) => Jn.set(e.knownAs, e.component));
+}
 function Hm(o) {
   return Jn.get(o);
 }
@@ -13339,5 +13342,7 @@ function Ng(o, e) {
 }
 Ae(["keydown"]);
 export {
-  Ng as N
+  Fg as F,
+  Ng as N,
+  gt as g
 };

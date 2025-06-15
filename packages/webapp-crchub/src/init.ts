@@ -8,7 +8,7 @@ import DatePicker from "./components/custom/DatePicker.svelte";
 import ExpandCollapseWrapperComponent from "./components/custom/ExpandCollapseWrapperComponent.svelte";
 import TimePicker from "./components/custom/TimePicker.svelte";
 
-console.log('Starting main.ts initialization');
+console.log('Starting init.ts initialization');
 
 // Configure the server connection settings
 const serverComm = ServerCommunication.getInstance();
@@ -33,5 +33,5 @@ setCustomComponents([
 ]);
 console.log('Custom components set');
 
-console.log('main.ts initialization complete');
+console.log('init.ts initialization complete');
 // Initialize the application done by the +layout.svelte

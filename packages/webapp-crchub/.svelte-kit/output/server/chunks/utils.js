@@ -1,5 +1,5 @@
 import { w as writable, g as get } from "./index3.js";
-import { M as ModelManager, t as tv, R as RtString, N as NN, L as LOe, a0 as lf, a1 as jo, a2 as Sf, a3 as FreNodeReference, a4 as of, a5 as lt, a6 as uf, a7 as Jr, a8 as em } from "./model-manager.js";
+import { M as ModelManager, t as tv, R as RtString, N as NN, L as LOe, a2 as lf, a3 as jo, a4 as Sf, b as FreNodeReference, a5 as of, a6 as lt, a7 as uf, a8 as Jr, a9 as em } from "./model-manager.js";
 import { e as env } from "./env.js";
 import { K as ensure_array_like, W as spread_attributes, Y as clsx, Z as element, B as pop, z as push } from "./index.js";
 function createUserStore() {

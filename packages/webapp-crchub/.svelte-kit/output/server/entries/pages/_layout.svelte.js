@@ -1,4 +1,9 @@
-import { z as push, F as spread_props, B as pop, G as store_get, I as unsubscribe_stores, E as escape_html, J as attr, K as ensure_array_like, M as attr_class, N as stringify, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head, A as onMount } from "../../chunks/index.js";
+import { A as onMount, F as attr, B as pop, z as push, G as spread_props, I as store_get, J as unsubscribe_stores, E as escape_html, K as ensure_array_like, M as attr_class, N as stringify, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head } from "../../chunks/index.js";
+import { i as isNullOrUndefined, F as FreLanguage, a as FreLogger, b as FreNodeReference, c as FreUtils, d as FreErrorSeverity, C as Ct, W as WebappConfigurator, r as rv, R as RtString, t as tv, N as NN, L as LOe, H as Hd, M as ModelManager } from "../../chunks/model-manager.js";
+import { g as gt, F as Fg } from "../../chunks/index4.js";
+import { e as env } from "../../chunks/env.js";
+import "clsx";
+import { runInAction } from "mobx";
 import { w as writable, g as get } from "../../chunks/index3.js";
 import { L as LoginPart, i as isAuthenticated } from "../../chunks/LoginPart.js";
 import { I as Icon, u as userStore, g as getStatusColor, d as dataStore } from "../../chunks/utils.js";
@@ -6,11 +11,857 @@ import { t as theme } from "../../chunks/theme-store.js";
 import "../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
 import { A as AppBar, P as Popover, S as Save, X, g as getDrawerWidth, a as getDrawerOrder, b as getDrawer, d as drawerStore, c as addDrawer } from "../../chunks/side-drawer-store.js";
 import "../../chunks/client.js";
-import "clsx";
 import { o as objectDrawerStore, c as closeObjectDrawer } from "../../chunks/object-drawer-store.js";
-import { r as rv, R as RtString, t as tv, N as NN, L as LOe, H as Hd, M as ModelManager } from "../../chunks/model-manager.js";
 import { h as html } from "../../chunks/html.js";
 import { marked } from "marked";
+function isIdentifier(str) {
+  if (!isNullOrUndefined(str)) {
+    const match = str.match(/^[a-z,A-Z][a-z,A-Z0-9_\-\.]*$/);
+    return match !== null && match.length > 0;
+  } else {
+    return false;
+  }
+}
+class FreModelSerializer {
+  constructor() {
+    this.language = FreLanguage.getInstance();
+  }
+  toTypeScriptInstance(jsonObject) {
+    return runInAction(() => {
+      return this.toTypeScriptInstanceInternal(jsonObject);
+    });
+  }
+  toTypeScriptInstanceInternal(jsonObject) {
+    if (jsonObject === null) {
+      throw new Error("Cannot read json: jsonObject is null.");
+    }
+    const type = jsonObject["$typename"];
+    if (isNullOrUndefined(type)) {
+      throw new Error(`Cannot read json: not a Freon structure, typename missing: ${JSON.stringify(jsonObject)}.`);
+    }
+    const result = this.language.createConceptOrUnit(type);
+    if (isNullOrUndefined(result)) {
+      throw new Error(`Cannot read json: ${type} unknown.`);
+    }
+    for (const property of this.language.allConceptProperties(type)) {
+      const value = jsonObject[property.name];
+      if (isNullOrUndefined(value)) {
+        continue;
+      }
+      this.convertProperties(result, property, value);
+    }
+    return result;
+  }
+  convertProperties(result, property, value) {
+    switch (property.propertyKind) {
+      case "primitive":
+        if (property.isList) {
+          result[property.name] = [];
+          for (const item in value) {
+            result[property.name].push(value[item]);
+          }
+        } else {
+          if (property.type === "string" || property.type === "identifier") {
+            this.checkValueToType(value, "string", property);
+          } else if (property.type === "number") {
+            this.checkValueToType(value, "number", property);
+          } else if (property.type === "boolean") {
+            this.checkValueToType(value, "boolean", property);
+          }
+          result[property.name] = value;
+        }
+        break;
+      case "part":
+        if (property.isList) {
+          for (const item in value) {
+            if (!isNullOrUndefined(value[item])) {
+              result[property.name].push(this.toTypeScriptInstance(value[item]));
+            }
+          }
+        } else {
+          if (!isNullOrUndefined(value)) {
+            result[property.name] = this.toTypeScriptInstance(value);
+          }
+        }
+        break;
+      case "reference":
+        if (property.isList) {
+          for (const item in value) {
+            if (!isNullOrUndefined(value[item])) {
+              result[property.name].push(this.language.referenceCreator(value[item], property.type));
+            }
+          }
+        } else {
+          if (!isNullOrUndefined(value)) {
+            result[property.name] = this.language.referenceCreator(value, property.type);
+          }
+        }
+        break;
+    }
+  }
+  checkValueToType(value, shouldBeType, property) {
+    if (typeof value !== shouldBeType) {
+      throw new Error(`Value of property '${property.name}' is not of type '${shouldBeType}'.`);
+    }
+  }
+  convertToJSON(tsObject, publicOnly) {
+    const typename = tsObject.freLanguageConcept();
+    let result;
+    if (publicOnly !== void 0 && publicOnly) {
+      if (this.language.concept(typename)?.isPublic || !!this.language.unit(typename)) {
+        result = this.convertToJSONinternal(tsObject, true, typename);
+      }
+    } else {
+      result = this.convertToJSONinternal(tsObject, false, typename);
+    }
+    return result;
+  }
+  convertToJSONinternal(tsObject, publicOnly, typename) {
+    const result = { $typename: typename };
+    for (const p of this.language.allConceptProperties(typename)) {
+      if (publicOnly) {
+        if (p.isPublic) {
+          this.convertPropertyToJSON(p, tsObject, publicOnly, result);
+        }
+      } else {
+        this.convertPropertyToJSON(p, tsObject, publicOnly, result);
+      }
+    }
+    return result;
+  }
+  convertPropertyToJSON(p, tsObject, publicOnly, result) {
+    switch (p.propertyKind) {
+      case "part":
+        const value = tsObject[p.name];
+        if (p.isList) {
+          const parts = tsObject[p.name];
+          result[p.name] = [];
+          for (let i = 0; i < parts.length; i++) {
+            result[p.name][i] = this.convertToJSON(parts[i], publicOnly);
+          }
+        } else {
+          result[p.name] = !!value ? this.convertToJSON(value, publicOnly) : null;
+        }
+        break;
+      case "reference":
+        if (p.isList) {
+          const references = tsObject[p.name];
+          result[p.name] = [];
+          for (let i = 0; i < references.length; i++) {
+            result[p.name][i] = references[i]["name"];
+          }
+        } else {
+          const value1 = tsObject[p.name];
+          result[p.name] = !!value1 ? tsObject[p.name]["name"] : null;
+        }
+        break;
+      case "primitive":
+        const value2 = tsObject[p.name];
+        result[p.name] = value2;
+        break;
+    }
+  }
+}
+function isLionWebJsonChunk(object) {
+  const cnk = object;
+  return cnk.serializationFormatVersion !== void 0 && cnk.languages !== void 0 && cnk.nodes !== void 0;
+}
+function createLionWebJsonNode() {
+  return {
+    id: null,
+    classifier: null,
+    properties: [],
+    containments: [],
+    references: [],
+    annotations: [],
+    parent: null
+  };
+}
+const LOGGER$1 = new FreLogger("FreLionwebSerializer");
+class FreLionwebSerializer {
+  constructor() {
+    this.nodesfromJson = /* @__PURE__ */ new Map();
+    this.language = FreLanguage.getInstance();
+  }
+  toTypeScriptInstance(jsonObject) {
+    LOGGER$1.log("toTypeScriptInstance");
+    this.nodesfromJson.clear();
+    FreLanguage.getInstance().stdLib.elements.forEach((elem) => this.nodesfromJson.set(elem.freId(), { freNode: elem, children: [], references: [] }));
+    LOGGER$1.log("Starting ...");
+    if (!isLionWebJsonChunk(jsonObject)) {
+      LOGGER$1.error(`Cannot read json: jsonObject is not a LionWeb chunk:`);
+    }
+    const chunk = jsonObject;
+    const serVersion = chunk.serializationFormatVersion;
+    LOGGER$1.log("SerializationFormatVersion: " + serVersion);
+    const nodes = chunk.nodes;
+    runInAction(() => {
+      for (const object of nodes) {
+        const parsedNode = this.toTypeScriptInstanceInternal(object);
+        if (parsedNode !== null) {
+          this.nodesfromJson.set(parsedNode.freNode.freId(), parsedNode);
+        }
+      }
+      LOGGER$1.info("resolving children");
+      this.resolveChildrenAndReferences();
+      LOGGER$1.info("resolved children");
+    });
+    LOGGER$1.log("toTypeScriptInstance done with root");
+    LOGGER$1.log("toTypeScriptInstance " + this.findRoot());
+    return this.findRoot();
+  }
+  findRoot() {
+    const mapEntries = this.nodesfromJson.values();
+    for (const parsedNode of mapEntries) {
+      if (parsedNode.freNode.freIsUnit()) {
+        return parsedNode.freNode;
+      }
+    }
+    return null;
+  }
+  resolveChildrenAndReferences() {
+    const mapEntries = this.nodesfromJson.values();
+    for (const parsedNode of mapEntries) {
+      LOGGER$1.log(`resolveChildrenAndReferences or node ${parsedNode.freNode.freId()}`);
+      for (const child of parsedNode.children) {
+        LOGGER$1.info(`resolving child ` + JSON.stringify(child));
+        const resolvedChild = this.nodesfromJson.get(child.referredId);
+        LOGGER$1.info(`resolvedChild ${resolvedChild?.freNode?.freId()}`);
+        if (isNullOrUndefined(resolvedChild)) {
+          LOGGER$1.error("Child cannot be resolved: " + child.referredId);
+          continue;
+        }
+        if (child.isList) {
+          LOGGER$1.info(`isList ${child.featureName} ${child.isList} '${child.typeName}' + '${typeof parsedNode.freNode[child.featureName]}'`);
+          LOGGER$1.info(`      '${Array.isArray(parsedNode.freNode[child.featureName])}' push '${resolvedChild.freNode.freId()}'`);
+          parsedNode.freNode[child.featureName].push(resolvedChild.freNode);
+          LOGGER$1.info("pushed");
+        } else {
+          LOGGER$1.info("NOT isList");
+          parsedNode.freNode[child.featureName] = resolvedChild.freNode;
+        }
+        LOGGER$1.info(`resolved child `);
+      }
+      for (const reference of parsedNode.references) {
+        LOGGER$1.info(`resolving reference ` + JSON.stringify(reference));
+        const freonRef = FreNodeReference.create(reference.resolveInfo, reference.typeName);
+        if (reference.isList) {
+          parsedNode.freNode[reference.featureName].push(freonRef);
+        } else {
+          parsedNode.freNode[reference.featureName] = freonRef;
+        }
+        LOGGER$1.log("resolved reference: " + freonRef.typeName);
+      }
+    }
+  }
+  toTypeScriptInstanceInternal(node) {
+    LOGGER$1.info("toTypeScriptInstanceInternal node " + node.id);
+    if (node === null) {
+      throw new Error("Cannot read json 1: jsonObject is null.");
+    }
+    const jsonMetaPointer = node.classifier;
+    const id = node.id;
+    if (isNullOrUndefined(jsonMetaPointer)) {
+      throw new Error(`Cannot read json 2: not a Freon structure, classifier name missing: ${JSON.stringify(node)}.`);
+    }
+    const conceptMetaPointer = this.convertMetaPointer(jsonMetaPointer, node);
+    LOGGER$1.log(`Metapointer is ${JSON.stringify(conceptMetaPointer)}`);
+    const classifier = this.language.classifierByKey(conceptMetaPointer.key);
+    if (isNullOrUndefined(classifier)) {
+      LOGGER$1.error(`1 Cannot read json 3: ${conceptMetaPointer.key} unknown.`);
+      return null;
+    }
+    const tsObject = this.language.createConceptOrUnit(classifier.typeName, id);
+    if (isNullOrUndefined(tsObject)) {
+      LOGGER$1.error(`2 Cannot read json 4: ${conceptMetaPointer.key} unknown.`);
+      return null;
+    }
+    FreUtils.nodeIdProvider.usedId(tsObject.freId());
+    this.convertPrimitiveProperties(tsObject, conceptMetaPointer.key, node);
+    const parsedChildren = this.convertChildProperties(conceptMetaPointer.key, node);
+    const parsedReferences = this.convertReferenceProperties(conceptMetaPointer.key, node);
+    LOGGER$1.info(`toTypeScriptInstanceInternal result ${JSON.stringify({ freNode: tsObject, children: parsedChildren, references: parsedReferences })}`);
+    return { freNode: tsObject, children: parsedChildren, references: parsedReferences };
+  }
+  convertPrimitiveProperties(freNode, concept, jsonObject) {
+    const jsonProperties = jsonObject.properties;
+    FreUtils.CHECK(Array.isArray(jsonProperties), "Found properties value which is not a Array for node: " + jsonObject.id);
+    for (const jsonProperty of Object.values(jsonProperties)) {
+      LOGGER$1.log(">> creating property " + JSON.stringify(jsonProperty) + " with value " + jsonProperty.value);
+      const jsonMetaPointer = jsonProperty.property;
+      const propertyMetaPointer = this.convertMetaPointer(jsonMetaPointer, jsonObject);
+      const property = this.language.classifierPropertyByKey(concept, propertyMetaPointer.key);
+      if (property === void 0 || property === null) {
+        LOGGER$1.error("NULL PROPERTY for key " + propertyMetaPointer.key);
+      }
+      if (isNullOrUndefined(property)) {
+        if (propertyMetaPointer.key !== "qualifiedName")
+          LOGGER$1.log("Unknown property: " + propertyMetaPointer.key + " for concept " + concept);
+        continue;
+      }
+      FreUtils.CHECK(!property.isList, "Lionweb does not support list properties: " + property.name);
+      FreUtils.CHECK(property.propertyKind === "primitive", "Primitive value found for non primitive property: " + property.name);
+      const value = jsonProperty.value;
+      if (isNullOrUndefined(value)) {
+        throw new Error(`Cannot read json 5: ${JSON.stringify(property, null, 2)} value unset.`);
+      }
+      if (property.type === "string" || property.type === "identifier") {
+        freNode[property.name] = value;
+      } else if (property.type === "number") {
+        freNode[property.name] = Number.parseInt(value);
+      } else if (property.type === "boolean") {
+        freNode[property.name] = value === "true";
+      }
+    }
+  }
+  convertMetaPointer(jsonObject, parent) {
+    if (isNullOrUndefined(jsonObject)) {
+      throw new Error(`Cannot read json 6: not a MetaPointer: ${JSON.stringify(parent)}.`);
+    }
+    const language = jsonObject.language;
+    if (isNullOrUndefined(language)) {
+      throw new Error(`MetaPointer misses metamodel: ${JSON.stringify(jsonObject)}`);
+    }
+    const version = jsonObject.version;
+    if (isNullOrUndefined(version)) {
+      throw new Error(`MetaPointer misses version: ${JSON.stringify(jsonObject)}`);
+    }
+    const key = jsonObject.key;
+    if (isNullOrUndefined(version)) {
+      throw new Error(`MetaPointer misses key: ${JSON.stringify(jsonObject)}`);
+    }
+    return {
+      language,
+      version,
+      key
+    };
+  }
+  convertChildProperties(concept, jsonObject) {
+    const jsonChildren = jsonObject.containments;
+    FreUtils.CHECK(Array.isArray(jsonChildren), "Found children value which is not a Array for node: " + jsonObject.id);
+    const parsedChildren = [];
+    for (const jsonChild of Object.values(jsonChildren)) {
+      LOGGER$1.info(`convertChildProperties ${JSON.stringify(jsonChild.containment)}`);
+      const jsonMetaPointer = jsonChild.containment;
+      const propertyMetaPointer = this.convertMetaPointer(jsonMetaPointer, jsonObject);
+      const property = this.language.classifierPropertyByKey(concept, propertyMetaPointer.key);
+      if (isNullOrUndefined(property)) {
+        LOGGER$1.log("Unknown child property: " + propertyMetaPointer.key + " for concept " + concept);
+        continue;
+      }
+      FreUtils.CHECK(property.propertyKind === "part", "Part value found for non part property: " + property.name);
+      const jsonValue = jsonChild.children;
+      FreUtils.CHECK(Array.isArray(jsonValue), "Found child value which is not a Array for property: " + property.name);
+      for (const item of jsonValue) {
+        if (!isNullOrUndefined(item)) {
+          parsedChildren.push({ featureName: property.name, isList: property.isList, referredId: item });
+        }
+      }
+    }
+    LOGGER$1.info("convertChildProperties resuilt is " + JSON.stringify(parsedChildren));
+    return parsedChildren;
+  }
+  convertReferenceProperties(concept, jsonObject) {
+    const jsonReferences = jsonObject.references;
+    FreUtils.CHECK(Array.isArray(jsonReferences), "Found references value which is not a Array for node: " + jsonObject.id);
+    const parsedReferences = [];
+    for (const jsonReference of Object.values(jsonReferences)) {
+      LOGGER$1.info(`convertReferenceProperties ${JSON.stringify(jsonReference.reference)}`);
+      const jsonMetaPointer = jsonReference.reference;
+      const propertyMetaPointer = this.convertMetaPointer(jsonMetaPointer, jsonObject);
+      const property = this.language.classifierPropertyByKey(concept, propertyMetaPointer.key);
+      if (isNullOrUndefined(property)) {
+        LOGGER$1.error("Unknown reference property: " + propertyMetaPointer.key + " for concept " + concept);
+        continue;
+      }
+      FreUtils.CHECK(property.propertyKind === "reference", "Reference value found for non reference property: " + property.name);
+      const jsonValue = jsonReference.targets;
+      FreUtils.CHECK(Array.isArray(jsonValue), "Found targets value which is not a Array for property: " + property.name);
+      for (const item of jsonValue) {
+        if (!isNullOrUndefined(item)) {
+          if (typeof item === "object") {
+            parsedReferences.push({
+              featureName: property.name,
+              isList: property.isList,
+              typeName: property.type,
+              referredId: item.reference,
+              resolveInfo: item.resolveInfo
+            });
+          } else if (typeof item === "string") {
+            parsedReferences.push({
+              featureName: property.name,
+              isList: property.isList,
+              typeName: property.type,
+              referredId: item,
+              resolveInfo: ""
+            });
+          } else {
+            LOGGER$1.log("Incorrect reference format: " + JSON.stringify(item));
+          }
+        }
+      }
+    }
+    return parsedReferences;
+  }
+  convertToJSON(freNode, publicOnly) {
+    const typename = freNode.freLanguageConcept();
+    LOGGER$1.log("start converting concept name " + typename + ", publicOnly: " + publicOnly);
+    const idMap = /* @__PURE__ */ new Map();
+    if (publicOnly !== void 0 && publicOnly) {
+      console.error("Use of publicOnly in FreLionWebSerializer.ts, should never happen!");
+      throw new Error("Use of publicOnly in FreLionWebSerializer.ts, should never happen!");
+    } else {
+      this.convertToJSONinternal(freNode, idMap);
+    }
+    LOGGER$1.log("end converting concept name " + JSON.stringify(Object.values(idMap)));
+    return Object.values(idMap);
+  }
+  convertToJSONinternal(freNode, idToLionWebJsonNodeMap) {
+    let result = idToLionWebJsonNodeMap.get(freNode.freId());
+    if (result !== void 0) {
+      LOGGER$1.error("already found: " + freNode.freId());
+      return result;
+    }
+    const typename = freNode.freLanguageConcept();
+    result = createLionWebJsonNode();
+    idToLionWebJsonNodeMap[freNode.freId()] = result;
+    result.id = freNode.freId();
+    result.parent = freNode?.freOwner()?.freId();
+    if (result.parent === void 0 || freNode.freIsUnit()) {
+      result.parent = null;
+    }
+    let lionWebConceptKey;
+    let lionWebLanguage;
+    const concept = this.language.concept(typename);
+    if (concept !== void 0) {
+      lionWebConceptKey = concept.key;
+      lionWebLanguage = concept.language;
+    } else {
+      const unit = this.language.unit(typename);
+      lionWebConceptKey = unit?.key;
+      lionWebLanguage = unit?.language;
+    }
+    if (lionWebConceptKey === void 0) {
+      LOGGER$1.error(`Unknown concept key: ${typename}`);
+      return void 0;
+    }
+    result.classifier = this.createMetaPointer(lionWebConceptKey, lionWebLanguage);
+    for (const p of this.language.allConceptProperties(typename)) {
+      this.convertPropertyToJSON(p, freNode, result, idToLionWebJsonNodeMap);
+    }
+    return result;
+  }
+  createMetaPointer(key, language) {
+    return {
+      language,
+      version: "2023.1",
+      key
+    };
+  }
+  convertPropertyToJSON(p, parentNode, result, idMap) {
+    if (p.id === void 0) {
+      LOGGER$1.log(`no id defined for property ${p.name}`);
+      return;
+    }
+    switch (p.propertyKind) {
+      case "part":
+        const value = parentNode[p.name];
+        if (value === null || value === void 0) {
+          LOGGER$1.log("PART is null: " + parentNode["name"] + "." + p.name);
+          break;
+        }
+        const child = {
+          containment: this.createMetaPointer(p.key, p.language),
+          children: []
+        };
+        if (p.isList) {
+          const parts = parentNode[p.name];
+          for (const part of parts) {
+            child.children.push(this.convertToJSONinternal(part, idMap).id);
+          }
+        } else {
+          child.children.push((!!value ? this.convertToJSONinternal(value, idMap) : null).id);
+        }
+        result.containments.push(child);
+        break;
+      case "reference":
+        const lwReference = {
+          reference: this.createMetaPointer(p.key, p.language),
+          targets: []
+        };
+        if (p.isList) {
+          const references = parentNode[p.name];
+          LOGGER$1.log("References for " + p.name + ": " + references);
+          for (const ref of references) {
+            if (ref === null || ref === void 0) {
+              LOGGER$1.log("REF NULL for " + p.name);
+              break;
+            }
+            const referredId = ref?.referred?.freId();
+            if (!!ref.name || !!referredId) {
+              lwReference.targets.push({
+                resolveInfo: ref.name,
+                reference: referredId ?? null
+              });
+            }
+          }
+        } else {
+          const ref = parentNode[p.name];
+          if (ref === null || ref === void 0) {
+            LOGGER$1.log("REF NULL for " + p.name + " parant " + parentNode["name"]);
+            break;
+          }
+          const referredId = ref?.referred?.freId();
+          if (!!ref.name || !!referredId) {
+            const referenceProp = ref?.referred?.freId();
+            lwReference.targets.push({
+              resolveInfo: !!ref ? ref["name"] : null,
+              reference: referenceProp ?? null
+            });
+          }
+        }
+        result.references.push(lwReference);
+        break;
+      case "primitive":
+        const value2 = parentNode[p.name];
+        result.properties.push({
+          property: this.createMetaPointer(p.key, p.language),
+          value: propertyValueToString(value2)
+        });
+        break;
+    }
+  }
+}
+function propertyValueToString(value) {
+  switch (typeof value) {
+    case "string":
+      return value;
+    case "boolean":
+      return value === true ? "true" : "false";
+    case "number":
+      return "" + value;
+    default:
+      return value;
+  }
+}
+const LOGGER = new FreLogger("ServerCommunication");
+class ServerCommunication {
+  constructor() {
+    this._nodePort = 8001;
+    this._SERVER_IP = `http://127.0.0.1`;
+    this._SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
+  }
+  get nodePort() {
+    return this._nodePort;
+  }
+  set nodePort(value) {
+    this._nodePort = value;
+    this.SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
+  }
+  get SERVER_URL() {
+    return this._SERVER_URL;
+  }
+  set SERVER_URL(value) {
+    this._SERVER_URL = value;
+  }
+  get SERVER_IP() {
+    return this._SERVER_IP;
+  }
+  set SERVER_IP(value) {
+    this._SERVER_IP = value;
+    this.SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
+  }
+  static getInstance() {
+    if (!!!ServerCommunication.instance) {
+      ServerCommunication.instance = new ServerCommunication();
+    }
+    return ServerCommunication.instance;
+  }
+  static findParams(params) {
+    if (!!params && params.length > 0) {
+      return "?" + params;
+    } else {
+      return "";
+    }
+  }
+  onError(msg, severity) {
+    console.error(`ServerCommunication ${severity}: ${msg}`);
+  }
+  async generateIds(quantity, callback) {
+    return null;
+  }
+  async putModelUnit(modelName, unitId, unit) {
+    LOGGER.log(`ServerCommunication.putModelUnit ${modelName}/${unitId.name}`);
+    if (isIdentifier(unitId.name)) {
+      const model = ServerCommunication.lionweb_serial.convertToJSON(unit);
+      let output = {
+        serializationFormatVersion: "2023.1",
+        languages: collectUsedLanguages(model),
+        nodes: model
+      };
+      await this.putWithTimeout(`putModelUnit`, output, `folder=${modelName}&name=${unitId.name}`);
+    } else {
+      LOGGER.error("Name of Unit '" + unitId.name + "' may contain only characters, numbers, '_', or '-', and must start with a character.");
+      this.onError("Name of Unit '" + unitId.name + "' may contain only characters, numbers, '_', or '-', and must start with a character.", FreErrorSeverity.NONE);
+    }
+  }
+  async deleteModelUnit(modelName, unit) {
+    LOGGER.log(`ServerCommunication.deleteModelUnit ${modelName}/${unit.name}`);
+    if (!!unit.name && unit.name.length > 0) {
+      await this.fetchWithTimeout(`deleteModelUnit`, `folder=${modelName}&name=${unit.name}`);
+    }
+  }
+  async deleteModel(modelName) {
+    LOGGER.log(`ServerCommunication.deleteModel ${modelName}`);
+    if (!!modelName && modelName.length > 0) {
+      await this.fetchWithTimeout(`deleteModel`, `folder=${modelName}`);
+    }
+  }
+  async loadModelList() {
+    LOGGER.log(`ServerCommunication.loadModelList`);
+    const res = await this.fetchWithTimeout(`getModelList`);
+    if (!!res) {
+      return res;
+    } else {
+      return [];
+    }
+  }
+  async loadUnitList(modelName) {
+    LOGGER.log(`ServerCommunication.loadUnitList`);
+    let modelUnits = await this.fetchWithTimeout(`getUnitList`, `folder=${modelName}`);
+    if (!!modelUnits) {
+      return modelUnits.map((u) => {
+        return { name: u, id: u, type: "" };
+      });
+    } else {
+      return [];
+    }
+  }
+  async loadModelUnit(modelName, unit) {
+    LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
+    if (!!unit.name && unit.name.length > 0) {
+      const res = await this.fetchWithTimeout(`getModelUnit`, `folder=${modelName}&name=${unit.name}`);
+      if (!!res) {
+        try {
+          let unit2;
+          if (res["$typename"] === void 0) {
+            unit2 = ServerCommunication.lionweb_serial.toTypeScriptInstance(res);
+          } else {
+            unit2 = ServerCommunication.serial.toTypeScriptInstance(res);
+          }
+          return unit2;
+        } catch (e) {
+          LOGGER.error("loadModelUnit, " + e.message);
+          this.onError(e.message, FreErrorSeverity.NONE);
+          console.log(e.stack);
+        }
+      }
+    }
+    return null;
+  }
+  async fetchWithTimeout(method, params) {
+    params = ServerCommunication.findParams(params);
+    LOGGER.log("fetchWithTimeout Params = " + params);
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2e3);
+      LOGGER.log(`Input: ${this._SERVER_URL}${method}${params}`);
+      const promise = await fetch(`${this._SERVER_URL}${method}${params}`, {
+        signal: controller.signal,
+        method: "get",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      clearTimeout(timeoutId);
+      return await promise.json();
+    } catch (e) {
+      this.handleError(e);
+    }
+    return null;
+  }
+  async putWithTimeout(method, data, params) {
+    params = ServerCommunication.findParams(params);
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2e3);
+      await fetch(`${this._SERVER_URL}${method}${params}`, {
+        signal: controller.signal,
+        method: "put",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+      clearTimeout(timeoutId);
+    } catch (e) {
+      this.handleError(e);
+    }
+  }
+  handleError(e) {
+    let errorMess = e.message;
+    if (e.message.includes("aborted")) {
+      errorMess = `Time out: no response from ${this._SERVER_URL}.`;
+    }
+    LOGGER.error(errorMess);
+    this.onError(errorMess, FreErrorSeverity.NONE);
+  }
+  async renameModelUnit(modelName, oldName, newName, unit) {
+    LOGGER.log(`ServerCommunication.renameModelUnit ${modelName}/${oldName} to ${modelName}/${newName}`);
+    this.putModelUnit(modelName, { name: newName, id: unit.freId(), type: unit.freLanguageConcept() }, unit);
+    this.deleteModelUnit(modelName, { name: oldName, id: unit.freId(), type: unit.freLanguageConcept() });
+  }
+  createModel(modelName) {
+  }
+  createModelUnit(modelName, unit) {
+    this.putModelUnit(modelName, { id: unit.freId(), name: unit.name, type: unit.freLanguageConcept() }, unit);
+  }
+}
+ServerCommunication.serial = new FreModelSerializer();
+ServerCommunication.lionweb_serial = new FreLionwebSerializer();
+function collectUsedLanguages(nodes) {
+  if (nodes.length == 0) {
+    return [];
+  }
+  const languages = /* @__PURE__ */ new Map();
+  nodes.forEach((node) => {
+    addLanguage(languages, node.classifier);
+    node.properties.forEach((p) => addLanguage(languages, p.property));
+    node.containments.forEach((c) => addLanguage(languages, c.containment));
+    node.references.forEach((r) => addLanguage(languages, r.reference));
+  });
+  const mapped = new Mapped();
+  languages.forEach(mapped.map);
+  return mapped.languages;
+}
+function addLanguage(languages, metaPointer) {
+  let versions = languages.get(metaPointer.language);
+  if (versions === void 0) {
+    versions = /* @__PURE__ */ new Set();
+    languages.set(metaPointer.language, versions);
+  }
+  versions.add(metaPointer.version);
+}
+class Mapped {
+  constructor() {
+    this.languages = [];
+    this.map = (value, key) => {
+      value.forEach((v) => this.languages.push({ key, version: v }));
+    };
+  }
+}
+function DatePicker($$payload, $$props) {
+  push();
+  const { box } = $$props;
+  let inputElement;
+  let value = "";
+  getValue();
+  function getValue() {
+    let startStr = box.getPropertyValue();
+    if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
+      value = startStr;
+    } else {
+      const today = /* @__PURE__ */ new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      value = `${yyyy}-${mm}-${dd}`;
+    }
+  }
+  async function setFocus() {
+    inputElement.focus();
+  }
+  const refresh = (why) => {
+    getValue();
+  };
+  onMount(() => {
+    getValue();
+    box.setFocus = setFocus;
+    box.refreshComponent = refresh;
+    console.log("[DatePicker] onMount value:", value);
+  });
+  $$payload.out += `<div class="datepicker"><input id="default-datepicker" type="date"${attr("value", value)} class="datepicker-input" placeholder="Select date"/></div>`;
+  pop();
+}
+function ExpandCollapseWrapperComponent($$payload, $$props) {
+  push();
+  const { box, editor } = $$props;
+  let inputElement;
+  async function setFocus() {
+    inputElement.focus();
+  }
+  const refresh = (why) => {
+  };
+  onMount(() => {
+    let verticalBox = box.childBox.children[0];
+    const extendedCssClass = verticalBox.cssClass + " ml-5";
+    FreUtils.initializeObject(verticalBox, { selectable: false, cssClass: extendedCssClass });
+    verticalBox.children.forEach((childBox) => {
+      let childExtendedCssClass = verticalBox.cssClass + " align-top";
+      FreUtils.initializeObject(childBox, {
+        selectable: true,
+        cssClass: childExtendedCssClass
+      });
+    });
+    box.setFocus = setFocus;
+    box.refreshComponent = refresh;
+    console.log("[ExpandCollapseWrapperComponent] onMount verticalBox:", verticalBox);
+  });
+  $$payload.out += `<div class="wrapper">`;
+  gt($$payload, { box: box.childBox, editor });
+  $$payload.out += `<!----></div>`;
+  pop();
+}
+function TimePicker($$payload, $$props) {
+  push();
+  const { box } = $$props;
+  let inputElement;
+  let value = "";
+  getValue();
+  function getValue() {
+    let startStr = box.getPropertyValue();
+    if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
+      value = startStr;
+    } else {
+      value = "";
+    }
+    return value;
+  }
+  async function setFocus() {
+    inputElement.focus();
+  }
+  const refresh = (why) => {
+    getValue();
+  };
+  onMount(() => {
+    getValue();
+    box.setFocus = setFocus;
+    box.refreshComponent = refresh;
+    console.log("[TimePicker] onMount value:", value);
+  });
+  $$payload.out += `<div class="timepicker"><input id="default-timepicker" type="time"${attr("value", value)} class="timepicker-input" placeholder="Select time"/></div>`;
+  pop();
+}
+console.log("Starting init.ts initialization");
+const serverComm = ServerCommunication.getInstance();
+console.log("ServerCommunication instance created");
+serverComm.SERVER_URL = env.serverUrl;
+serverComm.nodePort = parseInt(env.serverTimeout.toString());
+console.log("Server settings configured:", { url: env.serverUrl, timeout: env.serverTimeout });
+console.log("Creating editor environment");
+const webappConfigurator = WebappConfigurator.getInstance();
+const editorEnvironment = Ct.getInstance();
+console.log("Editor environment created");
+webappConfigurator.setEditorEnvironment(editorEnvironment);
+webappConfigurator.setServerCommunication(serverComm);
+console.log("Editor environment configured");
+Fg([
+  { component: DatePicker, knownAs: "DatePicker" },
+  { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
+  { component: TimePicker, knownAs: "TimePicker" }
+]);
+console.log("Custom components set");
+console.log("init.ts initialization complete");
 const ROUTE = Object.freeze({
   HOME: "home",
   LOGIN: "login",

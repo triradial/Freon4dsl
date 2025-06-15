@@ -1,7 +1,7 @@
-import { z as push, F as spread_props, B as pop, E as escape_html, M as attr_class, N as stringify, G as store_get, A as onMount, I as unsubscribe_stores, S as head, K as ensure_array_like, J as attr, T as onDestroy } from "../../../chunks/index.js";
+import { z as push, G as spread_props, B as pop, E as escape_html, M as attr_class, N as stringify, I as store_get, A as onMount, J as unsubscribe_stores, S as head, K as ensure_array_like, F as attr, T as onDestroy } from "../../../chunks/index.js";
 import { P as Pencil, T as Tabs, p as page } from "../../../chunks/stores.js";
 import "clsx";
-import { F as FreLogger, W as WebappConfigurator, M as ModelManager } from "../../../chunks/model-manager.js";
+import { a as FreLogger, W as WebappConfigurator, M as ModelManager } from "../../../chunks/model-manager.js";
 import "../../../chunks/env.js";
 import { I as Icon, g as getStatusColor, d as dataStore, b as getSVGIcon } from "../../../chunks/utils.js";
 import { createGrid } from "ag-grid-community";
@@ -459,6 +459,7 @@ function Study($$payload, $$props) {
   ];
   onMount(async () => {
     study = await dataStore.getStudy(id);
+    await dataStore.getStudyPatients(id);
     if (!study) {
       console.error(`Study with id ${id} not found`);
       return;
