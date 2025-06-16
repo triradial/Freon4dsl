@@ -27,6 +27,8 @@
  */
 declare module '$env/static/private' {
 	export const VITE_AZURE_ENVIRONMENT: string;
+	export const VITE_SERVER_URL: string;
+	export const VITE_NODE_PORT: string;
 	export const LESSOPEN: string;
 	export const USER: string;
 	export const npm_config_user_agent: string;
@@ -112,6 +114,8 @@ declare module '$env/static/public' {
 declare module '$env/dynamic/private' {
 	export const env: {
 		VITE_AZURE_ENVIRONMENT: string;
+		VITE_SERVER_URL: string;
+		VITE_NODE_PORT: string;
 		LESSOPEN: string;
 		USER: string;
 		npm_config_user_agent: string;

@@ -6,6 +6,6 @@ export interface ServerConfig {
 }
 
 export const defaultServerConfig: ServerConfig = {
-    serverUrl: 'http://localhost:8001',
+    serverUrl: 'http://localhost:8080',
     serverTimeout: 2000
 };

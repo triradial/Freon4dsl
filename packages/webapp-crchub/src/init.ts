@@ -10,12 +10,18 @@ import TimePicker from "./components/custom/TimePicker.svelte";
 
 console.log('Starting init.ts initialization');
 
+const serverUrl = env.serverUrl;
+const url = new URL(serverUrl);
+const serverIp = `${url.protocol}//${url.hostname}`;
+const serverPort = url.port;
+
 // Configure the server connection settings
 const serverComm = ServerCommunication.getInstance();
 console.log('ServerCommunication instance created');
-serverComm.SERVER_URL = env.serverUrl;
-serverComm.nodePort = parseInt(env.serverTimeout.toString());
-console.log('Server settings configured:', { url: env.serverUrl, timeout: env.serverTimeout });
+serverComm.SERVER_URL = serverUrl;
+serverComm.SERVER_IP = serverIp;
+serverComm.nodePort = parseInt(serverPort); 
+console.log('Server settings configured:', { url: serverUrl, timeout: env.serverTimeout });
 
 // Configure the editor environment
 console.log('Creating editor environment');
