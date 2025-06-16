@@ -52,7 +52,7 @@ export class ModelHandler {
     public static async getModelUnitList(model: string, ctx: IRouterContext) {
         try {
             const modelPath = this.getModelPath(model);
-            console.log("ModelHandler.getModelUnitList: starting with modelPath=", modelPath);
+            console.log("ModelHandler.getModelUnitList: modelPath=", modelPath);
 
             // Ensure directory exists
             if (!await storage.directoryExists(modelPath)) {

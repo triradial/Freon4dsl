@@ -21,7 +21,9 @@ const signInSchema = z.object({
     password: z.string().min(1)
 });
 
+/* ------------------------------------------------------------ */
 // General requests
+/* ------------------------------------------------------------ */
 router.get('/', async (ctx: Router.IRouterContext) => {
     ctx.body = 'CRCHub Server';
 });
@@ -30,7 +32,9 @@ router.get('/health', async (ctx: Router.IRouterContext) => {
     ctx.body = { status: 'ok' };
 });
 
+/* ------------------------------------------------------------ */
 // Auth requests
+/* ------------------------------------------------------------ */
 router.post('/signIn', rateLimiter, async (ctx: Router.IRouterContext) => {
     try {
         console.log('Router.signIn: ctx.request.body=', JSON.stringify(ctx.request.body, null, 2));
@@ -55,7 +59,9 @@ router.post('/signOut', async (ctx: Router.IRouterContext) => {
     }
 });
 
+/* ------------------------------------------------------------ */
 // Model requests
+/* ------------------------------------------------------------ */
 router.get("/getModelList", async (ctx: Router.IRouterContext) => {
     console.log("Routes.getModelList");
     await ModelHandler.getModelList(ctx);
@@ -129,7 +135,9 @@ router.get("/deleteModelUnit", async (ctx: Router.IRouterContext) => {
     ctx.response.body = { massage: (ctx.request as any).body };
 });
 
+/* ------------------------------------------------------------ */
 // Study requests
+/* ------------------------------------------------------------ */
 router.get("/getStudies", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
     console.log("Routes.getStudies: uid:" + uid);
@@ -193,7 +201,9 @@ router.delete("/deleteStudy", async (ctx: Router.IRouterContext) => {
     }
 });
 
+/* ------------------------------------------------------------ */
 // Patient requests
+/* ------------------------------------------------------------ */
 router.get("/getPatients", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
     console.log("Routes.getPatients: uid=" + uid);
@@ -270,7 +280,9 @@ router.delete("/deletePatient", async (ctx: Router.IRouterContext) => {
     }
 });
 
+/* ------------------------------------------------------------ */
 // User requests
+/* ------------------------------------------------------------ */
 router.get("/getUsers", async (ctx: Router.IRouterContext) => {
     console.log("Routes.getUsers");
     await DataHandler.getUsers(ctx);
