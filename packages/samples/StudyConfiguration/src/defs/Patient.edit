@@ -35,6 +35,11 @@ DateRange {
   [${startDate} thru:${endDate}]
 }
 
+DateConcept {
+  [${dateAsString replace=DatePicker startDate="30/09/2024"}]
+}
+
+
 PatientInfo {
   [
    ${patientHistories}
@@ -52,7 +57,7 @@ PatientHistory {
 
 PatientVisit {
   [
-      Visit: '${visit}' on  ${actualVisitDateAsString replace=DatePicker startDate="30/09/2024"}
+      Visit: '${visit}' on  ${actualVisitDate} 
   ]
 }
 

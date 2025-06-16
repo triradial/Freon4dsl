@@ -15,7 +15,6 @@ import { Event, Task, Period, StudyConfiguration } from "@freon4dsl/samples-stud
 const LOGGER = new FreLogger("EditorState").mute();
 
 export class ModelManager {
-
     private static instance: ModelManager | null = null;
 
     static getInstance(): ModelManager {
@@ -89,6 +88,7 @@ export class ModelManager {
     async openModel(modelName: string) {
         // FreLogger.unmuteAllLogs();
         LOGGER.log("ModelManager.openModel(" + modelName + ")");
+        console.log("ModelManager.openModel(" + modelName + ")");
         editorProgressShown.set(true);
         this.resetGlobalVariables();
         // save the old current unit, if there is one
@@ -101,6 +101,7 @@ export class ModelManager {
             // load the first unit completely and show it
             let first: boolean = true;
             for (const unitIdentifier of unitIdentifiers) {
+                console.log("unitIdentifier: " + unitIdentifier.name);
                 if (first) {
                     const unit = this.modelStore.getUnitByName(unitIdentifier.name);
                     LOGGER.log("UnitId " + unitIdentifier.name + " unit is " + unit?.name);
@@ -126,6 +127,7 @@ export class ModelManager {
      */
     async openModelUnit(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
         LOGGER.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
+        console.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
         editorProgressShown.set(true);
         this.resetGlobalVariables();
         // save the old current unit, if there is one
@@ -143,7 +145,26 @@ export class ModelManager {
         return unit;
     }
 
-    async openModelUnitWithoutSavingCurrentUnit(unit: FreModelUnit) {
+    async openModelUnitWithoutSavingCurrentUnit(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
+        LOGGER.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
+        editorProgressShown.set(true);
+        this.resetGlobalVariables();
+        // save the old current unit, if there is one
+        // await this.saveCurrentUnit();
+        // create new model instance in memory and set its name
+        await this.modelStore.openModel(modelName);
+        const unit = this.modelStore.getUnitByName(unitName);
+        console.log("openModelUnit unit:", unit);
+        if (unit) {
+            this.setCurrentUnit(unit);
+            BoxFactory.clearCaches();
+            this.langEnv.projectionHandler.clear();
+            this.showModelUnit(unit);
+        }
+        return unit;
+    }
+
+    async displayModelUnit(unit: FreModelUnit) {
         LOGGER.log("ModelHandler.openModelUnitWithoutSavingCurrentUnit unit: " + unit.name);
         editorProgressShown.set(true);
         this.resetGlobalVariables();
@@ -151,7 +172,7 @@ export class ModelManager {
         BoxFactory.clearCaches();
         this.langEnv.projectionHandler.clear();
         this.showModelUnit(unit);
-     }
+    }
 
     /**
      * Parses the string 'content' to create a model unit. If the parsing is ok,
@@ -238,7 +259,6 @@ export class ModelManager {
             currentModelName.set(this.currentModel.name);
 
             LOGGER.info("ModelHandler.createModelUnits END name: StudyConfiguration");
-
         } catch (error: unknown) {
             if (error instanceof Error) {
                 LOGGER.error("ModelHandler.createModelUnits ERROR: " + error.message);
@@ -250,8 +270,8 @@ export class ModelManager {
     }
 
     /**
- * Pushes the current unit to the server
- */
+     * Pushes the current unit to the server
+     */
     async saveCurrentUnit() {
         LOGGER.log("ModelHandler.saveCurrentUnit: " + get(currentUnitName)?.name);
         const unit: FreModelUnit = this.langEnv.editor.rootElement as FreModelUnit;
@@ -431,8 +451,12 @@ export class ModelManager {
                 if (e instanceof Error) {
                     console.log(e.message + e.stack);
                     modelErrors.set([
-
-                        new FreError("EditorState.runValidator - problem validating model unit: '" + e.message + "'", currentUnit, currentUnit.name, FreErrorSeverity.Error),
+                        new FreError(
+                            "EditorState.runValidator - problem validating model unit: '" + e.message + "'",
+                            currentUnit,
+                            currentUnit.name,
+                            FreErrorSeverity.Error,
+                        ),
                     ]);
                 }
             }
@@ -480,7 +504,7 @@ export class ModelManager {
             });
             // console.log('List after: [' + property.map(x => x.freId()).join(', ') + ']');
         } else {
-            console.log('property ' + propertyName + ' is no list');
+            console.log("property " + propertyName + " is no list");
             // runInAction(() => (element[propertyName] = this.langEnv.editor.copiedElement));
         }
     }

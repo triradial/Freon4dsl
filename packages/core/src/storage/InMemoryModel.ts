@@ -66,6 +66,7 @@ export class InMemoryModel {
      */
     async openModel(name: string): Promise<FreModel> {
         LOGGER.log("InMemoryModel.openModel(" + name + ")");
+        console.log("InMemoryModel.openModel(" + name + ")");
         this.__model = this.languageEnvironment.newModel(name);
         const unitsIds = await this.server.loadUnitList(name);
         for (const unitId of unitsIds) {
@@ -95,6 +96,7 @@ export class InMemoryModel {
      */
     async createUnit(name: string, unitConcept: string): Promise<FreModelUnit> {
         LOGGER.log(`InMemoryModel.createUnit ${name} of type ${unitConcept}`);
+        console.log(`InMemoryModel.createUnit ${name} of type ${unitConcept}`);
         const newUnit = this.model.newUnit(unitConcept);
         newUnit.name = name;
         await this.server.createModelUnit(this.model.name, newUnit);
@@ -155,6 +157,7 @@ export class InMemoryModel {
      */
     getUnitIdentifiers(): ModelUnitIdentifier[] {
         return this.model.getUnits().map((u) => {
+            console.log("getUnitIdentifiers: " + u.name);
             return { name: u.name, id: u.freId() };
         });
     }

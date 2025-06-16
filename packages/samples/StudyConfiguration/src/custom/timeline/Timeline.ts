@@ -1,6 +1,6 @@
-import { RtBoolean, RtObject } from "@freon4dsl/core";
+import { FreNodeReference, RtBoolean, RtObject } from "@freon4dsl/core";
 import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
-import { Availability, Event, PatientHistory, PatientVisit } from "../../language/gen/index.js";
+import { Availability, DateConcept, Event, Month, PatientHistory, PatientVisit } from "../../language/gen/index.js";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
 import { PeriodEventInstance } from "./PeriodEventInstance.js";
 import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
@@ -540,3 +540,45 @@ export class TimelineDay {
         return this.events.filter((event) => event instanceof StaffAvailabilityEventInstance) as StaffAvailabilityEventInstance[];
     }
 }
+
+export function getMonthFromString(month: string): FreNodeReference<Month> {
+    console.log("getMonthFromString month: " + month);
+    switch (month.toLowerCase()) {
+        case "january":
+            return FreNodeReference.create<Month>(Month.January, "Month");
+        case "february":
+            return FreNodeReference.create<Month>(Month.February, "Month");
+        case "march":
+            return FreNodeReference.create<Month>(Month.March, "Month");
+        case "april":
+            return FreNodeReference.create<Month>(Month.April, "Month");
+        case "may":
+            return FreNodeReference.create<Month>(Month.May, "Month");
+        case "june":
+            return FreNodeReference.create<Month>(Month.June, "Month");
+        case "july":
+            return FreNodeReference.create<Month>(Month.July, "Month");
+        case "august":
+            return FreNodeReference.create<Month>(Month.August, "Month");
+        case "september":
+            return FreNodeReference.create<Month>(Month.September, "Month");
+        case "october":
+            return FreNodeReference.create<Month>(Month.October, "Month");
+        case "november":
+            return FreNodeReference.create<Month>(Month.November, "Month");
+        case "december":
+            return FreNodeReference.create<Month>(Month.December, "Month");
+        default:
+            throw new Error(`Invalid month: ${month}`);
+    }
+}
+
+// The DateConcept is updated inline hence no return value.
+export function fillDateConceptFromAsString(dateConcept: DateConcept) {
+    const actualDate = new Date(dateConcept.dateAsString);
+    dateConcept.day = actualDate.getDate().toString();
+    dateConcept.month = getMonthFromString(actualDate.toLocaleString('en-US', { month: 'long' }));
+    dateConcept.year = actualDate.getFullYear().toString();
+}
+
+

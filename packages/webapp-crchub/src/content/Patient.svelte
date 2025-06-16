@@ -23,10 +23,7 @@
     import { Toolbar, ToolbarButton } from "flowbite-svelte";
     import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
 
-    import { fillDateConceptFromAsString, getChartWithPatientHistory, getMonthFromString } from "../services/utils.js";
-    import { DateRange2 } from "@freon4dsl/samples-study-configuration/dist/language/gen/DateRange2.js";
-    import type { StartRangeDate2 } from "@freon4dsl/samples-study-configuration/dist/language/gen/StartRangeDate2.js";
-    import type { EndRangeDate2 } from "@freon4dsl/samples-study-configuration/dist/language/gen/EndRangeDate2.js";
+    import { fillDateConceptFromAsString } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
 
     export let id: string;
     let patient: Patient | undefined;
@@ -42,8 +39,8 @@
     let patientInfo: PatientInfo | undefined;
 
     function clearPatientHistory(patientHistory: PatientHistory) {
-        patientHistory.patientVisits.length = 0;
-        patientHistory.patientNotAvailableDates = PatientNotAvailable.create({});
+        patientHistory.patientVisits.splice(0);
+        patientHistory.patientNotAvailableDates.dates.splice(0);
     }
 
     onMount(async () => {
@@ -63,7 +60,7 @@
         //TODO: Talk to Graham about changing patientNumber to patient_id or something else that can be initials, etc. 
         patientHistoryUnit.patientHistory.patient_id = fetchedPatient.patientNumber;
         // Get the model data for all the Patients
-        patientInfo = await modelManager.openModelUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
+        patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
         console.log("patientInfo onMount: ", patientInfo);
         if (patientInfo === null || patientInfo === undefined) {
             //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
@@ -73,9 +70,6 @@
             var found = false;
             patientInfo.patientHistories.forEach(aPatientHistory => {
                 if (!found && aPatientHistory.patient_id === fetchedPatient.patientNumber) {
-                    // patientHistoryUnit.patientHistory = aPatientHistory.copy();
-                    patientHistoryUnit.patientHistory.patientVisits.length  = 0;
-                    patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.length = 0;
                     aPatientHistory.patientVisits.forEach(visit => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
                     aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
                     patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
@@ -87,7 +81,7 @@
         }
         // Display the patientHistory for editing
         await modelManager.setCurrentUnit(patientHistoryUnit);
-        await modelManager.openModelUnitWithoutSavingCurrentUnit(patientHistoryUnit);
+        await modelManager.displayModelUnit(patientHistoryUnit);
         unit = patientHistoryUnit;
         setTimeout(() => {
             editorLoaded = true;
@@ -100,24 +94,42 @@
         }
     });
 
+    function getTimelineChartError() {
+        const html = `<div class="limited-width-container"><div class='text-red-500'>Error: PatientInfo not found</div></div>`;
+        return new RtString(html);
+   }
 
-    async function getChartWithPatientHistory2(referenceDate: Date) {
+
+    async function getChartWithPatientHistory(referenceDate: Date) {
         const fetchedPatient = await dataStore.getPatient(id);
 
         var found = false;
         var patientHistory: PatientHistory = PatientHistory.create({});
+        if (!patientInfo || patientInfo === undefined) {
+            const rtObject = getTimelineChartError() as RtString;
+            return rtObject.asString();
+        }
+
         patientInfo!.patientHistories.forEach(aPatientHistory => {
+            console.log("aPatientHistory.patient_id: " + aPatientHistory.patient_id + " patient!.patientNumber: " + patient!.patientNumber);
+            console.log("aPatientHistory.visits length: " + aPatientHistory.patientVisits.length);
+            console.log("aPatientHistory.notAvailableDates length: " + aPatientHistory.patientNotAvailableDates.dates.length);
+            console.log("aPatientHistory: ", aPatientHistory);
             if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
                 aPatientHistory.patientVisits.forEach(visit => {
-                    fillDateConceptFromAsString(visit.actualVisitDate);
-                    patientHistory.patientVisits.push(visit.copy());
+                    var updatedVisit = visit.copy(); 
+                    //TODO: resolve the inconsistent use of dateAsString and actualVisitDateAsString. 
+                    // updatedVisit.actualVisitDate.dateAsString = visit.actualVisitDateAsString;    
+                    fillDateConceptFromAsString(updatedVisit.actualVisitDate);
+                    patientHistory.patientVisits.push(updatedVisit);
                 });
                 aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => {
-                    fillDateConceptFromAsString(dateRange.startDate);
-                    if (dateRange.endDate) {
-                        fillDateConceptFromAsString(dateRange.endDate);
+                    var updatedDateRange = dateRange.copy();
+                    fillDateConceptFromAsString(updatedDateRange.startDate);
+                    if (updatedDateRange.endDate) {
+                        fillDateConceptFromAsString(updatedDateRange.endDate);
                     }
-                    patientHistory.patientNotAvailableDates.dates.push(dateRange.copy());
+                    patientHistory.patientNotAvailableDates.dates.push(updatedDateRange);
                 });
                 found = true;
             };
@@ -125,7 +137,7 @@
         var referenceDateForTimeline : Date | undefined;
         if (referenceDate === undefined) {
             if (patientHistory.patientVisits.length > 0) {
-                referenceDateForTimeline = new Date(patientHistory.patientVisits[0].actualVisitDateAsString);
+                referenceDateForTimeline = new Date(patientHistory.patientVisits[0].actualVisitDate.dateAsString);
             } else {
                 referenceDateForTimeline = new Date(200, 8, 30);
             }
@@ -146,10 +158,12 @@
         showChart = false;
         error = null;
         try {
+            patientInfo = await ModelManager.getInstance().openModelUnitWithoutSavingCurrentUnit(patient!.studyId, "PatientInfo") as PatientInfo;
+
             const startTime = Date.now();
             console.log("calling getChartWithPatientHistory");
             const referenceDate = new Date(2024, 8, 30);
-            chartHtml = await getChartWithPatientHistory2(referenceDate);
+            chartHtml = await getChartWithPatientHistory(referenceDate);
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
             if (container) {
                 await loadChartData();
@@ -197,21 +211,39 @@
         patientInfo.patientHistories.forEach(aPatientHistory => {
             if (aPatientHistory.patient_id === patientNumber) {
                 found = true;
-                aPatientHistory.patientVisits.length = 0;
-                unit?.patientHistory.patientVisits.forEach(visit => aPatientHistory.patientVisits.push(visit.copy()));
-                aPatientHistory.patientNotAvailableDates.dates.length = 0;
+                aPatientHistory.patientVisits.splice(0);
+                unit?.patientHistory.patientVisits.forEach(visit => {
+                    console.log("visit.actualVisitDate.dateAsString: " + visit.actualVisitDate.dateAsString);
+                    console.log("visit: " + visit);
+                    aPatientHistory.patientVisits.push(visit.copy());
+                });
+                aPatientHistory.patientNotAvailableDates.dates.splice(0);
                 unit!.patientHistory.patientNotAvailableDates.dates.forEach(dateRange => aPatientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
             }
         });
+        console.log("patientInfo.patientHistories length: " + patientInfo.patientHistories.length);
+        console.log("patientInfo.patientHistories[0].patient_id: " + patientInfo.patientHistories[0]?.patient_id + " patient!.patientNumber: " + patient!.patientNumber);
+        console.log("patientInfo.patientHistories[0].visits length: " + patientInfo.patientHistories[0]?.patientVisits.length);
+        console.log("patientInfo.patientHistories[0].patientNotAvailableDates length: " + patientInfo.patientHistories[0]?.patientNotAvailableDates.dates.length);
+        console.log("patientInfo.patientHistories[0].patientVisits[0].actualVisitDate.dateAsString: " + patientInfo.patientHistories[0]?.patientVisits[0]?.actualVisitDate.dateAsString);
+        console.log("patientInfo.patientHistories[0].patientVisits[0]: ", patientInfo.patientHistories[0]?.patientVisits[0]);
+        console.log("unit: ", unit);
         // If the patientHistory for this patient was not previously entered we need to add it to the list of all patientHistories in the PatientInfo
         if (!found) {
             patientInfo.patientHistories.push(unit?.patientHistory.copy() as PatientHistory);
         }
+        console.log("AFTER !found patientInfo.patientHistories length: " + patientInfo.patientHistories.length);
+        console.log("patientInfo.patientHistories[0].patient_id: " + patientInfo.patientHistories[0]?.patient_id + " patient!.patientNumber: " + patient!.patientNumber);
+        console.log("patientInfo.patientHistories[0].visits length: " + patientInfo.patientHistories[0]?.patientVisits.length);
+        console.log("patientInfo.patientHistories[0].patientNotAvailableDates length: " + patientInfo.patientHistories[0]?.patientNotAvailableDates.dates.length);
+        console.log("patientInfo.patientHistories[0].patientVisits[0].actualVisitDate.dateAsString: " + patientInfo.patientHistories[0]?.patientVisits[0]?.actualVisitDate.dateAsString);
+        console.log("patientInfo.patientHistories[0].patientVisits[0]: ", patientInfo.patientHistories[0]?.patientVisits[0]);
+        console.log("unit: ", unit);
         // Saving all the patientHistories stored in the PatientInfo even though we are only editing one patient at a time
         await modelManager.modelStore.saveUnit(patientInfo);
         console.log("patientInfo after saveUnit: ", patientInfo);
         // Force the editor to reload the patientHistoryUnit
-        await modelManager.openModelUnitWithoutSavingCurrentUnit(unit!);
+        await modelManager.displayModelUnit(unit!);
     }
 
     function handleUndoAction() {

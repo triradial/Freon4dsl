@@ -1,5 +1,5 @@
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { FirstDayOfStudy, StudyConfiguration } from "../../language/gen/index.js";
+import { DateConcept, FirstDayOfStudy, StudyConfiguration } from "../../language/gen/index.js";
 import { Period } from "../../language/gen/index.js";
 import { Event } from "../../language/gen/index.js";
 import { EventSchedule } from "../../language/gen/index.js";
@@ -27,10 +27,9 @@ import { PatientVisitStatus } from "../../language/gen/index.js";
 import { Availability } from "../../language/gen/index.js";
 import { StaffLevel } from "../../language/gen/index.js";
 import { DateRange } from "../../language/gen/index.js";
-import { DateConcept } from "../../language/gen/index.js";
 import { TimeAmountPart } from "../../language/gen/index.js";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
-import { Timeline } from "../timeline/Timeline.js";
+import { getMonthFromString, Timeline } from "../timeline/Timeline.js";
 import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
 import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
@@ -424,41 +423,10 @@ export function checkTimelineChart(
     }
 }
 
-function getMonthFromString(month: string): Month {
-    switch (month.toLowerCase()) {
-        case "january":
-            return Month.January;
-        case "february":
-            return Month.February;
-        case "march":
-            return Month.March;
-        case "april":
-            return Month.April;
-        case "may":
-            return Month.May;
-        case "june":
-            return Month.June;
-        case "july":
-            return Month.July;
-        case "august":
-            return Month.August;
-        case "september":
-            return Month.September;
-        case "october":
-            return Month.October;
-        case "november":
-            return Month.November;
-        case "december":
-            return Month.December;
-        default:
-            throw new Error(`Invalid month: ${month}`);
-    }
-}
-
 export function createACompletedPatientVisit(visitName: string, day: string, month: string, year: string, visitInstanceNumber: number): PatientVisit {
     // console.log("createACompletedPatientVisit visitName: " + visitName + " day: " + day + " month: " + month + " year: " + year);
     const referencedEvent = FreNodeReference.create<Event>(visitName, "Event");
-    const visitDate = VisitDate.create({ day: day, month: FreNodeReference.create<Month>(getMonthFromString(month), "Month"), year: year });
+    const visitDate = VisitDate.create({ day: day, month: getMonthFromString(month), year: year });
     const completedVisitStatus = FreNodeReference.create<PatientVisitStatus>(PatientVisitStatus.completed, "completed");
     let patientVisit = PatientVisit.create({
         visit: referencedEvent,
@@ -543,6 +511,7 @@ export function createCompletedPatientVisits(
     return completedPatientVisits;
 }
 
+
 function addDays(date: Date, days: number): Date {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
@@ -561,24 +530,32 @@ export function createStaffLevel(
     const startDateInRange = DateConcept.create({
         dateAsString: startDay + "/" + startMonth + "/" + startYear,
         day: startDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
+        month: getMonthFromString(startMonth),
         year: startYear,
     });
+    let endMonthString = "";
+
+    if (endMonth !== undefined) {
+        endMonthString = endMonth;
+    } else {
+        endMonthString = startMonth;
+    }
     if (!endDay) {
         endDay = startDay;
-        endMonth = startMonth;
+        endMonthString = startMonth;
         endYear = startYear;
     }
     const endDateInRange = DateConcept.create({
-        dateAsString: endDay + "/" + endMonth + "/" + endYear,
+        dateAsString: endDay + "/" + endMonthString + "/" + endYear,
         day: endDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
+        month: getMonthFromString(endMonthString),
         year: endYear,
     });
     const staffDateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
     const staffLevel = StaffLevel.create({ staffAvailable: staffAvailable, dateOrRange: staffDateOrRange });
     return staffLevel;
 }
+
 
 function createDate(day: number, month: string, year: number): Date {
     const monthIndex = new Date(`${month} 1, 2000`).getMonth();
@@ -612,17 +589,17 @@ export function createPatientNotAvailableDateRange(
         startDate.setDate(startDate.getDate() - dayOffsetOfFirstEventInstance);
         endDate.setDate(endDate.getDate() - dayOffsetOfFirstEventInstance);
         adjustedStartDay = startDate.getDate().toString();
-        adjustedStartMonth = startDate.toLocaleString('default', { month: 'long' });
+        adjustedStartMonth = startDate.toLocaleString("default", { month: "long" });
         adjustedStartYear = startDate.getFullYear().toString();
         adjustedEndDay = endDate.getDate().toString();
-        adjustedEndMonth = endDate.toLocaleString('default', { month: 'long' });
+        adjustedEndMonth = endDate.toLocaleString("default", { month: "long" });
         adjustedEndYear = endDate.getFullYear().toString();
     }
 
     const startDateInRange = DateConcept.create({
         dateAsString: adjustedStartDay + "/" + adjustedStartMonth + "/" + adjustedStartYear,
         day: adjustedStartDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(adjustedStartMonth), "Month"),
+        month: getMonthFromString(adjustedStartMonth),
         year: adjustedStartYear,
     });
 
@@ -635,7 +612,7 @@ export function createPatientNotAvailableDateRange(
     const endDateInRange = DateConcept.create({
         dateAsString: adjustedEndDay + "/" + adjustedEndMonth + "/" + adjustedEndYear,
         day: adjustedEndDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(adjustedEndMonth), "Month"),
+        month: getMonthFromString(adjustedEndMonth),
         year: adjustedEndYear,
     });
 
@@ -646,6 +623,16 @@ export function createPatientNotAvailableDateRange(
 export function createOneDayAvailability(day: string, month: string, year: string): Availability {
     const staffLevel = createStaffLevel("3", day, month, year);
     const availability = Availability.create({ baselineStaff: "4", staffLevels: [staffLevel] });
+    return availability;
+}
+function createAvailability(): Availability {
+    let month = "January";
+    const year = "2024";
+    let staffLevels = [];
+    staffLevels.push(createStaffLevel("3", "-27", month, year, "-25", month, year));
+    staffLevels.push(createStaffLevel("2", "11", month, year));
+    staffLevels.push(createStaffLevel("2", "19", month, year));
+    const availability = Availability.create({ baselineStaff: "4", staffLevels: staffLevels });
     return availability;
 }
 

@@ -151,6 +151,7 @@ export class ServerCommunication implements IServerCommunication {
      */
     async loadModelUnit(modelName: string, unit: ModelUnitIdentifier): Promise<FreNode> {
         LOGGER.log(`ServerCommunication.loadModelUnit ${modelName}/${unit.name}`);
+        console.log(`ServerCommunication.loadModelUnit ${modelName}/${unit.name}`);
         if (!!unit.name && unit.name.length > 0) {
             const res = await this.fetchWithTimeout<Object>(
                 `getModelUnit`,

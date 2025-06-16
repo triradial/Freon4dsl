@@ -18,7 +18,7 @@
         event.stopPropagation();
         let xx = getValidDate(value);
         if (xx !== undefined) {
-            console.log("Changing value to: " + value);
+            // console.log("Changing value to: " + value);
             box.setPropertyValue(value);
         } else {
             console.log("Value: " + value + " is not a valid date");
@@ -33,7 +33,7 @@
         const [year, month, day] = dateArray;
         const newDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 
-        console.log("In getValidDate: " + newDate); // YYYY-MM-DD format
+        // console.log("In getValidDate: " + newDate); // YYYY-MM-DD format
         let date = new Date(newDate);
         if (date instanceof Date) {
             return date;

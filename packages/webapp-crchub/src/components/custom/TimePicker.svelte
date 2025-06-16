@@ -15,7 +15,7 @@
         event.stopPropagation();
         let xx = getValidTime(value);
         if (xx !== undefined) {
-            console.log("Changing value to: " + value);
+            // console.log("Changing value to: " + value);
             box.setPropertyValue(value);
         } else {
             console.log("Value: " + value + " is not a valid time");

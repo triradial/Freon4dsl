@@ -31,8 +31,7 @@ limited PatientVisitStatus {
 concept PatientVisit {
   reference visit: Event;
   visitInstanceNumber: number = 1;
-  actualVisitDate: VisitDate;
-  actualVisitDateAsString: string;
+  actualVisitDate: DateConcept;
   status: PatientVisitStatus = PatientVisitStatus:completed;
 }
 
@@ -50,6 +49,7 @@ limited Month {
 }
 
 concept VisitDate {
+  dateAsString: string;
   day: string;
   month: Month;
   year: string = "2025";
