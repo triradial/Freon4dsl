@@ -4,7 +4,8 @@
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineChart } from "../../services/app/patient-timeline.js";
+    import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+    import { getTimelineAsOfADate } from "../../services/app/patient-timeline.js";
 
     export let box: ExternalStringBox;
 
@@ -27,7 +28,8 @@
         console.log("TimelineChar.getChart");
         const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
         const unit = model.configuration;
-        const rtObject = getTimelineChart(unit) as RtString;
+        const timeline = getTimelineAsOfADate(unit);
+        const rtObject = timeline.getTimelineChart() as RtString;
         chartHtml = rtObject.asString();
     }
 

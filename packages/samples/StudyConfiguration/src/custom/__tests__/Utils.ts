@@ -362,8 +362,7 @@ export function saveToFile(stringToSave: string, filename: string) {
 }
 
 export function saveTimeline(timelineDataAsScript: string) {
-    // console.log(process.cwd());
-    const filename = "../../../tmp/timeline.html";
+    const filename = "./tmp/timeline.html";
     const timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
     saveToFile(timelineDataAsHTML, filename);
@@ -463,11 +462,12 @@ export function createCompletedPatientVisits(
     numberToCreate: number,
     timeline: Timeline,
     shiftsFromScheduledVisit: ShiftsFromScheduledVisit[] = [],
+    startStudyDate: Date
 ): PatientVisit[] {
     let completedPatientVisits: PatientVisit[] = [];
     let i = 0;
     let stopAddingVisits = false;
-    const referenceDate = timeline.getReferenceDate();
+    const referenceDate = startStudyDate;
     timeline.printTimelineOfScheduledEventInstances();
     timeline.getScheduleEventInstancesOrderByDay().forEach((scheduledEventInstance) => {
         if (i++ < numberToCreate) {

@@ -1,36 +1,6 @@
-import { PatientHistory, Simulator, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/samples-study-configuration";
+import { PatientHistory, Simulator, StudyConfiguration } from "@freon4dsl/samples-study-configuration";
 import * as Sim from "@freon4dsl/samples-study-configuration/dist/custom/simjs/sim.js";
-import { RtString } from "@freon4dsl/core";
 import type { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-
-export function getTimelineTable(node: StudyConfiguration) {
-    let timeline = getTimelineAsOfADate(node);
-
-    const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
-    const html = `<div class="limited-width-container">${tableHTML}</div>`;
-
-    return new RtString(html);
-}
-
-export function getTimelineChart(node: StudyConfiguration) {
-    let timeline = getTimelineAsOfADate(node);
-
-    const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
-    const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
-    const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
-    const html = `<div class="limited-width-container">${chartHTML}</div>`;
-
-    return new RtString(html);
-}
-
-export function getTimelineChartHtml(timeline: Timeline) {
-    const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
-    const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
-    const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
-    const html = `<div class="limited-width-container">${chartHTML}</div>`;
-
-    return new RtString(html);
-}
 
 export function getTimelineAsOfADate(node: StudyConfiguration, referenceDate?: Date, patientHistory?: PatientHistory) : Timeline {
     var simulator;

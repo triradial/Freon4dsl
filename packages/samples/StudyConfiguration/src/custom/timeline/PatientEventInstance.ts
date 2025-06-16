@@ -35,11 +35,12 @@ export class PatientVisitEventInstance extends PatientEventInstance {
             classForDisplay = "visit-not-found";
         } else {
             if (
-                this.startDay < scheduledEventInstance.getStartDay() - scheduledEventInstance.getStartDayOfWindow() ||
-                this.startDay > scheduledEventInstance.getStartDay() + scheduledEventInstance.getEndDayOfWindow()
+                this.startDay - timeline.getOffsetOfFirstEventInstance() <
+                    scheduledEventInstance.getStartDay() - scheduledEventInstance.getStartDayOfWindow() ||
+                this.startDay - timeline.getOffsetOfFirstEventInstance() > scheduledEventInstance.getStartDay() + scheduledEventInstance.getEndDayOfWindow()
             ) {
                 classForDisplay = "out-of-window";
-            } else if (scheduledEventInstance.startDay !== this.startDay) {
+            } else if (scheduledEventInstance.startDay !== this.startDay - timeline.getOffsetOfFirstEventInstance()) {
                 classForDisplay = "in-window";
             }
         }

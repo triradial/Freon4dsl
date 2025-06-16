@@ -12,8 +12,6 @@
     import { FreNodeReference } from "@freon4dsl/core";
     import { type StudyConfigurationModel, StudyConfiguration, PatientInfo, PatientHistory, PatientVisit, PatientHistoryUnit, PatientNotAvailable } from "@freon4dsl/samples-study-configuration";
     import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-    import { getTimelineChart } from "../services/app/patient-timeline.js";
-    import { getTimelineChartHtml } from "../services/app/patient-timeline.js";
     import { getTimelineAsOfADate } from "../services/app/patient-timeline.js";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
@@ -24,6 +22,7 @@
     import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
 
     import { fillDateConceptFromAsString } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+    import { action } from "mobx";
 
     export let id: string;
     let patient: Patient | undefined;
@@ -93,13 +92,17 @@
         }
     });
 
-    function getTimelineChartError() {
+    const getTimelineChartError = action(() => {
         const html = `<div class="limited-width-container"><div class='text-red-500'>Error: PatientInfo not found</div></div>`;
         return new RtString(html);
-   }
+    });
 
+    // Create an action wrapper for fillDateConceptFromAsString
+    const fillDateConcept = action((dateConcept: any) => {
+        fillDateConceptFromAsString(dateConcept);
+    });
 
-    async function getChartWithPatientHistory(referenceDate: Date) {
+    const getChartWithPatientHistory = action(async (referenceDate: Date) => {
         const fetchedPatient = await dataStore.getPatient(id);
 
         var found = false;
@@ -113,14 +116,14 @@
             if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
                 aPatientHistory.patientVisits.forEach(visit => {
                     var updatedVisit = visit.copy(); 
-                    fillDateConceptFromAsString(updatedVisit.actualVisitDate);
+                    fillDateConcept(updatedVisit.actualVisitDate);  // Use the action wrapper
                     patientHistory.patientVisits.push(updatedVisit);
                 });
                 aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => {
                     var updatedDateRange = dateRange.copy();
-                    fillDateConceptFromAsString(updatedDateRange.startDate);
+                    fillDateConcept(updatedDateRange.startDate);  // Use the action wrapper
                     if (updatedDateRange.endDate) {
-                        fillDateConceptFromAsString(updatedDateRange.endDate);
+                        fillDateConcept(updatedDateRange.endDate);  // Use the action wrapper
                     }
                     patientHistory.patientNotAvailableDates.dates.push(updatedDateRange);
                 });
@@ -135,15 +138,22 @@
                 referenceDateForTimeline = new Date(200, 8, 30);
             }
         }
+
         const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-        const unit = model.configuration;
-
-        let timeline = getTimelineAsOfADate(unit, referenceDateForTimeline, patientHistory);
-        const rtObject = getTimelineChartHtml(timeline) as RtString;
+        const studyConfig = model.configuration;
+        let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
+        const rtObject = (timeline as any).getTimelineChartHtml() as RtString;
         return rtObject.asString();
-   }
+    });
 
- 
+    async function getChart(id: string) {
+        const modelManager = ModelManager.getInstance();
+        const unit = (await modelManager.openModelUnit(id, "StudyConfiguration")) as StudyConfiguration;
+        const timeline = getTimelineAsOfADate(unit);
+        const rtObject = timeline.getTimelineChart() as RtString;
+        return rtObject.asString();
+    }
+
     async function loadChart(id: string) {
         isLoading = true;
         showChart = false;
@@ -172,13 +182,6 @@
         } finally {
             isLoading = false;
         }
-    }
-
-    async function getChart(id: string) {
-        const modelManager = ModelManager.getInstance();
-        const unit = (await modelManager.openModelUnit(id, "StudyConfiguration")) as StudyConfiguration;
-        const rtObject = getTimelineChart(unit) as RtString;
-        return rtObject.asString();
     }
 
     async function loadChartData() {

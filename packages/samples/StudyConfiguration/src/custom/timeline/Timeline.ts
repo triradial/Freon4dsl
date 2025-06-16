@@ -1,4 +1,4 @@
-import { FreNodeReference, RtBoolean, RtObject } from "@freon4dsl/core";
+import { FreNodeReference, RtBoolean, RtObject, RtString } from "@freon4dsl/core";
 import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
 import { Availability, DateConcept, Event, Month, PatientHistory, PatientVisit } from "../../language/gen/index.js";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
@@ -6,6 +6,8 @@ import { PeriodEventInstance } from "./PeriodEventInstance.js";
 import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
 import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance.js";
 import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance.js";
+import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
+import { TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 
 /*
  * A Timeline records the events and the days they occur on.
@@ -512,6 +514,28 @@ export class Timeline extends RtObject {
         }
         return result;
     }
+
+    public getTimelineTable(): RtString {
+        const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(this);
+        const html = `<div class="limited-width-container">${tableHTML}</div>`;
+        return new RtString(html);
+    }
+
+    public getTimelineChart(): RtString {
+        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
+        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+        const html = `<div class="limited-width-container">${chartHTML}</div>`;
+        return new RtString(html);
+    }
+
+    public getTimelineChartHtml(): RtString {
+        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
+        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+        const html = `<div class="limited-width-container">${chartHTML}</div>`;
+        return new RtString(html);
+    }
 }
 
 /*
@@ -544,7 +568,6 @@ export class TimelineDay {
 }
 
 export function getMonthFromString(month: string): FreNodeReference<Month> {
-    console.log("getMonthFromString month: " + month);
     switch (month.toLowerCase()) {
         case "january":
             return FreNodeReference.create<Month>(Month.January, "Month");
