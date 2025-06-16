@@ -51,9 +51,18 @@ export class PatientVisitEventInstance extends PatientEventInstance {
         return "Patient visit:" + this.getName() + "'" + visitInstanceNumber;
     }
 
-    getStartDayAsDateString(timeline: Timeline): string {
-        console.log("getStartDayAsDateString: " + this.startDay);
-        return TimelineEventInstance.formatDate(this.getDayAsDate(this.startDay, timeline));
+    /*
+    This is overridden because visit date is added at the start of the simulation with the 
+    day of the visit specified by the user. 
+    Because of this it doesn't need to be modified by adding the dayOffsetOfFirstEventInstance.
+    */
+    getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
+        let startDateOfTimeline = new Date(timeline.getReferenceDate());
+        startDateOfTimeline.setDate(startDateOfTimeline.getDate() + day);
+        if (toEndOfDay) {
+            startDateOfTimeline.setHours(23, 59, 59);
+        }
+        return startDateOfTimeline;
     }
 }
 
@@ -70,5 +79,19 @@ export class PatientUnAvailableEventInstance extends PatientEventInstance {
 
     getTitle() {
         return "Patient Unavailable";
+    }
+
+    /*
+    This is overridden because unavailability is added at the start of the simulation with the 
+    day of the unavailability specified by the user. 
+    Because of this it doesn't need to be modified by adding the dayOffsetOfFirstEventInstance.
+    */
+    getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
+        let startDateOfTimeline = new Date(timeline.getReferenceDate());
+        startDateOfTimeline.setDate(startDateOfTimeline.getDate() + day);
+        if (toEndOfDay) {
+            startDateOfTimeline.setHours(23, 59, 59);
+        }
+        return startDateOfTimeline;
     }
 }

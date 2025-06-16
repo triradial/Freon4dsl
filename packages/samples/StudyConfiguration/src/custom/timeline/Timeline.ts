@@ -337,6 +337,8 @@ export class Timeline extends RtObject {
 
     // Add the patient visits that happened on specific dates to the timeline
     addPatientEvents(patientHistory: PatientHistory) {
+        this.setPatientHistory(patientHistory!);
+
         console.log("Adding Patient Visits to Timeline");
         patientHistory.patientVisits.forEach((patientVisit) => {
             const actualVisitDateAsDate = this.dateStringsToDate(

@@ -1,4 +1,4 @@
-import { Simulator, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/samples-study-configuration";
+import { PatientHistory, Simulator, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/samples-study-configuration";
 import * as Sim from "@freon4dsl/samples-study-configuration/dist/custom/simjs/sim.js";
 import { RtString } from "@freon4dsl/core";
 import type { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
@@ -32,7 +32,7 @@ export function getTimelineChartHtml(timeline: Timeline) {
     return new RtString(html);
 }
 
-export function getTimelineAsOfADate(node: StudyConfiguration, referenceDate?: Date) : Timeline {
+export function getTimelineAsOfADate(node: StudyConfiguration, referenceDate?: Date, patientHistory?: PatientHistory) : Timeline {
     var simulator;
     new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
     let studyConfigurationUnit = node as StudyConfiguration;
@@ -43,6 +43,9 @@ export function getTimelineAsOfADate(node: StudyConfiguration, referenceDate?: D
         simulator.setReferenceDate(new Date(2024, 8, 30));
     }
     simulator.organizedByReferenceDate();
+    if (patientHistory) {
+        simulator.timeline.addPatientEvents(patientHistory);
+    }
     simulator.run();
     let timeline = simulator.timeline;
 
