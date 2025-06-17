@@ -599,7 +599,7 @@ class ServerCommunication {
         languages: collectUsedLanguages(model),
         nodes: model
       };
-      await this.putWithTimeout(`saveModelUnit`, output, `model=${modelName}&unit=${unitId.name}`);
+      await this.putWithTimeout(`putModelUnit`, output, `folder=${modelName}&name=${unitId.name}`);
     } else {
       LOGGER.error("Name of Unit '" + unitId.name + "' may contain only characters, numbers, '_', or '-', and must start with a character.");
       this.onError("Name of Unit '" + unitId.name + "' may contain only characters, numbers, '_', or '-', and must start with a character.", FreErrorSeverity.NONE);
@@ -608,13 +608,13 @@ class ServerCommunication {
   async deleteModelUnit(modelName, unit) {
     LOGGER.log(`ServerCommunication.deleteModelUnit ${modelName}/${unit.name}`);
     if (!!unit.name && unit.name.length > 0) {
-      await this.fetchWithTimeout(`deleteModelUnit`, `model=${modelName}&unit=${unit.name}`);
+      await this.fetchWithTimeout(`deleteModelUnit`, `folder=${modelName}&name=${unit.name}`);
     }
   }
   async deleteModel(modelName) {
     LOGGER.log(`ServerCommunication.deleteModel ${modelName}`);
     if (!!modelName && modelName.length > 0) {
-      await this.fetchWithTimeout(`deleteModel`, `model=${modelName}`);
+      await this.fetchWithTimeout(`deleteModel`, `folder=${modelName}`);
     }
   }
   async loadModelList() {
@@ -628,7 +628,7 @@ class ServerCommunication {
   }
   async loadUnitList(modelName) {
     LOGGER.log(`ServerCommunication.loadUnitList`);
-    let modelUnits = await this.fetchWithTimeout(`getModelUnitList`, `model=${modelName}`);
+    let modelUnits = await this.fetchWithTimeout(`getModelUnitList`, `folder=${modelName}`);
     if (!!modelUnits) {
       return modelUnits.map((u) => {
         return { name: u, id: u, type: "" };
@@ -640,7 +640,7 @@ class ServerCommunication {
   async loadModelUnit(modelName, unit) {
     LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
     if (!!unit.name && unit.name.length > 0) {
-      const res = await this.fetchWithTimeout(`getModelUnit`, `model=${modelName}&unit=${unit.name}`);
+      const res = await this.fetchWithTimeout(`getModelUnit`, `folder=${modelName}&name=${unit.name}`);
       if (!!res) {
         try {
           let unit2;
@@ -661,7 +661,7 @@ class ServerCommunication {
   }
   async fetchWithTimeout(method, params) {
     params = ServerCommunication.findParams(params);
-    LOGGER.log(`fetchWithTimeout ${this._SERVER_URL}${method}${params}`);
+    LOGGER.log("fetchWithTimeout Params = " + params);
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2e3);
@@ -676,7 +676,6 @@ class ServerCommunication {
       clearTimeout(timeoutId);
       return await promise.json();
     } catch (e) {
-      LOGGER.log(`fetchWithTimeout ${this._SERVER_URL}${method}${params} error: ${e}`);
       this.handleError(e);
     }
     return null;

@@ -83,7 +83,7 @@ export class ServerCommunication implements IServerCommunication {
                 // "__version": "1234abcdef",
                 nodes: model,
             };
-            await this.putWithTimeout(`putModelUnit`, output, `folder=${modelName}&name=${unitId.name}`);
+            await this.putWithTimeout(`saveModelUnit`, output, `model=${modelName}&unit=${unitId.name}`);
         } else {
             LOGGER.error(
                 "Name of Unit '" +
@@ -107,7 +107,7 @@ export class ServerCommunication implements IServerCommunication {
     async deleteModelUnit(modelName: string, unit: FreUnitIdentifier): Promise<void> {
         LOGGER.log(`ServerCommunication.deleteModelUnit ${modelName}/${unit.name}`);
         if (!!unit.name && unit.name.length > 0) {
-            await this.fetchWithTimeout<any>(`deleteModelUnit`, `folder=${modelName}&name=${unit.name}`);
+            await this.fetchWithTimeout<any>(`deleteModelUnit`, `model=${modelName}&unit=${unit.name}`);
         }
     }
 
@@ -118,7 +118,7 @@ export class ServerCommunication implements IServerCommunication {
     async deleteModel(modelName: string): Promise<void> {
         LOGGER.log(`ServerCommunication.deleteModel ${modelName}`);
         if (!!modelName && modelName.length > 0) {
-            await this.fetchWithTimeout<any>(`deleteModel`, `folder=${modelName}`);
+            await this.fetchWithTimeout<any>(`deleteModel`, `model=${modelName}`);
         }
     }
 
@@ -141,7 +141,7 @@ export class ServerCommunication implements IServerCommunication {
      */
     async loadUnitList(modelName: string): Promise<FreUnitIdentifier[]> {
         LOGGER.log(`ServerCommunication.loadUnitList`);
-        let modelUnits: string[] = await this.fetchWithTimeout<string[]>(`getModelUnitList`, `folder=${modelName}`);
+        let modelUnits: string[] = await this.fetchWithTimeout<string[]>(`getModelUnitList`, `model=${modelName}`);
         if (!!modelUnits) {
             return modelUnits.map((u) => {
                 // The information the unit's type is not available. This is not a problem
@@ -163,7 +163,7 @@ export class ServerCommunication implements IServerCommunication {
     async loadModelUnit(modelName: string, unit: FreUnitIdentifier): Promise<FreNode> {
         LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
         if (!!unit.name && unit.name.length > 0) {
-            const res = await this.fetchWithTimeout<Object>(`getModelUnit`, `folder=${modelName}&name=${unit.name}`);
+            const res = await this.fetchWithTimeout<Object>(`getModelUnit`, `model=${modelName}&unit=${unit.name}`);
             if (!!res) {
                 try {
                     let unit: FreNode;
