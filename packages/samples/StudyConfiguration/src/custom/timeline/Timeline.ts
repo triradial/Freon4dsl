@@ -341,7 +341,6 @@ export class Timeline extends RtObject {
     addPatientEvents(patientHistory: PatientHistory) {
         this.setPatientHistory(patientHistory!);
 
-        console.log("Adding Patient Visits to Timeline");
         patientHistory.patientVisits.forEach((patientVisit) => {
             const actualVisitDateAsDate = this.dateStringsToDate(
                 patientVisit.actualVisitDate.day,
@@ -352,13 +351,11 @@ export class Timeline extends RtObject {
             this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
         });
         patientHistory.patientNotAvailableDates.dates.forEach((patientNotAvailableDate) => {
-            console.log("Adding Patient Not Available Date to Timeline: " + patientNotAvailableDate.startDate.day + "/" + patientNotAvailableDate.startDate.month.name + "/" + patientNotAvailableDate.startDate.year);
             const startDateAsDate = this.dateStringsToDate(
                 patientNotAvailableDate.startDate.day,
                 patientNotAvailableDate.startDate.month.name,
                 patientNotAvailableDate.startDate.year,
             );
-            console.log("startDateAsDate: " + startDateAsDate);
             let endDateAsDate = undefined;
             if (patientNotAvailableDate.endDate == undefined) {
                 endDateAsDate = new Date(startDateAsDate);
@@ -369,7 +366,6 @@ export class Timeline extends RtObject {
                     patientNotAvailableDate.endDate.year,
                 );
             }
-            console.log("startDateAsDate: " + this.getDayOnTimeline(startDateAsDate) + " endDateAsDate: " + this.getDayOnTimeline(endDateAsDate));
             this.addEvent(
                 new PatientUnAvailableEventInstance("Patient Not Available", this.getDayOnTimeline(startDateAsDate), this.getDayOnTimeline(endDateAsDate)),
             );
@@ -377,8 +373,10 @@ export class Timeline extends RtObject {
     }
 
     getDayOnTimeline(date: Date): number {
+        var datePlusOneDay = new Date(date); // Need to add one day to the date to get the correct day on the timeline
+        datePlusOneDay.setDate(datePlusOneDay.getDate() + 1);
         const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
-        const time2 = date.getTime();
+        const time2 = datePlusOneDay.getTime();
         const diffInMilliseconds = time2 - time1;
         const dayOnTimeline = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)); // Convert the milliseconds from the reference date to days
         return dayOnTimeline;

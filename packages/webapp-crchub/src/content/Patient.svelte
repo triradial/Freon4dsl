@@ -135,7 +135,7 @@
             if (patientHistory.patientVisits.length > 0) {
                 referenceDateForTimeline = new Date(patientHistory.patientVisits[0].actualVisitDate.dateAsString);
             } else {
-                referenceDateForTimeline = new Date(200, 8, 30);
+                referenceDateForTimeline = new Date(2024, 8, 30);
             }
         }
 
