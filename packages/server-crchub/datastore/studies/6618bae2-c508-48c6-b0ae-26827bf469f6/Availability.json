@@ -5,24 +5,24 @@
       {
          "id": "ID-104",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-Availability"
+            "key": "-key-Availability"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-name"
+                  "key": "-key-Availability-name"
                },
                "value": "Availability"
             },
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-baselineStaff"
+                  "key": "-key-Availability-baselineStaff"
                },
                "value": ""
             }
@@ -30,9 +30,9 @@
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-staffLevels"
+                  "key": "-key-Availability-staffLevels"
                },
                "children": []
             }

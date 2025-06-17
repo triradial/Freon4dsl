@@ -223,21 +223,26 @@ export class ModelManager {
 
     private showModelUnit(unit: FreModelUnit) {
         LOGGER.log("ModelHandler.showUnitAndErrors called, unitName: " + unit?.name);
-        if (!!unit) {
-            updateEditorState(false, false, false);
-            runInAction(() => {
-                this.langEnv.editor.rootElement = unit;
-            });
-            this.setCurrentUnit(unit);
-            WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
-        } else {
-            updateEditorState(false, true, false);
-            runInAction(() => {
-                this.langEnv.editor.rootElement = {} as FreNode;
-            });
-            this.setCurrentUnit(undefined);
-            WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
-        }
+        try {
+            if (!!unit) {
+                updateEditorState(false, false, false);
+                runInAction(() => {
+                    this.langEnv.editor.rootElement = unit;
+                });
+                this.setCurrentUnit(unit);
+                WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
+            } else {
+                updateEditorState(false, true, false);
+                runInAction(() => {
+                    this.langEnv.editor.rootElement = {} as FreNode;
+                });
+                this.setCurrentUnit(undefined);
+                WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
+            }
+        } catch (e) {
+            console.log("Error showing model unit:", unit);
+            throw e;
+        }   
     }
 
     selectElement(item: FreNode, propertyName?: string) {

@@ -6,9 +6,9 @@
          "id": "ID-62",
          "classifier": {
 <<<<<<< HEAD:packages/server-crchub/datastore/studies/20fd7b12-a9ab-40b7-ad5b-331f74d8b210/Availability.json
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-Availability"
+            "key": "-key-Availability"
 =======
             "language": "-key-Example",
             "version": "2023.1",
@@ -19,9 +19,9 @@
             {
                "property": {
 <<<<<<< HEAD:packages/server-crchub/datastore/studies/20fd7b12-a9ab-40b7-ad5b-331f74d8b210/Availability.json
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-name"
+                  "key": "-key-Availability-name"
 =======
                   "language": "-key-Example",
                   "version": "2023.1",
@@ -32,9 +32,9 @@
             },
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-baselineStaff"
+                  "key": "-key-Availability-baselineStaff"
                },
                "value": ""
             }
@@ -43,9 +43,9 @@
             {
                "containment": {
 <<<<<<< HEAD:packages/server-crchub/datastore/studies/20fd7b12-a9ab-40b7-ad5b-331f74d8b210/Availability.json
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-staffLevels"
+                  "key": "-key-Availability-staffLevels"
 =======
                   "language": "-key-Example",
                   "version": "2023.1",

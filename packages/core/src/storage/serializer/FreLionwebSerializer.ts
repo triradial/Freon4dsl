@@ -165,7 +165,12 @@ export class FreLionwebSerializer implements FreSerializer {
             );
         }
         const conceptMetaPointer = this.convertMetaPointer(jsonMetaPointer, node);
-        LOGGER.log(`Metapointer is ${JSON.stringify(conceptMetaPointer)}`);
+        // try {
+        //     LOGGER.log(`Metapointer is ${JSON.stringify(conceptMetaPointer)}`);
+        // } catch (e) {
+        //     console.log("Error converting meta pointer:", conceptMetaPointer);
+        //     throw e;
+        // }
         const classifier = this.language.classifierByKey(conceptMetaPointer.key);
         // @ts-expect-error TS2345
         if (isNullOrUndefined(classifier)) {
@@ -182,7 +187,12 @@ export class FreLionwebSerializer implements FreSerializer {
         this.convertPrimitiveProperties(tsObject, conceptMetaPointer.key, node);
         const parsedChildren = this.convertChildProperties(conceptMetaPointer.key, node);
         const parsedReferences = this.convertReferenceProperties(conceptMetaPointer.key, node);
-        LOGGER.info(`toTypeScriptInstanceInternal result ${JSON.stringify({ freNode: tsObject, children: parsedChildren, references: parsedReferences })}`)
+        // try {
+        //     LOGGER.info(`toTypeScriptInstanceInternal result ${JSON.stringify({ freNode: tsObject, children: parsedChildren, references: parsedReferences })}`)
+        // } catch (e) {
+        //     console.log("Error converting meta pointer:", conceptMetaPointer);
+        //     throw e;
+        // }
         return { freNode: tsObject, children: parsedChildren, references: parsedReferences };
     }
 

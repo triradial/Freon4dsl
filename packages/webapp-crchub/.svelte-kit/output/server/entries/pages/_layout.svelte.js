@@ -265,7 +265,6 @@ class FreLionwebSerializer {
       throw new Error(`Cannot read json 2: not a Freon structure, classifier name missing: ${JSON.stringify(node)}.`);
     }
     const conceptMetaPointer = this.convertMetaPointer(jsonMetaPointer, node);
-    LOGGER$1.log(`Metapointer is ${JSON.stringify(conceptMetaPointer)}`);
     const classifier = this.language.classifierByKey(conceptMetaPointer.key);
     if (isNullOrUndefined(classifier)) {
       LOGGER$1.error(`1 Cannot read json 3: ${conceptMetaPointer.key} unknown.`);
@@ -280,7 +279,6 @@ class FreLionwebSerializer {
     this.convertPrimitiveProperties(tsObject, conceptMetaPointer.key, node);
     const parsedChildren = this.convertChildProperties(conceptMetaPointer.key, node);
     const parsedReferences = this.convertReferenceProperties(conceptMetaPointer.key, node);
-    LOGGER$1.info(`toTypeScriptInstanceInternal result ${JSON.stringify({ freNode: tsObject, children: parsedChildren, references: parsedReferences })}`);
     return { freNode: tsObject, children: parsedChildren, references: parsedReferences };
   }
   convertPrimitiveProperties(freNode, concept, jsonObject) {
@@ -599,7 +597,7 @@ class ServerCommunication {
         languages: collectUsedLanguages(model),
         nodes: model
       };
-      await this.putWithTimeout(`putModelUnit`, output, `folder=${modelName}&name=${unitId.name}`);
+      await this.putWithTimeout(`saveModelUnit`, output, `model=${modelName}&unit=${unitId.name}`);
     } else {
       LOGGER.error("Name of Unit '" + unitId.name + "' may contain only characters, numbers, '_', or '-', and must start with a character.");
       this.onError("Name of Unit '" + unitId.name + "' may contain only characters, numbers, '_', or '-', and must start with a character.", FreErrorSeverity.NONE);
@@ -608,13 +606,13 @@ class ServerCommunication {
   async deleteModelUnit(modelName, unit) {
     LOGGER.log(`ServerCommunication.deleteModelUnit ${modelName}/${unit.name}`);
     if (!!unit.name && unit.name.length > 0) {
-      await this.fetchWithTimeout(`deleteModelUnit`, `folder=${modelName}&name=${unit.name}`);
+      await this.fetchWithTimeout(`deleteModelUnit`, `model=${modelName}&unit=${unit.name}`);
     }
   }
   async deleteModel(modelName) {
     LOGGER.log(`ServerCommunication.deleteModel ${modelName}`);
     if (!!modelName && modelName.length > 0) {
-      await this.fetchWithTimeout(`deleteModel`, `folder=${modelName}`);
+      await this.fetchWithTimeout(`deleteModel`, `model=${modelName}`);
     }
   }
   async loadModelList() {
@@ -628,7 +626,7 @@ class ServerCommunication {
   }
   async loadUnitList(modelName) {
     LOGGER.log(`ServerCommunication.loadUnitList`);
-    let modelUnits = await this.fetchWithTimeout(`getModelUnitList`, `folder=${modelName}`);
+    let modelUnits = await this.fetchWithTimeout(`getModelUnitList`, `model=${modelName}`);
     if (!!modelUnits) {
       return modelUnits.map((u) => {
         return { name: u, id: u, type: "" };
@@ -640,7 +638,7 @@ class ServerCommunication {
   async loadModelUnit(modelName, unit) {
     LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
     if (!!unit.name && unit.name.length > 0) {
-      const res = await this.fetchWithTimeout(`getModelUnit`, `folder=${modelName}&name=${unit.name}`);
+      const res = await this.fetchWithTimeout(`getModelUnit`, `model=${modelName}&unit=${unit.name}`);
       if (!!res) {
         try {
           let unit2;
