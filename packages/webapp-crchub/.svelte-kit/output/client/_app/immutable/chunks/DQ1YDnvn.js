@@ -1,1 +1,0 @@
-import{x as a}from"./H5RtyH0a.js";const i={HOME:"Home",PATIENTS:"Patients",STUDIES:"Studies",STUDY:"Study",PATIENT:"Patient",AVAILABILITY:"Availability"},e=a([]);function r(t){e.set(t)}export{i as L,e as b,r as s};

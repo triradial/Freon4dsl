@@ -1,4 +1,4 @@
-import { z as push, G as spread_props, B as pop, E as escape_html, M as attr_class, N as stringify, I as store_get, A as onMount, J as unsubscribe_stores, S as head, K as ensure_array_like, F as attr, T as onDestroy } from "../../../chunks/index.js";
+import { z as push, J as spread_props, B as pop, E as escape_html, G as attr_class, I as stringify, K as store_get, A as onMount, M as unsubscribe_stores, S as head, N as ensure_array_like, F as attr, T as onDestroy } from "../../../chunks/index.js";
 import { P as Pencil, T as Tabs, p as page } from "../../../chunks/stores.js";
 import "clsx";
 import { a as FreLogger, W as WebappConfigurator, M as ModelManager } from "../../../chunks/model-manager.js";
@@ -10,8 +10,8 @@ import { n as navigateTo, c as copy_payload, a as assign_payload, G as GridHeade
 import { t as theme } from "../../../chunks/theme-store.js";
 import { e as editObject } from "../../../chunks/object-drawer-store.js";
 import "../../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
-import { P as Popover, X, s as setDrawerProps, e as setDrawerVisibility, f as getActiveDrawer, h as setActiveDrawer, A as AppBar, S as Save } from "../../../chunks/side-drawer-store.js";
-import { N as Ng } from "../../../chunks/index4.js";
+import { P as Popover, X, s as setDrawerProps, e as setDrawerVisibility, f as getActiveDrawer, h as setActiveDrawer, S as Save } from "../../../chunks/side-drawer-store.js";
+import { F as Fg } from "../../../chunks/index4.js";
 import "mobx";
 function Eye($$payload, $$props) {
   push();
@@ -413,7 +413,6 @@ function Study($$payload, $$props) {
   push();
   let { id } = $$props;
   let study = void 0;
-  let editorLoaded = false;
   let activeTab = "patients";
   let dslEditor = void 0;
   let unit = void 0;
@@ -470,7 +469,6 @@ function Study($$payload, $$props) {
       unit = result;
       setTimeout(
         () => {
-          editorLoaded = true;
         },
         3e3
       );
@@ -486,7 +484,6 @@ function Study($$payload, $$props) {
     setDrawerVisibility("studyTimelineChart", true);
   });
   onDestroy(() => {
-    editorLoaded = false;
     var activeDrawer = getActiveDrawer();
     if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors") {
       setActiveDrawer(null);
@@ -543,33 +540,20 @@ function Study($$payload, $$props) {
         Tabs.Panel($$payload2, {
           value: "design",
           children: ($$payload3) => {
-            if (editorLoaded) {
-              $$payload3.out += "<!--[-->";
-              {
-                let lead = function($$payload4) {
-                  $$payload4.out += `<div class="flex gap-2"><button class="icon-button">`;
-                  Save($$payload4, {});
-                  $$payload4.out += `<!----></button> <button class="icon-button">`;
-                  Undo($$payload4, {});
-                  $$payload4.out += `<!----></button> <button class="icon-button">`;
-                  Redo($$payload4, {});
-                  $$payload4.out += `<!----></button></div>`;
-                };
-                AppBar($$payload3, { lead, $$slots: { lead: true } });
-              }
-              $$payload3.out += `<!----> <div class="crc-editor crc-content-width">`;
-              Ng($$payload3, { editor: dslEditor });
-              $$payload3.out += `<!----></div> <div class="crc-editor-footer h-8 crc-content-width">`;
-              DSLFooter($$payload3, {
-                items: footerItems,
-                onCheckboxChange: handleCheckboxChange
-              });
-              $$payload3.out += `<!----></div>`;
-            } else {
-              $$payload3.out += "<!--[!-->";
-              $$payload3.out += `<div class="h-full crc-content-width"><div class="placeholder animate-pulse"></div></div>`;
-            }
-            $$payload3.out += `<!--]-->`;
+            $$payload3.out += `<div class="flex gap-2"><button type="button" class="icon-button primary inverted">`;
+            Save($$payload3, {});
+            $$payload3.out += `<!----></button> <button type="button" class="icon-button primary inverted">`;
+            Undo($$payload3, {});
+            $$payload3.out += `<!----></button> <button type="button" class="icon-button primary inverted">`;
+            Redo($$payload3, {});
+            $$payload3.out += `<!----></button></div> <div class="crc-editor crc-content-width">`;
+            Fg($$payload3, { editor: dslEditor });
+            $$payload3.out += `<!----></div> <div class="crc-editor-footer h-8 crc-content-width">`;
+            DSLFooter($$payload3, {
+              items: footerItems,
+              onCheckboxChange: handleCheckboxChange
+            });
+            $$payload3.out += `<!----></div>`;
           },
           $$slots: { default: true }
         });

@@ -1,4 +1,4 @@
-import { M as attr_class, N as stringify, V as props_id, W as spread_attributes, B as pop, z as push, G as spread_props } from "./index.js";
+import { V as props_id, G as attr_class, W as spread_attributes, I as stringify, B as pop, z as push, J as spread_props } from "./index.js";
 import * as popover from "@zag-js/popover";
 import { t as toStyleString, u as useMachine, n as normalizeProps } from "./Tooltip.svelte_svelte_type_style_lang.js";
 import { mergeProps as mergeProps$1 } from "@zag-js/core";
@@ -22,83 +22,6 @@ function mergeProps(...args) {
     merged.style = toStyleString(merged.style);
   }
   return merged;
-}
-function AppBar($$payload, $$props) {
-  const {
-    // Root
-    base = "w-full flex flex-col",
-    background = "bg-surface-100-900",
-    spaceY = "space-y-4",
-    border = "",
-    padding = "p-4",
-    shadow = "",
-    classes = "",
-    // Toolbar
-    toolbarBase = "flex justify-between",
-    toolbarGridCols = "grid-cols-[auto_1fr_auto]",
-    toolbarGap = "gap-4",
-    toolbarClasses = "",
-    // Lead
-    leadBase = "flex",
-    leadSpaceX = "space-x-4 rtl:space-x-reverse",
-    leadPadding = "",
-    leadClasses = "",
-    // Center
-    centerBase = "grow",
-    centerAlign = "text-center",
-    centerPadding = "",
-    centerClasses = "",
-    // Trail
-    trailBase = "flex",
-    trailSpaceX = "space-x-4 rtl:space-x-reverse",
-    trailPadding = "",
-    trailClasses = "",
-    // Headline
-    headlineBase = "w-full",
-    headlineClasses = "",
-    // Snippets
-    children,
-    lead,
-    trail,
-    headline
-  } = $$props;
-  $$payload.out += `<header${attr_class(`${stringify(base)} ${stringify(background)} ${stringify(spaceY)} ${stringify(border)} ${stringify(padding)} ${stringify(shadow)} ${stringify(classes)}`)} role="toolbar" data-testid="app-bar"><section${attr_class(`${stringify(toolbarBase)} ${stringify(toolbarGridCols)} ${stringify(toolbarGap)} ${stringify(toolbarClasses)}`)} data-testid="app-bar-toolbar">`;
-  if (lead) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<div${attr_class(`${stringify(leadBase)} ${stringify(leadSpaceX)} ${stringify(leadPadding)} ${stringify(leadClasses)}`)}>`;
-    lead($$payload);
-    $$payload.out += `<!----></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]--> `;
-  if (children) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<div${attr_class(`${stringify(centerBase)} ${stringify(centerAlign)} ${stringify(centerPadding)} ${stringify(centerClasses)}`)}>`;
-    children($$payload);
-    $$payload.out += `<!----></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]--> `;
-  if (trail) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<div${attr_class(`${stringify(trailBase)} ${stringify(trailSpaceX)} ${stringify(trailPadding)} ${stringify(trailClasses)}`)}>`;
-    trail($$payload);
-    $$payload.out += `<!----></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]--></section> `;
-  if (headline) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<section${attr_class(`${stringify(headlineBase)} ${stringify(headlineClasses)}`)} data-testid="app-bar-headline">`;
-    headline($$payload);
-    $$payload.out += `<!----></section>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]--></header>`;
 }
 function Popover($$payload, $$props) {
   push();
@@ -304,7 +227,6 @@ function getDrawerOrder() {
   return get(drawerStore).drawerOrder;
 }
 export {
-  AppBar as A,
   Popover as P,
   Save as S,
   X,

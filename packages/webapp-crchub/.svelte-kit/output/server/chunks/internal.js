@@ -297,7 +297,7 @@ class Svelte4Component {
   constructor(options2) {
     var sources = /* @__PURE__ */ new Map();
     var add_source = (key, value) => {
-      var s = mutable_source(value);
+      var s = mutable_source(value, false, false);
       sources.set(key, s);
       return s;
     };
@@ -534,7 +534,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "gtnm52"
+  version_hash: "1rffe9o"
 };
 async function get_hooks() {
   let handle;

@@ -1,7 +1,7 @@
 import "clsx";
 import { A as onMount, T as onDestroy, B as pop, z as push } from "../../../chunks/index.js";
 import { M as ModelManager, W as WebappConfigurator } from "../../../chunks/model-manager.js";
-import { N as Ng } from "../../../chunks/index4.js";
+import { F as Fg } from "../../../chunks/index4.js";
 function Availability($$payload, $$props) {
   push();
   let modelname = "11119f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f";
@@ -28,7 +28,7 @@ function Availability($$payload, $$props) {
   $$payload.out += `<div class="crc-container p-2">`;
   if (editorLoaded) {
     $$payload.out += "<!--[-->";
-    Ng($$payload, { editor: dslEditor });
+    Fg($$payload, { editor: dslEditor });
   } else {
     $$payload.out += "<!--[!-->";
     $$payload.out += `<div class="h-full crc-content-width"><div class="placeholder animate-pulse"></div></div>`;

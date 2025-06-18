@@ -1,5 +1,5 @@
 import { g as goto } from "./client.js";
-import { G as spread_props, B as pop, z as push, E as escape_html, P as createEventDispatcher, M as attr_class } from "./index.js";
+import { J as spread_props, B as pop, z as push, E as escape_html, P as createEventDispatcher, G as attr_class } from "./index.js";
 import "clsx";
 import "./model-manager.js";
 import "./env.js";

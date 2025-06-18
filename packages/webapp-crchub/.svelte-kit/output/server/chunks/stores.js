@@ -1,4 +1,4 @@
-import { z as push, V as props_id, W as spread_attributes, N as stringify, M as attr_class, B as pop, Q as attr_style, G as spread_props } from "./index.js";
+import { z as push, V as props_id, W as spread_attributes, I as stringify, G as attr_class, B as pop, Q as attr_style, J as spread_props } from "./index.js";
 import * as tabs from "@zag-js/tabs";
 import { u as useMachine, n as normalizeProps, s as setTabContext, g as getTabContext } from "./Tooltip.svelte_svelte_type_style_lang.js";
 import { I as Icon } from "./utils.js";

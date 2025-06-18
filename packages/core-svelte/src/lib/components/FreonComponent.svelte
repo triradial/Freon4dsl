@@ -257,9 +257,11 @@
     // });
 
     $effect(() => {
-        editor.refreshComponentSelection = refreshSelection;
-        editor.refreshComponentRootBox = refreshRootBox;
-        editor.getClientRectangle = clientRectangle
+        if (editor) {
+            editor.refreshComponentSelection = refreshSelection;
+            editor.refreshComponentRootBox = refreshRootBox;
+            editor.getClientRectangle = clientRectangle
+        }
     });
 
     const refreshSelection = async (why?: string) => {

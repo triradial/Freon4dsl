@@ -125,27 +125,23 @@
                         </div>
                     </Tabs.Panel>
                     <Tabs.Panel value="design">
-                        {#if editorLoaded}
-                            <AppBar>
-                                {#snippet lead()}
-                                    <div class="flex gap-2">
-                                        <button class="icon-button" onclick={handleSaveStudy}><IconSave /></button>
-                                        <button class="icon-button" onclick={handleUndoAction}><IconUndo /></button>
-                                        <button class="icon-button" onclick={handleRedoAction}><IconRedo /></button>
-                                    </div>
-                                {/snippet}
-                            </AppBar>
+                        <!-- {#if editorLoaded} -->
+                            <div class="flex gap-2">
+                                <button type="button" class="icon-button primary inverted" onclick={handleSaveStudy}><IconSave /></button>
+                                <button type="button" class="icon-button primary inverted" onclick={handleUndoAction}><IconUndo /></button>
+                                <button type="button" class="icon-button primary inverted" onclick={handleRedoAction}><IconRedo /></button>
+                            </div>
                             <div class="crc-editor crc-content-width">
                                 <FreonComponent editor={dslEditor} />
                             </div>
                             <div class="crc-editor-footer h-8 crc-content-width">
                                 <DSLFooter items={footerItems} onCheckboxChange={handleCheckboxChange} />
                             </div>
-                        {:else}
+                        <!-- {:else}
                             <div class="h-full crc-content-width">
                                 <div class="placeholder animate-pulse"></div>
-                            </div>
-                        {/if}
+                            </div> -->
+                        <!-- {/if} -->
                     </Tabs.Panel>
                 {/snippet}
             </Tabs>

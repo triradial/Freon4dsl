@@ -23604,7 +23604,7 @@ const gG = /* @__PURE__ */ new Map([
 function yG(r) {
   r.addProjection("Brackets");
   for (const e of eg.customProjection)
-    r.addCustomProjection(e);
+    e.handler = r, r.addCustomProjection(e);
   r.initConceptToPropertyProjection(gG), r.initProviderConstructors(
     /* @__PURE__ */ new Map([
       [
@@ -88729,20 +88729,25 @@ class ModelManager {
   }
   showModelUnit(unit) {
     LOGGER.log("ModelHandler.showUnitAndErrors called, unitName: " + unit?.name);
-    if (!!unit) {
-      updateEditorState(false, false, false);
-      runInAction(() => {
-        this.langEnv.editor.rootElement = unit;
-      });
-      this.setCurrentUnit(unit);
-      WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
-    } else {
-      updateEditorState(false, true, false);
-      runInAction(() => {
-        this.langEnv.editor.rootElement = {};
-      });
-      this.setCurrentUnit(void 0);
-      WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
+    try {
+      if (!!unit) {
+        updateEditorState(false, false, false);
+        runInAction(() => {
+          this.langEnv.editor.rootElement = unit;
+        });
+        this.setCurrentUnit(unit);
+        WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
+      } else {
+        updateEditorState(false, true, false);
+        runInAction(() => {
+          this.langEnv.editor.rootElement = {};
+        });
+        this.setCurrentUnit(void 0);
+        WebappConfigurator.getInstance().editorEnvironment.editor.setErrors([]);
+      }
+    } catch (e) {
+      console.log("Error showing model unit:", unit);
+      throw e;
     }
   }
   selectElement(item, propertyName) {

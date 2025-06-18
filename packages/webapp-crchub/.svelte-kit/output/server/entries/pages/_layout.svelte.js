@@ -1,6 +1,6 @@
-import { A as onMount, F as attr, B as pop, z as push, G as spread_props, I as store_get, J as unsubscribe_stores, E as escape_html, K as ensure_array_like, M as attr_class, N as stringify, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head } from "../../chunks/index.js";
+import { A as onMount, F as attr, B as pop, z as push, G as attr_class, I as stringify, J as spread_props, K as store_get, M as unsubscribe_stores, E as escape_html, N as ensure_array_like, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head } from "../../chunks/index.js";
 import { i as isNullOrUndefined, F as FreLanguage, a as FreLogger, b as FreNodeReference, c as FreUtils, d as FreErrorSeverity, C as Ct, W as WebappConfigurator, r as rv, R as RtString, t as tv, N as NN, L as LOe, H as Hd, M as ModelManager } from "../../chunks/model-manager.js";
-import { g as gt, F as Fg } from "../../chunks/index4.js";
+import { b as bt, P as Pg } from "../../chunks/index4.js";
 import { e as env } from "../../chunks/env.js";
 import "clsx";
 import { runInAction } from "mobx";
@@ -9,7 +9,7 @@ import { L as LoginPart, i as isAuthenticated } from "../../chunks/LoginPart.js"
 import { I as Icon, u as userStore, g as getStatusColor, d as dataStore } from "../../chunks/utils.js";
 import { t as theme } from "../../chunks/theme-store.js";
 import "../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
-import { A as AppBar, P as Popover, S as Save, X, g as getDrawerWidth, a as getDrawerOrder, b as getDrawer, d as drawerStore, c as addDrawer } from "../../chunks/side-drawer-store.js";
+import { P as Popover, S as Save, X, g as getDrawerWidth, a as getDrawerOrder, b as getDrawer, d as drawerStore, c as addDrawer } from "../../chunks/side-drawer-store.js";
 import "../../chunks/client.js";
 import { o as objectDrawerStore, c as closeObjectDrawer } from "../../chunks/object-drawer-store.js";
 import { h as html } from "../../chunks/html.js";
@@ -806,7 +806,7 @@ function ExpandCollapseWrapperComponent($$payload, $$props) {
     console.log("[ExpandCollapseWrapperComponent] onMount verticalBox:", verticalBox);
   });
   $$payload.out += `<div class="wrapper">`;
-  gt($$payload, { box: box.childBox, editor });
+  bt($$payload, { box: box.childBox, editor });
   $$payload.out += `<!----></div>`;
   pop();
 }
@@ -858,13 +858,90 @@ console.log("Editor environment created");
 webappConfigurator.setEditorEnvironment(editorEnvironment);
 webappConfigurator.setServerCommunication(serverComm);
 console.log("Editor environment configured");
-Fg([
+Pg([
   { component: DatePicker, knownAs: "DatePicker" },
   { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
   { component: TimePicker, knownAs: "TimePicker" }
 ]);
 console.log("Custom components set");
 console.log("init.ts initialization complete");
+function AppBar($$payload, $$props) {
+  const {
+    // Root
+    base = "w-full flex flex-col",
+    background = "bg-surface-100-900",
+    spaceY = "space-y-4",
+    border = "",
+    padding = "p-4",
+    shadow = "",
+    classes = "",
+    // Toolbar
+    toolbarBase = "flex justify-between",
+    toolbarGridCols = "grid-cols-[auto_1fr_auto]",
+    toolbarGap = "gap-4",
+    toolbarClasses = "",
+    // Lead
+    leadBase = "flex",
+    leadSpaceX = "space-x-4 rtl:space-x-reverse",
+    leadPadding = "",
+    leadClasses = "",
+    // Center
+    centerBase = "grow",
+    centerAlign = "text-center",
+    centerPadding = "",
+    centerClasses = "",
+    // Trail
+    trailBase = "flex",
+    trailSpaceX = "space-x-4 rtl:space-x-reverse",
+    trailPadding = "",
+    trailClasses = "",
+    // Headline
+    headlineBase = "w-full",
+    headlineClasses = "",
+    // Snippets
+    children,
+    lead,
+    trail,
+    headline
+  } = $$props;
+  $$payload.out += `<header${attr_class(`${stringify(base)} ${stringify(background)} ${stringify(spaceY)} ${stringify(border)} ${stringify(padding)} ${stringify(shadow)} ${stringify(classes)}`)} role="toolbar" data-testid="app-bar"><section${attr_class(`${stringify(toolbarBase)} ${stringify(toolbarGridCols)} ${stringify(toolbarGap)} ${stringify(toolbarClasses)}`)} data-testid="app-bar-toolbar">`;
+  if (lead) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div${attr_class(`${stringify(leadBase)} ${stringify(leadSpaceX)} ${stringify(leadPadding)} ${stringify(leadClasses)}`)}>`;
+    lead($$payload);
+    $$payload.out += `<!----></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--> `;
+  if (children) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div${attr_class(`${stringify(centerBase)} ${stringify(centerAlign)} ${stringify(centerPadding)} ${stringify(centerClasses)}`)}>`;
+    children($$payload);
+    $$payload.out += `<!----></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--> `;
+  if (trail) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div${attr_class(`${stringify(trailBase)} ${stringify(trailSpaceX)} ${stringify(trailPadding)} ${stringify(trailClasses)}`)}>`;
+    trail($$payload);
+    $$payload.out += `<!----></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></section> `;
+  if (headline) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<section${attr_class(`${stringify(headlineBase)} ${stringify(headlineClasses)}`)} data-testid="app-bar-headline">`;
+    headline($$payload);
+    $$payload.out += `<!----></section>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></header>`;
+}
 const ROUTE = Object.freeze({
   HOME: "home",
   LOGIN: "login",

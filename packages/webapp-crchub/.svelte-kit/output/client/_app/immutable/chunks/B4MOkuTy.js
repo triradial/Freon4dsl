@@ -1,1 +1,0 @@
-import{x as t}from"./H5RtyH0a.js";const o=localStorage.getItem("theme")||"dark",r=t(o);r.subscribe(e=>{localStorage.setItem("theme",e),document.body.classList.toggle("dark",e==="dark")});export{r as t};

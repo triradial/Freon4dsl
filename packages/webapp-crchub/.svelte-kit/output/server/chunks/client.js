@@ -988,9 +988,7 @@ async function navigate({
   await tick();
   const scroll = popped ? popped.scroll : noscroll ? scroll_state() : null;
   if (autoscroll) {
-    const deep_linked = url.hash && document.getElementById(
-      decodeURIComponent(app.hash ? url.hash.split("#")[2] ?? "" : url.hash.slice(1))
-    );
+    const deep_linked = url.hash && document.getElementById(get_id(url));
     if (scroll) {
       scrollTo(scroll.x, scroll.y);
     } else if (deep_linked) {
@@ -1006,7 +1004,7 @@ async function navigate({
     document.activeElement !== document.body
   );
   if (!keepfocus && !changed_focus) {
-    reset_focus();
+    reset_focus(url);
   }
   autoscroll = true;
   if (navigation_result.props.page) {
@@ -1151,19 +1149,31 @@ function deserialize_uses(uses) {
     search_params: new Set(uses?.search_params ?? [])
   };
 }
-function reset_focus() {
+function reset_focus(url) {
   const autofocus = document.querySelector("[autofocus]");
   if (autofocus) {
     autofocus.focus();
   } else {
-    const root2 = document.body;
-    const tabindex = root2.getAttribute("tabindex");
-    root2.tabIndex = -1;
-    root2.focus({ preventScroll: true, focusVisible: false });
-    if (tabindex !== null) {
-      root2.setAttribute("tabindex", tabindex);
+    const id = get_id(url);
+    if (id && document.getElementById(id)) {
+      const { x, y } = scroll_state();
+      setTimeout(() => {
+        const history_state = history.state;
+        location.replace(`#${id}`);
+        if (app.hash) ;
+        history.replaceState(history_state, "", url.hash);
+        scrollTo(x, y);
+      });
     } else {
-      root2.removeAttribute("tabindex");
+      const root2 = document.body;
+      const tabindex = root2.getAttribute("tabindex");
+      root2.tabIndex = -1;
+      root2.focus({ preventScroll: true, focusVisible: false });
+      if (tabindex !== null) {
+        root2.setAttribute("tabindex", tabindex);
+      } else {
+        root2.removeAttribute("tabindex");
+      }
     }
     const selection = getSelection();
     if (selection && selection.type !== "None") {
@@ -1228,6 +1238,14 @@ function clone_page(page2) {
     status: page2.status,
     url: page2.url
   };
+}
+function get_id(url) {
+  let id;
+  if (app.hash) ;
+  else {
+    id = url.hash.slice(1);
+  }
+  return decodeURIComponent(id);
 }
 export {
   goto as g,

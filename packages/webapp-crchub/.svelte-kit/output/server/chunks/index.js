@@ -234,13 +234,13 @@ function proxy(value) {
         }
         var s = sources.get(prop);
         if (s === void 0) {
-          s = with_parent(() => /* @__PURE__ */ state(descriptor.value));
-          sources.set(prop, s);
+          s = with_parent(() => {
+            var s2 = /* @__PURE__ */ state(descriptor.value);
+            sources.set(prop, s2);
+            return s2;
+          });
         } else {
-          set(
-            s,
-            with_parent(() => proxy(descriptor.value))
-          );
+          set(s, descriptor.value, true);
         }
         return true;
       },
@@ -248,10 +248,8 @@ function proxy(value) {
         var s = sources.get(prop);
         if (s === void 0) {
           if (prop in target) {
-            sources.set(
-              prop,
-              with_parent(() => /* @__PURE__ */ state(UNINITIALIZED))
-            );
+            const s2 = with_parent(() => /* @__PURE__ */ state(UNINITIALIZED));
+            sources.set(prop, s2);
             update_version(version);
           }
         } else {
@@ -277,7 +275,11 @@ function proxy(value) {
         var s = sources.get(prop);
         var exists = prop in target;
         if (s === void 0 && (!exists || get_descriptor(target, prop)?.writable)) {
-          s = with_parent(() => /* @__PURE__ */ state(proxy(exists ? target[prop] : UNINITIALIZED)));
+          s = with_parent(() => {
+            var p = proxy(exists ? target[prop] : UNINITIALIZED);
+            var s2 = /* @__PURE__ */ state(p);
+            return s2;
+          });
           sources.set(prop, s);
         }
         if (s !== void 0) {
@@ -313,7 +315,11 @@ function proxy(value) {
         var has = s !== void 0 && s.v !== UNINITIALIZED || Reflect.has(target, prop);
         if (s !== void 0 || active_effect !== null && (!has || get_descriptor(target, prop)?.writable)) {
           if (s === void 0) {
-            s = with_parent(() => /* @__PURE__ */ state(has ? proxy(target[prop]) : UNINITIALIZED));
+            s = with_parent(() => {
+              var p = has ? proxy(target[prop]) : UNINITIALIZED;
+              var s2 = /* @__PURE__ */ state(p);
+              return s2;
+            });
             sources.set(prop, s);
           }
           var value2 = get(s);
@@ -341,18 +347,13 @@ function proxy(value) {
         if (s === void 0) {
           if (!has || get_descriptor(target, prop)?.writable) {
             s = with_parent(() => /* @__PURE__ */ state(void 0));
-            set(
-              s,
-              with_parent(() => proxy(value2))
-            );
+            set(s, proxy(value2));
             sources.set(prop, s);
           }
         } else {
           has = s.v !== UNINITIALIZED;
-          set(
-            s,
-            with_parent(() => proxy(value2))
-          );
+          var p = with_parent(() => proxy(value2));
+          set(s, p);
         }
         var descriptor = Reflect.getOwnPropertyDescriptor(target, prop);
         if (descriptor?.set) {
@@ -464,7 +465,7 @@ function state(v, stack) {
   return s;
 }
 // @__NO_SIDE_EFFECTS__
-function mutable_source(initial_value, immutable = false) {
+function mutable_source(initial_value, immutable = false, trackable = true) {
   const s = source(initial_value);
   if (!immutable) {
     s.equals = safe_equals;
@@ -472,7 +473,7 @@ function mutable_source(initial_value, immutable = false) {
   return s;
 }
 function set(source2, value, should_proxy = false) {
-  if (active_reaction !== null && !untracking && is_runes() && (active_reaction.f & (DERIVED | BLOCK_EFFECT)) !== 0 && !reaction_sources?.includes(source2)) {
+  if (active_reaction !== null && !untracking && is_runes() && (active_reaction.f & (DERIVED | BLOCK_EFFECT)) !== 0 && !(reaction_sources?.[1].includes(source2) && reaction_sources[0] === active_reaction)) {
     state_unsafe_mutation();
   }
   let new_value = should_proxy ? proxy(value) : value;
@@ -571,7 +572,33 @@ function get_next_sibling(node) {
 function clear_text_content(node) {
   node.textContent = "";
 }
-let is_throwing_error = false;
+function handle_error(error) {
+  var effect2 = (
+    /** @type {Effect} */
+    active_effect
+  );
+  if ((effect2.f & EFFECT_RAN) === 0) {
+    if ((effect2.f & BOUNDARY_EFFECT) === 0) {
+      throw error;
+    }
+    effect2.fn(error);
+  } else {
+    invoke_error_boundary(error, effect2);
+  }
+}
+function invoke_error_boundary(error, effect2) {
+  while (effect2 !== null) {
+    if ((effect2.f & BOUNDARY_EFFECT) !== 0) {
+      try {
+        effect2.fn(error);
+        return;
+      } catch {
+      }
+    }
+    effect2 = effect2.parent;
+  }
+  throw error;
+}
 let is_flushing = false;
 let last_scheduled_effect = null;
 let is_updating_effect = false;
@@ -594,9 +621,9 @@ let reaction_sources = null;
 function push_reaction_value(value) {
   if (active_reaction !== null && active_reaction.f & EFFECT_IS_UPDATING) {
     if (reaction_sources === null) {
-      reaction_sources = [value];
+      reaction_sources = [active_reaction, [value]];
     } else {
-      reaction_sources.push(value);
+      reaction_sources[1].push(value);
     }
   }
 }
@@ -667,49 +694,12 @@ function check_dirtiness(reaction) {
   }
   return false;
 }
-function propagate_error(error, effect2) {
-  var current = effect2;
-  while (current !== null) {
-    if ((current.f & BOUNDARY_EFFECT) !== 0) {
-      try {
-        current.fn(error);
-        return;
-      } catch {
-        current.f ^= BOUNDARY_EFFECT;
-      }
-    }
-    current = current.parent;
-  }
-  is_throwing_error = false;
-  throw error;
-}
-function should_rethrow_error(effect2) {
-  return (effect2.f & DESTROYED) === 0 && (effect2.parent === null || (effect2.parent.f & BOUNDARY_EFFECT) === 0);
-}
-function handle_error(error, effect2, previous_effect, component_context2) {
-  if (is_throwing_error) {
-    if (previous_effect === null) {
-      is_throwing_error = false;
-    }
-    if (should_rethrow_error(effect2)) {
-      throw error;
-    }
-    return;
-  }
-  if (previous_effect !== null) {
-    is_throwing_error = true;
-  }
-  propagate_error(error, effect2);
-  if (should_rethrow_error(effect2)) {
-    throw error;
-  }
-}
 function schedule_possible_effect_self_invalidation(signal, effect2, root = true) {
   var reactions = signal.reactions;
   if (reactions === null) return;
   for (var i = 0; i < reactions.length; i++) {
     var reaction = reactions[i];
-    if (reaction_sources?.includes(signal)) continue;
+    if (reaction_sources?.[1].includes(signal) && reaction_sources[0] === active_reaction) continue;
     if ((reaction.f & DERIVED) !== 0) {
       schedule_possible_effect_self_invalidation(
         /** @type {Derived} */
@@ -799,6 +789,8 @@ function update_reaction(reaction) {
       }
     }
     return result;
+  } catch (error) {
+    handle_error(error);
   } finally {
     new_deps = previous_deps;
     skipped_deps = previous_skipped_deps;
@@ -858,7 +850,6 @@ function update_effect(effect2) {
   }
   set_signal_status(effect2, CLEAN);
   var previous_effect = active_effect;
-  var previous_component_context = component_context;
   var was_updating_effect = is_updating_effect;
   active_effect = effect2;
   is_updating_effect = true;
@@ -872,12 +863,9 @@ function update_effect(effect2) {
     var teardown2 = update_reaction(effect2);
     effect2.teardown = typeof teardown2 === "function" ? teardown2 : null;
     effect2.wv = write_version;
-    var deps = effect2.deps;
     var dep;
-    if (DEV && tracing_mode_flag && (effect2.f & DIRTY) !== 0 && deps !== null) ;
+    if (DEV && tracing_mode_flag && (effect2.f & DIRTY) !== 0 && effect2.deps !== null) ;
     if (DEV) ;
-  } catch (error) {
-    handle_error(error, effect2, previous_effect, previous_component_context || effect2.ctx);
   } finally {
     is_updating_effect = was_updating_effect;
     active_effect = previous_effect;
@@ -889,7 +877,7 @@ function infinite_loop_guard() {
   } catch (error) {
     if (last_scheduled_effect !== null) {
       {
-        handle_error(error, last_scheduled_effect, null);
+        invoke_error_boundary(error, last_scheduled_effect);
       }
     } else {
       throw error;
@@ -926,19 +914,15 @@ function flush_queued_effects(effects) {
   for (var i = 0; i < length; i++) {
     var effect2 = effects[i];
     if ((effect2.f & (DESTROYED | INERT)) === 0) {
-      try {
-        if (check_dirtiness(effect2)) {
-          update_effect(effect2);
-          if (effect2.deps === null && effect2.first === null && effect2.nodes_start === null) {
-            if (effect2.teardown === null) {
-              unlink_effect(effect2);
-            } else {
-              effect2.fn = null;
-            }
+      if (check_dirtiness(effect2)) {
+        update_effect(effect2);
+        if (effect2.deps === null && effect2.first === null && effect2.nodes_start === null) {
+          if (effect2.teardown === null) {
+            unlink_effect(effect2);
+          } else {
+            effect2.fn = null;
           }
         }
-      } catch (error) {
-        handle_error(error, effect2, null, effect2.ctx);
       }
     }
   }
@@ -972,12 +956,8 @@ function process_effects(root) {
       } else if (is_branch) {
         effect2.f ^= CLEAN;
       } else {
-        try {
-          if (check_dirtiness(effect2)) {
-            update_effect(effect2);
-          }
-        } catch (error) {
-          handle_error(error, effect2, null, effect2.ctx);
+        if (check_dirtiness(effect2)) {
+          update_effect(effect2);
         }
       }
       var child = effect2.first;
@@ -1006,6 +986,8 @@ function flushSync(fn) {
   while (true) {
     flush_tasks();
     if (queued_root_effects.length === 0) {
+      is_flushing = false;
+      last_scheduled_effect = null;
       return (
         /** @type {T} */
         result
@@ -1023,7 +1005,7 @@ function get(signal) {
   var flags = signal.f;
   var is_derived = (flags & DERIVED) !== 0;
   if (active_reaction !== null && !untracking) {
-    if (!reaction_sources?.includes(signal)) {
+    if (!reaction_sources?.[1].includes(signal) || reaction_sources[0] !== active_reaction) {
       var deps = active_reaction.deps;
       if (signal.rv < read_version) {
         signal.rv = read_version;
@@ -1224,7 +1206,7 @@ function destroy_block_effect_children(signal) {
 }
 function destroy_effect(effect2, remove_dom = true) {
   var removed = false;
-  if ((remove_dom || (effect2.f & HEAD_EFFECT) !== 0) && effect2.nodes_start !== null) {
+  if ((remove_dom || (effect2.f & HEAD_EFFECT) !== 0) && effect2.nodes_start !== null && effect2.nodes_end !== null) {
     remove_effect_dom(
       effect2.nodes_start,
       /** @type {TemplateNode} */
@@ -1734,14 +1716,14 @@ export {
   DEV as D,
   escape_html as E,
   attr as F,
-  spread_props as G,
+  attr_class as G,
   HYDRATION_ERROR as H,
-  store_get as I,
-  unsubscribe_stores as J,
-  ensure_array_like as K,
+  stringify as I,
+  spread_props as J,
+  store_get as K,
   LEGACY_PROPS as L,
-  attr_class as M,
-  stringify as N,
+  unsubscribe_stores as M,
+  ensure_array_like as N,
   maybe_selected as O,
   createEventDispatcher as P,
   attr_style as Q,
