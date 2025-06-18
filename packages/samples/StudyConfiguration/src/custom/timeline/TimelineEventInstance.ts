@@ -61,13 +61,13 @@ export abstract class TimelineEventInstance {
     }
 
     getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
-        let startDateOfTimeline = new Date(timeline.getReferenceDate());
+        let dayAsDate = new Date(timeline.getReferenceDate());
         const dayOffsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
-        startDateOfTimeline.setDate(startDateOfTimeline.getDate() + day + dayOffsetOfFirstEventInstance);
+        dayAsDate.setDate(dayAsDate.getDate() + day + dayOffsetOfFirstEventInstance);
         if (toEndOfDay) {
-            startDateOfTimeline.setHours(23, 59, 59);
+            dayAsDate.setHours(23, 59, 59);
         }
-        return startDateOfTimeline;
+        return dayAsDate;
     }
 
     getStartDayAsDate(timeline: Timeline): Date {

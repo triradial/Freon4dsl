@@ -25,6 +25,7 @@ export class Timeline extends RtObject {
     // timeline data
     days: TimelineDay[] = [];
     currentDay: number = 0;
+    studyStartDayNumber: number = 0;
     availability: Availability;
     patientHistory: PatientHistory;
 
@@ -32,6 +33,13 @@ export class Timeline extends RtObject {
         super();
     }
 
+    public setStudyStartDayNumber(studyStartDayNumber: number) {
+        this.studyStartDayNumber = studyStartDayNumber;
+    }
+
+    getStudyStartDayNumber() {
+        return this.studyStartDayNumber;
+    }
     setReferenceDate(referenceDate: Date) {
         this.referenceDate = referenceDate;
     }
@@ -307,6 +315,13 @@ export class Timeline extends RtObject {
         }
     }
 
+    getOffsetOfLastEventInstance() {
+        const highestDayItem = this.days.reduce((maxItem, currentItem) => {
+            return currentItem.day > maxItem.day ? currentItem : maxItem;
+        }, this.days[0]);
+        return highestDayItem.day;
+    }
+
     getMaxDayOnTimeline() {
         const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
         return this.currentDay + dayOffsetOfFirstEventInstance;
@@ -373,14 +388,21 @@ export class Timeline extends RtObject {
     }
 
     getDayOnTimeline(date: Date): number {
-        var datePlusOneDay = new Date(date); // Need to add one day to the date to get the correct day on the timeline
-        datePlusOneDay.setDate(datePlusOneDay.getDate() + 1);
         const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
-        const time2 = datePlusOneDay.getTime();
+        const time2 = date.getTime();
         const diffInMilliseconds = time2 - time1;
         const dayOnTimeline = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)); // Convert the milliseconds from the reference date to days
         return dayOnTimeline;
     }
+    // getDayOnTimeline(date: Date): number {
+    //     var datePlusOneDay = new Date(date); // Need to add one day to the date to get the correct day on the timeline
+    //     datePlusOneDay.setDate(datePlusOneDay.getDate() + 1);
+    //     const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
+    //     const time2 = datePlusOneDay.getTime();
+    //     const diffInMilliseconds = time2 - time1;
+    //     const dayOnTimeline = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)); // Convert the milliseconds from the reference date to days
+    //     return dayOnTimeline;
+    // }
 
     addStaffAvailability(availability: Availability) {
         console.log("Adding Staff Availability to Timeline");
@@ -598,7 +620,10 @@ export function getMonthFromString(month: string): FreNodeReference<Month> {
 
 // The DateConcept is updated inline hence no return value.
 export function fillDateConceptFromAsString(dateConcept: DateConcept) {
-    const actualDate = new Date(dateConcept.dateAsString);
+    console.log("fillDateConceptFromAsString: " + dateConcept.dateAsString);
+    // Add "T00:00:00" to ensure the date is interpreted at midnight local time
+    const actualDate = new Date(dateConcept.dateAsString + "T00:00:00");
+    console.log("actualDate: " + actualDate);
     dateConcept.day = actualDate.getDate().toString();
     dateConcept.month = getMonthFromString(actualDate.toLocaleString('en-US', { month: 'long' }));
     dateConcept.year = actualDate.getFullYear().toString();

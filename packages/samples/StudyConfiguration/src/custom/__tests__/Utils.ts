@@ -150,6 +150,53 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(
     return studyConfiguration;
 }
 
+
+export function addAPeriodWithEventBeforeStudyStart(
+    studyConfiguration: StudyConfiguration,
+    periodName: string,
+    event1Name: string,
+    secondEventName: string,
+    secondEventDaysBeforeStudyStart,
+): StudyConfiguration {
+    var period = new Period(periodName);
+    period.name = periodName;
+
+    const studyStart = StudyStart.create({});
+    const eventSchedule = EventSchedule.create({ eventStart: studyStart });
+    createEventAndAddToPeriod(period, event1Name, eventSchedule);
+
+    const referenceToMinusOperator = FreNodeReference.create<SimpleOperators>("-", "SimpleOperators");
+    const days = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
+    const fromStudyStart = FirstDayOfStudy.create({
+        timeAmountPart: TimeAmountPart.create({
+            operator: referenceToMinusOperator,
+            timeAmount: TimeAmount.create({
+                value: secondEventDaysBeforeStudyStart,
+                unit: days,
+            }),
+        }),
+    });
+    const eventSchedule2 = EventSchedule.create({ eventStart: fromStudyStart });
+    createEventAndAddToPeriod(period, secondEventName, eventSchedule2);
+
+    const referenceToPlusOperator = FreNodeReference.create<SimpleOperators>("+", "SimpleOperators");
+    const days2 = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
+    const fromStudyStart2 = StudyStart.create({
+        timeAmountPart: TimeAmountPart.create({
+            operator: referenceToPlusOperator,
+            timeAmount: TimeAmount.create({
+                value: 2,
+                unit: days2,
+            }),
+        }),
+    });
+    const eventSchedule3 = EventSchedule.create({ eventStart: fromStudyStart2 });
+    createEventAndAddToPeriod(period, "V3", eventSchedule3);
+
+    studyConfiguration.periods.push(period);
+    return studyConfiguration;
+}
+
 // Event 1 is First Scheduled on event1Day and Event 2 is First Scheduled When event1 completes + event2DaysAfterEvent1
 //
 export function addEventScheduledOffCompletedEvent(
@@ -362,7 +409,7 @@ export function saveToFile(stringToSave: string, filename: string) {
 }
 
 export function saveTimeline(timelineDataAsScript: string) {
-    const filename = "./tmp/timeline.html";
+    const filename = "../../../tmp/timeline.html";
     const timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
     saveToFile(timelineDataAsHTML, filename);
@@ -488,7 +535,9 @@ export function createCompletedPatientVisits(
                 });
             }
             if (!foundAMatch) {
-                dateOfVisit = addDays(referenceDate, startDay); // No shifts for this Visit
+                // No shifts for this Visit but need to correct for any negative offset from first event instance
+                const offsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
+                dateOfVisit = addDays(referenceDate, startDay + offsetOfFirstEventInstance);
             }
             const patientVisit = createACompletedPatientVisit(
                 scheduledEventInstance.getName(),

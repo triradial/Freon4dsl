@@ -228,5 +228,14 @@
     "phase": "",
     "therapeuticArea": "",
     "currentProtocol": ""
+  },
+  {
+    "id": "c1bc6e63-2545-40c2-8108-d01b0f8ef5fe",
+    "name": "DayTest",
+    "title": "",
+    "status": "Active",
+    "phase": "Test",
+    "therapeuticArea": "Test-TPA",
+    "currentProtocol": ""
   }
 ]

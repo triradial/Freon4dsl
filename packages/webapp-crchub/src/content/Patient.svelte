@@ -8,7 +8,7 @@
     import { dataStore, type Patient } from "../services/data/data-store.js";
 
     import { ModelManager } from "../services/dsl/model-manager.js";
-    import { RtString } from "@freon4dsl/core";
+    import { AST, RtString } from "@freon4dsl/core";
     import { FreNodeReference } from "@freon4dsl/core";
     import { type StudyConfigurationModel, StudyConfiguration, PatientInfo, PatientHistory, PatientVisit, PatientHistoryUnit, PatientNotAvailable } from "@freon4dsl/samples-study-configuration";
     import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
@@ -22,7 +22,6 @@
     import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
 
     import { fillDateConceptFromAsString } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-    import { action } from "mobx";
 
     export let id: string;
     let patient: Patient | undefined;
@@ -49,38 +48,41 @@
             return;
         }
         patient = fetchedPatient;
-        dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
-        const modelManager = ModelManager.getInstance();
+        AST.change(async () => {  
+            dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+            const modelManager = ModelManager.getInstance();
 
-        // Create the PatientHistoryUnit to use just for editing of one patient at a time
-        await modelManager.createNewUnit("PatientHistoryUnit", "PatientHistoryUnit");
-        var patientHistoryUnit =  modelManager.modelStore.getUnitByName("PatientHistoryUnit") as PatientHistoryUnit;
-        clearPatientHistory(patientHistoryUnit.patientHistory);
-        //TODO: Talk to Graham about changing patientNumber to patient_id or something else that can be initials, etc. 
-        patientHistoryUnit.patientHistory.patient_id = fetchedPatient.patientNumber;
-        // Get the model data for all the Patients
-        patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
-        if (patientInfo === null || patientInfo === undefined) {
-            //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
-            await modelManager.modelStore.createUnit("PatientInfo", "PatientInfo");
-        } else {
-            // The PatientInfo already exists, we need to setup the patientHistory for editing
-            var found = false;
-            patientInfo.patientHistories.forEach(aPatientHistory => {
-                if (!found && aPatientHistory.patient_id === fetchedPatient.patientNumber) {
-                    aPatientHistory.patientVisits.forEach(visit => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
-                    aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
-                    patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
-                    patientHistoryUnit.patientHistory.id = aPatientHistory.id;
-                    patientHistoryUnit.patientHistory.patient_id = aPatientHistory.patient_id;
-                    found = true;
-                };
-            });
-        }
-        // Display the patientHistory for editing
-        await modelManager.setCurrentUnit(patientHistoryUnit);
-        await modelManager.displayModelUnit(patientHistoryUnit);
-        unit = patientHistoryUnit;
+            // Create the PatientHistoryUnit to use just for editing of one patient at a time
+            await modelManager.createNewUnit("PatientHistoryUnit", "PatientHistoryUnit");
+            var patientHistoryUnit =  modelManager.modelStore.getUnitByName("PatientHistoryUnit") as PatientHistoryUnit;
+            clearPatientHistory(patientHistoryUnit.patientHistory);
+            //TODO: Talk to Graham about changing patientNumber to patient_id or something else that can be initials, etc. 
+            patientHistoryUnit.patientHistory.patient_id = fetchedPatient.patientNumber;
+            // Get the model data for all the Patients
+            patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
+            if (patientInfo === null || patientInfo === undefined) {
+                //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
+                await modelManager.modelStore.createUnit("PatientInfo", "PatientInfo");
+            } else {
+                // The PatientInfo already exists, we need to setup the patientHistory for editing
+                var found = false;
+                patientInfo.patientHistories.forEach(aPatientHistory => {
+                    if (!found && aPatientHistory.patient_id === fetchedPatient.patientNumber) {
+                        aPatientHistory.patientVisits.forEach(visit => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
+                        aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
+                        patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
+                        patientHistoryUnit.patientHistory.id = aPatientHistory.id;
+                        patientHistoryUnit.patientHistory.patient_id = aPatientHistory.patient_id;
+                        found = true;
+                    };
+                });
+            }
+            // Display the patientHistory for editing
+            await modelManager.setCurrentUnit(patientHistoryUnit);
+            await modelManager.displayModelUnit(patientHistoryUnit);
+            unit = patientHistoryUnit;
+        });
+
         setTimeout(() => {
             editorLoaded = true;
         }, 300);
@@ -92,17 +94,16 @@
         }
     });
 
-    const getTimelineChartError = action(() => {
+    const getTimelineChartError = () => {
         const html = `<div class="limited-width-container"><div class='text-red-500'>Error: PatientInfo not found</div></div>`;
         return new RtString(html);
-    });
+    };
 
-    // Create an action wrapper for fillDateConceptFromAsString
-    const fillDateConcept = action((dateConcept: any) => {
+    const fillDateConcept = (dateConcept: any) => {
         fillDateConceptFromAsString(dateConcept);
-    });
+    };
 
-    const getChartWithPatientHistory = action(async (referenceDate: Date) => {
+    const getChartWithPatientHistory = async (referenceDate: Date) => {
         const fetchedPatient = await dataStore.getPatient(id);
 
         var found = false;
@@ -141,10 +142,11 @@
 
         const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
         const studyConfig = model.configuration;
+        studyConfig.studyStartDayNumber = 0;
         let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
         const rtObject = (timeline as any).getTimelineChartHtml() as RtString;
         return rtObject.asString();
-    });
+    };
 
     async function getChart(id: string) {
         const modelManager = ModelManager.getInstance();
@@ -155,33 +157,35 @@
     }
 
     async function loadChart(id: string) {
-        isLoading = true;
-        showChart = false;
-        error = null;
-        try {
-            patientInfo = await ModelManager.getInstance().openModelUnitWithoutSavingCurrentUnit(patient!.studyId, "PatientInfo") as PatientInfo;
+        AST.change(async () => {  
+            isLoading = true;
+            showChart = false;
+            error = null;
+            try {
+                patientInfo = await ModelManager.getInstance().openModelUnitWithoutSavingCurrentUnit(patient!.studyId, "PatientInfo") as PatientInfo;
 
-            const startTime = Date.now();
-            const referenceDate = new Date(2024, 8, 30);
-            chartHtml = await getChartWithPatientHistory(referenceDate);
-            await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
-            if (container) {
-                await loadChartData();
-                const elapsedTime = Date.now() - startTime;
-                if (elapsedTime < 3000) {
-                    await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
+                const startTime = Date.now();
+                const referenceDate = new Date(2024, 8, 30);
+                chartHtml = await getChartWithPatientHistory(referenceDate);
+                await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
+                if (container) {
+                    await loadChartData();
+                    const elapsedTime = Date.now() - startTime;
+                    if (elapsedTime < 3000) {
+                        await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
+                    }
+                    showChart = true;
+                } else {
+                    console.error("Container not found");
+                    throw new Error("Container not available");
                 }
-                showChart = true;
-            } else {
-                console.error("Container not found");
-                throw new Error("Container not available");
+            } catch (err: unknown) {
+                console.error(`Error fetching chart data for study: ${id}`, err);
+                error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
+            } finally {
+                isLoading = false;
             }
-        } catch (err: unknown) {
-            console.error(`Error fetching chart data for study: ${id}`, err);
-            error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
-        } finally {
-            isLoading = false;
-        }
+        });
     }
 
     async function loadChartData() {

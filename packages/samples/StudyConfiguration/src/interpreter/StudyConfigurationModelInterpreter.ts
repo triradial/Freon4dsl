@@ -156,9 +156,9 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                 }
             }
             let result = lastInstanceOfReferencedEvent.startDay;
-            if (eventState.name === language.EventState.completed.name || eventState.name === language.EventState.eachCompleted.name) {
-                result = result + 1;
-            }
+            // if (eventState.name === language.EventState.completed.name || eventState.name === language.EventState.eachCompleted.name) {
+            //     result = result + 1;
+            // }
             const when = node.freOwner() as language.When;
             if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
                 const timeAmount = main.evaluate(when.timeAmountPart, ctx) as RtNumber;
@@ -237,6 +237,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
         let startDay = studyStartDayNumber.value;
+        console.log("evalStudyStart: startDay: " + startDay);
         if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
             const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
             return new RtNumber(timeAmount.value + startDay);
@@ -249,6 +250,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         // TODO: Ask Jos if should create an expression for this rather than hardcoding the operator.
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
         let startDay = studyStartDayNumber.value;
+        console.log("evalFirstDayOfStudy: startDay: " + startDay);
         if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
             const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
             return new RtNumber(timeAmount.value + startDay);

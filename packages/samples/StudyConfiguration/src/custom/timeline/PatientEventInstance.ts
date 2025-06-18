@@ -58,13 +58,20 @@ export class PatientVisitEventInstance extends PatientEventInstance {
     Because of this it doesn't need to be modified by adding the dayOffsetOfFirstEventInstance.
     */
     getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
-        let startDateOfTimeline = new Date(timeline.getReferenceDate());
-        startDateOfTimeline.setDate(startDateOfTimeline.getDate() + day);
-        if (toEndOfDay) {
-            startDateOfTimeline.setHours(23, 59, 59);
+        let dayAsDate = new Date(timeline.getReferenceDate());
+        var correctedDay = day;
+        if (day < 0) {
+            correctedDay = day - 1;
         }
-        return startDateOfTimeline;
+        dayAsDate.setDate(dayAsDate.getDate() + correctedDay);
+        if (toEndOfDay) {
+            dayAsDate.setHours(23, 59, 59);
+        }
+        return dayAsDate;
     }
+    // getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
+    //     return super.getDayAsDate(day, timeline, toEndOfDay);
+    // }
 }
 
 export class PatientUnAvailableEventInstance extends PatientEventInstance {
