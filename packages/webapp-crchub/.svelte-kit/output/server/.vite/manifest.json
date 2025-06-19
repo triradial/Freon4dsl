@@ -42,7 +42,35 @@
       "_index.js",
       "_model-manager.js",
       "_env.js",
-      "_utils.js"
+      "_plus.js",
+      "_Icon.js"
+    ]
+  },
+  "_FragmentComponent.js": {
+    "file": "chunks/FragmentComponent.js",
+    "name": "FragmentComponent",
+    "imports": [
+      "_index.js",
+      "_model-manager.js",
+      "_plus.js",
+      "_html.js",
+      "_Icon.js"
+    ]
+  },
+  "_FreonComponent.js": {
+    "file": "chunks/FreonComponent.js",
+    "name": "FreonComponent",
+    "imports": [
+      "_index.js",
+      "_FragmentComponent.js",
+      "_model-manager.js"
+    ]
+  },
+  "_Icon.js": {
+    "file": "chunks/Icon.js",
+    "name": "Icon",
+    "imports": [
+      "_index.js"
     ]
   },
   "_LoginPart.js": {
@@ -118,14 +146,6 @@
       "_index.js"
     ]
   },
-  "_index4.js": {
-    "file": "chunks/index4.js",
-    "name": "index",
-    "imports": [
-      "_index.js",
-      "_model-manager.js"
-    ]
-  },
   "_internal.js": {
     "file": "chunks/internal.js",
     "name": "internal",
@@ -149,13 +169,21 @@
       "_utils.js"
     ]
   },
+  "_plus.js": {
+    "file": "chunks/plus.js",
+    "name": "plus",
+    "imports": [
+      "_index.js",
+      "_Icon.js"
+    ]
+  },
   "_side-drawer-store.js": {
     "file": "chunks/side-drawer-store.js",
     "name": "side-drawer-store",
     "imports": [
       "_index.js",
+      "_Icon.js",
       "_Tooltip.svelte_svelte_type_style_lang.js",
-      "_utils.js",
       "_index3.js"
     ]
   },
@@ -164,8 +192,8 @@
     "name": "stores",
     "imports": [
       "_index.js",
+      "_Icon.js",
       "_Tooltip.svelte_svelte_type_style_lang.js",
-      "_utils.js",
       "_client.js"
     ]
   },
@@ -182,8 +210,7 @@
     "imports": [
       "_index3.js",
       "_model-manager.js",
-      "_env.js",
-      "_index.js"
+      "_env.js"
     ]
   },
   "src/routes/+layout.svelte": {
@@ -194,8 +221,8 @@
     "imports": [
       "_index.js",
       "_model-manager.js",
-      "_index4.js",
       "_env.js",
+      "_FragmentComponent.js",
       "_index3.js",
       "_LoginPart.js",
       "_utils.js",
@@ -203,6 +230,7 @@
       "_Tooltip.svelte_svelte_type_style_lang.js",
       "_side-drawer-store.js",
       "_client.js",
+      "_Icon.js",
       "_object-drawer-store.js",
       "_html.js"
     ],
@@ -236,7 +264,7 @@
     "imports": [
       "_index.js",
       "_model-manager.js",
-      "_index4.js"
+      "_FreonComponent.js"
     ]
   },
   "src/routes/home/+page.svelte": {
@@ -276,6 +304,7 @@
       "_env.js",
       "_Tooltip.svelte_svelte_type_style_lang.js",
       "_utils.js",
+      "_Icon.js",
       "_html.js"
     ]
   },
@@ -289,7 +318,8 @@
       "_utils.js",
       "_object-drawer-store.js",
       "_DeleteObjectDialog.js",
-      "_theme-store.js"
+      "_theme-store.js",
+      "_plus.js"
     ]
   },
   "src/routes/study/+page.svelte": {
@@ -306,9 +336,11 @@
       "_DeleteObjectDialog.js",
       "_theme-store.js",
       "_object-drawer-store.js",
+      "_plus.js",
       "_Tooltip.svelte_svelte_type_style_lang.js",
       "_side-drawer-store.js",
-      "_index4.js"
+      "_Icon.js",
+      "_FreonComponent.js"
     ]
   }
 }

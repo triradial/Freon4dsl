@@ -31,7 +31,8 @@
         draggedElem,
         draggedFrom,
         selectedBoxes,
-        shouldBeHandledByBrowser
+        shouldBeHandledByBrowser,
+        contextMenu, contextMenuVisible
     } from './stores/AllStores.svelte.js';
     import type { MainComponentProps } from './svelte-utils/FreComponentProps.js';
 
@@ -256,14 +257,6 @@
     //     return () => resizeObserver.unobserve(element);
     // });
 
-    $effect(() => {
-        if (editor) {
-            editor.refreshComponentSelection = refreshSelection;
-            editor.refreshComponentRootBox = refreshRootBox;
-            editor.getClientRectangle = clientRectangle
-        }
-    });
-
     const refreshSelection = async (why?: string) => {
         LOGGER.log(
             'FreonComponent.refreshSelection: ' +
@@ -311,6 +304,15 @@
 
     refreshRootBox('Initialize FreonComponent');
     refreshSelection('Initialize FreonComponent');
+
+    $effect(() => {
+        if (editor) {
+            editor.refreshComponentSelection = refreshSelection;
+            editor.refreshComponentRootBox = refreshRootBox;
+            editor.getClientRectangle = clientRectangle
+        }
+    });
+
 </script>
 
 <!-- TODO This makes us dependent on @material/... do we want that?-->

@@ -1,56 +1,10 @@
 import { g as goto } from "./client.js";
-import { J as spread_props, B as pop, z as push, E as escape_html, P as createEventDispatcher, G as attr_class } from "./index.js";
+import { F as spread_props, B as pop, z as push, E as escape_html, P as createEventDispatcher, I as attr_class } from "./index.js";
 import "clsx";
 import "./model-manager.js";
 import "./env.js";
-import { I as Icon } from "./utils.js";
-class HeadPayload {
-  /** @type {Set<{ hash: string; code: string }>} */
-  css = /* @__PURE__ */ new Set();
-  out = "";
-  uid = () => "";
-  title = "";
-  constructor(css = /* @__PURE__ */ new Set(), out = "", title = "", uid = () => "") {
-    this.css = css;
-    this.out = out;
-    this.title = title;
-    this.uid = uid;
-  }
-}
-class Payload {
-  /** @type {Set<{ hash: string; code: string }>} */
-  css = /* @__PURE__ */ new Set();
-  out = "";
-  uid = () => "";
-  select_value = void 0;
-  head = new HeadPayload();
-  constructor(id_prefix = "") {
-    this.uid = props_id_generator(id_prefix);
-    this.head.uid = this.uid;
-  }
-}
-function copy_payload({ out, css, head, uid }) {
-  const payload = new Payload();
-  payload.out = out;
-  payload.css = new Set(css);
-  payload.uid = uid;
-  payload.head = new HeadPayload();
-  payload.head.out = head.out;
-  payload.head.css = new Set(head.css);
-  payload.head.title = head.title;
-  payload.head.uid = head.uid;
-  return payload;
-}
-function assign_payload(p1, p2) {
-  p1.out = p2.out;
-  p1.css = p2.css;
-  p1.head = p2.head;
-  p1.uid = p2.uid;
-}
-function props_id_generator(prefix) {
-  let uid = 1;
-  return () => `${prefix}s${uid++}`;
-}
+import { P as Plus } from "./plus.js";
+import { I as Icon } from "./Icon.js";
 function Circle_check($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;
@@ -100,27 +54,6 @@ function Circle_x($$payload, $$props) {
   ]));
   pop();
 }
-function Plus($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    ["path", { "d": "M5 12h14" }],
-    ["path", { "d": "M12 5v14" }]
-  ];
-  Icon($$payload, spread_props([
-    { name: "plus" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
 function navigateTo(routeName, id) {
   let url = "/" + routeName.toLowerCase();
   if (id) {
@@ -157,7 +90,5 @@ function DeleteObjectDialog($$payload, $$props) {
 export {
   DeleteObjectDialog as D,
   GridHeader as G,
-  assign_payload as a,
-  copy_payload as c,
   navigateTo as n
 };

@@ -1,9 +1,35 @@
-import { z as push, V as props_id, W as spread_attributes, I as stringify, G as attr_class, B as pop, Q as attr_style, J as spread_props } from "./index.js";
+import { z as push, F as spread_props, B as pop, V as props_id, W as spread_attributes, J as stringify, I as attr_class, Q as attr_style } from "./index.js";
+import { I as Icon } from "./Icon.js";
 import * as tabs from "@zag-js/tabs";
 import { u as useMachine, n as normalizeProps, s as setTabContext, g as getTabContext } from "./Tooltip.svelte_svelte_type_style_lang.js";
-import { I as Icon } from "./utils.js";
 import "clsx";
 import { s as stores } from "./client.js";
+function Pencil($$payload, $$props) {
+  push();
+  let { $$slots, $$events, ...props } = $$props;
+  const iconNode = [
+    [
+      "path",
+      {
+        "d": "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+      }
+    ],
+    ["path", { "d": "m15 5 4 4" }]
+  ];
+  Icon($$payload, spread_props([
+    { name: "pencil" },
+    props,
+    {
+      iconNode,
+      children: ($$payload2) => {
+        props.children?.($$payload2);
+        $$payload2.out += `<!---->`;
+      },
+      $$slots: { default: true }
+    }
+  ]));
+  pop();
+}
 function Tabs$1($$payload, $$props) {
   push();
   const id = props_id($$payload);
@@ -137,32 +163,6 @@ function TabsPanel($$payload, $$props) {
   pop();
 }
 const Tabs = /* @__PURE__ */ Object.assign(Tabs$1, { Control: TabsControl, Panel: TabsPanel });
-function Pencil($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    [
-      "path",
-      {
-        "d": "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
-      }
-    ],
-    ["path", { "d": "m15 5 4 4" }]
-  ];
-  Icon($$payload, spread_props([
-    { name: "pencil" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
 const getStores = () => {
   const stores$1 = stores;
   return {

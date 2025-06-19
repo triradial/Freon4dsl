@@ -1,16 +1,17 @@
-import { A as onMount, F as attr, B as pop, z as push, G as attr_class, I as stringify, J as spread_props, K as store_get, M as unsubscribe_stores, E as escape_html, N as ensure_array_like, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head } from "../../chunks/index.js";
+import { z as push, F as spread_props, B as pop, A as onMount, G as attr, I as attr_class, J as stringify, K as store_get, M as unsubscribe_stores, E as escape_html, N as ensure_array_like, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head } from "../../chunks/index.js";
 import { i as isNullOrUndefined, F as FreLanguage, a as FreLogger, b as FreNodeReference, c as FreUtils, d as FreErrorSeverity, C as Ct, W as WebappConfigurator, r as rv, R as RtString, t as tv, N as NN, L as LOe, H as Hd, M as ModelManager } from "../../chunks/model-manager.js";
-import { b as bt, P as Pg } from "../../chunks/index4.js";
 import { e as env } from "../../chunks/env.js";
 import "clsx";
+import { R as RenderComponent, C as Chevron_right, G as Grip_vertical } from "../../chunks/FragmentComponent.js";
 import { runInAction } from "mobx";
 import { w as writable, g as get } from "../../chunks/index3.js";
 import { L as LoginPart, i as isAuthenticated } from "../../chunks/LoginPart.js";
-import { I as Icon, u as userStore, g as getStatusColor, d as dataStore } from "../../chunks/utils.js";
+import { u as userStore, g as getStatusColor, d as dataStore } from "../../chunks/utils.js";
 import { t as theme } from "../../chunks/theme-store.js";
 import "../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
 import { P as Popover, S as Save, X, g as getDrawerWidth, a as getDrawerOrder, b as getDrawer, d as drawerStore, c as addDrawer } from "../../chunks/side-drawer-store.js";
 import "../../chunks/client.js";
+import { I as Icon } from "../../chunks/Icon.js";
 import { o as objectDrawerStore, c as closeObjectDrawer } from "../../chunks/object-drawer-store.js";
 import { h as html } from "../../chunks/html.js";
 import { marked } from "marked";
@@ -748,230 +749,10 @@ class Mapped {
     };
   }
 }
-function DatePicker($$payload, $$props) {
-  push();
-  const { box } = $$props;
-  let inputElement;
-  let value = "";
-  getValue();
-  function getValue() {
-    let startStr = box.getPropertyValue();
-    if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
-      value = startStr;
-    } else {
-      const today = /* @__PURE__ */ new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, "0");
-      const dd = String(today.getDate()).padStart(2, "0");
-      value = `${yyyy}-${mm}-${dd}`;
-    }
-  }
-  async function setFocus() {
-    inputElement.focus();
-  }
-  const refresh = (why) => {
-    getValue();
-  };
-  onMount(() => {
-    getValue();
-    box.setFocus = setFocus;
-    box.refreshComponent = refresh;
-    console.log("[DatePicker] onMount value:", value);
-  });
-  $$payload.out += `<div class="datepicker"><input id="default-datepicker" type="date"${attr("value", value)} class="datepicker-input" placeholder="Select date"/></div>`;
-  pop();
+const customMap = /* @__PURE__ */ new Map();
+function setCustomComponents(externals) {
+  externals.forEach((ext) => customMap.set(ext.knownAs, ext.component));
 }
-function ExpandCollapseWrapperComponent($$payload, $$props) {
-  push();
-  const { box, editor } = $$props;
-  let inputElement;
-  async function setFocus() {
-    inputElement.focus();
-  }
-  const refresh = (why) => {
-  };
-  onMount(() => {
-    let verticalBox = box.childBox.children[0];
-    const extendedCssClass = verticalBox.cssClass + " ml-5";
-    FreUtils.initializeObject(verticalBox, { selectable: false, cssClass: extendedCssClass });
-    verticalBox.children.forEach((childBox) => {
-      let childExtendedCssClass = verticalBox.cssClass + " align-top";
-      FreUtils.initializeObject(childBox, {
-        selectable: true,
-        cssClass: childExtendedCssClass
-      });
-    });
-    box.setFocus = setFocus;
-    box.refreshComponent = refresh;
-    console.log("[ExpandCollapseWrapperComponent] onMount verticalBox:", verticalBox);
-  });
-  $$payload.out += `<div class="wrapper">`;
-  bt($$payload, { box: box.childBox, editor });
-  $$payload.out += `<!----></div>`;
-  pop();
-}
-function TimePicker($$payload, $$props) {
-  push();
-  const { box } = $$props;
-  let inputElement;
-  let value = "";
-  getValue();
-  function getValue() {
-    let startStr = box.getPropertyValue();
-    if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
-      value = startStr;
-    } else {
-      value = "";
-    }
-    return value;
-  }
-  async function setFocus() {
-    inputElement.focus();
-  }
-  const refresh = (why) => {
-    getValue();
-  };
-  onMount(() => {
-    getValue();
-    box.setFocus = setFocus;
-    box.refreshComponent = refresh;
-    console.log("[TimePicker] onMount value:", value);
-  });
-  $$payload.out += `<div class="timepicker"><input id="default-timepicker" type="time"${attr("value", value)} class="timepicker-input" placeholder="Select time"/></div>`;
-  pop();
-}
-console.log("Starting init.ts initialization");
-const serverUrl = env.serverUrl;
-const url = new URL(serverUrl);
-const serverIp = `${url.protocol}//${url.hostname}`;
-const serverPort = url.port;
-const serverComm = ServerCommunication.getInstance();
-console.log("ServerCommunication instance created");
-serverComm.SERVER_URL = serverUrl;
-serverComm.SERVER_IP = serverIp;
-serverComm.nodePort = parseInt(serverPort);
-console.log("Server settings configured:", { url: serverUrl, timeout: env.serverTimeout });
-console.log("Creating editor environment");
-const webappConfigurator = WebappConfigurator.getInstance();
-const editorEnvironment = Ct.getInstance();
-console.log("Editor environment created");
-webappConfigurator.setEditorEnvironment(editorEnvironment);
-webappConfigurator.setServerCommunication(serverComm);
-console.log("Editor environment configured");
-Pg([
-  { component: DatePicker, knownAs: "DatePicker" },
-  { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
-  { component: TimePicker, knownAs: "TimePicker" }
-]);
-console.log("Custom components set");
-console.log("init.ts initialization complete");
-function AppBar($$payload, $$props) {
-  const {
-    // Root
-    base = "w-full flex flex-col",
-    background = "bg-surface-100-900",
-    spaceY = "space-y-4",
-    border = "",
-    padding = "p-4",
-    shadow = "",
-    classes = "",
-    // Toolbar
-    toolbarBase = "flex justify-between",
-    toolbarGridCols = "grid-cols-[auto_1fr_auto]",
-    toolbarGap = "gap-4",
-    toolbarClasses = "",
-    // Lead
-    leadBase = "flex",
-    leadSpaceX = "space-x-4 rtl:space-x-reverse",
-    leadPadding = "",
-    leadClasses = "",
-    // Center
-    centerBase = "grow",
-    centerAlign = "text-center",
-    centerPadding = "",
-    centerClasses = "",
-    // Trail
-    trailBase = "flex",
-    trailSpaceX = "space-x-4 rtl:space-x-reverse",
-    trailPadding = "",
-    trailClasses = "",
-    // Headline
-    headlineBase = "w-full",
-    headlineClasses = "",
-    // Snippets
-    children,
-    lead,
-    trail,
-    headline
-  } = $$props;
-  $$payload.out += `<header${attr_class(`${stringify(base)} ${stringify(background)} ${stringify(spaceY)} ${stringify(border)} ${stringify(padding)} ${stringify(shadow)} ${stringify(classes)}`)} role="toolbar" data-testid="app-bar"><section${attr_class(`${stringify(toolbarBase)} ${stringify(toolbarGridCols)} ${stringify(toolbarGap)} ${stringify(toolbarClasses)}`)} data-testid="app-bar-toolbar">`;
-  if (lead) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<div${attr_class(`${stringify(leadBase)} ${stringify(leadSpaceX)} ${stringify(leadPadding)} ${stringify(leadClasses)}`)}>`;
-    lead($$payload);
-    $$payload.out += `<!----></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]--> `;
-  if (children) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<div${attr_class(`${stringify(centerBase)} ${stringify(centerAlign)} ${stringify(centerPadding)} ${stringify(centerClasses)}`)}>`;
-    children($$payload);
-    $$payload.out += `<!----></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]--> `;
-  if (trail) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<div${attr_class(`${stringify(trailBase)} ${stringify(trailSpaceX)} ${stringify(trailPadding)} ${stringify(trailClasses)}`)}>`;
-    trail($$payload);
-    $$payload.out += `<!----></div>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]--></section> `;
-  if (headline) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<section${attr_class(`${stringify(headlineBase)} ${stringify(headlineClasses)}`)} data-testid="app-bar-headline">`;
-    headline($$payload);
-    $$payload.out += `<!----></section>`;
-  } else {
-    $$payload.out += "<!--[!-->";
-  }
-  $$payload.out += `<!--]--></header>`;
-}
-const ROUTE = Object.freeze({
-  HOME: "home",
-  LOGIN: "login",
-  PATIENTS: "patients",
-  STUDIES: "studies",
-  AVAILABILITY: "availability",
-  STUDY: "study",
-  PATIENT: "patient"
-});
-[
-  ROUTE.LOGIN,
-  ROUTE.HOME,
-  ROUTE.PATIENTS,
-  ROUTE.STUDIES,
-  ROUTE.AVAILABILITY,
-  ROUTE.STUDY,
-  ROUTE.PATIENT
-];
-[
-  ROUTE.PATIENT,
-  ROUTE.STUDY
-];
-const LABEL = {
-  HOME: "Home",
-  PATIENTS: "Patients",
-  STUDIES: "Studies",
-  STUDY: "Study",
-  PATIENT: "Patient",
-  AVAILABILITY: "Availability"
-};
 function Arrow_up_right($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;
@@ -981,55 +762,6 @@ function Arrow_up_right($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "arrow-up-right" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
-function Chevron_right($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [["path", { "d": "m9 18 6-6-6-6" }]];
-  Icon($$payload, spread_props([
-    { name: "chevron-right" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
-function Grip_vertical($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    ["circle", { "cx": "9", "cy": "12", "r": "1" }],
-    ["circle", { "cx": "9", "cy": "5", "r": "1" }],
-    ["circle", { "cx": "9", "cy": "19", "r": "1" }],
-    [
-      "circle",
-      { "cx": "15", "cy": "12", "r": "1" }
-    ],
-    ["circle", { "cx": "15", "cy": "5", "r": "1" }],
-    [
-      "circle",
-      { "cx": "15", "cy": "19", "r": "1" }
-    ]
-  ];
-  Icon($$payload, spread_props([
-    { name: "grip-vertical" },
     props,
     {
       iconNode,
@@ -1294,6 +1026,230 @@ function Triangle_alert($$payload, $$props) {
   ]));
   pop();
 }
+function DatePicker($$payload, $$props) {
+  push();
+  const { box } = $$props;
+  let inputElement;
+  let value = "";
+  getValue();
+  function getValue() {
+    let startStr = box.getPropertyValue();
+    if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
+      value = startStr;
+    } else {
+      const today = /* @__PURE__ */ new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      value = `${yyyy}-${mm}-${dd}`;
+    }
+  }
+  async function setFocus() {
+    inputElement.focus();
+  }
+  const refresh = (why) => {
+    getValue();
+  };
+  onMount(() => {
+    getValue();
+    box.setFocus = setFocus;
+    box.refreshComponent = refresh;
+    console.log("[DatePicker] onMount value:", value);
+  });
+  $$payload.out += `<div class="datepicker"><input id="default-datepicker" type="date"${attr("value", value)} class="datepicker-input" placeholder="Select date"/></div>`;
+  pop();
+}
+function ExpandCollapseWrapperComponent($$payload, $$props) {
+  push();
+  const { box, editor } = $$props;
+  let inputElement;
+  async function setFocus() {
+    inputElement.focus();
+  }
+  const refresh = (why) => {
+  };
+  onMount(() => {
+    let verticalBox = box.childBox.children[0];
+    const extendedCssClass = verticalBox.cssClass + " ml-5";
+    FreUtils.initializeObject(verticalBox, { selectable: false, cssClass: extendedCssClass });
+    verticalBox.children.forEach((childBox) => {
+      let childExtendedCssClass = verticalBox.cssClass + " align-top";
+      FreUtils.initializeObject(childBox, {
+        selectable: true,
+        cssClass: childExtendedCssClass
+      });
+    });
+    box.setFocus = setFocus;
+    box.refreshComponent = refresh;
+    console.log("[ExpandCollapseWrapperComponent] onMount verticalBox:", verticalBox);
+  });
+  $$payload.out += `<div class="wrapper">`;
+  RenderComponent($$payload, { box: box.childBox, editor });
+  $$payload.out += `<!----></div>`;
+  pop();
+}
+function TimePicker($$payload, $$props) {
+  push();
+  const { box } = $$props;
+  let inputElement;
+  let value = "";
+  getValue();
+  function getValue() {
+    let startStr = box.getPropertyValue();
+    if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
+      value = startStr;
+    } else {
+      value = "";
+    }
+    return value;
+  }
+  async function setFocus() {
+    inputElement.focus();
+  }
+  const refresh = (why) => {
+    getValue();
+  };
+  onMount(() => {
+    getValue();
+    box.setFocus = setFocus;
+    box.refreshComponent = refresh;
+    console.log("[TimePicker] onMount value:", value);
+  });
+  $$payload.out += `<div class="timepicker"><input id="default-timepicker" type="time"${attr("value", value)} class="timepicker-input" placeholder="Select time"/></div>`;
+  pop();
+}
+console.log("Starting init.ts initialization");
+const serverUrl = env.serverUrl;
+const url = new URL(serverUrl);
+const serverIp = `${url.protocol}//${url.hostname}`;
+const serverPort = url.port;
+const serverComm = ServerCommunication.getInstance();
+console.log("ServerCommunication instance created");
+serverComm.SERVER_URL = serverUrl;
+serverComm.SERVER_IP = serverIp;
+serverComm.nodePort = parseInt(serverPort);
+console.log("Server settings configured:", { url: serverUrl, timeout: env.serverTimeout });
+console.log("Creating editor environment");
+const webappConfigurator = WebappConfigurator.getInstance();
+const editorEnvironment = Ct.getInstance();
+console.log("Editor environment created");
+webappConfigurator.setEditorEnvironment(editorEnvironment);
+webappConfigurator.setServerCommunication(serverComm);
+console.log("Editor environment configured");
+setCustomComponents([
+  { component: DatePicker, knownAs: "DatePicker" },
+  { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
+  { component: TimePicker, knownAs: "TimePicker" }
+]);
+console.log("Custom components set");
+console.log("init.ts initialization complete");
+function AppBar($$payload, $$props) {
+  const {
+    // Root
+    base = "w-full flex flex-col",
+    background = "bg-surface-100-900",
+    spaceY = "space-y-4",
+    border = "",
+    padding = "p-4",
+    shadow = "",
+    classes = "",
+    // Toolbar
+    toolbarBase = "flex justify-between",
+    toolbarGridCols = "grid-cols-[auto_1fr_auto]",
+    toolbarGap = "gap-4",
+    toolbarClasses = "",
+    // Lead
+    leadBase = "flex",
+    leadSpaceX = "space-x-4 rtl:space-x-reverse",
+    leadPadding = "",
+    leadClasses = "",
+    // Center
+    centerBase = "grow",
+    centerAlign = "text-center",
+    centerPadding = "",
+    centerClasses = "",
+    // Trail
+    trailBase = "flex",
+    trailSpaceX = "space-x-4 rtl:space-x-reverse",
+    trailPadding = "",
+    trailClasses = "",
+    // Headline
+    headlineBase = "w-full",
+    headlineClasses = "",
+    // Snippets
+    children,
+    lead,
+    trail,
+    headline
+  } = $$props;
+  $$payload.out += `<header${attr_class(`${stringify(base)} ${stringify(background)} ${stringify(spaceY)} ${stringify(border)} ${stringify(padding)} ${stringify(shadow)} ${stringify(classes)}`)} role="toolbar" data-testid="app-bar"><section${attr_class(`${stringify(toolbarBase)} ${stringify(toolbarGridCols)} ${stringify(toolbarGap)} ${stringify(toolbarClasses)}`)} data-testid="app-bar-toolbar">`;
+  if (lead) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div${attr_class(`${stringify(leadBase)} ${stringify(leadSpaceX)} ${stringify(leadPadding)} ${stringify(leadClasses)}`)}>`;
+    lead($$payload);
+    $$payload.out += `<!----></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--> `;
+  if (children) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div${attr_class(`${stringify(centerBase)} ${stringify(centerAlign)} ${stringify(centerPadding)} ${stringify(centerClasses)}`)}>`;
+    children($$payload);
+    $$payload.out += `<!----></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--> `;
+  if (trail) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div${attr_class(`${stringify(trailBase)} ${stringify(trailSpaceX)} ${stringify(trailPadding)} ${stringify(trailClasses)}`)}>`;
+    trail($$payload);
+    $$payload.out += `<!----></div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></section> `;
+  if (headline) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<section${attr_class(`${stringify(headlineBase)} ${stringify(headlineClasses)}`)} data-testid="app-bar-headline">`;
+    headline($$payload);
+    $$payload.out += `<!----></section>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></header>`;
+}
+const ROUTE = Object.freeze({
+  HOME: "home",
+  LOGIN: "login",
+  PATIENTS: "patients",
+  STUDIES: "studies",
+  AVAILABILITY: "availability",
+  STUDY: "study",
+  PATIENT: "patient"
+});
+[
+  ROUTE.LOGIN,
+  ROUTE.HOME,
+  ROUTE.PATIENTS,
+  ROUTE.STUDIES,
+  ROUTE.AVAILABILITY,
+  ROUTE.STUDY,
+  ROUTE.PATIENT
+];
+[
+  ROUTE.PATIENT,
+  ROUTE.STUDY
+];
+const LABEL = {
+  HOME: "Home",
+  PATIENTS: "Patients",
+  STUDIES: "Studies",
+  STUDY: "Study",
+  PATIENT: "Patient",
+  AVAILABILITY: "Availability"
+};
 function NavBar($$payload, $$props) {
   push();
   var $$store_subs;

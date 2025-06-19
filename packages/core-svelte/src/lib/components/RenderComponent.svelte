@@ -35,7 +35,10 @@
         BoolDisplay,
         LimitedDisplay,
         isActionTextBox,
-        isNullOrUndefined, type ClientRectangle, UndefinedRectangle
+        isNullOrUndefined, type ClientRectangle, UndefinedRectangle,
+        /** M+G: start updates */
+        isMultiLineTextBox2, isItemGroupBox, isItemGroupBox2, isListGroupBox
+        /** M+G: end updates */
     } from "@freon4dsl/core"
     import MultiLineTextComponent from './MultiLineTextComponent.svelte';
     import EmptyLineComponent from './EmptyLineComponent.svelte';
@@ -59,6 +62,12 @@
     import SwitchComponent from './BooleanSwitchComponent.svelte';
     import ButtonComponent from './ButtonComponent.svelte';
     import FragmentComponent from './FragmentComponent.svelte';
+    /** M+G: start updates */
+    import MultiLineTextComponent2 from './MultiLineTextComponent2.svelte';
+    import ItemGroupComponent from './ItemGroupComponent.svelte';
+    import ItemGroupComponent2 from './ItemGroupComponent2.svelte';
+    import ListGroupComponent from './ListGroupComponent.svelte';
+    /** M+G: end updates */
     import { componentId, findCustomComponent } from '../index.js';
 
     import ErrorMarker from './ErrorMarker.svelte';
@@ -219,6 +228,16 @@
             <TextDropdownComponent {box} {editor} />
         {:else if isEmptyLineBox(box)}
             <EmptyLineComponent {box} {editor} />
+        <!-- M+G: start updates -->
+        {:else if isMultiLineTextBox2(box)}
+            <MultiLineTextComponent2 {box} {editor} />
+        {:else if isItemGroupBox(box)}
+            <ItemGroupComponent {box} {editor} />
+        {:else if isItemGroupBox2(box)}
+            <ItemGroupComponent2 {box} {editor} />
+        {:else if isListGroupBox(box)}
+            <ListGroupComponent {box} {editor} />
+        <!-- M+G: end updates -->
         {:else}
             <!-- we use box["kind"] here instead of box.kind to avoid an error from svelte check-->
             <p class="render-component-unknown-box">[UNKNOWN BOX TYPE: {box['kind']}]</p>

@@ -34,7 +34,7 @@
         { id: "showSharedTasks", label: "Shared Tasks", visible: false },
     ]);
 
-    onMount(async () => {
+    async function initializeStudy() {
         // get the study data
         study = await dataStore.getStudy(id);
         await dataStore.getStudyPatients(id);
@@ -42,7 +42,7 @@
             console.error(`Study with id ${id} not found`);
             return;
         }
-        dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+        
         // Get the model data for the study
         const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration");
         if (result !== undefined) {
@@ -60,13 +60,11 @@
             visible: unit[item.id as keyof StudyConfiguration] as boolean,
         }));
 
-        // initialize the study chart drawer for the study
-        setDrawerProps("dslErrors", { studyId: id });
-        setDrawerVisibility("dslErrors", true);
-        setDrawerProps("studyTimelineTable", { studyId: id });
-        setDrawerVisibility("studyTimelineTable", true);
-        setDrawerProps("studyTimelineChart", { studyId: id });
-        setDrawerVisibility("studyTimelineChart", true);
+    }
+
+    onMount(() => {
+        dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+        initializeStudy();
     });
 
     onDestroy(() => {

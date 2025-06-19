@@ -1,1 +1,0 @@
-import{b as t,f as v}from"../chunks/6E5EZBAr.js";import{$ as r,a0 as i}from"../chunks/Dy2S7-4X.js";import{L as d}from"../chunks/Ba7B77As.js";var e=v('<div class="login-page"><div class="login-container"><!></div></div>');function f(n){var a=e(),o=r(a),s=r(o);d(s,{}),i(o),i(a),t(n,a)}export{f as component};

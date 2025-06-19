@@ -1,289 +1,166 @@
-<!-- This component switches between a <span> and an <input> HTML element. -->
-<!-- This means that there is extra functionality to set the caret position -->
-<!-- (cursor or selected text), when the switch is being made. -->
-
 <script lang="ts">
-    import { onMount } from "svelte";
     import { componentId } from "./svelte-utils/index.js";
-    import { FreEditor, FreLogger, MultiLineTextBox2 } from "@freon4dsl/core";
-    import { ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BACKSPACE, CONTROL, DELETE, ENTER, ESCAPE, SHIFT, TAB } from "@freon4dsl/core";
+    import { MultiLineTextBox2 } from "@freon4dsl/core";
+    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
+    import { onMount, onDestroy } from "svelte";
 
-    import Editor from "@tinymce/tinymce-svelte";
-    import type { ComponentType } from "svelte";
-    import type { TinyMCE as TinyMCEEditor, Editor as TinyEditor, TinyMCE } from "tinymce";
-    import { runInAction } from "mobx";
+    // Props
+    let { box, editor }: FreComponentProps<MultiLineTextBox2> = $props();
 
-    // Probably needed to code/encode HTML inside <TextArea>
-    // import { replaceHTML } from "./svelte-utils/index.js";
-
-    // TODO find out better way to handle muting/unmuting of LOGGERs
-    const LOGGER = new FreLogger("MultiLineTextComponent2"); // .mute(); muting done through webapp/logging/LoggerSettings
-    type BoxType = "text";
-
-    // Parameters
-    export let editor: FreEditor;
-    export let box: MultiLineTextBox2; // the accompanying box
-    export let text: string; // the text to be displayed, needs to be exported for to use 'bind:text' in TextDropdownComponent
-    export let isEditing: boolean = false;
-
-    // Local variables
-    let id: string; // an id for the html element
+    // Local state
+    let id: string = $state('');
     id = !!box ? componentId(box) : "text-with-unknown-box";
-    let spanElement: HTMLSpanElement; // the <span> element on the screen
-    let editorElement: TinyMCEEditor;
-    let editorContainer: HTMLDivElement; // the text area element on the screen
-    let from = -1; // the cursor position, or when different from 'to', the start of the selected text
-    let to = -1;
+    const placeholderStore = $derived(() => box.placeHolder);
+    let text: string = $state('');
     let cssClass: string = "";
-    let boxType: BoxType = "text";
-    let ed: TinyEditor;
+    let editorDiv: HTMLDivElement;
+    let quill: any;
+    let html = "";
+    let isEditing = false;
+    let quillInitialized = false;
 
-    let placeholder: string = "<enter>"; // the placeholder when value of text component is not present
-    let placeHolderStyle: string;
-    $: placeHolderStyle = "text-component-placeholder";
+    // // TinyMCE config
+    // let conf = {
+    //     plugins: "lists searchreplace",
+    //     toolbar: "undo redo | bold italic underline | fontfamily fontsize | forecolor backcolor | alignleft aligncenter alignright | bullist numlist outdent indent | searchreplace",
+    //     toolbar_mode: "wrap",
+    //     skin: "oxide-dark",
+    //     menubar: false,
+    // };
 
-    let conf = {
-        plugins: "lists searchreplace",
-        toolbar:
-            "undo redo | bold italic underline \
-		| fontfamily fontsize \
-		| forecolor backcolor \
-		| alignleft aligncenter alignright \
-		| bullist numlist outdent indent | searchreplace",
-        toolbar_mode: "wrap",
-        skin: "oxide-dark",
-        menubar: false,
-    };
-
-    /**
-     * When this component is mounted, the setFocus and setCaret functions are
-     * made available to the textbox, and the 'text' and 'originalText' variables
-     * are set.
-     */
-    onMount(() => {
-        LOGGER.log("onMount" + " for element " + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")");
-        placeholder = box.placeHolder;
-        box.setFocus = setFocus;
-        box.refreshComponent = refresh;
-
-        const element = document.getElementById(id);
-        if (element) {
-            // Traverse up to find the nearest parent with the 'render-component' class
-            let parent = element.parentElement;
-            while (parent && !parent.classList.contains("render-component")) {
-                parent = parent.parentElement;
-            }
-            // If a parent with the 'render-component' class was found, apply styles to it
-            if (parent) {
-                // Example: Apply additional styles here
-                parent.style.width = "100%"; // Example style
-            }
-        }
-    });
-
-    /**
-     */
     $effect(() => {
-        placeholder = box.placeHolder;
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
 
-    /**
-     * This function sets the focus on this element programmatically.
-     * It is called from the box.
-     */
     export async function setFocus(): Promise<void> {
-        LOGGER.log("setFocus " + id);
-        isEditing = true;
-
-        if (ed) {
-            setCaret();
-        }
+        // The Editor component does not expose a direct focus method.
+        // Optionally, you could use a ref and call .focus() on the underlying element if needed.
     }
 
-    /**
-     * This function ensures that 'from <= to' always holds.
-     * Should be called whenever these variables are set.
-     * @param inFrom
-     * @param inTo
-     */
-    function setFromAndTo(inFrom: number, inTo: number) {
-        if (inFrom < inTo) {
-            from = inFrom;
-            to = inTo;
-        } else {
-            from = inTo;
-            to = inFrom;
-        }
-    }
-
-    function setCaret() {
-        LOGGER.log(`setCaret from: ${from} to: ${to}`);
-
-        //LOGGER.log(`setCaret ${freCaret.position} [${freCaret.from}, ${freCaret.to}]` );
-        // switch (freCaret.position) {
-        //     case FreCaretPosition.RIGHT_MOST:  // type nr 2
-        //         from = to = text.length;
-        //         break;
-        //     case FreCaretPosition.LEFT_MOST:   // type nr 1
-        //     case FreCaretPosition.UNSPECIFIED: // type nr 0
-        //         from = to = 0;
-        //         break;
-        //     case FreCaretPosition.INDEX:       // type nr 3
-        // 		setFromAndTo(freCaret.from, freCaret.to);
-        // 		break;
-        //     default:
-        // 		from = to = 0;
-        //         break;
-        // }
-        if (isEditing) {
-            ed.focus();
-            ed.selection.setCursorLocation();
-        }
-    }
-
-    //1
-    function startEditing(event: MouseEvent) {
-        LOGGER.log("edlc: startEditing " + id);
-        // set the global selection
-        editor.selectElementForBox(box);
-        // set the local variables
-        isEditing = true;
-
-        let { anchorOffset, focusOffset } = document.getSelection();
-        setFromAndTo(anchorOffset, focusOffset);
-        event.preventDefault();
-        event.stopPropagation();
-        if (ed) {
-            setCaret();
-        }
-    }
-
-    /**
-     * When the <input> element loses focus the function is called. It switches the display back to
-     * the <span> element, and stores the current text in the textbox.
-     */
-    function endEditing() {
-        LOGGER.log("edlc:  endEditing " + id);
-        if (isEditing) {
-            // reset the local variables
-            isEditing = false;
-            from = -1;
-            to = -1;
-
-            // // store the current value in the textbox, or delete the box, if appropriate
-            // LOGGER.log(`   save text using box.setText(${text})`)
-            // runInAction(() => {
-            // 	if (box.deleteWhenEmpty && text.length === 0) {
-            // 		editor.deleteBox(box);
-            // 	} else if (text !== box.getText()) {
-            // 		LOGGER.log(`   text is new value`)
-            // 		box.setText(text);
-            // 	}
-            // });
-        }
-    }
-
-    function onEditorInit(event: CustomEvent) {
-        LOGGER.log("edlc: onEditorInit " + id);
-        ed = event.detail.editor;
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    function onEditorFocus(event: CustomEvent) {
-        LOGGER.log("edlc: onEditorFocus " + id);
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    function onEditorFocusOut(event: CustomEvent) {
-        LOGGER.log("edlc: onEditorFocusOut " + id);
-        runInAction(() => {
-            if (text !== box.getText()) {
-                LOGGER.log(`   text is new value`);
-                box.setText(text);
-            } else {
-                LOGGER.log("Text is unchanged: " + text);
-            }
-        });
-    }
-
-    /**
-     * When this loose focus from editor
-     */
     function onEditorBlur(event: CustomEvent) {
-        LOGGER.log("edlc: onEditorBlur " + id);
-        endEditing();
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    function onEditorContainerKeyDown(event: KeyboardEvent) {
-        const key: string = event.key;
-        const alt: boolean = event.altKey;
-        const shift: boolean = event.shiftKey;
-        const ctrl: boolean = event.ctrlKey;
-        const meta: boolean = event.metaKey;
-
-        LOGGER.log("onKeyDown: [" + key + "] alt [" + alt + "] shift [" + shift + "] ctrl [" + ctrl + "] meta [" + meta + "]");
-        switch (key) {
-            case TAB: {
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
-                endEditing();
-                if (shift) {
-                    editor.selectPreviousLeaf();
-                } else {
-                    editor.selectNextLeaf();
-                }
-                break;
-            }
-            default: {
-                event.stopPropagation();
-            }
+        if (text !== box.getText()) {
+            box.setText(text);
         }
     }
 
     const refresh = () => {
-        LOGGER.log("REFRESH " + box?.node?.freId() + " (" + box?.node?.freLanguageConcept() + ")");
-        placeholder = box.placeHolder;
         text = box.getText();
         cssClass = box.cssClass;
     };
 
     refresh();
+
+    // Function to initialize Quill only when editing
+    async function initQuill() {
+        if (!quillInitialized && isEditing) {
+            const Quill = (await import("quill")).default;
+            quill = new Quill(editorDiv, {
+                theme: "snow",
+                modules: {
+                    toolbar: [
+                        [{ 'undo': 'undo' }, { 'redo': 'redo' }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'font': [] }, { 'size': [] }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+                        ['clean']
+                    ]
+                }
+            });
+            const toolbar = quill.getModule('toolbar');
+            if (toolbar) {
+                toolbar.addHandler('undo', () => quill.history.undo());
+                toolbar.addHandler('redo', () => quill.history.redo());
+            }
+            quill.on("text-change", () => {
+                html = editorDiv?.querySelector?.(".ql-editor")?.innerHTML ?? "";
+            });
+            // Set initial content if html is not empty
+            if (html) {
+                quill.root.innerHTML = html;
+            }
+            quillInitialized = true;
+        }
+    }
+
+    $effect(() => {
+        if (isEditing) {
+            initQuill();
+        } else {
+            if (quillInitialized && quill) {
+                html = editorDiv?.querySelector?.(".ql-editor")?.innerHTML ?? "";
+                quill = null;
+                quillInitialized = false;
+            }
+        }
+    });
+
+    onMount(async () => {
+        const Quill = (await import("quill")).default;
+        // Optionally import Quill modules for font, size, color, etc.
+        // You may need to import/register additional modules for full toolbar support
+        quill = new Quill(editorDiv, {
+            theme: "snow",
+            modules: {
+                toolbar: [
+                    [{ 'undo': 'undo' }, { 'redo': 'redo' }],
+                    ['bold', 'italic', 'underline'],
+                    [{ 'font': [] }, { 'size': [] }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+                    ['clean']
+                    // Search/replace is not natively supported in Quill; you can add a custom module/plugin if needed
+                ]
+            }
+        });
+
+        // Add undo/redo handlers (Quill does not provide toolbar buttons for these by default)
+        const toolbar = quill.getModule('toolbar');
+        if (toolbar) {
+            toolbar.addHandler('undo', () => quill.history.undo());
+            toolbar.addHandler('redo', () => quill.history.redo());
+        }
+
+        quill.on("text-change", () => {
+            html = editorDiv?.querySelector?.(".ql-editor")?.innerHTML ?? "";
+        });
+    });
+
+    onDestroy(() => {
+        quill = null;
+        quillInitialized = false;
+    });
 </script>
 
-<span {id} role="none" class="multiline2-component {cssClass} w-full">
-    <div bind:this={editorContainer} role="none" class="multiline2-editor {isEditing ? 'edit-mode' : 'view-mode'} w-full" on:keydown={onEditorContainerKeyDown}>
-        <Editor
-            licenseKey="gpl"
-            bind:this={editorElement}
-            bind:value={text}
-            scriptSrc="./tinymce/tinymce.min.js"
-            inline={true}
-            on:init={onEditorInit}
-            on:blur={onEditorBlur}
-            on:focusout={onEditorFocusOut}
-            {conf}
-        />
+{#if isEditing}
+    <div class="quill-toolbar-container">
+        <div bind:this={editorDiv} style="min-height: 200px;"></div>
+        <button on:click={() => isEditing = false}>Done</button>
     </div>
-    <span
-        id="{id}-span"
-        class="{box.role} text-box-{boxType} multiline2-text {isEditing ? 'edit-mode' : 'view-mode'}"
-        on:click={startEditing}
-        bind:this={spanElement}
-        contenteditable="true"
-        spellcheck="false"
-        role="none"
-    >
-        {#if !!text && text.length > 0}
-            {@html text}
-        {:else}
-            <span class={placeHolderStyle}>{placeholder}</span>
-        {/if}
-    </span>
-</span>
+{:else}
+    <div class="multiline-html" on:click={() => isEditing = true} tabindex="0" style="min-height: 200px; cursor: pointer;">
+        {@html html}
+    </div>
+{/if}
+
+<!--
+Associated commands:
+
+npm install quill
+
+// In your main entry or global style:
+import "quill/dist/quill.snow.css";
+
+// If you want to support font family, size, color, etc., you may need to import/register Quill formats:
+// import Quill from 'quill';
+// import 'quill/dist/quill.snow.css';
+// Quill.register('formats/font', ...);
+// Quill.register('formats/size', ...);
+// Quill.register('formats/color', ...);
+// See Quill documentation for details.
+
+// For search/replace, see Quill community plugins or implement a custom module.
+-->

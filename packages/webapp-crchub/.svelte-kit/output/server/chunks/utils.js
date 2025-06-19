@@ -1,7 +1,6 @@
 import { w as writable, g as get } from "./index3.js";
-import { M as ModelManager, t as tv, R as RtString, N as NN, L as LOe, a2 as lf, a3 as jo, a4 as Sf, b as FreNodeReference, a5 as of, a6 as lt, a7 as uf, a8 as Jr, a9 as em } from "./model-manager.js";
+import { M as ModelManager, t as tv, R as RtString, N as NN, L as LOe, a0 as lf, a1 as jo, a2 as Sf, b as FreNodeReference, a3 as of, a4 as lt, a5 as uf, a6 as Jr, a7 as em } from "./model-manager.js";
 import { e as env } from "./env.js";
-import { N as ensure_array_like, W as spread_attributes, Y as clsx, Z as element, B as pop, z as push } from "./index.js";
 function createUserStore() {
   const { subscribe, set, update } = writable(null);
   return {
@@ -307,82 +306,6 @@ function createDataStore() {
   };
 }
 const dataStore = createDataStore();
-/**
- * @license @lucide/svelte v0.513.0 - ISC
- *
- * ISC License
- * 
- * Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.
- * 
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- */
-const defaultAttributes = {
-  xmlns: "http://www.w3.org/2000/svg",
-  width: 24,
-  height: 24,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  "stroke-width": 2,
-  "stroke-linecap": "round",
-  "stroke-linejoin": "round"
-};
-function Icon($$payload, $$props) {
-  push();
-  const {
-    name,
-    color = "currentColor",
-    size = 24,
-    strokeWidth = 2,
-    absoluteStrokeWidth = false,
-    iconNode = [],
-    children,
-    $$slots,
-    $$events,
-    ...props
-  } = $$props;
-  const each_array = ensure_array_like(iconNode);
-  $$payload.out += `<svg${spread_attributes(
-    {
-      ...defaultAttributes,
-      ...props,
-      width: size,
-      height: size,
-      stroke: color,
-      "stroke-width": absoluteStrokeWidth ? Number(strokeWidth) * 24 / Number(size) : strokeWidth,
-      class: clsx([
-        "lucide-icon lucide",
-        name && `lucide-${name}`,
-        props.class
-      ])
-    },
-    null,
-    void 0,
-    void 0,
-    3
-  )}><!--[-->`;
-  for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
-    let [tag, attrs] = each_array[$$index];
-    element($$payload, tag, () => {
-      $$payload.out += `${spread_attributes({ ...attrs }, null, void 0, void 0, 3)}`;
-    });
-  }
-  $$payload.out += `<!--]-->`;
-  children?.($$payload);
-  $$payload.out += `<!----></svg>`;
-  pop();
-}
 function getTimelineChartHtml(timeline) {
   const timelineDataAsScript = tv.getTimelineDataHTML(timeline);
   const timelineVisualizationHTML = tv.getTimelineVisualizationHTML(timeline);
@@ -569,7 +492,6 @@ async function getChartWithPatientHistory(id) {
   return rtObject.asString();
 }
 export {
-  Icon as I,
   getChartWithPatientHistory as a,
   getSVGIcon as b,
   dataStore as d,

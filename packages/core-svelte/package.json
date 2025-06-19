@@ -15,7 +15,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "npm run clean && vite build",
+    "build": "npm run clean && vite build && npm run prepack",
     "build:verbose": "vite build --debug --logLevel debug && npm run prepack",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
@@ -59,6 +59,7 @@
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/package": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@types/quill": "^2.0.14",
     "autoprefixer": "^10.4.20",
     "globals": "^15.14.0",
     "prettier": "^3.4.2",
@@ -72,10 +73,10 @@
     "vitest": "^2.1.4"
   },
   "dependencies": {
-    "@lucide/svelte": "^0.513.0",
     "@freon4dsl/core": "1.1.0-beta.3",
     "@lionweb/repository-client": "0.2.2",
     "@lionweb/validation": "0.6.2",
+    "@lucide/svelte": "^0.513.0",
     "@material/slider": "^14.0.0",
     "@material/switch": "^14.0.0",
     "@material/web": "^2.2.0",
@@ -83,6 +84,7 @@
     "debug": "^4.3.4",
     "lodash": "^4.17.21",
     "mobx": "^6.12.3",
+    "quill": "^2.0.3",
     "reflect-metadata": "^0.2.2",
     "tslib": "^2.6.3"
   }

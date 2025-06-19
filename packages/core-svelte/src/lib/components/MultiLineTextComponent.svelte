@@ -16,16 +16,13 @@
     let id: string = $state(''); // an id for the html element
     id = !isNullOrUndefined(box) ? componentId(box) : 'text-with-unknown-box';
     let textArea: HTMLTextAreaElement; // the text area element on the screen
-    let placeholder: string = $state('<..>'); // the placeholder when value of text component is not present
+    const placeholderStore = $derived(() => box.placeHolder);
     let text: string = $state('');
 
     /**
      */
     $effect(() => {
         LOGGER.log('Start afterUpdate id: ' + id);
-        placeholder = box.placeHolder;
-        box.setFocus = setFocus;
-        box.refreshComponent = refresh;
     });
 
     /**
@@ -54,7 +51,6 @@
 
     const refresh = () => {
         LOGGER.log('REFRESH ' + box?.node?.freId() + ' (' + box?.node?.freLanguageConcept() + ')');
-        placeholder = box.placeHolder;
         text = box.getText();
     };
 
@@ -73,6 +69,6 @@
     onkeydown={onKeyDown}
     spellcheck="false"
     bind:this={textArea}
-    {placeholder}
+    placeholder={placeholderStore()}
     bind:value={text}
 ></textarea>

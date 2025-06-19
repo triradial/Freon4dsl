@@ -4087,6 +4087,9 @@ class MultiLineTextBox2 extends Box {
     return true;
   }
 }
+function isMultiLineTextBox2(b10) {
+  return !!b10 && b10.kind === "MultiLineTextBox2";
+}
 class ListGroupBox extends Box {
   constructor(node, role, getLabel, child, initializer) {
     super(node, role);
@@ -4138,6 +4141,9 @@ class ListGroupBox extends Box {
   get children() {
     return [this.child];
   }
+}
+function isListGroupBox(b10) {
+  return b10?.kind === "ListGroupBox";
 }
 const LOGGER$b = new FreLogger("TextBox");
 class ItemGroupBox extends Box {
@@ -4227,6 +4233,9 @@ class ItemGroupBox extends Box {
     return true;
   }
 }
+function isItemGroupBox(b10) {
+  return !!b10 && b10.kind === "ItemGroupBox";
+}
 class ItemGroupBox2 extends AbstractChoiceBox {
   constructor(node, role, getLabel, getOptions, getSelectedOption, selectOption, child, initializer) {
     super(node, role, "<options>", initializer);
@@ -4280,6 +4289,9 @@ class ItemGroupBox2 extends AbstractChoiceBox {
   deleteWhenEmpty1() {
     return this.deleteWhenEmpty;
   }
+}
+function isItemGroupBox2(b10) {
+  return !!b10 && b10.kind === "ItemGroupBox2";
 }
 class RoleProvider {
   static classifier(concept) {
@@ -88835,68 +88847,66 @@ class ModelManager {
   }
 }
 export {
-  FreCaretPosition as $,
+  isListGroupBox as $,
   AST as A,
-  BoolDisplay as B,
+  BehaviorExecutionResult as B,
   Ct as C,
-  isLabelBox as D,
+  LimitedDisplay as D,
   ElementBox as E,
   FreLanguage as F,
-  isLayoutBox as G,
+  isButtonBox as G,
   Hd as H,
-  FreEditorUtil as I,
-  ListDirection as J,
-  isOptionalBox2 as K,
+  isExternalBox as I,
+  isIndentBox as J,
+  isLabelBox as K,
   LOe as L,
   ModelManager as M,
   NN as N,
-  moveListElement as O,
-  dropListElement as P,
-  MenuOptionsType as Q,
+  isLayoutBox as O,
+  isListBox as P,
+  isOptionalBox2 as Q,
   RtString as R,
-  FreCreatePartAction as S,
-  isTableBox as T,
-  UndefinedRectangle as U,
-  TableDirection as V,
+  SelectBox as S,
+  TableDirection as T,
+  isTableBox as U,
+  isTextBox as V,
   WebappConfigurator as W,
-  BehaviorExecutionResult as X,
-  FreCaret as Y,
-  ActionBox as Z,
-  SelectBox as _,
+  isEmptyLineBox as X,
+  isMultiLineTextBox2 as Y,
+  isItemGroupBox as Z,
+  isItemGroupBox2 as _,
   FreLogger as a,
-  isEmptyLineBox as a0,
-  CharAllowed as a1,
-  lf as a2,
-  jo as a3,
-  Sf as a4,
-  of as a5,
-  lt as a6,
-  uf as a7,
-  Jr as a8,
-  em as a9,
+  lf as a0,
+  jo as a1,
+  Sf as a2,
+  of as a3,
+  lt as a4,
+  uf as a5,
+  Jr as a6,
+  em as a7,
   FreNodeReference as b,
   FreUtils as c,
   FreErrorSeverity as d,
-  FreUndoManager as e,
-  isActionTextBox as f,
-  isActionBox as g,
-  isListBox as h,
+  isTableRowBox as e,
+  isElementBox as f,
+  MobxModelElementImpl as g,
+  FreEditorUtil as h,
   isNullOrUndefined as i,
-  isFreNodeReference as j,
-  MobxModelElementImpl as k,
-  isExternalBox as l,
-  isSelectBox as m,
-  isReferenceBox as n,
+  isActionBox as j,
+  isFreNodeReference as k,
+  dropListElement as l,
+  moveListElement as m,
+  isActionTextBox as n,
   observableprim as o,
-  isBooleanControlBox as p,
-  isLimitedControlBox as q,
+  FreCaret as p,
+  isSelectBox as q,
   rv as r,
-  isTextBox as s,
+  FreCaretPosition as s,
   tv as t,
-  isElementBox as u,
-  isTableRowBox as v,
-  isNumberControlBox as w,
-  LimitedDisplay as x,
-  isButtonBox as y,
-  isIndentBox as z
+  ActionBox as u,
+  isReferenceBox as v,
+  isBooleanControlBox as w,
+  BoolDisplay as x,
+  isNumberControlBox as y,
+  isLimitedControlBox as z
 };

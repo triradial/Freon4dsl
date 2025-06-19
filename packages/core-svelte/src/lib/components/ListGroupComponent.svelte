@@ -8,29 +8,33 @@
     import { Box, FreLogger, ListGroupBox, FreEditor } from "@freon4dsl/core";
     import { componentId } from "./svelte-utils/index.js";
     import RenderComponent from "./RenderComponent.svelte";
-    import { CaretDown as IconCaretDown, CaretRight as IconCaretRight, Plus as IconPlus, EllipsisVertical as IconEllipsisVertical } from '@lucide/svelte';
-
-    export let box: ListGroupBox;
-    export let editor: FreEditor;
+    import { CircleChevronDown as IconChevronDown, CircleChevronRight as IconChevronRight, Plus as IconPlus, EllipsisVertical as IconEllipsisVertical } from '@lucide/svelte';
+    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
     const LOGGER = new FreLogger("ListGroupComponent");
+
+    // Props
+    let { 
+        box,
+        editor
+     }: FreComponentProps<ListGroupBox> = $props();
 
     let id: string = !!box ? componentId(box) : 'group-for-unknown-box';
     // let element: HTMLDivElement = null;
     let contentElement: HTMLDivElement | null = null;
     let style: string;
     let cssClass: string = '';
-    let label: string;
+    const label = $derived(() => box.getLabel());
     let level: number;
     let child: Box;
-    let isExpanded: boolean = false; 
-
-    let canAdd: boolean = false;
-    let canCRUD: boolean = false;
-    
+    let isExpanded = $state(true);
     let contentStyle: string = 'display: none';
 
-    onMount( () => {
+    let canAdd: boolean = true;
+    let canCRUD: boolean = false;
+
+
+    onMount(() => {
         if (!!box) {
             isExpanded = box.isExpanded;
             canAdd = box.canAdd;
@@ -49,23 +53,18 @@
     const refresh = (why?: string) => {
         LOGGER.log("REFRESH ListGroupBoxComponent (" + why + ")");
         if (!!box) {
-            label = box.getLabel();
             style = box.cssStyle;
             cssClass = box.cssClass;
             child = box?.child;
         }
     };
 
-    $: { // Evaluated and re-evaluated when the box changes.
+    $effect(() => {
         refresh("FROM component " + box?.id);
-    }
+    });
 
     function toggleExpanded() {
-        if (contentElement) {
-            contentElement.style.display = contentElement.style.display === "block" ? "none" : "block";
-            isExpanded = !isExpanded;
-            contentStyle = isExpanded ? 'display:block;' : 'display:none;';
-        }
+        isExpanded = !isExpanded;
     }
 
     function addItem() {
@@ -75,29 +74,27 @@
 </script>
 
 <div id="{id}" class="list-group {cssClass}" style="{style}">
-    {#key isExpanded}
-        <button class="btn btn-sm preset-filled w-4 h-4 p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded}>
-            {#if isExpanded}
-                <IconCaretDown />
-            {:else}
-                <IconCaretRight />
-            {/if}
-        </button>
-    {/key}
-    <span class="list-group-label">{label}</span>
-    {#if canAdd}
-    <button class="btn btn-sm preset-filled w-7 h-7 p-0 action-button" onclick={addItem}>
-        <IconPlus />
+    <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded}>
+        {#if isExpanded}
+            <IconChevronDown size={24} />
+        {:else}
+            <IconChevronRight size={24} />
+        {/if}
     </button>
+    <span class="list-group-label">{label()}</span>
+    {#if canAdd}
+        <button class="btn-icon p-0 action-button" onclick={addItem}>
+            <IconPlus size={16} />
+        </button>
     {/if}
     {#if canCRUD}
-    <button class="btn btn-sm preset-filled w-7 h-7 p-0 action-button">
-        <IconEllipsisVertical />
-    </button> 
+        <button class="btn-icon p-0 action-button">
+            <IconEllipsisVertical size={16} />
+        </button> 
     {/if}
 </div>
-{#key contentStyle}
-    <div bind:this={contentElement} style="{contentStyle}">
+{#if isExpanded}
+    <div bind:this={contentElement}>
         <RenderComponent box={child} editor={editor}/>
     </div>
-{/key}
+{/if}

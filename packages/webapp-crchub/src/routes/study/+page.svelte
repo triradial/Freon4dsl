@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { setBreadcrumb } from '../../services/stores/breadcrumb-store.js';
-  import { setAllDrawersVisibility, setDrawerVisibility, drawerStore } from '../../services/stores/side-drawer-store.js';
+  import { setAllDrawersVisibility, setDrawerVisibility, drawerStore, setDrawerProps } from '../../services/stores/side-drawer-store.js';
   import StudyContent from '../../content/Study.svelte';
   import { LABEL } from '../../constants/label-constants.js';
   import { dataStore } from '../../services/data/data-store.js';
@@ -16,7 +16,14 @@
       setAllDrawersVisibility(false);
       setDrawerVisibility("help", true);
       setDrawerVisibility("favorites", true);
+      setDrawerVisibility("dslErrors", true);
+      setDrawerVisibility("studyTimelineTable", true);
+      setDrawerVisibility("studyTimelineChart", true);
       didSetVisibility = true;
+
+      setDrawerProps("dslErrors", { studyId: id });
+      setDrawerProps("studyTimelineTable", { studyId: id });
+      setDrawerProps("studyTimelineChart", { studyId: id });
     }
   });
 

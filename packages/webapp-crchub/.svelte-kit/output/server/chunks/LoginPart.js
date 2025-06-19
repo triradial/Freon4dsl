@@ -1,4 +1,4 @@
-import { U as getContext, B as pop, z as push, F as attr, K as store_get, M as unsubscribe_stores } from "./index.js";
+import { U as getContext, B as pop, z as push, G as attr, K as store_get, M as unsubscribe_stores } from "./index.js";
 import { w as writable } from "./index3.js";
 import "./model-manager.js";
 import "./env.js";

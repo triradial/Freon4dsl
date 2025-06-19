@@ -1,10 +1,6 @@
-<!-- This component switches between a <span> and an <input> HTML element. -->
-<!-- This means that there is extra functionality to set the caret position -->
-<!-- (cursor or selected text), when the switch is being made. -->
-
 <script lang="ts">
     import { createEventDispatcher, onMount } from "svelte";
-    import { componentId, executeCustomKeyboardShortCut, setBoxSizes } from "./svelte-utils/index.js";
+    import { componentId, executeCustomKeyboardShortCut } from "./svelte-utils/index.js";
     import {
         ActionBox,
         ALT,
@@ -12,8 +8,7 @@
         ARROW_LEFT,
         ARROW_RIGHT,
         ARROW_UP,
-        BACKSPACE,
-        CONTROL,
+        BACKSPACE,        CONTROL,
         DELETE,
         ENTER,
         ESCAPE,
@@ -38,20 +33,30 @@
     import RenderComponent from "./RenderComponent.svelte";
     import { runInAction } from "mobx";
     import { replaceHTML } from "./svelte-utils/index.js";
-    import { Button } from "flowbite-svelte";
-    import { GripVertical as IconGripVertical, CaretDown as IconCaretDown, CaretRight as IconCaretRight, EllipsisVertical as IconEllipsisVertical, ShareNodes as IconShareNodes, SquareArrowUpRight as IconSquareArrowUpRight, LinkSlash as IconLinkSlash, AnglesDown as IconAnglesDown, Trash2 as IconTrash2 } from '@lucide/svelte';      
+    import { 
+        GripVertical as IconGripVertical, 
+        CircleChevronDown as IconChevronDown, 
+        CircleChevronRight as IconChevronRight, 
+        EllipsisVertical as IconEllipsisVertical, 
+        Share2 as IconShare2, 
+        Link2Off as IconUnlink, 
+        SquareArrowOutUpRight as IconDuplicate, 
+        Trash2 as IconTrash2 } from '@lucide/svelte';      
+    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
     // TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
     const dispatcher = createEventDispatcher();
     type BoxType = "action" | "select" | "text";
 
-    // Parameters
-    export let box: ItemGroupBox; // the accompanying textbox
-    export let editor: FreEditor; // the editor
-    export let isEditing: boolean = false; // indication whether this component is currently being edited by the user, needs to be exported for binding in TextDropdownComponent
-    export let partOfActionBox: boolean = false; // indication whether this text component is part of an TextDropdownComponent
-    export let text: string; // the text to be displayed, needs to be exported for to use 'bind:text' in TextDropdownComponent
+    // Props
+    let { 
+        box,
+        editor,
+        isEditing,
+        partOfActionBox,
+        text
+     }: FreComponentProps<ItemGroupBox> = $props();
 
     // Local variables
     let id: string; // an id for the html element
@@ -85,10 +90,8 @@
     let canDuplicate: boolean = false;
 
     // Note that 'from <= to' always holds.
-    let placeHolderStyle: string;
-    $: placeHolderStyle = partOfActionBox ? "text-component-action-placeholder" : "text-component-placeholder";
-    let boxType: BoxType = "text"; // indication how is this text component is used, determines styling
-    $: boxType = !!box.parent ? (isActionBox(box?.parent) ? "action" : isSelectBox(box?.parent) ? "select" : "text") : "text";
+    let placeHolderStyle: string = $derived(() => partOfActionBox ? "text-component-action-placeholder" : "text-component-placeholder");
+    let boxType: BoxType = $derived(() => !!box.parent ? (isActionBox(box?.parent) ? "action" : isSelectBox(box?.parent) ? "select" : "text") : "text");
 
     /**
      * When this component is mounted, the setFocus and setCaret functions are
@@ -115,6 +118,10 @@
             box.setCaret = setCaret;
             box.refreshComponent = refresh;
         }
+    });
+
+    $effect(() => {
+        box.refreshComponent = refresh;
     });
 
     /**
@@ -661,7 +668,7 @@
     {#key isExpanded}
         {#if canExpand}
             <button class="icon-button btn-sm w-4 h-4 p-0 ml-1 toggle-button" onclick={toggleExpanded}>
-                {#if isExpanded}<IconCaretDown />{:else}<IconCaretRight />{/if}
+                {#if isExpanded}<IconChevronDown size={16} />{:else}<IconChevronRight size={16} />{/if}
             </button>
         {:else}
             <span class="w-5" />
@@ -710,26 +717,26 @@
     </span>
     {#if canCRUD}
         <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={shareItem}>
-            <IconEllipsisVertical />
+            <IconEllipsisVertical size={16} />
         </button>
     {/if}
     {#if canShare}
-        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={shareItem}>
-            <IconShareNodes />
+        <button class="icon-button w-7 h-7 p-0 action-button" onclick={shareItem}>
+            <IconShare2 size={16} />
         </button>
     {/if}
     {#if canUnlink}
-        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={shareItem}>
-            <IconLinkSlash />
+        <button class="icon-button w-7 h-7 p-0 action-button" onclick={shareItem}>
+            <IconUnlink size={16} />
         </button>
     {/if}
     {#if canDuplicate}
-        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={duplicateItem}>
-            <IconAnglesDown />
+        <button class="icon-button w-7 h-7 p-0 action-button" onclick={duplicateItem}>
+            <IconDuplicate size={16} />
         </button>
     {/if}
     {#if canDelete}
-        <button class="icon-button btn-sm w-7 h-7 p-0 action-button" onclick={deleteItem}>
+        <button class="icon-button w-7 h-7 p-0 action-button" onclick={deleteItem}>
             <IconTrash2 />
         </button>
     {/if}

@@ -1,9 +1,62 @@
-import { V as props_id, G as attr_class, W as spread_attributes, I as stringify, B as pop, z as push, J as spread_props } from "./index.js";
+import { z as push, F as spread_props, B as pop, V as props_id, I as attr_class, W as spread_attributes, J as stringify } from "./index.js";
+import { I as Icon } from "./Icon.js";
 import * as popover from "@zag-js/popover";
 import { t as toStyleString, u as useMachine, n as normalizeProps } from "./Tooltip.svelte_svelte_type_style_lang.js";
 import { mergeProps as mergeProps$1 } from "@zag-js/core";
-import { I as Icon } from "./utils.js";
 import { g as get, w as writable } from "./index3.js";
+function Save($$payload, $$props) {
+  push();
+  let { $$slots, $$events, ...props } = $$props;
+  const iconNode = [
+    [
+      "path",
+      {
+        "d": "M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+      }
+    ],
+    [
+      "path",
+      {
+        "d": "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
+      }
+    ],
+    ["path", { "d": "M7 3v4a1 1 0 0 0 1 1h7" }]
+  ];
+  Icon($$payload, spread_props([
+    { name: "save" },
+    props,
+    {
+      iconNode,
+      children: ($$payload2) => {
+        props.children?.($$payload2);
+        $$payload2.out += `<!---->`;
+      },
+      $$slots: { default: true }
+    }
+  ]));
+  pop();
+}
+function X($$payload, $$props) {
+  push();
+  let { $$slots, $$events, ...props } = $$props;
+  const iconNode = [
+    ["path", { "d": "M18 6 6 18" }],
+    ["path", { "d": "m6 6 12 12" }]
+  ];
+  Icon($$payload, spread_props([
+    { name: "x" },
+    props,
+    {
+      iconNode,
+      children: ($$payload2) => {
+        props.children?.($$payload2);
+        $$payload2.out += `<!---->`;
+      },
+      $$slots: { default: true }
+    }
+  ]));
+  pop();
+}
 const CSS_REGEX = /((?:--)?(?:\w+-?)+)\s*:\s*([^;]*)/g;
 const serialize = (style) => {
   const res = {};
@@ -111,76 +164,11 @@ function Popover($$payload, $$props) {
   $$payload.out += `<!--]--></div></span>`;
   pop();
 }
-function Save($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    [
-      "path",
-      {
-        "d": "M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
-      }
-    ],
-    [
-      "path",
-      {
-        "d": "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"
-      }
-    ],
-    ["path", { "d": "M7 3v4a1 1 0 0 0 1 1h7" }]
-  ];
-  Icon($$payload, spread_props([
-    { name: "save" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
-function X($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    ["path", { "d": "M18 6 6 18" }],
-    ["path", { "d": "m6 6 12 12" }]
-  ];
-  Icon($$payload, spread_props([
-    { name: "x" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
 const drawerStore = writable({
   drawers: {},
   activeDrawer: null,
   drawerOrder: []
 });
-function setDrawerProps(drawerKey, props) {
-  drawerStore.update((store) => ({
-    ...store,
-    drawers: {
-      ...store.drawers,
-      [drawerKey]: {
-        ...store.drawers[drawerKey],
-        props: { ...store.drawers[drawerKey].props, ...props }
-      }
-    }
-  }));
-}
 function addDrawer(drawer) {
   drawerStore.update((store) => {
     const newOrder = store.drawerOrder.includes(drawer.key) ? store.drawerOrder : [...store.drawerOrder, drawer.key];
@@ -234,9 +222,8 @@ export {
   getDrawer as b,
   addDrawer as c,
   drawerStore as d,
-  setDrawerVisibility as e,
-  getActiveDrawer as f,
+  getActiveDrawer as e,
+  setDrawerVisibility as f,
   getDrawerWidth as g,
-  setActiveDrawer as h,
-  setDrawerProps as s
+  setActiveDrawer as s
 };

@@ -12,7 +12,6 @@
       setDrawerVisibility("help", true);
       setDrawerVisibility("favorites", true);
       setBreadcrumb([{ label: LABEL.STUDIES }]);
-      console.log("Drawers after visibility set:", $drawerStore.drawers);
       didSetVisibility = true;
     }
   });

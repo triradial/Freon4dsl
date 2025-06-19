@@ -1,18 +1,20 @@
-import { z as push, J as spread_props, B as pop, E as escape_html, G as attr_class, I as stringify, K as store_get, A as onMount, M as unsubscribe_stores, S as head, N as ensure_array_like, F as attr, T as onDestroy } from "../../../chunks/index.js";
+import { z as push, F as spread_props, B as pop, E as escape_html, I as attr_class, J as stringify, K as store_get, A as onMount, M as unsubscribe_stores, S as head, N as ensure_array_like, G as attr, T as onDestroy } from "../../../chunks/index.js";
 import { P as Pencil, T as Tabs, p as page } from "../../../chunks/stores.js";
 import "clsx";
 import { a as FreLogger, W as WebappConfigurator, M as ModelManager } from "../../../chunks/model-manager.js";
 import "../../../chunks/env.js";
-import { I as Icon, g as getStatusColor, d as dataStore, b as getSVGIcon } from "../../../chunks/utils.js";
+import { g as getStatusColor, d as dataStore, b as getSVGIcon } from "../../../chunks/utils.js";
 import { createGrid } from "ag-grid-community";
 import "ag-grid-enterprise";
-import { n as navigateTo, c as copy_payload, a as assign_payload, G as GridHeader, D as DeleteObjectDialog } from "../../../chunks/DeleteObjectDialog.js";
+import { n as navigateTo, G as GridHeader, D as DeleteObjectDialog } from "../../../chunks/DeleteObjectDialog.js";
 import { t as theme } from "../../../chunks/theme-store.js";
 import { e as editObject } from "../../../chunks/object-drawer-store.js";
+import { c as copy_payload, a as assign_payload } from "../../../chunks/plus.js";
 import "../../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
-import { P as Popover, X, s as setDrawerProps, e as setDrawerVisibility, f as getActiveDrawer, h as setActiveDrawer, S as Save } from "../../../chunks/side-drawer-store.js";
-import { F as Fg } from "../../../chunks/index4.js";
+import { P as Popover, X, e as getActiveDrawer, s as setActiveDrawer, f as setDrawerVisibility, S as Save } from "../../../chunks/side-drawer-store.js";
+import { I as Icon } from "../../../chunks/Icon.js";
 import "mobx";
+import { F as FreonComponent } from "../../../chunks/FreonComponent.js";
 function Eye($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;
@@ -456,14 +458,13 @@ function Study($$payload, $$props) {
       visible: false
     }
   ];
-  onMount(async () => {
+  async function initializeStudy() {
     study = await dataStore.getStudy(id);
     await dataStore.getStudyPatients(id);
     if (!study) {
       console.error(`Study with id ${id} not found`);
       return;
     }
-    dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
     const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration");
     if (result !== void 0) {
       unit = result;
@@ -476,12 +477,10 @@ function Study($$payload, $$props) {
       console.error("Failed to load study configuration");
     }
     footerItems = footerItems.map((item) => ({ ...item, visible: unit[item.id] }));
-    setDrawerProps("dslErrors", { studyId: id });
-    setDrawerVisibility("dslErrors", true);
-    setDrawerProps("studyTimelineTable", { studyId: id });
-    setDrawerVisibility("studyTimelineTable", true);
-    setDrawerProps("studyTimelineChart", { studyId: id });
-    setDrawerVisibility("studyTimelineChart", true);
+  }
+  onMount(() => {
+    dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+    initializeStudy();
   });
   onDestroy(() => {
     var activeDrawer = getActiveDrawer();
@@ -547,7 +546,7 @@ function Study($$payload, $$props) {
             $$payload3.out += `<!----></button> <button type="button" class="icon-button primary inverted">`;
             Redo($$payload3, {});
             $$payload3.out += `<!----></button></div> <div class="crc-editor crc-content-width">`;
-            Fg($$payload3, { editor: dslEditor });
+            FreonComponent($$payload3, { editor: dslEditor });
             $$payload3.out += `<!----></div> <div class="crc-editor-footer h-8 crc-content-width">`;
             DSLFooter($$payload3, {
               items: footerItems,
