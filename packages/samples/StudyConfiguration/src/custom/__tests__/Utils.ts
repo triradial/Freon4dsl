@@ -520,6 +520,7 @@ export function createCompletedPatientVisits(
         if (i++ < numberToCreate) {
             let dateOfVisit: Date = new Date();
             const startDay = scheduledEventInstance.getStartDay();
+            const offsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
             let foundAMatch = false;
             // There can be multiple shifts for the same ScheduledEventInstance (a visit), each with a different instance number to shift. Need to search to find the shift for the instance number, if any.
             let shiftsForVisitInstance = shiftsFromScheduledVisit.filter((record) => record.name === scheduledEventInstance.getName());
@@ -528,7 +529,7 @@ export function createCompletedPatientVisits(
                     shiftFromScheduledVisit.numberFound++; // This is the hack where the number of times a visit is matched is tracked for each shift of the same visit rather than just one counter.
                     if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance && shiftFromScheduledVisit.foundThisInstance === false) {
                         // if this matches then this is the instance to shift
-                        dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift); // Shift the visit
+                        dateOfVisit = addDays(referenceDate, startDay + offsetOfFirstEventInstance + shiftFromScheduledVisit.shift); // Shift the visit
                         shiftFromScheduledVisit.foundThisInstance = true; // Remember that this shift has been done
                         foundAMatch = true; // Done looking for shifts for this visit
                     }
@@ -536,7 +537,6 @@ export function createCompletedPatientVisits(
             }
             if (!foundAMatch) {
                 // No shifts for this Visit but need to correct for any negative offset from first event instance
-                const offsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
                 dateOfVisit = addDays(referenceDate, startDay + offsetOfFirstEventInstance);
             }
             const patientVisit = createACompletedPatientVisit(
