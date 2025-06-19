@@ -8,31 +8,34 @@
     import { Box, FreLogger, ListGroupBox, FreEditor } from "@freon4dsl/core";
     import { componentId } from "./svelte-utils/index.js";
     import RenderComponent from "./RenderComponent.svelte";
-    import { CircleChevronDown as IconChevronDown, CircleChevronRight as IconChevronRight, Plus as IconPlus, EllipsisVertical as IconEllipsisVertical } from '@lucide/svelte';
-    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
+    import { 
+        ChevronDown as IconChevronDown, 
+        ChevronRight as IconChevronRight, 
+        Plus as IconPlus, 
+        EllipsisVertical as IconEllipsisVertical 
+    } from '@lucide/svelte';
+    import type { ListGroupProps } from './svelte-utils/FreComponentProps.js';
 
     const LOGGER = new FreLogger("ListGroupComponent");
 
     // Props
     let { 
         box,
-        editor
-     }: FreComponentProps<ListGroupBox> = $props();
+        editor,
+        cssClass,
+        canAdd,
+        canCRUD
+     }: ListGroupProps<ListGroupBox> = $props();
 
     let id: string = !!box ? componentId(box) : 'group-for-unknown-box';
     // let element: HTMLDivElement = null;
     let contentElement: HTMLDivElement | null = null;
     let style: string;
-    let cssClass: string = '';
     const label = $derived(() => box.getLabel());
     let level: number;
     let child: Box;
     let isExpanded = $state(true);
     let contentStyle: string = 'display: none';
-
-    let canAdd: boolean = true;
-    let canCRUD: boolean = false;
-
 
     onMount(() => {
         if (!!box) {
@@ -76,9 +79,9 @@
 <div id="{id}" class="list-group {cssClass}" style="{style}">
     <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded}>
         {#if isExpanded}
-            <IconChevronDown size={24} />
+            <IconChevronDown size={20} />
         {:else}
-            <IconChevronRight size={24} />
+            <IconChevronRight size={20} />
         {/if}
     </button>
     <span class="list-group-label">{label()}</span>

@@ -42,7 +42,7 @@
         Link2Off as IconUnlink, 
         SquareArrowOutUpRight as IconDuplicate, 
         Trash2 as IconTrash2 } from '@lucide/svelte';      
-    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
+    import type { ItemGroupProps } from './svelte-utils/FreComponentProps.js';
 
     // TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -56,7 +56,7 @@
         isEditing,
         partOfActionBox,
         text
-     }: FreComponentProps<ItemGroupBox> = $props();
+     }: ItemGroupProps<ItemGroupBox> = $props();
 
     // Local variables
     let id: string; // an id for the html element
@@ -90,8 +90,8 @@
     let canDuplicate: boolean = false;
 
     // Note that 'from <= to' always holds.
-    let placeHolderStyle: string = $derived(() => partOfActionBox ? "text-component-action-placeholder" : "text-component-placeholder");
-    let boxType: BoxType = $derived(() => !!box.parent ? (isActionBox(box?.parent) ? "action" : isSelectBox(box?.parent) ? "select" : "text") : "text");
+    let placeHolderStyle = $derived(() => partOfActionBox ? "text-component-action-placeholder" : "text-component-placeholder");
+    let boxType = $derived(() => !!box.parent ? (isActionBox(box?.parent) ? "action" : isSelectBox(box?.parent) ? "select" : "text") : "text");
 
     /**
      * When this component is mounted, the setFocus and setCaret functions are
@@ -710,7 +710,7 @@
                 {#if !!text && text.length > 0}
                     {text}{#if canUnlink}<IconSquareArrowUpRight />{/if}
                 {:else}
-                    <span class="{placeHolderStyle} {isRequired ? 'required' : ''}">{placeholder}</span>
+                    <span class="{$placeHolderStyle} {isRequired ? 'required' : ''}">{placeholder}</span>
                 {/if}
             </span>
         {/if}

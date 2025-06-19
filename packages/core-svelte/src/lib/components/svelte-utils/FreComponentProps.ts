@@ -75,3 +75,19 @@ export interface ErrorProps<T extends Box> extends FreComponentProps<T> {
     parentLeft: number;
     children(): any; // replaces slot from Svelte version 4
 }
+
+
+/** M+G start updates */
+export interface ListGroupProps<T extends Box> extends FreComponentProps<T> {
+    cssClass: string;
+    canAdd: boolean;
+    canCRUD: boolean;
+}
+
+export interface ItemGroupProps<T extends Box> extends FreComponentProps<T> {
+    isEditing: boolean;
+    cssClass: string;
+    partOfActionBox: boolean;
+    text: string;
+}
+/** M+G end updates */
