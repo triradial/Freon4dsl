@@ -72,6 +72,8 @@
         setDrawerVisibility("studyTimelineTable", true);
         setDrawerProps("studyTimelineChart", { studyId: id });
         setDrawerVisibility("studyTimelineChart", true);
+        setDrawerProps("studyChecklist", { studyId: id });
+        setDrawerVisibility("studyChecklist", true);
     });
 
     onDestroy(() => {
@@ -83,6 +85,7 @@
         setDrawerVisibility("dslErrors", false);
         setDrawerVisibility("studyTimelineTable", false);
         setDrawerVisibility("studyTimelineChart", false);
+        setDrawerVisibility("studyChecklist", false);
     });
 
     function handleCheckboxChange(id: string, visible: boolean) {

@@ -1,10 +1,13 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { ListPlaceholder } from "flowbite-svelte";
+    import { Skeleton, ListPlaceholder } from "flowbite-svelte";
+    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import { faHeart, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { RtString } from "@freon4dsl/core";
+    import { type FreEnvironment, RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineTable } from "../../services/app/study-timeline.js";
+    import { getChecklistAsMarkdown, getTimelineTable } from "../../services/app/study-timeline.js";
+    import { marked } from "marked";
 
     export let studyId: string;
     let isLoading = true;
@@ -23,30 +26,28 @@
 
     export function refresh() {
         dispatch("refresh");
-        loadTable(studyId);
+        loadChecklistAsMarkdown(studyId);
     }
 
     $: {
         if (studyId) {
             console.log("studyId", studyId);
-            loadTable(studyId);
+            loadChecklistAsMarkdown(studyId);
         }
     }
 
-    async function loadTable(id: string) {
-        console.log("loadTable: ", id);
+    async function loadChecklistAsMarkdown(id: string) {
         isLoading = true;
         showTable = false;
         error = null;
         try {
             const startTime = Date.now();
-            tableHtml = loadTableData(studyId);
-            await new Promise((resolve) => setTimeout(() => resolve(null), 0));
+            checklistHtml = await loadChecklistData(studyId);
             const elapsedTime = Date.now() - startTime;
             if (elapsedTime < 2000) {
                 await new Promise((resolve) => setTimeout(resolve, 2000 - elapsedTime));
             }
-            showTable = true;
+            // checklistHtml = `<div class="limited-width-container">${checklistHtml}</div>`;
         } catch (err: unknown) {
             console.error(`Error fetching chart data for study: ${id}`, err);
             error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
@@ -55,18 +56,16 @@
         }
     }
 
-    function loadTableData(id: string) {
+    async function loadChecklistData(id: string) {
         const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
         const unit = model.configuration;
-        const rtObject = getTimelineTable(unit) as RtString;
-        return rtObject.asString();
+        const checklistAsMarkdown = getChecklistAsMarkdown(unit);
+        const htmlContent = await marked(checklistAsMarkdown);
+        return htmlContent;
     }
 </script>
 
 <div class="drawer-content-area p-2">
-    <div style="display: {isLoading || !showTable ? 'block' : 'none'}">
-        <ListPlaceholder divClass="mb-4" />
-    </div>
     <div style="display: {!isLoading && showTable ? 'block' : 'none'}">
         <div bind:this={container}>
             {@html tableHtml}

@@ -14,6 +14,7 @@
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
     import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
     import StudyTimelineTableDrawer from "../components/drawers/StudyTimelineTableDrawer.svelte";
+    import StudyChecklistDrawer from "../components/drawers/StudyChecklistDrawer.svelte";
     import DSLErrorsDrawer from "../components/drawers/DSLErrorsDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
 
@@ -27,7 +28,7 @@
     import PatientContent from "../content/Patient.svelte";
     import Availability from "../content/Availability.svelte";
 
-    import { faHeart, faTableList, faTimeline, faTriangleExclamation, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+    import { faHeart, faTableList, faTimeline, faTriangleExclamation, faInfoCircle, faCheckSquare } from "@fortawesome/free-solid-svg-icons";
 
     let contentComponent: typeof SvelteComponent;
     let breadcrumbItems: { label: string; href?: string }[] = [];
@@ -78,6 +79,15 @@
             component: StudyTimelineChartDrawer,
             title: "Study Timeline Chart",
             description: "View the timeline as a chart for this study.",
+            supportsRefresh: true,
+            defaultWidth: 800,
+        });
+        addDrawer({
+            key: "studyChecklist",
+            icon: faCheckSquare,
+            component: StudyChecklistDrawer,
+            title: "Study Checklist",
+            description: "View the checklist for this study.",
             supportsRefresh: true,
             defaultWidth: 800,
         });

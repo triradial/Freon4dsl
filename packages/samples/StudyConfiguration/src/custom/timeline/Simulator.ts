@@ -72,7 +72,7 @@ export class Simulator {
         return this.availability;
     }
 
-    getTimeline() {
+    getTimeline() : Timeline {
         return this.timeline;
     }
 

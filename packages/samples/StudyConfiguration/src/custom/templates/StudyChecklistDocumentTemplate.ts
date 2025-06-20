@@ -121,7 +121,7 @@ export class StudyChecklistDocumentTemplate {
 
 The timeline and visit checklists for the study.
 
-[toc]
+<!--TOC-->
 
 # Study Timeline 
 
