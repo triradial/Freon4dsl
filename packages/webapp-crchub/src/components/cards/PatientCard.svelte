@@ -11,7 +11,7 @@
     }
 </script>
 
-<div class="card crc-card-area max-w-sm h-full">
+<div class="card card-area max-w-sm h-full">
     <div class="flex items-center justify-left mb-4">
         <h3 class="text-base font-bold mr-2">Patient</h3>
         <button type="button" class="icon-button btn-sm grid-header-button" onclick={onEditClick}><IconPencil /></button>

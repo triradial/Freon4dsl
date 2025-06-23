@@ -10,32 +10,37 @@ export class CustomStudyConfigurationModelScoper implements FreScoper {
     mainScoper: FreScoperComposite;
 
     resolvePathName(node: FreNode, doNotSearch: FreNodeReference<FreNamedNode>, pathname: string[], metatype?: string): FreNamedNode {
-        // Implementation here
-        throw new Error("Method not implemented.");
+        // Did not find anything, so return. The FreScoperComposite will try the next scoper in its list.
+        return undefined;
     }
 
     replacementNamespace(node: FreNode): FreNamespace | undefined {
-        // Implementation here
+        // Did not find anything, so return. The FreScoperComposite will try the next scoper in its list.
         return undefined;
     }
 
     isInScope(modelElement: FreNode, name: string, metatype?: string, excludeSurrounding?: boolean): boolean {
-        return undefined;
+        // Did not find anything, so return. The FreScoperComposite will try the next scoper in its list.
+        return false;
     }
 
     getVisibleElements(modelelement: FreNode, metatype?: string, excludeSurrounding?: boolean): FreNamedNode[] {
-        return undefined;
+        // Did not find anything, so return. The FreScoperComposite will try the next scoper in its list.
+        return [];
     }
 
     getFromVisibleElements(modelelement: FreNode, name: string, metatype?: string, excludeSurrounding?: boolean): FreNamedNode {
+        // Did not find anything, so return. The FreScoperComposite will try the next scoper in its list.
         return undefined;
     }
 
     getVisibleNames(modelelement: FreNode, metatype?: string, excludeSurrounding?: boolean): string[] {
-        return undefined;
+        // Did not find anything, so return. The FreScoperComposite will try the next scoper in its list.
+        return [];
     }
 
     additionalNamespaces(element: FreNode): FreNode[] {
-        return undefined;
+        // Did not find anything, so return. The FreScoperComposite will try the next scoper in its list.
+        return [];
     }
 }

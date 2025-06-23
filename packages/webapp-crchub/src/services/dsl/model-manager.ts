@@ -81,7 +81,7 @@ export class ModelManager {
         LOGGER.log("ModelManager.openModel(" + modelName + ")");
         updateEditorState(true, true, false);
         this.resetGlobalVariables();
-        await this.saveCurrentUnit();
+        //await this.saveCurrentUnit();
         await this.modelStore.openModel(modelName);
         const unitIdentifiers = this.modelStore.getUnitIdentifiers();
         if (!!unitIdentifiers && unitIdentifiers.length > 0) {

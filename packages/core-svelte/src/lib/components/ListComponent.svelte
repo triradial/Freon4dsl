@@ -31,7 +31,7 @@
     } from "@freon4dsl/core"
     import RenderComponent from './RenderComponent.svelte';
     import { componentId, rememberDraggedNode } from '../index.js';
-    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
+    import type { ListProps } from './svelte-utils/FreComponentProps.js';
     import {
         activeElem,
         activeIn,
@@ -40,10 +40,16 @@
         draggedElem,
         draggedFrom
     } from './stores/AllStores.svelte.js';
-    import DragHandle from './images/DragHandle.svelte';
+    import { 
+        GripVertical as IconGripVertical, 
+    } from '@lucide/svelte';      
 
     // Props
-    let { editor, box }: FreComponentProps<ListBox> = $props();
+    let { 
+        editor, 
+        box,
+        cssClass
+    }: ListProps<ListBox> = $props();
 
     // Local state variables
     let LOGGER: FreLogger = LIST_LOGGER;
@@ -232,7 +238,7 @@
 >
     {#each shownElements as box, index (box.id)}
         <span
-            class="list-item"
+            class="list-item {cssClass} w-full"
             class:is-active={activeElem.value?.row === index && activeIn.value === id}
             class:dragged={draggedElem.value?.propertyIndex === index && draggedFrom.value === id}
             style:grid-column={!isHorizontal ? 1 : index + 1}
@@ -256,9 +262,9 @@
             <span class="drag-handle"
                   draggable="true"
                   ondragstart={(event) => dragstart(event, id, index)}
-                  role="listitem"><DragHandle/></span>
+                  role="listitem"><IconGripVertical size={16} /></span>
             {/if}
-            <RenderComponent {box} {editor} />
+            <RenderComponent {box} {editor} {cssClass} />
         </span>
     {/each}
 </span>

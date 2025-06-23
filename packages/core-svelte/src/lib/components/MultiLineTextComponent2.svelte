@@ -138,10 +138,10 @@
 {#if isEditing}
     <div class="quill-toolbar-container">
         <div bind:this={editorDiv} style="min-height: 200px;"></div>
-        <button on:click={() => isEditing = false}>Done</button>
+        <button onclick={() => isEditing = false}>Done</button>
     </div>
 {:else}
-    <div class="multiline-html" on:click={() => isEditing = true} tabindex="0" style="min-height: 200px; cursor: pointer;">
+    <div class="multiline-html" onclick={() => isEditing = true} tabindex="0" style="min-height: 200px; cursor: pointer;">
         {@html html}
     </div>
 {/if}

@@ -14,7 +14,7 @@
     }
 </script>
 
-<div class="card crc-card-area max-w-sm h-full">
+<div class="card card-area max-w-sm h-full">
     <div class="flex items-center justify-left mb-4">
         <h3 class="main-label-text mr-2">Study</h3>
         <button type="button" class="icon-button primary inverted" onclick={onEditClick}><IconPencil /></button>
@@ -30,7 +30,7 @@
         </div>
         <div>
             <div class="small-label-text">Status</div>
-            <span class="badge {statusColor} text-xs">{study.status}</span>
+            <span class="badge {statusColor} standard-text">{study.status}</span>
         </div>
         <div>
             <div class="small-label-text">Phase</div>

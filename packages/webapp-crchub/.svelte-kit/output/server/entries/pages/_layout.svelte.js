@@ -749,10 +749,6 @@ class Mapped {
     };
   }
 }
-const customMap = /* @__PURE__ */ new Map();
-function setCustomComponents(externals) {
-  externals.forEach((ext) => customMap.set(ext.knownAs, ext.component));
-}
 function Arrow_up_right($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;
@@ -1026,6 +1022,10 @@ function Triangle_alert($$payload, $$props) {
   ]));
   pop();
 }
+const customMap = /* @__PURE__ */ new Map();
+function setCustomComponents(externals) {
+  externals.forEach((ext) => customMap.set(ext.knownAs, ext.component));
+}
 function DatePicker($$payload, $$props) {
   push();
   const { box } = $$props;
@@ -1070,7 +1070,7 @@ function ExpandCollapseWrapperComponent($$payload, $$props) {
   };
   onMount(() => {
     let verticalBox = box.childBox.children[0];
-    const extendedCssClass = verticalBox.cssClass + " ml-5";
+    const extendedCssClass = verticalBox.cssClass;
     FreUtils.initializeObject(verticalBox, { selectable: false, cssClass: extendedCssClass });
     verticalBox.children.forEach((childBox) => {
       let childExtendedCssClass = verticalBox.cssClass + " align-top";
@@ -1608,25 +1608,26 @@ function StudyTimelineTableDrawer($$payload, $$props) {
   const dispatch = createEventDispatcher();
   function refresh() {
     dispatch("refresh");
-    loadTable(studyId);
-    loadChecklistAsMarkdown(studyId);
+    loadAllData(studyId);
   }
-  async function loadChecklistAsMarkdown(id) {
-    console.log("loadChecklistAsMarkdown: ", id);
-    const model = ModelManager.getInstance().openModel(id);
-    const unit = model.configuration;
-    const checklistAsMarkdown = getChecklistAsMarkdown(unit);
-    const htmlContent = marked(checklistAsMarkdown);
-    console.log("htmlContent: ", htmlContent);
-    checklistHtml = `<div class="limited-width-container">${htmlContent}</div>`;
-  }
-  async function loadTable(id) {
-    console.log("loadTable: ", id);
+  async function loadAllData(id) {
+    console.log("loadAllData: ", id);
     isLoading = true;
     showTable = false;
     try {
       const startTime = Date.now();
-      tableHtml = loadTableData(studyId);
+      const modelManager = ModelManager.getInstance();
+      await modelManager.openModel(id);
+      const model = modelManager.currentModel;
+      const unit = model.configuration;
+      if (!unit) {
+        throw new Error("Configuration unit is not available in the model.");
+      }
+      const rtObject = getTimelineTable(unit);
+      tableHtml = rtObject.asString();
+      const checklistAsMarkdown = getChecklistAsMarkdown(unit);
+      const htmlContent = marked(checklistAsMarkdown);
+      checklistHtml = `<div class="limited-width-container">${htmlContent}</div>`;
       await new Promise((resolve) => setTimeout(() => resolve(null), 0));
       const elapsedTime = Date.now() - startTime;
       if (elapsedTime < 2e3) {
@@ -1639,12 +1640,6 @@ function StudyTimelineTableDrawer($$payload, $$props) {
     } finally {
       isLoading = false;
     }
-  }
-  function loadTableData(id) {
-    const model = ModelManager.getInstance().openModel(id);
-    const unit = model.configuration;
-    const rtObject = getTimelineTable(unit);
-    return rtObject.asString();
   }
   $$payload.out += `<div class="drawer-content-area p-2"><div${attr_style(`display: ${stringify(isLoading || !showTable ? "block" : "none")}`)}><div class="placeholder animate-pulse mb-4"></div></div> <div${attr_style(`display: ${stringify(!isLoading && showTable ? "block" : "none")}`)}><div>${html(tableHtml)}</div></div> <div style="display: block" class="markdown-body svelte-110fhye"><div>${html(checklistHtml)}</div></div></div>`;
   bind_props($$props, { refresh });
@@ -1664,12 +1659,19 @@ function DSLErrorsDrawer($$payload, $$props) {
     console.log("DSLErrorsDrawer refresh errors", modelErrors.length);
   }
   const each_array = ensure_array_like(modelErrors);
-  $$payload.out += `<div class="drawer-content-area"><div class="table-wrap"><table class="table table-hover table-striped"><thead><tr><th class="bg-surface-500-900">Message</th><th class="bg-surface-500-900">Severity</th></tr></thead><tbody><!--[-->`;
+  $$payload.out += `<div class="drawer-content-area"><div class="table-wrap"><table class="table table-hover table-striped error-drawer"><thead><tr class="error-drawer-row"><th class="error-drawer-head">Message</th><th class="error-drawer-head">Severity</th></tr></thead><tbody>`;
+  if (modelErrors.length === 0) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<tr class="error-drawer-row"><td class="error-drawer-cell" colspan="2">No errors found</td></tr>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--><!--[-->`;
   for (let index = 0, $$length = each_array.length; index < $$length; index++) {
     let error = each_array[index];
-    $$payload.out += `<tr class="hover:bg-surface-500-900/50"><td><div class="flex items-center gap-2"><button type="button" class="icon-button btn-sm">`;
+    $$payload.out += `<tr class="error-drawer-row"><td class="error-drawer-cell"><div class="flex items-center gap-2"><button type="button" class="icon-button">`;
     Arrow_up_right($$payload, {});
-    $$payload.out += `<!----></button> <span>${escape_html(error.message)}</span></div></td><td>${escape_html(error.severity)}</td></tr>`;
+    $$payload.out += `<!----></button> <span>${escape_html(error.message)}</span></div></td><td class="error-drawer-cell">${escape_html(error.severity)}</td></tr>`;
   }
   $$payload.out += `<!--]--></tbody></table></div></div>`;
   bind_props($$props, { refresh });

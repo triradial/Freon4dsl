@@ -279,7 +279,7 @@ function PatientGrid($$payload, $$props) {
       {
         type: "edit",
         icon: "edit",
-        level: "primary",
+        level: "secondary",
         onClick: onEditClick,
         isVisible: () => {
           return canManageStudies;
@@ -380,13 +380,13 @@ function DSLFooter($$payload, $$props) {
   $$payload.out += `<div class="footer-container">`;
   {
     let trigger = function($$payload2) {
-      $$payload2.out += `<button id="editoritems" type="button" class="btn btn-sm preset-filled editor-footer-button">`;
-      Eye($$payload2, {});
+      $$payload2.out += `<button id="editoritems" type="button" class="icon-button editor-footer-button">`;
+      Eye($$payload2, { size: 16 });
       $$payload2.out += `<!----></button>`;
     }, content = function($$payload2) {
       const each_array = ensure_array_like(items);
-      $$payload2.out += `<header class="flex justify-between"><span class="font-bold text-xl">Display Options</span> <button class="icon-button preset-filled hover:preset-tonal" type="button">`;
-      X($$payload2, {});
+      $$payload2.out += `<header class="flex justify-between"><span class="font-bold text-xl">Display Options</span> <button class="icon-button hover:preset-tonal" type="button">`;
+      X($$payload2, { size: "16" });
       $$payload2.out += `<!----></button></header>  <div><!--[-->`;
       for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
         let item = each_array[$$index];
@@ -398,8 +398,7 @@ function DSLFooter($$payload, $$props) {
       open: openState,
       onOpenChange: (e) => openState = e.open,
       positioning: { placement: "top" },
-      triggerBase: "btn btn-sm preset-filled editor-footer-button",
-      contentBase: "card bg-surface-200-800 p-4 space-y-4 max-w-[320px] editor-display-options-popover w-40",
+      contentBase: "card black p-4 space-y-4 max-w-[320px] editor-display-options-popover w-40",
       arrow: true,
       arrowBackground: "!bg-surface-200 dark:!bg-surface-800",
       trigger,
@@ -505,6 +504,7 @@ function Study($$payload, $$props) {
       let list = function($$payload2) {
         $$payload2.out += `<!---->`;
         Tabs.Control($$payload2, {
+          stateActive: "tab-active",
           value: "patients",
           children: ($$payload3) => {
             $$payload3.out += `<div class="tab-item">`;
@@ -515,6 +515,7 @@ function Study($$payload, $$props) {
         });
         $$payload2.out += `<!----> <!---->`;
         Tabs.Control($$payload2, {
+          stateActive: "tab-active",
           value: "design",
           children: ($$payload3) => {
             $$payload3.out += `<div class="tab-item">`;
@@ -562,7 +563,9 @@ function Study($$payload, $$props) {
         value: activeTab,
         onValueChange: (e) => activeTab = e.value,
         listGap: "gap-6",
-        base: "mt-4",
+        listMargin: "mb-4",
+        base: "mt-2",
+        contentBase: "mt-0",
         list,
         content,
         $$slots: { list: true, content: true }

@@ -74,20 +74,20 @@
 /* #region Text Component */
 .text-dropdown-component .text-component-input,
 .text-component-input {
-  color: var(--green-70t);
-  background-color: var(--green-10t);
+  color: var(--green-90t);
+  background-color: var(--green-30t);
 }
 
 .text-dropdown-component .text-component-text,
 .text-component-text {
-  color: var(--green-60t);
+  color: var(--green-90t);
   background-color: inherit;
 }
 
 .text-dropdown-component .text-component-text:hover,
 .text-component-text:hover {
-  color: var(--green-60t);
-  background-color: var(--green-10t);
+  color: var(--green-90t);
+  background-color: var(--green-30t);
 }
 
 .text-dropdown-component .text-component-placeholder,
@@ -134,11 +134,11 @@
 }
 
 .list-group.type2 {
-  background-color: var(--white-5t);
+  background-color: var(--white-20t);
 }
 
 .list-group.type3 {
-  border-bottom: 1px solid var(--white-20t);
+  border-bottom: 1px solid var(--white-30t);
 }
 
 .list-group.type4 {
@@ -178,6 +178,30 @@
 
 .list-group .toggle-button:active {
   background-color: var(--white-20t);
+}
+
+.drag-handle svg {
+  color: var(--green);
+}
+
+.action-button {
+  color: var(--primary-600);
+  background-color: transparent !important;
+  border: 1px solid var(--primary-600) !important;
+}
+
+.action-button:hover {
+  color: var(--white);
+  background-color: var(--primary-600) !important;
+  border: 1px solid var(--primary-600) !important;
+}
+
+.action-button:active {
+  background-color: var(--gray-700);
+}
+
+.action-button:focus {
+  background-color: var(--gray-700);
 }
 
 /* #endregion */

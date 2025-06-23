@@ -136,11 +136,11 @@
 }
 
 .list-group.type2 {
-  background-color: var(--black-5t);
+  background-color: var(--black-20t);
 }
 
 .list-group.type3 {
-  border-bottom: 1px solid var(--white-20t);
+  border-bottom: 1px solid var(--black-30t);
 }
 
 .list-group.type4 {
@@ -180,6 +180,26 @@
 
 .list-group .toggle-button:active {
   background-color: var(--black-20t);
+}
+
+.drag-handle svg {
+  color: var(--green);
+}
+
+.action-button {
+  color: var(--gray-800);
+  background-color: transparent !important;
+  border: 1px solid var(--gray-800) !important;
+}
+
+.action-button:hover {
+  color: var(--white);
+  background-color: var(--primary-600) !important;
+  border: 1px solid var(--primary-600) !important;
+}
+
+.action-button:active {
+  background-color: var(--gray-900);
 }
 
 /* #endregion */

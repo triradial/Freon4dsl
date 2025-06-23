@@ -52,9 +52,9 @@
     "imports": [
       "_index.js",
       "_model-manager.js",
+      "_Icon.js",
       "_plus.js",
-      "_html.js",
-      "_Icon.js"
+      "_html.js"
     ]
   },
   "_FreonComponent.js": {

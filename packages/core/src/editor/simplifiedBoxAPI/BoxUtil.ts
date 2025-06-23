@@ -550,9 +550,14 @@ export class BoxUtil {
         return new RefListWrapperBox(externalComponentName, node, roleName, propertyName, childBox, initializer);
     }
 
-
     /** START - M+G */
-    static listGroupBox(node: FreNode, roleName: string, label: string, childBox: Box, initializer?: Partial<ListGroupBox>): ListGroupBox {
+    static listGroupBox(
+        node: FreNode, 
+        roleName: string, 
+        label: string, 
+        childBox: Box, 
+        initializer?: Partial<ListGroupBox>
+    ): ListGroupBox {
         const role = this.makeKeyName(roleName);
         const updatedInitializer = {
             ...initializer,
@@ -560,6 +565,7 @@ export class BoxUtil {
             isExpanded: initializer?.isExpanded ?? false,
             canAdd: initializer?.canAdd ?? false,
             canCRUD: initializer?.canCRUD ?? false,
+            canExpand: initializer?.canExpand ?? true,
         };
         let result: ListGroupBox = BoxFactory.listGroup(node, role, label, childBox, updatedInitializer);
         return result;
@@ -587,6 +593,7 @@ export class BoxUtil {
             canUnlink: initializer?.canUnlink ?? false,
             canCRUD: initializer?.canCRUD ?? false,
             canEdit: initializer?.canEdit ?? true,
+            canExpand: initializer?.canExpand ?? true,
             placeHolder: ph,
         };
         const property = node[propertyName];
@@ -674,7 +681,8 @@ export class BoxUtil {
         //result.propertyIndex = index;
         return result;
     }
-
+    /** END - M+G */
+    
     /**
      * Returns a textBox for property named 'propertyName' within 'element'.
      * When the property is a list (the type is "string[]", or "identifier[]"), this method can be

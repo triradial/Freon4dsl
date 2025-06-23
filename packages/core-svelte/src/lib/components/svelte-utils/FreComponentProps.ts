@@ -14,14 +14,13 @@ export interface MainComponentProps {
  */
 export interface FreComponentProps<T extends Box> extends MainComponentProps {
     box: T;
+    cssClass: string;
 }
 
 /**
  * Properties for a GridComponent
  */
-export interface GridProps {
-    editor: FreEditor;
-    box: GridBox;
+export interface GridProps extends FreComponentProps<GridBox> {
 }
 
 /**
@@ -76,18 +75,38 @@ export interface ErrorProps<T extends Box> extends FreComponentProps<T> {
     children(): any; // replaces slot from Svelte version 4
 }
 
-
 /** M+G start updates */
+
+export interface ListProps<T extends Box> extends FreComponentProps<T> {
+}
+
 export interface ListGroupProps<T extends Box> extends FreComponentProps<T> {
-    cssClass: string;
     canAdd: boolean;
     canCRUD: boolean;
+    canExpand: boolean;
+    isExpanded: boolean;
 }
 
 export interface ItemGroupProps<T extends Box> extends FreComponentProps<T> {
     isEditing: boolean;
-    cssClass: string;
     partOfActionBox: boolean;
     text: string;
+    canDelete: boolean;
+    canUnlink: boolean;
+    canExpand: boolean;
+    canShare: boolean;
+    canCRUD: boolean;
+    canDuplicate: boolean;
+    isRequired: boolean;
+    isExpanded: boolean;
 }
+
+export interface ItemGroup2Props<T extends Box> extends FreComponentProps<T> {
+    isEditing: boolean;
+    canDelete: boolean;
+    canUnlink: boolean;
+    canExpand: boolean;
+    isDraggable: boolean;
+}
+
 /** M+G end updates */

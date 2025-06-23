@@ -23,37 +23,42 @@
 
     export function refresh() {
         dispatch("refresh");
-        loadTable(studyId);
-        loadChecklistAsMarkdown(studyId);
+        loadAllData(studyId);
     }
 
     $effect(() => {
         console.log("[StudyTimelineTableDrawer] $effect studyId:", studyId);
         if (studyId) {
             console.log("studyId", studyId);
-            loadTable(studyId);
-            loadChecklistAsMarkdown(studyId);
+            loadAllData(studyId);
         }
     });
 
-    async function loadChecklistAsMarkdown(id: string) {
-        console.log("loadChecklistAsMarkdown: ", id);
-        const model = ModelManager.getInstance().openModel(id) as StudyConfigurationModel;
-        const unit = model.configuration;
-        const checklistAsMarkdown = getChecklistAsMarkdown(unit);
-        const htmlContent = marked(checklistAsMarkdown);
-        console.log("htmlContent: ", htmlContent);
-        checklistHtml = `<div class="limited-width-container">${htmlContent}</div>`;
-    }
-
-    async function loadTable(id: string) {
-        console.log("loadTable: ", id);
+    async function loadAllData(id: string) {
+        console.log("loadAllData: ", id);
         isLoading = true;
         showTable = false;
         error = null;
         try {
             const startTime = Date.now();
-            tableHtml = loadTableData(studyId);
+            const modelManager = ModelManager.getInstance();
+            await modelManager.openModel(id);
+            const model = modelManager.currentModel as StudyConfigurationModel;
+            const unit = model.configuration;
+
+            if (!unit) {
+                throw new Error("Configuration unit is not available in the model.");
+            }
+            
+            // From loadTableData
+            const rtObject = getTimelineTable(unit) as RtString;
+            tableHtml = rtObject.asString();
+
+            // From loadChecklistAsMarkdown
+            const checklistAsMarkdown = getChecklistAsMarkdown(unit);
+            const htmlContent = marked(checklistAsMarkdown);
+            checklistHtml = `<div class="limited-width-container">${htmlContent}</div>`;
+
             await new Promise((resolve) => setTimeout(() => resolve(null), 0));
             const elapsedTime = Date.now() - startTime;
             if (elapsedTime < 2000) {
@@ -66,13 +71,6 @@
         } finally {
             isLoading = false;
         }
-    }
-
-    function loadTableData(id: string) {
-        const model = ModelManager.getInstance().openModel(id) as StudyConfigurationModel;
-        const unit = model.configuration;
-        const rtObject = getTimelineTable(unit) as RtString;
-        return rtObject.asString();
     }
 </script>
 

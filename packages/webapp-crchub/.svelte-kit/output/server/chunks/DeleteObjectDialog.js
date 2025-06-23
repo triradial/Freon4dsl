@@ -1,5 +1,5 @@
 import { g as goto } from "./client.js";
-import { F as spread_props, B as pop, z as push, E as escape_html, P as createEventDispatcher, I as attr_class } from "./index.js";
+import { F as spread_props, B as pop, z as push, I as attr_class, E as escape_html, P as createEventDispatcher } from "./index.js";
 import "clsx";
 import "./model-manager.js";
 import "./env.js";
@@ -65,7 +65,7 @@ function navigateTo(routeName, id) {
 function GridHeader($$payload, $$props) {
   push();
   const { parentId = null, objectType, title } = $$props;
-  $$payload.out += `<div class="card grid-header w-full"><div class="flex items-center justify-left"><h3 class="main-label-text mr-2">${escape_html(title)}</h3> <button type="button" class="icon-button primary inverted">`;
+  $$payload.out += `<div${attr_class(`card grid-header w-full ${parentId ? "mt-0" : "mt-3"}`)}><div class="flex items-center justify-left"><h3 class="main-label-text mr-2">${escape_html(title)}</h3> <button type="button" class="icon-button primary inverted">`;
   Plus($$payload, { size: "16" });
   $$payload.out += `<!----></button></div></div>`;
   pop();

@@ -4099,6 +4099,7 @@ class ListGroupBox extends Box {
     this.isExpanded = true;
     this.canAdd = false;
     this.canCRUD = false;
+    this.canExpand = true;
     FreUtils.initializeObject(this, initializer);
     this.setLabel(getLabel);
     this.child = child;
@@ -4165,6 +4166,7 @@ class ItemGroupBox extends Box {
     this.canCRUD = false;
     this.canEdit = true;
     this.canDuplicate = false;
+    this.canExpand = true;
     this.isCharAllowed = () => {
       return CharAllowed.OK;
     };
@@ -5301,7 +5303,8 @@ class BoxUtil {
       selectable: initializer?.selectable ?? true,
       isExpanded: initializer?.isExpanded ?? false,
       canAdd: initializer?.canAdd ?? false,
-      canCRUD: initializer?.canCRUD ?? false
+      canCRUD: initializer?.canCRUD ?? false,
+      canExpand: initializer?.canExpand ?? true
     };
     let result = BoxFactory.listGroup(node, role, label, childBox, updatedInitializer);
     return result;
@@ -5321,6 +5324,7 @@ class BoxUtil {
       canUnlink: initializer?.canUnlink ?? false,
       canCRUD: initializer?.canCRUD ?? false,
       canEdit: initializer?.canEdit ?? true,
+      canExpand: initializer?.canExpand ?? true,
       placeHolder: ph2
     };
     const property = node[propertyName];
@@ -23997,16 +24001,30 @@ class bG {
         t,
         "periods",
         "Study Periods",
-        BoxUtil.verticalPartListBox(t, t.periods, "periods", null, this.handler, { cssClass: "ml-6 mb-2" }),
-        { cssClass: "type1 mt-2", isExpanded: true, canAdd: true }
+        BoxUtil.verticalPartListBox(
+          t,
+          t.periods,
+          "periods",
+          null,
+          this.handler,
+          { cssClass: "vplb sc1 type1" }
+        ),
+        { cssClass: "lgb sc2 type1", canAdd: true, canExpand: true, isExpanded: true }
       ),
       ...t.showSharedTasks === true ? [
         BoxUtil.listGroupBox(
           t,
           "shared-tasks",
           "Shared Tasks",
-          BoxUtil.verticalPartListBox(t, t.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mb-2" }),
-          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true }
+          BoxUtil.verticalPartListBox(
+            t,
+            t.tasks,
+            "tasks",
+            null,
+            this.handler,
+            { cssClass: "lgb sc3 type1" }
+          ),
+          { cssClass: "sc4 type1", isExpanded: true, canAdd: true }
         )
       ] : [],
       ...t.showSystems === true ? [
@@ -24014,10 +24032,15 @@ class bG {
           t,
           "shared-systems",
           "Systems",
-          BoxUtil.verticalPartListBox(t, t.systemAccesses, "systemAccesses", null, this.handler, {
-            cssClass: "ml-6 mb-2"
-          }),
-          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true }
+          BoxUtil.verticalPartListBox(
+            t,
+            t.systemAccesses,
+            "systemAccesses",
+            null,
+            this.handler,
+            { cssClass: "vplb sc5 type1" }
+          ),
+          { cssClass: "lgb sc6 type1", isExpanded: true, canAdd: true }
         )
       ] : [],
       ...t.showPeople === true ? [
@@ -24025,8 +24048,18 @@ class bG {
           t,
           "shared-people",
           "People",
-          BoxUtil.indentBox(t, 4, "21", BoxUtil.getBoxOrAction(t, "staffing", "Staffing", this.handler)),
-          { cssClass: "type1 mt-2", isExpanded: true, canAdd: true }
+          BoxUtil.indentBox(
+            t,
+            4,
+            "21",
+            BoxUtil.getBoxOrAction(
+              t,
+              "staffing",
+              "Staffing",
+              this.handler
+            )
+          ),
+          { cssClass: "lgb sc8 type1", isExpanded: true, canAdd: true }
         )
       ] : []
     ]);
@@ -24040,7 +24073,7 @@ class bG {
       (a) => {
         t.text = a;
       },
-      { placeHolder: n, cssClass: "mr-2" }
+      { placeHolder: n, cssClass: "desc" }
     );
   }
   projectPeriod(e) {
@@ -24060,21 +24093,35 @@ class bG {
               t,
               "period-hlist-line-1",
               "",
-              [BoxUtil.getBoxOrAction(t, "description", "Description", this.handler)],
-              { selectable: false, cssClass: "w-full mt-1 align-top" }
+              [
+                BoxUtil.getBoxOrAction(
+                  t,
+                  "description",
+                  "Description",
+                  this.handler
+                )
+              ],
+              { selectable: false, cssClass: "per1 desc align-top" }
             )
           ] : [],
           BoxUtil.listGroupBox(
             t,
             "events",
             "Events",
-            BoxUtil.verticalPartListBox(t, t.events, "events", null, this.handler, { cssClass: "ml-6" }),
-            { cssClass: "type2", isExpanded: true, canAdd: true }
+            BoxUtil.verticalPartListBox(
+              t,
+              t.events,
+              "events",
+              null,
+              this.handler,
+              { cssClass: "vplb per2 type2 ml-6" }
+            ),
+            { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true }
           )
         ],
-        { cssClass: "ml-8 mb-2" }
+        { cssClass: "vl per4 type2" }
       ),
-      { cssClass: "type1", placeHolder: "enter", isExpanded: false, isRequired: true }
+      { cssClass: "igb per5 type2", placeHolder: "enter", canExpand: true, isExpanded: false, isRequired: true }
     );
   }
   projectEvent(e) {
@@ -24094,7 +24141,11 @@ class bG {
             "Event-hlist-line-1",
             "",
             [
-              BoxUtil.labelBox(t, "This is a", "top-1-line-1-item-0"),
+              BoxUtil.labelBox(
+                t,
+                "This is a",
+                "top-1-line-1-item-0"
+              ),
               BoxUtil.limitedBox(
                 t,
                 "typeOfEvent",
@@ -24104,12 +24155,26 @@ class bG {
                 LimitedDisplay.SELECT,
                 Ct.getInstance().scoper
               ),
-              BoxUtil.labelBox(t, "that is also referred to as", "top-1-line-1-item-2"),
-              BoxUtil.textBox(t, "alternativeName")
+              BoxUtil.labelBox(
+                t,
+                "that is also referred to as",
+                "top-1-line-1-item-2"
+              ),
+              BoxUtil.textBox(
+                t,
+                "alternativeName"
+              )
             ],
-            { selectable: false }
+            { cssClass: "ml-6", selectable: false }
           ),
-          ...s === true ? [BoxUtil.getBoxOrAction(t, "description", "Description", this.handler)] : [],
+          ...s === true ? [
+            BoxUtil.getBoxOrAction(
+              t,
+              "description",
+              "Description",
+              this.handler
+            )
+          ] : [],
           ...n === true ? [
             BoxUtil.listGroupBox(
               t,
@@ -24119,9 +24184,14 @@ class bG {
                 t,
                 "schedule",
                 "ExpandCollapseWrapper",
-                BoxUtil.getBoxOrAction(t, "schedule", "EventSchedule", this.handler)
+                BoxUtil.getBoxOrAction(
+                  t,
+                  "schedule",
+                  "EventSchedule",
+                  this.handler
+                )
               ),
-              { cssClass: "type3", isExpanded: true }
+              { cssClass: "lgb ev4 type3", isExpanded: true }
             )
           ] : [],
           ...a === true ? [
@@ -24129,14 +24199,21 @@ class bG {
               t,
               "tasks",
               "Checklist",
-              BoxUtil.verticalPartListBox(t, t.tasks, "tasks", null, this.handler, { cssClass: "ml-6 mt-2 mb-2" }),
-              { cssClass: "type3", isExpanded: true, canAdd: true }
+              BoxUtil.verticalPartListBox(
+                t,
+                t.tasks,
+                "tasks",
+                null,
+                this.handler,
+                { cssClass: "vplb ev5 type3" }
+              ),
+              { cssClass: "lgb ev6 type3", isExpanded: true, canAdd: true }
             )
           ] : []
         ],
-        { cssClass: "ml-6 mb-2" }
+        { cssClass: "vl ev7 type3" }
       ),
-      { cssClass: "type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true }
+      { cssClass: "igb ev8 type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true }
     );
   }
   // projectSchedule(event: EventSchedule): Box {
@@ -24206,18 +24283,42 @@ class bG {
             i,
             4,
             "it2",
-            BoxFactory.verticalLayout(i, "task-overall", "", [
-              ...s ? [BoxUtil.getBoxOrAction(i, "description", "Description", this.handler)] : [],
-              BoxUtil.listGroupBox(
-                i,
-                "steps",
-                "Steps",
-                BoxUtil.indentBox(i, 3, "t12", BoxUtil.verticalPartListBox(i, i.steps, "steps", null, this.handler)),
-                { cssClass: "type4", isExpanded: true, canAdd: true }
-              )
-            ])
+            BoxFactory.verticalLayout(
+              i,
+              "task-overall",
+              "",
+              [
+                ...s ? [
+                  BoxUtil.getBoxOrAction(
+                    i,
+                    "description",
+                    "Description",
+                    this.handler
+                  )
+                ] : [],
+                BoxUtil.listGroupBox(
+                  i,
+                  "steps",
+                  "Steps",
+                  BoxUtil.indentBox(
+                    i,
+                    3,
+                    "t12",
+                    BoxUtil.verticalPartListBox(
+                      i,
+                      i.steps,
+                      "steps",
+                      null,
+                      this.handler,
+                      { cssClass: "vplb tsk2 type4" }
+                    )
+                  ),
+                  { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+                )
+              ]
+            )
           ),
-          { cssClass: "type3", placeHolder: "enter", canShare: true, canDelete: true, isRequired: true }
+          { cssClass: "igb tsk4 type3", placeHolder: "enter", canShare: true, canDelete: true, isRequired: true }
         );
       } else {
         let i = e, o = i.$task;
@@ -24238,18 +24339,42 @@ class bG {
             o,
             4,
             "it2",
-            BoxFactory.verticalLayout(o, "task-overall", "", [
-              ...s ? [BoxUtil.getBoxOrAction(o, "description", "Description", this.handler)] : [],
-              BoxUtil.listGroupBox(
-                o,
-                "steps",
-                "Steps",
-                BoxUtil.indentBox(o, 3, "t12", BoxUtil.verticalPartListBox(o, o.steps, "steps", null, this.handler)),
-                { cssClass: "type4", isExpanded: true, canAdd: true }
-              )
-            ])
+            BoxFactory.verticalLayout(
+              o,
+              "task-overall",
+              "",
+              [
+                ...s ? [
+                  BoxUtil.getBoxOrAction(
+                    o,
+                    "description",
+                    "Description",
+                    this.handler
+                  )
+                ] : [],
+                BoxUtil.listGroupBox(
+                  o,
+                  "steps",
+                  "Steps",
+                  BoxUtil.indentBox(
+                    o,
+                    3,
+                    "t12",
+                    BoxUtil.verticalPartListBox(
+                      o,
+                      o.steps,
+                      "steps",
+                      null,
+                      this.handler,
+                      { cssClass: "vplb tsk2 type4" }
+                    )
+                  ),
+                  { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+                )
+              ]
+            )
           ),
-          { cssClass: "type3", placeHolder: "enter", canDelete: true, isRequired: false }
+          { cssClass: "igb tsk4 type3", placeHolder: "enter", canDelete: true, isRequired: false }
         ) : t = BoxUtil.itemGroupBox2(
           i,
           "task",
@@ -24264,7 +24389,7 @@ class bG {
           },
           Ct.getInstance().scoper,
           BoxFactory.label(i, "task-reference", "No task details"),
-          { cssClass: "type3", placeHolder: "choose", canExpand: false, canDelete: true, isRequired: true }
+          { cssClass: "igb2 tsk4 type3", placeHolder: "choose", canExpand: false, canDelete: true, isRequired: true }
         );
       }
     else {
@@ -24274,22 +24399,37 @@ class bG {
         "task",
         "Task:",
         "name",
-        BoxUtil.indentBox(
-          i,
-          4,
-          "it1",
-          BoxFactory.verticalLayout(i, "task-overall", "", [
-            ...s ? [BoxUtil.getBoxOrAction(i, "description", "Description", this.handler)] : [],
-            BoxUtil.listGroupBox(
+        // BoxUtil.indentBox(
+        //     element, 4, "it1",
+        BoxFactory.verticalLayout(i, "task-overall", "", [
+          ...s ? [
+            BoxUtil.getBoxOrAction(
               i,
-              "steps",
-              "Steps",
-              BoxUtil.indentBox(i, 3, "t11", BoxUtil.verticalPartListBox(i, i.steps, "steps", null, this.handler)),
-              { cssClass: "type4", isExpanded: true, canAdd: true }
+              "description",
+              "Description",
+              this.handler
             )
-          ])
-        ),
-        { cssClass: "type3", placeHolder: "enter", canShare: false, canDelete: false, isRequired: true }
+          ] : [],
+          BoxUtil.listGroupBox(
+            i,
+            "steps",
+            "Steps",
+            // BoxUtil.indentBox(
+            //     element, 3, "t11", 
+            BoxUtil.verticalPartListBox(
+              i,
+              i.steps,
+              "steps",
+              null,
+              this.handler,
+              { cssClass: "vplb tsk2 type4" }
+            ),
+            // ),
+            { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+          )
+        ]),
+        // ),
+        { cssClass: "igb tsk4 type3", placeHolder: "enter", canShare: false, canDelete: false, isRequired: true }
       );
     }
     return t;
@@ -24301,12 +24441,21 @@ class bG {
       "step",
       "Step:",
       "title",
-      BoxUtil.indentBox(
+      // BoxUtil.indentBox(
+      //     element, 4, "ss1",
+      BoxFactory.verticalLayout(
         e,
-        4,
-        "ss1",
-        BoxFactory.verticalLayout(e, "step-overall", "", [
-          ...n ? [BoxUtil.getBoxOrAction(e, "detailsDescription", "Description", this.handler)] : [],
+        "step-overall",
+        "",
+        [
+          ...n ? [
+            BoxUtil.getBoxOrAction(
+              e,
+              "detailsDescription",
+              "Description",
+              this.handler
+            )
+          ] : [],
           ...a ? [
             BoxUtil.listGroupBox(
               e,
@@ -24316,9 +24465,16 @@ class bG {
                 e,
                 3,
                 "ss11",
-                BoxUtil.verticalPartListBox(e, e.references, "references", null, this.handler)
+                BoxUtil.verticalPartListBox(
+                  e,
+                  e.references,
+                  "references",
+                  null,
+                  this.handler,
+                  { cssClass: "vplb st2 type4" }
+                )
               ),
-              { cssClass: "type4", isExpanded: false, canAdd: true }
+              { cssClass: "lgb st1 type4", isExpanded: false, canAdd: true }
             )
           ] : [],
           ...s ? [
@@ -24326,8 +24482,20 @@ class bG {
               e,
               "systems",
               "Systems",
-              BoxUtil.indentBox(e, 3, "ss12", BoxUtil.verticalPartListBox(e, e.systems, "systems", null, this.handler)),
-              { cssClass: "type4", isExpanded: false, canAdd: true }
+              BoxUtil.indentBox(
+                e,
+                3,
+                "ss12",
+                BoxUtil.verticalPartListBox(
+                  e,
+                  e.systems,
+                  "systems",
+                  null,
+                  this.handler,
+                  { cssClass: "vplb st3 type4" }
+                )
+              ),
+              { cssClass: "lgb st4 type4", isExpanded: false, canAdd: true }
             )
           ] : [],
           ...i ? [
@@ -24335,13 +24503,26 @@ class bG {
               e,
               "people",
               "People",
-              BoxUtil.indentBox(e, 3, "ss13", BoxUtil.verticalPartListBox(e, e.people, "people", null, this.handler)),
-              { cssClass: "type4", isExpanded: false, canAdd: true }
+              BoxUtil.indentBox(
+                e,
+                3,
+                "ss13",
+                BoxUtil.verticalPartListBox(
+                  e,
+                  e.people,
+                  "people",
+                  null,
+                  this.handler,
+                  { cssClass: "vplb st5 type4" }
+                )
+              ),
+              { cssClass: "lgb st6 type4", isExpanded: false, canAdd: true }
             )
           ] : []
-        ])
+        ]
       ),
-      { cssClass: "w-full type3", placeHolder: "enter", isRequired: true }
+      // ),
+      { cssClass: "igb st7 type3", placeHolder: "enter", isRequired: true }
     );
   }
   projectReference(e) {
@@ -24350,7 +24531,20 @@ class bG {
       "reference",
       "Reference",
       "title",
-      BoxUtil.indentBox(e, 6.5, "ir1", BoxFactory.verticalLayout(e, "reference-overall", "", [BoxUtil.textBox(e, "link")])),
+      // BoxUtil.indentBox(
+      //     element, 6.5, "ir1", 
+      BoxFactory.verticalLayout(
+        e,
+        "reference-overall",
+        "",
+        [
+          BoxUtil.textBox(
+            e,
+            "link"
+          )
+        ]
+      ),
+      // ),
       { cssClass: "w-full type3", placeHolder: "reference", canShare: true, isRequired: true }
     );
   }
@@ -24361,15 +24555,20 @@ class bG {
       "system",
       "System",
       "name",
-      BoxUtil.indentBox(
-        e,
-        6.5,
-        "is1",
-        BoxFactory.verticalLayout(e, "system-overall", "", [
-          BoxUtil.textBox(e, "functionName"),
-          ...n ? [BoxUtil.getBoxOrAction(e, "description", "Description", this.handler)] : []
-        ])
-      ),
+      // BoxUtil.indentBox(
+      //     element, 6.5, "is1",
+      BoxFactory.verticalLayout(e, "system-overall", "", [
+        BoxUtil.textBox(e, "functionName"),
+        ...n ? [
+          BoxUtil.getBoxOrAction(
+            e,
+            "description",
+            "Description",
+            this.handler
+          )
+        ] : []
+      ]),
+      // ),
       { cssClass: "w-full type3", placeHolder: "system", canShare: true, isRequired: true }
     );
   }
@@ -24379,16 +24578,19 @@ class bG {
       "person",
       "Person",
       "name",
-      BoxUtil.indentBox(
+      // BoxUtil.indentBox(
+      //     element, 6.5, "ip1",
+      BoxFactory.verticalLayout(
         e,
-        6.5,
-        "ip1",
-        BoxFactory.verticalLayout(e, "person-overall", "", [
+        "person-overall",
+        "",
+        [
           BoxUtil.textBox(e, "email"),
           BoxUtil.textBox(e, "phoneNumber"),
           BoxUtil.getBoxOrAction(e, "role", "StaffRole", this.handler)
-        ])
+        ]
       ),
+      // ),
       { cssClass: "w-full type3", placeHolder: "name", canShare: true, isRequired: true }
     );
   }
@@ -24458,19 +24660,22 @@ class bG {
 }
 class wG {
   resolvePathName(e, t, n, a) {
-    throw new Error("Method not implemented.");
   }
   replacementNamespace(e) {
   }
   isInScope(e, t, n, a) {
+    return false;
   }
   getVisibleElements(e, t, n) {
+    return [];
   }
   getFromVisibleElements(e, t, n, a) {
   }
   getVisibleNames(e, t, n) {
+    return [];
   }
   additionalNamespaces(e) {
+    return [];
   }
 }
 class EG {
@@ -88615,7 +88820,6 @@ class ModelManager {
     LOGGER.log("ModelManager.openModel(" + modelName + ")");
     updateEditorState(true, true, false);
     this.resetGlobalVariables();
-    await this.saveCurrentUnit();
     await this.modelStore.openModel(modelName);
     const unitIdentifiers = this.modelStore.getUnitIdentifiers();
     if (!!unitIdentifiers && unitIdentifiers.length > 0) {
@@ -88847,34 +89051,34 @@ class ModelManager {
   }
 }
 export {
-  isListGroupBox as $,
+  isEmptyLineBox as $,
   AST as A,
   BehaviorExecutionResult as B,
   Ct as C,
-  LimitedDisplay as D,
+  isListGroupBox as D,
   ElementBox as E,
   FreLanguage as F,
-  isButtonBox as G,
+  isItemGroupBox as G,
   Hd as H,
-  isExternalBox as I,
-  isIndentBox as J,
-  isLabelBox as K,
+  isItemGroupBox2 as I,
+  isMultiLineTextBox2 as J,
+  isBooleanControlBox as K,
   LOe as L,
   ModelManager as M,
   NN as N,
-  isLayoutBox as O,
-  isListBox as P,
-  isOptionalBox2 as Q,
+  BoolDisplay as O,
+  isNumberControlBox as P,
+  isLimitedControlBox as Q,
   RtString as R,
   SelectBox as S,
   TableDirection as T,
-  isTableBox as U,
-  isTextBox as V,
+  LimitedDisplay as U,
+  isButtonBox as V,
   WebappConfigurator as W,
-  isEmptyLineBox as X,
-  isMultiLineTextBox2 as Y,
-  isItemGroupBox as Z,
-  isItemGroupBox2 as _,
+  isExternalBox as X,
+  isLabelBox as Y,
+  isOptionalBox2 as Z,
+  isTextBox as _,
   FreLogger as a,
   lf as a0,
   jo as a1,
@@ -88905,8 +89109,8 @@ export {
   tv as t,
   ActionBox as u,
   isReferenceBox as v,
-  isBooleanControlBox as w,
-  BoolDisplay as x,
-  isNumberControlBox as y,
-  isLimitedControlBox as z
+  isIndentBox as w,
+  isLayoutBox as x,
+  isListBox as y,
+  isTableBox as z
 };

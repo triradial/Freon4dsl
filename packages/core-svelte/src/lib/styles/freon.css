@@ -67,7 +67,11 @@
 
 .list-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center
+}
+
+.list-item.type1 {
+    margin-left: 2rem;
 }
 
 .drag-handle {

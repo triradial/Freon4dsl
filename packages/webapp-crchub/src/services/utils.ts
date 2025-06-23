@@ -22,9 +22,9 @@ import type { ScheduledEventInstance } from "@freon4dsl/study-configuration";
 export function getStatusColor(status: string): string {
     switch (status.toLowerCase()) {
         case "active":
-            return "green";
+            return "blue";
         case "complete":
-            return "dark";
+            return "green";
         case "suspended":
             return "pink";
         case "terminated":

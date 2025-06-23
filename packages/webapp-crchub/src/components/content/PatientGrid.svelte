@@ -154,7 +154,7 @@
         {
             type: "delete",
             icon: "delete",
-            level: "secondary",
+            level: "primary",
             onClick: onDeleteClick,
             isVisible: () => {
                 return canManageStudies;

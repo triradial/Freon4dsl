@@ -4,6 +4,10 @@ main {
   height: calc(100vh);
 }
 
+.editor-component {
+  margin: 0.5rem;
+}
+
 .editor-part {
   height: 100%;
   box-sizing: border-box;
@@ -53,7 +57,7 @@ main {
   font-variant: normal;
   margin: 0 !important;
   padding: 2px 0px 0px 2px;
-  white-space: normal;
+  white-space: nowrap;
   display: inline-block;
   line-height: 20px !important;
   height: 24px !important;
@@ -207,14 +211,14 @@ main {
 
 .list-group .action-button {
   display: none;
-  margin-left: 0.2rem;
-  margin-top: 0.4rem;
+  margin-left: 0.25rem !important;
+  margin-top: 0rem !important;
 }
 
 .list-group:hover .action-button {
   display: inline-block;
-  margin-left: 0.2rem;
-  margin-top: 0.4rem;
+  margin-left: 0.25rem !important;
+  margin-top: 0 !important;
 }
 
 .list-group .toggle-button {
@@ -222,19 +226,22 @@ main {
 }
 
 .list-group.type1 {
-  height: 36px;
+  height: 2rem;
 }
 
 .list-group.type2 {
-  height: 32px;
+  height: 2rem;
+  margin-left: 1.25rem;
 }
 
 .list-group.type3 {
-  height: 32px;
+  height: 2rem;
+  margin-left: 1.25rem;
 }
 
 .list-group.type4 {
-  height: 32px;
+  height: 2rem;
+  margin-left: 1.25rem;
 }
 
 .list-group-label {
@@ -263,9 +270,56 @@ main {
   font-size: 0.7rem;
 }
 
+.list-group-content.type1 {
+  margin-left: 0;
+}
+
+.list-group-content.type2 {
+  margin-left: 1.25rem;
+}
+
+.list-group-content.type3 {
+  margin-left: 2.25rem;
+}
+
+.list-group-content.type4 {
+  margin-left: 1.25rem;
+}
+
+.list-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.list-item.type1 {
+  margin-left: 1.25rem;
+}
+
+.list-item.type2 {
+  margin-left: 1.5rem;
+}
+
+.drag-handle {
+  cursor: move;
+  z-index: 10;
+  margin-top: 0.5rem;
+}
+
 /* #endregion */
 
 /* #region Item Group Component */
+.circle-button {
+  padding: 0 0.25rem !important;
+  border-width: 1px !important;
+  height: 1.5rem !important;
+  width: 1.5rem !important;
+  border-radius: 99rem !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-decoration-line: none;
+  white-space: nowrap;
+}
+
 .item-group:empty:before {
   content: attr(data-placeholdertext);
   margin: 0;
@@ -279,32 +333,32 @@ main {
 
 .item-group .action-button {
   display: none;
-  margin-left: 0.2rem;
-  margin-top: 0.25rem;
+  margin-left: 0.25rem !important;
+  margin-top: 0rem !important;
 }
 
 .item-group:hover .action-button {
   display: inline-block;
-  margin-left: 0.2rem;
-  margin-top: 0.25rem;
+  margin-left: 0.25rem !important  ;
+  margin-top: 0rem !important;
 }
 
 .item-group .toggle-button {
-  margin-top: 0.3rem;
+  margin-top: 0;
 }
 
 .item-group .required {}
 
 .item-group.type1 {
-  height: 2.3rem;
+  height: 2rem;
 }
 
 .item-group.type2 {
-  height: 2.3rem;
+  height: 2rem;
 }
 
 .item-group.type3 {
-  height: 2.3rem;
+  height: 2rem;
 }
 
 .item-group-label {

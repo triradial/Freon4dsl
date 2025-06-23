@@ -13,7 +13,7 @@
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
     // Props
-    let { editor, box }: FreComponentProps<LayoutBox> = $props();
+    let { editor, box, cssClass }: FreComponentProps<LayoutBox> = $props();
 
     let LOGGER: FreLogger = LAYOUT_LOGGER;
     let id: string = $state('');
@@ -58,27 +58,24 @@
 </script>
 
 {#if errMess.length > 0}
-    <ErrorMarker {editor} {box} />
+    <ErrorMarker {editor} {box} cssClass={box.cssClass} />
 {/if}
 <span
-    class="layout-component {errorCls}"
     {id}
+    class="layout-component {errorCls} {cssClass}"
     class:layout-component-horizontal={isHorizontal}
     class:layout-component-vertical={!isHorizontal}
+    class:w-full={!isHorizontal}
     tabindex="-1"
     bind:this={element}
 >
     {#if isHorizontal}
         {#each children as child (child.id)}
-            <RenderComponent box={child} {editor} />
+            <RenderComponent box={child} {editor} cssClass={child.cssClass} />
         {/each}
     {:else}
         {#each children as child (child.id)}
-            <!--            {#if i > 0 && i < children.length && !(isEmptyLineBox(children[i - 1]))}
-                <br/>
-            {/if}
--->
-            <RenderComponent box={child} {editor} />
+            <RenderComponent box={child} {editor} cssClass={child.cssClass} />
         {/each}
     {/if}
 </span>

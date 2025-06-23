@@ -362,6 +362,10 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Editor */
+.crc-editor {
+  background-color: white;
+}
+
 .footer-container {
   background-color: var(--drawer-header-background);
   border-top: 1px solid var(--drawer-handle);
@@ -409,7 +413,7 @@ appnav a:visited {
 
 .crc-grid a,
 .crc-grid a:visited {
-  color: rgb(0, 100, 201);
+  color: var(--primary-600);
 }
 
 .crc-grid a:hover {
@@ -458,22 +462,21 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Tab */
-.crc-tab {
-  background-color: var(--content-background);
-}
-
-.crc-tab .tab-item {
-  color: var(-black);
+.tab-item {
+  color: var(--black);
   background-color: transparent;
+  border-bottom: 2px solid transparent !important;
 }
 
-.crc-tab .tab-item:hover {
-  background-color: var(--black-10t);
+.tab-item:hover {
+  background-color: var(--black-10t) !important;
 }
 
-.crc-tab .tab-item:active {
-  background-color: var(--black-20t);
+.tab-active {
+  color: var(--primary-600) !important;
+  border-bottom: 2px solid var(--primary-600) !important;
 }
+
 /* #endregion */
 
 /* #region Drawer */
@@ -651,6 +654,18 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Error Drawer */
+.error-drawer {
+  color: var(--black) !important;
+}
+
+.error-drawer-head {
+  color: var(--black) !important;
+}
+
+.error-drawer-cell {
+  color: var(--black) !important;
+} 
+
 .error-drawer-button{
   background: var(--toolbar-button-background) !important;
   color: var(--toolbar-button) !important;
@@ -667,14 +682,168 @@ appnav a:visited {
 } 
 /* #endregion */
 
+/* #region Buttons */
+.standard-button.primary:not(:disabled),
+.icon-button.primary:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-900) !important;
+  border-color: var(--primary-900) !important;
+  transition: color 0.3s ease !important;
+}
+
+.standard-button.primary:hover:not(:disabled),
+.icon-button.primary:hover:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-900) !important;
+  border-color: var(--white) !important;
+}
+
+.standard-button.primary:active:not(:disabled),
+.icon-button.primary:active:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-700) !important;
+  border-color: var(--white) !important;
+}
+
+.standard-button.primary.inverted:not(:disabled),
+.icon-button.primary.inverted:not(:disabled) {
+  color: var(--primary-900) !important;
+  background-color: transparent !important;
+  border-color: var(--primary-900) !important;
+  transition: color 0.3s ease !important;
+}
+
+.standard-button.primary.inverted:hover:not(:disabled),
+.icon-button.primary.inverted:hover:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-900) !important;
+  border-color: var(--primary-900) !important;
+}
+
+.standard-button.primary.inverted:active:not(:disabled),
+.icon-button.primary.inverted:active:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--primary-700) !important;
+  border-color: var(--primary-700) !important;
+}
+
+.standard-button:disabled,
+.icon-button:disabled {
+  color: var(--gray-700) !important;
+  background-color: transparent !important;
+  border-color: var(--gray-600) !important;
+  cursor: not-allowed !important;
+}
+
+.standard-button.secondary:not(:disabled),
+.icon-button.secondary:not(:disabled) {
+  color: var(--gray-400) !important;
+  background-color: transparent !important;
+  border-color: var(--gray-400) !important;
+  transition: color 0.3s ease !important;
+}
+
+.standard-button.secondary:hover:not(:disabled),
+.icon-button.secondary:hover:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--gray-600) !important;
+  border-color: var(--gray-600) !important;
+}
+
+.standard-button.secondary:active:not(:disabled),
+.icon-button.secondary:active:not(:disabled) {
+  color: var(--white) !important;
+  background-color: var(--gray-800) !important;
+}
+
+.standard-button.tertiary,
+.icon-button.tertiary {
+  color: var(--gray-400) !important;
+  background-color: transparent !important;
+  border-color: var(--gray-400) !important;
+  transition: color 0.3s ease !important;
+}
+
+.standard-button.tertiary:hover,
+.icon-button.tertiary:hover {
+  color: var(--white) !important;
+  background-color: var(--gray-400) !important;
+}
+
+.standard-button.tertiary:active,
+.icon-button.tertiary:active {
+  color: var(--white) !important;
+  background-color: var(--gray-600) !important;
+}
+/* #endregion */
+
 /* #region Labels */
 .small-label-text {
-  color: var(--primary-900);
+  color: var(--primary-700);
 }
 
 .main-label-text {
-  color: var(--text-primary-500) !important;
+  color: var(--text-primary-600) !important;
 }
 /* #endregion */
 
 /* #region Inputs */
+.input-field:not(.error),
+.textarea-field:not(.error),
+.select-field:not(.error) {
+  background-color: var(--input-background);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
+}
+
+.input-field.error {
+  border-color: var(--error-color);
+  background-color: var(--error-background);
+  color: var(--error-color);
+}
+
+/* #endregion */
+
+/* #region Badge */
+
+.badge.default {
+  background-color: #454d59;
+  color: var(--white);
+}
+
+.badge.green {
+  background-color: #177967;
+  color: var(--white);
+}
+
+.badge.blue {
+  background-color: #4484af;
+  color: var(--white);
+}
+
+.badge.red {
+  background-color: #da5353;
+  color: var(--white);
+}
+
+.badge.yellow {
+  background-color: #cbdb3b;
+  color: var(--white);
+}
+
+.badge.indigo {
+  background-color: #9726e2;
+  color: var(--white);
+}
+
+.badge.pink {
+  background-color: #eb308d;
+  color: var(--white);
+}
+
+.badge.cyan {
+  background-color: #1ce4e4;
+  color: var(--white);
+}
+
+/* #endregion */

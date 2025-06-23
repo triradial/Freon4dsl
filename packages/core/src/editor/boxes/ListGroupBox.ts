@@ -15,9 +15,10 @@ export class ListGroupBox extends Box {
     private $label: string = "";
     private $child: Box = null;
 
-    isExpanded: boolean = true;
-	canAdd: boolean = false;
-	canCRUD: boolean = false; 
+    public isExpanded: boolean = true;
+    public canAdd: boolean = false;
+    public canCRUD: boolean = false; 
+    public canExpand: boolean = true;
 
     constructor(node: FreNode, role: string, getLabel: string | (() => string), child: Box, initializer?: Partial<ListGroupBox>) {
         super(node, role);

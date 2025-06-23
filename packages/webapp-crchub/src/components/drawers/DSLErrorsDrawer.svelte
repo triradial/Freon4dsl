@@ -45,23 +45,28 @@
 
 <div class="drawer-content-area">
     <div class="table-wrap">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover table-striped error-drawer">
             <thead>
-                <tr>
-                    <th class="bg-surface-500-900">Message</th>
-                    <th class="bg-surface-500-900">Severity</th>
+                <tr class="error-drawer-row">
+                    <th class="error-drawer-head">Message</th>
+                    <th class="error-drawer-head">Severity</th>
                 </tr>
             </thead>
             <tbody>
+                {#if modelErrors.length === 0}
+                    <tr class="error-drawer-row">
+                        <td class="error-drawer-cell" colspan="2">No errors found</td>
+                    </tr>
+                {/if}
                 {#each modelErrors as error, index}
-                    <tr class="hover:bg-surface-500-900/50">
-                        <td>
+                    <tr class="error-drawer-row">
+                        <td class="error-drawer-cell">
                             <div class="flex items-center gap-2">
-                                <button type="button" class="icon-button btn-sm" onclick={() => handleClick(index)}><IconArrowUpRight /></button>
+                                <button type="button" class="icon-button" onclick={() => handleClick(index)}><IconArrowUpRight /></button>
                                 <span>{error.message}</span>
                             </div>
                         </td>
-                        <td>{error.severity}</td>
+                        <td class="error-drawer-cell">{error.severity}</td>
                     </tr>
                 {/each}
             </tbody>

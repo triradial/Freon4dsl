@@ -38,7 +38,14 @@
     const LOGGER = new FreLogger('ItemGroupComponent2');
 
     // Props
-    let { box, editor }: { box: ItemGroupBox2; editor: FreEditor } = $props();
+    let { 
+        box, 
+        editor,
+        cssClass,
+        canDelete,
+        canUnlink,
+        canExpand
+    }: ItemGroup2Props<ItemGroupBox2> = $props();
     let textBox: TextBox = $derived(() => box?.textBox);
 
     let id: string; // an id for the html element
@@ -50,7 +57,6 @@
     let filteredOptions: SelectOption[]; // the list of filtered options that are shown in the dropdown
     let allOptions: SelectOption[]; // all options as calculated by the editor
     let textComponent: any;
-    let cssClass: string = '';
     let style: string = '';
 
     let contentElement: HTMLDivElement | null = null;
@@ -59,10 +65,7 @@
     let isExpanded: boolean = false;
     let contentStyle: string = 'display: none';
     let isDraggable: boolean = true;
-    let canDelete: boolean = false;
-    let canUnlink: boolean = false;
     let canEdit: boolean = true;
-    let canExpand: boolean = true;
 
     let setText = (value: string) => {
         if (value === null || value === undefined) {
@@ -560,6 +563,7 @@
     >
         <TextComponent
             {editor}
+            cssClass={textBox?.cssClass}
             box={textBox}
             partOfDropdown={true}
             bind:isEditing
@@ -576,18 +580,19 @@
         {/if}
     </span>
     {#if canUnlink}
-        <button class="btn btn-sm preset-filled action-button h-7 w-7 p-0" onclick={unlinkItem}>
-            <IconUnlink />
+        <button class="btn-icon action-button p-0" onclick={unlinkItem}>
+            <IconUnlink size={16} />
         </button>
     {/if}
     {#if canDelete}
-        <button class="btn btn-sm preset-filled action-button h-7 w-7 p-0" onclick={deleteItem}>
-            <IconTrash2 />
+        <button class="btn-icon action-button p-0" onclick={deleteItem}>
+            <IconTrash2 size={16} />
         </button>
     {/if}
 </div>
 {#key contentStyle}
     <div bind:this={contentElement} style={contentStyle}>
-        <RenderComponent box={child} {editor} />
+        <RenderComponent box={child} {editor} cssClass={child?.cssClass} />
     </div>
 {/key}
+

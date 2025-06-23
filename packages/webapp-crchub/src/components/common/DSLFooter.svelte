@@ -68,18 +68,17 @@
         open={openState}
         onOpenChange={(e) => (openState = e.open)}
         positioning={{ placement: 'top' }}
-        triggerBase="btn btn-sm preset-filled editor-footer-button"
-        contentBase="card bg-surface-200-800 p-4 space-y-4 max-w-[320px] editor-display-options-popover w-40"
+        contentBase="card black p-4 space-y-4 max-w-[320px] editor-display-options-popover w-40"
         arrow
         arrowBackground="!bg-surface-200 dark:!bg-surface-800"
     >
         {#snippet trigger()}
-            <button id="editoritems" type="button" class="btn btn-sm preset-filled editor-footer-button"><IconEye /></button>
+            <button id="editoritems" type="button" class="icon-button editor-footer-button"><IconEye size={16}/></button>
         {/snippet}
         {#snippet content()}
             <header class="flex justify-between">
                 <span class="font-bold text-xl">Display Options</span>
-                <button class="icon-button preset-filled hover:preset-tonal" type="button" onclick={popoverClose}><IconX /></button>
+                <button class="icon-button hover:preset-tonal" type="button" onclick={popoverClose}><IconX size="16" /></button>
             </header>
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_static_element_interactions -->

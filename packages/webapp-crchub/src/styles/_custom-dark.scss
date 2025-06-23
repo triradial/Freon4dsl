@@ -360,6 +360,10 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Editor */
+.crc-editor {
+  background-color: black;
+}
+
 .footer-container {
   background-color: var(--drawer-header-background);
   border-top: 1px solid var(--drawer-handle);
@@ -407,7 +411,7 @@ appnav a:visited {
 
 .crc-grid a,
 .crc-grid a:visited {
-  color: rgb(68, 133, 199);
+  color: var(--primary-500);
 }
 
 .crc-grid a:hover {
@@ -460,15 +464,18 @@ appnav a:visited {
 .tab-item {
   color: var(--white);
   background-color: transparent;
+  border-bottom: 2px solid transparent;
 }
 
-.crc-tab .tab-item:hover {
-  background-color: var(--white-10t);
+.tab-item:hover {
+  background-color: var(--white-10t) !important;
 }
 
-.crc-tab .tab-item:active {
-  background-color: var(--white-20t);
+.tab-active {
+  color: var(--primary-600) !important;
+  border-bottom: 2px solid var(--primary-600) !important;
 }
+
 /* #endregion */
 
 /* #region Drawer */
@@ -642,6 +649,18 @@ border-bottom: 1px solid var(--white-5t) !important;
 /* #endregion */
 
 /* #region Error Drawer */
+.error-drawer {
+  color: var(--white) !important;
+}
+
+.error-drawer-head {
+  color: var(--white) !important;
+}
+
+.error-drawer-cell {
+  color: var(--white) !important;
+} 
+
 .error-drawer-button{
   background: var(--toolbar-button-background) !important;
   color: var(--toolbar-button) !important;
@@ -789,6 +808,50 @@ border-bottom: 1px solid var(--white-5t) !important;
   border-color: var(--error-color);
   background-color: var(--error-background);
   color: var(--error-color);
+}
+
+/* #endregion */
+
+/* #region Badge */
+
+.badge.default {
+  background-color: #454d59;
+  color: var(--white);
+}
+
+.badge.green {
+  background-color: #177967;
+  color: var(--white);
+}
+
+.badge.blue {
+  background-color: #104c74;
+  color: var(--white);
+}
+
+.badge.red {
+  background-color: #ad3737;
+  color: var(--white);
+}
+
+.badge.yellow {
+  background-color: #adb93c;
+  color: var(--white);
+}
+
+.badge.indigo {
+  background-color: #5e1e88;
+  color: var(--white);
+}
+
+.badge.pink {
+  background-color: #b03974;
+  color: var(--white);
+}
+
+.badge.cyan {
+  background-color: #107474;
+  color: var(--white);
 }
 
 /* #endregion */
