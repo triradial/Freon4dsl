@@ -18,7 +18,7 @@
     let isLoading = true;
     let checklistHtml: string = "";
     let error: string | null = null;
-    let showHeadingNumbers: boolean = false;
+    let showHeadingNumbers: boolean = true;
 
     const dispatch = createEventDispatcher();
 
@@ -287,13 +287,13 @@
 </div>
 
 <style>
-    .markdown-body {
+    div.drawer-content-area div.markdown-body .markdown-body {
         box-sizing: border-box;
         min-width: 200px;
         max-width: 980px;
         margin: 0 auto;
         padding: 45px;
-        height: 100%;
+        min-height: 100% !important;
     }
 
     @media (max-width: 767px) {
