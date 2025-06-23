@@ -26,7 +26,7 @@
         dispatch("close");
     }
 
-    function downloadPdf() {
+    function openPdf() {
         const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
         if (!model) {
             error = "Model not loaded, cannot generate PDF.";
@@ -182,6 +182,10 @@
         loadChecklistAsMarkdown();
     }
 
+    export function print() {
+        openPdf();
+    }
+
     $: {
         if (studyId) {
             loadChecklistAsMarkdown();
@@ -245,7 +249,7 @@
             // Generate TOC HTML from the captured headings
             let tocHtml = '<h2>Table of Contents</h2><ul class="toc-list">';
             toc.forEach(item => {
-                tocHtml += `<li style="margin-left: ${(item.level - 1) * 20}px;"><a href="#${item.id}">${item.text}</a></li>`;
+                tocHtml += `<li style="margin-left: ${(item.level - 1) * 20}px;"><a href="#${item.id}" style="color: #cfcfcf;">${item.text}</a></li>`;
             });
             tocHtml += "</ul><hr/>";
 
@@ -266,11 +270,10 @@
 </script>
 
 <div class="drawer-content-area p-2">
-    <div class="flex items-center mb-4">
+    <!-- <div class="flex items-center mb-4">
         <input id="heading-checkbox" type="checkbox" bind:checked={showHeadingNumbers} on:change={loadChecklistAsMarkdown} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
         <label for="heading-checkbox" class="ml-2 text-sm font-medium text-gray-900">Show Heading Numbers</label>
-        <button on:click={downloadPdf} class="ml-auto p-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Open as PDF</button>
-    </div>
+    </div> -->
 
     {#if isLoading}
         <ListPlaceholder divClass="mb-4" />
@@ -290,6 +293,7 @@
         max-width: 980px;
         margin: 0 auto;
         padding: 45px;
+        height: 100%;
     }
 
     @media (max-width: 767px) {

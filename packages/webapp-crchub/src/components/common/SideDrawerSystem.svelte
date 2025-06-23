@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
     import { Button, Tooltip } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faTimes, faGripLinesVertical, faRotateRight } from "@fortawesome/free-solid-svg-icons";
+    import { faTimes, faGripLinesVertical, faRotateRight, faPrint } from "@fortawesome/free-solid-svg-icons";
     import { getDrawer, drawerStore, setDrawerWidth, setActiveDrawer, getDrawerWidth, type Drawer } from "../../services/stores/side-drawer-store.js";
 
     export let isOpen = false;
@@ -39,6 +39,12 @@
     function refreshDrawer() {
         if (activeDrawerInstance && typeof activeDrawerInstance.refresh === "function") {
             activeDrawerInstance.refresh();
+        }
+    }
+
+    function printDrawer() {
+        if (activeDrawerInstance && typeof activeDrawerInstance.print === "function") {
+            activeDrawerInstance.print();
         }
     }
 
@@ -101,7 +107,12 @@
                                 <FontAwesomeIcon icon={faRotateRight} />
                             </Button>
                         {/if}
-                    </div>
+                         {#if getDrawer(activeDrawer)?.supportsPrint}
+                            <Button class="drawer-header-button" on:click={printDrawer}>
+                                <FontAwesomeIcon icon={faPrint} />
+                            </Button>
+                        {/if}
+                   </div>
                     <Button class="drawer-header-button" on:click={closeDrawer}>
                         <FontAwesomeIcon icon={faTimes} />
                     </Button>

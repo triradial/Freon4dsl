@@ -138,7 +138,6 @@ export class StudyChecklistDocumentTemplate {
                 
                 // Build the hierarchical number
                 const number = headingCounters.slice(0, level).join('.');
-                
                 return `${headingMatch[1]} ${number}. ${title}`;
             }
             return line;

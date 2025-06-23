@@ -44,6 +44,7 @@
             title: "Help",
             description: "Help for application.",
             supportsRefresh: false,
+            supportsPrint: false,
             defaultWidth: 900,
         });
         addDrawer({
@@ -53,6 +54,7 @@
             title: "Favorites",
             description: "Manage your favorite studies, patients, and tasks.",
             supportsRefresh: true,
+            supportsPrint: false,
             defaultWidth: 400,
         });
         addDrawer({
@@ -61,7 +63,8 @@
             component: DSLErrorsDrawer,
             title: "Errors",
             description: "View the errors in the study design.",
-            supportsRefresh: true,
+            supportsRefresh: true,  
+            supportsPrint: false,
             defaultWidth: 800,
         });
         addDrawer({
@@ -71,6 +74,7 @@
             title: "Study Timeline Table",
             description: "View the timeline as a table for this study.",
             supportsRefresh: true,
+            supportsPrint: false,
             defaultWidth: 600,
         });
         addDrawer({
@@ -80,6 +84,7 @@
             title: "Study Timeline Chart",
             description: "View the timeline as a chart for this study.",
             supportsRefresh: true,
+            supportsPrint: false,
             defaultWidth: 800,
         });
         addDrawer({
@@ -89,6 +94,7 @@
             title: "Study Checklist",
             description: "View the checklist for this study.",
             supportsRefresh: true,
+            supportsPrint: true,
             defaultWidth: 800,
         });
         setContent($currentRoute);

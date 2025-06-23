@@ -7,7 +7,7 @@
         "clean": "rm -rf node_modules/",
         "build": "rollup -c",
         "build-app": "rollup -c",
-        "dev": "cross-env NODE_OPTIONS='--max-old-space-size=8192' NODE_PORT=8002 rollup -c -w",
+        "dev": "cross-env NODE_OPTIONS='--max-old-space-size=12288' NODE_PORT=8002 rollup -c -w",
         "start": "sirv public --port 8004 --single",
         "validate": "svelte-check --tsconfig ./tsconfig.json",
         "prepare-app": "npx gulp"
