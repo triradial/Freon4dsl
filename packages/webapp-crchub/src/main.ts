@@ -5,6 +5,7 @@ import { StudyConfigurationModelEnvironment } from "@freon4dsl/samples-study-con
 import { ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
 import { env } from "./config/env.js";
+import { ModelManager } from "./services/dsl/model-manager.js";
 
 import DatePicker from "./components/custom/DatePicker.svelte";
 import ExpandCollapseWrapperComponent from "./components/custom/ExpandCollapseWrapperComponent.svelte";
@@ -29,14 +30,10 @@ setCustomComponents([
     { component: TimePicker, knownAs: "TimePicker" },
 ]);
 
-async function initializeApp() {
+ModelManager.getInstance();
 
     const app = new App({
         target: document.body,
-        props: {},
     });
 
-    return app;
-}
-
-export default initializeApp();
+export default app;

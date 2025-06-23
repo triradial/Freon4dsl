@@ -40,9 +40,9 @@ function getTimeline(node: StudyConfiguration) : Timeline {
     return timeline;
 }
 
-export function getChecklistAsMarkdown(studyConfigurationUnit: StudyConfiguration) {
+export function getChecklistAsMarkdown(studyConfigurationUnit: StudyConfiguration, showHeadingNumbers: boolean = false) {
     let timeline = getTimeline(studyConfigurationUnit);
-    const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline);
+    const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline, showHeadingNumbers);
     // const markdown = `<div class="limited-width-container">${studyChecklistAsMarkdown}</div>`;
     return studyChecklistAsMarkdown;
 }
