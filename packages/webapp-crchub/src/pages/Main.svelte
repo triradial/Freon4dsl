@@ -15,6 +15,8 @@
     import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
     import StudyTimelineTableDrawer from "../components/drawers/StudyTimelineTableDrawer.svelte";
     import StudyChecklistDrawer from "../components/drawers/StudyChecklistDrawer.svelte";
+    import StaffAvailabilityDrawer from "../components/drawers/StaffAvailabilityDrawer.svelte";
+    import PatientTimelineChartDrawer from "../components/drawers/PatientTimelineChartDrawer.svelte";
     import DSLErrorsDrawer from "../components/drawers/DSLErrorsDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
 
@@ -28,7 +30,7 @@
     import PatientContent from "../content/Patient.svelte";
     import Availability from "../content/Availability.svelte";
 
-    import { faHeart, faTableList, faTimeline, faTriangleExclamation, faInfoCircle, faCheckSquare } from "@fortawesome/free-solid-svg-icons";
+    import { faHeart, faTableList, faTimeline, faTriangleExclamation, faInfoCircle, faCheckSquare, faUsers, faCalendar } from "@fortawesome/free-solid-svg-icons";
 
     let contentComponent: typeof SvelteComponent;
     let breadcrumbItems: { label: string; href?: string }[] = [];
@@ -81,7 +83,7 @@
             key: "studyTimelineChart",
             icon: faTimeline,
             component: StudyTimelineChartDrawer,
-            title: "Study Timeline Chart",
+            title: "Study Timeline",
             description: "View the timeline as a chart for this study.",
             supportsRefresh: true,
             supportsPrint: false,
@@ -95,6 +97,26 @@
             description: "View the checklist for this study.",
             supportsRefresh: true,
             supportsPrint: true,
+            defaultWidth: 800,
+        });
+        addDrawer({
+            key: "patientTimelineChart",
+            icon: faCalendar,
+            component: PatientTimelineChartDrawer,
+            title: "Patient Timeline",
+            description: "View the availability of staff for this study.",
+            supportsRefresh: true,
+            supportsPrint: false,
+            defaultWidth: 800,
+        });
+        addDrawer({
+            key: "staffAvailability",
+            icon: faUsers,
+            component: StaffAvailabilityDrawer,
+            title: "Staff Availability",
+            description: "View the availability of staff for this study.",
+            supportsRefresh: true,
+            supportsPrint: false,
             defaultWidth: 800,
         });
         setContent($currentRoute);

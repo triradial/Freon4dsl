@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import PatientCard from "../components/cards/PatientCard.svelte";
 
     import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
@@ -9,19 +9,17 @@
 
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { AST, RtString } from "@freon4dsl/core";
-    import { FreNodeReference } from "@freon4dsl/core";
-    import { type StudyConfigurationModel, StudyConfiguration, PatientInfo, PatientHistory, PatientVisit, PatientHistoryUnit, PatientNotAvailable } from "@freon4dsl/samples-study-configuration";
-    import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+    import { type StudyConfigurationModel, PatientInfo, PatientHistory, PatientHistoryUnit } from "@freon4dsl/samples-study-configuration";
     import { getTimelineAsOfADate } from "../services/app/patient-timeline.js";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { FreEditor } from "@freon4dsl/core";
-    import { type Study } from "../services/data/data-store.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { Toolbar, ToolbarButton } from "flowbite-svelte";
     import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
 
     import { fillDateConceptFromAsString } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+    import { setDrawerProps, setDrawerVisibility } from "services/stores/side-drawer-store.js";
 
     export let id: string;
     let patient: Patient | undefined;
@@ -42,12 +40,11 @@
     }
 
     onMount(async () => {
-        const fetchedPatient = await dataStore.getPatient(id);
-        if (!fetchedPatient) {
+        patient = await dataStore.getPatient(id);
+        if (!patient) {
             console.error(`Patient with id ${id} not found`);
             return;
         }
-        patient = fetchedPatient;
         AST.change(async () => {  
             dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
             const modelManager = ModelManager.getInstance();
@@ -57,9 +54,9 @@
             var patientHistoryUnit =  modelManager.modelStore.getUnitByName("PatientHistoryUnit") as PatientHistoryUnit;
             clearPatientHistory(patientHistoryUnit.patientHistory);
             //TODO: Talk to Graham about changing patientNumber to patient_id or something else that can be initials, etc. 
-            patientHistoryUnit.patientHistory.patient_id = fetchedPatient.patientNumber;
+            patientHistoryUnit.patientHistory.patient_id = patient!.patientNumber;
             // Get the model data for all the Patients
-            patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(fetchedPatient.studyId, "PatientInfo") as PatientInfo;
+            patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(patient!.studyId, "PatientInfo") as PatientInfo;
             if (patientInfo === null || patientInfo === undefined) {
                 //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
                 await modelManager.modelStore.createUnit("PatientInfo", "PatientInfo");
@@ -67,7 +64,7 @@
                 // The PatientInfo already exists, we need to setup the patientHistory for editing
                 var found = false;
                 patientInfo.patientHistories.forEach(aPatientHistory => {
-                    if (!found && aPatientHistory.patient_id === fetchedPatient.patientNumber) {
+                    if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
                         aPatientHistory.patientVisits.forEach(visit => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
                         aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
                         patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
@@ -87,11 +84,22 @@
             editorLoaded = true;
         }, 300);
 
-        if (fetchedPatient) {
+        if (patient) {
             // await loadChart(patient.studyId);
         } else {
             console.error(`Patient with id ${id} not found`);
         }
+        setDrawerProps("studyChecklist", { studyId: patient!.studyId });
+        setDrawerVisibility("studyChecklist", true);
+        setDrawerProps("patientTimelineChart", { id: id });
+        setDrawerVisibility("patientTimelineChart", true);
+        setDrawerProps("staffAvailability", { studyId: id });
+        setDrawerVisibility("staffAvailability", true);
+    });
+
+    onDestroy(() => {
+        setDrawerVisibility("studyChecklist", false);
+        setDrawerVisibility("patientTimelineChart", false);
     });
 
     const getTimelineChartError = () => {
@@ -104,7 +112,7 @@
     };
 
     const getChartWithPatientHistory = async (referenceDate: Date) => {
-        const fetchedPatient = await dataStore.getPatient(id);
+        patient = await dataStore.getPatient(id);
 
         var found = false;
         var patientHistory: PatientHistory = PatientHistory.create({});
@@ -148,13 +156,13 @@
         return rtObject.asString();
     };
 
-    async function getChart(id: string) {
-        const modelManager = ModelManager.getInstance();
-        const unit = (await modelManager.openModelUnit(id, "StudyConfiguration")) as StudyConfiguration;
-        const timeline = getTimelineAsOfADate(unit);
-        const rtObject = timeline.getTimelineChart() as RtString;
-        return rtObject.asString();
-    }
+    // async function getChart(id: string) {
+    //     const modelManager = ModelManager.getInstance();
+    //     const unit = (await modelManager.openModelUnit(id, "StudyConfiguration")) as StudyConfiguration;
+    //     const timeline = getTimelineAsOfADate(unit);
+    //     const rtObject = timeline.getTimelineChart() as RtString;
+    //     return rtObject.asString();
+    // }
 
     async function loadChart(id: string) {
         AST.change(async () => {  

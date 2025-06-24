@@ -74,18 +74,21 @@
         setDrawerVisibility("studyTimelineChart", true);
         setDrawerProps("studyChecklist", { studyId: id });
         setDrawerVisibility("studyChecklist", true);
+        setDrawerProps("staffAvailability", { studyId: id });
+        setDrawerVisibility("staffAvailability", true);
     });
 
     onDestroy(() => {
         editorLoaded = false;
         var activeDrawer = getActiveDrawer();
-        if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors") {
+        if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors" || activeDrawer === "staffAvailability" || activeDrawer === "studyChecklist") {
             setActiveDrawer(null);
         }
         setDrawerVisibility("dslErrors", false);
         setDrawerVisibility("studyTimelineTable", false);
         setDrawerVisibility("studyTimelineChart", false);
         setDrawerVisibility("studyChecklist", false);
+        setDrawerVisibility("staffAvailability", false);
     });
 
     function handleCheckboxChange(id: string, visible: boolean) {
