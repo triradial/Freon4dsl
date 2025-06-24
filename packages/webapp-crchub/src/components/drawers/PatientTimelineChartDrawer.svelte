@@ -6,7 +6,7 @@
     import { PatientHistory, PatientHistoryUnit, PatientInfo, type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
     import { getTimelineChart } from "../../services/app/study-timeline.js";
     import { getTimelineAsOfADate } from "services/app/patient-timeline.js";
-    import { fillDateConceptFromAsString } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
+    import { fillDateConceptFromAsString, Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
     import { dataStore, type Patient } from "../../services/data/data-store.js";
 
     export let id: string;
@@ -58,8 +58,18 @@
             const rtObject = getTimelineChartError() as RtString;
             return rtObject.asString();
         }
+        
+        console.log("PatientInfo found:", patientInfo);
+        console.log("Looking for patient with ID:", fetchedPatient!.patientNumber);
+        console.log("Available patient histories:", patientInfo!.patientHistories.length);
+        
         patientInfo!.patientHistories.forEach(aPatientHistory => {
+            console.log("Checking patient history:", aPatientHistory.patient_id);
             if (!found && aPatientHistory.patient_id === fetchedPatient!.patientNumber) {
+                console.log("Found matching patient history!");
+                console.log("Patient visits:", aPatientHistory.patientVisits.length);
+                console.log("Not available dates:", aPatientHistory.patientNotAvailableDates.dates.length);
+                
                 aPatientHistory.patientVisits.forEach(visit => {
                     let updatedVisit = visit.copy(); 
                     fillDateConcept(updatedVisit.actualVisitDate);  // Use the action wrapper
@@ -76,6 +86,13 @@
                 found = true;
             };
         });
+        
+        if (!found) {
+            console.error("No matching patient history found!");
+            const rtObject = getTimelineChartError() as RtString;
+            return rtObject.asString();
+        }
+        
         let referenceDateForTimeline : Date | undefined;
         if (referenceDate === undefined) {
             if (patientHistory.patientVisits.length > 0) {
@@ -88,8 +105,12 @@
         const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
         const studyConfig = model.configuration;
         studyConfig.studyStartDayNumber = 0;
+        
+        console.log("Creating timeline with patient history...");
         let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
-        const rtObject = (timeline as any).getTimelineChartHtml() as RtString;
+        console.log("Timeline created, getting chart HTML...");
+        const rtObject = (timeline as Timeline).getTimelineChartHtml() as RtString;
+        console.log("Chart HTML generated");
         return rtObject.asString();
     };
 
@@ -108,7 +129,12 @@
             const referenceDate = new Date(2024, 8, 30);
             
             // Keep isLoading true during chart generation
-            chartHtml = await getChartWithPatientHistory(referenceDate);
+            let chartHtmlResult: string = "";
+            console.log("Starting chart generation...");
+            chartHtmlResult = await getChartWithPatientHistory(referenceDate);
+            console.log("Chart generation completed, result:", chartHtmlResult);
+            chartHtml = chartHtmlResult!;
+            console.log("Chart HTML set to:", chartHtml);
             
             if (container) {
                 await loadChartData();

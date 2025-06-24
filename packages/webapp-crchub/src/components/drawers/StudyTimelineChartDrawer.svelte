@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
     import { ListPlaceholder } from "flowbite-svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { RtString } from "@freon4dsl/core";
+    import { AST, RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
     import { getTimelineChart } from "../../services/app/study-timeline.js";
 
