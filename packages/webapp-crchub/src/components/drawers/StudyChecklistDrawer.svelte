@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { ListPlaceholder } from "flowbite-svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
@@ -10,11 +10,13 @@
     import pdfFonts from "pdfmake/build/vfs_fonts.js";
     import type { TDocumentDefinitions } from "pdfmake/interfaces.js";
     import MarkdownIt from "markdown-it";
+    import { dataStore } from "services/data/data-store.js";
 
     pdfMake.vfs = pdfFonts as any;
     const md = new MarkdownIt();
 
     export let studyId: string;
+    let studyName: string = "";
     let isLoading = true;
     let checklistHtml: string = "";
     let error: string | null = null;
@@ -22,12 +24,19 @@
 
     const dispatch = createEventDispatcher();
 
+    onMount(async () => {
+        const study = await dataStore.getStudy(studyId);
+        studyName = study!.name;
+    });
+
     function closeDrawer() {
         dispatch("close");
     }
 
     function openPdf() {
+
         const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+
         if (!model) {
             error = "Model not loaded, cannot generate PDF.";
             return;
@@ -138,9 +147,14 @@
 
         const docDefinition: TDocumentDefinitions = {
             content: finalContent,
+            info: {
+                title: `${studyName} - ${new Date().toLocaleDateString()}`,
+                author: "CRCHub",
+                subject: "Study Checklist"
+            },
             header: function(currentPage: number, pageCount: number) {
                 const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-                const studyName = model.name || "Study Checklist";
+                // const studyName = model.name || "Study Checklist";
                 return {
                     text: `${studyName} - ${new Date().toLocaleDateString()}`,
                     alignment: 'center',
@@ -174,7 +188,22 @@
         // pdfMake.createPdf(docDefinition).print(); // Opens print dialog
         // pdfMake.createPdf(docDefinition).getBlob((blob) => { /* handle blob */ });
         
-        pdfMake.createPdf(docDefinition).open();
+        const fileName = `study-checklist-${studyName}.pdf`;
+        // pdfMake.createPdf(docDefinition).open();
+        pdfMake.createPdf(docDefinition).getBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            
+            // Open in new tab
+            window.open(url);
+            
+            // Also download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+        });
     }
 
     export function refresh() {
