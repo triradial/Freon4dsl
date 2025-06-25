@@ -2,22 +2,30 @@
     import { createEventDispatcher } from "svelte";
     import { ListPlaceholder } from "flowbite-svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getChecklistAsMarkdown } from "../../services/app/study-timeline.js";
+    import { Availability } from "@freon4dsl/samples-study-configuration";
+    import { Toolbar, ToolbarButton } from "flowbite-svelte";
+    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
+    import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
+    import { FreonComponent } from "@freon4dsl/core-svelte";
+
 
     // PDFMake and Markdown-it imports
     import pdfMake from "pdfmake/build/pdfmake.js";
     import pdfFonts from "pdfmake/build/vfs_fonts.js";
     import MarkdownIt from "markdown-it";
+    import { WebappConfigurator } from "services/dsl/webapp-configurator.js";
+    import { AST, type FreEditor, type FreModelUnit } from "@freon4dsl/core";
+    import { EditorRequestsHandler } from "services/dsl/editor-requests-handler.js";
 
     pdfMake.vfs = pdfFonts as any;
     const md = new MarkdownIt();
 
     export let studyId: string;
     let isLoading = true;
-    let checklistHtml: string = "";
     let error: string | null = null;
-    let showHeadingNumbers: boolean = true;
+    let editorLoaded = false;
+    let dslAvailabilityEditor: FreEditor;
+    let unit: Availability | undefined;
 
     const dispatch = createEventDispatcher();
 
@@ -27,103 +35,84 @@
 
     export function refresh() {
         dispatch("refresh");
-        loadChecklistAsMarkdown();
+        loadStaffAvailability();
     }
 
     $: {
         if (studyId) {
-            loadChecklistAsMarkdown();
+            loadStaffAvailability();
         }
     }
 
-    async function loadChecklistAsMarkdown() {
+    async function loadStaffAvailability() {
         isLoading = true;
         error = null;
-        try {
-            const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-            if (!model) {
-                error = "Model not loaded.";
-                isLoading = false;
-                return;
-            }
-            const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
+        AST.change(async () => {  
+            dslAvailabilityEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+            const modelManager = ModelManager.getInstance();
 
-            // Use markdown-it to parse for headings, which is more reliable than a custom marked renderer
-            const tokens = md.parse(markdown, {});
-            const toc: { level: number; text: string; id: string }[] = [];
-            
-            // Use markdown-it's default ID generation algorithm for consistency
-            const generateId = (text: string) => {
-                return text.toLowerCase()
-                    .replace(/[^\w\- ]/g, '') // Remove special characters except hyphens and spaces
-                    .replace(/\s+/g, '-')     // Replace spaces with hyphens
-                    .replace(/-+/g, '-')      // Replace multiple hyphens with single hyphen
-                    .replace(/^-|-$/g, '');   // Remove leading/trailing hyphens
-            };
+            // Create the PatientHistoryUnit to use just for editing of one patient at a time
+            unit =  modelManager.modelStore.getUnitByName("Availability") as Availability;
+            // Get the model data for all the Patients
+            if (unit === null || unit === undefined) {
+                //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
+                await modelManager.modelStore.createUnit("Availability", "Availability");
+            } 
+            // Display the availability for editing
+            await modelManager.setCurrentUnit(unit);
+            await modelManager.displayModelUnit(unit);
+        });
 
-            for (let i = 0; i < tokens.length; i++) {
-                const token = tokens[i];
-                if (token.type === 'heading_open') {
-                    const text = tokens[i + 1].content;
-                    const level = parseInt(token.tag.slice(1));
-                    const id = generateId(text);
-                    toc.push({ level, text, id });
-                    i++; // skip inline content token
-                }
-            }
-            
-            // Use markdown-it for rendering
-            let bodyHtml = md.render(markdown);
-            
-            // Manually add IDs to headings in the rendered HTML using DOM manipulation
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = bodyHtml;
-            
-            toc.forEach(item => {
-                const headings = tempDiv.querySelectorAll(`h${item.level}`);
-                headings.forEach(heading => {
-                    if (heading.textContent?.trim() === item.text) {
-                        heading.id = item.id;
-                    }
-                });
-            });
-            
-            bodyHtml = tempDiv.innerHTML;
+        setTimeout(() => {
+            editorLoaded = true;
+        }, 300);
 
-            // Generate TOC HTML from the captured headings
-            let tocHtml = '<h2>Table of Contents</h2><ul class="toc-list">';
-            toc.forEach(item => {
-                tocHtml += `<li style="margin-left: ${(item.level - 1) * 20}px;"><a href="#${item.id}" style="color: #cfcfcf;">${item.text}</a></li>`;
-            });
-            tocHtml += "</ul><hr/>";
-
-            // Replace the <!--TOC--> marker with the generated TOC, or prepend if no marker found
-            if (bodyHtml.includes('<!--TOC-->')) {
-                checklistHtml = bodyHtml.replace('<!--TOC-->', tocHtml);
-            } else {
-                checklistHtml = tocHtml + bodyHtml;
-            }
-
-        } catch (err: unknown) {
-            console.error(`Error fetching data for study: ${studyId}`, err);
-            error = err instanceof Error ? err.message : "An error occurred";
-        } finally {
-            isLoading = false;
-        }
+        isLoading = false;
     }
+
+
+    async function handleSaveAvailability() {
+        const modelManager = ModelManager.getInstance();
+        await modelManager.modelStore.saveUnit(unit as FreModelUnit);
+        // await modelManager.displayModelUnit(unit!);
+    }
+
+    function handleUndoAction() {
+        EditorRequestsHandler.getInstance().undo();
+        console.log("Undo action");
+    }
+
+    function handleRedoAction() {
+        EditorRequestsHandler.getInstance().redo();
+        console.log("Redo action");
+    }
+
 </script>
 
-<div class="drawer-content-area p-2">
-    {#if isLoading}
-        <ListPlaceholder divClass="mb-4" />
-    {:else if error}
-        <div class="text-red-500 p-4">{error}</div>
-    {:else}
-        <div class="markdown-body">
-            {@html checklistHtml}
+{#if unit}
+    <div class="crc-container">
+        <div class="crc-content">
+            {#if editorLoaded}
+                <Toolbar class="toolbar">
+                    <ToolbarButton class="toolbar-button" on:click={handleSaveAvailability}><FontAwesomeIcon icon={faSave} /></ToolbarButton>
+                    <ToolbarButton class="toolbar-button" on:click={handleUndoAction}><FontAwesomeIcon icon={faUndo} /></ToolbarButton>
+                    <ToolbarButton class="toolbar-button" on:click={handleRedoAction}><FontAwesomeIcon icon={faRedo} /></ToolbarButton>
+                </Toolbar>
+                <div class="crc-editor crc-content-width">
+                    <FreonComponent editor={dslAvailabilityEditor} />
+                </div>
+            {:else}
+                <div class="h-full crc-content-width">
+                    <ListPlaceholder
+                        divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
+                    />
+                </div>
+            {/if}
         </div>
-    {/if}
-</div>
+    </div>
+{:else}
+    <p>Loading Availability...</p>
+{/if}
 
 <style>
     div.drawer-content-area div.markdown-body .markdown-body {

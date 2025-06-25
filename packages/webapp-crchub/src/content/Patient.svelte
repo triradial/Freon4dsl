@@ -73,9 +73,7 @@
             editorLoaded = true;
         }, 300);
 
-        if (patient) {
-            // await loadChart(patient.studyId);
-        } else {
+        if (!patient) {
             console.error(`Patient with id ${id} not found`);
         }
         setDrawerProps("studyChecklist", { studyId: patient!.studyId });

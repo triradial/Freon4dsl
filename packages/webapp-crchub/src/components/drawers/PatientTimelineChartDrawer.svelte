@@ -58,18 +58,9 @@
             const rtObject = getTimelineChartError() as RtString;
             return rtObject.asString();
         }
-        
-        console.log("PatientInfo found:", patientInfo);
-        console.log("Looking for patient with ID:", fetchedPatient!.patientNumber);
-        console.log("Available patient histories:", patientInfo!.patientHistories.length);
-        
+              
         patientInfo!.patientHistories.forEach(aPatientHistory => {
-            console.log("Checking patient history:", aPatientHistory.patient_id);
-            if (!found && aPatientHistory.patient_id === fetchedPatient!.patientNumber) {
-                console.log("Found matching patient history!");
-                console.log("Patient visits:", aPatientHistory.patientVisits.length);
-                console.log("Not available dates:", aPatientHistory.patientNotAvailableDates.dates.length);
-                
+            if (!found && aPatientHistory.patient_id === fetchedPatient!.patientNumber) {               
                 aPatientHistory.patientVisits.forEach(visit => {
                     let updatedVisit = visit.copy(); 
                     fillDateConcept(updatedVisit.actualVisitDate);  // Use the action wrapper
@@ -106,11 +97,8 @@
         const studyConfig = model.configuration;
         studyConfig.studyStartDayNumber = 0;
         
-        console.log("Creating timeline with patient history...");
         let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
-        console.log("Timeline created, getting chart HTML...");
         const rtObject = (timeline as Timeline).getTimelineChartHtml() as RtString;
-        console.log("Chart HTML generated");
         return rtObject.asString();
     };
 
