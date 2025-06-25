@@ -52,7 +52,7 @@
     let { 
         box,
         editor,
-        isEditing,
+        isEditing: initialIsEditing = false,
         partOfActionBox,
         text,
         cssClass,
@@ -77,6 +77,7 @@
     let to = -1;
     let style: string = "";
     let contentElement: HTMLDivElement | null = null;
+    let isEditing = $state(initialIsEditing);
     let isExpanded = $state(initialIsExpanded);
     let contentStyle = $derived(isExpanded ? "display:block;" : "display:none;");
 
@@ -169,6 +170,12 @@
             LOGGER.log("startEditing " + id);
             editor.selectElementForBox(box);
             isEditing = true;
+            if (typeof window !== 'undefined') {
+                console.debug('[ItemGroupComponent] isEditing set to', isEditing, 'in startEditing');
+                if (window.__FREON_DEBUG_TRACE__) {
+                    console.trace('[ItemGroupComponent] isEditing set to', isEditing, 'in startEditing');
+                }
+            }
             editStart = true;
             originalText = text;
             let { anchorOffset, focusOffset } = document.getSelection() || { anchorOffset: 0, focusOffset: 0 };
@@ -206,6 +213,12 @@
         if (isEditing) {
             // reset the local variables
             isEditing = false;
+            if (typeof window !== 'undefined') {
+                console.debug('[ItemGroupComponent] isEditing set to', isEditing, 'in endEditing');
+                if (window.__FREON_DEBUG_TRACE__) {
+                    console.trace('[ItemGroupComponent] isEditing set to', isEditing, 'in endEditing');
+                }
+            }
             from = -1;
             to = -1;
 

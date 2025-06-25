@@ -24,15 +24,24 @@
     let dslEditor = $state<FreEditor | undefined>(undefined);
     let unit = $state<StudyConfiguration | undefined>(undefined);
 
-    let footerItems = $state([
-        { id: "showScheduling", label: "Scheduling", visible: true },
-        { id: "showChecklists", label: "Checklists", visible: false },
-        { id: "showReferences", label: "References", visible: false, parent: "showChecklists" },
-        { id: "showSystems", label: "Systems", visible: false, parent: "showChecklists" },
-        { id: "showPeople", label: "People", visible: false, parent: "showChecklists" },
-        { id: "showDescriptions", label: "Descriptions", visible: false },
-        { id: "showSharedTasks", label: "Shared Tasks", visible: false },
-    ]);
+    const footerConfig = [
+        { id: "showScheduling", label: "Scheduling" },
+        { id: "showChecklists", label: "Checklists" },
+        { id: "showReferences", label: "References", parent: "showChecklists" },
+        { id: "showSystems", label: "Systems", parent: "showChecklists" },
+        { id: "showPeople", label: "People", parent: "showChecklists" },
+        { id: "showDescriptions", label: "Descriptions" },
+        { id: "showSharedTasks", label: "Shared Tasks" },
+    ];
+
+    let footerItems = $derived(
+        unit
+            ? footerConfig.map(cfg => ({
+                ...cfg,
+                visible: !!unit[cfg.id as keyof StudyConfiguration],
+            }))
+            : footerConfig.map(cfg => ({ ...cfg, visible: false }))
+    );
 
     async function initializeStudy() {
         // get the study data
@@ -79,7 +88,7 @@
     });
 
     function handleCheckboxChange(id: string, visible: boolean) {
-        if (id in unit) {
+        if (unit && id in unit) {
             (unit[id as keyof StudyConfiguration] as boolean) = visible;
         }
     }

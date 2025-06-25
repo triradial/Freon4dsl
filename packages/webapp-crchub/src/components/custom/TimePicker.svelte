@@ -1,47 +1,27 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { ExternalStringBox, FreEditor } from "@freon4dsl/core";
-    
+    import { ExternalStringBox } from "@freon4dsl/core";
+    import { Clock } from '@lucide/svelte';
     const { box } = $props<{ box: ExternalStringBox }>();
 
-    let inputElement: any;
+    let inputElement: HTMLInputElement;
     let value = $state("");
+    let isEditing = $state(false);
     getValue();
 
-    const onClick = (event: MouseEvent & { currentTarget: EventTarget & HTMLInputElement }) => {
-        event.stopPropagation();
-    };
-
-    const onChange = (event: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
-        event.stopPropagation();
-        let xx = getValidTime(value);
-        if (xx !== undefined) {
-            console.log("Changing value to: " + value);
-            box.setPropertyValue(value);
-        } else {
-            console.log("Value: " + value + " is not a valid time");
-        }
-    };
-    function getValidTime(timeString: string): String | undefined {
-        // Regular expression to match the HH:MM format
-        const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-
-        if (!timeRegex.test(timeString)) {
-            return undefined;
-        }
-
-        const [hours, minutes] = timeString.split(":").map(Number);
-
-        // Create a Date object for today with the given time
-        const date = new Date();
-        date.setHours(hours, minutes, 0, 0);
-
-        if (date instanceof Date && !isNaN(date.getTime())) {
-            return timeString;
-        } else {
-            return undefined;
-        }
+    // Helper to format time as 'h:mm A' (12-hour with AM/PM)
+    function formatTime(val: string): string {
+        if (!val) return '';
+        const [h, m] = val.split(":");
+        if (h === undefined || m === undefined) return val;
+        let hour = parseInt(h, 10);
+        const minute = m.padStart(2, '0');
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12;
+        if (hour === 0) hour = 12;
+        return `${hour}:${minute} ${ampm}`;
     }
+
     function getValue() {
         let startStr: string | undefined = box.getPropertyValue();
         if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
@@ -52,37 +32,103 @@
         return value;
     }
 
+    function toEditMode() {
+        isEditing = true;
+        setTimeout(() => {
+            if (inputElement) inputElement.focus();
+        }, 0);
+    }
+    function toDisplayMode() {
+        isEditing = false;
+    }
+
+    const onInput = (event: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
+        value = event.currentTarget.value;
+    };
+
+    const onChange = (event: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
+        event.stopPropagation();
+        if (getValidTime(value) !== undefined) {
+            box.setPropertyValue(value);
+        }
+        toDisplayMode();
+    };
+
+    function getValidTime(timeString: string): String | undefined {
+        // Regular expression to match the HH:MM format
+        const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+        if (!timeRegex.test(timeString)) {
+            return undefined;
+        }
+        const [hours, minutes] = timeString.split(":").map(Number);
+        const date = new Date();
+        date.setHours(hours, minutes, 0, 0);
+        if (date instanceof Date && !isNaN(date.getTime())) {
+            return timeString;
+        } else {
+            return undefined;
+        }
+    }
+
     // The following four functions need to be included for the editor to function properly.
-    // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
-        inputElement.focus();
+        isEditing = true;
+        setTimeout(() => {
+            if (inputElement) inputElement.focus();
+        }, 0);
     }
     const refresh = (why?: string): void => {
-        // do whatever needs to be done to refresh the elements that show information from the model
         getValue();
     };
     onMount(() => {
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
-        console.log("[TimePicker] onMount value:", value);
     });
     $effect(() => {
-        console.log("[TimePicker] $effect setFocus/refresh assignment");
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
+
+    function onInputKeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter' || event.key === 'Escape') {
+            toDisplayMode();
+        }
+    }
+    function onInputBlur() {
+        toDisplayMode();
+    }
+    function onIconClick() {
+        if (inputElement) {
+            inputElement.focus();
+            // Try to open the native picker (not always possible programmatically)
+            inputElement.click();
+        }
+    }
 </script>
 
-<div class="timepicker">
-    <input
-        id="default-timepicker"
-        type="time"
-        bind:value
-        class="timepicker-input"
-        placeholder="Select time"
-        onclick={onClick}
-        onchange={onChange}
-        bind:this={inputElement}
-    />
+<div class="timepicker-container">
+    {#if isEditing}
+        <input
+            id="default-timepicker"
+            type="time"
+            bind:value
+            class="timepicker-input"
+            placeholder="Select time"
+            bind:this={inputElement}
+            aria-label="Time input"
+            oninput={onInput}
+            onchange={onChange}
+            onkeydown={onInputKeydown}
+            onblur={onInputBlur}
+            style="margin-right: 0.25rem;"
+        />
+        <button class="timepicker-icon-btn" aria-label="Show time picker" type="button" onclick={onIconClick} tabindex="-1">
+            <Clock size={16} />
+        </button>
+    {:else}
+        <span class="timepicker-display" onclick={toEditMode} tabindex="0" aria-label="Edit time">
+            {value ? formatTime(value) : '—:--'}
+        </span>
+    {/if}
 </div>

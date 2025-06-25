@@ -437,7 +437,8 @@
             }
             // Ensure that HTML tags in value are encoded, otherwise they will be seen as HTML.
             widthSpan.innerHTML = replaceHTML(value);
-            inputElement.style.width = widthSpan.offsetWidth + 'px';
+            const width = widthSpan.offsetWidth + 2 + "px";
+            inputElement.style.width = width;
         }
     }
 
@@ -538,7 +539,7 @@
 <ErrorTooltip {editor} {box} {hasErr} parentTop={0} parentLeft={0}>
     <span {id} role="none" bind:this={surroundingElement}>
         {#if isEditing}
-            <span class="text-component-input">
+            <span>
                 <input
                     type="text"
                     class="text-component-input"

@@ -8,13 +8,14 @@ global {
     }
 }
 
-StaffAvailability {
+Availability {
   [
     STAFFING
       Number of CRCs Normally Available: ${baselineStaff}
 
       Staffing Level Changes:
       ${staffLevels}
+
   ]
 }
 
@@ -32,16 +33,12 @@ StaffLevel {
 
 DateRange {
   [${startDate} thru:${endDate}]
-  trigger = "Date or Date Range"
 }
 
-StartRangeDate {
+DateConcept {
   [${dateAsString replace=DatePicker startDate="30/09/2024"}]
 }
 
-EndRangeDate {
-  [${dateAsString replace=DatePicker startDate="30/09/2024"}]
-}
 
 PatientInfo {
   [
@@ -51,17 +48,21 @@ PatientInfo {
 
 PatientHistory {
   [
-   ID ${id} 
+   ID ${patient_id} 
    Patient completed: 
    ${patientVisits} 
    Not Available ${patientNotAvailableDates}
   ]
-  trigger = "Patient"
 }
 
 PatientVisit {
   [
-      '${visit}' on  ${actualVisitDateAsString replace=DatePicker startDate="30/09/2024"}
+      Visit: '${visit}' on  ${actualVisitDate} 
   ]
-  trigger = "Visit"
+}
+
+PatientHistoryUnit {
+  [
+    ${patientHistory}
+  ]
 }

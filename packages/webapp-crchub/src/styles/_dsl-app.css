@@ -95,7 +95,8 @@ main {
   border-width: 0px;
   box-sizing: border-box;
   margin: 0px 2px 0px 2px;
-  padding: 0.025rem 0.15rem 0.0625rem 0.2rem;
+  /* padding: 0.025rem 0.15rem 0.0625rem 0.2rem; */
+  padding: 0 0.2rem 0 0.2rem;
   padding-block: 0px;
   height: 24px;
 }
@@ -114,7 +115,7 @@ main {
 }
 
 .text-dropdown-component {
-  display: flex;
+
 }
 
 .text-dropdown-component .text-component-text:hover,
@@ -406,6 +407,18 @@ main {
 /* #region MultilineText2 Component */
 .multiline2-component {
   padding-right: 0.75rem;
+}
+
+.multiline-container {
+  padding: 0 0 0 0.125rem;
+  margin: 0 0.25rem 0 0.125rem;
+  min-height: 32px;
+}
+
+.multiline-html {
+  padding: 0 0 0 0.125rem;
+  margin: 0 0.25rem 0 0.125rem;
+  min-height: 32px;
 }
 
 .multiline2-text {
@@ -801,69 +814,69 @@ span:has(> .tinymce-wrapper) {
 /* #endregion */
 
 /* #region Datepicker */
-.datepicker {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
+.datepicker-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
 }
-
 .datepicker-input {
-  width: 6rem;
-  height: 1.25rem;
-  font-size: 0.75rem;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-  padding-bottom: 0.35rem;
+  font-size: 1rem;
+  padding: 2px 2px;
+  min-width: 80px;
+  outline: none;
+}
+.datepicker-input::-webkit-calendar-picker-indicator {
+  /* display: none; */
+}
+.datepicker-icon-btn {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
 }
-
-.datepicker-input:hover {
-  height: 1.25rem;
-  font-size: 0.75rem;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-  padding-bottom: 0.35rem;
+.datepicker-display {
+  font-size: 1rem;
+  padding: 2px 2px;
+  cursor: pointer;
+  user-select: text;
+  outline: none;
+  min-width: 80px;
+  display: inline-block;
 }
-
-.datepicker-input:focus {
-  height: 1.25rem;
-  font-size: 0.75rem;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-  padding-bottom: 0.35rem;
-}
-
 /* #endregion */
 
 /* #region Timepicker */
-.timepicker {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
+.timepicker-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  margin-left: 0.25rem
 }
-
 .timepicker-input {
-  width: 6rem;
-  height: 1.25rem;
   font-size: 0.75rem;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-  padding-bottom: 0.35rem;
+  padding: 2px 2px;
+  min-width: 64px;
+  height: 1.5rem;
+  outline: none;
+}
+.timepicker-input::-webkit-calendar-picker-indicator {
+  /* display: none; */
+}
+.timepicker-icon-btn {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
 }
-
-.timepicker-input:hover {
-  height: 1.25rem;
+.timepicker-display {
   font-size: 0.75rem;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-  padding-bottom: 0.35rem;
-}
-
-.timepicker-input:focus {
-  height: 1.25rem;
-  font-size: 0.75rem;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-  padding-bottom: 0.35rem;
+  padding: 2px 2px;
+  cursor: pointer;
+  user-select: text;
+  border: none;
+  outline: none;
+  min-width: 64px;
+  display: inline-block;
 }
 
 /* #endregion */

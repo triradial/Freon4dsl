@@ -1,7 +1,7 @@
 language StudyConfigurationModel
 
-modelunit StaffAvailability {
-  name: identifier = "StaffAvailability";
+modelunit Availability { //TODO: rename StaffAvailability
+  name: identifier = "Availability";
   baselineStaff: string;
   staffLevels: StaffLevel[];
 }
@@ -11,8 +11,15 @@ modelunit PatientInfo {  // TODO: Change to Patients
   patientHistories: PatientHistory[];
 }
 
+// TODO: Remove this temporary hack to allow editing of a patient history for a patient in the database.
+modelunit PatientHistoryUnit {
+  patientHistory: PatientHistory;
+}
+
 concept PatientHistory {
-  id: string; // initials or whatever the specific study uses to identify the patient in a secure way; No sharing patients across studies
+  patient_id: string;// initials or whatever the specific study uses to identify the patient in a secure way; No sharing patients across studies
+  id: string; // TODO: DELETE this and switch to patient_id; 
+  startOfStudyDate: DateConcept;
   patientVisits: PatientVisit[];
   patientNotAvailableDates: PatientNotAvailable;
 }
@@ -24,8 +31,7 @@ limited PatientVisitStatus {
 concept PatientVisit {
   reference visit: Event;
   visitInstanceNumber: number = 1;
-  actualVisitDate: VisitDate;
-  actualVisitDateAsString: string;
+  actualVisitDate: DateConcept;
   status: PatientVisitStatus = PatientVisitStatus:completed;
 }
 
@@ -38,29 +44,29 @@ concept StaffLevel {
   dateOrRange: DateRange;
 }
 
-concept DateRange {
-  startDate: StartRangeDate;
-  endDate?: EndRangeDate;
-}
-
 limited Month {
     January; February; March; April; May; June; July; August; September; October; November; December;
 }
 
-// TODO: use a different name to avoid conflicts with TypeScript Date
-concept Date {
+concept VisitDate {
   dateAsString: string;
   day: string;
   month: Month;
   year: string = "2025";
 }
 
-concept VisitDate {
+concept DateRange {
+  startDate: DateConcept;
+  endDate?: DateConcept;
+}
+
+// This is called DateConcept to avoid conflict with the TypeScript Date class. 
+// It represents a date in the language.
+// dataAsString is only here because the DatePicker component needs to set the date as a string. 
+// DatePicker needs to be updated to directly set the day, month, year.
+concept DateConcept {
+  dateAsString: string;
   day: string;
   month: Month;
   year: string = "2025";
 }
-
-
-concept EndRangeDate base Date {}
-concept StartRangeDate base Date {}

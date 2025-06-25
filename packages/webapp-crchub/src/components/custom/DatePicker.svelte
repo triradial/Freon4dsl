@@ -1,45 +1,24 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { ExternalStringBox, FreEditor } from "@freon4dsl/core";
+    import { ExternalStringBox } from "@freon4dsl/core";
+    import { CalendarDays } from '@lucide/svelte';
     const { box } = $props<{ box: ExternalStringBox }>();
-    // export let editor: FreEditor;
 
     let inputElement: HTMLInputElement;
-
     let value = $state("");
+    let isEditing = $state(false);
     getValue();
 
-    const onClick = (event: MouseEvent & { currentTarget: EventTarget & HTMLInputElement }) => {
-        event.stopPropagation();
-    };
-
-    const onChange = (event: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
-        event.stopPropagation();
-        let xx = getValidDate(value);
-        if (xx !== undefined) {
-            console.log("Changing value to: " + value);
-            box.setPropertyValue(value);
-        } else {
-            console.log("Value: " + value + " is not a valid date");
-        }
-        // return undefined;
-    };
-    function getValidDate(d: string): Date | undefined {
-        const dateArray = d.split("-");
-        if (dateArray.length !== 3) {
-            return undefined;
-        }
-        const [year, month, day] = dateArray;
-        const newDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-
-        console.log("In getValidDate: " + newDate); // YYYY-MM-DD format
-        let date = new Date(newDate);
-        if (date instanceof Date) {
-            return date;
-        } else {
-            return undefined;
-        }
+    // Helper to format date as 'MMM D, YYYY'
+    function formatDate(val: string): string {
+        if (!val) return '';
+        const [yyyy, mm, dd] = val.split('-');
+        if (!yyyy || !mm || !dd) return val;
+        const date = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+        if (isNaN(date.getTime())) return val;
+        return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
     }
+
     function getValue() {
         let startStr: string | undefined = box.getPropertyValue();
         if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
@@ -51,41 +30,103 @@
             const dd = String(today.getDate()).padStart(2, '0');
             value = `${yyyy}-${mm}-${dd}`;
         }
+        return value;
     }
 
-    // The following four functions need to be included for the editor to function properly.
-    // Please, set the focus to the first editable/selectable element in this component.
+    function toEditMode() {
+        isEditing = true;
+        setTimeout(() => {
+            if (inputElement) inputElement.focus();
+        }, 0);
+    }
+    function toDisplayMode() {
+        isEditing = false;
+    }
+
+    const onInput = (event: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
+        value = event.currentTarget.value;
+    };
+
+    const onChange = (event: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
+        event.stopPropagation();
+        if (getValidDate(value) !== undefined) {
+            box.setPropertyValue(value);
+        }
+        toDisplayMode();
+    };
+
+    function getValidDate(d: string): Date | undefined {
+        const dateArray = d.split("-");
+        if (dateArray.length !== 3) {
+            return undefined;
+        }
+        const [year, month, day] = dateArray;
+        const newDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+        let date = new Date(newDate);
+        if (date instanceof Date && !isNaN(date.getTime())) {
+            return date;
+        } else {
+            return undefined;
+        }
+    }
+
     async function setFocus(): Promise<void> {
-        inputElement.focus();
+        isEditing = true;
+        setTimeout(() => {
+            if (inputElement) inputElement.focus();
+        }, 0);
     }
     const refresh = (why?: string): void => {
-        // do whatever needs to be done to refresh the elements that show information from the model
         getValue();
     };
     onMount(() => {
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
-        console.log("[DatePicker] onMount value:", value);
     });
     $effect(() => {
-        console.log("[DatePicker] $effect setFocus/refresh assignment");
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
+
+    function onInputKeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter' || event.key === 'Escape') {
+            toDisplayMode();
+        }
+    }
+    function onInputBlur() {
+        toDisplayMode();
+    }
+    function onIconClick() {
+        if (inputElement) {
+            inputElement.focus();
+            inputElement.click();
+        }
+    }
 </script>
 
-<div class="datepicker">
-    <input
-        id="default-datepicker"
-        type="date"
-        bind:value
-        class="datepicker-input"
-        placeholder="Select date"
-        onclick={onClick}
-        onchange={onChange}
-        bind:this={inputElement}
-    />
+<div class="datepicker-container">
+    {#if isEditing}
+        <input
+            id="default-datepicker"
+            type="date"
+            bind:value
+            class="datepicker-input"
+            placeholder="Select date"
+            bind:this={inputElement}
+            aria-label="Date input"
+            on:input={onInput}
+            on:change={onChange}
+            on:keydown={onInputKeydown}
+            on:blur={onInputBlur}
+            style="margin-right: 0.25rem;"
+        />
+        <button class="datepicker-icon-btn" aria-label="Show date picker" type="button" on:click={onIconClick} tabindex="-1">
+            <CalendarDays size={20} />
+        </button>
+    {:else}
+        <span class="datepicker-display" on:click={toEditMode} tabindex="0" aria-label="Edit date">
+            {value ? formatDate(value) : '—'}
+        </span>
+    {/if}
 </div>
-
-

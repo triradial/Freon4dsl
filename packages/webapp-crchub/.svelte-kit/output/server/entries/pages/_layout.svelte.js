@@ -1,8 +1,10 @@
-import { z as push, F as spread_props, B as pop, A as onMount, G as attr, I as attr_class, J as stringify, K as store_get, M as unsubscribe_stores, E as escape_html, N as ensure_array_like, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head } from "../../chunks/index.js";
+import { z as push, F as spread_props, B as pop, A as onMount, E as escape_html, G as attr, I as attr_class, J as stringify, K as store_get, M as unsubscribe_stores, N as ensure_array_like, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head } from "../../chunks/index.js";
 import { i as isNullOrUndefined, F as FreLanguage, a as FreLogger, b as FreNodeReference, c as FreUtils, d as FreErrorSeverity, C as Ct, W as WebappConfigurator, r as rv, R as RtString, t as tv, N as NN, L as LOe, H as Hd, M as ModelManager } from "../../chunks/model-manager.js";
 import { e as env } from "../../chunks/env.js";
+import { C as Calendar_days } from "../../chunks/calendar-days.js";
 import "clsx";
 import { R as RenderComponent, C as Chevron_right, G as Grip_vertical } from "../../chunks/FragmentComponent.js";
+import { I as Icon } from "../../chunks/Icon.js";
 import { runInAction } from "mobx";
 import { w as writable, g as get } from "../../chunks/index3.js";
 import { L as LoginPart, i as isAuthenticated } from "../../chunks/LoginPart.js";
@@ -11,7 +13,6 @@ import { t as theme } from "../../chunks/theme-store.js";
 import "../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
 import { P as Popover, S as Save, X, g as getDrawerWidth, a as getDrawerOrder, b as getDrawer, d as drawerStore, c as addDrawer } from "../../chunks/side-drawer-store.js";
 import "../../chunks/client.js";
-import { I as Icon } from "../../chunks/Icon.js";
 import { o as objectDrawerStore, c as closeObjectDrawer } from "../../chunks/object-drawer-store.js";
 import { h as html } from "../../chunks/html.js";
 import { marked } from "marked";
@@ -770,6 +771,30 @@ function Arrow_up_right($$payload, $$props) {
   ]));
   pop();
 }
+function Clock($$payload, $$props) {
+  push();
+  let { $$slots, $$events, ...props } = $$props;
+  const iconNode = [
+    [
+      "circle",
+      { "cx": "12", "cy": "12", "r": "10" }
+    ],
+    ["polyline", { "points": "12 6 12 12 16 14" }]
+  ];
+  Icon($$payload, spread_props([
+    { name: "clock" },
+    props,
+    {
+      iconNode,
+      children: ($$payload2) => {
+        props.children?.($$payload2);
+        $$payload2.out += `<!---->`;
+      },
+      $$slots: { default: true }
+    }
+  ]));
+  pop();
+}
 function Heart($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;
@@ -1029,9 +1054,21 @@ function setCustomComponents(externals) {
 function DatePicker($$payload, $$props) {
   push();
   const { box } = $$props;
-  let inputElement;
   let value = "";
+  let isEditing = false;
   getValue();
+  function formatDate(val) {
+    if (!val) return "";
+    const [yyyy, mm, dd] = val.split("-");
+    if (!yyyy || !mm || !dd) return val;
+    const date = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+    if (isNaN(date.getTime())) return val;
+    return date.toLocaleDateString(void 0, {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+  }
   function getValue() {
     let startStr = box.getPropertyValue();
     if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
@@ -1043,9 +1080,15 @@ function DatePicker($$payload, $$props) {
       const dd = String(today.getDate()).padStart(2, "0");
       value = `${yyyy}-${mm}-${dd}`;
     }
+    return value;
   }
   async function setFocus() {
-    inputElement.focus();
+    isEditing = true;
+    setTimeout(
+      () => {
+      },
+      0
+    );
   }
   const refresh = (why) => {
     getValue();
@@ -1054,9 +1097,18 @@ function DatePicker($$payload, $$props) {
     getValue();
     box.setFocus = setFocus;
     box.refreshComponent = refresh;
-    console.log("[DatePicker] onMount value:", value);
   });
-  $$payload.out += `<div class="datepicker"><input id="default-datepicker" type="date"${attr("value", value)} class="datepicker-input" placeholder="Select date"/></div>`;
+  $$payload.out += `<div class="datepicker-container">`;
+  if (isEditing) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<input id="default-datepicker" type="date"${attr("value", value)} class="datepicker-input" placeholder="Select date" aria-label="Date input" style="margin-right: 0.25rem;"/> <button class="datepicker-icon-btn" aria-label="Show date picker" type="button" tabindex="-1">`;
+    Calendar_days($$payload, { size: 20 });
+    $$payload.out += `<!----></button>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+    $$payload.out += `<span class="datepicker-display" tabindex="0" aria-label="Edit date">${escape_html(value ? formatDate(value) : "—")}</span>`;
+  }
+  $$payload.out += `<!--]--></div>`;
   pop();
 }
 function ExpandCollapseWrapperComponent($$payload, $$props) {
@@ -1091,9 +1143,20 @@ function ExpandCollapseWrapperComponent($$payload, $$props) {
 function TimePicker($$payload, $$props) {
   push();
   const { box } = $$props;
-  let inputElement;
   let value = "";
+  let isEditing = false;
   getValue();
+  function formatTime(val) {
+    if (!val) return "";
+    const [h, m] = val.split(":");
+    if (h === void 0 || m === void 0) return val;
+    let hour = parseInt(h, 10);
+    const minute = m.padStart(2, "0");
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+    return `${hour}:${minute} ${ampm}`;
+  }
   function getValue() {
     let startStr = box.getPropertyValue();
     if (typeof startStr === "string" && !!startStr && startStr.length > 0) {
@@ -1104,7 +1167,12 @@ function TimePicker($$payload, $$props) {
     return value;
   }
   async function setFocus() {
-    inputElement.focus();
+    isEditing = true;
+    setTimeout(
+      () => {
+      },
+      0
+    );
   }
   const refresh = (why) => {
     getValue();
@@ -1113,9 +1181,18 @@ function TimePicker($$payload, $$props) {
     getValue();
     box.setFocus = setFocus;
     box.refreshComponent = refresh;
-    console.log("[TimePicker] onMount value:", value);
   });
-  $$payload.out += `<div class="timepicker"><input id="default-timepicker" type="time"${attr("value", value)} class="timepicker-input" placeholder="Select time"/></div>`;
+  $$payload.out += `<div class="timepicker-container">`;
+  if (isEditing) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<input id="default-timepicker" type="time"${attr("value", value)} class="timepicker-input" placeholder="Select time" aria-label="Time input" style="margin-right: 0.25rem;"/> <button class="timepicker-icon-btn" aria-label="Show time picker" type="button" tabindex="-1">`;
+    Clock($$payload, { size: 16 });
+    $$payload.out += `<!----></button>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+    $$payload.out += `<span class="timepicker-display" tabindex="0" aria-label="Edit time">${escape_html(value ? formatTime(value) : "—:--")}</span>`;
+  }
+  $$payload.out += `<!--]--></div>`;
   pop();
 }
 console.log("Starting init.ts initialization");

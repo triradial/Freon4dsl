@@ -92,12 +92,12 @@
 
 .text-dropdown-component .text-component-placeholder,
 .text-component-placeholder {
-  color: var(--green-60t);
+  color: var(--green-90t);
   background-color: transparent;
 }
 
 .text-component-action-placeholder {
-  color: var(--green-60t);
+  color: var(--green-90t);
   background-color: transparent;
 }
 
@@ -181,7 +181,7 @@
 }
 
 .drag-handle svg {
-  color: var(--green);
+  color: var(--green-90t);
 }
 
 .action-button {
@@ -197,11 +197,11 @@
 }
 
 .action-button:active {
-  background-color: var(--gray-700);
+  background-color: var(--primary-900);
 }
 
 .action-button:focus {
-  background-color: var(--gray-700);
+  background-color: var(--primary-800);
 }
 
 /* #endregion */
@@ -408,47 +408,55 @@
 /* #endregion */
 
 /* #region Datepicker */
-
 .datepicker-input {
-  color: var(--green-50t);
-  background-color: transparent;
-  border: transparent;
-  color-scheme: dark;
+  color: var(--green-90t);
+  background-color: var(--green-30t);
+  border: 1px solid var(--green-90t);
 }
-
-.datepicker-input:hover {
-  color: var(--green-50t);
-  background-color: var(--green-10t);
+.datepicker-input::-ms-input-placeholder {
+  color: var(--green-90t);
 }
-
-.datepicker-input:focus {
-  color: var(--green-60t);
-  background-color: var(--green-10t);
-  border: green;
+.datepicker-input::placeholder {
+  color: var(--green-90t);
 }
-
+.datepicker-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--green-90t);
+}
+.datepicker-icon-btn:focus {
+  color: var(--green-70t);
+}
+.datepicker-display {
+  color: var(--green-90t);
+  background-color: transparent
+}
 /* #endregion */
 
 /* #region Timepicker */
-
 .timepicker-input {
-  color: var(--green-50t);
-  background-color: transparent;
-  border: transparent;
-  color-scheme: dark;
+  background-color: var(--green-30t);
+  color: var(--green-90t);
+  border: 1px solid var(--green-90t);
 }
-
-.timepicker-input:hover {
-  color: var(--green-50t);
-  background-color: var(--green-10t);
+.timepicker-input::-ms-input-placeholder {
+  color: var(--green-90t);
 }
-
-.timepicker-input:focus {
-  color: var(--green-60t);
-  background-color: var(--green-10t);
-  border: green;
+.timepicker-input::placeholder {
+  color: var(--green-90t);
 }
-
+.timepicker-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--green-90t);
+}
+.timepicker-icon-btn:focus {
+  color: var(--green-70t);
+}
+.timepicker-display {
+  color: var(--green-90t);
+  background-color: transparent
+}
 /* #endregion */
 
 /* #region Render Component */

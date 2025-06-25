@@ -13,11 +13,11 @@
     const placeholderStore = $derived(() => box.placeHolder);
     let text: string = $state('');
     let cssClass: string = "";
-    let editorDiv: HTMLDivElement;
-    let quill: any;
-    let html = "";
+    let editorDiv: HTMLDivElement | null = null;
+    let quill: any = null;
     let isEditing = false;
     let quillInitialized = false;
+    let html = "";
 
     // // TinyMCE config
     // let conf = {
@@ -51,82 +51,55 @@
 
     refresh();
 
-    // Function to initialize Quill only when editing
-    async function initQuill() {
-        if (!quillInitialized && isEditing) {
-            const Quill = (await import("quill")).default;
-            quill = new Quill(editorDiv, {
-                theme: "snow",
-                modules: {
-                    toolbar: [
-                        [{ 'undo': 'undo' }, { 'redo': 'redo' }],
-                        ['bold', 'italic', 'underline'],
-                        [{ 'font': [] }, { 'size': [] }],
-                        [{ 'color': [] }, { 'background': [] }],
-                        [{ 'align': [] }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
-                        ['clean']
-                    ]
+    // Only initialize Quill when isEditing and editorDiv are set
+    $effect(() => {
+        if (isEditing && editorDiv && !quillInitialized) {
+            import("quill").then(({ default: Quill }) => {
+                if (editorDiv) {
+                    quill = new Quill(editorDiv, {
+                        theme: "snow",
+                        placeholder: box.placeHolder || "<enter>",
+                        modules: {
+                            toolbar: [
+                                [{ 'undo': 'undo' }, { 'redo': 'redo' }],
+                                ['bold', 'italic', 'underline'],
+                                [{ 'font': [] }, { 'size': [] }],
+                                [{ 'color': [] }, { 'background': [] }],
+                                [{ 'align': [] }],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
+                                ['clean']
+                            ]
+                        }
+                    });
+                    const toolbar = quill.getModule('toolbar');
+                    if (toolbar) {
+                        toolbar.addHandler('undo', () => quill.history.undo());
+                        toolbar.addHandler('redo', () => quill.history.redo());
+                    }
+                    quill.on("text-change", () => {
+                        html = editorDiv?.querySelector?.(".ql-editor")?.innerHTML ?? "";
+                    });
+                    // Set initial content if html is not empty
+                    if (html) {
+                        quill.root.innerHTML = html;
+                    }
+                    quillInitialized = true;
                 }
             });
-            const toolbar = quill.getModule('toolbar');
-            if (toolbar) {
-                toolbar.addHandler('undo', () => quill.history.undo());
-                toolbar.addHandler('redo', () => quill.history.redo());
-            }
-            quill.on("text-change", () => {
-                html = editorDiv?.querySelector?.(".ql-editor")?.innerHTML ?? "";
-            });
-            // Set initial content if html is not empty
-            if (html) {
-                quill.root.innerHTML = html;
-            }
-            quillInitialized = true;
         }
-    }
+    });
 
+    // Clean up Quill when not editing
     $effect(() => {
-        if (isEditing) {
-            initQuill();
-        } else {
-            if (quillInitialized && quill) {
-                html = editorDiv?.querySelector?.(".ql-editor")?.innerHTML ?? "";
-                quill = null;
-                quillInitialized = false;
-            }
+        if (!isEditing && quillInitialized) {
+            quill = null;
+            quillInitialized = false;
         }
     });
 
     onMount(async () => {
-        const Quill = (await import("quill")).default;
         // Optionally import Quill modules for font, size, color, etc.
         // You may need to import/register additional modules for full toolbar support
-        quill = new Quill(editorDiv, {
-            theme: "snow",
-            modules: {
-                toolbar: [
-                    [{ 'undo': 'undo' }, { 'redo': 'redo' }],
-                    ['bold', 'italic', 'underline'],
-                    [{ 'font': [] }, { 'size': [] }],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'align': [] }],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'indent': '-1'}, { 'indent': '+1' }],
-                    ['clean']
-                    // Search/replace is not natively supported in Quill; you can add a custom module/plugin if needed
-                ]
-            }
-        });
-
-        // Add undo/redo handlers (Quill does not provide toolbar buttons for these by default)
-        const toolbar = quill.getModule('toolbar');
-        if (toolbar) {
-            toolbar.addHandler('undo', () => quill.history.undo());
-            toolbar.addHandler('redo', () => quill.history.redo());
-        }
-
-        quill.on("text-change", () => {
-            html = editorDiv?.querySelector?.(".ql-editor")?.innerHTML ?? "";
-        });
     });
 
     onDestroy(() => {
@@ -136,13 +109,17 @@
 </script>
 
 {#if isEditing}
-    <div class="quill-toolbar-container">
-        <div bind:this={editorDiv} style="min-height: 200px;"></div>
+    <div class="multiline-container">
+        <div bind:this={editorDiv}></div>
         <button onclick={() => isEditing = false}>Done</button>
     </div>
 {:else}
-    <div class="multiline-html" onclick={() => isEditing = true} tabindex="0" style="min-height: 200px; cursor: pointer;">
-        {@html html}
+    <div class="multiline-html" onclick={() => isEditing = true} tabindex="0" style="cursor: pointer;">
+        {#if html}
+            {@html html}
+        {:else}
+            <span class="placeholder">{box.placeHolder || "<enter>"}</span>
+        {/if}
     </div>
 {/if}
 

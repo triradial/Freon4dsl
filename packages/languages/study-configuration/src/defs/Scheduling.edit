@@ -20,7 +20,7 @@ When {
 }  
 
 StudyStart {
-    [ as the start day of the study ] 
+    [ as the start day of the study ${timeAmountPart} ] 
     trigger = "study start: Declares this event to be the start of the study"
 } 
 
@@ -148,4 +148,3 @@ EventReference {
 Days {
     [${count}]
 }
-

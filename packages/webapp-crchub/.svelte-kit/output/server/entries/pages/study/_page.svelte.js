@@ -166,9 +166,9 @@ function StudyCard($$payload, $$props) {
   push();
   const { study } = $$props;
   let statusColor = getStatusColor(study.status);
-  $$payload.out += `<div class="card crc-card-area max-w-sm h-full"><div class="flex items-center justify-left mb-4"><h3 class="main-label-text mr-2">Study</h3> <button type="button" class="icon-button primary inverted">`;
+  $$payload.out += `<div class="card card-area max-w-sm h-full"><div class="flex items-center justify-left mb-4"><h3 class="main-label-text mr-2">Study</h3> <button type="button" class="icon-button primary inverted">`;
   Pencil($$payload, {});
-  $$payload.out += `<!----></button></div> <div class="space-y-4"><div><div class="small-label-text">Name</div> <p class="standard-text">${escape_html(study.name)}</p></div> <div><div class="small-label-text">Title</div> <p class="standard-text">${escape_html(study.title)}</p></div> <div><div class="small-label-text">Status</div> <span${attr_class(`badge ${stringify(statusColor)} text-xs`)}>${escape_html(study.status)}</span></div> <div><div class="small-label-text">Phase</div> <p class="standard-text">${escape_html(study.phase)}</p></div> <div><div class="small-label-text">Therapeutic Area</div> <p class="standard-text">${escape_html(study.therapeuticArea)}</p></div> <div><div class="small-label-text">Current Protocol</div> <p class="standard-text">${escape_html(study.currentProtocol)}</p></div></div></div>`;
+  $$payload.out += `<!----></button></div> <div class="space-y-4"><div><div class="small-label-text">Name</div> <p class="standard-text">${escape_html(study.name)}</p></div> <div><div class="small-label-text">Title</div> <p class="standard-text">${escape_html(study.title)}</p></div> <div><div class="small-label-text">Status</div> <span${attr_class(`badge ${stringify(statusColor)} standard-text`)}>${escape_html(study.status)}</span></div> <div><div class="small-label-text">Phase</div> <p class="standard-text">${escape_html(study.phase)}</p></div> <div><div class="small-label-text">Therapeutic Area</div> <p class="standard-text">${escape_html(study.therapeuticArea)}</p></div> <div><div class="small-label-text">Current Protocol</div> <p class="standard-text">${escape_html(study.currentProtocol)}</p></div></div></div>`;
   pop();
 }
 function PatientGrid($$payload, $$props) {
@@ -279,7 +279,7 @@ function PatientGrid($$payload, $$props) {
       {
         type: "edit",
         icon: "edit",
-        level: "secondary",
+        level: "primary",
         onClick: onEditClick,
         isVisible: () => {
           return canManageStudies;
@@ -288,7 +288,7 @@ function PatientGrid($$payload, $$props) {
       {
         type: "delete",
         icon: "delete",
-        level: "secondary",
+        level: "primary",
         onClick: onDeleteClick,
         isVisible: () => {
           return canManageStudies;
@@ -540,7 +540,7 @@ function Study($$payload, $$props) {
         Tabs.Panel($$payload2, {
           value: "design",
           children: ($$payload3) => {
-            $$payload3.out += `<div class="flex gap-2"><button type="button" class="icon-button primary inverted">`;
+            $$payload3.out += `<div class="flex gap-2 mb-2"><button type="button" class="icon-button primary inverted">`;
             Save($$payload3, {});
             $$payload3.out += `<!----></button> <button type="button" class="icon-button primary inverted">`;
             Undo($$payload3, {});
@@ -563,7 +563,7 @@ function Study($$payload, $$props) {
         value: activeTab,
         onValueChange: (e) => activeTab = e.value,
         listGap: "gap-6",
-        listMargin: "mb-4",
+        listMargin: "mb-2",
         base: "mt-2",
         contentBase: "mt-0",
         list,

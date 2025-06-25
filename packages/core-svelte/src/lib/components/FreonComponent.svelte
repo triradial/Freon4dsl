@@ -268,7 +268,7 @@
             //&& !$selectedBoxes.includes(editor.selectedBox)) { // selection is no longer in sync with editor
             await tick();
             selectedBoxes.value = getSelectableChildren(editor.selectedBox);
-            editor.selectedBox.setFocus();
+            // editor.selectedBox.setFocus();
         }
     };
 

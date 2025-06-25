@@ -4,14 +4,12 @@
     // @ts-ignore
     import { Eye as IconEye, X as IconX } from '@lucide/svelte';
 
-    const { onCheckboxChange, items: initialItems } = $props<{
+    const { onCheckboxChange, items } = $props<{
         onCheckboxChange: (key: string, value: boolean) => void;
         items: Array<{ id: string; label: string; visible: boolean; parent?: string }>;
     }>();
-    let items = $state<Array<{ id: string; label: string; visible: boolean; parent?: string }>>([...initialItems]);
 
     onMount(() => {
-        items = [...initialItems];
         console.log("[DSLFooter] onMount items:", items);
     });
 
@@ -19,26 +17,9 @@
     console.log("[DSLFooter] $derived hiddenItems:", hiddenItems);
 
     function handleItemToggle(id: string) {
-        const index = items.findIndex((item) => item.id === id);
-        if (index !== -1) {
-            const item = items[index];
-            item.visible = !item.visible;      
-            if (!item.visible) {
-                items.forEach((child, i) => {
-                    if (child.parent === id) {
-                        child.visible = false;
-                    }
-                });
-            }
-            items = [...items]; // Trigger reactivity
-            onCheckboxChange(id, item.visible);
-            if (!item.visible) {
-                items.forEach((child, i) => {
-                    if (child.parent === id) {
-                        onCheckboxChange(child.id, child.visible);
-                    }
-                });
-            }
+        const item = items.find(i => i.id === id);
+        if (item) {
+            onCheckboxChange(id, !item.visible);
         }
     }
 

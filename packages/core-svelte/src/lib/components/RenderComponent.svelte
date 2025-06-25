@@ -265,7 +265,11 @@
                 isExpanded={box.isExpanded}
             />
         {:else if isItemGroupBox2(box)}
-            <ItemGroupComponent2 {box} {editor} cssClass={box.cssClass} />
+            <ItemGroupComponent2 
+                {box} 
+                {editor} 
+                cssClass={box.cssClass} 
+            />
         {:else if isListGroupBox(box)}
             <ListGroupComponent 
                 {box} 

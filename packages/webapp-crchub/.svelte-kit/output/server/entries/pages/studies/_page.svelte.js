@@ -109,7 +109,7 @@ function StudyGrid($$payload, $$props) {
       {
         type: "edit",
         icon: "edit",
-        level: "secondary",
+        level: "primary",
         onClick: onEditClick,
         isVisible: () => {
           return canManageStudies;
@@ -118,7 +118,7 @@ function StudyGrid($$payload, $$props) {
       {
         type: "delete",
         icon: "delete",
-        level: "secondary",
+        level: "primary",
         onClick: onDeleteClick,
         isVisible: () => {
           return canManageStudies;

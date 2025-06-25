@@ -83,5 +83,3 @@ GreaterThenExpression {
 EqualsExpression {
     symbol = "=="
 }
-
-

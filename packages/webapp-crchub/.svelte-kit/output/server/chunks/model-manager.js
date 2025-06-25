@@ -7624,7 +7624,7 @@ function Qy(r, e) {
 }
 var yt = /* @__PURE__ */ Symbol("mobx administration"), lc = /* @__PURE__ */ function() {
   function r(t) {
-    t === void 0 && (t = process.env.NODE_ENV !== "production" ? "Atom@" + Di() : "Atom"), this.name_ = void 0, this.flags_ = 0, this.observers_ = /* @__PURE__ */ new Set(), this.lastAccessedBy_ = 0, this.lowestObserverState_ = Ut.NOT_TRACKING_, this.onBOL = void 0, this.onBUOL = void 0, this.name_ = t;
+    t === void 0 && (t = process.env.NODE_ENV !== "production" ? "Atom@" + Di() : "Atom"), this.name_ = void 0, this.flags_ = 0, this.observers_ = /* @__PURE__ */ new Set(), this.lastAccessedBy_ = 0, this.lowestObserverState_ = Wt.NOT_TRACKING_, this.onBOL = void 0, this.onBUOL = void 0, this.name_ = t;
   }
   var e = r.prototype;
   return e.onBO = function() {
@@ -8224,7 +8224,7 @@ var VF = "create", Mc = /* @__PURE__ */ function(r) {
   }, e;
 }(lc), Qs = /* @__PURE__ */ function() {
   function r(t) {
-    this.dependenciesState_ = Ut.NOT_TRACKING_, this.observing_ = [], this.newObserving_ = null, this.observers_ = /* @__PURE__ */ new Set(), this.runId_ = 0, this.lastAccessedBy_ = 0, this.lowestObserverState_ = Ut.UP_TO_DATE_, this.unboundDepsCount_ = 0, this.value_ = new Z1(null), this.name_ = void 0, this.triggeredBy_ = void 0, this.flags_ = 0, this.derivation = void 0, this.setter_ = void 0, this.isTracing_ = Hs.NONE, this.scope_ = void 0, this.equals_ = void 0, this.requiresReaction_ = void 0, this.keepAlive_ = void 0, this.onBOL = void 0, this.onBUOL = void 0, t.get || $e(31), this.derivation = t.get, this.name_ = t.name || (process.env.NODE_ENV !== "production" ? "ComputedValue@" + Di() : "ComputedValue"), t.set && (this.setter_ = Qc(process.env.NODE_ENV !== "production" ? this.name_ + "-setter" : "ComputedValue-setter", t.set)), this.equals_ = t.equals || (t.compareStructural || t.struct ? J1.structural : J1.default), this.scope_ = t.context, this.requiresReaction_ = t.requiresReaction, this.keepAlive_ = !!t.keepAlive;
+    this.dependenciesState_ = Wt.NOT_TRACKING_, this.observing_ = [], this.newObserving_ = null, this.observers_ = /* @__PURE__ */ new Set(), this.runId_ = 0, this.lastAccessedBy_ = 0, this.lowestObserverState_ = Wt.UP_TO_DATE_, this.unboundDepsCount_ = 0, this.value_ = new Z1(null), this.name_ = void 0, this.triggeredBy_ = void 0, this.flags_ = 0, this.derivation = void 0, this.setter_ = void 0, this.isTracing_ = Hs.NONE, this.scope_ = void 0, this.equals_ = void 0, this.requiresReaction_ = void 0, this.keepAlive_ = void 0, this.onBOL = void 0, this.onBUOL = void 0, t.get || $e(31), this.derivation = t.get, this.name_ = t.name || (process.env.NODE_ENV !== "production" ? "ComputedValue@" + Di() : "ComputedValue"), t.set && (this.setter_ = Qc(process.env.NODE_ENV !== "production" ? this.name_ + "-setter" : "ComputedValue-setter", t.set)), this.equals_ = t.equals || (t.compareStructural || t.struct ? J1.structural : J1.default), this.scope_ = t.context, this.requiresReaction_ = t.requiresReaction, this.keepAlive_ = !!t.keepAlive;
   }
   var e = r.prototype;
   return e.onBecomeStale_ = function() {
@@ -8262,7 +8262,7 @@ var VF = "create", Mc = /* @__PURE__ */ function(r) {
   }, e.trackAndCompute = function() {
     var n = this.value_, a = (
       /* see #1208 */
-      this.dependenciesState_ === Ut.NOT_TRACKING_
+      this.dependenciesState_ === Wt.NOT_TRACKING_
     ), s = this.computeValue_(true), i = a || B1(n) || B1(s) || !this.equals_(n, s);
     return i && (this.value_ = s, process.env.NODE_ENV !== "production" && Qn() && Xc({
       observableKind: "computed",
@@ -8360,10 +8360,10 @@ Qs.isRunningSetterMask_ = 2;
 Qs.isBeingObservedMask_ = 4;
 Qs.isPendingUnobservationMask_ = 8;
 Qs.diffValueMask_ = 16;
-var t_ = /* @__PURE__ */ Qm("ComputedValue", Qs), Ut;
+var t_ = /* @__PURE__ */ Qm("ComputedValue", Qs), Wt;
 (function(r) {
   r[r.NOT_TRACKING_ = -1] = "NOT_TRACKING_", r[r.UP_TO_DATE_ = 0] = "UP_TO_DATE_", r[r.POSSIBLY_STALE_ = 1] = "POSSIBLY_STALE_", r[r.STALE_ = 2] = "STALE_";
-})(Ut || (Ut = {}));
+})(Wt || (Wt = {}));
 var Hs;
 (function(r) {
   r[r.NONE = 0] = "NONE", r[r.LOG = 1] = "LOG", r[r.BREAK = 2] = "BREAK";
@@ -8376,12 +8376,12 @@ function B1(r) {
 }
 function Bw(r) {
   switch (r.dependenciesState_) {
-    case Ut.UP_TO_DATE_:
+    case Wt.UP_TO_DATE_:
       return false;
-    case Ut.NOT_TRACKING_:
-    case Ut.STALE_:
+    case Wt.NOT_TRACKING_:
+    case Wt.STALE_:
       return true;
-    case Ut.POSSIBLY_STALE_: {
+    case Wt.POSSIBLY_STALE_: {
       for (var e = bA(true), t = Xm(), n = r.observing_, a = n.length, s = 0; s < a; s++) {
         var i = n[s];
         if (t_(i)) {
@@ -8393,7 +8393,7 @@ function Bw(r) {
             } catch {
               return go(t), Kd(e), true;
             }
-          if (r.dependenciesState_ === Ut.STALE_)
+          if (r.dependenciesState_ === Wt.STALE_)
             return go(t), Kd(e), true;
         }
       }
@@ -8434,7 +8434,7 @@ function KF(r) {
   process.env.NODE_ENV !== "production" && r.observing_.length === 0 && (typeof r.requiresObservable_ == "boolean" ? r.requiresObservable_ : Ne.reactionRequiresObservable) && console.warn("[mobx] Derivation '" + r.name_ + "' is created/updated without reading any observable value.");
 }
 function YF(r) {
-  for (var e = r.observing_, t = r.observing_ = r.newObserving_, n = Ut.UP_TO_DATE_, a = 0, s = r.unboundDepsCount_, i = 0; i < s; i++) {
+  for (var e = r.observing_, t = r.observing_ = r.newObserving_, n = Wt.UP_TO_DATE_, a = 0, s = r.unboundDepsCount_, i = 0; i < s; i++) {
     var o = t[i];
     o.diffValue === 0 && (o.diffValue = 1, a !== i && (t[a] = o), a++), o.dependenciesState_ > n && (n = o.dependenciesState_);
   }
@@ -8446,14 +8446,14 @@ function YF(r) {
     var f = t[a];
     f.diffValue === 1 && (f.diffValue = 0, JF(f, r));
   }
-  n !== Ut.UP_TO_DATE_ && (r.dependenciesState_ = n, r.onBecomeStale_());
+  n !== Wt.UP_TO_DATE_ && (r.dependenciesState_ = n, r.onBecomeStale_());
 }
 function Fw(r) {
   var e = r.observing_;
   r.observing_ = [];
   for (var t = e.length; t--; )
     zP(e[t], r);
-  r.dependenciesState_ = Ut.NOT_TRACKING_;
+  r.dependenciesState_ = Wt.NOT_TRACKING_;
 }
 function FP(r) {
   var e = Xm();
@@ -8478,10 +8478,10 @@ function Kd(r) {
   Ne.allowStateReads = r;
 }
 function jP(r) {
-  if (r.dependenciesState_ !== Ut.UP_TO_DATE_) {
-    r.dependenciesState_ = Ut.UP_TO_DATE_;
+  if (r.dependenciesState_ !== Wt.UP_TO_DATE_) {
+    r.dependenciesState_ = Wt.UP_TO_DATE_;
     for (var e = r.observing_, t = e.length; t--; )
-      e[t].lowestObserverState_ = Ut.UP_TO_DATE_;
+      e[t].lowestObserverState_ = Wt.UP_TO_DATE_;
   }
 }
 var vw = function() {
@@ -8520,18 +8520,18 @@ function WP(r) {
   return e !== null ? (e.runId_ !== r.lastAccessedBy_ && (r.lastAccessedBy_ = e.runId_, e.newObserving_[e.unboundDepsCount_++] = r, !r.isBeingObserved && Ne.trackingContext && (r.isBeingObserved = true, r.onBO())), r.isBeingObserved) : (r.observers_.size === 0 && Ne.inBatch > 0 && GP(r), false);
 }
 function UP(r) {
-  r.lowestObserverState_ !== Ut.STALE_ && (r.lowestObserverState_ = Ut.STALE_, r.observers_.forEach(function(e) {
-    e.dependenciesState_ === Ut.UP_TO_DATE_ && (process.env.NODE_ENV !== "production" && e.isTracing_ !== Hs.NONE && VP(e, r), e.onBecomeStale_()), e.dependenciesState_ = Ut.STALE_;
+  r.lowestObserverState_ !== Wt.STALE_ && (r.lowestObserverState_ = Wt.STALE_, r.observers_.forEach(function(e) {
+    e.dependenciesState_ === Wt.UP_TO_DATE_ && (process.env.NODE_ENV !== "production" && e.isTracing_ !== Hs.NONE && VP(e, r), e.onBecomeStale_()), e.dependenciesState_ = Wt.STALE_;
   }));
 }
 function QF(r) {
-  r.lowestObserverState_ !== Ut.STALE_ && (r.lowestObserverState_ = Ut.STALE_, r.observers_.forEach(function(e) {
-    e.dependenciesState_ === Ut.POSSIBLY_STALE_ ? (e.dependenciesState_ = Ut.STALE_, process.env.NODE_ENV !== "production" && e.isTracing_ !== Hs.NONE && VP(e, r)) : e.dependenciesState_ === Ut.UP_TO_DATE_ && (r.lowestObserverState_ = Ut.UP_TO_DATE_);
+  r.lowestObserverState_ !== Wt.STALE_ && (r.lowestObserverState_ = Wt.STALE_, r.observers_.forEach(function(e) {
+    e.dependenciesState_ === Wt.POSSIBLY_STALE_ ? (e.dependenciesState_ = Wt.STALE_, process.env.NODE_ENV !== "production" && e.isTracing_ !== Hs.NONE && VP(e, r)) : e.dependenciesState_ === Wt.UP_TO_DATE_ && (r.lowestObserverState_ = Wt.UP_TO_DATE_);
   }));
 }
 function XF(r) {
-  r.lowestObserverState_ === Ut.UP_TO_DATE_ && (r.lowestObserverState_ = Ut.POSSIBLY_STALE_, r.observers_.forEach(function(e) {
-    e.dependenciesState_ === Ut.UP_TO_DATE_ && (e.dependenciesState_ = Ut.POSSIBLY_STALE_, e.onBecomeStale_());
+  r.lowestObserverState_ === Wt.UP_TO_DATE_ && (r.lowestObserverState_ = Wt.POSSIBLY_STALE_, r.observers_.forEach(function(e) {
+    e.dependenciesState_ === Wt.UP_TO_DATE_ && (e.dependenciesState_ = Wt.POSSIBLY_STALE_, e.onBecomeStale_());
   }));
 }
 function VP(r, e) {
@@ -8566,7 +8566,7 @@ function HP(r, e, t) {
 }
 var nf = /* @__PURE__ */ function() {
   function r(t, n, a, s) {
-    t === void 0 && (t = process.env.NODE_ENV !== "production" ? "Reaction@" + Di() : "Reaction"), this.name_ = void 0, this.onInvalidate_ = void 0, this.errorHandler_ = void 0, this.requiresObservable_ = void 0, this.observing_ = [], this.newObserving_ = [], this.dependenciesState_ = Ut.NOT_TRACKING_, this.runId_ = 0, this.unboundDepsCount_ = 0, this.flags_ = 0, this.isTracing_ = Hs.NONE, this.name_ = t, this.onInvalidate_ = n, this.errorHandler_ = a, this.requiresObservable_ = s;
+    t === void 0 && (t = process.env.NODE_ENV !== "production" ? "Reaction@" + Di() : "Reaction"), this.name_ = void 0, this.onInvalidate_ = void 0, this.errorHandler_ = void 0, this.requiresObservable_ = void 0, this.observing_ = [], this.newObserving_ = [], this.dependenciesState_ = Wt.NOT_TRACKING_, this.runId_ = 0, this.unboundDepsCount_ = 0, this.flags_ = 0, this.isTracing_ = Hs.NONE, this.name_ = t, this.onInvalidate_ = n, this.errorHandler_ = a, this.requiresObservable_ = s;
   }
   var e = r.prototype;
   return e.onBecomeStale_ = function() {
@@ -11544,7 +11544,7 @@ class uf extends MobxModelElementImpl {
 class ff extends MobxModelElementImpl {
   // implementation of reference 'eventState'
   constructor(e) {
-    super(), this.$typename = "EventReference", this.$id = "", e ? this.$id = e : this.$id = FreUtils.ID(), observablepart(this, "event"), observablepart(this, "eventState"), this.eventState = FreNodeReference.create(Wt.completed, "EventState"), Ue(this, {
+    super(), this.$typename = "EventReference", this.$id = "", e ? this.$id = e : this.$id = FreUtils.ID(), observablepart(this, "event"), observablepart(this, "eventState"), this.eventState = FreNodeReference.create(Zt.completed, "EventState"), Ue(this, {
       copy: Me
     });
   }
@@ -12620,7 +12620,7 @@ bl(() => {
     name: "skipped"
   });
 });
-class Wt extends MobxModelElementImpl {
+class Zt extends MobxModelElementImpl {
   // implementation of name
   constructor(e) {
     super(), this.$typename = "EventState", this.$id = "", e ? this.$id = e : this.$id = FreUtils.ID(), observableprim(this, "name"), this.name = "", Ue(this, {
@@ -12633,7 +12633,7 @@ class Wt extends MobxModelElementImpl {
    * @param data partial object
    */
   static create(e) {
-    const t = new Wt(e.$id);
+    const t = new Zt(e.$id);
     return e.name && (t.name = e.name), e.parseLocation && (t.parseLocation = e.parseLocation), t;
   }
   /**
@@ -12676,7 +12676,7 @@ class Wt extends MobxModelElementImpl {
    * A convenience method that copies this instance into a new object.
    */
   copy() {
-    const e = new Wt();
+    const e = new Zt();
     return this.name && (e.name = this.name), e;
   }
   /**
@@ -12690,15 +12690,15 @@ class Wt extends MobxModelElementImpl {
   }
 }
 bl(() => {
-  Wt.completed = Wt.create({
+  Zt.completed = Zt.create({
     name: "completed"
-  }), Wt.eachCompleted = Wt.create({
+  }), Zt.eachCompleted = Zt.create({
     name: "each completed"
-  }), Wt.started = Wt.create({
+  }), Zt.started = Zt.create({
     name: "started"
-  }), Wt.scheduled = Wt.create({
+  }), Zt.scheduled = Zt.create({
     name: "scheduled"
-  }), Wt.skipped = Wt.create({
+  }), Zt.skipped = Zt.create({
     name: "skipped"
   });
 });
@@ -17089,7 +17089,7 @@ class mI {
         return this.walkTimeAmount(e, t);
       if (e instanceof tl)
         return this.walkRepeatCondition(e, t);
-      if (e instanceof Wt)
+      if (e instanceof Zt)
         return this.walkEventState(e, t);
       if (e instanceof Qr)
         return this.walkPhaseState(e, t);
@@ -24022,9 +24022,9 @@ class bG {
             "tasks",
             null,
             this.handler,
-            { cssClass: "lgb sc3 type1" }
+            { cssClass: "vplb sc3 type1" }
           ),
-          { cssClass: "sc4 type1", isExpanded: true, canAdd: true }
+          { cssClass: "lgb sc4 type1", isExpanded: true, canAdd: true }
         )
       ] : [],
       ...t.showSystems === true ? [
@@ -24048,16 +24048,11 @@ class bG {
           t,
           "shared-people",
           "People",
-          BoxUtil.indentBox(
+          BoxUtil.getBoxOrAction(
             t,
-            4,
-            "21",
-            BoxUtil.getBoxOrAction(
-              t,
-              "staffing",
-              "Staffing",
-              this.handler
-            )
+            "staffing",
+            "Staffing",
+            this.handler
           ),
           { cssClass: "lgb sc8 type1", isExpanded: true, canAdd: true }
         )
@@ -24165,7 +24160,7 @@ class bG {
                 "alternativeName"
               )
             ],
-            { cssClass: "ml-6", selectable: false }
+            { cssClass: "hl ev1 ml-6", selectable: false }
           ),
           ...s === true ? [
             BoxUtil.getBoxOrAction(
@@ -24279,44 +24274,34 @@ class bG {
           "task",
           "Task:",
           "name",
-          BoxUtil.indentBox(
+          BoxFactory.verticalLayout(
             i,
-            4,
-            "it2",
-            BoxFactory.verticalLayout(
-              i,
-              "task-overall",
-              "",
-              [
-                ...s ? [
-                  BoxUtil.getBoxOrAction(
-                    i,
-                    "description",
-                    "Description",
-                    this.handler
-                  )
-                ] : [],
-                BoxUtil.listGroupBox(
+            "task-overall",
+            "",
+            [
+              ...s ? [
+                BoxUtil.getBoxOrAction(
                   i,
-                  "steps",
-                  "Steps",
-                  BoxUtil.indentBox(
-                    i,
-                    3,
-                    "t12",
-                    BoxUtil.verticalPartListBox(
-                      i,
-                      i.steps,
-                      "steps",
-                      null,
-                      this.handler,
-                      { cssClass: "vplb tsk2 type4" }
-                    )
-                  ),
-                  { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+                  "description",
+                  "Description",
+                  this.handler
                 )
-              ]
-            )
+              ] : [],
+              BoxUtil.listGroupBox(
+                i,
+                "steps",
+                "Steps",
+                BoxUtil.verticalPartListBox(
+                  i,
+                  i.steps,
+                  "steps",
+                  null,
+                  this.handler,
+                  { cssClass: "vplb tsk2 type4" }
+                ),
+                { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+              )
+            ]
           ),
           { cssClass: "igb tsk4 type3", placeHolder: "enter", canShare: true, canDelete: true, isRequired: true }
         );
@@ -24335,44 +24320,34 @@ class bG {
             );
           },
           Ct.getInstance().scoper,
-          BoxUtil.indentBox(
+          BoxFactory.verticalLayout(
             o,
-            4,
-            "it2",
-            BoxFactory.verticalLayout(
-              o,
-              "task-overall",
-              "",
-              [
-                ...s ? [
-                  BoxUtil.getBoxOrAction(
-                    o,
-                    "description",
-                    "Description",
-                    this.handler
-                  )
-                ] : [],
-                BoxUtil.listGroupBox(
+            "task-overall",
+            "",
+            [
+              ...s ? [
+                BoxUtil.getBoxOrAction(
                   o,
-                  "steps",
-                  "Steps",
-                  BoxUtil.indentBox(
-                    o,
-                    3,
-                    "t12",
-                    BoxUtil.verticalPartListBox(
-                      o,
-                      o.steps,
-                      "steps",
-                      null,
-                      this.handler,
-                      { cssClass: "vplb tsk2 type4" }
-                    )
-                  ),
-                  { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+                  "description",
+                  "Description",
+                  this.handler
                 )
-              ]
-            )
+              ] : [],
+              BoxUtil.listGroupBox(
+                o,
+                "steps",
+                "Steps",
+                BoxUtil.verticalPartListBox(
+                  o,
+                  o.steps,
+                  "steps",
+                  null,
+                  this.handler,
+                  { cssClass: "vplb tsk2 type4" }
+                ),
+                { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+              )
+            ]
           ),
           { cssClass: "igb tsk4 type3", placeHolder: "enter", canDelete: true, isRequired: false }
         ) : t = BoxUtil.itemGroupBox2(
@@ -24399,36 +24374,35 @@ class bG {
         "task",
         "Task:",
         "name",
-        // BoxUtil.indentBox(
-        //     element, 4, "it1",
-        BoxFactory.verticalLayout(i, "task-overall", "", [
-          ...s ? [
-            BoxUtil.getBoxOrAction(
+        BoxFactory.verticalLayout(
+          i,
+          "task-overall",
+          "",
+          [
+            ...s ? [
+              BoxUtil.getBoxOrAction(
+                i,
+                "description",
+                "Description",
+                this.handler
+              )
+            ] : [],
+            BoxUtil.listGroupBox(
               i,
-              "description",
-              "Description",
-              this.handler
-            )
-          ] : [],
-          BoxUtil.listGroupBox(
-            i,
-            "steps",
-            "Steps",
-            // BoxUtil.indentBox(
-            //     element, 3, "t11", 
-            BoxUtil.verticalPartListBox(
-              i,
-              i.steps,
               "steps",
-              null,
-              this.handler,
-              { cssClass: "vplb tsk2 type4" }
-            ),
-            // ),
-            { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
-          )
-        ]),
-        // ),
+              "Steps",
+              BoxUtil.verticalPartListBox(
+                i,
+                i.steps,
+                "steps",
+                null,
+                this.handler,
+                { cssClass: "vplb tsk2 type4" }
+              ),
+              { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+            )
+          ]
+        ),
         { cssClass: "igb tsk4 type3", placeHolder: "enter", canShare: false, canDelete: false, isRequired: true }
       );
     }
@@ -24600,7 +24574,14 @@ class bG {
       t,
       "patients",
       "patients",
-      BoxUtil.verticalPartListBox(t, t.patientHistories, "patientHistories", null, this.handler, { cssClass: "ml-6 mb-2" }),
+      BoxUtil.verticalPartListBox(
+        t,
+        t.patientHistories,
+        "patientHistories",
+        null,
+        this.handler,
+        { cssClass: "ml-6 mb-2" }
+      ),
       { cssClass: "type1 mt-2", isExpanded: true, canAdd: true }
     );
   }
@@ -24627,13 +24608,18 @@ class bG {
               t,
               "PatientHistory-hlist-line-1",
               "",
-              [BoxUtil.verticalPartListBox(t, t.patientVisits, "patientVisits", null, this.handler)],
+              [
+                BoxUtil.verticalPartListBox(
+                  t,
+                  t.patientVisits,
+                  "patientVisits",
+                  null,
+                  this.handler
+                )
+              ],
               { selectable: false, cssClass: "w-full ml-8" }
             ),
-            {
-              cssClass: "type4",
-              isExpanded: true
-            }
+            { cssClass: "type4", isExpanded: true }
           ),
           BoxUtil.listGroupBox(
             t,
@@ -24643,13 +24629,17 @@ class bG {
               t,
               "PatientHistory-hlist-line-2",
               "",
-              [BoxUtil.getBoxOrAction(t, "patientNotAvailableDates", "PatientNotAvailable", this.handler)],
+              [
+                BoxUtil.getBoxOrAction(
+                  t,
+                  "patientNotAvailableDates",
+                  "PatientNotAvailable",
+                  this.handler
+                )
+              ],
               { selectable: false, cssClass: "w-full ml-8" }
             ),
-            {
-              cssClass: "type4",
-              isExpanded: true
-            }
+            { cssClass: "type4", isExpanded: true }
           )
         ],
         { cssClass: "w-full ml-8" }
@@ -24732,7 +24722,7 @@ class NA {
    * in which the list of predefined elements is filled.
    */
   constructor() {
-    this.elements = [], this.elements.push(Jr.completed), this.elements.push(Jr.missed), this.elements.push(Jr.canceled), this.elements.push(lt.January), this.elements.push(lt.February), this.elements.push(lt.March), this.elements.push(lt.April), this.elements.push(lt.May), this.elements.push(lt.June), this.elements.push(lt.July), this.elements.push(lt.August), this.elements.push(lt.September), this.elements.push(lt.October), this.elements.push(lt.November), this.elements.push(lt.December), this.elements.push(gr.hours), this.elements.push(gr.days), this.elements.push(gr.weeks), this.elements.push(gr.months), this.elements.push(Qr.completed), this.elements.push(Qr.started), this.elements.push(Qr.skipped), this.elements.push(Wt.completed), this.elements.push(Wt.eachCompleted), this.elements.push(Wt.started), this.elements.push(Wt.scheduled), this.elements.push(Wt.skipped), this.elements.push(pn.plus), this.elements.push(pn.minus), this.elements.push(Dt.monday), this.elements.push(Dt.tuesday), this.elements.push(Dt.wednesday), this.elements.push(Dt.thursday), this.elements.push(Dt.friday), this.elements.push(Dt.saturday), this.elements.push(Dt.sunday), this.elements.push(Er.site), this.elements.push(Er.video), this.elements.push(Er.phone), this.elements.push(Er.other);
+    this.elements = [], this.elements.push(Jr.completed), this.elements.push(Jr.missed), this.elements.push(Jr.canceled), this.elements.push(lt.January), this.elements.push(lt.February), this.elements.push(lt.March), this.elements.push(lt.April), this.elements.push(lt.May), this.elements.push(lt.June), this.elements.push(lt.July), this.elements.push(lt.August), this.elements.push(lt.September), this.elements.push(lt.October), this.elements.push(lt.November), this.elements.push(lt.December), this.elements.push(gr.hours), this.elements.push(gr.days), this.elements.push(gr.weeks), this.elements.push(gr.months), this.elements.push(Qr.completed), this.elements.push(Qr.started), this.elements.push(Qr.skipped), this.elements.push(Zt.completed), this.elements.push(Zt.eachCompleted), this.elements.push(Zt.started), this.elements.push(Zt.scheduled), this.elements.push(Zt.skipped), this.elements.push(pn.plus), this.elements.push(pn.minus), this.elements.push(Dt.monday), this.elements.push(Dt.tuesday), this.elements.push(Dt.wednesday), this.elements.push(Dt.thursday), this.elements.push(Dt.friday), this.elements.push(Dt.saturday), this.elements.push(Dt.sunday), this.elements.push(Er.site), this.elements.push(Er.video), this.elements.push(Er.phone), this.elements.push(Er.other);
     for (const e of eg.customStdLibs)
       kA.addAllIfNotPresent(this.elements, e.elements);
   }
@@ -27024,8 +27014,8 @@ function NW() {
     language: "-key-StudyConfigurationModel",
     isNamedElement: true,
     trigger: "EventState",
-    constructor: (e) => new Wt(e),
-    creator: (e) => Wt.create(e),
+    constructor: (e) => new Zt(e),
+    creator: (e) => Zt.create(e),
     properties: /* @__PURE__ */ new Map(),
     baseName: null,
     subConceptNames: []
@@ -30375,7 +30365,7 @@ class TA {
    * @param node
    */
   writeNameOnly(e) {
-    return e ? e instanceof af || e instanceof sf || e instanceof Bo || e instanceof Fo || e instanceof Jr || e instanceof lt || e instanceof gr || e instanceof Qr || e instanceof Wt || e instanceof pn || e instanceof vf || e instanceof Dt || e instanceof gf || e instanceof Wo || e instanceof Uo || e instanceof Er || e instanceof pm || e instanceof Xs || e instanceof Vo || e instanceof Ho || e instanceof bf || e instanceof Ko ? e.name : (this.output = [], this.currentLine = 0, this.output[this.currentLine] = "", this.unparse(e, true), this.output[0].trimEnd()) : "";
+    return e ? e instanceof af || e instanceof sf || e instanceof Bo || e instanceof Fo || e instanceof Jr || e instanceof lt || e instanceof gr || e instanceof Qr || e instanceof Zt || e instanceof pn || e instanceof vf || e instanceof Dt || e instanceof gf || e instanceof Wo || e instanceof Uo || e instanceof Er || e instanceof pm || e instanceof Xs || e instanceof Vo || e instanceof Ho || e instanceof bf || e instanceof Ko ? e.name : (this.output = [], this.currentLine = 0, this.output[this.currentLine] = "", this.unparse(e, true), this.output[0].trimEnd()) : "";
   }
   unparse(e, t) {
     if (e)
@@ -31430,7 +31420,7 @@ class TA {
   _unparseReference(e, t) {
     if (e) {
       const n = e == null ? void 0 : e.referred;
-      n ? n instanceof Jr ? this.unparsePatientVisitStatus(n, t) : n instanceof lt ? this.unparseMonth(n, t) : n instanceof gr ? this.unparseTimeUnit(n, t) : n instanceof Qr ? this.unparsePhaseState(n, t) : n instanceof Wt ? this.unparseEventState(n, t) : n instanceof pn ? this.unparseSimpleOperators(n, t) : n instanceof Dt ? this.unparseDayOfWeek(n, t) : n instanceof Er ? this.unparseTypeOfEvent(n, t) : this.output[this.currentLine] += e.pathnameToString(".") + " " : this.output[this.currentLine] += e.pathnameToString(".") + " ";
+      n ? n instanceof Jr ? this.unparsePatientVisitStatus(n, t) : n instanceof lt ? this.unparseMonth(n, t) : n instanceof gr ? this.unparseTimeUnit(n, t) : n instanceof Qr ? this.unparsePhaseState(n, t) : n instanceof Zt ? this.unparseEventState(n, t) : n instanceof pn ? this.unparseSimpleOperators(n, t) : n instanceof Dt ? this.unparseDayOfWeek(n, t) : n instanceof Er ? this.unparseTypeOfEvent(n, t) : this.output[this.currentLine] += e.pathnameToString(".") + " " : this.output[this.currentLine] += e.pathnameToString(".") + " ";
     }
   }
   /**
@@ -31958,7 +31948,7 @@ let P5 = class {
     return PU(e);
   }
 };
-class Ht {
+class Vt {
 }
 function s_() {
   return SU(this);
@@ -31994,7 +31984,7 @@ let D5 = class {
   }
 }, L5 = class {
 };
-class Kt {
+class Ht {
   constructor(e, t) {
     this.o2_1 = e, this.p2_1 = t;
   }
@@ -32008,7 +31998,7 @@ class Kt {
     return jl(this.p2_1, e.p2_1);
   }
   d(e) {
-    return this.s2(e instanceof Kt ? e : g());
+    return this.s2(e instanceof Ht ? e : g());
   }
   equals(e) {
     return this === e;
@@ -32413,16 +32403,16 @@ class i_ {
   u6(e) {
     if (!(e != null && p(e, pi)))
       return false;
-    var t = e.m2(), n = e.n2(), a = (p(this, Ht) ? this : g()).l2(t);
+    var t = e.m2(), n = e.n2(), a = (p(this, Vt) ? this : g()).l2(t);
     if (!C(n, a))
       return false;
     var s;
-    return a == null ? s = !(p(this, Ht) ? this : g()).j2(t) : s = false, !s;
+    return a == null ? s = !(p(this, Vt) ? this : g()).j2(t) : s = false, !s;
   }
   equals(e) {
     if (e === this)
       return true;
-    if (!(e != null && p(e, Ht)) || this.r() !== e.r())
+    if (!(e != null && p(e, Vt)) || this.r() !== e.r())
       return false;
     var t = e.i2(), n;
     e: {
@@ -33187,7 +33177,7 @@ class bi {
       t = true;
     else {
       var n;
-      e != null && p(e, Ht) ? n = qV(this, e) : n = false, t = n;
+      e != null && p(e, Vt) ? n = qV(this, e) : n = false, t = n;
     }
     return t;
   }
@@ -33577,7 +33567,7 @@ class sE extends rp {
 }
 class re {
 }
-class Qt {
+class Jt {
 }
 class KI {
   constructor() {
@@ -33792,7 +33782,7 @@ class vu {
     return this.pd_1.toString();
   }
 }
-class iE extends Kt {
+class iE extends Ht {
   constructor(e, t, n) {
     super(e, t), this.ie_1 = n;
   }
@@ -34183,7 +34173,7 @@ class BA {
   }
   equals(e) {
     var t;
-    return e != null && p(e, Ht) ? t = e.y() : t = false, t;
+    return e != null && p(e, Vt) ? t = e.y() : t = false, t;
   }
   hashCode() {
     return 0;
@@ -37170,7 +37160,7 @@ function Iu(r, e) {
 }
 function Qe() {
   var r = G6();
-  return p(r, Ht) ? r : g();
+  return p(r, Vt) ? r : g();
 }
 function b_(r) {
   return Z.va(r);
@@ -37803,8 +37793,8 @@ F(ov, "MutableIterable", l, l, [Mh]);
 F($h, "MutableCollection", l, l, [De, ov]);
 F(yr, "MutableList", l, l, [se, $h]);
 Te(P5);
-F(Ht, "Map");
-F(El, "MutableMap", l, l, [Ht]);
+F(Vt, "Map");
+F(El, "MutableMap", l, l, [Vt]);
 F(pi, "Entry");
 Te(I5);
 Te(C5);
@@ -37812,7 +37802,7 @@ F(ql, "Set", l, l, [De]);
 F(Xo, "MutableSet", l, l, [ql, $h]);
 Te(D5);
 Te(L5);
-b(Kt, "Enum", l, l, [qh]);
+b(Ht, "Enum", l, l, [qh]);
 Te(wI);
 b(Kr, "Long", l, l, [PA, qh]);
 F(Ze, "FunctionAdapter");
@@ -37835,7 +37825,7 @@ b(ep, "AbstractMutableList", l, l, [fc, yr]);
 F(tp, "RandomAccess");
 b(TI, "SubList", l, l, [ep, tp]);
 xe(i_).asJsReadonlyMapView = s_;
-b(i_, "AbstractMap", l, l, [Ht]);
+b(i_, "AbstractMap", l, l, [Vt]);
 xe(l_).asJsMapView = _I;
 b(l_, "AbstractMutableMap", l, l, [i_, El]);
 xe($l).asJsSetView = bI;
@@ -37892,7 +37882,7 @@ b(iy, "ErrorKClass", iy, l, [hh]);
 b(Mr, "PrimitiveKClassImpl");
 b(sE, "SimpleKClassImpl");
 F(re, "KProperty1");
-F(Qt, "KMutableProperty1", l, l, [re]);
+F(Jt, "KMutableProperty1", l, l, [re]);
 _t(KI, "PrimitiveClasses");
 b(qt, "StringBuilder", qt.f, l, [OA]);
 Te(YI);
@@ -37921,7 +37911,7 @@ _t($A, "EmptyList", l, l, [se, tp]);
 b(u_, "ArrayAsCollection", l, l, [De]);
 _t(sC, "EmptyIterator");
 xe(BA).asJsReadonlyMapView = s_;
-_t(BA, "EmptyMap", l, l, [Ht]);
+_t(BA, "EmptyMap", l, l, [Vt]);
 b(iC, "IntIterator");
 b(lC);
 b(oC, "TransformingSequence");
@@ -38037,7 +38027,7 @@ class sR {
   }
   oo() {
     this.kclass;
-    var e = Gp(this.kclass), t = Kt.prototype, n = Object.getPrototypeOf(e.prototype);
+    var e = Gp(this.kclass), t = Ht.prototype, n = Object.getPrototypeOf(e.prototype);
     return t == n;
   }
   po() {
@@ -38106,7 +38096,7 @@ class sR {
       n = null;
     }
     var i = n;
-    return i == null || i instanceof Kt ? i : g();
+    return i == null || i instanceof Ht ? i : g();
   }
   call(e, t, n) {
     return e[t](n);
@@ -38737,7 +38727,7 @@ function IH(r) {
 function my(r) {
   for (var e = or.b7(), t = r.i2().o(); t.p(); ) {
     var n = t.q(), a = n.m2(), s = n.n2(), i;
-    if (a != null && p(a, Ht)) {
+    if (a != null && p(a, Vt)) {
       var o = my(a);
       i = o ?? g();
     } else if (a != null && p(a, De)) {
@@ -38746,7 +38736,7 @@ function my(r) {
     } else
       i = a;
     var f = i, c;
-    if (s != null && p(s, Ht)) {
+    if (s != null && p(s, Vt)) {
       var m = my(s);
       c = m ?? g();
     } else if (s != null && p(s, De)) {
@@ -38774,7 +38764,7 @@ function $E(r) {
     if (s != null && p(s, De)) {
       var o = $E(s);
       i = o ?? g();
-    } else if (s != null && p(s, Ht)) {
+    } else if (s != null && p(s, Vt)) {
       var u = my(s);
       i = u ?? g();
     } else
@@ -38799,10 +38789,10 @@ function CH(r) {
     e = Qe();
   else if (r instanceof Z) {
     var t = Z.va(r);
-    e = p(t, Ht) ? t : g();
+    e = p(t, Vt) ? t : g();
   } else if (r instanceof or) {
     var n = or.q7(r);
-    e = p(n, Ht) ? n : g();
+    e = p(n, Vt) ? n : g();
   } else {
     var a = "Trying to clone unknown type";
     throw k.f4(y(a));
@@ -38810,10 +38800,10 @@ function CH(r) {
   return e;
 }
 xe(lR).asJsReadonlyMapView = s_;
-b(lR, "LazyMap", l, l, [Ht]);
+b(lR, "LazyMap", l, l, [Vt]);
 xe(E_).asJsReadonlyMapView = s_;
 xe(E_).asJsMapView = _I;
-b(E_, "LazyMutableMapNonNull", l, l, [Ht, El]);
+b(E_, "LazyMutableMapNonNull", l, l, [Vt, El]);
 F(S_, "ListSeparated", l, l, [se]);
 b(an, "ListSeparatedArrayList", l, l, [Bh, S_]);
 b(LE, "MutableQueue", LE);
@@ -39082,7 +39072,7 @@ class fR {
     return "Regex{" + this.gm_1 + "}";
   }
 }
-class FE extends Kt {
+class FE extends Ht {
 }
 let d0 = class {
   constructor() {
@@ -39199,7 +39189,7 @@ class Ve {
     return e;
   }
 }
-class Ou extends Kt {
+class Ou extends Ht {
 }
 class yh {
   constructor(e, t) {
@@ -39247,9 +39237,9 @@ let Ca = class {
     return "-" + e + "->(" + (t == null ? null : t.sk_1) + ")";
   }
 };
-class jE extends Kt {
+class jE extends Ht {
 }
-class xm extends Kt {
+class xm extends Ht {
   get name() {
     return this.q2();
   }
@@ -39622,13 +39612,13 @@ function MH(r) {
               var Tt = qt.f();
               for (Tt.na(a), a = zt(r); 48 <= a && a <= 57; )
                 Tt.na(a), a = zt(r);
-              var jt = cy(Tt.toString(), 10), Xt;
+              var jt = cy(Tt.toString(), 10), Qt;
               if (jt == null) {
-                var Zt = "Counted repetition must be one of the forms {n} | {n,} | {n,m} where n and m are numbers";
-                throw k.f4(y(Zt));
+                var Xt = "Counted repetition must be one of the forms {n} | {n,} | {n,m} where n and m are numbers";
+                throw k.f4(y(Xt));
               } else
-                Xt = jt;
-              var vr = Xt;
+                Qt = jt;
+              var vr = Qt;
               if (a === 125) {
                 var qr = dt().PREC_REP;
                 e.kj(new ee(qr, o7(r, it, vr))), a = zt(r);
@@ -40671,7 +40661,7 @@ class mg {
     return this.zt();
   }
 }
-class bo extends Kt {
+class bo extends Ht {
   get name() {
     return this.q2();
   }
@@ -40684,7 +40674,7 @@ class M0 {
 function b7(r, e) {
   return r = r === l ? false : r, e === l ? this.gu(r) : e.gu.call(this, r);
 }
-class ja extends Kt {
+class ja extends Ht {
   get name() {
     return this.q2();
   }
@@ -41048,8 +41038,8 @@ class B0 extends $0 {
       me.n(It);
     }
     for (var Mt = me, Tt = Mt.o(); Tt.p(); ) {
-      var jt = Tt.q(), Xt = this.dx_1, Zt = jt.wx_1, vr = new Nm(we(jt.wx_1));
-      Xt.d2(Zt, vr);
+      var jt = Tt.q(), Qt = this.dx_1, Xt = jt.wx_1, vr = new Nm(we(jt.wx_1));
+      Qt.d2(Xt, vr);
     }
     return ue(Mt);
   }
@@ -41297,14 +41287,14 @@ let F0 = class {
           var Mt = It, Tt = mt.q();
           It = Mt.qy(e, Tt);
         }
-        var jt = It, Xt = new is(Le, jt);
-        ve.n(Xt);
+        var jt = It, Qt = new is(Le, jt);
+        ve.n(Qt);
       }
-      var Zt = ue(ve), vr;
-      if (Zt.r() === 1)
-        vr = Zt;
+      var Xt = ue(ve), vr;
+      if (Xt.r() === 1)
+        vr = Xt;
       else {
-        var qr = dY, cr = new F0(qr), mr = ur(Zt, cr), sr = Je.a1(), zr = Je.a1(), pr = 0, rn = mr.r() - 1 | 0;
+        var qr = dY, cr = new F0(qr), mr = ur(Xt, cr), sr = Je.a1(), zr = Je.a1(), pr = 0, rn = mr.r() - 1 | 0;
         if (pr <= rn)
           do {
             var ir = pr;
@@ -42752,11 +42742,11 @@ let J0 = class {
         var Tt = mt, jt = new ia(Ae, Tt);
         Se.n(jt);
       }
-      var Xt = ue(Se), Zt;
-      if (Xt.r() === 1)
-        Zt = Xt;
+      var Qt = ue(Se), Xt;
+      if (Qt.r() === 1)
+        Xt = Qt;
       else {
-        var vr = I9, qr = new J0(vr), cr = ur(Xt, qr), mr = Je.a1(), sr = Je.a1(), zr = 0, pr = cr.r() - 1 | 0;
+        var vr = I9, qr = new J0(vr), cr = ur(Qt, qr), mr = Je.a1(), sr = Je.a1(), zr = 0, pr = cr.r() - 1 | 0;
         if (zr <= pr)
           do {
             var rn = zr;
@@ -42774,9 +42764,9 @@ let J0 = class {
               mr.n(ir);
             }
           } while (zr <= pr);
-        Zt = mr;
+        Xt = mr;
       }
-      t = Zt;
+      t = Xt;
     }
     return t;
   }
@@ -43240,7 +43230,7 @@ class dg {
     return i ? s : null;
   }
 }
-class il extends Kt {
+class il extends Ht {
   get name() {
     return this.q2();
   }
@@ -43248,7 +43238,7 @@ class il extends Kt {
     return this.r2();
   }
 }
-class Ur extends Kt {
+class Ur extends Ht {
   get name() {
     return this.q2();
   }
@@ -44136,7 +44126,7 @@ class DR {
 }
 class LR {
 }
-class ll extends Kt {
+class ll extends Ht {
   get name() {
     return this.q2();
   }
@@ -44653,7 +44643,7 @@ class Pn {
     return !(!C(this.reason, t.reason) || !this.choice.equals(t.choice) || this.text !== t.text);
   }
 }
-class Fp extends Kt {
+class Fp extends Ht {
   get name() {
     return this.q2();
   }
@@ -44661,7 +44651,7 @@ class Fp extends Kt {
     return this.r2();
   }
 }
-class Gd extends Kt {
+class Gd extends Ht {
   get name() {
     return this.q2();
   }
@@ -45581,7 +45571,7 @@ class Pt {
     return this.e1e();
   }
 }
-class Bs extends Kt {
+class Bs extends Ht {
   get name() {
     return this.q2();
   }
@@ -45589,7 +45579,7 @@ class Bs extends Kt {
     return this.r2();
   }
 }
-class Fs extends Kt {
+class Fs extends Ht {
   get name() {
     return this.q2();
   }
@@ -45597,7 +45587,7 @@ class Fs extends Kt {
     return this.r2();
   }
 }
-class za extends Kt {
+class za extends Ht {
   get name() {
     return this.q2();
   }
@@ -45605,7 +45595,7 @@ class za extends Kt {
     return this.r2();
   }
 }
-class js extends Kt {
+class js extends Ht {
   get name() {
     return this.q2();
   }
@@ -46699,7 +46689,7 @@ class Qh {
 }
 class VR {
 }
-class zf extends Kt {
+class zf extends Ht {
   get name() {
     return this.q2();
   }
@@ -46714,7 +46704,7 @@ function O7(r, e, t) {
 }
 class KR {
 }
-class ol extends Kt {
+class ol extends Ht {
   get name() {
     return this.q2();
   }
@@ -47256,7 +47246,7 @@ class nu extends Xh {
     this.js_1.z1(), this.is_1.z1();
   }
   isLookingAt(e, t, n) {
-    var a = this.is_1, s = new ee(t, n), i = (p(a, Ht) ? a : g()).l2(s), o;
+    var a = this.is_1, s = new ee(t, n), i = (p(a, Vt) ? a : g()).l2(s), o;
     if (i != null)
       o = i;
     else {
@@ -48337,7 +48327,7 @@ class bh {
       default:
         var v = qc(Ji, i.z(0)), _;
         if (this.h1o_1.j2(v)) {
-          for (var E = this.g1o_1, R = this.h1o_1.l2(v), x = (p(E, Ht) ? E : g()).l2(R), N = M(x).i2(), P = w.s($(N, 10)), O = N.o(); O.p(); ) {
+          for (var E = this.g1o_1, R = this.h1o_1.l2(v), x = (p(E, Vt) ? E : g()).l2(R), N = M(x).i2(), P = w.s($(N, 10)), O = N.o(); O.p(); ) {
             var D = O.q(), q = new ee(D.m2(), D.n2());
             P.n(q);
           }
@@ -48947,7 +48937,7 @@ class Oi {
     return this.a1l();
   }
 }
-class Cc extends Kt {
+class Cc extends Ht {
   get name() {
     return this.q2();
   }
@@ -49738,8 +49728,8 @@ function QK(r, e) {
       var Mt = it, Tt = we(new ia(Mt, ht().EMPTY)), jt = new ys(O, V, G, he, Tt);
       d.n(jt);
     }
-    var Xt = ue(d);
-    t = Xt;
+    var Qt = ue(d);
+    t = Qt;
   }
   return t;
 }
@@ -51139,11 +51129,11 @@ function a8(r, e, t) {
     } else {
       for (var je = w.d1(), Be = e.o(); Be.p(); ) {
         for (var ct = Be.q(), ft = ct.kg(), it = ct.lg(), mt = it, It = n8(r, u, ft.to.rulePositions, mt, t), Mt = w.s($(It, 10)), Tt = It.o(); Tt.p(); ) {
-          var jt = Tt.q(), Xt = new ee(ft, jt);
-          Mt.n(Xt);
+          var jt = Tt.q(), Qt = new ee(ft, jt);
+          Mt.n(Qt);
         }
-        var Zt = Mt;
-        pe(je, Zt);
+        var Xt = Mt;
+        pe(je, Xt);
       }
       var vr = je, qr;
       if (vr.y()) {
@@ -51461,13 +51451,13 @@ function Tw(r, e, t, n, a, s) {
         for (var ft = w.s($(j, 10)), it = j.o(); it.p(); ) {
           var mt = it.q(), It = mt.si_1, Mt = mt.ti_1, Tt = mt.ui_1, jt;
           Tt.jy_1 || Tt.ky_1 ? jt = r.k15_1.x10(Tt.cz(It, Mt)) : jt = Tt;
-          var Xt = jt;
-          ft.n(Xt);
+          var Qt = jt;
+          ft.n(Qt);
         }
         G = ue(ft);
       }
-      var Zt = G;
-      V = r.q15_1.z18(e, t, n.to, Zt);
+      var Xt = G;
+      V = r.q15_1.z18(e, t, n.to, Xt);
     } else
       iq(r, s, e, n, o, a), V = false;
     return V;
@@ -51582,11 +51572,11 @@ function s8(r, e, t, n) {
     var Tt = _e + ft + " on " + y(it);
     i.n(Tt);
   }
-  for (var jt = i, Xt = w.s($(t, 10)), Zt = t.o(); Zt.p(); ) {
-    var vr = Zt.q(), qr = vr.action;
-    Xt.n(qr);
+  for (var jt = i, Qt = w.s($(t, 10)), Xt = t.o(); Xt.p(); ) {
+    var vr = Xt.q(), qr = vr.action;
+    Qt.n(qr);
   }
-  var cr = ue(Xt), mr = fe(cr, "/", l, l, l, l, v8), sr;
+  var cr = ue(Qt), mr = fe(cr, "/", l, l, l, l, v8), sr;
   jt.r() === 1 ? sr = st(jt) : sr = fe(jt, `
     `, `
     `, `
@@ -52818,7 +52808,7 @@ function HQ(r, e, t) {
   r.m1m_1.kj(n), r.p1m_1.kj(e);
 }
 function Zq(r, e) {
-  var t = r.p1m_1.oj(), n = r.m1m_1.oj(), a = t.goalRuleFor, s = e.ns_1, i = (p(a, Ht) ? a : g()).l2(s), o = M(i), u = new Br(o, e.os_1, e.ps_1, e.qs_1, de().OPTION_NONE, Q());
+  var t = r.p1m_1.oj(), n = r.m1m_1.oj(), a = t.goalRuleFor, s = e.ns_1, i = (p(a, Vt) ? a : g()).l2(s), o = M(i), u = new Br(o, e.os_1, e.ps_1, e.qs_1, de().OPTION_NONE, Q());
   return n.setChildren(u, oe(e), false), n.setRootTo(u), n;
 }
 function KQ(r, e, t) {
@@ -53537,7 +53527,7 @@ class uM {
   registerUsedClasses() {
     S().bo("net.akehurst.language.agl.processor.BuildConfig", A(H2), null, W3), S().bo("net.akehurst.language.agl.processor.FormatterAbstract", A(vM), null, null), S().bo("net.akehurst.language.agl.processor.LanguageDefinitionAbstract", A(Rg), null, null), S().bo("net.akehurst.language.agl.processor.AglLanguages", A(J2), null, null), S().bo("net.akehurst.language.agl.processor.LanguageRegistryDefault", A(Nv), null, null), S().bo("net.akehurst.language.agl.processor.LanguageProcessorConfigurationDslMarker", A(Tv), null, null), S().bo("net.akehurst.language.agl.processor.LanguageProcessorConfigurationBuilder", A(Z2), null, null), S().bo("net.akehurst.language.agl.processor.ProcessOptionsDefault", A(Kf), null, null), S().bo("net.akehurst.language.agl.processor.SyntaxAnalysisOptionsDefault", A(qm), null, null), S().bo("net.akehurst.language.agl.processor.SemanticAnalysisOptionsDefault", A(Yf), null, null), S().bo("net.akehurst.language.agl.processor.CompletionProviderOptionsDefault", A(Mm), null, null), S().bo("net.akehurst.language.agl.processor.ProcessOptionsDslMarker", A(Ov), null, null), S().bo("net.akehurst.language.agl.processor.ScanOptionsBuilder", A(ax), null, null), S().bo("net.akehurst.language.agl.processor.ParseOptionsBuilder", A(lb), null, null), S().bo("net.akehurst.language.agl.processor.ProcessOptionsBuilder", A(sx), null, null), S().bo("net.akehurst.language.agl.processor.SyntaxAnalysisOptionsBuilder", A(ix), null, null), S().bo("net.akehurst.language.agl.processor.SemanticAnalysisOptionsBuilder", A(lx), null, null), S().bo("net.akehurst.language.agl.processor.CompletionProviderOptionsBuilder", A(ox), null, null), S().bo("net.akehurst.language.agl.processor.LanguageProcessorResult", A(Ay), null, null), S().bo("net.akehurst.language.agl.processor.SyntaxAnalysisResultDefault", A(zc), null, null), S().bo("net.akehurst.language.agl.processor.SemanticAnalysisResultDefault", A(Ga), null, null), S().bo("net.akehurst.language.agl.processor.ProcessResultDefault", A(St), null, null), S().bo("net.akehurst.language.agl.processor.FormatResultDefault", A(wi), null, null), S().bo("net.akehurst.language.agl.processor.ExpectedAtResultDefault", A(Wu), null, null), S().bo("net.akehurst.language.agl.semanticAnalyser.ContextFromTypeModelReference", A(LM), null, null), S().bo("net.akehurst.language.agl.semanticAnalyser.ContextFromTypeModel", A(Wl), null, null), S().bo("net.akehurst.language.agl.simple.ContextAsmSimple", A(Ry), null, null);
     var e = S(), t = A(zs);
-    e.bo("net.akehurst.language.api.processor.CompletionItemKind", t, HX(), null), S().bo("net.akehurst.language.api.processor.CompletionItem", A(Yt), null, null), S().bo("net.akehurst.language.api.processor.SpineNode", A(ib), null, null), S().bo("net.akehurst.language.api.processor.Spine", A(K2), null, null), S().bo("net.akehurst.language.api.processor.CompletionProvider", A(sb), null, null), S().bo("net.akehurst.language.api.processor.Formatter", A(dp), null, null), S().bo("net.akehurst.language.api.processor.GrammarRegistry", A(Q2), null, null), S().bo("net.akehurst.language.api.processor.LanguageIdentity", A(Hr), null, null), S().bo("net.akehurst.language.api.processor.GrammarString", A(Vn), null, null), S().bo("net.akehurst.language.api.processor.TypesString", A(Hn), null, null), S().bo("net.akehurst.language.api.processor.TransformString", A(hn), null, null), S().bo("net.akehurst.language.api.processor.CrossReferenceString", A(Kn), null, null), S().bo("net.akehurst.language.api.processor.StyleString", A(Yn), null, null), S().bo("net.akehurst.language.api.processor.FormatString", A(Jn), null, null), S().bo("net.akehurst.language.api.processor.LanguageRegistry", A(X2), null, null), S().bo("net.akehurst.language.api.processor.LanguageDefinition", A(xv), null, null), S().bo("net.akehurst.language.api.processor.LanguageProcessor", A(Y2), null, null), S().bo("net.akehurst.language.api.processor.LanguageProcessorConfiguration", A(xg), null, null);
+    e.bo("net.akehurst.language.api.processor.CompletionItemKind", t, HX(), null), S().bo("net.akehurst.language.api.processor.CompletionItem", A(Kt), null, null), S().bo("net.akehurst.language.api.processor.SpineNode", A(ib), null, null), S().bo("net.akehurst.language.api.processor.Spine", A(K2), null, null), S().bo("net.akehurst.language.api.processor.CompletionProvider", A(sb), null, null), S().bo("net.akehurst.language.api.processor.Formatter", A(dp), null, null), S().bo("net.akehurst.language.api.processor.GrammarRegistry", A(Q2), null, null), S().bo("net.akehurst.language.api.processor.LanguageIdentity", A(Hr), null, null), S().bo("net.akehurst.language.api.processor.GrammarString", A(Vn), null, null), S().bo("net.akehurst.language.api.processor.TypesString", A(Hn), null, null), S().bo("net.akehurst.language.api.processor.TransformString", A(hn), null, null), S().bo("net.akehurst.language.api.processor.CrossReferenceString", A(Kn), null, null), S().bo("net.akehurst.language.api.processor.StyleString", A(Yn), null, null), S().bo("net.akehurst.language.api.processor.FormatString", A(Jn), null, null), S().bo("net.akehurst.language.api.processor.LanguageRegistry", A(X2), null, null), S().bo("net.akehurst.language.api.processor.LanguageDefinition", A(xv), null, null), S().bo("net.akehurst.language.api.processor.LanguageProcessor", A(Y2), null, null), S().bo("net.akehurst.language.api.processor.LanguageProcessorConfiguration", A(xg), null, null);
     var n = S(), a = A(sd);
     n.bo("net.akehurst.language.api.processor.ParserKind", a, KX(), null), S().bo("net.akehurst.language.api.processor.LanguageObject", A(yx), null, null), S().bo("net.akehurst.language.api.processor.LanguageObjectAbstract.Companion", A(_x), null, oN()), S().bo("net.akehurst.language.api.processor.LanguageObjectAbstract", A(id), null, null), S().bo("net.akehurst.language.api.processor.SyntaxAnalysisOptions", A(tx), null, null), S().bo("net.akehurst.language.api.processor.SemanticAnalysisOptions", A(rx), null, null), S().bo("net.akehurst.language.api.processor.CompletionProviderOptions", A(nx), null, null), S().bo("net.akehurst.language.api.processor.ProcessOptions", A(ex), null, null), S().bo("net.akehurst.language.api.processor.SyntaxAnalysisResult", A(ob), null, null), S().bo("net.akehurst.language.api.processor.SemanticAnalysisResult", A(ux), null, null), S().bo("net.akehurst.language.api.processor.ProcessResult", A(fx), null, null), S().bo("net.akehurst.language.api.processor.FormatResult", A(cx), null, null), S().bo("net.akehurst.language.api.processor.ExpectedAtResult", A(mx), null, null), S().bo("net.akehurst.language.api.semanticAnalyser.SentenceContext", A(yc), null, null), S().bo("net.akehurst.language.asm.api.AsmPath", A(mb), null, null), S().bo("net.akehurst.language.asm.api.Asm", A(pb), null, null), S().bo("net.akehurst.language.asm.api.AsmValue", A(wu), null, null), S().bo("net.akehurst.language.asm.api.AsmNothing", A(ti), null, null), S().bo("net.akehurst.language.asm.api.AsmAny", A(Eh), null, null), S().bo("net.akehurst.language.asm.api.AsmPrimitive", A(Xr), null, null), S().bo("net.akehurst.language.asm.api.AsmReference", A(Qf), null, null), S().bo("net.akehurst.language.asm.api.PropertyValueName", A(Sn), null, null), S().bo("net.akehurst.language.asm.api.AsmStructure", A(Tn), null, null), S().bo("net.akehurst.language.asm.api.AsmStructureProperty", A(bx), null, null), S().bo("net.akehurst.language.asm.api.AsmList", A(Cr), null, null), S().bo("net.akehurst.language.asm.api.AsmListSeparated", A(Xf), null, null), S().bo("net.akehurst.language.asm.api.AsmLambda", A(Iv), null, null), S().bo("net.akehurst.language.asm.api.AsmTreeWalker", A(fb), null, null), S().bo("net.akehurst.language.asm.simple.AglAsm", A(wx), null, Mse()), S().bo("net.akehurst.language.asm.simple.AsmFactorySimple", A(Tx), null, null), S().bo("net.akehurst.language.asm.simple.AsmPathSimple.Companion", A(Ex), null, Ln()), S().bo("net.akehurst.language.asm.simple.AsmPathSimple", A(fl), null, null), S().bo("net.akehurst.language.asm.simple.AsmSimple", A(Ro), null, null), S().bo("net.akehurst.language.asm.simple.AsmValueAbstract", A(bn), null, null), S().bo("net.akehurst.language.asm.simple.AsmNothingSimple", A(Sx), null, Wm()), S().bo("net.akehurst.language.asm.simple.AsmAnySimple.Companion", A(Ax), null, uN), S().bo("net.akehurst.language.asm.simple.AsmAnySimple", A(Ng), null, null), S().bo("net.akehurst.language.asm.simple.AsmPrimitiveSimple.Companion", A(Rx), null, Ua), S().bo("net.akehurst.language.asm.simple.AsmPrimitiveSimple", A(gi), null, null), S().bo("net.akehurst.language.asm.simple.AsmReferenceSimple", A(hi), null, null), S().bo("net.akehurst.language.asm.simple.AsmStructureSimple", A(fs), null, null), S().bo("net.akehurst.language.asm.simple.AsmStructurePropertySimple.Companion", A(xx), null, fN), S().bo("net.akehurst.language.asm.simple.AsmStructurePropertySimple", A(hb), null, null), S().bo("net.akehurst.language.asm.simple.AsmListSimple", A(ii), null, null), S().bo("net.akehurst.language.asm.simple.AsmListSeparatedSimple", A(kx), null, null), S().bo("net.akehurst.language.asm.simple.AsmLambdaSimple", A(Nx), null, null), S().bo("net.akehurst.language.asm.builder.AsmSimpleBuilderMarker", A(Cv), null, null), S().bo("net.akehurst.language.asm.builder.AsmSimpleBuilder", A(t3), null, null), S().bo("net.akehurst.language.asm.builder.AsmElementSimpleBuilder", A(ld), null, null), S().bo("net.akehurst.language.asm.builder.ListAsmElementSimpleBuilder", A(od), null, null), S().bo("net.akehurst.language.base.asm.OptionHolderDefault", A(Et), null, null), S().bo("net.akehurst.language.base.asm.ModelAbstract", A(Ya), null, null), S().bo("net.akehurst.language.base.asm.NamespaceAbstract", A(da), null, null), S().bo("net.akehurst.language.base.asm.DefinitionAbstract", A(oi), null, null), S().bo("net.akehurst.language.base.asm.ModelDefault", A(Px), null, null), S().bo("net.akehurst.language.base.asm.NamespaceDefault", A(Ix), null, null), S().bo("net.akehurst.language.base.asm.DefinitionDefault", A(Cx), null, null), S().bo("net.akehurst.language.base.api.PossiblyQualifiedName.Companion", A(Dx), null, o$), S().bo("net.akehurst.language.base.api.PossiblyQualifiedName", A(tn), null, null), S().bo("net.akehurst.language.base.api.QualifiedName", A(le), null, null), S().bo("net.akehurst.language.base.api.SimpleName.Companion", A(Lx), null, u$), S().bo("net.akehurst.language.base.api.SimpleName", A(ke), null, null), S().bo("net.akehurst.language.base.api.PublicValueType", A(ra), null, null), S().bo("net.akehurst.language.base.api.Import", A(Dr), null, null), S().bo("net.akehurst.language.base.api.Indent", A(Zf), null, null), S().bo("net.akehurst.language.base.api.Formatable", A(si), null, null), S().bo("net.akehurst.language.base.api.OptionHolder", A(Ox), null, null), S().bo("net.akehurst.language.base.api.Model", A(li), null, null), S().bo("net.akehurst.language.base.api.Namespace", A(xs), null, null), S().bo("net.akehurst.language.base.api.DefinitionReference", A(qx), null, null), S().bo("net.akehurst.language.base.api.Definition", A(_u), null, null), S().bo("net.akehurst.language.base.processor.AglBase", A(Mx), null, Ja()), S().bo("net.akehurst.language.base.processor.BaseSyntaxAnalyser", A(ec), null, null), S().bo("net.akehurst.language.expressions.api.Expression", A(kt), null, null), S().bo("net.akehurst.language.expressions.api.RootExpression", A(ds), null, null), S().bo("net.akehurst.language.expressions.api.LiteralExpression", A(Hu), null, null), S().bo("net.akehurst.language.expressions.api.CreateObjectExpression", A(wc), null, null), S().bo("net.akehurst.language.expressions.api.CreateTupleExpression", A(gp), null, null), S().bo("net.akehurst.language.expressions.api.OnExpression", A(Tg), null, null), S().bo("net.akehurst.language.expressions.api.NavigationExpression", A(Ol), null, null), S().bo("net.akehurst.language.expressions.api.NavigationPart", A(Og), null, null), S().bo("net.akehurst.language.expressions.api.PropertyCall", A(tc), null, null), S().bo("net.akehurst.language.expressions.api.MethodCall", A(Pg), null, null), S().bo("net.akehurst.language.expressions.api.LambdaExpression", A(ud), null, null), S().bo("net.akehurst.language.expressions.api.IndexOperation", A(Ig), null, null), S().bo("net.akehurst.language.expressions.api.AssignmentStatement", A($x), null, null), S().bo("net.akehurst.language.expressions.api.WithExpression", A(Cg), null, null), S().bo("net.akehurst.language.expressions.api.WhenExpression", A(Dg), null, null), S().bo("net.akehurst.language.expressions.api.WhenOption", A(db), null, null), S().bo("net.akehurst.language.expressions.api.WhenOptionElse", A(Lg), null, null), S().bo("net.akehurst.language.expressions.api.InfixExpression", A(qg), null, null), S().bo("net.akehurst.language.expressions.api.CastExpression", A(yp), null, null), S().bo("net.akehurst.language.expressions.api.TypeTestExpression", A(vb), null, null), S().bo("net.akehurst.language.expressions.api.TypeReference", A(fd), null, null), S().bo("net.akehurst.language.expressions.api.GroupExpression", A(Mg), null, null), S().bo("net.akehurst.language.expressions.asm.ExpressionAbstract", A(wn), null, null), S().bo("net.akehurst.language.expressions.asm.CreateTupleExpressionDefault", A(xo), null, null), S().bo("net.akehurst.language.expressions.asm.CreateObjectExpressionDefault", A(Zn), null, null), S().bo("net.akehurst.language.expressions.asm.WithExpressionDefault", A(Su), null, null), S().bo("net.akehurst.language.expressions.asm.WhenExpressionDefault", A(Sh), null, null), S().bo("net.akehurst.language.expressions.asm.OnExpressionDefault", A(Bx), null, null), S().bo("net.akehurst.language.expressions.asm.WhenOptionDefault", A(Ah), null, null), S().bo("net.akehurst.language.expressions.asm.WhenOptionElseDefault", A(Rh), null, null), S().bo("net.akehurst.language.expressions.asm.RootExpressionDefault.Companion", A(Fx), null, Ar()), S().bo("net.akehurst.language.expressions.asm.RootExpressionDefault", A(Sr), null, null), S().bo("net.akehurst.language.expressions.asm.LiteralExpressionDefault", A(Ea), null, null), S().bo("net.akehurst.language.expressions.asm.NavigationExpressionDefault", A(Ra), null, null), S().bo("net.akehurst.language.expressions.asm.PropertyCallDefault", A(ko), null, null), S().bo("net.akehurst.language.expressions.asm.MethodCallDefault", A(Ku), null, null), S().bo("net.akehurst.language.expressions.asm.LambdaExpressionDefault", A(No), null, null), S().bo("net.akehurst.language.expressions.asm.IndexOperationDefault", A(To), null, null), S().bo("net.akehurst.language.expressions.asm.AssignmentStatementDefault", A(_p), null, null), S().bo("net.akehurst.language.expressions.asm.InfixExpressionDefault", A($m), null, null), S().bo("net.akehurst.language.expressions.asm.CastExpressionDefault", A(gb), null, null), S().bo("net.akehurst.language.expressions.asm.TypeTestExpressionDefault", A(yb), null, null), S().bo("net.akehurst.language.expressions.asm.TypeReferenceDefault", A(Wc), null, null), S().bo("net.akehurst.language.expressions.asm.GroupExpressionDefault", A(_b), null, null), S().bo("net.akehurst.language.expressions.processor.AglExpressions", A(jx), null, ku()), S().bo("net.akehurst.language.expressions.processor.ExpressionTypeResolver", A($g), null, null), S().bo("net.akehurst.language.expressions.processor.ExpressionsCompletionProvider", A(Ny), null, null), S().bo("net.akehurst.language.expressions.processor.EvaluationContext.Companion", A(zx), null, pa), S().bo("net.akehurst.language.expressions.processor.EvaluationContext", A(Oo), null, null), S().bo("net.akehurst.language.expressions.processor.TypedObject", A(Ei), null, null), S().bo("net.akehurst.language.expressions.processor.ObjectGraph", A(kg), null, null), S().bo("net.akehurst.language.expressions.processor.ExpressionsInterpreterOverTypedObject", A($i), null, null), S().bo("net.akehurst.language.expressions.processor.ExpressionsSemanticAnalyser", A(Dv), null, null), S().bo("net.akehurst.language.expressions.processor.ExpressionsSyntaxAnalyser.PropertyValue", A(Uc), null, null), S().bo("net.akehurst.language.expressions.processor.ExpressionsSyntaxAnalyser", A(iu), null, null), S().bo("net.akehurst.language.expressions.processor.StdLibPrimitiveExecutions", A(Gx), null, YS()), S().bo("net.akehurst.language.expressions.processor.TypedObjectAsmValue", A(ya), null, null), S().bo("net.akehurst.language.expressions.processor.ObjectGraphAsmSimple", A(bc), null, null), S().bo("net.akehurst.language.grammar.asm.GrammarModelDefault", A(Pl), null, null), S().bo("net.akehurst.language.grammar.asm.GrammarNamespaceDefault", A(md), null, null), S().bo("net.akehurst.language.grammar.asm.GrammarDefault.Companion", A(Zx), null, pN), S().bo("net.akehurst.language.grammar.asm.GrammarDefault", A(Wg), null, null), S().bo("net.akehurst.language.grammar.asm.GrammarReferenceDefault", A(vs), null, null), S().bo("net.akehurst.language.grammar.asm.GrammarAbstract", A(Gg), null, null), S().bo("net.akehurst.language.grammar.asm.GrammarItemAbstract", A(bp), null, null), S().bo("net.akehurst.language.grammar.asm.GrammarRuleAbstract.Companion.CompressedLeafRule", A(Ui), null, null), S().bo("net.akehurst.language.grammar.asm.GrammarRuleAbstract.Companion", A(Eb), null, Ph), S().bo("net.akehurst.language.grammar.asm.GrammarRuleAbstract", A(wp), null, null), S().bo("net.akehurst.language.grammar.asm.NormalRuleDefault", A(Vg), null, null), S().bo("net.akehurst.language.grammar.asm.OverrideRuleDefault", A(dd), null, null), S().bo("net.akehurst.language.grammar.asm.PreferenceRuleDefault", A(Yu), null, null);
     var s = S(), i = A(Gs);
@@ -53549,7 +53539,7 @@ class uM {
     var m = S(), d = A(pl);
     m.bo("net.akehurst.language.grammar.api.SeparatedListKind", d, XX(), null), S().bo("net.akehurst.language.grammar.api.Group", A(Bn), null, null), S().bo("net.akehurst.language.grammar.api.TangibleItem", A(Ys), null, null), S().bo("net.akehurst.language.grammar.api.EmptyRule", A(Na), null, null), S().bo("net.akehurst.language.grammar.api.Terminal", A(Bt), null, null), S().bo("net.akehurst.language.grammar.api.NonTerminal", A(tr), null, null), S().bo("net.akehurst.language.grammar.api.Embedded", A(Or), null, null), S().bo("net.akehurst.language.grammar.builder.GrammarBuilderMarker", A(Mv), null, null), S().bo("net.akehurst.language.grammar.builder.GrammarModelBuilder", A(ak), null, null), S().bo("net.akehurst.language.grammar.builder.GrammarNamespaceBuilder", A(sk), null, null), S().bo("net.akehurst.language.grammar.builder.GrammarBuilder", A(Nb), null, null), S().bo("net.akehurst.language.grammar.builder.SimpleItemsBuilder", A(Qi), null, null), S().bo("net.akehurst.language.grammar.builder.ChoiceItemBuilder", A(lk), null, null), S().bo("net.akehurst.language.grammar.builder.ConcatenationItemBuilder", A(yd), null, null), S().bo("net.akehurst.language.grammar.builder.GroupChoiceBuilder", A(R3), null, null), S().bo("net.akehurst.language.grammar.builder.PreferenceRuleBuilder", A(ik), null, null), S().bo("net.akehurst.language.grammar.processor.AglGrammar", A(ok), null, Tp()), S().bo("net.akehurst.language.grammar.processor.AglGrammarCompletionProvider", A(Py), null, null), S().bo("net.akehurst.language.grammar.processor.AglGrammarSemanticAnalyser.Companion", A(uk), null, _N), S().bo("net.akehurst.language.grammar.processor.AglGrammarSemanticAnalyser", A(Fm), null, null), S().bo("net.akehurst.language.grammar.processor.ContextFromGrammar.Companion", A(fk), null, Nu), S().bo("net.akehurst.language.grammar.processor.ContextFromGrammar", A(jm), null, null), S().bo("net.akehurst.language.grammar.processor.ContextFromGrammarRegistry", A(Ru), null, null), S().bo("net.akehurst.language.grammarTypemodel.asm.GrammarTypeNamespaceSimple.Companion", A(ck), null, E1), S().bo("net.akehurst.language.grammarTypemodel.asm.GrammarTypeNamespaceSimple", A(ri), null, null), S().bo("net.akehurst.language.grammarTypemodel.asm.GrammarTypeNamespaceAbstract", A(mk), null, null), S().bo("net.akehurst.language.grammarTypemodel.builder.GrammarTypeNamespaceBuilder", A(k3), null, null), S().bo("net.akehurst.language.grammarTypemodel.api.GrammarTypeNamespace", A(In), null, null), S().bo("net.akehurst.language.reference.processor.AglCrossReference", A(pk), null, tw()), S().bo("net.akehurst.language.reference.processor.ReferencesCompletionProvider", A(Iy), null, null), S().bo("net.akehurst.language.reference.processor.ReferencesSemanticAnalyser", A($v), null, null), S().bo("net.akehurst.language.reference.processor.ReferencesSyntaxAnalyser.PropertyValue", A(Cn), null, null), S().bo("net.akehurst.language.reference.processor.ReferencesSyntaxAnalyser", A(Bv), null, null), S().bo("net.akehurst.language.reference.api.CrossReferenceModel", A(Ob), null, null), S().bo("net.akehurst.language.reference.api.CrossReferenceNamespace", A(hk), null, null), S().bo("net.akehurst.language.reference.api.DeclarationsForNamespace", A(dk), null, null), S().bo("net.akehurst.language.reference.api.ReferenceDefinition", A(vk), null, null), S().bo("net.akehurst.language.reference.api.ScopeDefinition", A(gk), null, null), S().bo("net.akehurst.language.reference.api.Identifiable", A(yk), null, null), S().bo("net.akehurst.language.reference.api.ReferenceExpression", A(Jg), null, null), S().bo("net.akehurst.language.reference.api.ReferenceExpressionProperty", A(_k), null, null), S().bo("net.akehurst.language.reference.api.ReferenceExpressionCollection", A(bk), null, null), S().bo("net.akehurst.language.reference.asm.CrossReferenceModelDefault.Companion", A(wk), null, Va()), S().bo("net.akehurst.language.reference.asm.CrossReferenceModelDefault", A(Hl), null, null), S().bo("net.akehurst.language.reference.asm.CrossReferenceNamespaceDefault", A(Pb), null, null), S().bo("net.akehurst.language.reference.asm.DeclarationsForNamespaceDefault", A(Qu), null, null), S().bo("net.akehurst.language.reference.asm.ScopeDefinitionDefault", A(Si), null, null), S().bo("net.akehurst.language.reference.asm.IdentifiableDefault", A(Io), null, null), S().bo("net.akehurst.language.reference.asm.ReferenceDefinitionDefault", A(hl), null, null), S().bo("net.akehurst.language.reference.asm.ReferenceExpressionAbstract", A(Ac), null, null), S().bo("net.akehurst.language.reference.asm.ReferenceExpressionPropertyDefault", A(Ai), null, null), S().bo("net.akehurst.language.reference.asm.ReferenceExpressionCollectionDefault", A(Co), null, null), S().bo("net.akehurst.language.reference.builder.CrossReferenceModelBuilderMarker", A(Fv), null, null), S().bo("net.akehurst.language.reference.builder.CrossReferenceModelBuilder", A(AS), null, null), S().bo("net.akehurst.language.reference.builder.DeclarationsForNamespaceBuilder", A(Ek), null, null), S().bo("net.akehurst.language.reference.builder.ScopeDefinitionBuilder", A(Sk), null, null), S().bo("net.akehurst.language.reference.builder.ReferenceDefinitionBuilder", A(Ak), null, null), S().bo("net.akehurst.language.scope.processor.AglScope", A(Rk), null, EEe()), S().bo("net.akehurst.language.scope.api.ItemInScope", A(Do), null, null), S().bo("net.akehurst.language.scope.api.Scope", A(xk), null, null), S().bo("net.akehurst.language.scope.asm.ScopeSimple.Companion", A(kk), null, SN), S().bo("net.akehurst.language.scope.asm.ScopeSimple", A(Ci), null, null), S().bo("net.akehurst.language.style.processor.AglStyle", A(Nk), null, rw()), S().bo("net.akehurst.language.style.processor.AglStyleCompletionProvider.Companion", A(Tk), null, Km()), S().bo("net.akehurst.language.style.processor.AglStyleCompletionProvider", A(jv), null, null), S().bo("net.akehurst.language.style.processor.AglStyleSemanticAnalyser.Companion", A(Ok), null, nw()), S().bo("net.akehurst.language.style.processor.AglStyleSemanticAnalyser", A(kh), null, null), S().bo("net.akehurst.language.style.asm.AglStyleModelDefault.Companion", A(Pk), null, sc()), S().bo("net.akehurst.language.style.asm.AglStyleModelDefault", A(_d), null, null), S().bo("net.akehurst.language.style.asm.StyleNamespaceDefault", A(Cy), null, null), S().bo("net.akehurst.language.style.asm.StyleSetReferenceDefault", A(rh), null, null), S().bo("net.akehurst.language.style.asm.AglStyleSetDefault", A(Lk), null, null), S().bo("net.akehurst.language.style.asm.AglStyleMetaRuleDefault", A(Xu), null, null), S().bo("net.akehurst.language.style.asm.AglStyleTagRuleDefault", A(Zu), null, null), S().bo("net.akehurst.language.style.api.AglStyleModel", A(Ib), null, null), S().bo("net.akehurst.language.style.api.StyleNamespace", A(Ik), null, null), S().bo("net.akehurst.language.style.api.StyleSetReference", A(Ck), null, null), S().bo("net.akehurst.language.style.api.StyleSet", A(Dk), null, null), S().bo("net.akehurst.language.style.api.AglStyleRule", A(Qg), null, null), S().bo("net.akehurst.language.style.api.AglStyleMetaRule", A(Xg), null, null), S().bo("net.akehurst.language.style.api.AglStyleTagRule", A(Zg), null, null);
     var v = S(), _ = A(Ws);
-    v.bo("net.akehurst.language.style.api.AglStyleSelectorKind", _, ZX(), null), S().bo("net.akehurst.language.style.api.AglStyleSelector", A(dl), null, null), S().bo("net.akehurst.language.style.api.AglStyleDeclaration", A(Vc), null, null), S().bo("net.akehurst.language.style.builder.StyleModelBuilder", A(qk), null, null), S().bo("net.akehurst.language.typemodel.asm.StdLibDefault", A(Fk), null, L()), S().bo("net.akehurst.language.typemodel.asm.TypeModelSimple.Companion", A(jk), null, Od), S().bo("net.akehurst.language.typemodel.asm.TypeModelSimple", A(Ap), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeModelSimpleAbstract", A(Db), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeInstanceAbstract", A(xp), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeParameterReference", A(Yr), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeArgumentSimple", A(Us), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeInstanceSimple.Companion", A(zk), null, lw), S().bo("net.akehurst.language.typemodel.asm.TypeInstanceSimple", A(Ri), null, null), S().bo("net.akehurst.language.typemodel.asm.TupleTypeInstanceSimple", A(Nh), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeNamespaceSimple", A(Sd), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeNamespaceAbstract", A(ou), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeParameterSimple", A(fn), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeParameterMultiple", A(Gk), null, aB()), S().bo("net.akehurst.language.typemodel.asm.TypeDefinitionSimpleAbstract.Companion", A(Wk), null, RN), S().bo("net.akehurst.language.typemodel.asm.TypeDefinitionSimpleAbstract", A(nr), null, null), S().bo("net.akehurst.language.typemodel.asm.SpecialTypeSimple", A(ef), null, null), S().bo("net.akehurst.language.typemodel.asm.SingletonTypeSimple", A(Uk), null, null), S().bo("net.akehurst.language.typemodel.asm.PrimitiveTypeSimple", A(Lb), null, null), S().bo("net.akehurst.language.typemodel.asm.EnumTypeSimple", A(qb), null, null), S().bo("net.akehurst.language.typemodel.asm.UnionTypeSimple", A(a1), null, null), S().bo("net.akehurst.language.typemodel.asm.StructuredTypeSimpleAbstract", A(Rs), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeArgumentNamedSimple", A(kn), null, null), S().bo("net.akehurst.language.typemodel.asm.TupleTypeSimple", A(Mb), null, null), S().bo("net.akehurst.language.typemodel.asm.ValueTypeSimple", A($b), null, null), S().bo("net.akehurst.language.typemodel.asm.InterfaceTypeSimple", A(Vk), null, null), S().bo("net.akehurst.language.typemodel.asm.DataTypeSimple", A(Ad), null, null), S().bo("net.akehurst.language.typemodel.asm.CollectionTypeSimple", A(Bb), null, null), S().bo("net.akehurst.language.typemodel.asm.ConstructorDeclarationSimple", A(Rd), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationAbstract", A(kp), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationStored", A(xd), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationPrimitive", A(l1), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationDerived", A(o1), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationResolvedSimple", A(u1), null, null), S().bo("net.akehurst.language.typemodel.asm.MethodDeclarationAbstract", A(Rc), null, null), S().bo("net.akehurst.language.typemodel.asm.MethodDeclarationDerivedSimple", A(Yk), null, null), S().bo("net.akehurst.language.typemodel.asm.MethodDeclarationResolvedSimple", A(f1), null, null), S().bo("net.akehurst.language.typemodel.asm.ParameterDefinitionSimple", A(Xi), null, null), S().bo("net.akehurst.language.typemodel.processor.AglTypemodel", A(Qk), null, A1()), S().bo("net.akehurst.language.typemodel.processor.TypemodelCompletionProvider", A(Dy), null, null), S().bo("net.akehurst.language.typemodel.processor.TypemodelSemanticAnalyser", A(Gv), null, null), S().bo("net.akehurst.language.typemodel.api.TypeModel", A(e1), null, null), S().bo("net.akehurst.language.typemodel.api.TypeNamespace", A(Ju), null, null), S().bo("net.akehurst.language.typemodel.api.TypeParameter", A(r1), null, null), S().bo("net.akehurst.language.typemodel.api.TypeArgument", A(t1), null, null), S().bo("net.akehurst.language.typemodel.api.TypeInstance", A(Rp), null, null), S().bo("net.akehurst.language.typemodel.api.TypeArgumentNamed", A(s1), null, null), S().bo("net.akehurst.language.typemodel.api.TupleTypeInstance", A(Ed), null, null), S().bo("net.akehurst.language.typemodel.api.TypeDefinition", A(Mi), null, null), S().bo("net.akehurst.language.typemodel.api.SpecialType", A(n1), null, null), S().bo("net.akehurst.language.typemodel.api.SingletonType", A(tf), null, null), S().bo("net.akehurst.language.typemodel.api.PrimitiveType", A(Fr), null, null), S().bo("net.akehurst.language.typemodel.api.EnumType", A(rf), null, null), S().bo("net.akehurst.language.typemodel.api.StructuredType", A(ta), null, null), S().bo("net.akehurst.language.typemodel.api.TupleType", A(Pr), null, null), S().bo("net.akehurst.language.typemodel.api.ValueType", A(vl), null, null), S().bo("net.akehurst.language.typemodel.api.InterfaceType", A(Lo), null, null), S().bo("net.akehurst.language.typemodel.api.DataType", A(Jt), null, null), S().bo("net.akehurst.language.typemodel.api.UnionType", A(ln), null, null), S().bo("net.akehurst.language.typemodel.api.CollectionType", A(Dn), null, null), S().bo("net.akehurst.language.typemodel.api.PropertyName", A(Nn), null, null), S().bo("net.akehurst.language.typemodel.api.PropertyDeclaration", A(i1), null, null), S().bo("net.akehurst.language.typemodel.api.PropertyDeclarationResolved", A(Kk), null, null);
+    v.bo("net.akehurst.language.style.api.AglStyleSelectorKind", _, ZX(), null), S().bo("net.akehurst.language.style.api.AglStyleSelector", A(dl), null, null), S().bo("net.akehurst.language.style.api.AglStyleDeclaration", A(Vc), null, null), S().bo("net.akehurst.language.style.builder.StyleModelBuilder", A(qk), null, null), S().bo("net.akehurst.language.typemodel.asm.StdLibDefault", A(Fk), null, L()), S().bo("net.akehurst.language.typemodel.asm.TypeModelSimple.Companion", A(jk), null, Od), S().bo("net.akehurst.language.typemodel.asm.TypeModelSimple", A(Ap), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeModelSimpleAbstract", A(Db), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeInstanceAbstract", A(xp), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeParameterReference", A(Yr), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeArgumentSimple", A(Us), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeInstanceSimple.Companion", A(zk), null, lw), S().bo("net.akehurst.language.typemodel.asm.TypeInstanceSimple", A(Ri), null, null), S().bo("net.akehurst.language.typemodel.asm.TupleTypeInstanceSimple", A(Nh), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeNamespaceSimple", A(Sd), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeNamespaceAbstract", A(ou), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeParameterSimple", A(fn), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeParameterMultiple", A(Gk), null, aB()), S().bo("net.akehurst.language.typemodel.asm.TypeDefinitionSimpleAbstract.Companion", A(Wk), null, RN), S().bo("net.akehurst.language.typemodel.asm.TypeDefinitionSimpleAbstract", A(nr), null, null), S().bo("net.akehurst.language.typemodel.asm.SpecialTypeSimple", A(ef), null, null), S().bo("net.akehurst.language.typemodel.asm.SingletonTypeSimple", A(Uk), null, null), S().bo("net.akehurst.language.typemodel.asm.PrimitiveTypeSimple", A(Lb), null, null), S().bo("net.akehurst.language.typemodel.asm.EnumTypeSimple", A(qb), null, null), S().bo("net.akehurst.language.typemodel.asm.UnionTypeSimple", A(a1), null, null), S().bo("net.akehurst.language.typemodel.asm.StructuredTypeSimpleAbstract", A(Rs), null, null), S().bo("net.akehurst.language.typemodel.asm.TypeArgumentNamedSimple", A(kn), null, null), S().bo("net.akehurst.language.typemodel.asm.TupleTypeSimple", A(Mb), null, null), S().bo("net.akehurst.language.typemodel.asm.ValueTypeSimple", A($b), null, null), S().bo("net.akehurst.language.typemodel.asm.InterfaceTypeSimple", A(Vk), null, null), S().bo("net.akehurst.language.typemodel.asm.DataTypeSimple", A(Ad), null, null), S().bo("net.akehurst.language.typemodel.asm.CollectionTypeSimple", A(Bb), null, null), S().bo("net.akehurst.language.typemodel.asm.ConstructorDeclarationSimple", A(Rd), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationAbstract", A(kp), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationStored", A(xd), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationPrimitive", A(l1), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationDerived", A(o1), null, null), S().bo("net.akehurst.language.typemodel.asm.PropertyDeclarationResolvedSimple", A(u1), null, null), S().bo("net.akehurst.language.typemodel.asm.MethodDeclarationAbstract", A(Rc), null, null), S().bo("net.akehurst.language.typemodel.asm.MethodDeclarationDerivedSimple", A(Yk), null, null), S().bo("net.akehurst.language.typemodel.asm.MethodDeclarationResolvedSimple", A(f1), null, null), S().bo("net.akehurst.language.typemodel.asm.ParameterDefinitionSimple", A(Xi), null, null), S().bo("net.akehurst.language.typemodel.processor.AglTypemodel", A(Qk), null, A1()), S().bo("net.akehurst.language.typemodel.processor.TypemodelCompletionProvider", A(Dy), null, null), S().bo("net.akehurst.language.typemodel.processor.TypemodelSemanticAnalyser", A(Gv), null, null), S().bo("net.akehurst.language.typemodel.api.TypeModel", A(e1), null, null), S().bo("net.akehurst.language.typemodel.api.TypeNamespace", A(Ju), null, null), S().bo("net.akehurst.language.typemodel.api.TypeParameter", A(r1), null, null), S().bo("net.akehurst.language.typemodel.api.TypeArgument", A(t1), null, null), S().bo("net.akehurst.language.typemodel.api.TypeInstance", A(Rp), null, null), S().bo("net.akehurst.language.typemodel.api.TypeArgumentNamed", A(s1), null, null), S().bo("net.akehurst.language.typemodel.api.TupleTypeInstance", A(Ed), null, null), S().bo("net.akehurst.language.typemodel.api.TypeDefinition", A(Mi), null, null), S().bo("net.akehurst.language.typemodel.api.SpecialType", A(n1), null, null), S().bo("net.akehurst.language.typemodel.api.SingletonType", A(tf), null, null), S().bo("net.akehurst.language.typemodel.api.PrimitiveType", A(Fr), null, null), S().bo("net.akehurst.language.typemodel.api.EnumType", A(rf), null, null), S().bo("net.akehurst.language.typemodel.api.StructuredType", A(ta), null, null), S().bo("net.akehurst.language.typemodel.api.TupleType", A(Pr), null, null), S().bo("net.akehurst.language.typemodel.api.ValueType", A(vl), null, null), S().bo("net.akehurst.language.typemodel.api.InterfaceType", A(Lo), null, null), S().bo("net.akehurst.language.typemodel.api.DataType", A(Yt), null, null), S().bo("net.akehurst.language.typemodel.api.UnionType", A(ln), null, null), S().bo("net.akehurst.language.typemodel.api.CollectionType", A(Dn), null, null), S().bo("net.akehurst.language.typemodel.api.PropertyName", A(Nn), null, null), S().bo("net.akehurst.language.typemodel.api.PropertyDeclaration", A(i1), null, null), S().bo("net.akehurst.language.typemodel.api.PropertyDeclarationResolved", A(Kk), null, null);
     var E = S(), R = A(Vr);
     E.bo("net.akehurst.language.typemodel.api.PropertyCharacteristic", R, eZ(), null), S().bo("net.akehurst.language.typemodel.api.MethodName", A(gl), null, null), S().bo("net.akehurst.language.typemodel.api.MethodDeclaration", A(kd), null, null), S().bo("net.akehurst.language.typemodel.api.MethodDeclarationPrimitive", A(zb), null, null), S().bo("net.akehurst.language.typemodel.api.MethodDeclarationDerived", A(Fb), null, null), S().bo("net.akehurst.language.typemodel.api.MethodDeclarationResolved", A(Jk), null, null), S().bo("net.akehurst.language.typemodel.api.ConstructorDeclaration", A(Hk), null, null), S().bo("net.akehurst.language.typemodel.api.ParameterName", A(Wv), null, null), S().bo("net.akehurst.language.typemodel.api.ParameterDeclaration", A(jb), null, null), S().bo("net.akehurst.language.typemodel.builder.TypeModelDslMarker", A(Uv), null, null), S().bo("net.akehurst.language.typemodel.builder.TypeModelBuilder", A(Xk), null, null), S().bo("net.akehurst.language.typemodel.builder.TypeNamespaceBuilder", A(Zk), null, null), S().bo("net.akehurst.language.typemodel.builder.StructuredTypeBuilder", A(c1), null, null), S().bo("net.akehurst.language.typemodel.builder.ValueTypeBuilder", A(eN), null, null), S().bo("net.akehurst.language.typemodel.builder.InterfaceTypeBuilder", A(tN), null, null), S().bo("net.akehurst.language.typemodel.builder.DataTypeBuilder", A(rN), null, null), S().bo("net.akehurst.language.typemodel.builder.ConstructorBuilder", A(Gb), null, null), S().bo("net.akehurst.language.typemodel.builder.TypeInstanceArgBuilder", A(fu), null, null), S().bo("net.akehurst.language.typemodel.builder.TypeInstanceArgNamedBuilder", A(zm), null, null), S().bo("net.akehurst.language.typemodel.builder.TypeArgumentBuilder", A(m1), null, null), S().bo("net.akehurst.language.typemodel.builder.SubtypeListBuilder", A(Wb), null, null);
   }
@@ -53886,7 +53876,7 @@ class cM {
     else {
       for (var a = w.d1(), s = t.o(); s.p(); ) {
         for (var i = s.q(), o = mn.expand(e, i), u = w.s($(o, 10)), f = o.o(); f.p(); ) {
-          var c = f.q(), m = c.name, d = m ?? i.owningRule.name, v = c.list, _ = new Yt(Gm(), d, v);
+          var c = f.q(), m = c.name, d = m ?? i.owningRule.name, v = c.list, _ = new Kt(Gm(), d, v);
           u.n(_);
         }
         var E = u;
@@ -53899,7 +53889,7 @@ class cM {
   provideForRuleItem(e, t) {
     for (var n = w.s($(t, 10)), a = t.o(); a.p(); ) {
       for (var s = a.q(), i = mn.expand(e, s), o = w.s($(i, 10)), u = i.o(); u.p(); ) {
-        var f = u.q(), c = f.name, m = c ?? s.owningRule.name, d = f.list, v = new Yt(Gm(), m, d);
+        var f = u.q(), c = f.name, m = c ?? s.owningRule.name, d = f.list, v = new Kt(Gm(), m, d);
         o.n(v);
       }
       n.n(o);
@@ -53995,7 +53985,7 @@ class cM {
           ve > 1 ? Ee = xZ : Ee = kZ;
           for (var ct = Ee, ft = t.items.o(); ft.p(); ) {
             for (var it = ft.q(), mt = this.expand(e, it), It = w.d1(), Mt = mt.o(); Mt.p(); ) {
-              for (var Tt = Mt.q(), jt = ct(Tt), Xt = he, Zt = w.s($(Xt, 10)), vr = Xt.o(); vr.p(); ) {
+              for (var Tt = Mt.q(), jt = ct(Tt), Qt = he, Xt = w.s($(Qt, 10)), vr = Qt.o(); vr.p(); ) {
                 var qr = vr.q(), cr;
                 if (Am(Tt.list))
                   cr = qr;
@@ -54007,9 +53997,9 @@ class cM {
                   cr = new nn(sr ?? jt, qr.list + " " + Tt.list);
                 }
                 var zr = cr;
-                Zt.n(zr);
+                Xt.n(zr);
               }
-              var pr = Zt;
+              var pr = Xt;
               pe(It, pr);
             }
             var rn = It;
@@ -54134,10 +54124,10 @@ class cM {
     var t;
     if (p(e, tr)) {
       var n = e.ruleReference, a = e.referencedRule(e.owningRule.grammar), s = a.compressedLeaf.value;
-      t = oe(new Yt(nh(), s, "<" + n + ">"));
+      t = oe(new Kt(nh(), s, "<" + n + ">"));
     } else if (p(e, Bt)) {
       var i = e.owningRule.isLeaf ? e.owningRule.name : e.value;
-      t = e.isPattern ? oe(new Yt(nh(), e.value, "<" + i + ">")) : oe(new Yt(Zr(), "'" + i + "'", e.value));
+      t = e.isPattern ? oe(new Kt(nh(), e.value, "<" + i + ">")) : oe(new Kt(Zr(), "'" + i + "'", e.value));
     } else {
       var o = "Not supported subtype of TangibleItem: " + qe(e).jc();
       throw k.f4(y(o));
@@ -57229,7 +57219,7 @@ class nr {
   }
   s2f() {
     for (var e = this.supertypes, t = this.supertypes, n = w.d1(), a = t.o(); a.p(); ) {
-      var s = a.q(), i = s.resolvedDeclaration, o = (p(i, Jt) ? i : g()).allSuperTypes;
+      var s = a.q(), i = s.resolvedDeclaration, o = (p(i, Yt) ? i : g()).allSuperTypes;
       pe(n, o);
     }
     return ea(e, n);
@@ -58057,7 +58047,7 @@ class yS {
       var i;
       p(t, tr) ? i = Ly(t.ruleReference) : p(t, Bt) || p(t, Bn) ? i = Ye().UNNAMED_LIST_PROPERTY_NAME : i = a + "List", s = i;
     } else
-      p(n, Pr) || p(n, Jt), s = a;
+      p(n, Pr) || p(n, Yt), s = a;
     var o = s;
     return o;
   }
@@ -58688,9 +58678,9 @@ class QM {
         }
       } else if (p(_, Pr))
         this.g2k_1.startTuple();
-      else if (p(_, Jt)) {
+      else if (p(_, Yt)) {
         var x = d.forNode.resolvedDeclaration;
-        this.g2k_1.startAsmElement(n, p(x, Jt) ? x : g());
+        this.g2k_1.startAsmElement(n, p(x, Yt) ? x : g());
       } else {
         var N = d.forNode.resolvedDeclaration;
         if (!C(N, this.g2k_1.typeModel.NothingType) && !C(N, this.g2k_1.typeModel.AnyType)) {
@@ -58761,7 +58751,7 @@ class XM {
 }
 class CX {
 }
-class zs extends Kt {
+class zs extends Ht {
   get name() {
     return this.q2();
   }
@@ -58769,7 +58759,7 @@ class zs extends Kt {
     return this.r2();
   }
 }
-class Yt {
+class Kt {
   constructor(e, t, n) {
     this.kind = e, this.label = t, this.text = n, this.description = "";
   }
@@ -58798,7 +58788,7 @@ class Yt {
     return this.text;
   }
   p2k(e, t, n) {
-    return new Yt(e, t, n);
+    return new Kt(e, t, n);
   }
   copy(e, t, n, a) {
     return e = e === l ? this.kind : e, t = t === l ? this.label : t, n = n === l ? this.text : n, a === l ? this.p2k(e, t, n) : a.p2k.call(this, e, t, n);
@@ -58813,9 +58803,9 @@ class Yt {
   equals(e) {
     if (this === e)
       return true;
-    if (!(e instanceof Yt))
+    if (!(e instanceof Kt))
       return false;
-    var t = e instanceof Yt ? e : g();
+    var t = e instanceof Kt ? e : g();
     return !(!this.kind.equals(t.kind) || this.label !== t.label || this.text !== t.text);
   }
 }
@@ -58967,7 +58957,7 @@ class ZM extends ph {
     return Fn(n, n.r1q_1), n;
   }
 }
-class sd extends Kt {
+class sd extends Ht {
   get name() {
     return this.q2();
   }
@@ -60247,7 +60237,7 @@ class t3 {
 class ld {
   constructor(e, t, n, a, s, i, o, u, f, c, m) {
     this.x2n_1 = e, this.y2n_1 = t, this.z2n_1 = n, this.a2o_1 = a, this.b2o_1 = s, this.c2o_1 = i, this.d2o_1 = o;
-    var d = this, v = Vt(f), _;
+    var d = this, v = Ut(f), _;
     if (v instanceof le) {
       var E = this.x2n_1.findByQualifiedNameOrNull(v.x25_1), R = E == null ? null : E.qualifiedName, x, N = R;
       if ((N == null ? null : new le(N)) == null) {
@@ -62554,7 +62544,7 @@ class $X {
       t = L().Real;
     else if (e != null && p(e, se))
       t = L().List.type(oe(L().AnyType.asTypeArgument));
-    else if (e != null && p(e, Ht)) {
+    else if (e != null && p(e, Vt)) {
       var n = Fd(e.i2()), a;
       if (n == null)
         a = L().Map.type(Fe([L().AnyType.asTypeArgument, L().AnyType.asTypeArgument]));
@@ -62615,7 +62605,7 @@ class $X {
       o = sfe(i);
     else if (p(i, ta)) {
       var u;
-      if (p(i, Jt)) {
+      if (p(i, Yt)) {
         var f = t.h2(), c = Rl(f);
         u = ife(i, c.slice());
       } else if (p(i, vl))
@@ -62704,8 +62694,8 @@ class $X {
     var n;
     if (L().TupleType.equals(e.type.resolvedDeclaration)) {
       var a = e.self, s;
-      if (p(a, Ht)) {
-        var i = e.self, o = (p(i, Ht) ? i : g()).l2(t), u;
+      if (p(a, Vt)) {
+        var i = e.self, o = (p(i, Vt) ? i : g()).l2(t), u;
         o == null ? u = null : u = this.toTypedObject(o);
         var f = u;
         s = f ?? this.nothing();
@@ -64503,7 +64493,7 @@ class Yu extends bp {
     return this.mz();
   }
 }
-class Gs extends Kt {
+class Gs extends Ht {
   get name() {
     return this.q2();
   }
@@ -65336,7 +65326,7 @@ class Yg extends gd {
     return this.b2v();
   }
 }
-class nc extends Kt {
+class nc extends Ht {
   get name() {
     return this.q2();
   }
@@ -65344,7 +65334,7 @@ class nc extends Kt {
     return this.r2();
   }
 }
-class ml extends Kt {
+class ml extends Ht {
   get name() {
     return this.q2();
   }
@@ -65352,7 +65342,7 @@ class ml extends Kt {
     return this.r2();
   }
 }
-class pl extends Kt {
+class pl extends Ht {
   get name() {
     return this.q2();
   }
@@ -65432,7 +65422,7 @@ class Nb {
     n.e35_1 = Z.v3();
   }
   extends(e) {
-    this.d35_1.extends.n(new vs(this.d35_1.namespace, Vt(e)));
+    this.d35_1.extends.n(new vs(this.d35_1.namespace, Ut(e)));
   }
   extendsGrammar(e) {
     this.d35_1.extends.n(e);
@@ -65643,7 +65633,7 @@ class Qi {
     this.p35(new rc(e, true));
   }
   h2w(e, t) {
-    var n = new vs(this.k2q_1, Vt(e));
+    var n = new vs(this.k2q_1, Ut(e));
     this.p35(new qv(t, n));
   }
   q35(e, t) {
@@ -66291,7 +66281,7 @@ class ou extends da {
   g38() {
     for (var e = this.ownedTypesByName.h2(), t = w.d1(), n = e.o(); n.p(); ) {
       var a = n.q();
-      a != null && p(a, Jt) && t.n(a);
+      a != null && p(a, Yt) && t.n(a);
     }
     return ue(t);
   }
@@ -66372,7 +66362,7 @@ class ou extends da {
   }
   findOwnedDataTypeNamedOrNull(e) {
     var t = this.findOwnedTypeNamed(e);
-    return t == null || p(t, Jt) ? t : g();
+    return t == null || p(t, Yt) ? t : g();
   }
   findOwnedUnionTypeNamedOrNull(e) {
     var t = this.findOwnedTypeNamed(e);
@@ -67548,7 +67538,7 @@ class Ak {
       _ = D;
     }
     for (var B = _, j = w.s($(t, 10)), U = t.o(); U.p(); ) {
-      var V = U.q(), G = Vt(V);
+      var V = U.q(), G = Ut(V);
       j.n(G);
     }
     this._refExpressionList.n(new Ai(v, j, B));
@@ -68474,7 +68464,7 @@ class Zu {
     this.d3d(e);
   }
 }
-class Ws extends Kt {
+class Ws extends Ht {
   get name() {
     return this.q2();
   }
@@ -69312,7 +69302,7 @@ class $3 {
   extends(e) {
     for (var t = 0, n = e.length; t < n; ) {
       var a = e[t];
-      t = t + 1 | 0, this.h3g_1.n(new ho(this.c3g_1, Vt(a)));
+      t = t + 1 | 0, this.h3g_1.n(new ho(this.c3g_1, Ut(a)));
     }
   }
   importTypes(e) {
@@ -70804,7 +70794,7 @@ class z3 {
     return Y(this.g3());
   }
 }
-class Jt {
+class Yt {
 }
 class Ad extends Rs {
   constructor(e, t) {
@@ -70880,7 +70870,7 @@ class Ad extends Rs {
   }
   equals(e) {
     var t;
-    return e != null && p(e, Jt) ? this.qualifiedName !== e.qualifiedName ? t = false : t = true : t = false, t;
+    return e != null && p(e, Yt) ? this.qualifiedName !== e.qualifiedName ? t = false : t = true : t = false, t;
   }
   toString() {
     return this.qualifiedName;
@@ -71625,7 +71615,7 @@ class IS extends ka {
     super.register(ITe(this)), super.register(CTe(this)), super.register(DTe(this)), super.register(LTe(this)), super.register(qTe(this)), super.register(MTe(this)), super.register($Te(this)), super.register(BTe(this)), super.register(FTe(this)), super.register(jTe(this)), super.register(zTe(this)), super.register(GTe(this));
   }
 }
-class Vr extends Kt {
+class Vr extends Ht {
   y2f(e) {
     var t;
     switch (this.p2_1) {
@@ -71878,7 +71868,7 @@ class c1 {
   l3p(e, t, n, a, s) {
     var i = new m1(this._structuredType, this._namespace);
     s(i);
-    var o = i.build(), u = o, f = this._namespace.createTypeInstance(this._structuredType.qualifiedName, Vt(n), u, a);
+    var o = i.build(), u = o, f = this._namespace.createTypeInstance(this._structuredType.qualifiedName, Ut(n), u, a);
     return this._structuredType.appendPropertyStored(t, f, e);
   }
   propertyOf(e, t, n, a, s, i) {
@@ -71887,7 +71877,7 @@ class c1 {
     return s === l ? o = iOe : o = s, s = o, i === l ? this.l3p(e, t, n, a, s) : i.l3p.call(this, e, t, n, a, s);
   }
   propertyPrimitiveType(e, t, n, a) {
-    return this.property(e, this._namespace.createTypeInstance(this._structuredType.qualifiedName, Vt(t), Q(), n), a);
+    return this.property(e, this._namespace.createTypeInstance(this._structuredType.qualifiedName, Ut(t), Q(), n), a);
   }
   propertyListTypeOf(e, t, n, a) {
     return this.propertyListType(e, n, a, lOe(t));
@@ -71899,7 +71889,7 @@ class c1 {
     return this.property(e, o, n);
   }
   propertyListSeparatedTypeOf(e, t, n, a, s) {
-    var i = this._namespace.findTypeNamed(Vt(t)), o = i ?? this._namespace.findOwnedOrCreateDataTypeNamed(t), u = this._namespace.findTypeNamed(Vt(t)), f = u ?? this._namespace.findOwnedOrCreateDataTypeNamed(n), c = L().ListSeparated, m = c.type(Fe([o.type().asTypeArgument, f.type().asTypeArgument]), a);
+    var i = this._namespace.findTypeNamed(Ut(t)), o = i ?? this._namespace.findOwnedOrCreateDataTypeNamed(t), u = this._namespace.findTypeNamed(Ut(t)), f = u ?? this._namespace.findOwnedOrCreateDataTypeNamed(n), c = L().ListSeparated, m = c.type(Fe([o.type().asTypeArgument, f.type().asTypeArgument]), a);
     return this.property(e, m, s);
   }
   propertyListSeparatedType(e, t, n, a) {
@@ -71925,11 +71915,11 @@ class c1 {
     return this.property(e, o, n);
   }
   propertyDataTypeOf(e, t, n, a) {
-    var s = Vt(t), i = this._namespace.findTypeNamed(s), o = i ?? this._namespace.findOwnedOrCreateDataTypeNamed(s.simpleName), u = o.type(l, n);
+    var s = Ut(t), i = this._namespace.findTypeNamed(s), o = i ?? this._namespace.findOwnedOrCreateDataTypeNamed(s.simpleName), u = o.type(l, n);
     return this.property(e, u, a);
   }
   propertyUnionTypeOf(e, t, n, a) {
-    var s = Vt(t), i = this._namespace.findTypeNamed(s), o;
+    var s = Ut(t), i = this._namespace.findTypeNamed(s), o;
     if (i == null) {
       var u = s.simpleName;
       o = this._namespace.findOwnedOrCreateUnionTypeNamed(u, uOe);
@@ -71960,7 +71950,7 @@ class eN extends c1 {
     return this.n3p_1;
   }
   o3p(e, t) {
-    var n = Vt(e), a = new fu(this._structuredType, this._namespace, n, false, this._typeReferences);
+    var n = Ut(e), a = new fu(this._structuredType, this._namespace, n, false, this._typeReferences);
     t(a);
     var s = a.build();
     this.n3p_1.addSupertype(s);
@@ -72000,7 +71990,7 @@ class tN extends c1 {
     n.t(a);
   }
   o3p(e, t) {
-    var n = Vt(e), a = new fu(this._structuredType, this._namespace, n, false, this._typeReferences);
+    var n = Ut(e), a = new fu(this._structuredType, this._namespace, n, false, this._typeReferences);
     t(a);
     var s = a.build();
     this.p3p_1.addSupertype(s);
@@ -72015,9 +72005,9 @@ class tN extends c1 {
     for (var t = 0, n = e.length; t < n; ) {
       var a = e[t];
       t = t + 1 | 0;
-      var s = Vt(a), i = this._namespace.createTypeInstance(this.p3p_1.qualifiedName, s, Q(), false);
+      var s = Ut(a), i = this._namespace.createTypeInstance(this.p3p_1.qualifiedName, s, Q(), false);
       this.p3p_1.addSubtype(i);
-      var o = this._namespace.findTypeNamed(s), u = o == null || p(o, Jt) ? o : g();
+      var o = this._namespace.findTypeNamed(s), u = o == null || p(o, Yt) ? o : g();
       u == null || u.addSupertype_dep(new le(this.p3p_1.qualifiedName));
     }
   }
@@ -72029,7 +72019,7 @@ class rN extends c1 {
   constructor(e, t, n) {
     super(e, t);
     var a = this, s = e.findOwnedOrCreateDataTypeNamed(n);
-    a.q3p_1 = p(s, Jt) ? s : g();
+    a.q3p_1 = p(s, Yt) ? s : g();
   }
   c3p() {
     return this.q3p_1;
@@ -72047,12 +72037,12 @@ class rN extends c1 {
     for (var t = 0, n = e.length; t < n; ) {
       var a = e[t];
       t = t + 1 | 0;
-      var s = Vt(a), i = this._namespace.createTypeInstance(this.q3p_1.qualifiedName, s, Q(), false);
+      var s = Ut(a), i = this._namespace.createTypeInstance(this.q3p_1.qualifiedName, s, Q(), false);
       this.q3p_1.addSupertype(i);
     }
   }
   o3p(e, t) {
-    var n = Vt(e), a = new fu(this._structuredType, this._namespace, n, false, this._typeReferences);
+    var n = Ut(e), a = new fu(this._structuredType, this._namespace, n, false, this._typeReferences);
     t(a);
     var s = a.build();
     this.q3p_1.addSupertype(s);
@@ -72067,7 +72057,7 @@ class rN extends c1 {
     for (var t = 0, n = e.length; t < n; ) {
       var a = e[t];
       t = t + 1 | 0;
-      var s = Vt(a), i = this._namespace.createTypeInstance(this.q3p_1.qualifiedName, s, Q(), false);
+      var s = Ut(a), i = this._namespace.createTypeInstance(this.q3p_1.qualifiedName, s, Q(), false);
       this.q3p_1.addSubtype(i);
     }
   }
@@ -72091,7 +72081,7 @@ class Gb {
     return this._namespace;
   }
   u3p(e, t, n) {
-    var a = this._namespace.createTypeInstance(this.r3p_1.qualifiedName, Vt(t), Q(), n);
+    var a = this._namespace.createTypeInstance(this.r3p_1.qualifiedName, Ut(t), Q(), n);
     this.t3p_1.n(new Xi(e, a, null));
   }
   parameter(e, t, n, a) {
@@ -72125,10 +72115,10 @@ class fu {
     return this._typeReferences;
   }
   ref(e) {
-    var t = Vt(e), n;
+    var t = Ut(e), n;
     if (t instanceof le) {
       var a = this.context;
-      n = this._namespace.createTypeInstance(a == null ? null : a.qualifiedName, Vt(e), Q(), this.nullable);
+      n = this._namespace.createTypeInstance(a == null ? null : a.qualifiedName, Ut(e), Q(), this.nullable);
     } else if (t instanceof ke) {
       var s = this.context, i = s == null ? null : s.typeParameters, o;
       if (i == null)
@@ -72150,7 +72140,7 @@ class fu {
       var m = o, d;
       if (m == null || this.context == null) {
         var v = this.context;
-        d = this._namespace.createTypeInstance(v == null ? null : v.qualifiedName, Vt(e), Q(), this.nullable);
+        d = this._namespace.createTypeInstance(v == null ? null : v.qualifiedName, Ut(e), Q(), this.nullable);
       } else
         d = new Yr(this.context, m.name);
       n = d;
@@ -72188,10 +72178,10 @@ class zm {
     return this._typeReferences;
   }
   typeRef(e, t, n) {
-    var a = this._namespace.findTypeNamed(Vt(t)), s = a == null ? null : a.type(Q(), n), i;
+    var a = this._namespace.findTypeNamed(Ut(t)), s = a == null ? null : a.type(Q(), n), i;
     if (s == null) {
       var o = this.context;
-      i = this._namespace.createTypeInstance(o == null ? null : o.qualifiedName, Vt(t), Q(), n);
+      i = this._namespace.createTypeInstance(o == null ? null : o.qualifiedName, Ut(t), Q(), n);
     } else
       i = s;
     var u = i, f = new kn(e, u);
@@ -72216,10 +72206,10 @@ class m1 {
   c3q(e, t, n) {
     var a = new m1(this.z3p_1, this.a3q_1);
     n(a);
-    var s = a.build(), i = Vt(e), o;
+    var s = a.build(), i = Ut(e), o;
     if (i instanceof le) {
       var u = this.z3p_1;
-      o = this.a3q_1.createTypeInstance(u == null ? null : u.qualifiedName, Vt(e), s, t);
+      o = this.a3q_1.createTypeInstance(u == null ? null : u.qualifiedName, Ut(e), s, t);
     } else if (i instanceof ke) {
       var f = this.z3p_1, c = f == null ? null : f.typeParameters, m;
       if (c == null)
@@ -72241,7 +72231,7 @@ class m1 {
       var E = m, R;
       if (E == null || this.z3p_1 == null) {
         var x = this.z3p_1;
-        R = this.a3q_1.createTypeInstance(x == null ? null : x.qualifiedName, Vt(e), s, t);
+        R = this.a3q_1.createTypeInstance(x == null ? null : x.qualifiedName, Ut(e), s, t);
       } else
         R = new Yr(this.z3p_1, E.name);
       o = R;
@@ -72276,7 +72266,7 @@ class Wb {
     return this._subtypeList;
   }
   f3q(e, t) {
-    var n = Vt(e), a = this._namespace.createTypeInstance(null, n, Q(), t);
+    var n = Ut(e), a = this._namespace.createTypeInstance(null, n, Q(), t);
     this._subtypeList.n(a);
   }
   typeRef(e, t, n) {
@@ -72580,13 +72570,13 @@ function BZ(r) {
   };
 }
 function FZ() {
-  return W("grammarModel", 1, Qt, (r) => r.grammarModel, (r, e) => r.grammarModel = e);
+  return W("grammarModel", 1, Jt, (r) => r.grammarModel, (r, e) => r.grammarModel = e);
 }
 function jZ() {
-  return W("grammarModel", 1, Qt, (r) => r.grammarModel, (r, e) => r.grammarModel = e);
+  return W("grammarModel", 1, Jt, (r) => r.grammarModel, (r, e) => r.grammarModel = e);
 }
 function zZ() {
-  return W("targetGrammarName", 1, Qt, (r) => {
+  return W("targetGrammarName", 1, Jt, (r) => {
     var e = r.targetGrammarName;
     return e == null ? null : new ke(e);
   }, (r, e) => {
@@ -72595,7 +72585,7 @@ function zZ() {
   });
 }
 function GZ() {
-  return W("targetGrammarName", 1, Qt, (r) => {
+  return W("targetGrammarName", 1, Jt, (r) => {
     var e = r.targetGrammarName;
     return e == null ? null : new ke(e);
   }, (r, e) => {
@@ -72604,7 +72594,7 @@ function GZ() {
   });
 }
 function WZ() {
-  return W("defaultGoalRule", 1, Qt, (r) => {
+  return W("defaultGoalRule", 1, Jt, (r) => {
     var e = r.defaultGoalRule;
     return e == null ? null : new pt(e);
   }, (r, e) => {
@@ -72613,7 +72603,7 @@ function WZ() {
   });
 }
 function UZ() {
-  return W("defaultGoalRule", 1, Qt, (r) => {
+  return W("defaultGoalRule", 1, Jt, (r) => {
     var e = r.defaultGoalRule;
     return e == null ? null : new pt(e);
   }, (r, e) => {
@@ -72622,76 +72612,76 @@ function UZ() {
   });
 }
 function VZ() {
-  return W("_regexEngineKind", 1, Qt, (r) => r._regexEngineKind, (r, e) => r._regexEngineKind = e);
+  return W("_regexEngineKind", 1, Jt, (r) => r._regexEngineKind, (r, e) => r._regexEngineKind = e);
 }
 function HZ() {
-  return W("_regexEngineKind", 1, Qt, (r) => r._regexEngineKind, (r, e) => r._regexEngineKind = e);
+  return W("_regexEngineKind", 1, Jt, (r) => r._regexEngineKind, (r, e) => r._regexEngineKind = e);
 }
 function KZ() {
-  return W("_scannerKind", 1, Qt, (r) => r._scannerKind, (r, e) => r._scannerKind = e);
+  return W("_scannerKind", 1, Jt, (r) => r._scannerKind, (r, e) => r._scannerKind = e);
 }
 function YZ() {
-  return W("_scannerKind", 1, Qt, (r) => r._scannerKind, (r, e) => r._scannerKind = e);
+  return W("_scannerKind", 1, Jt, (r) => r._scannerKind, (r, e) => r._scannerKind = e);
 }
 function JZ() {
-  return W("_crossReferenceModelResolver", 1, Qt, (r) => r._crossReferenceModelResolver, (r, e) => r._crossReferenceModelResolver = e);
+  return W("_crossReferenceModelResolver", 1, Jt, (r) => r._crossReferenceModelResolver, (r, e) => r._crossReferenceModelResolver = e);
 }
 function QZ() {
-  return W("_crossReferenceModelResolver", 1, Qt, (r) => r._crossReferenceModelResolver, (r, e) => r._crossReferenceModelResolver = e);
+  return W("_crossReferenceModelResolver", 1, Jt, (r) => r._crossReferenceModelResolver, (r, e) => r._crossReferenceModelResolver = e);
 }
 function XZ() {
-  return W("_scannerResolver", 1, Qt, (r) => r._scannerResolver, (r, e) => r._scannerResolver = e);
+  return W("_scannerResolver", 1, Jt, (r) => r._scannerResolver, (r, e) => r._scannerResolver = e);
 }
 function ZZ() {
-  return W("_scannerResolver", 1, Qt, (r) => r._scannerResolver, (r, e) => r._scannerResolver = e);
+  return W("_scannerResolver", 1, Jt, (r) => r._scannerResolver, (r, e) => r._scannerResolver = e);
 }
 function eee() {
-  return W("_parserResolver", 1, Qt, (r) => r._parserResolver, (r, e) => r._parserResolver = e);
+  return W("_parserResolver", 1, Jt, (r) => r._parserResolver, (r, e) => r._parserResolver = e);
 }
 function tee() {
-  return W("_parserResolver", 1, Qt, (r) => r._parserResolver, (r, e) => r._parserResolver = e);
+  return W("_parserResolver", 1, Jt, (r) => r._parserResolver, (r, e) => r._parserResolver = e);
 }
 function ree() {
-  return W("_typeModelResolver", 1, Qt, (r) => r._typeModelResolver, (r, e) => r._typeModelResolver = e);
+  return W("_typeModelResolver", 1, Jt, (r) => r._typeModelResolver, (r, e) => r._typeModelResolver = e);
 }
 function nee() {
-  return W("_typeModelResolver", 1, Qt, (r) => r._typeModelResolver, (r, e) => r._typeModelResolver = e);
+  return W("_typeModelResolver", 1, Jt, (r) => r._typeModelResolver, (r, e) => r._typeModelResolver = e);
 }
 function aee() {
-  return W("_asmTransformModelResolver", 1, Qt, (r) => r._asmTransformModelResolver, (r, e) => r._asmTransformModelResolver = e);
+  return W("_asmTransformModelResolver", 1, Jt, (r) => r._asmTransformModelResolver, (r, e) => r._asmTransformModelResolver = e);
 }
 function see() {
-  return W("_asmTransformModelResolver", 1, Qt, (r) => r._asmTransformModelResolver, (r, e) => r._asmTransformModelResolver = e);
+  return W("_asmTransformModelResolver", 1, Jt, (r) => r._asmTransformModelResolver, (r, e) => r._asmTransformModelResolver = e);
 }
 function iee() {
-  return W("_syntaxAnalyserResolver", 1, Qt, (r) => r._syntaxAnalyserResolver, (r, e) => r._syntaxAnalyserResolver = e);
+  return W("_syntaxAnalyserResolver", 1, Jt, (r) => r._syntaxAnalyserResolver, (r, e) => r._syntaxAnalyserResolver = e);
 }
 function lee() {
-  return W("_syntaxAnalyserResolver", 1, Qt, (r) => r._syntaxAnalyserResolver, (r, e) => r._syntaxAnalyserResolver = e);
+  return W("_syntaxAnalyserResolver", 1, Jt, (r) => r._syntaxAnalyserResolver, (r, e) => r._syntaxAnalyserResolver = e);
 }
 function oee() {
-  return W("_semanticAnalyserResolver", 1, Qt, (r) => r._semanticAnalyserResolver, (r, e) => r._semanticAnalyserResolver = e);
+  return W("_semanticAnalyserResolver", 1, Jt, (r) => r._semanticAnalyserResolver, (r, e) => r._semanticAnalyserResolver = e);
 }
 function uee() {
-  return W("_semanticAnalyserResolver", 1, Qt, (r) => r._semanticAnalyserResolver, (r, e) => r._semanticAnalyserResolver = e);
+  return W("_semanticAnalyserResolver", 1, Jt, (r) => r._semanticAnalyserResolver, (r, e) => r._semanticAnalyserResolver = e);
 }
 function fee() {
-  return W("_formatterResolver", 1, Qt, (r) => r._formatterResolver, (r, e) => r._formatterResolver = e);
+  return W("_formatterResolver", 1, Jt, (r) => r._formatterResolver, (r, e) => r._formatterResolver = e);
 }
 function cee() {
-  return W("_formatterResolver", 1, Qt, (r) => r._formatterResolver, (r, e) => r._formatterResolver = e);
+  return W("_formatterResolver", 1, Jt, (r) => r._formatterResolver, (r, e) => r._formatterResolver = e);
 }
 function mee() {
-  return W("_styleResolver", 1, Qt, (r) => r._styleResolver, (r, e) => r._styleResolver = e);
+  return W("_styleResolver", 1, Jt, (r) => r._styleResolver, (r, e) => r._styleResolver = e);
 }
 function pee() {
-  return W("_styleResolver", 1, Qt, (r) => r._styleResolver, (r, e) => r._styleResolver = e);
+  return W("_styleResolver", 1, Jt, (r) => r._styleResolver, (r, e) => r._styleResolver = e);
 }
 function hee() {
-  return W("_completionProviderResolver", 1, Qt, (r) => r._completionProviderResolver, (r, e) => r._completionProviderResolver = e);
+  return W("_completionProviderResolver", 1, Jt, (r) => r._completionProviderResolver, (r, e) => r._completionProviderResolver = e);
 }
 function dee() {
-  return W("_completionProviderResolver", 1, Qt, (r) => r._completionProviderResolver, (r, e) => r._completionProviderResolver = e);
+  return W("_completionProviderResolver", 1, Jt, (r) => r._completionProviderResolver, (r, e) => r._completionProviderResolver = e);
 }
 function vee(r, e, t) {
   var n = e, a = n == null ? null : new Vn(n), s = t;
@@ -73477,7 +73467,7 @@ function xre(r, e, t, n) {
       pe(_, N);
     }
     for (var P = _, O = w.s($(P, 10)), D = P.o(); D.p(); ) {
-      var q = D.q(), B = new Yt(Oh(), Rr(q.qualifiedTypeName), q.referableName);
+      var q = D.q(), B = new Kt(Oh(), Rr(q.qualifiedTypeName), q.referableName);
       O.n(B);
     }
     for (var j = t.expectedNextLeafNonTerminalOrTerminal, U = w.d1(), V = j.o(); V.p(); ) {
@@ -73490,7 +73480,7 @@ function xre(r, e, t, n) {
         pe(Ae, ct);
       }
       for (var ft = Ae, it = w.s($(ft, 10)), mt = ft.o(); mt.p(); ) {
-        var It = mt.q(), Mt = new Yt(Oh(), Rr(It.qualifiedTypeName), It.referableName);
+        var It = mt.q(), Mt = new Kt(Oh(), Rr(It.qualifiedTypeName), It.referableName);
         it.n(Mt);
       }
       it == null || U.n(it);
@@ -73547,7 +73537,7 @@ function Ire(r) {
 function Cre(r) {
   return (e) => {
     var t = r;
-    return (p(t, Ht) ? t : g()).l2(e);
+    return (p(t, Vt) ? t : g()).l2(e);
   };
 }
 function Iw(r, e, t) {
@@ -73633,7 +73623,7 @@ function p1(r, e, t) {
       var R = "Subtype of GrammarRule '" + qe(e).jc() + "' not supported";
       throw k.f4(y(R));
     }
-    var x = m, N = x.type(), P = t.z2d_1(p(x, Jt) ? x : g());
+    var x = m, N = x.type(), P = t.z2d_1(p(x, Yt) ? x : g());
     P.grammarRuleName = e.name, P.resolveTypeAs(N);
     var O = r.v2d_1, D = new pt(n);
     O.d2(D, P), t.a2e_1(P), s = P;
@@ -73781,7 +73771,7 @@ function Mre(r, e, t) {
           }
           for (var he = v.o(); he.p(); ) {
             var Ee = he.q(), Se = Ee.resolvedType.resolvedDeclaration;
-            if (!p(Se, Jt)) {
+            if (!p(Se, Yt)) {
               me = false;
               break e;
             }
@@ -73829,8 +73819,8 @@ function Mre(r, e, t) {
               ft = true;
             }
             if (ft) {
-              for (var Tt, jt = w.s($(v, 10)), Xt = v.o(); Xt.p(); ) {
-                var Zt = Xt.q(), vr = Zt.resolvedType, qr = ue((p(vr, Ed) ? vr : g()).typeArguments);
+              for (var Tt, jt = w.s($(v, 10)), Qt = v.o(); Qt.p(); ) {
+                var Xt = Qt.q(), vr = Xt.resolvedType, qr = ue((p(vr, Ed) ? vr : g()).typeArguments);
                 jt.n(qr);
               }
               if (ue(jt).r() === 1) {
@@ -73988,7 +73978,7 @@ function H3(r, e, t) {
     d = Ye().toNoActionTrRule(P);
   } else if (Iw(Ye(), m, L().String.resolvedDeclaration))
     d = er(L().String, Ye().EXPRESSION_CHILD(0));
-  else if (VO(Ye(), m, A(Jt))) {
+  else if (VO(Ye(), m, A(Yt))) {
     var O = HO(r, e), D = r.o2d_1.findOwnedOrCreateUnionTypeNamed(O, fne(m));
     d = Ye().toSubtypeTrRule(D.type());
   } else if (Iw(Ye(), m, L().List)) {
@@ -74228,9 +74218,9 @@ function ene(r) {
 }
 function tne(r) {
   return (e) => {
-    for (var t = e.resolvedType.resolvedDeclaration, n = p(t, Jt) ? t : g(), a = r.o(); a.p(); ) {
+    for (var t = e.resolvedType.resolvedDeclaration, n = p(t, Yt) ? t : g(), a = r.o(); a.p(); ) {
       var s = a.q(), i = s.resolvedType.resolvedDeclaration;
-      (p(i, Jt) ? i : g()).addSupertype_dep(new le(n.qualifiedName)), n.addSubtype_dep(new le(s.resolvedType.resolvedDeclaration.qualifiedName));
+      (p(i, Yt) ? i : g()).addSupertype_dep(new le(n.qualifiedName)), n.addSubtype_dep(new le(s.resolvedType.resolvedDeclaration.qualifiedName));
     }
     return h;
   };
@@ -74465,21 +74455,21 @@ function dne(r, e, t, n) {
       mt == null || ct.n(mt);
     }
     for (var It = ct, Mt = w.d1(), Tt = It.o(); Tt.p(); ) {
-      var jt = Tt.q(), Xt = Ee.findItemsNamedConformingTo(je, yne(r, jt));
-      pe(Mt, Xt);
+      var jt = Tt.q(), Qt = Ee.findItemsNamedConformingTo(je, yne(r, jt));
+      pe(Mt, Qt);
     }
-    var Zt = Mt;
-    if (Zt.y()) {
+    var Xt = Mt;
+    if (Xt.y()) {
       eo(r, n, "No target of type(s) " + y(e.a2h_1) + " found for referring value '" + je + "' in scope of element '" + y(n) + "'");
       var vr = qp(r, e.z2g_1, n);
       vr.convertToReferenceTo(null);
-    } else if (1 < Zt.r()) {
-      var qr = "Multiple target of type(s) " + y(e.a2h_1) + " found for referring value '" + y(Ae.value) + "' in scope of element '" + y(n) + "': " + y(Zt);
+    } else if (1 < Xt.r()) {
+      var qr = "Multiple target of type(s) " + y(e.a2h_1) + " found for referring value '" + y(Ae.value) + "' in scope of element '" + y(n) + "': " + y(Xt);
       eo(r, n, qr);
       var cr = qp(r, e.z2g_1, n);
       cr.convertToReferenceTo(null);
     } else {
-      var mr = st(Zt).item;
+      var mr = st(Xt).item;
       if (r.resolveFunction != null) {
         var sr = r.resolveFunction(mr);
         if (sr == null)
@@ -74974,7 +74964,7 @@ function JO(r, e, t, n) {
     s = new La(e, Da.z2i(t, Ye().toLeafAsStringTrRule(L().String)));
   else {
     var f;
-    if (p(a, Jt) ? f = a.property.r() === 1 : f = false, f) {
+    if (p(a, Yt) ? f = a.property.r() === 1 : f = false, f) {
       var c;
       if (st(a.property).typeInstance.isNullable) {
         var m = st(a.property);
@@ -75072,7 +75062,7 @@ function QO(r, e, t, n) {
     s == null ? i = null : i = e.plus(s.name);
     var o = i;
     a = o ?? e.plus("<error>");
-  } else if (p(t, Jt)) {
+  } else if (p(t, Yt)) {
     var u;
     if (!t.subtypes.y())
       u = e;
@@ -75124,7 +75114,7 @@ function Vne(r, e, t) {
       s = i;
     } else if (p(a, Pr))
       s = Xne(r, a, t);
-    else if (p(a, Jt))
+    else if (p(a, Yt))
       s = Zne(r, a, t);
     else {
       var u;
@@ -75147,7 +75137,7 @@ function Hne(r, e, t) {
 }
 function Kne(r, e, t) {
   var n = e.resolvedDeclaration, a;
-  if (p(n, Jt)) {
+  if (p(n, Yt)) {
     var s = n.getOwnedPropertyByIndexOrNull(t.child.propertyIndex), i = s == null ? null : s.typeInstance;
     a = i ?? r.typeModel.NothingType.type();
   } else
@@ -75198,7 +75188,7 @@ function X3(r, e, t) {
       s = e.typeInstance;
     else if (p(a, Pr))
       s = e.typeInstance;
-    else if (p(a, Jt))
+    else if (p(a, Yt))
       s = e.typeInstance;
     else {
       var f;
@@ -75222,7 +75212,7 @@ function XO(r, e, t) {
     a = qa.t2j(e, L().String);
   else {
     var u;
-    if (p(n, Jt) ? u = n.property.r() === 1 : u = false, u)
+    if (p(n, Yt) ? u = n.property.r() === 1 : u = false, u)
       a = st(n.property).typeInstance.isNullable ? qa.t2j(e, st(n.property).typeInstance) : t.node.rule.isOptional ? qa.new_net_akehurst_language_agl_syntaxAnalyser_NodeTypes(e) : t.node.rule.isList ? qa.t2j(e, st(n.property).typeInstance) : qa.new_net_akehurst_language_agl_syntaxAnalyser_NodeTypes(e);
     else if (p(n, ln)) {
       var f;
@@ -75271,12 +75261,12 @@ function tae(r, e, t, n, a) {
         var c;
         if (s != null && !C(s.resolvedDeclaration, L().List)) {
           var m = s.resolvedDeclaration;
-          c = p(m, Jt);
+          c = p(m, Yt);
         } else
           c = false;
         if (c) {
           r.finishList();
-          var d = s.resolvedDeclaration, v = p(d, Jt) ? d : g(), _ = st(v.property);
+          var d = s.resolvedDeclaration, v = p(d, Yt) ? d : g(), _ = st(v.property);
           Cw(r, v, _), r.finishAsmElement(t.path, v);
         } else
           r.finishList();
@@ -75284,12 +75274,12 @@ function tae(r, e, t, n, a) {
         var E;
         if (s != null && !C(s.resolvedDeclaration, L().ListSeparated)) {
           var R = s.resolvedDeclaration;
-          E = p(R, Jt);
+          E = p(R, Yt);
         } else
           E = false;
         if (E) {
           r.finishListSeparated();
-          var x = s.resolvedDeclaration, N = p(x, Jt) ? x : g(), P = st(N.property);
+          var x = s.resolvedDeclaration, N = p(x, Yt) ? x : g(), P = st(N.property);
           Cw(r, N, P), r.finishAsmElement(t.path, N);
         } else
           r.finishListSeparated();
@@ -75299,7 +75289,7 @@ function tae(r, e, t, n, a) {
       }
     else if (p(o, Pr))
       eP(r, e, o, t.path);
-    else if (p(o, Jt)) {
+    else if (p(o, Yt)) {
       if (o.subtypes.y()) {
         for (var D = o.property.o(); D.p(); ) {
           var q = D.q(), B = q.typeInstance.resolvedDeclaration;
@@ -75922,7 +75912,7 @@ function tie(r, e) {
 function rie(r) {
   return (e) => r.toString() + e.asString(r);
 }
-function Vt(r) {
+function Ut(r) {
   return nie(r) ? new le(r) : new ke(r);
 }
 function nie(r) {
@@ -75967,7 +75957,7 @@ function Sa(r) {
   return fe(ap(c$(r), 1), ".");
 }
 function oie(r) {
-  return Vt(r);
+  return Ut(r);
 }
 function xu(r, e) {
   return lie(r, e);
@@ -76265,7 +76255,7 @@ function Cle(r, e, t, n) {
   return new ee(s, c);
 }
 function Dle(r, e, t, n) {
-  return Vt(fe(p(t, se) ? t : g(), ""));
+  return Ut(fe(p(t, se) ? t : g(), ""));
 }
 function Lle(r) {
   var e = (t, n, a) => Tle(r, t, n);
@@ -77510,10 +77500,10 @@ function lme(r, e) {
     var u = o, f;
     if (u instanceof ee)
       f = u;
-    else if (u != null && p(u, Ht)) {
+    else if (u != null && p(u, Vt)) {
       var c, m;
-      if ((p(u, Ht) ? u : g()).j2("key") ? m = (p(u, Ht) ? u : g()).j2("value") : m = false, m) {
-        var d = (p(u, Ht) ? u : g()).l2("key"), v = (p(u, Ht) ? u : g()).l2("value");
+      if ((p(u, Vt) ? u : g()).j2("key") ? m = (p(u, Vt) ? u : g()).j2("value") : m = false, m) {
+        var d = (p(u, Vt) ? u : g()).l2("key"), v = (p(u, Vt) ? u : g()).l2("value");
         c = new ee(d, v);
       } else {
         var _ = "To convert a List<Map> via 'asMap' there must be a 'key' and a 'value' entry";
@@ -77861,7 +77851,7 @@ function mpe(r, e) {
         if (a.isStdSet)
           throw ye.ri();
         if (a.isStdMap) {
-          var m = r.objectGraph.valueOf(t), d = p(m, Ht) ? m : g(), v = d.h2();
+          var m = r.objectGraph.valueOf(t), d = p(m, Vt) ? m : g(), v = d.h2();
           u = fe(v, "", l, l, l, l, wpe(r));
         } else
           throw ye.ri();
@@ -79307,13 +79297,13 @@ function h1e() {
 }
 function bN(r, e, t, n) {
   var a = r.x35_1, s;
-  a == null ? s = null : s = (p(a, Ht) ? a : g()).l2(e);
+  a == null ? s = null : s = (p(a, Vt) ? a : g()).l2(e);
   var i = s;
   r.w35_1.warn(i, t, n);
 }
 function vo(r, e, t, n) {
   var a = r.x35_1, s;
-  a == null ? s = null : s = (p(a, Ht) ? a : g()).l2(e);
+  a == null ? s = null : s = (p(a, Vt) ? a : g()).l2(e);
   var i = s;
   r.w35_1.error(i, t, n);
 }
@@ -79528,8 +79518,8 @@ function E1e(r, e, t) {
             }
             var je = _e, Be = ne.intersect(je);
             if (Be.isNotEmpty) {
-              for (var ct = n.a36(st(m.from.runtimeRules).runtimeRuleSetNumber, st(m.from.runtimeRules).ruleNumber), ft = n.a36(st(m.to.runtimeRules).runtimeRuleSetNumber, st(m.to.runtimeRules).ruleNumber), it = n.a36(st(O.to.runtimeRules).runtimeRuleSetNumber, st(O.to.runtimeRules).ruleNumber), mt = ct == null ? null : ct.owningRule, It = ft == null ? null : ft.owningRule, Mt = it == null ? null : it.owningRule, Tt = Be.fullContent, jt = w.s($(Tt, 10)), Xt = Tt.o(); Xt.p(); ) {
-                var Zt = Xt.q(), vr = Zt.tag;
+              for (var ct = n.a36(st(m.from.runtimeRules).runtimeRuleSetNumber, st(m.from.runtimeRules).ruleNumber), ft = n.a36(st(m.to.runtimeRules).runtimeRuleSetNumber, st(m.to.runtimeRules).ruleNumber), it = n.a36(st(O.to.runtimeRules).runtimeRuleSetNumber, st(O.to.runtimeRules).ruleNumber), mt = ct == null ? null : ct.owningRule, It = ft == null ? null : ft.owningRule, Mt = it == null ? null : it.owningRule, Tt = Be.fullContent, jt = w.s($(Tt, 10)), Qt = Tt.o(); Qt.p(); ) {
+                var Xt = Qt.q(), vr = Xt.tag;
                 jt.n(vr);
               }
               var qr = jt, cr = m.action.toString(), mr = O.action.toString(), sr = mt == null ? null : mt.name, zr = ze(sr == null ? null : new pt(sr)), pr = It == null ? null : It.name, rn = ze(pr == null ? null : new pt(pr)), ir = Mt == null ? null : Mt.name, lr = "Ambiguity: [" + cr + "/" + mr + "] conflict from '" + zr + "' into '" + rn + "/" + ze(ir == null ? null : new pt(ir)) + "' on " + y(qr);
@@ -80932,7 +80922,7 @@ function iwe(r, e, t, n, a, s) {
         throw k.f4(y(x));
       } else {
         var N, P;
-        if (p(m, Jt) ? P = E != null ? p(E, Jt) : false : P = false, P) {
+        if (p(m, Yt) ? P = E != null ? p(E, Yt) : false : P = false, P) {
           var O = E.allSuperTypes, D;
           e: {
             var q;
@@ -81634,36 +81624,36 @@ function HSe(r, e, t) {
 }
 function KSe(r, e, t, n) {
   for (var a = n.rootScope, s = a.findItemsConformingTo(nAe), i = w.s($(s, 10)), o = s.o(); o.p(); ) {
-    var u = o.q(), f = new Yt(Zr(), "LITERAL", u.referableName);
+    var u = o.q(), f = new Kt(Zr(), "LITERAL", u.referableName);
     f.description = "Reference to a literal value used in the grammar. Literals are enclosed in single quotes or leaf rules.", i.n(f);
   }
   return i;
 }
 function YSe(r, e, t, n) {
   for (var a = n.rootScope, s = a.findItemsConformingTo(aAe), i = w.s($(s, 10)), o = s.o(); o.p(); ) {
-    var u = o.q(), f = new Yt(Zr(), "PATTERN", u.referableName);
+    var u = o.q(), f = new Kt(Zr(), "PATTERN", u.referableName);
     f.description = "Reference to a pattern value (regular expression) used in the grammar. Patterns are enclosed in double quotes or leaf rules.", i.n(f);
   }
   return i;
 }
 function JSe(r, e, t, n) {
   for (var a = n.rootScope, s = a.findItemsConformingTo(sAe), i = w.s($(s, 10)), o = s.o(); o.p(); ) {
-    var u = o.q(), f = new Yt(Zr(), Km().h3b_1.resolvedDeclaration.name, u.referableName);
+    var u = o.q(), f = new Kt(Zr(), Km().h3b_1.resolvedDeclaration.name, u.referableName);
     i.n(f);
   }
   return i;
 }
 function QSe(r, e, t, n) {
-  return Fe([new Yt(Zr(), "META_IDENTIFIER", sc().KEYWORD_STYLE_ID.value), new Yt(Zr(), "META_IDENTIFIER", sc().NO_STYLE_ID.value)]);
+  return Fe([new Kt(Zr(), "META_IDENTIFIER", sc().KEYWORD_STYLE_ID.value), new Kt(Zr(), "META_IDENTIFIER", sc().NO_STYLE_ID.value)]);
 }
 function XSe(r, e, t, n) {
-  return Fe([new Yt(Zr(), "STYLE_ID", "foreground"), new Yt(Zr(), "STYLE_ID", "background"), new Yt(Zr(), "STYLE_ID", "font-style"), new Yt(Gm(), "style", "<STYLE_ID>: <STYLE_VALUE>;")]);
+  return Fe([new Kt(Zr(), "STYLE_ID", "foreground"), new Kt(Zr(), "STYLE_ID", "background"), new Kt(Zr(), "STYLE_ID", "font-style"), new Kt(Gm(), "style", "<STYLE_ID>: <STYLE_VALUE>;")]);
 }
 function ZSe(r, e, t, n) {
-  return Fe([new Yt(Zr(), "STYLE_VALUE", "<colour>"), new Yt(Zr(), "STYLE_VALUE", "bold"), new Yt(Zr(), "STYLE_VALUE", "italic")]);
+  return Fe([new Kt(Zr(), "STYLE_VALUE", "<colour>"), new Kt(Zr(), "STYLE_VALUE", "bold"), new Kt(Zr(), "STYLE_VALUE", "italic")]);
 }
 function eAe(r, e, t, n) {
-  return oe(new Yt(Zr(), "selectorAndComposition", ","));
+  return oe(new Kt(Zr(), "selectorAndComposition", ","));
 }
 function tAe(r, e, t, n) {
   var a;
@@ -81671,12 +81661,12 @@ function tAe(r, e, t, n) {
     var s;
     switch (e.value) {
       case "'{'":
-        s = Fe([new Yt(Zr(), "rule", "{"), new Yt(Gm(), "rule", `{
+        s = Fe([new Kt(Zr(), "rule", "{"), new Kt(Gm(), "rule", `{
   <STYLE_ID>: <STYLE_VALUE>;
 }`)]);
         break;
       case "'}'":
-        s = oe(new Yt(Zr(), "rule", "}"));
+        s = oe(new Kt(Zr(), "rule", "}"));
         break;
       default:
         var i = "Internal error: RuleItem " + y(e) + " not handled";
@@ -81695,10 +81685,10 @@ function rAe(r, e, t, n) {
     var s;
     switch (e.value) {
       case "':'":
-        s = oe(new Yt(Zr(), "style", ":"));
+        s = oe(new Kt(Zr(), "style", ":"));
         break;
       case "';'":
-        s = oe(new Yt(Zr(), "style", ";"));
+        s = oe(new Kt(Zr(), "style", ";"));
         break;
       default:
         var i = "Internal error: RuleItem " + y(e) + " not handled";
@@ -82048,7 +82038,7 @@ function bRe(r, e) {
   var f = n;
   if (AN(r, e.options))
     for (var c = f.o(); c.p(); ) {
-      var m = c.q(), d = m.expression, v = p(d, ds) ? d : g(), _ = Vt(v.name), E = gs(r).findFirstDefinitionByPossiblyQualifiedNameOrNull(_), R = E == null ? null : E.type(), x = R ?? L().NothingType, N = r.f3e_1.value.findDefinitionByQualifiedNameOrNull(e.qualifiedName), P;
+      var m = c.q(), d = m.expression, v = p(d, ds) ? d : g(), _ = Ut(v.name), E = gs(r).findFirstDefinitionByPossiblyQualifiedNameOrNull(_), R = E == null ? null : E.type(), x = R ?? L().NothingType, N = r.f3e_1.value.findDefinitionByQualifiedNameOrNull(e.qualifiedName), P;
       if (N == null) {
         var O = "Should exist!";
         throw k.f4(y(O));
@@ -82420,7 +82410,7 @@ function v2e(r, e, t, n) {
   return s;
 }
 function nB(r, e, t) {
-  var n = Vt(t), a;
+  var n = Ut(t), a;
   if (r.f3g_1) {
     var s;
     if (n instanceof ke) {
@@ -83327,7 +83317,7 @@ function TTe(r, e, t, n) {
   return s;
 }
 function OTe(r, e, t, n) {
-  var a = t.z(0), s = a != null && p(a, se) ? a : g(), i = t.z(1), o = i == null || p(i, se) ? i : g(), u = o ?? Q(), f = Vt(fe(s, ".")), c = t.z(2), m = (c == null || typeof c == "string" ? c : g()) != null, d = new Hc(f, u, m);
+  var a = t.z(0), s = a != null && p(a, se) ? a : g(), i = t.z(1), o = i == null || p(i, se) ? i : g(), u = o ?? Q(), f = Ut(fe(s, ".")), c = t.z(2), m = (c == null || typeof c == "string" ? c : g()) != null, d = new Hc(f, u, m);
   return d;
 }
 function PTe(r, e, t, n) {
@@ -83693,7 +83683,7 @@ F(kg, "ObjectGraph");
 F(XM, "AsmFactory", l, l, [kg]);
 F(CX, "AsmWalker");
 b(zs, "CompletionItemKind");
-b(Yt, "CompletionItem");
+b(Kt, "CompletionItem");
 F(ra, "PublicValueType");
 b(Hr, "LanguageIdentity", l, l, [ra]);
 b(Vn, "GrammarString", l, l, [ra]);
@@ -84126,8 +84116,8 @@ b(j3, "sam$kotlin_Comparator$0", l, l, [et, Ze]);
 F(Lo, "InterfaceType", l, l, [ta]);
 b(Vk, "InterfaceTypeSimple", l, l, [Rs, Lo]);
 b(z3, "sam$kotlin_Comparator$0", l, l, [et, Ze]);
-F(Jt, "DataType", l, l, [ta]);
-b(Ad, "DataTypeSimple", l, l, [Rs, Jt]);
+F(Yt, "DataType", l, l, [ta]);
+b(Ad, "DataTypeSimple", l, l, [Rs, Yt]);
 F(Dn, "CollectionType", l, l, [ta]);
 b(Bb, "CollectionTypeSimple", l, l, [Rs, Dn]);
 F(Hk, "ConstructorDeclaration");
@@ -85499,23 +85489,23 @@ class vOe {
     let a;
     switch (t.toArray()[0]) {
       case "completed": {
-        a = FreNodeReference.create(Wt.completed, "EventState");
+        a = FreNodeReference.create(Zt.completed, "EventState");
         break;
       }
       case "each completed": {
-        a = FreNodeReference.create(Wt.eachCompleted, "EventState");
+        a = FreNodeReference.create(Zt.eachCompleted, "EventState");
         break;
       }
       case "started": {
-        a = FreNodeReference.create(Wt.started, "EventState");
+        a = FreNodeReference.create(Zt.started, "EventState");
         break;
       }
       case "scheduled": {
-        a = FreNodeReference.create(Wt.scheduled, "EventState");
+        a = FreNodeReference.create(Zt.scheduled, "EventState");
         break;
       }
       case "skipped": {
-        a = FreNodeReference.create(Wt.skipped, "EventState");
+        a = FreNodeReference.create(Zt.skipped, "EventState");
         break;
       }
       default:
@@ -88437,44 +88427,44 @@ class BOe extends AOe {
     return n.equals(a);
   }
   evalEventReference(e, t) {
-    const n = t.find("timeline"), a = e.$event, s = e.eventState;
-    let i = ownerOfType(e, "Event");
-    (a == null || a == null) && console.log("evalEventReference: owningEvent: " + i.name);
-    let o = n.getLastScheduledEventInstanceForThisEventsName(a);
-    if (o == null) {
+    const n = t.find("timeline"), a = e.$event;
+    e.eventState;
+    let s = ownerOfType(e, "Event");
+    (a == null || a == null) && console.log("evalEventReference: owningEvent: owningEvent.name");
+    let i = n.getLastScheduledEventInstanceForThisEventsName(a);
+    if (i == null) {
       console.log(
-        "The event '" + i.name + "' reference to: '" + a.name + "' cannot be evaluated because the referenced event is not on the timeline"
+        "The event 'owningEvent.name' reference to: 'referencedEvent.name' cannot be evaluated because the referenced event is not on the timeline"
       );
       return;
     } else {
-      if (o.getScheduledEvent().isRepeatingEvent()) {
-        if (e.eventState.name === Wt.eachCompleted.name) {
-          const c = n.numberCompletedInstancesOf(o.getScheduledEvent());
-          let m = t.find("scheduledEvent").getScheduledEvent();
-          const d = n.numberCompletedInstancesOf(m);
-          if (c <= d) {
-            c >= m.numberOfRepeats(n) + 1 ? console.log(
-              "The event '" + i.name + "' has a each-completed reference to:'" + a.name + "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated"
+      if (i.getScheduledEvent().isRepeatingEvent()) {
+        if (e.eventState.name === Zt.eachCompleted.name) {
+          const f = n.numberCompletedInstancesOf(i.getScheduledEvent());
+          let c = t.find("scheduledEvent").getScheduledEvent();
+          const m = n.numberCompletedInstancesOf(c);
+          if (f <= m) {
+            f >= c.numberOfRepeats(n) + 1 ? console.log(
+              "The event '" + s.name + "' has a each-completed reference to:'" + a.name + "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated"
             ) : console.log(
-              "The event '" + i.name + "' has a each-completed reference to:'" + a.name + "' and the parallel repeating event is completed"
+              "The event '" + s.name + "' has a each-completed reference to:'" + a.name + "' and the parallel repeating event is completed"
             );
             return;
           }
-        } else if (o.getScheduledEvent().anyRepeatsNotCompleted(n)) {
+        } else if (i.getScheduledEvent().anyRepeatsNotCompleted(n)) {
           console.log(
-            "The event '" + i.name + "' has a reference to:'" + a.name + "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated"
+            "The event '" + s.name + "' has a reference to:'" + a.name + "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated"
           );
           return;
         }
       }
-      let u = o.startDay;
-      (s.name === Wt.completed.name || s.name === Wt.eachCompleted.name) && (u = u + 1);
-      const f = e.freOwner();
-      if (f.timeAmountPart !== void 0 && f.timeAmountPart !== null) {
-        const c = un.evaluate(f.timeAmountPart, t);
-        return new RtNumber(u + c.value);
+      let o = i.startDay;
+      const u = e.freOwner();
+      if (u.timeAmountPart !== void 0 && u.timeAmountPart !== null) {
+        const f = un.evaluate(u.timeAmountPart, t);
+        return new RtNumber(o + f.value);
       } else
-        return new RtNumber(u);
+        return new RtNumber(o);
     }
   }
   evalEventStart(e, t) {

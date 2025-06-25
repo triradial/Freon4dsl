@@ -327,9 +327,9 @@ function getTimeline(node) {
 function getStatusColor(status) {
   switch (status.toLowerCase()) {
     case "active":
-      return "green";
+      return "blue";
     case "complete":
-      return "dark";
+      return "green";
     case "suspended":
       return "pink";
     case "terminated":

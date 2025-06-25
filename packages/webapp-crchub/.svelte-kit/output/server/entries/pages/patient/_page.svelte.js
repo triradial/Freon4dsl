@@ -5,46 +5,9 @@ import "../../../chunks/model-manager.js";
 import "../../../chunks/env.js";
 import "../../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
 import { d as dataStore, a as getChartWithPatientHistory } from "../../../chunks/utils.js";
+import { C as Calendar_days } from "../../../chunks/calendar-days.js";
 import { I as Icon } from "../../../chunks/Icon.js";
 import { h as html } from "../../../chunks/html.js";
-function Calendar_days($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    ["path", { "d": "M8 2v4" }],
-    ["path", { "d": "M16 2v4" }],
-    [
-      "rect",
-      {
-        "width": "18",
-        "height": "18",
-        "x": "3",
-        "y": "4",
-        "rx": "2"
-      }
-    ],
-    ["path", { "d": "M3 10h18" }],
-    ["path", { "d": "M8 14h.01" }],
-    ["path", { "d": "M12 14h.01" }],
-    ["path", { "d": "M16 14h.01" }],
-    ["path", { "d": "M8 18h.01" }],
-    ["path", { "d": "M12 18h.01" }],
-    ["path", { "d": "M16 18h.01" }]
-  ];
-  Icon($$payload, spread_props([
-    { name: "calendar-days" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
 function List_todo($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;
@@ -81,7 +44,7 @@ function List_todo($$payload, $$props) {
 function PatientCard($$payload, $$props) {
   push();
   const { patient } = $$props;
-  $$payload.out += `<div class="card crc-card-area max-w-sm h-full"><div class="flex items-center justify-left mb-4"><h3 class="text-base font-bold mr-2">Patient</h3> <button type="button" class="icon-button btn-sm grid-header-button">`;
+  $$payload.out += `<div class="card card-area max-w-sm h-full"><div class="flex items-center justify-left mb-4"><h3 class="text-base font-bold mr-2">Patient</h3> <button type="button" class="icon-button btn-sm grid-header-button">`;
   Pencil($$payload, {});
   $$payload.out += `<!----></button></div> <div class="space-y-2"><div><h4 class="card-label-text">Patient Number</h4> <p class="text-sm">${escape_html(patient.patientNumber)}</p></div> <div><h4 class="card-label-text">Initials</h4> <p class="text-xs">${escape_html(patient.initials)}</p></div> <div><h4 class="card-label-text">YOB</h4> <p class="text-xs">${escape_html(patient.dob)}</p></div> <div><h4 class="card-label-text">Gender</h4> <p class="text-xs">${escape_html(patient.gender)}</p></div></div></div>`;
   pop();

@@ -145,7 +145,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectDescription(description: Description): Box {
         const element: Description = description;
-        const ph = "<" + element.$$propertyName + ">";
+        const ph = "<description>";
         return new MultiLineTextBox2(
             element, "study-part-description", () => { return element.text; },
             (t: string) => { element.text = t; },

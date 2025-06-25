@@ -100,7 +100,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
         let owningEvent = ownerOfType(node, "Event") as language.Event;
         if (referencedEvent == undefined || referencedEvent == null) {
-            console.log("evalEventReference: owningEvent: " + owningEvent.name);
+            console.log("evalEventReference: owningEvent: " + "owningEvent.name");
         }
         // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
         // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
@@ -110,9 +110,9 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
             console.log(
                 "The event '" +
-                    owningEvent.name +
+                    "owningEvent.name" +
                     "' reference to: '" +
-                    referencedEvent.name +
+                    "referencedEvent.name" +
                     "' cannot be evaluated because the referenced event is not on the timeline",
             );
             return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
@@ -156,9 +156,9 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                 }
             }
             let result = lastInstanceOfReferencedEvent.startDay;
-            if (eventState.name === language.EventState.completed.name || eventState.name === language.EventState.eachCompleted.name) {
-                result = result + 1;
-            }
+            // if (eventState.name === language.EventState.completed.name || eventState.name === language.EventState.eachCompleted.name) {
+            //     result = result + 1;
+            // }
             const when = node.freOwner() as language.When;
             if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
                 const timeAmount = main.evaluate(when.timeAmountPart, ctx) as RtNumber;
