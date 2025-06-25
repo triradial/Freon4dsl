@@ -118,35 +118,17 @@
         isLoading = true;
         showChart = false;
         error = null;
-        
-        // Allow UI to update to show loading state
-        await new Promise((resolve) => setTimeout(() => resolve(null), 0));
-        
         try {
-            patientInfo = await ModelManager.getInstance().openModelUnitWithoutSavingCurrentUnit(id, "PatientInfo") as PatientInfo;
-
             const startTime = Date.now();
             const referenceDate = new Date(2024, 8, 30);
-            
-            // Keep isLoading true during chart generation
-            let chartHtmlResult: string = "";
-            console.log("Starting chart generation...");
-            chartHtmlResult = await getChartWithPatientHistory(referenceDate);
-            console.log("Chart generation completed, result:", chartHtmlResult);
-            chartHtml = chartHtmlResult!;
-            console.log("Chart HTML set to:", chartHtml);
-            
-            if (container) {
-                await loadChartData();
-                const elapsedTime = Date.now() - startTime;
-                if (elapsedTime < 3000) {
-                    await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
-                }
-                showChart = true;
-            } else {
-                console.error("Container not found");
-                throw new Error("Container not available");
+            chartHtml = await getChartWithPatientHistory(referenceDate);
+            await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
+            await loadChartData();
+            const elapsedTime = Date.now() - startTime;
+            if (elapsedTime < 5000) {
+                await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
             }
+            showChart = true;
         } catch (err: unknown) {
             console.error(`Error fetching chart data for study: ${id}`, err);
             error = err instanceof Error ? err.message : "An error occurred while fetching chart data";

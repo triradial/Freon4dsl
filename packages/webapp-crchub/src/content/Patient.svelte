@@ -1,36 +1,25 @@
 <script lang="ts">
     import { onDestroy, onMount } from "svelte";
     import PatientCard from "../components/cards/PatientCard.svelte";
-
     import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
     import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faListCheck, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
+    import { faListCheck } from "@fortawesome/free-solid-svg-icons";
     import { dataStore, type Patient } from "../services/data/data-store.js";
-
     import { ModelManager } from "../services/dsl/model-manager.js";
-    import { AST, RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel, PatientInfo, PatientHistory, PatientHistoryUnit } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineAsOfADate } from "../services/app/patient-timeline.js";
+    import { AST } from "@freon4dsl/core";
+    import { PatientInfo, PatientHistory, PatientHistoryUnit } from "@freon4dsl/samples-study-configuration";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { FreEditor } from "@freon4dsl/core";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { Toolbar, ToolbarButton } from "flowbite-svelte";
     import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
-
-    import { fillDateConceptFromAsString } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
     import { setDrawerProps, setDrawerVisibility } from "services/stores/side-drawer-store.js";
 
     export let id: string;
     let patient: Patient | undefined;
     let editorLoaded = false;
     let dslEditor: FreEditor;
-
-    let isLoading = true;
-    let showChart = false;
-    let chartHtml: string = "";
-    let error: string | null = null;
-    let container: HTMLElement | null = null;
     let unit: PatientHistoryUnit | undefined;
     let patientInfo: PatientInfo | undefined;
 
@@ -102,110 +91,6 @@
         setDrawerVisibility("patientTimelineChart", false);
     });
 
-    const getTimelineChartError = () => {
-        const html = `<div class="limited-width-container"><div class='text-red-500'>Error: PatientInfo not found</div></div>`;
-        return new RtString(html);
-    };
-
-    const fillDateConcept = (dateConcept: any) => {
-        fillDateConceptFromAsString(dateConcept);
-    };
-
-    const getChartWithPatientHistory = async (referenceDate: Date) => {
-        patient = await dataStore.getPatient(id);
-
-        var found = false;
-        var patientHistory: PatientHistory = PatientHistory.create({});
-        if (!patientInfo || patientInfo === undefined) {
-            const rtObject = getTimelineChartError() as RtString;
-            return rtObject.asString();
-        }
-
-        patientInfo!.patientHistories.forEach(aPatientHistory => {
-            if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
-                aPatientHistory.patientVisits.forEach(visit => {
-                    var updatedVisit = visit.copy(); 
-                    fillDateConcept(updatedVisit.actualVisitDate);  // Use the action wrapper
-                    patientHistory.patientVisits.push(updatedVisit);
-                });
-                aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => {
-                    var updatedDateRange = dateRange.copy();
-                    fillDateConcept(updatedDateRange.startDate);  // Use the action wrapper
-                    if (updatedDateRange.endDate) {
-                        fillDateConcept(updatedDateRange.endDate);  // Use the action wrapper
-                    }
-                    patientHistory.patientNotAvailableDates.dates.push(updatedDateRange);
-                });
-                found = true;
-            };
-        });
-        var referenceDateForTimeline : Date | undefined;
-        if (referenceDate === undefined) {
-            if (patientHistory.patientVisits.length > 0) {
-                referenceDateForTimeline = new Date(patientHistory.patientVisits[0].actualVisitDate.dateAsString);
-            } else {
-                referenceDateForTimeline = new Date(2024, 8, 30);
-            }
-        }
-
-        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-        const studyConfig = model.configuration;
-        studyConfig.studyStartDayNumber = 0;
-        let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
-        const rtObject = (timeline as any).getTimelineChartHtml() as RtString;
-        return rtObject.asString();
-    };
-
-    // async function getChart(id: string) {
-    //     const modelManager = ModelManager.getInstance();
-    //     const unit = (await modelManager.openModelUnit(id, "StudyConfiguration")) as StudyConfiguration;
-    //     const timeline = getTimelineAsOfADate(unit);
-    //     const rtObject = timeline.getTimelineChart() as RtString;
-    //     return rtObject.asString();
-    // }
-
-    async function loadChart(id: string) {
-        AST.change(async () => {  
-            isLoading = true;
-            showChart = false;
-            error = null;
-            try {
-                patientInfo = await ModelManager.getInstance().openModelUnitWithoutSavingCurrentUnit(patient!.studyId, "PatientInfo") as PatientInfo;
-
-                const startTime = Date.now();
-                const referenceDate = new Date(2024, 8, 30);
-                chartHtml = await getChartWithPatientHistory(referenceDate);
-                await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
-                if (container) {
-                    await loadChartData();
-                    const elapsedTime = Date.now() - startTime;
-                    if (elapsedTime < 3000) {
-                        await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
-                    }
-                    showChart = true;
-                } else {
-                    console.error("Container not found");
-                    throw new Error("Container not available");
-                }
-            } catch (err: unknown) {
-                console.error(`Error fetching chart data for study: ${id}`, err);
-                error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
-            } finally {
-                isLoading = false;
-            }
-        });
-    }
-
-    async function loadChartData() {
-        return new Promise<void>((resolve) => {
-            if (container) {
-                container.innerHTML = chartHtml;
-                executeScripts();
-            }
-            resolve();
-        });
-    }
-
     async function handleSaveStudy() {
         const modelManager = ModelManager.getInstance();
         var patientNumber = patient!.patientNumber;
@@ -244,30 +129,6 @@
         console.log("Redo action");
     }
 
-    function executeScripts() {
-        if (container) {
-            const scripts = container.querySelectorAll("script");
-            scripts.forEach((oldScript) => {
-                const newScript = document.createElement("script");
-                Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
-
-                // Wrap the script content in a function that checks for vis
-                const wrappedContent = `
-                (function checkVis() {
-                    if (typeof vis !== 'undefined') {
-                        ${oldScript.innerHTML}
-                    } else {
-                        setTimeout(checkVis, 100);
-                    }
-                })();
-            `;
-                newScript.appendChild(document.createTextNode(wrappedContent));
-                if (oldScript.parentNode) {
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                }
-            });
-        }
-    }
 </script>
 
 {#if patient}
@@ -298,19 +159,6 @@
                             />
                         </div>
                     {/if}
-                </TabItem>
-                <TabItem title="Schedule" on:click={() => patient && loadChart(patient.studyId)}>
-                    <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faCalendarDays} class="w-4 h-4" />Schedule
-                    </div>
-                    <div style="display: {isLoading || !showChart ? 'block' : 'none'}">
-                        <ListPlaceholder divClass="mb-4" />
-                    </div>
-                    <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
-                        <div bind:this={container}>
-                            {@html chartHtml}
-                        </div>
-                    </div>
                 </TabItem>
             </Tabs>
         </div>
