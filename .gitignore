@@ -103,9 +103,6 @@ packages/server/modelstore/x/StudyConfigurationPublic.json
 
 #Backup
 *.bck
-packages/webapp-crchub/.svelte-kit/generated/server/*
-packages/webapp-crchub/.svelte-kit/output/client/.vite/*
-packages/webapp-crchub/.svelte-kit/output/client/_app/immutable/chunks/*
-packages/webapp-crchub/.svelte-kit/output/client/_app/immutable/nodes/*
-packages/webapp-crchub/.svelte-kit/output/server/*
-packages/webapp-crchub/.svelte-kit/output/server/nodes/*
+
+.svelte-kit/
+/packages/webapp-crchub/.svelte-kit/
