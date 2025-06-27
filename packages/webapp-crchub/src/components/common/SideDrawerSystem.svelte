@@ -8,9 +8,23 @@
 
     let activeDrawer = $derived($drawerStore.activeDrawer);
     let drawerWidth = $derived(activeDrawer ? getDrawerWidth(activeDrawer) : 400);
-    let drawers = $derived(
-        $drawerStore.drawerOrder.map(key => $drawerStore.drawers[key]).filter(Boolean)
-    );
+    let drawers = $derived($drawerStore.drawerOrder.map(key => $drawerStore.drawers[key]).filter(Boolean));
+    let drawerContentEl = $state<HTMLElement | null>(null);
+    let activeDrawerInstance = $state<any>(null);
+    let activeDrawerKey: string | null = null;
+    let resizing = false;
+    let startX: number;
+    let startWidth: number;
+
+    let DrawerComponent = $state(null);
+    $effect(() => {
+        DrawerComponent = getDrawer(activeDrawer)?.component ?? null;
+    });
+
+    let isHandleBright = $state(false);
+    let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
+
+
     $effect(() => {
         console.log("[SideDrawerSystem] $effect activeDrawer:", activeDrawer, "activeDrawerKey:", activeDrawerKey);
         if (activeDrawer !== activeDrawerKey) {
@@ -18,9 +32,6 @@
             activeDrawerInstance = null;
         }
     });
-
-    let activeDrawerInstance = $state<any>(null);
-    let activeDrawerKey: string | null = null;
 
     const dispatch = createEventDispatcher();
 
@@ -51,12 +62,6 @@
             activeDrawerInstance.refresh();
         }
     }
-
-    let resizing = false;
-    let startX: number;
-    let startWidth: number;
-
-    let drawerContentEl: HTMLElement | null = null;
 
     function getDynamicMinWidth() {
         const HARDCODED_MIN = 400;
@@ -95,19 +100,6 @@
         window.removeEventListener("mousemove", handleResize);
         window.removeEventListener("mouseup", stopResize);
     }
-
-    let DrawerComponent = $state(null);
-    $effect(() => {
-        console.log("[SideDrawerSystem] $effect DrawerComponent:", DrawerComponent);
-        DrawerComponent = getDrawer(activeDrawer)?.component ?? null;
-    });
-
-    $effect(() => {
-        console.log("Rendering drawers:", drawers);
-    });
-
-    let isHandleBright = $state(false);
-    let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
     function handleResizeHandleMouseEnter() {
         hoverTimeout = setTimeout(() => {

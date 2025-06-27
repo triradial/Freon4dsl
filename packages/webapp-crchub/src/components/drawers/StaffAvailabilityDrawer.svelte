@@ -113,10 +113,10 @@
 </script>
 
 <div class="drawer-content-area p-2">
-    {#if isLoading}
+    {#if error}
+        <div class="drawer-error p-4">{error}</div>
+    {:else if isLoading}
         <div class="placeholder animate-pulse mb-4"></div>    
-    {:else if error}
-        <div class="text-red-500 p-4">{error}</div>
     {:else}
         <div class="markdown-body">
             {@html checklistHtml}

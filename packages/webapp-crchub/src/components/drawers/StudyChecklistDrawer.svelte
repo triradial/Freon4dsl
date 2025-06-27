@@ -304,7 +304,7 @@
 
 <div class="checklist-drawer">
     {#if error}
-        <div class="text-red-500 p-4">{error}</div>
+        <div class="drawer-error p-4">{error}</div>
     {:else}
         {#if isLoading}
             <ContentLoader />

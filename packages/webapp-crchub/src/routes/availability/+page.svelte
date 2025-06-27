@@ -10,7 +10,6 @@
     if ($drawerStore && $drawerStore.drawers && Object.keys($drawerStore.drawers).length > 0) {
       setAllDrawersVisibility(false);
       setDrawerVisibility("help", true);
-      // setDrawerVisibility("favorites", true);
       didSetVisibility = true;
     }
   });

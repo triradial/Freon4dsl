@@ -8,6 +8,7 @@
     import { dataStore, type Patient } from "../../services/data/data-store.js";
 
     let { id } = $props<{ id: string }>();
+
     let isLoading = $state(true);
     let showChart = $state(false);
     let chartHtml = $state<string>("");
@@ -176,20 +177,20 @@
     <script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
     <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
 </svelte:head>
-
-<div class="drawer-content-area p-2">
-    <div style="display: {isLoading ? 'block' : 'none'}" class="text-center py-8">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p class="mt-2 text-gray-600">Preparing Patient Timeline...</p>
-    </div>
     
-    <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
-        <div bind:this={container}>
-            {@html chartHtml}
+{#if error}
+    <div class="drawer-error p-4">{error}</div>
+{:else}
+    <div class="drawer-content-area p-2">
+        <div style="display: {isLoading ? 'block' : 'none'}" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-2 text-gray-600">Preparing Patient Timeline...</p>
+        </div>
+        
+        <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
+            <div bind:this={container}>
+                {@html chartHtml}
+            </div>
         </div>
     </div>
-    
-    {#if error}
-        <div class="text-red-500 p-4">{error}</div>
-    {/if}
-</div>
+{/if}
