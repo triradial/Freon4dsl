@@ -28,7 +28,7 @@ export async function addObject(type: 'study' | 'patient', parentId?: string) {
     }
     const object = type === 'study'
         ? { id: uuidv4(), name: '', title: '', status: '', phase: '', therapeuticArea: '', currentProtocol: '' }
-        : { id: uuidv4(), patientNumber: '', displayName: '', name: '', dob: '', gender: '', studyId: parentId, study: parentName };
+        : { id: uuidv4(), patientNumber: '', displayName: '', name: '', initials: '', dob: '', gender: '', studyId: parentId, study: parentName };
     objectDrawerStore.set({ open: true, type, action: 'add', data: object });
 }
 
