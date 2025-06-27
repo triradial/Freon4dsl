@@ -1,44 +1,21 @@
-import { Simulator, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/study-configuration";
+import { PatientHistory, Simulator, StudyConfiguration } from "@freon4dsl/study-configuration";
 import * as Sim from "@freon4dsl/study-configuration";
-import { RtString } from "@freon4dsl/core";
 import type { Timeline } from "@freon4dsl/study-configuration";
 
-export function getTimelineTable(node: StudyConfiguration) {
-    let timeline = getTimeline(node);
-
-    const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
-    const html = `<div class="limited-width-container">${tableHTML}</div>`;
-
-    return new RtString(html);
-}
-
-export function getTimelineChart(node: StudyConfiguration) {
-    let timeline = getTimeline(node);
-
-    const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
-    const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
-    const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
-    const html = `<div class="limited-width-container">${chartHTML}</div>`;
-
-    return new RtString(html);
-}
-
-export function getTimelineChartHtml(timeline: Timeline) {
-    const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
-    const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
-    const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
-    const html = `<div class="limited-width-container">${chartHTML}</div>`;
-
-    return new RtString(html);
-}
-
-export function getTimeline(node: StudyConfiguration) {
+export function getTimelineAsOfADate(node: StudyConfiguration, referenceDate?: Date, patientHistory?: PatientHistory) : Timeline {
     var simulator;
     new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
     let studyConfigurationUnit = node as StudyConfiguration;
     simulator = new Simulator(studyConfigurationUnit);
-    simulator.setReferenceDate(new Date(2024, 8, 30));
+    if (referenceDate) {
+        simulator.setReferenceDate(referenceDate);
+    } else {
+        simulator.setReferenceDate(new Date(2024, 8, 30));
+    }
     simulator.organizedByReferenceDate();
+    if (patientHistory) {
+        simulator.timeline.addPatientEvents(patientHistory);
+    }
     simulator.run();
     let timeline = simulator.timeline;
 

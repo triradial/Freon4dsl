@@ -516,9 +516,12 @@ appnav a:visited {
 .resize-handle {
   background-color: var(--drawer-handle);
 }
-
-.grip-icon {
-  color: #2e2e2e;
+.resize-handle {
+  background-color: var(--drawer-handle);
+  transition: background-color 0.2s;
+}
+.resize-handle.bright {
+  background-color: #7c3bff !important; /* or any bright color you want */
 }
 
 .drawer-content,
@@ -846,4 +849,10 @@ appnav a:visited {
   color: var(--white);
 }
 
+/* #endregion */
+
+/* #region Placeholders */  
+.placeholder, .placeholder-circle {
+  background-color: var(--black-20t);
+}
 /* #endregion */

@@ -35,30 +35,15 @@ export class PatientVisitEventInstance extends PatientEventInstance {
             classForDisplay = "visit-not-found";
         } else {
             if (
-                this.startDay < scheduledEventInstance.getStartDay() - scheduledEventInstance.getStartDayOfWindow() ||
-                this.startDay > scheduledEventInstance.getStartDay() + scheduledEventInstance.getEndDayOfWindow()
+                this.startDay - timeline.getOffsetOfFirstEventInstance() <
+                    scheduledEventInstance.getStartDay() - scheduledEventInstance.getStartDayOfWindow() ||
+                this.startDay - timeline.getOffsetOfFirstEventInstance() > scheduledEventInstance.getStartDay() + scheduledEventInstance.getEndDayOfWindow()
             ) {
                 classForDisplay = "out-of-window";
-            } else if (scheduledEventInstance.startDay !== this.startDay) {
+            } else if (scheduledEventInstance.startDay !== this.startDay - timeline.getOffsetOfFirstEventInstance()) {
                 classForDisplay = "in-window";
             }
         }
-        // console.log(
-        //     "getClassForDisplay " +
-        //         scheduledEventInstance.getName() +
-        //         " visitInstanceNumber:" +
-        //         this.visitInstanceNumber +
-        //         " scheduled day:" +
-        //         scheduledEventInstance.startDay +
-        //         " window:" +
-        //         scheduledEventInstance.getStartDayOfWindow() +
-        //         "-" +
-        //         scheduledEventInstance.getEndDayOfWindow() +
-        //         " patient startDay " +
-        //         this.startDay +
-        //         " classForDisplay:" +
-        //         classForDisplay,
-        // );
         return classForDisplay;
     }
 
@@ -66,6 +51,27 @@ export class PatientVisitEventInstance extends PatientEventInstance {
         const visitInstanceNumber = this.getVisitInstanceNumber() > 1 ? " #" + this.getVisitInstanceNumber() : "";
         return "Patient visit:" + this.getName() + "'" + visitInstanceNumber;
     }
+
+    /*
+    This is overridden because visit date is added at the start of the simulation with the 
+    day of the visit specified by the user. 
+    Because of this it doesn't need to be modified by adding the dayOffsetOfFirstEventInstance.
+    */
+    getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
+        let dayAsDate = new Date(timeline.getReferenceDate());
+        var correctedDay = day;
+        if (day < 0) {
+            correctedDay = day - 1;
+        }
+        dayAsDate.setDate(dayAsDate.getDate() + correctedDay);
+        if (toEndOfDay) {
+            dayAsDate.setHours(23, 59, 59);
+        }
+        return dayAsDate;
+    }
+    // getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
+    //     return super.getDayAsDate(day, timeline, toEndOfDay);
+    // }
 }
 
 export class PatientUnAvailableEventInstance extends PatientEventInstance {
@@ -81,5 +87,19 @@ export class PatientUnAvailableEventInstance extends PatientEventInstance {
 
     getTitle() {
         return "Patient Unavailable";
+    }
+
+    /*
+    This is overridden because unavailability is added at the start of the simulation with the 
+    day of the unavailability specified by the user. 
+    Because of this it doesn't need to be modified by adding the dayOffsetOfFirstEventInstance.
+    */
+    getDayAsDate(day: number, timeline: Timeline, toEndOfDay?: boolean): Date {
+        let startDateOfTimeline = new Date(timeline.getReferenceDate());
+        startDateOfTimeline.setDate(startDateOfTimeline.getDate() + day);
+        if (toEndOfDay) {
+            startDateOfTimeline.setHours(23, 59, 59);
+        }
+        return startDateOfTimeline;
     }
 }

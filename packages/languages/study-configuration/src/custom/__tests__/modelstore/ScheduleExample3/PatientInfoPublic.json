@@ -5,16 +5,16 @@
       {
          "id": "ID-474",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-PatientInfo"
+            "key": "-key-PatientInfo"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientInfo-name"
+                  "key": "-key-PatientInfo-name"
                },
                "value": "PatientInfo"
             }
@@ -22,9 +22,9 @@
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientInfo-patientHistories"
+                  "key": "-key-PatientInfo-patientHistories"
                },
                "children": []
             }

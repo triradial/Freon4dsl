@@ -48,7 +48,7 @@
     }
 </script>
 
-<AppBar>
+<AppBar trailSpaceX="gap-1">
     {#snippet lead()}
         <div id="navbar-logo" class="flex items-center">
             <img src="/images/logo_grey.svg" class="me-1 h-6 sm:h-8" alt="CRCHub Logo" />

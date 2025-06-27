@@ -1,141 +1,159 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import PatientCard from "../components/cards/PatientCard.svelte";
     import { Tabs } from '@skeletonlabs/skeleton-svelte';
-    import { CalendarDays as IconCalendarDays, ListTodo as IconListTodo } from '@lucide/svelte';
     import { dataStore, type Patient } from "../services/data/data-store.js";
     import { ModelManager } from "../services/dsl/model-manager.js";
-    import { RtString } from "@freon4dsl/core";
-    import { getTimelineChart } from "../services/app/patient-timeline.js";
-    import { StudyConfiguration } from "@freon4dsl/study-configuration";
-    import { getChartWithPatientHistory } from "../services/utils.js";
+    import { AST, RtString } from "@freon4dsl/core";
+    import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
+    import { PatientInfo, PatientHistory, PatientHistoryUnit } from "@freon4dsl/study-configuration";
+    import { FreonComponent } from "@freon4dsl/core-svelte"; 
+    import { FreEditor } from "@freon4dsl/core"; 
+    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
+    import { setDrawerVisibility } from "../services/stores/side-drawer-store.js";
+
+    // @ts-ignore
+    import { CalendarDays as IconCalendarDays, ListTodo as IconListTodo, Save as IconSave, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
 
     let { id } = $props<{ id: string }>();
 
     let patient = $state<Patient | undefined>(undefined);
     let isLoading = $state(true);
-    let showChart = $state(false);
-    let chartHtml = $state<string>("");
-    let error = $state<string | null>(null);
-    let container = $state<HTMLElement | null>(null);
     let activeTab = $state('schedule');
+    let dslEditor = $state<FreEditor | undefined>(undefined);
+    let unit: PatientHistoryUnit | undefined;
+    let patientInfo: PatientInfo | undefined;
+
 
     onMount(async () => {
+        // Load the patient data
         const fetchedPatient = await dataStore.getPatient(id);
         if (fetchedPatient) {
             patient = fetchedPatient;
-            await loadChart(patient.studyId);
         } else {
             console.error(`Patient with id ${id} not found`);
         }
+
+        // Load the patient history for editing
+        AST.change(async () => {  
+            dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+            const modelManager = ModelManager.getInstance();
+
+            // Create the PatientHistoryUnit to use just for editing of one patient at a time
+            await modelManager.createBasicModelUnit("PatientHistoryUnit", "PatientHistoryUnit");
+            var patientHistoryUnit =  modelManager.getModelUnit("PatientHistoryUnit") as PatientHistoryUnit;
+            clearPatientHistory(patientHistoryUnit.patientHistory);
+            //TODO: Talk to Graham about changing patientNumber to patient_id or something else that can be initials, etc. 
+            patientHistoryUnit.patientHistory.patient_id = patient!.patientNumber;
+            // Get the model data for all the Patients
+            patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(patient!.studyId, "PatientInfo") as PatientInfo;
+            if (patientInfo === null || patientInfo === undefined) {
+                //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
+                await modelManager.createRawModelUnit("PatientInfo", "PatientInfo");
+            } else {
+                // The PatientInfo already exists, we need to setup the patientHistory for editing
+                var found = false;
+                patientInfo.patientHistories.forEach(aPatientHistory => {
+                    if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
+                        aPatientHistory.patientVisits.forEach(visit => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
+                        aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
+                        patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
+                        patientHistoryUnit.patientHistory.id = aPatientHistory.id;
+                        patientHistoryUnit.patientHistory.patient_id = aPatientHistory.patient_id;
+                        found = true;
+                    };
+                });
+            }
+            // Display the patientHistory for editing
+            await modelManager.setCurrentUnit(patientHistoryUnit);
+            await modelManager.displayModelUnit(patientHistoryUnit);
+            unit = patientHistoryUnit;
+        });
+
+        setTimeout(() => {
+            isLoading = false;
+        }, 300);
     });
 
-    async function loadChart(id: string) {
-        isLoading = true;
-        showChart = false;
-        error = null;
-        try {
-            const startTime = Date.now();
-            console.log("calling getChartWithPatientHistory");
-            chartHtml = await getChartWithPatientHistory(id);
-            await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
-            if (container) {
-                await loadChartData();
-                const elapsedTime = Date.now() - startTime;
-                if (elapsedTime < 3000) {
-                    await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
-                }
-                showChart = true;
-            } else {
-                console.error("Container not found");
-                throw new Error("Container not available");
-            }
-        } catch (err: unknown) {
-            console.error(`Error fetching chart data for study: ${id}`, err);
-            error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
-        } finally {
-            isLoading = false;
-        }
-    }
+    onDestroy(() => {
+        setDrawerVisibility("studyChecklist", false);
+        setDrawerVisibility("patientTimelineChart", false);
+    });
 
-    async function getChart(id: string) {
+    async function handleSaveStudy() {
         const modelManager = ModelManager.getInstance();
-        const unit = (await modelManager.openModelUnit(id, "StudyConfiguration")) as StudyConfiguration;
-        const rtObject = getTimelineChart(unit) as RtString;
-        return rtObject.asString();
-    }
-
-    async function loadChartData() {
-        return new Promise<void>((resolve) => {
-            if (container) {
-                container.innerHTML = chartHtml;
-                executeScripts();
+        var patientNumber = patient!.patientNumber;
+        const patientInfo = await modelManager.getModelUnit("PatientInfo") as PatientInfo;
+        
+        var found = false;
+        // If the patientHistory for this patient was previously entered we need to replace it with the current value
+        patientInfo.patientHistories.forEach(aPatientHistory => {
+            if (aPatientHistory.patient_id === patientNumber) {
+                found = true;
+                aPatientHistory.patientVisits.splice(0);
+                unit?.patientHistory.patientVisits.forEach(visit => {
+                    aPatientHistory.patientVisits.push(visit.copy());
+                });
+                aPatientHistory.patientNotAvailableDates.dates.splice(0);
+                unit!.patientHistory.patientNotAvailableDates.dates.forEach(dateRange => aPatientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
             }
-            resolve();
         });
+        // If the patientHistory for this patient was not previously entered we need to add it to the list of all patientHistories in the PatientInfo
+        if (!found) {
+            patientInfo.patientHistories.push(unit?.patientHistory.copy() as PatientHistory);
+        }
+        // Saving all the patientHistories stored in the PatientInfo even though we are only editing one patient at a time
+        await modelManager.saveModelUnit(patientInfo);
+        // Force the editor to reload the patientHistoryUnit
+        await modelManager.displayModelUnit(unit!);
     }
 
-    function executeScripts() {
-        if (container) {
-            const scripts = container.querySelectorAll("script");
-            scripts.forEach((oldScript) => {
-                const newScript = document.createElement("script");
-                Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
+    function handleUndoAction() {
+        EditorRequestsHandler.getInstance().undo();
+        console.log("Undo action");
+    }
 
-                // Wrap the script content in a function that checks for vis
-                const wrappedContent = `
-                (function checkVis() {
-                    if (typeof vis !== 'undefined') {
-                        ${oldScript.innerHTML}
-                    } else {
-                        setTimeout(checkVis, 100);
-                    }
-                })();
-            `;
-                newScript.appendChild(document.createTextNode(wrappedContent));
-                if (oldScript.parentNode) {
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                }
-            });
-        }
+    function handleRedoAction() {
+        EditorRequestsHandler.getInstance().redo();
+        console.log("Redo action");
+    }
+
+    function clearPatientHistory(patientHistory: PatientHistory) {
+        patientHistory.patientVisits.splice(0);
+        patientHistory.patientNotAvailableDates.dates.splice(0);
     }
 </script>
 
 {#if patient}
     <div class="crc-container">
-        <div class="crc-card">
-            <PatientCard {patient} />
+        <div class="card-container">
+            <PatientCard patientId={patient.id} />
         </div>
 
         <div class="crc-content">
-            <Tabs value={activeTab} onValueChange={(e) => {
-                activeTab = e.value;
-                if (e.value === 'schedule' && patient) {
-                    loadChart(patient.studyId);
-                }
-            }}>
+            <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2" contentBase="mt-0">
                 {#snippet list()}
                     <Tabs.Control value="schedule">
                         <div class="flex items-center gap-2"><IconCalendarDays />Schedule</div>
-                    </Tabs.Control>
-                    <Tabs.Control value="tasks">
-                        <div class="flex items-center gap-2"><IconListTodo />Tasks</div>
                     </Tabs.Control>
                 {/snippet}
 
                 {#snippet content()}
                     <Tabs.Panel value="schedule">
-                        <div style="display: {isLoading || !showChart ? 'block' : 'none'}">
-                            <div class="placeholder animate-pulse mb-4"></div>
-                        </div>
-                        <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
-                            <div bind:this={container}>
-                                {@html chartHtml}
+                        {#if !isLoading}
+                            <div class="flex gap-2 mb-2">
+                                <button type="button" class="icon-button primary inverted" onclick={handleSaveStudy}><IconSave /></button>
+                                <button type="button" class="icon-button primary inverted" onclick={handleUndoAction}><IconUndo /></button>
+                                <button type="button" class="icon-button primary inverted" onclick={handleRedoAction}><IconRedo /></button>
                             </div>
-                        </div>
-                    </Tabs.Panel>
-                    <Tabs.Panel value="tasks">
-                        <div class="crc-grid"></div>
+                            <div class="crc-editor crc-content-width">
+                                <FreonComponent editor={dslEditor} />
+                            </div>
+                        {:else}
+                            <div class="h-full crc-content-width">
+                                <div class="placeholder animate-pulse"></div>
+                            </div>
+                        {/if}
                     </Tabs.Panel>
                 {/snippet}
             </Tabs>

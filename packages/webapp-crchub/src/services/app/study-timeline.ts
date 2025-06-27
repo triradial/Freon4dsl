@@ -1,7 +1,9 @@
 import { StudyConfiguration } from "@freon4dsl/study-configuration";
 import { Simulator, StudyChecklistDocumentTemplate, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/study-configuration";
+import type { Timeline } from "@freon4dsl/study-configuration";
 import * as Sim from "@freon4dsl/study-configuration";
 import { RtString } from "@freon4dsl/core";
+
 
 export function getTimelineTable(node: StudyConfiguration) {
     let timeline = getTimeline(node);
@@ -12,12 +14,12 @@ export function getTimelineTable(node: StudyConfiguration) {
     return new RtString(html);
 }
 
-export function getTimelineChart(node: StudyConfiguration) {
+export function getTimelineChart(node: StudyConfiguration, hasPatientKey: boolean = false, hasStaffKey: boolean = false) {
     let timeline = getTimeline(node);
 
     const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
     const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
-    const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+    const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, hasPatientKey, hasStaffKey);
     const html = `<div class="limited-width-container">${chartHTML}</div>`;
 
     return new RtString(html);
@@ -34,9 +36,9 @@ function getTimeline(node: StudyConfiguration) {
     return timeline;
 }
 
-export function getChecklistAsMarkdown(studyConfigurationUnit: StudyConfiguration) {
+export function getChecklistAsMarkdown(studyConfigurationUnit: StudyConfiguration, showHeadingNumbers: boolean = false) {
     let timeline = getTimeline(studyConfigurationUnit);
-    const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline);
+    const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline, showHeadingNumbers);
     const html = `<div class="limited-width-container">${studyChecklistAsMarkdown}</div>`;
     return html;
 }

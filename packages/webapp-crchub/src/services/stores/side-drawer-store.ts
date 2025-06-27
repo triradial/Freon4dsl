@@ -10,6 +10,7 @@ export type Drawer = {
     width: number;
     isVisible: boolean;
     supportsRefresh: boolean;
+    supportsPrint: boolean;
     props?: Record<string, any>;
 };
 

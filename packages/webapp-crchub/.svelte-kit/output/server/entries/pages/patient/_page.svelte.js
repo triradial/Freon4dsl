@@ -1,46 +1,12 @@
-import { z as push, F as spread_props, B as pop, E as escape_html, A as onMount, Q as attr_style, J as stringify, K as store_get, M as unsubscribe_stores } from "../../../chunks/index.js";
-import { P as Pencil, T as Tabs, p as page } from "../../../chunks/stores.js";
+import { z as push, F as escape_html, B as pop, A as onMount, U as onDestroy, M as store_get, N as unsubscribe_stores } from "../../../chunks/index.js";
+import { P as Pencil, T as Tabs, U as Undo, R as Redo, p as page } from "../../../chunks/editor-requests-handler.js";
 import "clsx";
-import "../../../chunks/model-manager.js";
+import { A as AST, W as WebappConfigurator, f as ModelManager } from "../../../chunks/model-manager.js";
 import "../../../chunks/env.js";
-import "../../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
-import { d as dataStore, a as getChartWithPatientHistory } from "../../../chunks/utils.js";
+import { s as setDrawerVisibility, S as Save } from "../../../chunks/side-drawer-store.js";
+import { d as dataStore } from "../../../chunks/data-store.js";
 import { C as Calendar_days } from "../../../chunks/calendar-days.js";
-import { I as Icon } from "../../../chunks/Icon.js";
-import { h as html } from "../../../chunks/html.js";
-function List_todo($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    [
-      "rect",
-      {
-        "x": "3",
-        "y": "5",
-        "width": "6",
-        "height": "6",
-        "rx": "1"
-      }
-    ],
-    ["path", { "d": "m3 17 2 2 4-4" }],
-    ["path", { "d": "M13 6h8" }],
-    ["path", { "d": "M13 12h8" }],
-    ["path", { "d": "M13 18h8" }]
-  ];
-  Icon($$payload, spread_props([
-    { name: "list-todo" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
+import { F as FreonComponent } from "../../../chunks/FreonComponent.js";
 function PatientCard($$payload, $$props) {
   push();
   const { patient } = $$props;
@@ -54,43 +20,56 @@ function Patient($$payload, $$props) {
   let { id } = $$props;
   let patient = void 0;
   let isLoading = true;
-  let showChart = false;
-  let chartHtml = "";
-  let container = null;
   let activeTab = "schedule";
+  let dslEditor = void 0;
+  let patientInfo;
   onMount(async () => {
     const fetchedPatient = await dataStore.getPatient(id);
     if (fetchedPatient) {
       patient = fetchedPatient;
-      await loadChart(patient.studyId);
     } else {
       console.error(`Patient with id ${id} not found`);
     }
-  });
-  async function loadChart(id2) {
-    isLoading = true;
-    showChart = false;
-    try {
-      const startTime = Date.now();
-      console.log("calling getChartWithPatientHistory");
-      chartHtml = await getChartWithPatientHistory(id2);
-      await new Promise((resolve) => setTimeout(() => resolve(null), 0));
-      if (container) ;
-      else {
-        console.error("Container not found");
-        throw new Error("Container not available");
+    AST.change(async () => {
+      dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+      const modelManager = ModelManager.getInstance();
+      await modelManager.createBasicModelUnit("PatientHistoryUnit", "PatientHistoryUnit");
+      var patientHistoryUnit = modelManager.getModelUnit("PatientHistoryUnit");
+      clearPatientHistory(patientHistoryUnit.patientHistory);
+      patientHistoryUnit.patientHistory.patient_id = patient.patientNumber;
+      patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(patient.studyId, "PatientInfo");
+      if (patientInfo === null || patientInfo === void 0) {
+        await modelManager.createRawModelUnit("PatientInfo", "PatientInfo");
+      } else {
+        var found = false;
+        patientInfo.patientHistories.forEach((aPatientHistory) => {
+          if (!found && aPatientHistory.patient_id === patient.patientNumber) {
+            aPatientHistory.patientVisits.forEach((visit) => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
+            aPatientHistory.patientNotAvailableDates.dates.forEach((dateRange) => patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
+            patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
+            patientHistoryUnit.patientHistory.id = aPatientHistory.id;
+            patientHistoryUnit.patientHistory.patient_id = aPatientHistory.patient_id;
+            found = true;
+          }
+        });
       }
-    } catch (err) {
-      console.error(`Error fetching chart data for study: ${id2}`, err);
-      err instanceof Error ? err.message : "An error occurred while fetching chart data";
-    } finally {
-      isLoading = false;
-    }
-  }
-  async function loadChartData() {
-    return new Promise((resolve) => {
-      resolve();
+      await modelManager.setCurrentUnit(patientHistoryUnit);
+      await modelManager.displayModelUnit(patientHistoryUnit);
     });
+    setTimeout(
+      () => {
+        isLoading = false;
+      },
+      300
+    );
+  });
+  onDestroy(() => {
+    setDrawerVisibility("studyChecklist", false);
+    setDrawerVisibility("patientTimelineChart", false);
+  });
+  function clearPatientHistory(patientHistory) {
+    patientHistory.patientVisits.splice(0);
+    patientHistory.patientNotAvailableDates.dates.splice(0);
   }
   if (patient) {
     $$payload.out += "<!--[-->";
@@ -109,31 +88,28 @@ function Patient($$payload, $$props) {
           },
           $$slots: { default: true }
         });
-        $$payload2.out += `<!----> <!---->`;
-        Tabs.Control($$payload2, {
-          value: "tasks",
-          children: ($$payload3) => {
-            $$payload3.out += `<div class="flex items-center gap-2">`;
-            List_todo($$payload3, {});
-            $$payload3.out += `<!---->Tasks</div>`;
-          },
-          $$slots: { default: true }
-        });
         $$payload2.out += `<!---->`;
       }, content = function($$payload2) {
         $$payload2.out += `<!---->`;
         Tabs.Panel($$payload2, {
           value: "schedule",
           children: ($$payload3) => {
-            $$payload3.out += `<div${attr_style(`display: ${stringify(isLoading || !showChart ? "block" : "none")}`)}><div class="placeholder animate-pulse mb-4"></div></div> <div${attr_style(`display: ${stringify(!isLoading && showChart ? "block" : "none")}`)}><div>${html(chartHtml)}</div></div>`;
-          },
-          $$slots: { default: true }
-        });
-        $$payload2.out += `<!----> <!---->`;
-        Tabs.Panel($$payload2, {
-          value: "tasks",
-          children: ($$payload3) => {
-            $$payload3.out += `<div class="crc-grid"></div>`;
+            if (!isLoading) {
+              $$payload3.out += "<!--[-->";
+              $$payload3.out += `<div class="flex gap-2 mb-2"><button type="button" class="icon-button primary inverted">`;
+              Save($$payload3, {});
+              $$payload3.out += `<!----></button> <button type="button" class="icon-button primary inverted">`;
+              Undo($$payload3, {});
+              $$payload3.out += `<!----></button> <button type="button" class="icon-button primary inverted">`;
+              Redo($$payload3, {});
+              $$payload3.out += `<!----></button></div> <div class="crc-editor crc-content-width">`;
+              FreonComponent($$payload3, { editor: dslEditor });
+              $$payload3.out += `<!----></div>`;
+            } else {
+              $$payload3.out += "<!--[!-->";
+              $$payload3.out += `<div class="h-full crc-content-width"><div class="placeholder animate-pulse"></div></div>`;
+            }
+            $$payload3.out += `<!--]-->`;
           },
           $$slots: { default: true }
         });
@@ -141,12 +117,11 @@ function Patient($$payload, $$props) {
       };
       Tabs($$payload, {
         value: activeTab,
-        onValueChange: (e) => {
-          activeTab = e.value;
-          if (e.value === "schedule" && patient) {
-            loadChart(patient.studyId);
-          }
-        },
+        onValueChange: (e) => activeTab = e.value,
+        listGap: "gap-6",
+        listMargin: "mb-2",
+        base: "mt-2",
+        contentBase: "mt-0",
         list,
         content,
         $$slots: { list: true, content: true }

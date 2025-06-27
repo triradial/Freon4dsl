@@ -4,6 +4,7 @@
     import StudyMutation from '../mutations/StudyMutation.svelte';
     import PatientMutation from '../mutations/PatientMutation.svelte';
     import IconX from '@lucide/svelte/icons/x';
+    import { dataStore } from '../../services/data/data-store.js';
 
     let openState = $derived($objectDrawerStore.open);
     let type = $derived($objectDrawerStore.type);
@@ -18,6 +19,8 @@
 
 <Popover
     open={openState}
+    modal={true}
+    closeOnInteractOutside={false}
     onOpenChange={(e) => e.open ? null : handleClose()}
     positioning={{
         placement: 'left',
@@ -44,14 +47,28 @@
                 <StudyMutation 
                     study={data} 
                     {action} 
-                    onsave={(study) => { handleClose(); }} 
+                    onsave={async (study) => {
+                        if (action === 'add') {
+                            await dataStore.addStudy(study);
+                        } else if (action === 'edit') {
+                            await dataStore.updateStudy(study);
+                        }
+                        handleClose();
+                    }} 
                     onclose={() => { handleClose(); }} 
                 />
             {:else if type === 'patient'}
                 <PatientMutation 
                     patient={data} 
                     {action} 
-                    onsave={(patient) => { handleClose(); }} 
+                    onsave={async (patient) => {
+                        if (action === 'add') {
+                            await dataStore.addPatient(patient);
+                        } else if (action === 'edit') {
+                            await dataStore.updatePatient(patient);
+                        }
+                        handleClose();
+                    }} 
                     onclose={() => { handleClose(); }} 
                 />
             {/if}

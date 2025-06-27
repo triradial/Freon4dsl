@@ -1,19 +1,17 @@
-import { z as push, F as spread_props, B as pop, E as escape_html, I as attr_class, J as stringify, K as store_get, A as onMount, M as unsubscribe_stores, S as head, N as ensure_array_like, G as attr, T as onDestroy } from "../../../chunks/index.js";
-import { P as Pencil, T as Tabs, p as page } from "../../../chunks/stores.js";
+import { z as push, G as spread_props, B as pop, F as escape_html, J as attr_class, K as stringify, M as store_get, A as onMount, N as unsubscribe_stores, T as head, O as ensure_array_like, I as attr, U as onDestroy } from "../../../chunks/index.js";
+import { P as Pencil, T as Tabs, U as Undo, R as Redo, p as page } from "../../../chunks/editor-requests-handler.js";
 import "clsx";
-import { a as FreLogger, W as WebappConfigurator, M as ModelManager } from "../../../chunks/model-manager.js";
+import { W as WebappConfigurator, f as ModelManager } from "../../../chunks/model-manager.js";
 import "../../../chunks/env.js";
-import { g as getStatusColor, d as dataStore, b as getSVGIcon } from "../../../chunks/utils.js";
+import { g as getStatusColor, a as getSVGIcon, e as editObject } from "../../../chunks/utils.js";
+import { d as dataStore } from "../../../chunks/data-store.js";
 import { createGrid } from "ag-grid-community";
 import "ag-grid-enterprise";
 import { n as navigateTo, G as GridHeader, D as DeleteObjectDialog } from "../../../chunks/DeleteObjectDialog.js";
 import { t as theme } from "../../../chunks/theme-store.js";
-import { e as editObject } from "../../../chunks/object-drawer-store.js";
-import { c as copy_payload, a as assign_payload } from "../../../chunks/plus.js";
-import "../../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
-import { P as Popover, X, e as getActiveDrawer, s as setActiveDrawer, f as setDrawerVisibility, S as Save } from "../../../chunks/side-drawer-store.js";
-import { I as Icon } from "../../../chunks/Icon.js";
-import "mobx";
+import { I as Icon, c as copy_payload, a as assign_payload } from "../../../chunks/plus.js";
+import { c as getActiveDrawer, e as setActiveDrawer, s as setDrawerVisibility, S as Save } from "../../../chunks/side-drawer-store.js";
+import { P as Popover, X } from "../../../chunks/Popover.js";
 import { F as FreonComponent } from "../../../chunks/FreonComponent.js";
 function Eye($$payload, $$props) {
   push();
@@ -72,58 +70,6 @@ function Pencil_ruler($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "pencil-ruler" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
-function Redo($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    ["path", { "d": "M21 7v6h-6" }],
-    [
-      "path",
-      {
-        "d": "M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"
-      }
-    ]
-  ];
-  Icon($$payload, spread_props([
-    { name: "redo" },
-    props,
-    {
-      iconNode,
-      children: ($$payload2) => {
-        props.children?.($$payload2);
-        $$payload2.out += `<!---->`;
-      },
-      $$slots: { default: true }
-    }
-  ]));
-  pop();
-}
-function Undo($$payload, $$props) {
-  push();
-  let { $$slots, $$events, ...props } = $$props;
-  const iconNode = [
-    ["path", { "d": "M3 7v6h6" }],
-    [
-      "path",
-      {
-        "d": "M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"
-      }
-    ]
-  ];
-  Icon($$payload, spread_props([
-    { name: "undo" },
     props,
     {
       iconNode,
@@ -354,10 +300,8 @@ function PatientGrid($$payload, $$props) {
 }
 function DSLFooter($$payload, $$props) {
   push();
-  const { onCheckboxChange, items: initialItems } = $$props;
-  let items = [...initialItems];
+  const { onCheckboxChange, items } = $$props;
   onMount(() => {
-    items = [...initialItems];
     console.log("[DSLFooter] onMount items:", items);
   });
   let hiddenItems = items.filter((item) => !item.visible);
@@ -409,7 +353,6 @@ function DSLFooter($$payload, $$props) {
   $$payload.out += `<!----> <span class="editor-footer-text flex-grow">${escape_html(hiddenItems.length > 0 ? `Hidden: ${hiddenItems.map((item) => item.label).join(", ")}` : "")}</span></div>`;
   pop();
 }
-new FreLogger("EditorRequestsHandler");
 function Study($$payload, $$props) {
   push();
   let { id } = $$props;
@@ -417,46 +360,28 @@ function Study($$payload, $$props) {
   let activeTab = "patients";
   let dslEditor = void 0;
   let unit = void 0;
-  let footerItems = [
-    {
-      id: "showScheduling",
-      label: "Scheduling",
-      visible: true
-    },
-    {
-      id: "showChecklists",
-      label: "Checklists",
-      visible: false
-    },
+  const footerConfig = [
+    { id: "showScheduling", label: "Scheduling" },
+    { id: "showChecklists", label: "Checklists" },
     {
       id: "showReferences",
       label: "References",
-      visible: false,
       parent: "showChecklists"
     },
     {
       id: "showSystems",
       label: "Systems",
-      visible: false,
       parent: "showChecklists"
     },
     {
       id: "showPeople",
       label: "People",
-      visible: false,
       parent: "showChecklists"
     },
-    {
-      id: "showDescriptions",
-      label: "Descriptions",
-      visible: false
-    },
-    {
-      id: "showSharedTasks",
-      label: "Shared Tasks",
-      visible: false
-    }
+    { id: "showDescriptions", label: "Descriptions" },
+    { id: "showSharedTasks", label: "Shared Tasks" }
   ];
+  let footerItems = unit ? footerConfig.map((cfg) => ({ ...cfg, visible: !!unit[cfg.id] })) : footerConfig.map((cfg) => ({ ...cfg, visible: false }));
   async function initializeStudy() {
     study = await dataStore.getStudy(id);
     await dataStore.getStudyPatients(id);
@@ -491,7 +416,7 @@ function Study($$payload, $$props) {
     setDrawerVisibility("studyTimelineChart", false);
   });
   function handleCheckboxChange(id2, visible) {
-    if (id2 in unit) {
+    if (unit && id2 in unit) {
       unit[id2] = visible;
     }
   }

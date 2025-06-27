@@ -32,6 +32,7 @@
         "mobx": "^6.12.3",
         "mobx-utils": "^6.0.8",
         "net.akehurst.language-agl-processor": "4.0.0-rc.5",
+        "pdfmake": "^0.2.10",
         "sirv-cli": "^2.0.2",
         "svelte": "^5.0.0",
         "svelte-fa": "^4.0.4",

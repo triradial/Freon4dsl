@@ -1,11 +1,13 @@
-import { RtBoolean, RtObject } from "@freon4dsl/core";
-import { ScheduledEvent } from "./ScheduledEvent.js";
-import { Availability, Event, PatientHistory } from "../../language/gen/index.js";
+import { FreNodeReference, RtBoolean, RtObject, RtString } from "@freon4dsl/core";
+import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
+import { Availability, DateConcept, Event, Month, PatientHistory, PatientVisit } from "../../language/gen/index.js";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
 import { PeriodEventInstance } from "./PeriodEventInstance.js";
 import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
 import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance.js";
 import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance.js";
+import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
+import { TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 
 /*
  * A Timeline records the events and the days they occur on.
@@ -23,6 +25,7 @@ export class Timeline extends RtObject {
     // timeline data
     days: TimelineDay[] = [];
     currentDay: number = 0;
+    studyStartDayNumber: number = 0;
     availability: Availability;
     patientHistory: PatientHistory;
 
@@ -30,6 +33,13 @@ export class Timeline extends RtObject {
         super();
     }
 
+    public setStudyStartDayNumber(studyStartDayNumber: number) {
+        this.studyStartDayNumber = studyStartDayNumber;
+    }
+
+    getStudyStartDayNumber() {
+        return this.studyStartDayNumber;
+    }
     setReferenceDate(referenceDate: Date) {
         this.referenceDate = referenceDate;
     }
@@ -305,6 +315,13 @@ export class Timeline extends RtObject {
         }
     }
 
+    getOffsetOfLastEventInstance() {
+        const highestDayItem = this.days.reduce((maxItem, currentItem) => {
+            return currentItem.day > maxItem.day ? currentItem : maxItem;
+        }, this.days[0]);
+        return highestDayItem.day;
+    }
+
     getMaxDayOnTimeline() {
         const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
         return this.currentDay + dayOffsetOfFirstEventInstance;
@@ -337,18 +354,15 @@ export class Timeline extends RtObject {
 
     // Add the patient visits that happened on specific dates to the timeline
     addPatientEvents(patientHistory: PatientHistory) {
-        console.log("Adding Patient Visits to Timeline");
+        this.setPatientHistory(patientHistory!);
+
         patientHistory.patientVisits.forEach((patientVisit) => {
             const actualVisitDateAsDate = this.dateStringsToDate(
                 patientVisit.actualVisitDate.day,
                 patientVisit.actualVisitDate.month.name,
                 patientVisit.actualVisitDate.year,
             );
-            // Convert from the date given as when the visit happened to the day of the event on the timeline
-            const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
-            const time2 = actualVisitDateAsDate.getTime();
-            const diffInMilliseconds = time2 - time1;
-            const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
+            const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
             this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
         });
         patientHistory.patientNotAvailableDates.dates.forEach((patientNotAvailableDate) => {
@@ -377,15 +391,24 @@ export class Timeline extends RtObject {
         const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
         const time2 = date.getTime();
         const diffInMilliseconds = time2 - time1;
-        const dayOnTimeline = diffInMilliseconds / (1000 * 60 * 60 * 24); // Convert the milliseconds from the reference date to days
+        const dayOnTimeline = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)); // Convert the milliseconds from the reference date to days
         return dayOnTimeline;
     }
+    // getDayOnTimeline(date: Date): number {
+    //     var datePlusOneDay = new Date(date); // Need to add one day to the date to get the correct day on the timeline
+    //     datePlusOneDay.setDate(datePlusOneDay.getDate() + 1);
+    //     const time1 = this.getReferenceDate().getTime(); // Get the time in milliseconds
+    //     const time2 = datePlusOneDay.getTime();
+    //     const diffInMilliseconds = time2 - time1;
+    //     const dayOnTimeline = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)); // Convert the milliseconds from the reference date to days
+    //     return dayOnTimeline;
+    // }
 
     addStaffAvailability(availability: Availability) {
         console.log("Adding Staff Availability to Timeline");
         this.availability = availability;
 
-        (availability as any).staffLevels.forEach((staffLevel) => {
+        availability.staffLevels.forEach((staffLevel) => {
             const startDateAsDate = this.dateStringsToDate(
                 staffLevel.dateOrRange.startDate.day,
                 staffLevel.dateOrRange.startDate.month.name,
@@ -412,7 +435,7 @@ export class Timeline extends RtObject {
     }
 
     getBaselineStaff(): number {
-        return Number((this.availability as any).baselineStaff);
+        return Number(this.availability.baselineStaff);
     }
 
     anyPatientEventInstances(): boolean {
@@ -511,6 +534,28 @@ export class Timeline extends RtObject {
         }
         return result;
     }
+
+    public getTimelineTable(): RtString {
+        const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(this);
+        const html = `<div class="limited-width-container">${tableHTML}</div>`;
+        return new RtString(html);
+    }
+
+    public getTimelineChart(): RtString {
+        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
+        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+        const html = `<div class="limited-width-container">${chartHTML}</div>`;
+        return new RtString(html);
+    }
+
+    public getTimelineChartHtml(): RtString {
+        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
+        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+        const html = `<div class="limited-width-container">${chartHTML}</div>`;
+        return new RtString(html);
+    }
 }
 
 /*
@@ -541,3 +586,47 @@ export class TimelineDay {
         return this.events.filter((event) => event instanceof StaffAvailabilityEventInstance) as StaffAvailabilityEventInstance[];
     }
 }
+
+export function getMonthFromString(month: string): FreNodeReference<Month> {
+    switch (month.toLowerCase()) {
+        case "january":
+            return FreNodeReference.create<Month>(Month.January, "Month");
+        case "february":
+            return FreNodeReference.create<Month>(Month.February, "Month");
+        case "march":
+            return FreNodeReference.create<Month>(Month.March, "Month");
+        case "april":
+            return FreNodeReference.create<Month>(Month.April, "Month");
+        case "may":
+            return FreNodeReference.create<Month>(Month.May, "Month");
+        case "june":
+            return FreNodeReference.create<Month>(Month.June, "Month");
+        case "july":
+            return FreNodeReference.create<Month>(Month.July, "Month");
+        case "august":
+            return FreNodeReference.create<Month>(Month.August, "Month");
+        case "september":
+            return FreNodeReference.create<Month>(Month.September, "Month");
+        case "october":
+            return FreNodeReference.create<Month>(Month.October, "Month");
+        case "november":
+            return FreNodeReference.create<Month>(Month.November, "Month");
+        case "december":
+            return FreNodeReference.create<Month>(Month.December, "Month");
+        default:
+            throw new Error(`Invalid month: ${month}`);
+    }
+}
+
+// The DateConcept is updated inline hence no return value.
+export function fillDateConceptFromAsString(dateConcept: DateConcept) {
+    console.log("fillDateConceptFromAsString: " + dateConcept.dateAsString);
+    // Add "T00:00:00" to ensure the date is interpreted at midnight local time
+    const actualDate = new Date(dateConcept.dateAsString + "T00:00:00");
+    console.log("actualDate: " + actualDate);
+    dateConcept.day = actualDate.getDate().toString();
+    dateConcept.month = getMonthFromString(actualDate.toLocaleString('en-US', { month: 'long' }));
+    dateConcept.year = actualDate.getFullYear().toString();
+}
+
+

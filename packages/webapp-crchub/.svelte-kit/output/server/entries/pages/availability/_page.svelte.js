@@ -1,6 +1,6 @@
 import "clsx";
-import { A as onMount, T as onDestroy, B as pop, z as push } from "../../../chunks/index.js";
-import { M as ModelManager, W as WebappConfigurator } from "../../../chunks/model-manager.js";
+import { A as onMount, U as onDestroy, B as pop, z as push } from "../../../chunks/index.js";
+import { f as ModelManager, W as WebappConfigurator } from "../../../chunks/model-manager.js";
 import { F as FreonComponent } from "../../../chunks/FreonComponent.js";
 function Availability($$payload, $$props) {
   push();

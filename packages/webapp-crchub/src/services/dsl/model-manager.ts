@@ -1,18 +1,11 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
-import { AST, BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, FreUtils } from "@freon4dsl/core";
+import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, FreUtils } from "@freon4dsl/core";
 import type { FreEnvironment, FreNode, FreModel, FreModelUnit, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
 import { runInAction } from "mobx";
-
 import { get } from "svelte/store";
-import { 
-    updateModelState, updateEditorState, updateUnitState, updateUnitLists,
-    setCurrentModelName, setCurrentUnitName, setNoUnitAvailable, setEditorProgressShown,
-    setUnsavedChanges, setToBeDeleted, setToBeRenamed, setUnitNames, updateUnits
-} from "./model-store.js";
+import { updateModelState, updateEditorState, updateUnitLists, setCurrentModelName, setCurrentUnitName, editorProgressShown, units, unitNames } from "./model-store.js";
 import { setUserMessage } from "./usermessage-store.js";
-
 import { WebappConfigurator } from "./webapp-configurator.js";
-
 import { Event, Task, Period, StudyConfiguration } from "@freon4dsl/study-configuration";
 
 const LOGGER = new FreLogger("EditorState").mute();
@@ -64,7 +57,7 @@ export class ModelManager {
     async createModel(modelName: string) {
         try {
             LOGGER.log("ModelHandler.createModel name: " + modelName);
-            await this.saveCurrentUnit();
+            // await this.saveCurrentUnit();
             this.resetGlobalVariables();
             await this.modelStore.createModel(modelName);
             if (modelName === "StudyConfiguration") {
@@ -103,6 +96,47 @@ export class ModelManager {
             updateEditorState(false, true, false);
         }
     }
+    
+    async deleteModel(modelName: string) {
+        LOGGER.log("ModelManager.deleteModel(" + modelName + ")");
+        this.resetGlobalVariables();
+        await this.saveCurrentUnit();
+        await this.modelStore.deleteModel(modelName);
+    }
+    
+    async createModelUnit(unitName: string, unitType: string) {
+        LOGGER.log("model-manager.createModelUnit: unitType: " + unitType + ", name: " + unitName);
+        await this.saveCurrentUnit();
+        await this.createBasicModelUnit(unitName, unitType);
+    }  
+    
+    async createBasicModelUnit(unitName: string, unitType: string) {
+        LOGGER.log("model-manager.createBasicModelUnit called, unitType: " + unitType + " name: " + unitName);
+        const newUnit = await this.modelStore.createUnit(unitName, unitType);
+        if (!!newUnit) {
+            newUnit.name = unitName;
+            this.showModelUnit(newUnit);
+        } else {
+            setUserMessage(`Model unit of type '${unitType}' could not be created.`);
+        }
+    }
+
+    async createRawModelUnit(unitName: string, unitType: string) {
+        LOGGER.log("model-manager.createRawModelUnit called, unitType: " + unitType + " name: " + unitName);
+        const newUnit = await this.modelStore.createUnit(unitName, unitType);
+        if (!!newUnit) {
+            newUnit.name = unitName;
+        } else {
+            setUserMessage(`Model unit of type '${unitType}' could not be created.`);
+        }
+    }
+
+    getModelUnit(unitName: string): FreModelUnit | undefined {
+        if (this.modelStore) {
+            return this.modelStore.getUnitByName(unitName);
+        }
+        return undefined;
+    }
 
     async openModelUnit(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
         LOGGER.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
@@ -118,6 +152,35 @@ export class ModelManager {
             this.showModelUnit(unit);
         }
         return unit;
+    }
+
+    async openModelUnitWithoutSavingCurrentUnit(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
+        LOGGER.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
+        editorProgressShown.set(true);
+        this.resetGlobalVariables();
+        // save the old current unit, if there is one
+        // await this.saveCurrentUnit();
+        // create new model instance in memory and set its name
+        await this.modelStore.openModel(modelName);
+        const unit = this.modelStore.getUnitByName(unitName);
+        console.log("openModelUnit unit:", unit);
+        if (unit) {
+            this.setCurrentUnit(unit);
+            BoxFactory.clearCaches();
+            this.langEnv.projectionHandler.clear();
+            this.showModelUnit(unit);
+        }
+        return unit;
+    }
+
+    async displayModelUnit(unit: FreModelUnit) {
+        LOGGER.log("ModelHandler.openModelUnitWithoutSavingCurrentUnit unit: " + unit.name);
+        editorProgressShown.set(true);
+        this.resetGlobalVariables();
+        this.setCurrentUnit(unit);
+        BoxFactory.clearCaches();
+        this.langEnv.projectionHandler.clear();
+        this.showModelUnit(unit);
     }
 
     async openModelUnitFromFile(fileName: string, content: string, metaType: string, showIt: boolean) {
@@ -141,49 +204,8 @@ export class ModelManager {
         }
     }
 
-    async createModelUnit(newName: string, unitType: string) {
-        LOGGER.log("EditorCommuncation.newUnit: unitType: " + unitType + ", name: " + newName);
-        await this.saveCurrentUnit();
-        await this.createNewUnit(newName, unitType);
-    }
-
-    async deleteModel(modelName: string) {
-        LOGGER.log("ModelManager.deleteModel(" + modelName + ")");
-        this.resetGlobalVariables();
-        await this.saveCurrentUnit();
-        await this.modelStore.deleteModel(modelName);
-    }
-
-    private async createStudyConfigurationModelUnits() {
-        try {
-            LOGGER.info("ModelHandler.createModelUnits START name: StudyConfiguration");
-
-            await this.createNewUnit("Availability", "Availability");
-            await this.saveCurrentUnit();
-
-            await this.createNewUnit("PatientInfo", "PatientInfo");
-            await this.saveCurrentUnit();
-
-            await this.createNewUnit("StudyConfiguration", "StudyConfiguration");
-            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
-            studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
-            studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
-            studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
-            await this.saveCurrentUnit();
-
-            this.setCurrentUnit(studyConfigUnit);
-            setCurrentModelName(this.currentModel.name);
-
-            LOGGER.info("ModelHandler.createModelUnits END name: StudyConfiguration");
-
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                LOGGER.error("ModelHandler.createModelUnits ERROR: " + error.message);
-                LOGGER.error("ModelHandler.createModelUnits ERROR: Stack trace: " + error.stack);
-            } else {
-                LOGGER.error("ModelHandler.createModelUnits ERROR: " + String(error));
-            }
-        }
+    async saveModelUnit(unit: FreModelUnit) {
+        await this.modelStore.saveUnit(unit);
     }
 
     async saveCurrentUnit() {
@@ -204,14 +226,35 @@ export class ModelManager {
         }
     }
 
-    private async createNewUnit(newName: string, unitType: string) {
-        LOGGER.log("private createNewUnit called, unitType: " + unitType + " name: " + newName);
-        const newUnit = await this.modelStore.createUnit(newName, unitType);
-        if (!!newUnit) {
-            newUnit.name = newName;
-            this.showModelUnit(newUnit);
-        } else {
-            setUserMessage(`Model unit of type '${unitType}' could not be created.`);
+    private async createStudyConfigurationModelUnits() {
+        try {
+            LOGGER.info("ModelHandler.createModelUnits START name: StudyConfiguration");
+
+            await this.createModelUnit("Availability", "Availability");
+            await this.saveCurrentUnit();
+
+            await this.createModelUnit("PatientInfo", "PatientInfo");
+            await this.saveCurrentUnit();
+
+            await this.createModelUnit("StudyConfiguration", "StudyConfiguration");
+            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
+            studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
+            studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
+            studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
+            await this.saveCurrentUnit();
+
+            this.setCurrentUnit(studyConfigUnit);
+            setCurrentModelName(this.currentModel.name);
+
+            LOGGER.info("ModelHandler.createModelUnits END name: StudyConfiguration");
+
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                LOGGER.error("ModelHandler.createModelUnits ERROR: " + error.message);
+                LOGGER.error("ModelHandler.createModelUnits ERROR: Stack trace: " + error.stack);
+            } else {
+                LOGGER.error("ModelHandler.createModelUnits ERROR: " + String(error));
+            }
         }
     }
 
@@ -243,6 +286,13 @@ export class ModelManager {
             console.log("Error showing model unit:", unit);
             throw e;
         }   
+    }
+
+    private setUnitLists() {
+        LOGGER.log("setUnitLists");
+        const unitsInModel = this.currentModel.getUnits();
+        unitNames.set(unitsInModel.map((u) => ({ name: u.name, id: u.freId() })));
+        units.set(unitsInModel);
     }
 
     selectElement(item: FreNode, propertyName?: string) {

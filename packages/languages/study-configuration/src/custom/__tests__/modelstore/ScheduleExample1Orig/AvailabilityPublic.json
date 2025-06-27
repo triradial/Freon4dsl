@@ -5,24 +5,24 @@
       {
          "id": "ID-032",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-Availability"
+            "key": "-key-Availability"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-name"
+                  "key": "-key-Availability-name"
                },
                "value": "Availability"
             },
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-baselineStaff"
+                  "key": "-key-Availability-baselineStaff"
                },
                "value": "4"
             }
@@ -30,9 +30,9 @@
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Availability-staffLevels"
+                  "key": "-key-Availability-staffLevels"
                },
                "children": [
                   "ID-148"
@@ -46,16 +46,16 @@
       {
          "id": "ID-148",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-StaffLevel"
+            "key": "-key-StaffLevel"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-StaffLevel-staffAvailable"
+                  "key": "-key-StaffLevel-staffAvailable"
                },
                "value": "2"
             }
@@ -63,9 +63,9 @@
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-StaffLevel-dateOrRange"
+                  "key": "-key-StaffLevel-dateOrRange"
                },
                "children": [
                   "ID-150"
@@ -79,17 +79,17 @@
       {
          "id": "ID-150",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-DateRange"
+            "key": "-key-DateRange"
          },
          "properties": [],
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-DateRange-startDate"
+                  "key": "-key-DateRange-startDate"
                },
                "children": [
                   "ID-152"
@@ -103,24 +103,24 @@
       {
          "id": "ID-152",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-StartRangeDate"
+            "key": "-key-StartRangeDate"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Date-day"
+                  "key": "-key-Date-day"
                },
                "value": "1"
             },
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Date-year"
+                  "key": "-key-Date-year"
                },
                "value": "2025"
             }
@@ -129,9 +129,9 @@
          "references": [
             {
                "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-Date-month"
+                  "key": "-key-Date-month"
                },
                "targets": [
                   {

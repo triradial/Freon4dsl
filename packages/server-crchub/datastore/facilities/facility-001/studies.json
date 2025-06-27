@@ -32,39 +32,6 @@
     ]
   },
   {
-    "id": "3a7e9f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f",
-    "name": "MK-3475-028",
-    "identifiers": [
-      {
-        "type": "nct",
-        "identifier": "NCT03421378"
-      }
-    ],
-    "status": "Active",
-    "title": "An Efficacy and Safety Study of INM-176 for the Treatment of Patients With Advanced Malignancies",
-    "phase": "II",
-    "interventions": [
-      {
-        "type": "drug",
-        "name": "INM-176"
-      }
-    ],
-    "therapeuticArea": "Oncology",
-    "currentProtocol": "v2",
-    "protocolAmendments": [
-      {
-        "version": "v1",
-        "date": "01-MAY-2023",
-        "description": "initial protocol"
-      },
-      {
-        "version": "v2",
-        "date": "24-NOV-2023",
-        "description": "updated protocol"
-      }
-    ]
-  },
-  {
     "id": "4b5c6d7e-8f9a-4f1b-2a3c-4e5d6e7a8e9e",
     "name": "XL-184-001",
     "identifiers": [
@@ -121,43 +88,6 @@
     ]
   },
   {
-    "id": "6d6e7f8a-9f1e-2dae-4e5a-6f7e8c9c0a",
-    "name": "MK-2200-001",
-    "identifiers": [
-      {
-        "type": "nct",
-        "identifier": "NCT55567491"
-      }
-    ],
-    "status": "Completed",
-    "title": "A Study of Tillocin in Patients With Advanced Solid Tumors",
-    "phase": "III",
-    "interventions": [
-      {
-        "type": "drug",
-        "name": "Tillocin"
-      }
-    ],
-    "therapeuticArea": "Hematology",
-    "currentProtocol": "v1",
-    "protocolAmendments": [
-      {
-        "version": "v1",
-        "date": "01-MAY-2023",
-        "description": "initial protocol"
-      }
-    ]
-  },
-  {
-    "id": "20fd7b12-a9ab-40b7-ad5b-331f74d8b210",
-    "name": "SV-LIFV",
-    "title": "Small Study to",
-    "status": "Planning",
-    "phase": "III",
-    "therapeuticArea": "Alzheimers",
-    "currentProtocol": ""
-  },
-  {
     "id": "e0b1dc36-07ee-4f0f-8ba6-8d9c69724c67",
     "name": "StartMinusDays",
     "title": "Study used for automated tests",
@@ -205,9 +135,9 @@
   {
     "id": "5688359e-1c73-42ed-a18d-5a379363748a",
     "name": "demo2",
-    "title": "flwkjdffljsdf ",
+    "title": "",
     "status": "Planning",
-    "phase": "",
+    "phase": "II",
     "therapeuticArea": "",
     "currentProtocol": ""
   },

@@ -1,10 +1,9 @@
 import { g as goto } from "./client.js";
-import { F as spread_props, B as pop, z as push, E as escape_html, P as createEventDispatcher, I as attr_class } from "./index.js";
+import { G as spread_props, B as pop, z as push, F as escape_html, Q as createEventDispatcher, J as attr_class } from "./index.js";
 import "clsx";
 import "./model-manager.js";
 import "./env.js";
-import { P as Plus } from "./plus.js";
-import { I as Icon } from "./Icon.js";
+import { I as Icon, P as Plus } from "./plus.js";
 function Circle_check($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;

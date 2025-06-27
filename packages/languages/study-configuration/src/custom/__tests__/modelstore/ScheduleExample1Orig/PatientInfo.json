@@ -5,16 +5,16 @@
       {
          "id": "ID-033",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-PatientInfo"
+            "key": "-key-PatientInfo"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientInfo-name"
+                  "key": "-key-PatientInfo-name"
                },
                "value": "PatientInfo"
             }
@@ -22,9 +22,9 @@
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientInfo-patientHistories"
+                  "key": "-key-PatientInfo-patientHistories"
                },
                "children": [
                   "ID-50"
@@ -38,16 +38,16 @@
       {
          "id": "ID-50",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-PatientHistory"
+            "key": "-key-PatientHistory"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientHistory-id"
+                  "key": "-key-PatientHistory-id"
                },
                "value": ""
             }
@@ -55,9 +55,9 @@
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientHistory-patientVisits"
+                  "key": "-key-PatientHistory-patientVisits"
                },
                "children": [
                   "ID-146"
@@ -65,9 +65,9 @@
             },
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientHistory-patientNotAvailableDates"
+                  "key": "-key-PatientHistory-patientNotAvailableDates"
                },
                "children": [
                   "ID-51"
@@ -81,16 +81,16 @@
       {
          "id": "ID-146",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-PatientVisit"
+            "key": "-key-PatientVisit"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientVisit-visitInstanceNumber"
+                  "key": "-key-PatientVisit-visitInstanceNumber"
                },
                "value": "1"
             }
@@ -98,9 +98,9 @@
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientVisit-actualVisitDate"
+                  "key": "-key-PatientVisit-actualVisitDate"
                },
                "children": [
                   "ID-147"
@@ -110,9 +110,9 @@
          "references": [
             {
                "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientVisit-status"
+                  "key": "-key-PatientVisit-status"
                },
                "targets": [
                   {
@@ -128,24 +128,24 @@
       {
          "id": "ID-147",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-VisitDate"
+            "key": "-key-VisitDate"
          },
          "properties": [
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-VisitDate-day"
+                  "key": "-key-VisitDate-day"
                },
                "value": "1"
             },
             {
                "property": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-VisitDate-year"
+                  "key": "-key-VisitDate-year"
                },
                "value": "2025"
             }
@@ -154,9 +154,9 @@
          "references": [
             {
                "reference": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-VisitDate-month"
+                  "key": "-key-VisitDate-month"
                },
                "targets": [
                   {
@@ -172,17 +172,17 @@
       {
          "id": "ID-51",
          "classifier": {
-            "language": "-default-key-StudyConfigurationModel",
+            "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-default-key-PatientNotAvailable"
+            "key": "-key-PatientNotAvailable"
          },
          "properties": [],
          "containments": [
             {
                "containment": {
-                  "language": "-default-key-StudyConfigurationModel",
+                  "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-default-key-PatientNotAvailable-dates"
+                  "key": "-key-PatientNotAvailable-dates"
                },
                "children": []
             }

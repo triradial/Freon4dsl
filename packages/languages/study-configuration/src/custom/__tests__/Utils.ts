@@ -1,7 +1,35 @@
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { FirstDayOfStudy, StudyConfiguration, Period, Event, EventSchedule, Day, PlusExpression, When, NumberLiteralExpression, EventReference, RepeatCondition, RepeatUnit, Days, EventWindow, EventState, SimpleOperators, TimeAmount, StudyStart, TimeUnit, Weekly, PatientVisit, PatientHistory, PatientInfo, VisitDate, Month, PatientVisitStatus, Availability, StaffLevel, DateRange, StartRangeDate, TimeAmountPart, Description } from "../../language/gen/index.js";
+import { DateConcept, FirstDayOfStudy, StudyConfiguration } from "../../language/gen/index.js";
+import { Period } from "../../language/gen/index.js";
+import { Event } from "../../language/gen/index.js";
+import { EventSchedule } from "../../language/gen/index.js";
+import { Day } from "../../language/gen/index.js";
+import { PlusExpression } from "../../language/gen/index.js";
+import { When } from "../../language/gen/index.js";
+import { NumberLiteralExpression } from "../../language/gen/index.js";
+import { EventReference } from "../../language/gen/index.js";
+import { RepeatCondition } from "../../language/gen/index.js";
+import { RepeatUnit } from "../../language/gen/index.js";
+import { Days } from "../../language/gen/index.js";
+import { EventWindow } from "../../language/gen/index.js";
+import { EventState } from "../../language/gen/index.js";
+import { SimpleOperators } from "../../language/gen/index.js";
+import { TimeAmount } from "../../language/gen/index.js";
+import { StudyStart } from "../../language/gen/index.js";
+import { TimeUnit } from "../../language/gen/index.js";
+import { Weekly } from "../../language/gen/index.js";
+import { PatientVisit } from "../../language/gen/index.js";
+import { PatientHistory } from "../../language/gen/index.js";
+import { PatientInfo } from "../../language/gen/index.js";
+import { VisitDate } from "../../language/gen/index.js";
+import { Month } from "../../language/gen/index.js";
+import { PatientVisitStatus } from "../../language/gen/index.js";
+import { Availability } from "../../language/gen/index.js";
+import { StaffLevel } from "../../language/gen/index.js";
+import { DateRange } from "../../language/gen/index.js";
+import { TimeAmountPart } from "../../language/gen/index.js";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
-import { Timeline } from "../timeline/Timeline.js";
+import { getMonthFromString, Timeline } from "../timeline/Timeline.js";
 import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
 import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
@@ -117,6 +145,53 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(
     });
     let eventSchedule = EventSchedule.create({ eventStart: studyStart });
     createEventAndAddToPeriod(period, secondEventName, eventSchedule);
+
+    studyConfiguration.periods.push(period);
+    return studyConfiguration;
+}
+
+
+export function addAPeriodWithEventBeforeStudyStart(
+    studyConfiguration: StudyConfiguration,
+    periodName: string,
+    event1Name: string,
+    secondEventName: string,
+    secondEventDaysBeforeStudyStart,
+): StudyConfiguration {
+    var period = new Period(periodName);
+    period.name = periodName;
+
+    const studyStart = StudyStart.create({});
+    const eventSchedule = EventSchedule.create({ eventStart: studyStart });
+    createEventAndAddToPeriod(period, event1Name, eventSchedule);
+
+    const referenceToMinusOperator = FreNodeReference.create<SimpleOperators>("-", "SimpleOperators");
+    const days = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
+    const fromStudyStart = FirstDayOfStudy.create({
+        timeAmountPart: TimeAmountPart.create({
+            operator: referenceToMinusOperator,
+            timeAmount: TimeAmount.create({
+                value: secondEventDaysBeforeStudyStart,
+                unit: days,
+            }),
+        }),
+    });
+    const eventSchedule2 = EventSchedule.create({ eventStart: fromStudyStart });
+    createEventAndAddToPeriod(period, secondEventName, eventSchedule2);
+
+    const referenceToPlusOperator = FreNodeReference.create<SimpleOperators>("+", "SimpleOperators");
+    const days2 = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
+    const fromStudyStart2 = StudyStart.create({
+        timeAmountPart: TimeAmountPart.create({
+            operator: referenceToPlusOperator,
+            timeAmount: TimeAmount.create({
+                value: 2,
+                unit: days2,
+            }),
+        }),
+    });
+    const eventSchedule3 = EventSchedule.create({ eventStart: fromStudyStart2 });
+    createEventAndAddToPeriod(period, "V3", eventSchedule3);
 
     studyConfiguration.periods.push(period);
     return studyConfiguration;
@@ -293,7 +368,7 @@ export function addEventAndInstanceToTimeline(
 
 export function loadModelUnit(modelFolderName: string, modelUnitName: string, alternateStudyFolderPath?: string): FreModelUnit {
     FreLogger.muteAllLogs();
-    var studyFolderPath: string = path.resolve(__dirname, "..", "..", "..", "..", "..", "server", "modelstore", modelFolderName);
+    var studyFolderPath: string = path.resolve(__dirname, "modelstore", modelFolderName);
 
     if (alternateStudyFolderPath) {
         studyFolderPath = alternateStudyFolderPath;
@@ -312,9 +387,14 @@ export function loadModelUnit(modelFolderName: string, modelUnitName: string, al
     return modelUnit;
 }
 
+export function saveChecklistDocument(stringToSave: string) {
+    const filename = "../../../tmp/StudyChecklistOneVisitOneChecklist.md";
+    this.saveToFile(stringToSave, filename);
+}
+
 export function saveTimelineTable(timelineTableAsScript: string) {
-    let filename = "timeline-table.html";
-    let timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
+    const filename = "../../../tmp/timeline-table.html";
+    const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
 
     this.saveToFile(timelineTableAsHTML, filename);
 }
@@ -329,9 +409,8 @@ export function saveToFile(stringToSave: string, filename: string) {
 }
 
 export function saveTimeline(timelineDataAsScript: string) {
-    // console.log(process.cwd());
-    let filename = "../../../tmp/timeline.html";
-    let timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
+    const filename = "../../../tmp/timeline.html";
+    const timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
     saveToFile(timelineDataAsHTML, filename);
 }
@@ -390,41 +469,10 @@ export function checkTimelineChart(
     }
 }
 
-function getMonthFromString(month: string): Month {
-    switch (month.toLowerCase()) {
-        case "january":
-            return Month.January;
-        case "february":
-            return Month.February;
-        case "march":
-            return Month.March;
-        case "april":
-            return Month.April;
-        case "may":
-            return Month.May;
-        case "june":
-            return Month.June;
-        case "july":
-            return Month.July;
-        case "august":
-            return Month.August;
-        case "september":
-            return Month.September;
-        case "october":
-            return Month.October;
-        case "november":
-            return Month.November;
-        case "december":
-            return Month.December;
-        default:
-            throw new Error(`Invalid month: ${month}`);
-    }
-}
-
 export function createACompletedPatientVisit(visitName: string, day: string, month: string, year: string, visitInstanceNumber: number): PatientVisit {
     // console.log("createACompletedPatientVisit visitName: " + visitName + " day: " + day + " month: " + month + " year: " + year);
     const referencedEvent = FreNodeReference.create<Event>(visitName, "Event");
-    const visitDate = VisitDate.create({ day: day, month: FreNodeReference.create<Month>(getMonthFromString(month), "Month"), year: year });
+    const visitDate = VisitDate.create({ day: day, month: getMonthFromString(month), year: year });
     const completedVisitStatus = FreNodeReference.create<PatientVisitStatus>(PatientVisitStatus.completed, "completed");
     let patientVisit = PatientVisit.create({
         visit: referencedEvent,
@@ -461,16 +509,18 @@ export function createCompletedPatientVisits(
     numberToCreate: number,
     timeline: Timeline,
     shiftsFromScheduledVisit: ShiftsFromScheduledVisit[] = [],
+    startStudyDate: Date
 ): PatientVisit[] {
     let completedPatientVisits: PatientVisit[] = [];
     let i = 0;
     let stopAddingVisits = false;
-    const referenceDate = timeline.getReferenceDate();
+    const referenceDate = startStudyDate;
     timeline.printTimelineOfScheduledEventInstances();
     timeline.getScheduleEventInstancesOrderByDay().forEach((scheduledEventInstance) => {
         if (i++ < numberToCreate) {
             let dateOfVisit: Date = new Date();
             const startDay = scheduledEventInstance.getStartDay();
+            const offsetOfFirstEventInstance = timeline.getOffsetOfFirstEventInstance();
             let foundAMatch = false;
             // There can be multiple shifts for the same ScheduledEventInstance (a visit), each with a different instance number to shift. Need to search to find the shift for the instance number, if any.
             let shiftsForVisitInstance = shiftsFromScheduledVisit.filter((record) => record.name === scheduledEventInstance.getName());
@@ -479,14 +529,15 @@ export function createCompletedPatientVisits(
                     shiftFromScheduledVisit.numberFound++; // This is the hack where the number of times a visit is matched is tracked for each shift of the same visit rather than just one counter.
                     if (shiftFromScheduledVisit.numberFound === shiftFromScheduledVisit.instance && shiftFromScheduledVisit.foundThisInstance === false) {
                         // if this matches then this is the instance to shift
-                        dateOfVisit = addDays(referenceDate, startDay + shiftFromScheduledVisit.shift); // Shift the visit
+                        dateOfVisit = addDays(referenceDate, startDay + offsetOfFirstEventInstance + shiftFromScheduledVisit.shift); // Shift the visit
                         shiftFromScheduledVisit.foundThisInstance = true; // Remember that this shift has been done
                         foundAMatch = true; // Done looking for shifts for this visit
                     }
                 });
             }
             if (!foundAMatch) {
-                dateOfVisit = addDays(referenceDate, startDay); // No shifts for this Visit
+                // No shifts for this Visit but need to correct for any negative offset from first event instance
+                dateOfVisit = addDays(referenceDate, startDay + offsetOfFirstEventInstance);
             }
             const patientVisit = createACompletedPatientVisit(
                 scheduledEventInstance.getName(),
@@ -509,13 +560,14 @@ export function createCompletedPatientVisits(
     return completedPatientVisits;
 }
 
+
 function addDays(date: Date, days: number): Date {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
 }
 
-function createStaffLevel(
+export function createStaffLevel(
     staffAvailable: string,
     startDay: string,
     startMonth: string,
@@ -524,24 +576,39 @@ function createStaffLevel(
     endMonth?: string,
     endYear?: string,
 ) {
-    const startDateInRange = StartRangeDate.create({
+    const startDateInRange = DateConcept.create({
+        dateAsString: startDay + "/" + startMonth + "/" + startYear,
         day: startDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
+        month: getMonthFromString(startMonth),
         year: startYear,
     });
+    let endMonthString = "";
+
+    if (endMonth !== undefined) {
+        endMonthString = endMonth;
+    } else {
+        endMonthString = startMonth;
+    }
     if (!endDay) {
         endDay = startDay;
-        endMonth = startMonth;
+        endMonthString = startMonth;
         endYear = startYear;
     }
-    const endDateInRange = StartRangeDate.create({
+    const endDateInRange = DateConcept.create({
+        dateAsString: endDay + "/" + endMonthString + "/" + endYear,
         day: endDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
+        month: getMonthFromString(endMonthString),
         year: endYear,
     });
     const staffDateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
     const staffLevel = StaffLevel.create({ staffAvailable: staffAvailable, dateOrRange: staffDateOrRange });
     return staffLevel;
+}
+
+
+function createDate(day: number, month: string, year: number): Date {
+    const monthIndex = new Date(`${month} 1, 2000`).getMonth();
+    return new Date(year, monthIndex, day);
 }
 
 export function createPatientNotAvailableDateRange(
@@ -551,51 +618,70 @@ export function createPatientNotAvailableDateRange(
     endDay?: string,
     endMonth?: string,
     endYear?: string,
+    dayOffsetOfFirstEventInstance?: number,
 ) {
-    const startDateInRange = StartRangeDate.create({
-        day: startDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(startMonth), "Month"),
-        year: startYear,
-    });
-    if (!endDay) {
-        endDay = startDay;
-        endMonth = startMonth;
-        endYear = startYear;
+    let adjustedStartDay = startDay;
+    let adjustedStartMonth = startMonth;
+    let adjustedStartYear = startYear;
+    let adjustedEndDay = endDay;
+    let adjustedEndMonth = endMonth;
+    let adjustedEndYear = endYear;
+
+    if (dayOffsetOfFirstEventInstance) {
+        const startDate = createDate(parseInt(startDay), startMonth, parseInt(startYear));
+        let endDate = undefined;
+        if (endDay) {
+            endDate = createDate(parseInt(endDay), endMonth, parseInt(endYear));
+        } else {
+            endDate = startDate;
+        }
+        startDate.setDate(startDate.getDate() - dayOffsetOfFirstEventInstance);
+        endDate.setDate(endDate.getDate() - dayOffsetOfFirstEventInstance);
+        adjustedStartDay = startDate.getDate().toString();
+        adjustedStartMonth = startDate.toLocaleString("default", { month: "long" });
+        adjustedStartYear = startDate.getFullYear().toString();
+        adjustedEndDay = endDate.getDate().toString();
+        adjustedEndMonth = endDate.toLocaleString("default", { month: "long" });
+        adjustedEndYear = endDate.getFullYear().toString();
     }
-    const endDateInRange = StartRangeDate.create({
-        day: endDay,
-        month: FreNodeReference.create<Month>(getMonthFromString(endMonth), "Month"),
-        year: endYear,
+
+    const startDateInRange = DateConcept.create({
+        dateAsString: adjustedStartDay + "/" + adjustedStartMonth + "/" + adjustedStartYear,
+        day: adjustedStartDay,
+        month: getMonthFromString(adjustedStartMonth),
+        year: adjustedStartYear,
     });
+
+    if (!adjustedEndDay) {
+        adjustedEndDay = adjustedStartDay;
+        adjustedEndMonth = adjustedStartMonth;
+        adjustedEndYear = adjustedStartYear;
+    }
+
+    const endDateInRange = DateConcept.create({
+        dateAsString: adjustedEndDay + "/" + adjustedEndMonth + "/" + adjustedEndYear,
+        day: adjustedEndDay,
+        month: getMonthFromString(adjustedEndMonth),
+        year: adjustedEndYear,
+    });
+
     const dateOrRange = DateRange.create({ startDate: startDateInRange, endDate: endDateInRange });
     return dateOrRange;
 }
 
 export function createOneDayAvailability(day: string, month: string, year: string): Availability {
     const staffLevel = createStaffLevel("3", day, month, year);
-    const availability = Availability.create({ 
-        name: "Availability",
-        description: Description.create({}),
-        availableDays: [],
-        exceptions: [],
-        staffLevels: [staffLevel]
-    });
+    const availability = Availability.create({ baselineStaff: "4", staffLevels: [staffLevel] });
     return availability;
 }
-
-export function createAvailability(): Availability {
+function createAvailability(): Availability {
     let month = "January";
     const year = "2024";
     let staffLevels = [];
     staffLevels.push(createStaffLevel("3", "-27", month, year, "-25", month, year));
     staffLevels.push(createStaffLevel("2", "11", month, year));
     staffLevels.push(createStaffLevel("2", "19", month, year));
-    const availability = Availability.create({ 
-        name: "Availability",
-        description: Description.create({}),
-        availableDays: [],
-        exceptions: [],
-        staffLevels: staffLevels
-    });
+    const availability = Availability.create({ baselineStaff: "4", staffLevels: staffLevels });
     return availability;
 }
+

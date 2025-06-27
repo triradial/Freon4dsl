@@ -2,7 +2,7 @@
     import { getStatusColor } from "../../services/utils.js";
     import { type Study } from "../../services/data/data-store.js";
     // @ts-ignore
-    import { Save as IconSave, X as IconX } from '@lucide/svelte';
+    import { Save as IconSave, X as IconX, Asterisk as IconAsterisk } from '@lucide/svelte';
 
     const { study, action, onsave, onclose } = $props<{
         study: Study;
@@ -62,16 +62,9 @@
     function validateAllFields() {
         (Object.keys(mutatedStudy) as Array<keyof typeof errors>).forEach((key) => {
             if (key in errors) {
-                if (key === "name" && !mutatedStudy[key].trim()) {
-                    errors[key] = "Study name is required";
-                } else {
-                    errors[key] = "";
-                }
-                errorState[key] = errors[key];
+                validateField(key, mutatedStudy[key]);
             }
         });
-        console.log("[StudyMutation] After validateAllFields errors:", errors);
-        console.log("[StudyMutation] After validateAllFields errorState:", errorState);
     }
 
     function validateField(field: keyof typeof errors, value: string) {
@@ -81,16 +74,13 @@
             errors[field] = "";
         }
         errorState[field] = errors[field];
-        console.log(`[StudyMutation] validateField '${field}':`, errors[field]);
-        console.log("[StudyMutation] errors after validateField:", errors);
-        console.log("[StudyMutation] errorState after validateField:", errorState);
     }
 </script>
 
 <div class="mutation-area max-w-sm">
-    <div class="space-y-4">
+    <div class="flex flex-col gap-2">
         <div>
-            <div class="small-label-text">Name {#if errors.name}<span class="text-red-500">*</span>{/if}</div>        
+            <div class="small-label-text">Name{#if errors.name}<IconAsterisk size="12" color="red" />{/if}</div>        
             <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} />
         </div>
         <div>

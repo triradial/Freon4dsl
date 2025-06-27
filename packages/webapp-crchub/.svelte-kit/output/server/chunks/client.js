@@ -1,4 +1,4 @@
-import { A as onMount, C as tick } from "./index.js";
+import { A as onMount, E as tick } from "./index.js";
 import "clsx";
 import { w as writable } from "./index3.js";
 import { A as b64_decode, h as hash, g as get_status, a as get_message, e as decode_params, y as decode_pathname, q as add_data_suffix, T as TRAILING_SLASH_PARAM, I as INVALIDATED_PARAM, p as normalize_path, r as compact, m as make_trackable } from "./exports.js";

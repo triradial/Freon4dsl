@@ -1,30 +1,27 @@
 {
    "serializationFormatVersion": "2023.1",
-   "languages": [],
+   "languages": [
+      {
+         "key": "-key-StudyConfigurationModel",
+         "version": "2023.1"
+      }
+   ],
    "nodes": [
       {
-         "id": "ID-254",
+         "id": "ID-77",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-Availability"
+            "key": "-key-PatientInfo"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-Availability-name"
+                  "key": "-key-PatientInfo-name"
                },
-               "value": "Availability"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Availability-baselineStaff"
-               },
-               "value": ""
+               "value": "PatientInfo"
             }
          ],
          "containments": [
@@ -32,7 +29,7 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-Availability-staffLevels"
+                  "key": "-key-PatientInfo-patientHistories"
                },
                "children": []
             }

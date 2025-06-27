@@ -1,5 +1,6 @@
-Study 123ABC 
-==============
+Study STUDY-NAME 
+
+---
 
 The timeline and visit checklists for the study.
 
@@ -14,18 +15,24 @@ The timeline and visit checklists for the study.
 
 ## Chart
 
+
+
 [View the interactive chart of the schedule](./timeline.html)
 
-
-![Overview of Timeline](./docs/example-schedule.png)
+To view the interactive chart you must have downloaded it.
 
 ---
 
 # Screening
 ## V1
+
 <p>This is visit V1</p>
 
-### Task 1
+This event is first scheduled as the start day of the study
+with a window of 0 day(s) before and 0 day(s) after and a compliance window of:  
+
+
+### Task:Task 1
 
 <p>The description of the first and only checklist for V1...</p>
 

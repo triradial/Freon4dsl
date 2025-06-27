@@ -1,4 +1,4 @@
-import { H as HYDRATION_ERROR, g as get_next_sibling, d as define_property, s as set_active_reaction, a as set_active_effect, i as is_array, b as active_reaction, c as active_effect, e as init_operations, f as get_first_child, h as HYDRATION_START, j as HYDRATION_END, k as hydration_failed, l as clear_text_content, m as array_from, n as component_root, o as create_text, p as branch, q as is_passive_event, r as push, t as pop, u as component_context, v as get, L as LEGACY_PROPS, w as set, x as flushSync, y as mutable_source, z as push$1, A as onMount, B as pop$1, C as tick, E as escape_html } from "./index.js";
+import { H as HYDRATION_ERROR, g as get_next_sibling, d as define_property, s as set_active_reaction, a as set_active_effect, i as is_array, b as active_reaction, c as active_effect, e as init_operations, f as get_first_child, C as COMMENT_NODE, h as HYDRATION_START, j as HYDRATION_END, k as hydration_failed, l as clear_text_content, m as array_from, n as component_root, o as create_text, p as branch, q as is_passive_event, r as push, t as pop, u as component_context, v as get, L as LEGACY_PROPS, w as set, x as flushSync, y as mutable_source, z as push$1, A as onMount, B as pop$1, E as tick, F as escape_html } from "./index.js";
 import "clsx";
 import "./environment.js";
 let public_env = {};
@@ -148,7 +148,7 @@ function hydrate(component, options2) {
       /** @type {TemplateNode} */
       get_first_child(target)
     );
-    while (anchor && (anchor.nodeType !== 8 || /** @type {Comment} */
+    while (anchor && (anchor.nodeType !== COMMENT_NODE || /** @type {Comment} */
     anchor.data !== HYDRATION_START)) {
       anchor = /** @type {TemplateNode} */
       get_next_sibling(anchor);
@@ -163,7 +163,7 @@ function hydrate(component, options2) {
     );
     hydrate_next();
     const instance = _mount(component, { ...options2, anchor });
-    if (hydrate_node === null || hydrate_node.nodeType !== 8 || /** @type {Comment} */
+    if (hydrate_node === null || hydrate_node.nodeType !== COMMENT_NODE || /** @type {Comment} */
     hydrate_node.data !== HYDRATION_END) {
       hydration_mismatch();
       throw HYDRATION_ERROR;
@@ -534,7 +534,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "18654m1"
+  version_hash: "1mufhjt"
 };
 async function get_hooks() {
   let handle;

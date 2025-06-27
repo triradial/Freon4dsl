@@ -11,7 +11,7 @@
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
-    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility, setDrawerProps } from "../services/stores/side-drawer-store.js";
+    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility } from "../services/stores/side-drawer-store.js";
     // @ts-ignore
     import { User as IconUser, PencilRuler as IconPencilRuler, Save as IconSave, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
 
@@ -112,7 +112,7 @@
 {#if study}
     <div class="crc-container">
         <div class="card-container">
-            <StudyCard {study} />
+            <StudyCard studyId={study.id} />
         </div>
         <div class="crc-content">
             <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2" contentBase="mt-0">

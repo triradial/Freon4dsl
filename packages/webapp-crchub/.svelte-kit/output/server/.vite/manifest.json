@@ -42,8 +42,7 @@
       "_index.js",
       "_model-manager.js",
       "_env.js",
-      "_plus.js",
-      "_Icon.js"
+      "_plus.js"
     ]
   },
   "_FragmentComponent.js": {
@@ -52,9 +51,7 @@
     "imports": [
       "_index.js",
       "_model-manager.js",
-      "_Icon.js",
-      "_plus.js",
-      "_html.js"
+      "_plus.js"
     ]
   },
   "_FreonComponent.js": {
@@ -64,13 +61,6 @@
       "_index.js",
       "_FragmentComponent.js",
       "_model-manager.js"
-    ]
-  },
-  "_Icon.js": {
-    "file": "chunks/Icon.js",
-    "name": "Icon",
-    "imports": [
-      "_index.js"
     ]
   },
   "_LoginPart.js": {
@@ -84,14 +74,13 @@
       "_client.js"
     ]
   },
-  "_Tooltip.svelte_svelte_type_style_lang.js": {
-    "file": "chunks/Tooltip.svelte_svelte_type_style_lang.js",
-    "name": "Tooltip.svelte_svelte_type_style_lang",
+  "_Popover.js": {
+    "file": "chunks/Popover.js",
+    "name": "Popover",
     "imports": [
-      "_index.js"
-    ],
-    "css": [
-      "_app/immutable/assets/Tooltip.DXh0bXFJ.css"
+      "_index.js",
+      "_plus.js",
+      "_side-drawer-store.js"
     ]
   },
   "_calendar-days.js": {
@@ -99,7 +88,7 @@
     "name": "calendar-days",
     "imports": [
       "_index.js",
-      "_Icon.js"
+      "_plus.js"
     ]
   },
   "_client.js": {
@@ -117,6 +106,26 @@
     "file": "chunks/control.js",
     "name": "control"
   },
+  "_data-store.js": {
+    "file": "chunks/data-store.js",
+    "name": "data-store",
+    "imports": [
+      "_index3.js",
+      "_model-manager.js",
+      "_env.js"
+    ]
+  },
+  "_editor-requests-handler.js": {
+    "file": "chunks/editor-requests-handler.js",
+    "name": "editor-requests-handler",
+    "imports": [
+      "_index.js",
+      "_plus.js",
+      "_side-drawer-store.js",
+      "_client.js",
+      "_model-manager.js"
+    ]
+  },
   "_env.js": {
     "file": "chunks/env.js",
     "name": "env"
@@ -131,10 +140,6 @@
     "imports": [
       "_control.js"
     ]
-  },
-  "_html.js": {
-    "file": "chunks/html.js",
-    "name": "html"
   },
   "_index.js": {
     "file": "chunks/index.js",
@@ -169,20 +174,11 @@
       "_index3.js"
     ]
   },
-  "_object-drawer-store.js": {
-    "file": "chunks/object-drawer-store.js",
-    "name": "object-drawer-store",
-    "imports": [
-      "_index3.js",
-      "_utils.js"
-    ]
-  },
   "_plus.js": {
     "file": "chunks/plus.js",
     "name": "plus",
     "imports": [
-      "_index.js",
-      "_Icon.js"
+      "_index.js"
     ]
   },
   "_side-drawer-store.js": {
@@ -190,19 +186,11 @@
     "name": "side-drawer-store",
     "imports": [
       "_index.js",
-      "_Icon.js",
-      "_Tooltip.svelte_svelte_type_style_lang.js",
+      "_plus.js",
       "_index3.js"
-    ]
-  },
-  "_stores.js": {
-    "file": "chunks/stores.js",
-    "name": "stores",
-    "imports": [
-      "_index.js",
-      "_Icon.js",
-      "_Tooltip.svelte_svelte_type_style_lang.js",
-      "_client.js"
+    ],
+    "css": [
+      "_app/immutable/assets/side-drawer-store.DXh0bXFJ.css"
     ]
   },
   "_theme-store.js": {
@@ -217,8 +205,7 @@
     "name": "utils",
     "imports": [
       "_index3.js",
-      "_model-manager.js",
-      "_env.js"
+      "_data-store.js"
     ]
   },
   "src/routes/+layout.svelte": {
@@ -232,19 +219,18 @@
       "_env.js",
       "_calendar-days.js",
       "_FragmentComponent.js",
-      "_Icon.js",
+      "_plus.js",
       "_index3.js",
       "_LoginPart.js",
-      "_utils.js",
+      "_data-store.js",
       "_theme-store.js",
-      "_Tooltip.svelte_svelte_type_style_lang.js",
       "_side-drawer-store.js",
+      "_Popover.js",
       "_client.js",
-      "_object-drawer-store.js",
-      "_html.js"
+      "_utils.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.a5SW5sdn.css"
+      "_app/immutable/assets/_layout.Dnwnj-kH.css"
     ]
   },
   "src/routes/+layout.ts": {
@@ -308,14 +294,13 @@
     "isEntry": true,
     "imports": [
       "_index.js",
-      "_stores.js",
+      "_editor-requests-handler.js",
       "_model-manager.js",
       "_env.js",
-      "_Tooltip.svelte_svelte_type_style_lang.js",
-      "_utils.js",
+      "_side-drawer-store.js",
+      "_data-store.js",
       "_calendar-days.js",
-      "_Icon.js",
-      "_html.js"
+      "_FreonComponent.js"
     ]
   },
   "src/routes/studies/+page.svelte": {
@@ -325,8 +310,8 @@
     "isEntry": true,
     "imports": [
       "_index.js",
+      "_data-store.js",
       "_utils.js",
-      "_object-drawer-store.js",
       "_DeleteObjectDialog.js",
       "_theme-store.js",
       "_plus.js"
@@ -339,17 +324,16 @@
     "isEntry": true,
     "imports": [
       "_index.js",
-      "_stores.js",
+      "_editor-requests-handler.js",
       "_model-manager.js",
       "_env.js",
       "_utils.js",
+      "_data-store.js",
       "_DeleteObjectDialog.js",
       "_theme-store.js",
-      "_object-drawer-store.js",
       "_plus.js",
-      "_Tooltip.svelte_svelte_type_style_lang.js",
       "_side-drawer-store.js",
-      "_Icon.js",
+      "_Popover.js",
       "_FreonComponent.js"
     ]
   }

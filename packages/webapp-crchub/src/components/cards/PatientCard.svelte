@@ -1,37 +1,54 @@
 <script lang="ts">
-    import { type Patient } from "../../services/data/data-store.js";
-    import { editObject } from "../../services/stores/object-drawer-store.js";
+    import { dataStore } from "../../services/data/data-store.js";
+    const { patientId } = $props<{ patientId: string }>();
+
+    let patient = $derived($dataStore.patients.find(p => p.id === patientId));
+    import { getStatusColor } from "../../services/utils.js";
     // @ts-ignore
     import { Pencil as IconPencil } from '@lucide/svelte';
 
-    const { patient } = $props<{ patient: Patient }>();
+    let statusColor = $derived(patient ? getStatusColor(patient.gender) : ""); // Example: use gender for color, adjust as needed
 
     function onEditClick() {
-        editObject("patient", patient.id);
+        if (patient) {
+            import("../../services/stores/object-drawer-store.js").then(m => m.editObject("patient", patient.id));
+        }
     }
 </script>
 
+{#if patient}
 <div class="card card-area max-w-sm h-full">
     <div class="flex items-center justify-left mb-4">
-        <h3 class="text-base font-bold mr-2">Patient</h3>
-        <button type="button" class="icon-button btn-sm grid-header-button" onclick={onEditClick}><IconPencil /></button>
+        <h3 class="main-label-text mr-2">Patient</h3>
+        <button type="button" class="icon-button primary inverted" onclick={onEditClick}><IconPencil /></button>
     </div>
-    <div class="space-y-2">
+    <div class="space-y-4">
         <div>
-            <h4 class="card-label-text">Patient Number</h4>
-            <p class="text-sm">{patient.patientNumber}</p>
+            <div class="small-label-text">Patient Number</div>
+            <p class="standard-text">{patient.patientNumber}</p>
         </div>
         <div>
-            <h4 class="card-label-text">Initials</h4>
-            <p class="text-xs">{patient.initials}</p>
+            <div class="small-label-text">Initials</div>
+            <p class="standard-text">{patient.initials}</p>
         </div>
         <div>
-            <h4 class="card-label-text">YOB</h4>
-            <p class="text-xs">{patient.dob}</p>
+            <div class="small-label-text">Gender</div>
+            <span class="badge {statusColor} standard-text">{patient.gender}</span>
         </div>
         <div>
-            <h4 class="card-label-text">Gender</h4>
-            <p class="text-xs">{patient.gender}</p>
+            <div class="small-label-text">DOB</div>
+            <p class="standard-text">{patient.dob}</p>
+        </div>
+        <div>
+            <div class="small-label-text">Initials</div>
+            <p class="standard-text">{patient.initials}</p>
+        </div>
+        <div>
+            <div class="small-label-text">Study</div>
+            <p class="standard-text">{patient.study}</p>
         </div>
     </div>
 </div>
+{:else}
+<div>Patient not found.</div>
+{/if}

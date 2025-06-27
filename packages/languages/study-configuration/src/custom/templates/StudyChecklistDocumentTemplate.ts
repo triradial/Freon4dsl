@@ -1,12 +1,11 @@
 import { dedent } from "../utils/dedent.js";
-import { Timeline } from "../timeline/Timeline.js";
+import { Timeline } from "../../custom/timeline/Timeline.js";
 import { AbstractTask, ComplianceWindowOf, NoComplianceWindow, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
 export class StudyChecklistDocumentTemplate {
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
         var template = dedent`
-      ## Table
       | Visit Name | Alternative Name | Phase | Window (-) | Day/Date | Window (+) |
       | :---------------------- | :--------------- | :-------- | :--------- | :------- | :--------- |
       ${timeline
@@ -16,7 +15,7 @@ export class StudyChecklistDocumentTemplate {
                   .getEventInstances()
                   .map(
                       (eventInstance, index) =>
-                          dedent`| ${eventInstance.getName()} | ${eventInstance.getScheduledEvent().configuredEvent.alternativeName} | ${((eventInstance.getScheduledEvent().configuredEvent as any).freOwner() as Period).name} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""} | ${(eventInstance.getStartDay() + 1).toString() ?? ""} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""} |`,
+                          dedent`| ${eventInstance.getName()} | ${eventInstance.getScheduledEvent().configuredEvent.alternativeName} | ${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""} | ${(eventInstance.getStartDay() + 1).toString() ?? ""} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""} |`,
                   )
                   .join(""),
           )
@@ -114,31 +113,57 @@ export class StudyChecklistDocumentTemplate {
         return template;
     }
 
-    static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline): string {
-        var template = dedent`Study ${"STUDY-NAME"} 
+    /**
+     * Generic function to add hierarchical heading numbers to any markdown content
+     * @param markdown The markdown content to process
+     * @returns The markdown content with heading numbers added
+     */
+    static addHeadingNumbers(markdown: string): string {
+        const lines = markdown.split('\n');
+        const headingCounters: number[] = [0, 0, 0, 0, 0, 0]; // Support up to 6 heading levels
+        
+        return lines.map(line => {
+            const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+            if (headingMatch) {
+                const level = headingMatch[1].length;
+                const title = headingMatch[2];
+                
+                // Reset counters for deeper levels
+                for (let i = level; i < headingCounters.length; i++) {
+                    headingCounters[i] = 0;
+                }
+                
+                // Increment counter for current level
+                headingCounters[level - 1]++;
+                
+                // Build the hierarchical number
+                const number = headingCounters.slice(0, level).join('.');
+                return `${headingMatch[1]} ${number}. ${title}`;
+            }
+            return line;
+        }).join('\n');
+    }
+
+    static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline, showHeadingNumbers: boolean = false): string {
+        let markdown = dedent` 
 
 ---
 
-The timeline and visit checklists for the study.
 
-[toc]
-
-# Study Timeline 
+# Timeline 
 
 ${StudyChecklistDocumentTemplate.getTimelineTablAsMarkdown(timeline)}
-
-## Chart
-
-
-
-[View the interactive chart of the schedule](./timeline.html)
-
-To view the interactive chart you must have downloaded it.
 
 ---
 
 ${StudyChecklistDocumentTemplate.getVisitsByPeriodAsMarkdown(studyConfiguration)}
 `;
-        return template;
+
+        // Apply heading numbers if requested
+        if (showHeadingNumbers) {
+            markdown = StudyChecklistDocumentTemplate.addHeadingNumbers(markdown);
+        }
+
+        return markdown;
     }
 }

@@ -1,21 +1,28 @@
-import { z as push, F as spread_props, B as pop, A as onMount, E as escape_html, G as attr, I as attr_class, J as stringify, K as store_get, M as unsubscribe_stores, N as ensure_array_like, O as maybe_selected, P as createEventDispatcher, Q as attr_style, R as bind_props, S as head } from "../../chunks/index.js";
-import { i as isNullOrUndefined, F as FreLanguage, a as FreLogger, b as FreNodeReference, c as FreUtils, d as FreErrorSeverity, C as Ct, W as WebappConfigurator, r as rv, R as RtString, t as tv, N as NN, L as LOe, H as Hd, M as ModelManager } from "../../chunks/model-manager.js";
+import { z as push, G as spread_props, B as pop, A as onMount, F as escape_html, I as attr, J as attr_class, K as stringify, M as store_get, N as unsubscribe_stores, O as ensure_array_like, P as maybe_selected, Q as createEventDispatcher, R as attr_style, S as bind_props, T as head } from "../../chunks/index.js";
+import { i as isNullOrUndefined, F as FreLanguage, a as FreLogger, b as FreNodeReference, c as FreUtils, d as FreErrorSeverity, C as Ct, W as WebappConfigurator, n as nh, R as RtString, p as pi, S as Sk, e as SOe, M as Mp, f as ModelManager, g as bl, h as gOe } from "../../chunks/model-manager.js";
 import { e as env } from "../../chunks/env.js";
 import { C as Calendar_days } from "../../chunks/calendar-days.js";
 import "clsx";
-import { R as RenderComponent, C as Chevron_right, G as Grip_vertical } from "../../chunks/FragmentComponent.js";
-import { I as Icon } from "../../chunks/Icon.js";
+import { R as RenderComponent, C as Chevron_right } from "../../chunks/FragmentComponent.js";
+import { I as Icon } from "../../chunks/plus.js";
 import { runInAction } from "mobx";
 import { w as writable, g as get } from "../../chunks/index3.js";
 import { L as LoginPart, i as isAuthenticated } from "../../chunks/LoginPart.js";
-import { u as userStore, g as getStatusColor, d as dataStore } from "../../chunks/utils.js";
+import { u as userStore, d as dataStore } from "../../chunks/data-store.js";
 import { t as theme } from "../../chunks/theme-store.js";
-import "../../chunks/Tooltip.svelte_svelte_type_style_lang.js";
-import { P as Popover, S as Save, X, g as getDrawerWidth, a as getDrawerOrder, b as getDrawer, d as drawerStore, c as addDrawer } from "../../chunks/side-drawer-store.js";
+import { S as Save, g as getDrawerWidth, a as getDrawer, d as drawerStore, b as addDrawer } from "../../chunks/side-drawer-store.js";
+import { P as Popover, X } from "../../chunks/Popover.js";
 import "../../chunks/client.js";
-import { o as objectDrawerStore, c as closeObjectDrawer } from "../../chunks/object-drawer-store.js";
-import { h as html } from "../../chunks/html.js";
-import { marked } from "marked";
+import { g as getStatusColor, o as objectDrawerStore, c as closeObjectDrawer } from "../../chunks/utils.js";
+import "marked";
+import pdfMake from "pdfmake/build/pdfmake.js";
+import pdfFonts from "pdfmake/build/vfs_fonts.js";
+import MarkdownIt from "markdown-it";
+function html(value) {
+  var html2 = String(value ?? "");
+  var open = "<!---->";
+  return open + html2 + "<!---->";
+}
 function isIdentifier(str) {
   if (!isNullOrUndefined(str)) {
     const match = str.match(/^[a-z,A-Z][a-z,A-Z0-9_\-\.]*$/);
@@ -771,6 +778,38 @@ function Arrow_up_right($$payload, $$props) {
   ]));
   pop();
 }
+function Calendar($$payload, $$props) {
+  push();
+  let { $$slots, $$events, ...props } = $$props;
+  const iconNode = [
+    ["path", { "d": "M8 2v4" }],
+    ["path", { "d": "M16 2v4" }],
+    [
+      "rect",
+      {
+        "width": "18",
+        "height": "18",
+        "x": "3",
+        "y": "4",
+        "rx": "2"
+      }
+    ],
+    ["path", { "d": "M3 10h18" }]
+  ];
+  Icon($$payload, spread_props([
+    { name: "calendar" },
+    props,
+    {
+      iconNode,
+      children: ($$payload2) => {
+        props.children?.($$payload2);
+        $$payload2.out += `<!---->`;
+      },
+      $$slots: { default: true }
+    }
+  ]));
+  pop();
+}
 function Clock($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;
@@ -899,6 +938,45 @@ function Moon($$payload, $$props) {
   ]));
   pop();
 }
+function Printer($$payload, $$props) {
+  push();
+  let { $$slots, $$events, ...props } = $$props;
+  const iconNode = [
+    [
+      "path",
+      {
+        "d": "M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+      }
+    ],
+    [
+      "path",
+      { "d": "M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6" }
+    ],
+    [
+      "rect",
+      {
+        "x": "6",
+        "y": "14",
+        "width": "12",
+        "height": "8",
+        "rx": "1"
+      }
+    ]
+  ];
+  Icon($$payload, spread_props([
+    { name: "printer" },
+    props,
+    {
+      iconNode,
+      children: ($$payload2) => {
+        props.children?.($$payload2);
+        $$payload2.out += `<!---->`;
+      },
+      $$slots: { default: true }
+    }
+  ]));
+  pop();
+}
 function Refresh_cw($$payload, $$props) {
   push();
   let { $$slots, $$events, ...props } = $$props;
@@ -952,6 +1030,32 @@ function Square_chart_gantt($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "square-chart-gantt" },
+    props,
+    {
+      iconNode,
+      children: ($$payload2) => {
+        props.children?.($$payload2);
+        $$payload2.out += `<!---->`;
+      },
+      $$slots: { default: true }
+    }
+  ]));
+  pop();
+}
+function Square_check_big($$payload, $$props) {
+  push();
+  let { $$slots, $$events, ...props } = $$props;
+  const iconNode = [
+    [
+      "path",
+      {
+        "d": "M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344"
+      }
+    ],
+    ["path", { "d": "m9 11 3 3L22 4" }]
+  ];
+  Icon($$payload, spread_props([
+    { name: "square-check-big" },
     props,
     {
       iconNode,
@@ -1035,6 +1139,37 @@ function Triangle_alert($$payload, $$props) {
   ];
   Icon($$payload, spread_props([
     { name: "triangle-alert" },
+    props,
+    {
+      iconNode,
+      children: ($$payload2) => {
+        props.children?.($$payload2);
+        $$payload2.out += `<!---->`;
+      },
+      $$slots: { default: true }
+    }
+  ]));
+  pop();
+}
+function Users($$payload, $$props) {
+  push();
+  let { $$slots, $$events, ...props } = $$props;
+  const iconNode = [
+    [
+      "path",
+      {
+        "d": "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+      }
+    ],
+    [
+      "path",
+      { "d": "M16 3.128a4 4 0 0 1 0 7.744" }
+    ],
+    ["path", { "d": "M22 21v-2a4 4 0 0 0-3-3.87" }],
+    ["circle", { "cx": "9", "cy": "7", "r": "4" }]
+  ];
+  Icon($$payload, spread_props([
+    { name: "users" },
     props,
     {
       iconNode,
@@ -1371,6 +1506,7 @@ function NavBar($$payload, $$props) {
       $$payload2.out += `<!---->`;
     };
     AppBar($$payload, {
+      trailSpaceX: "gap-1",
       lead,
       trail,
       $$slots: { lead: true, trail: true }
@@ -1418,7 +1554,7 @@ function StudyMutation($$payload, $$props) {
   const errors = { name: "" };
   const errorState = { ...errors };
   let hasErrors = Object.values(errorState).some((error) => error !== "");
-  $$payload.out += `<div class="mutation-area max-w-sm"><div class="space-y-4"><div><div class="small-label-text">Name `;
+  $$payload.out += `<div class="mutation-area max-w-sm"><div class="flex flex-col gap-2"><div><div class="small-label-text">Name`;
   {
     $$payload.out += "<!--[!-->";
   }
@@ -1440,23 +1576,31 @@ function StudyMutation($$payload, $$props) {
 }
 function PatientMutation($$payload, $$props) {
   push();
-  const { study, patient, action } = $$props;
+  const { study, patient, action, onsave, onclose } = $$props;
   let mutatedPatient = { ...patient };
   createEventDispatcher();
-  function getInputClass(field) {
+  function getErrorState(field) {
     return errorState[field] ? "error" : "";
   }
-  let errors = { patientNumber: "" };
-  let errorState = { ...errors };
+  const errors = { patientNumber: "", initials: "" };
+  const errorState = { ...errors };
   let hasErrors = Object.values(errorState).some((error) => error !== "");
-  $$payload.out += `<div class="card crc-mutation-area max-w-sm"><div class="space-y-2"><div><h4 class="card-label-text">Patient Number</h4> <input type="text"${attr("value", mutatedPatient.patientNumber)}${attr_class(`crc-field ${stringify(getInputClass("patientNumber"))}`)}/></div> <div><h4 class="card-label-text">Initials</h4> <input type="text"${attr("value", mutatedPatient.initials)} class="crc-field"/></div> <div><h4 class="card-label-text">YOB</h4> <input type="number"${attr("value", mutatedPatient.dob)} min="1924"${attr("max", (/* @__PURE__ */ new Date()).getFullYear())} class="crc-field"/></div> <div><h4 class="card-label-text">Gender</h4> <select class="select crc-field">`;
+  $$payload.out += `<div class="mutation-area max-w-sm"><div class="flex flex-col gap-2"><div><div class="small-label-text">Patient Number`;
+  {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></div> <input${attr_class(`input-field ${stringify(getErrorState("patientNumber"))}`)} type="text"${attr("value", mutatedPatient.patientNumber)}/></div> <div><div class="small-label-text">Initials`;
+  {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></div> <input class="input-field" type="text"${attr("value", mutatedPatient.initials)}/></div> <div><div class="small-label-text">YOB</div> <input class="input-field" type="number"${attr("value", mutatedPatient.dob)} min="1924"${attr("max", (/* @__PURE__ */ new Date()).getFullYear())}/></div> <div><div class="small-label-text">Gender</div> <select class="select-field">`;
   $$payload.select_value = mutatedPatient.gender;
   $$payload.out += `<option value="Male"${maybe_selected($$payload, "Male")}>Male</option><option value="Female"${maybe_selected($$payload, "Female")}>Female</option><option value="Other"${maybe_selected($$payload, "Other")}>Other</option>`;
   $$payload.select_value = void 0;
-  $$payload.out += `</select></div></div> <div class="flex items-center justify-center mt-4"><button class="btn btn-sm preset-filled primary-button mr-2"${attr("disabled", hasErrors, true)}>`;
-  Save($$payload, {});
-  $$payload.out += `<!---->Save</button> <button class="btn btn-sm preset-filled secondary-button">`;
-  X($$payload, {});
+  $$payload.out += `</select></div></div> <div class="flex items-center justify-center mt-8"><button class="standard-button primary"${attr("disabled", hasErrors, true)}>`;
+  Save($$payload, { size: "16" });
+  $$payload.out += `<!---->Save</button> <button class="standard-button secondary">`;
+  X($$payload, { size: "16" });
   $$payload.out += `<!---->Cancel</button></div></div>`;
   pop();
 }
@@ -1481,7 +1625,12 @@ function ObjectDrawerSystem($$payload, $$props) {
         StudyMutation($$payload2, {
           study: data,
           action,
-          onsave: (study) => {
+          onsave: async (study) => {
+            if (action === "add") {
+              await dataStore.addStudy(study);
+            } else if (action === "edit") {
+              await dataStore.updateStudy(study);
+            }
             handleClose();
           },
           onclose: () => {
@@ -1493,7 +1642,12 @@ function ObjectDrawerSystem($$payload, $$props) {
         PatientMutation($$payload2, {
           patient: data,
           action,
-          onsave: (patient) => {
+          onsave: async (patient) => {
+            if (action === "add") {
+              await dataStore.addPatient(patient);
+            } else if (action === "edit") {
+              await dataStore.updatePatient(patient);
+            }
             handleClose();
           },
           onclose: () => {
@@ -1507,6 +1661,7 @@ function ObjectDrawerSystem($$payload, $$props) {
     };
     Popover($$payload, {
       open: openState,
+      modal: true,
       onOpenChange: (e) => e.open ? null : handleClose(),
       positioning: {
         placement: "left",
@@ -1531,9 +1686,9 @@ function SideDrawerSystem($$payload, $$props) {
   let { isOpen = false } = $$props;
   let activeDrawer = store_get($$store_subs ??= {}, "$drawerStore", drawerStore).activeDrawer;
   let drawerWidth = activeDrawer ? getDrawerWidth(activeDrawer) : 400;
-  getDrawerOrder();
   let drawers = store_get($$store_subs ??= {}, "$drawerStore", drawerStore).drawerOrder.map((key) => store_get($$store_subs ??= {}, "$drawerStore", drawerStore).drawers[key]).filter(Boolean);
   createEventDispatcher();
+  let isHandleBright = false;
   const each_array = ensure_array_like(drawers);
   $$payload.out += `<div${attr_class("drawer-system", void 0, { "open": isOpen })}><div class="drawer-buttons"><!--[-->`;
   for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
@@ -1541,7 +1696,7 @@ function SideDrawerSystem($$payload, $$props) {
     if (drawer.isVisible) {
       $$payload.out += "<!--[-->";
       const Icon2 = drawer.icon;
-      $$payload.out += `<button${attr("id", drawer.key)} class="icon-button toolbar-button"><!---->`;
+      $$payload.out += `<button${attr("id", drawer.key)} class="icon-button toolbar-button"${attr("title", drawer.description)}><!---->`;
       Icon2($$payload, { size: 20 });
       $$payload.out += `<!----></button>`;
     } else {
@@ -1552,18 +1707,25 @@ function SideDrawerSystem($$payload, $$props) {
   $$payload.out += `<!--]--></div> `;
   if (isOpen && activeDrawer) {
     $$payload.out += "<!--[-->";
-    $$payload.out += `<div class="drawer-content-wrapper"${attr_style(`width: ${stringify(drawerWidth)}px`)}><div class="resize-handle" role="button" tabindex="0">`;
-    Grip_vertical($$payload, {});
-    $$payload.out += `<!----></div> <div class="drawer-content"><div class="drawer-header"><div class="drawer-title-container"><h2>${escape_html(getDrawer(activeDrawer)?.title ?? "")}</h2> `;
+    $$payload.out += `<div class="drawer-content-wrapper"${attr_style(`width: ${stringify(drawerWidth)}px`)}><div${attr_class("resize-handle", void 0, { "bright": isHandleBright })} role="button" tabindex="0"></div> <div class="drawer-content"><div class="drawer-header"><div class="drawer-title-container"><h2>${escape_html(getDrawer(activeDrawer)?.title ?? "")}</h2> `;
     if (getDrawer(activeDrawer)?.supportsRefresh) {
       $$payload.out += "<!--[-->";
-      $$payload.out += `<button class="icon-button drawer-header-button">`;
-      Refresh_cw($$payload, { size: 16 });
+      $$payload.out += `<button class="image-button drawer-header-button">`;
+      Refresh_cw($$payload, { size: 20 });
       $$payload.out += `<!----></button>`;
     } else {
       $$payload.out += "<!--[!-->";
     }
-    $$payload.out += `<!--]--></div> <button class="icon-button drawer-header-button">`;
+    $$payload.out += `<!--]--> `;
+    if (getDrawer(activeDrawer)?.supportsPrint) {
+      $$payload.out += "<!--[-->";
+      $$payload.out += `<button class="image-button drawer-header-button">`;
+      Printer($$payload, { size: 20 });
+      $$payload.out += `<!----></button>`;
+    } else {
+      $$payload.out += "<!--[!-->";
+    }
+    $$payload.out += `<!--]--></div> <button class="image-button drawer-header-button">`;
     X($$payload, { size: 16 });
     $$payload.out += `<!----></button></div> `;
     {
@@ -1590,32 +1752,35 @@ function FavoritesDrawer($$payload, $$props) {
 }
 function getTimelineTable(node) {
   let timeline = getTimeline(node);
-  const tableHTML = rv.getTimeLineTableAndStyles(timeline);
+  const tableHTML = nh.getTimeLineTableAndStyles(timeline);
   const html2 = `<div class="limited-width-container">${tableHTML}</div>`;
   return new RtString(html2);
 }
-function getTimelineChart(node) {
+function getTimelineChart(node, hasPatientKey = false, hasStaffKey = false) {
   let timeline = getTimeline(node);
-  const timelineDataAsScript = tv.getTimelineDataHTML(timeline);
-  const timelineVisualizationHTML = tv.getTimelineVisualizationHTML(timeline);
-  const chartHTML = tv.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+  const timelineDataAsScript = pi.getTimelineDataHTML(timeline);
+  const timelineVisualizationHTML = pi.getTimelineVisualizationHTML(timeline);
+  const chartHTML = pi.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, hasPatientKey, hasStaffKey);
   const html2 = `<div class="limited-width-container">${chartHTML}</div>`;
   return new RtString(html2);
 }
 function getTimeline(node) {
   var simulator;
-  new NN();
+  new Sk();
   let studyConfigurationUnit = node;
-  simulator = new LOe(studyConfigurationUnit);
+  simulator = new SOe(studyConfigurationUnit);
   simulator.run();
   let timeline = simulator.timeline;
   return timeline;
 }
-function getChecklistAsMarkdown(studyConfigurationUnit) {
+function getChecklistAsMarkdown(studyConfigurationUnit, showHeadingNumbers = false) {
   let timeline = getTimeline(studyConfigurationUnit);
-  const studyChecklistAsMarkdown = Hd.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline);
+  const studyChecklistAsMarkdown = Mp.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline, showHeadingNumbers);
   const html2 = `<div class="limited-width-container">${studyChecklistAsMarkdown}</div>`;
   return html2;
+}
+function ContentLoader($$payload) {
+  $$payload.out += `<div class="placeholder animate-pulse mt-1 mb-2"></div> <div class="grid grid-cols-4 gap-4 mb-2"><div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div></div> <div class="grid grid-cols-4 gap-4 mb-2"><div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div></div> <div class="grid grid-cols-4 gap-4"><div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div> <div class="placeholder animate-pulse"></div></div>`;
 }
 function StudyTimelineChartDrawer($$payload, $$props) {
   push();
@@ -1623,17 +1788,28 @@ function StudyTimelineChartDrawer($$payload, $$props) {
   let isLoading = true;
   let showChart = false;
   let chartHtml = "";
+  let error = null;
   const dispatch = createEventDispatcher();
   function refresh() {
     dispatch("refresh");
-    loadChart(studyId);
+    buildChart(studyId);
   }
-  async function loadChart(id) {
+  async function buildChart(id) {
+    console.log("build StudyTimelineChart: ", id);
     isLoading = true;
     showChart = false;
+    error = null;
     try {
       const startTime = Date.now();
-      chartHtml = getChart(studyId);
+      const modelManager = ModelManager.getInstance();
+      await modelManager.openModel(id);
+      const model = modelManager.currentModel;
+      const unit = model.configuration;
+      if (!unit) {
+        throw new Error("Configuration unit is not available in the model.");
+      }
+      const rtObject = getTimelineChart(unit, false, true);
+      chartHtml = rtObject.asString();
       await new Promise((resolve) => setTimeout(() => resolve(null), 0));
       await loadChartData();
       const elapsedTime = Date.now() - startTime;
@@ -1643,35 +1819,27 @@ function StudyTimelineChartDrawer($$payload, $$props) {
       showChart = true;
     } catch (err) {
       console.error(`Error fetching chart data for study: ${id}`, err);
-      err instanceof Error ? err.message : "An error occurred while fetching chart data";
+      error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
     } finally {
       isLoading = false;
     }
   }
-  function getChart(id) {
-    const model = ModelManager.getInstance().openModel(id);
-    const unit = model.configuration;
-    const rtObject = getTimelineChart(unit);
-    return rtObject.asString();
-  }
   async function loadChartData() {
-    return new Promise((resolve) => {
-      const link = document.createElement("link");
-      link.href = "https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css";
-      link.rel = "stylesheet";
-      document.head.appendChild(link);
-      const script = document.createElement("script");
-      script.src = "https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js";
-      script.onload = () => {
-        resolve();
-      };
-      document.body.appendChild(script);
-    });
   }
   head($$payload, ($$payload2) => {
     $$payload2.out += `<script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"><\/script> <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css"/>`;
   });
-  $$payload.out += `<div class="drawer-content-area p-2"><div${attr_style(`display: ${stringify(isLoading || !showChart ? "block" : "none")}`)}><div class="placeholder animate-pulse mb-4"></div></div> <div${attr_style(`display: ${stringify(!isLoading && showChart ? "block" : "none")}`)}><div>${html(chartHtml)}</div></div></div>`;
+  $$payload.out += `<div class="drawer-content-area p-2">`;
+  if (error) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="text-red-500 p-4">${escape_html(error)}</div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+    $$payload.out += `<div${attr_style(`display: ${stringify(isLoading ? "block" : "none")}`)}>`;
+    ContentLoader($$payload);
+    $$payload.out += `<!----></div> <div${attr_style(`display: ${stringify(!isLoading && showChart ? "block" : "none")}`)}><div>${html(chartHtml)}</div></div>`;
+  }
+  $$payload.out += `<!--]--></div>`;
   bind_props($$props, { refresh });
   pop();
 }
@@ -1680,17 +1848,18 @@ function StudyTimelineTableDrawer($$payload, $$props) {
   let { studyId } = $$props;
   let isLoading = true;
   let tableHtml = "";
-  let checklistHtml = "";
+  let error = null;
   let showTable = false;
   const dispatch = createEventDispatcher();
   function refresh() {
     dispatch("refresh");
-    loadAllData(studyId);
+    buildTable(studyId);
   }
-  async function loadAllData(id) {
-    console.log("loadAllData: ", id);
+  async function buildTable(id) {
+    console.log("build StudyTimelineTable: ", id);
     isLoading = true;
     showTable = false;
+    error = null;
     try {
       const startTime = Date.now();
       const modelManager = ModelManager.getInstance();
@@ -1702,9 +1871,6 @@ function StudyTimelineTableDrawer($$payload, $$props) {
       }
       const rtObject = getTimelineTable(unit);
       tableHtml = rtObject.asString();
-      const checklistAsMarkdown = getChecklistAsMarkdown(unit);
-      const htmlContent = marked(checklistAsMarkdown);
-      checklistHtml = `<div class="limited-width-container">${htmlContent}</div>`;
       await new Promise((resolve) => setTimeout(() => resolve(null), 0));
       const elapsedTime = Date.now() - startTime;
       if (elapsedTime < 2e3) {
@@ -1713,12 +1879,534 @@ function StudyTimelineTableDrawer($$payload, $$props) {
       showTable = true;
     } catch (err) {
       console.error(`Error fetching chart data for study: ${id}`, err);
-      err instanceof Error ? err.message : "An error occurred while fetching chart data";
+      error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
     } finally {
       isLoading = false;
     }
   }
-  $$payload.out += `<div class="drawer-content-area p-2"><div${attr_style(`display: ${stringify(isLoading || !showTable ? "block" : "none")}`)}><div class="placeholder animate-pulse mb-4"></div></div> <div${attr_style(`display: ${stringify(!isLoading && showTable ? "block" : "none")}`)}><div>${html(tableHtml)}</div></div> <div style="display: block" class="markdown-body svelte-110fhye"><div>${html(checklistHtml)}</div></div></div>`;
+  $$payload.out += `<div class="drawer-content-area p-2">`;
+  if (error) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="text-red-500 p-4">${escape_html(error)}</div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+    if (isLoading || !showTable) {
+      $$payload.out += "<!--[-->";
+      ContentLoader($$payload);
+    } else {
+      $$payload.out += "<!--[!-->";
+      $$payload.out += `<div>${html(tableHtml)}</div>`;
+    }
+    $$payload.out += `<!--]-->`;
+  }
+  $$payload.out += `<!--]--></div>`;
+  bind_props($$props, { refresh });
+  pop();
+}
+function StudyChecklistDrawer($$payload, $$props) {
+  push();
+  pdfMake.vfs = pdfFonts;
+  const md = new MarkdownIt();
+  let { studyId } = $$props;
+  let studyName = "";
+  let isLoading = true;
+  let checklistHtml = "";
+  let error = null;
+  let showHeadingNumbers = true;
+  const dispatch = createEventDispatcher();
+  onMount(async () => {
+    const study = await dataStore.getStudy(studyId);
+    studyName = study.name;
+  });
+  function openPdf() {
+    const model = ModelManager.getInstance().getModelUnit("StudyConfigurationModel");
+    if (!model) {
+      error = "Model not loaded, cannot generate PDF.";
+      return;
+    }
+    const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
+    const tokens = md.parse(markdown, {});
+    const content = [];
+    const tocItems = [];
+    let headingCounter = 0;
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      if (token.type === "heading_open") {
+        const text = tokens[i + 1].content;
+        const level = parseInt(token.tag.slice(1));
+        const id = `heading-${headingCounter++}`;
+        tocItems.push({ text, level, id });
+        const style = `h${level}`;
+        const contentItem = { text, style, id };
+        if (level === 1) {
+          contentItem.pageBreak = "before";
+        }
+        content.push(contentItem);
+        i++;
+      } else if (token.type === "paragraph_open") {
+        const inline = tokens[i + 1];
+        if (inline.type === "inline" && inline.children?.length) {
+          content.push({
+            text: inline.content,
+            margin: [0, 5, 0, 15]
+          });
+        }
+        i++;
+      } else if (token.type === "bullet_list_open") {
+        const items = [];
+        let j = i + 1;
+        while (tokens[j] && tokens[j].type !== "bullet_list_close") {
+          if (tokens[j].type === "list_item_open") {
+            const contentToken = tokens[j + 1];
+            if (contentToken && contentToken.type === "inline") {
+              items.push(contentToken.content);
+            }
+          }
+          j++;
+        }
+        content.push({ ul: items, margin: [0, 5, 0, 15] });
+        i = j;
+      } else if (token.type === "table_open") {
+        const tableBody = [];
+        let j = i + 1;
+        while (tokens[j] && tokens[j].type !== "thead_close") {
+          j++;
+        }
+        j++;
+        while (tokens[j] && tokens[j].type !== "table_close") {
+          if (tokens[j].type === "tr_open") {
+            const row = [];
+            let k = j + 1;
+            while (tokens[k] && tokens[k].type !== "tr_close") {
+              if (tokens[k].type === "td_open" || tokens[k].type === "th_open") {
+                const cellContent = tokens[k + 1].content;
+                row.push(cellContent);
+              }
+              k++;
+            }
+            if (row.length > 0) {
+              tableBody.push(row);
+            }
+            j = k;
+          }
+          j++;
+        }
+        if (tableBody.length > 0) {
+          content.push({
+            table: { headerRows: 1, body: tableBody },
+            margin: [0, 10, 0, 15]
+          });
+        }
+        i = j;
+      } else if (token.type === "hr") {
+        content.push({
+          canvas: [
+            {
+              type: "line",
+              x1: 0,
+              y1: 5,
+              x2: 515,
+              y2: 5,
+              lineWidth: 1,
+              lineColor: "#cccccc"
+            }
+          ],
+          margin: [0, 10]
+        });
+      }
+    }
+    const tocContent = tocItems.map((item) => ({
+      text: item.text,
+      linkToDestination: item.id,
+      margin: [(item.level - 1) * 15, 5, 0, 5],
+      // Indent based on heading level
+      style: "tocLink"
+    }));
+    const finalContent = [
+      { text: "Table of Contents", style: "h2" },
+      ...tocContent,
+      ...content
+    ];
+    const docDefinition = {
+      content: finalContent,
+      info: {
+        title: `${studyName} - ${(/* @__PURE__ */ new Date()).toLocaleDateString()}`,
+        author: "CRCHub",
+        subject: "Study Checklist"
+      },
+      header(currentPage, pageCount) {
+        ModelManager.getInstance().getModelUnit("StudyConfigurationModel");
+        return {
+          text: `${studyName} - ${(/* @__PURE__ */ new Date()).toLocaleDateString()}`,
+          alignment: "center",
+          style: "header",
+          margin: [0, 10, 0, 0]
+        };
+      },
+      footer(currentPage, pageCount) {
+        return {
+          text: `Page ${currentPage.toString()} of ${pageCount}`,
+          alignment: "center",
+          style: "footer"
+        };
+      },
+      styles: {
+        h1: {
+          fontSize: 24,
+          bold: true,
+          margin: [0, 0, 0, 20],
+          pageBreak: "before"
+        },
+        h2: {
+          fontSize: 20,
+          bold: true,
+          margin: [0, 15, 0, 10]
+        },
+        h3: {
+          fontSize: 16,
+          bold: true,
+          margin: [0, 15, 0, 5]
+        },
+        footer: { fontSize: 10, color: "#444" },
+        header: { fontSize: 10, color: "#666", bold: true },
+        tocLink: { color: "blue" }
+      },
+      defaultStyle: { fontSize: 12, lineHeight: 1.15 }
+    };
+    const fileName = `study-checklist-${studyName}.pdf`;
+    pdfMake.createPdf(docDefinition).getBlob((blob) => {
+      const url2 = URL.createObjectURL(blob);
+      window.open(url2);
+      const link = document.createElement("a");
+      link.href = url2;
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(url2);
+    });
+  }
+  function refresh() {
+    dispatch("refresh");
+    loadChecklistAsMarkdown();
+  }
+  function print() {
+    openPdf();
+  }
+  async function loadChecklistAsMarkdown() {
+    isLoading = true;
+    error = null;
+    try {
+      const modelManager = ModelManager.getInstance();
+      await modelManager.openModel(studyId);
+      const model = modelManager.currentModel;
+      const unit = model.configuration;
+      if (!model) {
+        error = "Model not loaded.";
+        isLoading = false;
+        return;
+      }
+      const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
+      const tokens = md.parse(markdown, {});
+      const toc = [];
+      const generateId = (text) => {
+        return text.toLowerCase().replace(/[^\w\- ]/g, "").replace(
+          /\s+/g,
+          // Remove special characters except hyphens and spaces
+          "-"
+        ).replace(
+          /-+/g,
+          // Replace spaces with hyphens
+          "-"
+        ).replace(
+          /^-|-$/g,
+          // Replace multiple hyphens with single hyphen
+          ""
+        );
+      };
+      for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+        if (token.type === "heading_open") {
+          const text = tokens[i + 1].content;
+          const level = parseInt(token.tag.slice(1));
+          const id = generateId(text);
+          toc.push({ level, text, id });
+          i++;
+        }
+      }
+      let bodyHtml = md.render(markdown);
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = bodyHtml;
+      toc.forEach((item) => {
+        const headings = tempDiv.querySelectorAll(`h${item.level}`);
+        headings.forEach((heading) => {
+          if (heading.textContent?.trim() === item.text) {
+            heading.id = item.id;
+          }
+        });
+      });
+      bodyHtml = tempDiv.innerHTML;
+      let tocHtml = '<h2>Table of Contents</h2><ul class="toc-list">';
+      toc.forEach((item) => {
+        tocHtml += `<li style="margin-left: ${(item.level - 1) * 20}px;"><a href="#${item.id}">${item.text}</a></li>`;
+      });
+      tocHtml += "</ul>";
+      if (bodyHtml.includes("<!--TOC-->")) {
+        checklistHtml = bodyHtml.replace("<!--TOC-->", tocHtml);
+      } else {
+        checklistHtml = tocHtml + bodyHtml;
+      }
+    } catch (err) {
+      console.error(`Error fetching data for study: ${studyId}`, err);
+      error = err instanceof Error ? err.message : "An error occurred";
+    } finally {
+      isLoading = false;
+    }
+  }
+  $$payload.out += `<div class="checklist-drawer">`;
+  if (error) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="text-red-500 p-4">${escape_html(error)}</div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+    if (isLoading) {
+      $$payload.out += "<!--[-->";
+      ContentLoader($$payload);
+    } else {
+      $$payload.out += "<!--[!-->";
+      $$payload.out += `<div class="markdown-body">${html(checklistHtml)}</div>`;
+    }
+    $$payload.out += `<!--]-->`;
+  }
+  $$payload.out += `<!--]--></div>`;
+  bind_props($$props, { refresh, print });
+  pop();
+}
+function getTimelineAsOfADate(node, referenceDate, patientHistory) {
+  var simulator;
+  new Sk();
+  let studyConfigurationUnit = node;
+  simulator = new SOe(studyConfigurationUnit);
+  if (referenceDate) {
+    simulator.setReferenceDate(referenceDate);
+  } else {
+    simulator.setReferenceDate(new Date(2024, 8, 30));
+  }
+  simulator.organizedByReferenceDate();
+  if (patientHistory) {
+    simulator.timeline.addPatientEvents(patientHistory);
+  }
+  simulator.run();
+  let timeline = simulator.timeline;
+  return timeline;
+}
+function PatientTimelineChartDrawer($$payload, $$props) {
+  push();
+  let { id } = $$props;
+  let isLoading = true;
+  let showChart = false;
+  let chartHtml = "";
+  let error = null;
+  let patientInfo;
+  const dispatch = createEventDispatcher();
+  function refresh() {
+    dispatch("refresh");
+    loadChart(id);
+  }
+  const getTimelineChartError = () => {
+    const html2 = `<div class="limited-width-container"><div class='text-red-500'>Error: PatientInfo not found</div></div>`;
+    return new RtString(html2);
+  };
+  const fillDateConcept = (dateConcept) => {
+    gOe.fillDateConceptFromAsString(dateConcept);
+  };
+  const getChartWithPatientHistory = async (referenceDate) => {
+    const modelManager = ModelManager.getInstance();
+    const fetchedPatient = await dataStore.getPatient(id);
+    let found = false;
+    let patientHistory = bl.create({});
+    patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(fetchedPatient.studyId, "PatientInfo");
+    if (!patientInfo || patientInfo === void 0) {
+      const rtObject2 = getTimelineChartError();
+      return rtObject2.asString();
+    }
+    console.log("PatientInfo found:", patientInfo);
+    console.log("Looking for patient with ID:", fetchedPatient.patientNumber);
+    console.log("Available patient histories:", patientInfo.patientHistories.length);
+    patientInfo.patientHistories.forEach((aPatientHistory) => {
+      console.log("Checking patient history:", aPatientHistory.patient_id);
+      if (!found && aPatientHistory.patient_id === fetchedPatient.patientNumber) {
+        console.log("Found matching patient history!");
+        console.log("Patient visits:", aPatientHistory.patientVisits.length);
+        console.log("Not available dates:", aPatientHistory.patientNotAvailableDates.dates.length);
+        aPatientHistory.patientVisits.forEach((visit) => {
+          let updatedVisit = visit.copy();
+          fillDateConcept(updatedVisit.actualVisitDate);
+          patientHistory.patientVisits.push(updatedVisit);
+        });
+        aPatientHistory.patientNotAvailableDates.dates.forEach((dateRange) => {
+          let updatedDateRange = dateRange.copy();
+          fillDateConcept(updatedDateRange.startDate);
+          if (updatedDateRange.endDate) {
+            fillDateConcept(updatedDateRange.endDate);
+          }
+          patientHistory.patientNotAvailableDates.dates.push(updatedDateRange);
+        });
+        found = true;
+      }
+    });
+    if (!found) {
+      console.error("No matching patient history found!");
+      const rtObject2 = getTimelineChartError();
+      return rtObject2.asString();
+    }
+    let referenceDateForTimeline;
+    if (referenceDate === void 0) {
+      if (patientHistory.patientVisits.length > 0) {
+        referenceDateForTimeline = new Date(patientHistory.patientVisits[0].actualVisitDate.dateAsString);
+      } else {
+        referenceDateForTimeline = new Date(2024, 8, 30);
+      }
+    }
+    const model = ModelManager.getInstance().getModelUnit("StudyConfigurationModel");
+    const studyConfig = model.configuration;
+    studyConfig.studyStartDayNumber = 0;
+    console.log("Creating timeline with patient history...");
+    let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
+    console.log("Timeline created, getting chart HTML...");
+    const rtObject = timeline.getTimelineChartHtml();
+    console.log("Chart HTML generated");
+    return rtObject.asString();
+  };
+  async function loadChart(id2) {
+    isLoading = true;
+    showChart = false;
+    error = null;
+    try {
+      const startTime = Date.now();
+      const referenceDate = new Date(2024, 8, 30);
+      chartHtml = await getChartWithPatientHistory(referenceDate);
+      await new Promise((resolve) => setTimeout(() => resolve(null), 0));
+      await loadChartData();
+      const elapsedTime = Date.now() - startTime;
+      if (elapsedTime < 5e3) {
+        await new Promise((resolve) => setTimeout(resolve, 5e3 - elapsedTime));
+      }
+      showChart = true;
+    } catch (err) {
+      console.error(`Error fetching chart data for study: ${id2}`, err);
+      error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
+    } finally {
+      isLoading = false;
+    }
+  }
+  async function loadChartData() {
+  }
+  head($$payload, ($$payload2) => {
+    $$payload2.out += `<script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"><\/script> <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css"/>`;
+  });
+  $$payload.out += `<div class="drawer-content-area p-2"><div${attr_style(`display: ${stringify(isLoading ? "block" : "none")}`)} class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div> <p class="mt-2 text-gray-600">Preparing Patient Timeline...</p></div> <div${attr_style(`display: ${stringify(!isLoading && showChart ? "block" : "none")}`)}><div>${html(chartHtml)}</div></div> `;
+  if (error) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="text-red-500 p-4">${escape_html(error)}</div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></div>`;
+  bind_props($$props, { refresh });
+  pop();
+}
+function StaffAvailabilityDrawer($$payload, $$props) {
+  push();
+  pdfMake.vfs = pdfFonts;
+  const md = new MarkdownIt();
+  let { studyId } = $$props;
+  let isLoading = true;
+  let checklistHtml = "";
+  let error = null;
+  let showHeadingNumbers = true;
+  const dispatch = createEventDispatcher();
+  function refresh() {
+    dispatch("refresh");
+    loadChecklistAsMarkdown();
+  }
+  async function loadChecklistAsMarkdown() {
+    isLoading = true;
+    error = null;
+    try {
+      const model = ModelManager.getInstance().getModelUnit("StudyConfigurationModel");
+      if (!model) {
+        error = "Model not loaded.";
+        isLoading = false;
+        return;
+      }
+      const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
+      const tokens = md.parse(markdown, {});
+      const toc = [];
+      const generateId = (text) => {
+        return text.toLowerCase().replace(/[^\w\- ]/g, "").replace(
+          /\s+/g,
+          // Remove special characters except hyphens and spaces
+          "-"
+        ).replace(
+          /-+/g,
+          // Replace spaces with hyphens
+          "-"
+        ).replace(
+          /^-|-$/g,
+          // Replace multiple hyphens with single hyphen
+          ""
+        );
+      };
+      for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+        if (token.type === "heading_open") {
+          const text = tokens[i + 1].content;
+          const level = parseInt(token.tag.slice(1));
+          const id = generateId(text);
+          toc.push({ level, text, id });
+          i++;
+        }
+      }
+      let bodyHtml = md.render(markdown);
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = bodyHtml;
+      toc.forEach((item) => {
+        const headings = tempDiv.querySelectorAll(`h${item.level}`);
+        headings.forEach((heading) => {
+          if (heading.textContent?.trim() === item.text) {
+            heading.id = item.id;
+          }
+        });
+      });
+      bodyHtml = tempDiv.innerHTML;
+      let tocHtml = '<h2>Table of Contents</h2><ul class="toc-list">';
+      toc.forEach((item) => {
+        tocHtml += `<li style="margin-left: ${(item.level - 1) * 20}px;"><a href="#${item.id}" style="color: #cfcfcf;">${item.text}</a></li>`;
+      });
+      tocHtml += "</ul><hr/>";
+      if (bodyHtml.includes("<!--TOC-->")) {
+        checklistHtml = bodyHtml.replace("<!--TOC-->", tocHtml);
+      } else {
+        checklistHtml = tocHtml + bodyHtml;
+      }
+    } catch (err) {
+      console.error(`Error fetching data for study: ${studyId}`, err);
+      error = err instanceof Error ? err.message : "An error occurred";
+    } finally {
+      isLoading = false;
+    }
+  }
+  $$payload.out += `<div class="drawer-content-area p-2">`;
+  if (isLoading) {
+    $$payload.out += "<!--[-->";
+    $$payload.out += `<div class="placeholder animate-pulse mb-4"></div>`;
+  } else if (error) {
+    $$payload.out += "<!--[1-->";
+    $$payload.out += `<div class="text-red-500 p-4">${escape_html(error)}</div>`;
+  } else {
+    $$payload.out += "<!--[!-->";
+    $$payload.out += `<div class="markdown-body svelte-xnshrd">${html(checklistHtml)}</div>`;
+  }
+  $$payload.out += `<!--]--></div>`;
   bind_props($$props, { refresh });
   pop();
 }
@@ -1820,6 +2508,7 @@ function _layout($$payload, $$props) {
         title: "Help",
         description: "Help for application.",
         supportsRefresh: false,
+        supportsPrint: false,
         defaultWidth: 900
       });
       addDrawer({
@@ -1829,6 +2518,7 @@ function _layout($$payload, $$props) {
         title: "Favorites",
         description: "Manage your favorite studies, patients, and tasks.",
         supportsRefresh: true,
+        supportsPrint: false,
         defaultWidth: 400
       });
       addDrawer({
@@ -1838,24 +2528,57 @@ function _layout($$payload, $$props) {
         title: "Errors",
         description: "View the errors in the study design.",
         supportsRefresh: true,
+        supportsPrint: false,
         defaultWidth: 800
       });
       addDrawer({
         key: "studyTimelineTable",
-        icon: Square_chart_gantt,
+        icon: Table_2,
         component: StudyTimelineTableDrawer,
         title: "Study Timeline Table",
         description: "View the timeline as a table for this study.",
         supportsRefresh: true,
+        supportsPrint: false,
         defaultWidth: 600
       });
       addDrawer({
         key: "studyTimelineChart",
-        icon: Table_2,
+        icon: Square_chart_gantt,
         component: StudyTimelineChartDrawer,
         title: "Study Timeline Chart",
         description: "View the timeline as a chart for this study.",
         supportsRefresh: true,
+        supportsPrint: false,
+        defaultWidth: 800
+      });
+      addDrawer({
+        key: "studyChecklist",
+        icon: Square_check_big,
+        component: StudyChecklistDrawer,
+        title: "Study Checklist",
+        description: "View the checklist for this study.",
+        supportsRefresh: true,
+        supportsPrint: true,
+        defaultWidth: 800
+      });
+      addDrawer({
+        key: "patientTimelineChart",
+        icon: Calendar,
+        component: PatientTimelineChartDrawer,
+        title: "Patient Timeline",
+        description: "View the availability of staff for this study.",
+        supportsRefresh: true,
+        supportsPrint: false,
+        defaultWidth: 800
+      });
+      addDrawer({
+        key: "staffAvailability",
+        icon: Users,
+        component: StaffAvailabilityDrawer,
+        title: "Staff Availability",
+        description: "View the availability of staff for this study.",
+        supportsRefresh: true,
+        supportsPrint: false,
         defaultWidth: 800
       });
       console.log("All drawers after registration:", get(drawerStore).drawers);

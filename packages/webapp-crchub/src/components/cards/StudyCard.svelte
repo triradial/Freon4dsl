@@ -1,19 +1,22 @@
 <script lang="ts">
-    import { type Study } from "../../services/data/data-store.js";
-    import { editObject } from "../../services/stores/object-drawer-store.js";
+    import { dataStore } from "../../services/data/data-store.js";
+    const { studyId } = $props<{ studyId: string }>();
+
+    let study = $derived($dataStore.studies.find(s => s.id === studyId));
     import { getStatusColor } from "../../services/utils.js";
     // @ts-ignore
     import { Pencil as IconPencil } from '@lucide/svelte';
 
-    const { study } = $props<{ study: Study }>();
-
-    let statusColor = getStatusColor(study.status);
+    let statusColor = $derived(study ? getStatusColor(study.status) : "");
 
     function onEditClick() {
-        editObject("study", study.id);
+        if (study) {
+            import("../../services/stores/object-drawer-store.js").then(m => m.editObject("study", study.id));
+        }
     }
 </script>
 
+{#if study}
 <div class="card card-area max-w-sm h-full">
     <div class="flex items-center justify-left mb-4">
         <h3 class="main-label-text mr-2">Study</h3>
@@ -46,3 +49,6 @@
         </div>
     </div>
 </div>
+{:else}
+<div>Study not found.</div>
+{/if}
