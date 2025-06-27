@@ -101,3 +101,5 @@ packages/server/modelstore/x/StudyConfigurationPublic.json
 
 #Backup
 *.bck
+.svelte-kit/
+/packages/webapp-crchub/.svelte-kit/
