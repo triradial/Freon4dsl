@@ -48,6 +48,7 @@
   --drawer-content-background: #2c3e50;
   --drawer-header-background: #1e2b38;
   --drawer-header-text: var(--text-primary-500);
+  --drawer-error-text: #b37393;
   --drawer-content-area: #2c3e50;
 
   --toolbar-button: var(--text-primary-500);
@@ -520,10 +521,12 @@ appnav a:visited {
 .resize-handle {
   background-color: var(--drawer-handle);
 }
+
 .resize-handle {
   background-color: var(--drawer-handle);
   transition: background-color 0.2s;
 }
+
 .resize-handle.bright {
   background-color: #7c3bff !important; /* or any bright color you want */
 }
@@ -531,6 +534,10 @@ appnav a:visited {
 .drawer-content,
 .drawer-content-area {
   background-color: var(--drawer-content-area);
+}
+
+.drawer-error {
+  color: var(--drawer-error-text) !important;
 }
 /* #endregion */
 

@@ -72,7 +72,7 @@
 
 <div class="drawer-content-area p-2">
     {#if error}
-        <div class="text-red-500 p-4">{error}</div>
+        <div class="drawer-error p-4">{error}</div>
     {:else}
         {#if isLoading || !showTable}
             <ContentLoader />

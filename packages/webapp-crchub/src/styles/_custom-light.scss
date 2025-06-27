@@ -49,6 +49,7 @@
   --drawer-header-background: #a9b7c5;
   --drawer-header-text: var(--text-primary-900);
   --drawer-content-area: #e2e2e2;
+  --drawer-error-text: #af5080;
 
   --toolbar-button: var(--text-primary-500);
   --toolbar-button-background: none;  
@@ -527,6 +528,10 @@ appnav a:visited {
 .drawer-content,
 .drawer-content-area {
   background-color: var(--drawer-content-area);
+}
+
+.drawer-error {
+  color: var(--drawer-error-text) !important;
 }
 /* #endregion */
 
