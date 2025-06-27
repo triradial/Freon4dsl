@@ -1,1 +1,0 @@
-import{r as e}from"../chunks/B90CZVMX.js";function o(){throw e(307,"/home")}const t=Object.freeze(Object.defineProperty({__proto__:null,load:o},Symbol.toStringTag,{value:"Module"}));export{t as universal};
