@@ -60,34 +60,6 @@
     ]
   },
   {
-    "id": "5d6e7f8a-9f1e-2dae-4e5a-6f7e8c9c0a",
-    "name": "AX-3476-001",
-    "identifiers": [
-      {
-        "type": "nct",
-        "identifier": "NCT86177491"
-      }
-    ],
-    "status": "Active",
-    "title": "Short-term Effects on Cervical Cancerous Tumors in Patients On the Drug Fallaxin",
-    "phase": "III",
-    "interventions": [
-      {
-        "type": "drug",
-        "name": "Fallaxin"
-      }
-    ],
-    "therapeuticArea": "Hematology",
-    "currentProtocol": "v1",
-    "protocolAmendments": [
-      {
-        "version": "v1",
-        "date": "01-MAY-2023",
-        "description": "initial protocol"
-      }
-    ]
-  },
-  {
     "id": "e0b1dc36-07ee-4f0f-8ba6-8d9c69724c67",
     "name": "StartMinusDays",
     "title": "Study used for automated tests",
@@ -157,6 +129,15 @@
     "status": "Planning",
     "phase": "Phase I",
     "therapeuticArea": "Oncology",
+    "currentProtocol": ""
+  },
+  {
+    "id": "93d7b22a-98a5-4551-a606-cb13538d69d1",
+    "name": "Demo1",
+    "title": "",
+    "status": "Planning",
+    "phase": "III",
+    "therapeuticArea": "",
     "currentProtocol": ""
   }
 ]
