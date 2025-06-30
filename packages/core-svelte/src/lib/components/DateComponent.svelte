@@ -23,18 +23,17 @@
 	export let text: string;    			// the text to be displayed
 
     // Local variables
-    let id: string;                         // an id for the html element
-    id = !!box ? componentId(box) : 'text-with-unknown-box';
-    let spanElement: HTMLSpanElement;       // the <span> element on the screen
-    let inputElement: HTMLInputElement | null = null; 	// the <input> element on the screen
-    let placeholder: string = '<..>';       // the placeholder when value of text component is not present
-    let originalText: string;               // variable to remember the text that was in the box previously
-    let editStart = false;					// indicates whether we are just starting to edit, so we need to set the cursor in the <input>
-    let from = -1;							// the cursor position, or when different from 'to', the start of the selected text
-    let to = -1;							// the cursor position, or when different from 'from', the end of the selected text
-	let cssClass: string = '';
-	let placeHolderStyle: string = "datecomponent-placeholder";
-	let dateValue: DateValue | undefined = undefined;
+    let id: string = $state(!!box ? componentId(box) : 'text-with-unknown-box');
+    let spanElement: HTMLSpanElement | null = $state(null);
+    let inputElement: HTMLInputElement | null = $state(null);
+    let placeholder: string = $state('<..>');
+    let originalText: string = $state('');
+    let editStart: boolean = $state(false);
+    let from: number = $state(-1);
+    let to: number = $state(-1);
+	let cssClass: string = $state('');
+	let placeHolderStyle: string = $state('datecomponent-placeholder');
+	let dateValue: DateValue | undefined = $state(undefined);
 
     /**
      * This function sets the focus on this element programmatically.
@@ -468,7 +467,7 @@
 </script>
 
 <!-- todo there is a double selection here: two borders are showing -->
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events -->
 <span id="{id}" onclick={onClick} role="none" class="{cssClass}">
 	{#if isEditing}
 		<span id="{id}">
@@ -543,7 +542,7 @@
 		<!-- contenteditable must be true, otherwise there is no cursor position in the span after a click,
 		     But ... this is only a problem when this component is inside a draggable element (like List or table)
 		-->
-		<!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events -->
 		<span class="{box.role} date-box datecomponent-text"
               onclick={startEditing}
               bind:this={spanElement}

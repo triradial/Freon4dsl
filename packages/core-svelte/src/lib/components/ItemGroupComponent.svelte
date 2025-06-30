@@ -1,47 +1,15 @@
 <script lang="ts">
     import { createEventDispatcher, onMount } from "svelte";
     import { componentId, executeCustomKeyboardShortCut } from "./svelte-utils/index.js";
-    import {
-        ActionBox,
-        ALT,
-        ARROW_DOWN,
-        ARROW_LEFT,
-        ARROW_RIGHT,
-        ARROW_UP,
-        BACKSPACE,        CONTROL,
-        DELETE,
-        ENTER,
-        ESCAPE,
-        isActionBox,
-        isActionTextBox,
-        isSelectBox,
-        FreCaret,
-        FreCaretPosition,
-        FreEditor,
-        FreLogger,
-        SelectBox,
-        FreErrorSeverity,
-        SHIFT,
-        TAB,
-        ItemGroupBox,
-        Box,
-        isRegExp,
-        triggerTypeToString,
-        type FrePostAction,
-    } from "@freon4dsl/core";
-    import { CharAllowed } from "@freon4dsl/core";
+    import { ALT, ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BACKSPACE, CONTROL, DELETE, ENTER, ESCAPE, SHIFT, TAB } from '@freon4dsl/core';
+    import { ActionBox,  isActionBox, isActionTextBox, isSelectBox, ItemGroupBox, FreCaret, FreCaretPosition, FreLogger, FreErrorSeverity, isRegExp, triggerTypeToString, CharAllowed } from "@freon4dsl/core";
+    import type { FrePostAction } from "@freon4dsl/core";
+    import type { ItemGroupProps } from './svelte-utils/FreComponentProps.js';
     import RenderComponent from "./RenderComponent.svelte";
     import { runInAction } from "mobx";
     import { replaceHTML } from "./svelte-utils/index.js";
-    import { 
-        ChevronDown as IconChevronDown, 
-        ChevronRight as IconChevronRight, 
-        EllipsisVertical as IconEllipsisVertical, 
-        Share2 as IconShare2, 
-        Link2Off as IconUnlink, 
-        Copy as IconDuplicate, 
-        Trash2 as IconTrash2 } from '@lucide/svelte';      
-    import type { ItemGroupProps } from './svelte-utils/FreComponentProps.js';
+    /* ts-ignore */
+    import { ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  EllipsisVertical as IconEllipsisVertical,  Share2 as IconShare2,  Link2Off as IconUnlink,  Copy as IconDuplicate,  Trash2 as IconTrash2 } from '@lucide/svelte';      
 
     // TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -67,16 +35,16 @@
      }: ItemGroupProps<ItemGroupBox> = $props();
 
     // Local variables
-    let id: string = !!box ? componentId(box) : "texitemgroup-with-unknown-box";
-    let spanElement: HTMLSpanElement;
-    let inputElement: HTMLInputElement;
-    let placeholder: string = box?.placeHolder ?? "<..>";
-    let originalText: string;
-    let editStart = false;
-    let from = -1;
-    let to = -1;
-    let style: string = "";
-    let contentElement: HTMLDivElement | null = null;
+    let id: string = $state(!!box ? componentId(box) : "texitemgroup-with-unknown-box");
+    let spanElement: HTMLSpanElement = $state();
+    let inputElement: HTMLInputElement = $state();
+    let placeholder: string = $state(box?.placeHolder ?? "<..>");
+    let originalText: string = $state();
+    let editStart = $state(false);
+    let from = $state(-1);
+    let to = $state(-1);
+    let style: string = $state("");
+    let contentElement: HTMLDivElement | null = $state(null);
     let isEditing = $state(initialIsEditing);
     let isExpanded = $state(initialIsExpanded);
     let contentStyle = $derived(isExpanded ? "display:block;" : "display:none;");
@@ -495,7 +463,7 @@
         event.preventDefault();
     }
 
-    let widthSpan: HTMLSpanElement;
+    let widthSpan: HTMLSpanElement | null = $state(null);
 
     function onInput(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
         setInputWidth();
@@ -503,11 +471,17 @@
 
     refresh();
 
-    const selectItem = (event: MouseEvent) => {
+    const selectItem = (event: MouseEvent | KeyboardEvent) => {
         editor.selectElementForBox(box);
         event.preventDefault();
         event.stopPropagation();
     };
+
+    function handleKeydown(event: KeyboardEvent) {
+        if (event.key === "Enter" || event.key === " ") {
+            selectItem(event);
+        }
+    }
 
     const toggleExpanded = (event: MouseEvent) => {
         isExpanded = !isExpanded;
@@ -528,8 +502,8 @@
     }
 </script>
 
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events a11y-interactive-supports-focus -->
-<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} role="button">
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events a11y_interactive_supports_focus -->
+<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} onkeydown={handleKeydown} role="button" tabindex="0">
     {#if canExpand}
         <button class="btn-icon p-0 ml-1 toggle-button" onclick={toggleExpanded}>
             {#if isExpanded}
@@ -539,7 +513,7 @@
             {/if}
         </button>
     {:else}
-        <span class="w-5" />
+        <span class="w-5"></span>
     {/if}
     <span class="item-group-label">{box.getLabel()}</span>
     <span {id} onclick={onClick} role="none">
@@ -561,7 +535,7 @@
                 <span class="text-component-width" bind:this={widthSpan}></span>
             </span>
         {:else}
-            <!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events -->
             <span
                 class="{box.role} text-box-{boxType} text-component-text"
                 onclick={startEditing}

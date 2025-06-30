@@ -1,4 +1,3 @@
-<svelte:options immutable={true}/>
 <script lang="ts">
     /**
      * This component expands/collapses the child of its (Expandable)Box.
@@ -29,9 +28,9 @@
         isExpanded: initialIsExpanded = false
      }: ListGroupProps<ListGroupBox> = $props();
 
-    let id: string = !!box ? componentId(box) : 'group-for-unknown-box';
-    let contentElement: HTMLDivElement | null = null;
-    let style: string;
+    let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
+    let contentElement: HTMLDivElement | null = $state(null);
+    let style: string = $state('');
     const label = $derived(() => box.getLabel());
     let isExpanded = $state(initialIsExpanded);
     let contentStyle = $derived(isExpanded ? 'display:block;' : 'display:none;');

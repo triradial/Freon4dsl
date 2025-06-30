@@ -1,6 +1,6 @@
 <script lang="ts">
     import { componentId } from "./svelte-utils/index.js";
-    import { MultiLineTextBox2 } from "@freon4dsl/core";
+    import type { MultiLineTextBox2 } from "@freon4dsl/core";
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
     import { onMount, onDestroy } from "svelte";
 
@@ -11,13 +11,12 @@
     let id: string = $state('');
     id = !!box ? componentId(box) : "text-with-unknown-box";
     const placeholderStore = $derived(() => box.placeHolder);
-    let text: string = $state('');
-    let cssClass: string = "";
-    let editorDiv: HTMLDivElement | null = null;
-    let quill: any = null;
-    let isEditing = false;
-    let quillInitialized = false;
-    let html = "";
+    let cssClass: string = $state("");
+    let editorDiv: HTMLDivElement | null = $state(null);
+    let quill: any = $state(null);
+    let isEditing: boolean = $state(false);
+    let quillInitialized: boolean = $state(false);
+    let html: string = $state("");
 
     // // TinyMCE config
     // let conf = {
@@ -106,6 +105,13 @@
         quill = null;
         quillInitialized = false;
     });
+
+    function handleKeydown(event: KeyboardEvent) {
+        if (event.key === "Enter" || event.key === " ") {
+            isEditing = true;
+            event.preventDefault();
+        }
+    }
 </script>
 
 {#if isEditing}
@@ -114,7 +120,7 @@
         <button onclick={() => isEditing = false}>Done</button>
     </div>
 {:else}
-    <div class="multiline-html" onclick={() => isEditing = true} tabindex="0" style="cursor: pointer;">
+    <div class="multiline-html" onclick={() => isEditing = true} onkeydown={handleKeydown} tabindex="0" role="button" style="cursor: pointer;">
         {#if html}
             {@html html}
         {:else}
