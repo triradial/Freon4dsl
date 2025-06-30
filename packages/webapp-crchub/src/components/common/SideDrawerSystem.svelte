@@ -23,7 +23,7 @@
 
     let isHandleBright = $state(false);
     let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
-
+    let dragging = false;
 
     $effect(() => {
         console.log("[SideDrawerSystem] $effect activeDrawer:", activeDrawer, "activeDrawerKey:", activeDrawerKey);
@@ -87,8 +87,11 @@
 
     function startResize(event: MouseEvent) {
         resizing = true;
+        dragging = true;
         startX = event.clientX;
         startWidth = drawerWidth;
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        isHandleBright = true;
 
         window.addEventListener("mousemove", handleResize);
         window.addEventListener("mouseup", stopResize);
@@ -97,6 +100,9 @@
 
     function stopResize() {
         resizing = false;
+        dragging = false;
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        isHandleBright = false;
         window.removeEventListener("mousemove", handleResize);
         window.removeEventListener("mouseup", stopResize);
     }
@@ -109,7 +115,9 @@
 
     function handleResizeHandleMouseLeave() {
         if (hoverTimeout) clearTimeout(hoverTimeout);
-        isHandleBright = false;
+        if (!dragging) {
+            isHandleBright = false;
+        }
     }
 </script>
 
