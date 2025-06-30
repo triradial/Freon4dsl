@@ -73,13 +73,13 @@
 </script>
 
 <div class="mutation-area max-w-sm">
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-4">
         <div>
-            <div class="small-label-text">Patient Number{#if errors.patientNumber}<IconAsterisk size="12" color="red" />{/if}</div>
+            <div class="small-label-text">Patient Number{#if errors.patientNumber}<IconAsterisk size="12" class="object-drawer-error-indicator" />{/if}</div>
             <input class="input-field {getErrorState('patientNumber')}" type="text" bind:value={mutatedPatient.patientNumber} oninput={handleInput("patientNumber")} />
         </div>
         <div>
-            <div class="small-label-text">Initials{#if errors.initials}<IconAsterisk size="12" color="red" />{/if}</div>
+            <div class="small-label-text">Initials{#if errors.initials}<IconAsterisk size="12" class="object-drawer-error-indicator" />{/if}</div>
             <input class="input-field {getErrorState('initials')}" type="text" bind:value={mutatedPatient.initials} oninput={handleInput("initials")} />
         </div>
         <div>
