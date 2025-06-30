@@ -560,44 +560,41 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectPatientHistory(patientHistory: PatientHistory) {
         const element: PatientHistory = patientHistory;
-        let box: Box = BoxUtil.itemGroupBox(
-            element, "patientHistory", "Patient:", "id",
-            BoxFactory.verticalLayout(
-                element, "PatientHistory-overall", "",
-                [
-                    BoxUtil.listGroupBox(
-                        element, "patientVisit", "Completed Visits",
-                        //TODO: add and deleted button needed; allow drag-and-drop reordering
-                        //TODO: put a "completed visits: " label here?
-                        //TODO: decide if it's worth auto-populating all the visits without a complete date
-                        BoxFactory.horizontalLayout(
-                            element, "PatientHistory-hlist-line-1", "",
-                            [
-                                BoxUtil.verticalPartListBox(
-                                    element, element.patientVisits, "patientVisits", null, this.handler
-                                )
-                            ],
-                            { selectable: false, cssClass: "w-full ml-8" },
-                        ),
-                        { cssClass: "type4", isExpanded: true },
+        let box: Box = BoxFactory.verticalLayout(
+            // Removed the item group box because the history is now only displayed under a single patient and entire histories are added by adding a patient in the database. 
+            element, "PatientHistory-overall", "",
+            [
+                BoxUtil.listGroupBox(
+                    element, "patientVisit", "Completed Visits",
+                    //TODO: add and deleted button needed; allow drag-and-drop reordering
+                    //TODO: put a "completed visits: " label here?
+                    //TODO: decide if it's worth auto-populating all the visits without a complete date
+                    BoxFactory.horizontalLayout(
+                        element, "PatientHistory-hlist-line-1", "",
+                        [
+                            BoxUtil.verticalPartListBox(
+                                element, element.patientVisits, "patientVisits", null, this.handler
+                            )
+                        ],
+                        { selectable: false, cssClass: "w-full ml-8" },
                     ),
-                    BoxUtil.listGroupBox(
-                        element, "patientNotAvailable", "Not Available",
-                        BoxFactory.horizontalLayout(
-                            element, "PatientHistory-hlist-line-2", "",
-                            [
-                                BoxUtil.getBoxOrAction(
-                                    element, "patientNotAvailableDates", "PatientNotAvailable", this.handler
-                                )
-                            ],
-                            { selectable: false, cssClass: "w-full ml-8" },
-                        ),
-                        { cssClass: "type4", isExpanded: true },
+                    { cssClass: "type4", isExpanded: true },
+                ),
+                BoxUtil.listGroupBox(
+                    element, "patientNotAvailable", "Not Available",
+                    BoxFactory.horizontalLayout(
+                        element, "PatientHistory-hlist-line-2", "",
+                        [
+                            BoxUtil.getBoxOrAction(
+                                element, "patientNotAvailableDates", "PatientNotAvailable", this.handler
+                            )
+                        ],
+                        { selectable: false, cssClass: "w-full ml-8" },
                     ),
-                ],
-                { cssClass: "w-full ml-8" },
-            ),
-            { cssClass: "type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true },
+                    { cssClass: "type4", isExpanded: true },
+                ),
+            ],
+            { cssClass: "w-full ml-8" },
         );
         return box;
     }
