@@ -8,8 +8,10 @@
     import RenderComponent from "./RenderComponent.svelte";
     import { runInAction } from "mobx";
     import { replaceHTML } from "./svelte-utils/index.js";
+    import { contextMenu } from './stores/AllStores.svelte.js';
     /* ts-ignore */
     import { ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  EllipsisVertical as IconEllipsisVertical,  Share2 as IconShare2,  Link2Off as IconUnlink,  Copy as IconDuplicate,  Trash2 as IconTrash2 } from '@lucide/svelte';      
+
 
     // TODO find out better way to handle muting/unmuting of LOGGERs
     const LOGGER = new FreLogger("ItemGroupComponent"); // .mute(); muting done through webapp/logging/LoggerSettings
@@ -36,10 +38,10 @@
 
     // Local variables
     let id: string = $state(!!box ? componentId(box) : "texitemgroup-with-unknown-box");
-    let spanElement: HTMLSpanElement = $state();
-    let inputElement: HTMLInputElement = $state();
+    let spanElement: HTMLSpanElement | undefined = $state();
+    let inputElement: HTMLInputElement | undefined = $state();
     let placeholder: string = $state(box?.placeHolder ?? "<..>");
-    let originalText: string = $state();
+    let originalText: string = $state("");
     let editStart = $state(false);
     let from = $state(-1);
     let to = $state(-1);
@@ -500,10 +502,15 @@
     function duplicateItem() {
         box.executeAction(editor, "duplicate");
     }
+
+    function onContextMenu(event: MouseEvent) {
+        event.preventDefault();
+        dispatcher("contextmenu", { event, box, editor });
+    }
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events a11y_interactive_supports_focus -->
-<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} onkeydown={handleKeydown} role="button" tabindex="0">
+<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} onkeydown={handleKeydown} oncontextmenu={onContextMenu} role="button" tabindex="0">
     {#if canExpand}
         <button class="btn-icon p-0 ml-1 toggle-button" onclick={toggleExpanded}>
             {#if isExpanded}

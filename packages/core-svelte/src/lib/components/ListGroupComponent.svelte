@@ -3,17 +3,14 @@
      * This component expands/collapses the child of its (Expandable)Box.
      * with non-editable text
      */
-    import { onMount } from "svelte";
+    import { onMount, createEventDispatcher } from "svelte";
     import { Box, FreLogger, ListGroupBox, FreEditor } from "@freon4dsl/core";
     import { componentId } from "./svelte-utils/index.js";
     import RenderComponent from "./RenderComponent.svelte";
-    import { 
-        ChevronDown as IconChevronDown, 
-        ChevronRight as IconChevronRight, 
-        Plus as IconPlus, 
-        EllipsisVertical as IconEllipsisVertical 
-    } from '@lucide/svelte';
     import type { ListGroupProps } from './svelte-utils/FreComponentProps.js';
+    import { contextMenu } from './stores/AllStores.svelte.js';
+    /* ts-ignore */
+    import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Plus as IconPlus,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
 
     const LOGGER = new FreLogger("ListGroupComponent");
 
@@ -29,11 +26,13 @@
      }: ListGroupProps<ListGroupBox> = $props();
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
-    let contentElement: HTMLDivElement | null = $state(null);
+    let contentElement: HTMLDivElement | undefined = $state();
     let style: string = $state('');
     const label = $derived(() => box.getLabel());
     let isExpanded = $state(initialIsExpanded);
     let contentStyle = $derived(isExpanded ? 'display:block;' : 'display:none;');
+
+    const dispatcher = createEventDispatcher();
 
     onMount(() => {
         if (!!box) {
@@ -70,9 +69,14 @@
         event.stopPropagation();
     };
 
+    function onContextMenu(event: MouseEvent) {
+        event.preventDefault();
+        dispatcher("contextmenu", { event, box, editor });
+    }
+
 </script>
 
-<div id="{id}" class="list-group {cssClass}" style="{style}">
+<div id="{id}" class="list-group {cssClass}" style="{style}" oncontextmenu={onContextMenu}>
     {#if canExpand}
         <button class="p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded}>
             {#if isExpanded}

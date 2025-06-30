@@ -38,6 +38,7 @@ main {
 
 .render-component {
   display: grid;
+  border: 1px solid transparent;
 }
 
 /* #endregion */
