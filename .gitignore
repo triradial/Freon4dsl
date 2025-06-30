@@ -25,6 +25,7 @@ build
 dist
 target
 .docz
+.svelte-kit
 
 # misc
 .DS_Store

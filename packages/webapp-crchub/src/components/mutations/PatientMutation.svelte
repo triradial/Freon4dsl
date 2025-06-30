@@ -4,8 +4,7 @@
     // @ts-ignore
     import { Save as IconSave, X as IconX, Asterisk as IconAsterisk } from '@lucide/svelte';
 
-    const { study, patient, action, onsave, onclose } = $props<{
-        study: Study;
+    const { patient, action, onsave, onclose } = $props<{
         patient: Patient;
         action: "add" | "edit";
         onsave?: (patient: Patient) => void;
@@ -19,7 +18,6 @@
     }
 
     $effect(() => {
-        console.log("[PatientMutation] $effect edit:", action, patient);
         if (action === "edit" && patient) {
             validateAllFields();
         }
@@ -34,8 +32,6 @@
 
     $effect(() => {
         validateAllFields();
-        console.log("[PatientMutation] errors:", errors);
-        console.log("[PatientMutation] errorState:", errorState);
     });
 
     function handleSave() {
@@ -46,7 +42,6 @@
     }
 
     function handleClose() {
-        console.log("[PatientMutation] calling onclose prop");
         onclose?.();
     }
 
@@ -85,11 +80,11 @@
         </div>
         <div>
             <div class="small-label-text">Initials{#if errors.initials}<IconAsterisk size="12" color="red" />{/if}</div>
-            <input class="input-field" type="text" bind:value={mutatedPatient.initials} oninput={handleInput("initials")} />
+            <input class="input-field {getErrorState('initials')}" type="text" bind:value={mutatedPatient.initials} oninput={handleInput("initials")} />
         </div>
         <div>
-            <div class="small-label-text">YOB</div>
-            <input class="input-field" type="number" bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} oninput={handleInput("dob")} />
+            <div class="small-label-text">Year of Birth</div>
+            <input class="input-field" type="number" bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} />
         </div>
         <div>
             <div class="small-label-text">Gender</div>

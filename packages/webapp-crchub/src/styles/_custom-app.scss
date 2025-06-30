@@ -583,13 +583,17 @@ appbar header {
   padding: 0 0.5rem;
 }
 
+.footer-header-text { 
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
 .editor-display-options {
   background-color: transparent;
 }
 
 .editor-display-options label {
   font-size: 0.75rem;
-  color: var(--gray-800);
 }
 
 .editor-display-options input {
@@ -799,6 +803,7 @@ appbar header {
 .standard-text {
   font-size: var(--standard-font-size);
   line-height: 1rem;
+  min-height: 1rem;
 }
 
 

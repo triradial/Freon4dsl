@@ -22,7 +22,7 @@
         <h3 class="main-label-text mr-2">Patient</h3>
         <button type="button" class="icon-button primary inverted" onclick={onEditClick}><IconPencil /></button>
     </div>
-    <div class="space-y-4">
+    <div class="space-y-2">
         <div>
             <div class="small-label-text">Patient Number</div>
             <p class="standard-text">{patient.patientNumber}</p>
@@ -33,19 +33,19 @@
         </div>
         <div>
             <div class="small-label-text">Gender</div>
-            <span class="badge {statusColor} standard-text">{patient.gender}</span>
+            <span class="badge {statusColor} standard-text">{patient.gender || "None"}</span>
         </div>
         <div>
             <div class="small-label-text">DOB</div>
-            <p class="standard-text">{patient.dob}</p>
+            <p class="standard-text">{patient.dob || "-"}</p>
         </div>
         <div>
             <div class="small-label-text">Initials</div>
-            <p class="standard-text">{patient.initials}</p>
+            <p class="standard-text">{patient.initials || "-"}</p>
         </div>
         <div>
             <div class="small-label-text">Study</div>
-            <p class="standard-text">{patient.study}</p>
+            <p class="standard-text">{patient.study || "None"}</p>
         </div>
     </div>
 </div>

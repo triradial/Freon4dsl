@@ -22,30 +22,30 @@
         <h3 class="main-label-text mr-2">Study</h3>
         <button type="button" class="icon-button primary inverted" onclick={onEditClick}><IconPencil /></button>
     </div>
-    <div class="space-y-4">
+    <div class="space-y-2">
         <div>
             <div class="small-label-text">Name</div>
             <p class="standard-text">{study.name}</p>
         </div>
         <div>
             <div class="small-label-text">Title</div>
-            <p class="standard-text">{study.title}</p>
+            <p class="standard-text">{study.title || "-"}</p>
         </div>
         <div>
             <div class="small-label-text">Status</div>
-            <span class="badge {statusColor} standard-text">{study.status}</span>
+            <span class="badge {statusColor} standard-text">{study.status || "None"}</span>
         </div>
         <div>
             <div class="small-label-text">Phase</div>
-            <p class="standard-text">{study.phase}</p>
+            <p class="standard-text">{study.phase || "-"}</p>
         </div>
         <div>
             <div class="small-label-text">Therapeutic Area</div>
-            <p class="standard-text">{study.therapeuticArea}</p>
+            <p class="standard-text">{study.therapeuticArea || "-"}</p>
         </div>
         <div>
             <div class="small-label-text">Current Protocol</div>
-            <p class="standard-text">{study.currentProtocol}</p>
+            <p class="standard-text">{study.currentProtocol || "-"}</p>
         </div>
     </div>
 </div>

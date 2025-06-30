@@ -50,6 +50,7 @@
   --drawer-header-text: var(--text-primary-500);
   --drawer-error-text: #b37393;
   --drawer-content-area: #2c3e50;
+  --arrow-background: #2c3e50;
 
   --toolbar-button: var(--text-primary-500);
   --toolbar-button-background: none;  
@@ -378,6 +379,10 @@ appnav a:visited {
   border-top: 1px solid var(--drawer-handle);
 }
 
+.footer-header-text {
+  color: var(--drawer-header-text);
+}
+
 .editor-footer-button {
   color: var(--drawer-header-text);
 }
@@ -388,6 +393,14 @@ appnav a:visited {
 
 .editor-footer-text {
   color: var(--drawer-header-text);
+}
+
+.editor-display-options-popover {
+  background-color: var(--drawer-content-background);
+}
+
+.editor-display-options label {
+  color: var(--white-90t);
 }
 /* #endregion */
 
@@ -520,15 +533,11 @@ appnav a:visited {
 
 .resize-handle {
   background-color: var(--drawer-handle);
-}
-
-.resize-handle {
-  background-color: var(--drawer-handle);
   transition: background-color 0.2s;
 }
 
 .resize-handle.bright {
-  background-color: #7c3bff !important; /* or any bright color you want */
+  background-color: #0078D4 !important; /* or any bright color you want */
 }
 
 .drawer-content,

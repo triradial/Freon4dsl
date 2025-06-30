@@ -33,7 +33,7 @@
   },
   {
     "id": "4b5c6d7e-8f9a-4f1b-2a3c-4e5d6e7a8e9e",
-    "name": "XL-184-001",
+    "name": "Demo3",
     "identifiers": [
       {
         "type": "nct",
@@ -106,11 +106,11 @@
   },
   {
     "id": "5688359e-1c73-42ed-a18d-5a379363748a",
-    "name": "demo2",
+    "name": "Demo2",
     "title": "",
     "status": "Planning",
     "phase": "II",
-    "therapeuticArea": "",
+    "therapeuticArea": "Oncology",
     "currentProtocol": ""
   },
   {
@@ -118,7 +118,7 @@
     "name": "A022104 Checklist",
     "title": "Example Oncology Study from MD Anderson Cancer Center at Cooper",
     "status": "Planning",
-    "phase": "Phase I",
+    "phase": "II",
     "therapeuticArea": "Oncology",
     "currentProtocol": ""
   },
@@ -129,15 +129,6 @@
     "status": "Planning",
     "phase": "Phase I",
     "therapeuticArea": "Oncology",
-    "currentProtocol": ""
-  },
-  {
-    "id": "93d7b22a-98a5-4551-a606-cb13538d69d1",
-    "name": "Demo1",
-    "title": "",
-    "status": "Planning",
-    "phase": "III",
-    "therapeuticArea": "",
     "currentProtocol": ""
   }
 ]
