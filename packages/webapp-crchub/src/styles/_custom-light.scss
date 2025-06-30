@@ -50,6 +50,7 @@
   --drawer-header-text: var(--text-primary-900);
   --drawer-content-area: #e2e2e2;
   --drawer-error-text: #af5080;
+  --arrow-background: #d5dee7;
 
   --toolbar-button: var(--text-primary-500);
   --toolbar-button-background: none;  
@@ -383,6 +384,14 @@ appnav a:visited {
 .editor-footer-text {
   color: var(--drawer-header-text);
 }
+
+.editor-display-options-popover {
+  background-color: var(--drawer-content-background);
+}
+
+.editor-display-options label {
+  color: var(--black-90t);
+}
 /* #endregion */
 
 /* #region Toolbar */
@@ -516,13 +525,11 @@ appnav a:visited {
 
 .resize-handle {
   background-color: var(--drawer-handle);
-}
-.resize-handle {
-  background-color: var(--drawer-handle);
   transition: background-color 0.2s;
 }
+
 .resize-handle.bright {
-  background-color: #7c3bff !important; /* or any bright color you want */
+  background-color: #0078D4 !important; /* or any bright color you want */
 }
 
 .drawer-content,

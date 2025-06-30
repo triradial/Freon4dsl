@@ -140,10 +140,10 @@
   },
   {
     "id": "ca3359eb-dda9-42cb-811c-f4bc700ec17f",
-    "patientNumber": "1",
+    "patientNumber": "1001-D2",
     "displayName": "",
     "name": "",
-    "dob": "",
+    "dob": 1924,
     "gender": "",
     "studyId": "5688359e-1c73-42ed-a18d-5a379363748a",
     "study": "demo2",

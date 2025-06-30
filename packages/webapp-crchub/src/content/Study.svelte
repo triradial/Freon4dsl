@@ -23,6 +23,7 @@
 
     let dslEditor = $state<FreEditor | undefined>(undefined);
     let unit = $state<StudyConfiguration | undefined>(undefined);
+    let mobxVersion = $state(0);
 
     const footerConfig = [
         { id: "showScheduling", label: "Scheduling" },
@@ -34,14 +35,17 @@
         { id: "showSharedTasks", label: "Shared Tasks" },
     ];
 
-    let footerItems = $derived(
-        unit
-            ? footerConfig.map(cfg => ({
+    let footerItems = $derived(() => {
+        mobxVersion;
+        if (!unit) {
+            return footerConfig.map(cfg => ({ ...cfg, visible: false }));
+        } else {
+            return footerConfig.map(cfg => ({
                 ...cfg,
                 visible: !!unit[cfg.id as keyof StudyConfiguration],
-            }))
-            : footerConfig.map(cfg => ({ ...cfg, visible: false }))
-    );
+            }));
+        }
+    });
 
     async function initializeStudy() {
         // get the study data
@@ -62,13 +66,6 @@
         } else {
             console.error("Failed to load study configuration");
         }
-
-        // Set initial visibility based on studyConfigurationUnit
-        footerItems = footerItems.map((item) => ({
-            ...item,
-            visible: unit[item.id as keyof StudyConfiguration] as boolean,
-        }));
-
     }
 
     onMount(() => {
@@ -90,6 +87,8 @@
     function handleCheckboxChange(id: string, visible: boolean) {
         if (unit && id in unit) {
             (unit[id as keyof StudyConfiguration] as boolean) = visible;
+            ModelManager.getInstance().saveCurrentUnit();
+            mobxVersion++;
         }
     }
 
@@ -142,7 +141,7 @@
                                 <FreonComponent editor={dslEditor} />
                             </div>
                             <div class="crc-editor-footer h-8 crc-content-width">
-                                <DSLFooter items={footerItems} onCheckboxChange={handleCheckboxChange} />
+                                <DSLFooter items={footerItems()} onCheckboxChange={handleCheckboxChange} />
                             </div>
                     </Tabs.Panel>
                 {/snippet}
