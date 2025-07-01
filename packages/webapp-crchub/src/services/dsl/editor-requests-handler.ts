@@ -7,7 +7,7 @@ const LOGGER = new FreLogger("EditorRequestsHandler"); // .mute();
 export class EditorRequestsHandler {
     private static instance: EditorRequestsHandler;
     static getInstance(): EditorRequestsHandler {
-        if (EditorRequestsHandler.instance === null) {
+        if (EditorRequestsHandler.instance === null || EditorRequestsHandler.instance === undefined) {
             EditorRequestsHandler.instance = new EditorRequestsHandler();
         }
         return EditorRequestsHandler.instance;

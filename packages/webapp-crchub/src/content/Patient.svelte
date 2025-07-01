@@ -133,7 +133,7 @@
         <div class="crc-content">
             <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2" contentBase="mt-0">
                 {#snippet list()}
-                    <Tabs.Control stateActive="tab-active" value="schedule">
+                    <Tabs.Control stateActive="tab-active" value="Patient Info">
                         <div class="tab-item"><IconCalendarDays size="16" />Schedule</div>
                     </Tabs.Control>
                 {/snippet}

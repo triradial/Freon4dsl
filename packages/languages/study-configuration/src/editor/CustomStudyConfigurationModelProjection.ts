@@ -569,11 +569,10 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 BoxUtil.listGroupBox(
                     element, "patientvisits","Completed Visits",
                     //TODO: add and deleted button needed; allow drag-and-drop reordering
-                    //TODO: put a "completed visits: " label here?
                     //TODO: decide if it's worth auto-populating all the visits without a complete date
                     BoxUtil.verticalPartListBox(
                         element, element.patientVisits, "patientVisits", null, this.handler,
-                        { cssClass: "vplb per2 type2 ml-6" }
+                        { cssClass: "vplb per2 type2 ml-6", selectable: false }
                     ),
                     { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
                 ),
@@ -581,12 +580,12 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     element, "patientNotAvailableDates", "Not Available",
                     BoxUtil.verticalPartListBox(
                         element, element.patientNotAvailableDates, "patientNotAvailableDates", null, this.handler,
-                        { cssClass: "vplb per2 type2 ml-6" }
+                        { cssClass: "vplb per2 type2 ml-6", selectable: false }
                     ),
                     { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
                 ),
             ],
-            { cssClass: "w-full ml-8" },
+            { cssClass: "w-full ml-8", selectable: false },
         )
         return box;
     }

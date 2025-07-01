@@ -64,5 +64,5 @@
 
 <div class="wrapper">
     <!-- <div>msg: {@html msg}</div> -->
-    <RenderComponent box={box.childBox} {editor} />
+    <RenderComponent box={box.childBox} {editor} cssClass="w-full" />
 </div>
