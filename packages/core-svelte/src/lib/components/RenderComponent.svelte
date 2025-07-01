@@ -81,13 +81,13 @@
 
     const isFullWidth = $derived(
         !isNullOrUndefined(box) && (
-            isGridBox(box)
-            || isIndentBox(box)
-            || isLayoutBox(box)
-            || isListBox(box)
-            || isTableBox(box)
-            || isListGroupBox(box)
-            || isItemGroupBox(box)
+        //     isGridBox(box)
+        //     || isIndentBox(box)
+        //     || isLayoutBox(box)
+        //     || isListBox(box)
+        //     || isTableBox(box)
+            // isListGroupBox(box)
+            isItemGroupBox(box)
             || isItemGroupBox2(box)
             || isMultiLineTextBox(box)
             || isMultiLineTextBox2(box)
