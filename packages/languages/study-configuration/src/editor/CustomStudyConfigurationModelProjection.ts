@@ -140,7 +140,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 { cssClass: "lgb sc8 type1", isExpanded: true, canAdd: true }
             ),
             ] : []),
-        ]);
+        ],
+        {selectable: false});
     }
 
     projectDescription(description: Description): Box {
@@ -183,7 +184,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 ],
                 { cssClass: "vl per4 type2" },
             ),
-            { cssClass: "igb per5 type2", placeHolder: "enter", canExpand: true, isExpanded: false, isRequired: true },
+            { cssClass: "igb per5 type2", placeHolder: "enter", canExpand: true, isExpanded: false, isRequired: true, selectable: false },
         );
         return box;
     }
@@ -560,13 +561,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectPatientHistory(patientHistory: PatientHistory) {
         const element: PatientHistory = patientHistory;
-        let box: Box = BoxFactory.verticalLayout(
-            // Removed the item group box because the history is now only displayed under a single patient and entire histories are added by adding a patient in the
-            element,
-            "PatientHistory-overall",
-            "",
-            [
-                BoxUtil.listGroupBox(
+        let patientVisitsBox = BoxUtil.listGroupBox(
                     element, "patientvisits","Completed Visits",
                     //TODO: add and deleted button needed; allow drag-and-drop reordering
                     //TODO: decide if it's worth auto-populating all the visits without a complete date
@@ -575,18 +570,29 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         { cssClass: "vplb per2 type2 ml-6", selectable: false }
                     ),
                     { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
-                ),
-                BoxUtil.listGroupBox(
+                )
+        patientVisitsBox.selectable = false;
+        let patientNotAvailableDatesBox = BoxUtil.listGroupBox(
                     element, "patientNotAvailableDates", "Not Available",
                     BoxUtil.verticalPartListBox(
                         element, element.patientNotAvailableDates, "patientNotAvailableDates", null, this.handler,
                         { cssClass: "vplb per2 type2 ml-6", selectable: false }
                     ),
                     { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
-                ),
+                )
+        patientNotAvailableDatesBox.selectable = false;
+        let box: Box = BoxFactory.verticalLayout(
+            // Removed the item group box because the history is now only displayed under a single patient and entire histories are added by adding a patient in the
+            element,
+            "PatientHistory-overall",
+            "",
+            [
+                patientVisitsBox,
+                patientNotAvailableDatesBox,
             ],
             { cssClass: "w-full ml-8", selectable: false },
         )
+        box.selectable = false;
         return box;
     }
 }
