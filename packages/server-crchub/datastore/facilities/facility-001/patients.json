@@ -159,5 +159,71 @@
     "studyId": "46abda0c-51c3-473a-ad01-dacbc03d8639",
     "study": "ScheduleExample1",
     "initials": "MV"
+  },
+  {
+    "id": "1fe85c81-870a-4fc7-bbab-44f11f50e846",
+    "patientNumber": "2222",
+    "displayName": "",
+    "name": "",
+    "initials": "MV",
+    "dob": "",
+    "gender": "",
+    "studyId": "6cbeca36-13a8-4ecf-b68d-4944fc590184",
+    "study": "UI-Testing"
+  },
+  {
+    "id": "cdeb838d-8df3-47c2-9fe6-8d365105c67e",
+    "patientNumber": "222",
+    "displayName": "",
+    "name": "",
+    "initials": "nb",
+    "dob": "",
+    "gender": "",
+    "studyId": "c89d55b6-2621-484c-80e0-1c77879a57c1",
+    "study": "t2"
+  },
+  {
+    "id": "7161d298-2f04-4706-ab82-c15db7ae7517",
+    "patientNumber": "333",
+    "displayName": "",
+    "name": "",
+    "initials": "mv",
+    "dob": "",
+    "gender": "",
+    "studyId": "07625817-3713-4034-89ef-7b8bce39d8a8",
+    "study": "t3"
+  },
+  {
+    "id": "bd464904-e23a-4b78-b6e2-01e576518858",
+    "patientNumber": "4444",
+    "displayName": "",
+    "name": "",
+    "initials": "mn",
+    "dob": "",
+    "gender": "",
+    "studyId": "53b0f287-2ff8-412d-b575-31a721152629",
+    "study": "t4"
+  },
+  {
+    "id": "04c4a01c-2e1a-4499-9159-1d00f6541016",
+    "patientNumber": "444",
+    "displayName": "",
+    "name": "",
+    "initials": "gg",
+    "dob": "",
+    "gender": "",
+    "studyId": "420cd487-5141-490f-8e7e-ceb5b62538ee",
+    "study": "t5"
+  },
+  {
+    "id": "ddffa29d-8d20-47df-a3f2-f18e1288c8ec",
+    "patientNumber": "2323",
+    "displayName": "",
+    "name": "",
+    "initials": "MV",
+    "dob": "",
+    "gender": "",
+    "studyId": "2cbdbc39-a026-419b-9896-6b9333c7763f",
+    "study": "t7"
   }
 ]

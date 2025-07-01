@@ -365,7 +365,7 @@ export class Timeline extends RtObject {
             const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
             this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
         });
-        patientHistory.patientNotAvailableDates.dates.forEach((patientNotAvailableDate) => {
+        patientHistory.patientNotAvailableDates.forEach((patientNotAvailableDate) => {
             const startDateAsDate = this.dateStringsToDate(
                 patientNotAvailableDate.startDate.day,
                 patientNotAvailableDate.startDate.month.name,

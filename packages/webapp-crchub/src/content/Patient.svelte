@@ -56,7 +56,7 @@
                 patientInfo.patientHistories.forEach(aPatientHistory => {
                     if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
                         aPatientHistory.patientVisits.forEach(visit => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
-                        aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
+                        aPatientHistory.patientNotAvailableDates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.push(dateRange.copy()));
                         patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
                         patientHistoryUnit.patientHistory.id = aPatientHistory.id;
                         patientHistoryUnit.patientHistory.patient_id = aPatientHistory.patient_id;
@@ -94,8 +94,8 @@
                 unit?.patientHistory.patientVisits.forEach(visit => {
                     aPatientHistory.patientVisits.push(visit.copy());
                 });
-                aPatientHistory.patientNotAvailableDates.dates.splice(0);
-                unit!.patientHistory.patientNotAvailableDates.dates.forEach(dateRange => aPatientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
+                aPatientHistory.patientNotAvailableDates.splice(0);
+                unit!.patientHistory.patientNotAvailableDates.forEach(dateRange => aPatientHistory.patientNotAvailableDates.push(dateRange.copy()));
             }
         });
         // If the patientHistory for this patient was not previously entered we need to add it to the list of all patientHistories in the PatientInfo
@@ -120,7 +120,7 @@
 
     function clearPatientHistory(patientHistory: PatientHistory) {
         patientHistory.patientVisits.splice(0);
-        patientHistory.patientNotAvailableDates.dates.splice(0);
+        patientHistory.patientNotAvailableDates.splice(0);
     }
 </script>
 
