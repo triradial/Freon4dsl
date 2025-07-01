@@ -21,7 +21,7 @@ concept PatientHistory {
   id: string; // TODO: DELETE this and switch to patient_id; 
   startOfStudyDate: DateConcept;
   patientVisits: PatientVisit[];
-  patientNotAvailableDates: PatientNotAvailable;
+  patientNotAvailableDates: DateRange[];
 }
 
 limited PatientVisitStatus {
@@ -29,6 +29,7 @@ limited PatientVisitStatus {
 }
 
 concept PatientVisit {
+  name: identifier;
   reference visit: Event;
   visitInstanceNumber: number = 1;
   actualVisitDate: DateConcept;

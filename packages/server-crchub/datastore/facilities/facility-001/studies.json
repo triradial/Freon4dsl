@@ -130,5 +130,23 @@
     "phase": "Phase I",
     "therapeuticArea": "Oncology",
     "currentProtocol": ""
+  },
+  {
+    "id": "6cbeca36-13a8-4ecf-b68d-4944fc590184",
+    "name": "UI-Testing",
+    "title": "this is a study created to explore how the Freon UI has improved",
+    "status": "Planning",
+    "phase": "I",
+    "therapeuticArea": "Test TPA",
+    "currentProtocol": ""
+  },
+  {
+    "id": "2cbdbc39-a026-419b-9896-6b9333c7763f",
+    "name": "t7",
+    "title": "7",
+    "status": "",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
   }
 ]

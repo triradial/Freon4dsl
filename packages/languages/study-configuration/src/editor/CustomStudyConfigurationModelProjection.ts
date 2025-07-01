@@ -561,41 +561,33 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectPatientHistory(patientHistory: PatientHistory) {
         const element: PatientHistory = patientHistory;
         let box: Box = BoxFactory.verticalLayout(
-            // Removed the item group box because the history is now only displayed under a single patient and entire histories are added by adding a patient in the database. 
-            element, "PatientHistory-overall", "",
+            // Removed the item group box because the history is now only displayed under a single patient and entire histories are added by adding a patient in the
+            element,
+            "PatientHistory-overall",
+            "",
             [
                 BoxUtil.listGroupBox(
-                    element, "patientVisit", "Completed Visits",
+                    element, "patientvisits","Completed Visits",
                     //TODO: add and deleted button needed; allow drag-and-drop reordering
                     //TODO: put a "completed visits: " label here?
                     //TODO: decide if it's worth auto-populating all the visits without a complete date
-                    BoxFactory.horizontalLayout(
-                        element, "PatientHistory-hlist-line-1", "",
-                        [
-                            BoxUtil.verticalPartListBox(
-                                element, element.patientVisits, "patientVisits", null, this.handler
-                            )
-                        ],
-                        { selectable: false, cssClass: "w-full ml-8" },
+                    BoxUtil.verticalPartListBox(
+                        element, element.patientVisits, "patientVisits", null, this.handler,
+                        { cssClass: "vplb per2 type2 ml-6" }
                     ),
-                    { cssClass: "type4", isExpanded: true },
+                    { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
                 ),
                 BoxUtil.listGroupBox(
-                    element, "patientNotAvailable", "Not Available",
-                    BoxFactory.horizontalLayout(
-                        element, "PatientHistory-hlist-line-2", "",
-                        [
-                            BoxUtil.getBoxOrAction(
-                                element, "patientNotAvailableDates", "PatientNotAvailable", this.handler
-                            )
-                        ],
-                        { selectable: false, cssClass: "w-full ml-8" },
+                    element, "patientNotAvailableDates", "Not Available",
+                    BoxUtil.verticalPartListBox(
+                        element, element.patientNotAvailableDates, "patientNotAvailableDates", null, this.handler,
+                        { cssClass: "vplb per2 type2 ml-6" }
                     ),
-                    { cssClass: "type4", isExpanded: true },
+                    { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
                 ),
             ],
             { cssClass: "w-full ml-8" },
-        );
+        )
         return box;
     }
 }
