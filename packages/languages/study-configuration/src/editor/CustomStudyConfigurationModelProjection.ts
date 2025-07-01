@@ -575,11 +575,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         element, element.patientVisits, "patientVisits", null, this.handler,
                         { cssClass: "vplb per2 type2 ml-6" }
                     ),
-<<<<<<< HEAD
-                    { cssClass: "type4", isExpanded: true, selectable: false },
-=======
-                    { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
->>>>>>> 1967578df8bdbe81ed8202090a25021e4d4147b8
+                    { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
                 ),
                 BoxUtil.listGroupBox(
                     element, "patientNotAvailableDates", "Not Available",
@@ -587,11 +583,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         element, element.patientNotAvailableDates, "patientNotAvailableDates", null, this.handler,
                         { cssClass: "vplb per2 type2 ml-6" }
                     ),
-<<<<<<< HEAD
-                    { cssClass: "type4", isExpanded: true, selectable: false },
-=======
-                    { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
->>>>>>> 1967578df8bdbe81ed8202090a25021e4d4147b8
+                    { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
                 ),
             ],
             { cssClass: "w-full ml-8" },
