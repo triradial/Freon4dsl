@@ -130,5 +130,14 @@
     "phase": "I",
     "therapeuticArea": "Oncology",
     "currentProtocol": ""
+  },
+  {
+    "id": "ce96de44-b612-4d97-9e02-0ae4f40f738f",
+    "name": "Demo4",
+    "title": "",
+    "status": "Planning",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
   }
 ]

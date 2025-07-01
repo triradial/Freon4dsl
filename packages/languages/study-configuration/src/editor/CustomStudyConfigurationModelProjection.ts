@@ -109,7 +109,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     element, element.periods, "periods", null, this.handler, 
                     { cssClass: "vplb sc1 type1" }
                 ),
-                { cssClass: "lgb sc2 type1", canAdd: true, canExpand: true, isExpanded: true }
+                { cssClass: "lgb sc2 type1", canAdd: true, canExpand: true, isExpanded: true, selectable: false }
             ),
             ...(element.showSharedTasks === true ? [
             BoxUtil.listGroupBox( 
@@ -118,7 +118,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     element, element.tasks, "tasks", null, this.handler, 
                     { cssClass: "vplb sc3 type1" }
                 ),
-                { cssClass: "lgb sc4 type1", isExpanded: true, canAdd: true }
+                { cssClass: "lgb sc4 type1", isExpanded: true, canAdd: true, selectable: false }
             ),
             ] : []),
             ...(element.showSystems === true ? [
@@ -128,7 +128,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     element, element.systemAccesses, "systemAccesses", null, this.handler, 
                     { cssClass: "vplb sc5 type1" }
                 ),
-                { cssClass: "lgb sc6 type1", isExpanded: true, canAdd: true }
+                { cssClass: "lgb sc6 type1", isExpanded: true, canAdd: true, selectable: false }
             ),
             ] : []),
             ...(element.showPeople === true ? [
@@ -137,7 +137,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     BoxUtil.getBoxOrAction(
                         element, "staffing", "Staffing", this.handler
                     ),
-                { cssClass: "lgb sc8 type1", isExpanded: true, canAdd: true }
+                { cssClass: "lgb sc8 type1", isExpanded: true, canAdd: true, selectable: false }
             ),
             ] : []),
         ]);
@@ -178,7 +178,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             element, element.events, "events", null, this.handler, 
                             { cssClass: "vplb per2 type2 ml-6" }
                         ),
-                        { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true },
+                        { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
                     ),
                 ],
                 { cssClass: "vl per4 type2" },
@@ -234,7 +234,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                     element as Event, "schedule", "EventSchedule", this.handler
                                 )
                             ),
-                            { cssClass: "lgb ev4 type3", isExpanded: true }
+                            { cssClass: "lgb ev4 type3", isExpanded: true, selectable: false }
                         ),
                     ] : []),
 
@@ -245,7 +245,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 element, element.tasks, "tasks", null, this.handler, 
                                 { cssClass: "vplb ev5 type3" }
                             ),
-                            { cssClass: "lgb ev6 type3", isExpanded: true, canAdd: true }
+                            { cssClass: "lgb ev6 type3", isExpanded: true, canAdd: true, selectable: false }
                         ),
                     ] : []),
                 ],
@@ -340,7 +340,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                     element, element.steps, "steps", null, this.handler,
                                     { cssClass: "vplb tsk2 type4" }
                                 ),
-                                { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+                                { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false }
                             )
                         ]),
                     { cssClass: "igb tsk4 type3", placeHolder: "enter", canShare: true, canDelete: true, isRequired: true },
@@ -373,7 +373,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                         element, element.steps, "steps", null, this.handler, 
                                         { cssClass: "vplb tsk2 type4" }
                                     ),
-                                    { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+                                    { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false }
                                 )
                             ]
                         ),
@@ -415,7 +415,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 element, element.steps, "steps", null, this.handler, 
                                 { cssClass: "vplb tsk2 type4" }
                             ),
-                            { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true }
+                            { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false }
                         ),
                     ]
                 ),
@@ -452,7 +452,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                     { cssClass: "vplb st2 type4" }
                                 )
                             ),
-                            { cssClass: "lgb st1 type4", isExpanded: false, canAdd: true },
+                            { cssClass: "lgb st1 type4", isExpanded: false, canAdd: true, selectable: false },
                         )
                     ] : []),
                     ...(showSystems ? [
@@ -465,7 +465,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                     { cssClass: "vplb st3 type4" }
                                 )
                             ),
-                            { cssClass: "lgb st4 type4", isExpanded: false, canAdd: true },
+                            { cssClass: "lgb st4 type4", isExpanded: false, canAdd: true, selectable: false },
                         )
                     ] : []),
                     ...(showPeople ? [
@@ -478,7 +478,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                     { cssClass: "vplb st5 type4" }
                                 )
                             ),
-                            { cssClass: "lgb st6 type4", isExpanded: false, canAdd: true },
+                            { cssClass: "lgb st6 type4", isExpanded: false, canAdd: true, selectable: false },
                         )
                     ] : []),
                 ]),
@@ -553,7 +553,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 element, element.patientHistories, "patientHistories", null, this.handler, 
                 { cssClass: "ml-6 mb-2" }
             ),
-            { cssClass: "type1 mt-2", isExpanded: true, canAdd: true },
+            { cssClass: "type1 mt-2", isExpanded: true, canAdd: true, selectable: false },
         );
         return box;
     }
@@ -578,7 +578,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         ],
                         { selectable: false, cssClass: "w-full ml-8" },
                     ),
-                    { cssClass: "type4", isExpanded: true },
+                    { cssClass: "type4", isExpanded: true, selectable: false },
                 ),
                 BoxUtil.listGroupBox(
                     element, "patientNotAvailable", "Not Available",
@@ -591,7 +591,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         ],
                         { selectable: false, cssClass: "w-full ml-8" },
                     ),
-                    { cssClass: "type4", isExpanded: true },
+                    { cssClass: "type4", isExpanded: true, selectable: false },
                 ),
             ],
             { cssClass: "w-full ml-8" },

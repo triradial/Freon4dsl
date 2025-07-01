@@ -81,17 +81,10 @@
 
     const isFullWidth = $derived(
         !isNullOrUndefined(box) && (
-        //     isGridBox(box)
-        //     || isIndentBox(box)
-        //     || isLayoutBox(box)
-        //     || isListBox(box)
-        //     || isTableBox(box)
-            // isListGroupBox(box)
             isItemGroupBox(box)
             || isItemGroupBox2(box)
             || isMultiLineTextBox(box)
             || isMultiLineTextBox2(box)
-            // || isOptionalBox2(box)
         )
     );
     
@@ -106,9 +99,10 @@
         LOGGER.log(
             'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
         );
-        // Note that click events on some components, like TextComponent, are already caught.
-        // These components need to take care of setting the currently selected element themselves.
-        editor.selectElementForBox(box);
+        // Only allow selection if the box is selectable
+        if (box.selectable) {
+            editor.selectElementForBox(box);
+        }
         event.preventDefault();
         event.stopPropagation();
     };
@@ -137,7 +131,14 @@
         if (isBooleanControlBox(box) || isLimitedControlBox(box)) {
             // do not set extra class, the control itself handles being selected
         } else {
-            const newSelectedCls = isSelected ? 'render-component-selected' : 'render-component-unselected'
+            // Only apply selected/unselected classes if selectable, otherwise use a not-selectable class
+            let newSelectedCls = '';
+            LOGGER.log("box=" + box.node.name + " selectable=" + box.selectable);
+            if (box.selectable) {
+                newSelectedCls = isSelected ? 'render-component-selected' : 'render-component-unselected';
+            } else {
+                newSelectedCls = 'render-component-unselected';
+            }
             selectedChanged = (newSelectedCls !== selectedCls)
             selectedCls = newSelectedCls
         }
@@ -287,3 +288,12 @@
         {/if}
     </span>
 {/if}
+
+<style>
+/* Add a style for non-selectable boxes */
+.render-component-not-selectable {
+    opacity: 0.5;
+    pointer-events: none;
+    /* You can adjust the style as needed for better UX */
+}
+</style>
