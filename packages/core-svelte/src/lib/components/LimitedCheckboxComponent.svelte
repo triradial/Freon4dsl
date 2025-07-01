@@ -1,16 +1,7 @@
 <script lang="ts">
     import { LIMITEDCHECKBOX_LOGGER } from './ComponentLoggers.js';
-    import {
-        LimitedControlBox,
-        SHIFT,
-        CONTROL,
-        ALT,
-        SPACEBAR,
-        ARROW_RIGHT,
-        ARROW_LEFT,
-        ARROW_DOWN,
-        ARROW_UP
-    } from '@freon4dsl/core';
+    import { SHIFT, CONTROL, ALT, SPACEBAR, ARROW_RIGHT, ARROW_LEFT, ARROW_DOWN, ARROW_UP } from '@freon4dsl/core';
+    import type { LimitedControlBox } from '@freon4dsl/core';
     import { onMount } from 'svelte';
     import { MdCheckbox } from '@material/web/all.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';

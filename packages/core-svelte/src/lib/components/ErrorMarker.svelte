@@ -2,7 +2,7 @@
     import { tick } from 'svelte';
     import ErrorTooltip from './ErrorTooltip.svelte';
     import type { FreComponentProps } from "$lib";
-    import {Box} from "@freon4dsl/core";
+    import type {Box} from "@freon4dsl/core";
 
     let { editor, box }: FreComponentProps<Box> = $props();
 
@@ -42,7 +42,7 @@
     style="top: {top}px; height: {height}px;"
     role="contentinfo"
 >
-    <ErrorTooltip {box} {editor} hasErr={true} parentTop={top} parentLeft={2}>
+    <ErrorTooltip {box} {editor} hasErr={true} parentTop={top} parentLeft={2} cssClass="">
         <span class="error-marker" style="height: {height}px;">&nbsp</span>
     </ErrorTooltip>
 </span>

@@ -87,8 +87,6 @@
   --input-text: var(--white);
   --input-border: #6B7280;
 
-
-
   --background-color: white;
   --background-value1: #333;
   --background-label: #555;
@@ -184,6 +182,8 @@
 
   --error-background: #fae4e7;
   --error-color: #9b2a22;
+
+  --error-indicator: #c7706a;
 }
 
 body {
@@ -532,12 +532,15 @@ appnav a:visited {
 }
 
 .resize-handle {
+  width: 8px;
   background-color: var(--drawer-handle);
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  box-shadow: 1px 0 4px rgba(0,0,0,0.08);
 }
 
 .resize-handle.bright {
-  background-color: #0078D4 !important; /* or any bright color you want */
+  background-color: #1C64F2 !important;
+  box-shadow: 0 0 12px #1C64F2, 1px 0 4px rgba(0,0,0,0.08);
 }
 
 .drawer-content,
@@ -715,8 +718,12 @@ border-bottom: 1px solid var(--white-5t) !important;
   background-color: var(--content-background) !important;
 }
 
+.object-drawer-error-indicator {
+  color: var(--error-indicator) !important;
+}
+
 .mutation-area {
-  }
+}
 /* #endregion */
 
 /* #region Buttons */

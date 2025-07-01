@@ -65,7 +65,7 @@
     class="layout-component {errorCls} {cssClass}"
     class:layout-component-horizontal={isHorizontal}
     class:layout-component-vertical={!isHorizontal}
-    class:w-full={!isHorizontal}
+
     tabindex="-1"
     bind:this={element}
 >

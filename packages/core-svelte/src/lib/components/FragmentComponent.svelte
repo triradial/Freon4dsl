@@ -1,7 +1,8 @@
 <script lang="ts">
     import { FRAGMENT_LOGGER } from './ComponentLoggers.js';
     import RenderComponent from './RenderComponent.svelte';
-    import { Box, FragmentBox, isNullOrUndefined } from '@freon4dsl/core';
+    import { Box, isNullOrUndefined } from '@freon4dsl/core';
+    import type { FragmentBox } from '@freon4dsl/core';
     import { componentId } from './svelte-utils/index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
@@ -44,6 +45,6 @@
 
 {#if !isNullOrUndefined(childBox)}
     <span class="fragment-component {cssClass}" {id}>
-        <RenderComponent box={childBox} {editor} />
+        <RenderComponent box={childBox} {editor} cssClass="" />
     </span>
 {/if}

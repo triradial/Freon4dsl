@@ -78,7 +78,7 @@
 </script>
 
 <div class="mutation-area max-w-sm">
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-4">
         <div>
             <div class="small-label-text">Name{#if errors.name}<IconAsterisk size="12" color="red" />{/if}</div>        
             <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} />

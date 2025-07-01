@@ -461,7 +461,8 @@
 
 /* #region Render Component */
 .render-component-selected {
-  background-color: var(--white-5t);
+  background-color: #4d008c51;
+  /* border: 1px dashed #531388 !important; */
 }
 /* #endregion */
 

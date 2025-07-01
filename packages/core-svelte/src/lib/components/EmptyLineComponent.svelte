@@ -4,7 +4,8 @@
      */
     import { componentId } from '../index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
-    import { EmptyLineBox, isNullOrUndefined } from '@freon4dsl/core';
+    import type { EmptyLineBox } from '@freon4dsl/core';
+    import { isNullOrUndefined } from '@freon4dsl/core';
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let { editor, box }: FreComponentProps<EmptyLineBox> = $props();

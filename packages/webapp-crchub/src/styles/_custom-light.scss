@@ -169,6 +169,7 @@
 
   --error-background: #fae4e7;
   --error-color: #ae2b22;
+  --error-indicator: #c75047;
 }
 
 body {
@@ -524,12 +525,15 @@ appnav a:visited {
 }
 
 .resize-handle {
+  width: 8px;
   background-color: var(--drawer-handle);
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  box-shadow: 1px 0 4px rgba(0,0,0,0.08);
 }
 
 .resize-handle.bright {
-  background-color: #0078D4 !important; /* or any bright color you want */
+  background-color: #1C64F2 !important;
+  box-shadow: 0 0 12px #1C64F2, 1px 0 4px rgba(0,0,0,0.08);
 }
 
 .drawer-content,
@@ -695,6 +699,20 @@ appnav a:visited {
   background: var(--toolbar-button-active-background) !important;
   color: var(--toolbar-button-active) !important;
 } 
+/* #endregion */
+
+/* #region Object Drawer */
+.object-drawer {
+  background-color: var(--mutation-background) !important;
+}
+
+.object-drawer-area {
+  background-color: var(--content-background) !important;
+}
+
+.object-drawer-error-indicator {
+  color: var(--error-indicator) !important;
+}
 /* #endregion */
 
 /* #region Buttons */

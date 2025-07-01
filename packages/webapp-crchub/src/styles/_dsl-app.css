@@ -38,6 +38,7 @@ main {
 
 .render-component {
   display: grid;
+  border: 1px solid transparent;
 }
 
 /* #endregion */
@@ -208,6 +209,7 @@ main {
   margin: 0;
   padding: 0.5rem 0;
   align-items: center;
+  overflow: hidden;
 }
 
 .list-group .action-button {
@@ -330,6 +332,7 @@ main {
 .item-group {
   display: flex;
   align-items: center;
+  overflow: hidden;
 }
 
 .item-group .action-button {
@@ -400,6 +403,7 @@ main {
   display: block;
   padding: 0px;
   margin: 0px;
+  overflow: hidden;
 }
 
 /* #endregion */

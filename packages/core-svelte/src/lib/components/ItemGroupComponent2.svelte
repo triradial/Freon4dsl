@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { isNumber } from 'lodash';
+    // unused import 30-JUn import { isNumber } from 'lodash';
     import TextComponent from './TextComponent.svelte';
     import DropdownComponent from './DropdownComponent.svelte';
     import { clickOutsideConditional, componentId } from './svelte-utils/index.js';
@@ -48,24 +48,23 @@
     }: ItemGroup2Props<ItemGroupBox2> = $props();
     let textBox: TextBox = $derived(() => box?.textBox);
 
-    let id: string; // an id for the html element
-    id = !!box ? componentId(box) : 'itemgroup2-with-unknown-box';
-    let isEditing: boolean = false; // becomes true when the text field gets focus
-    let dropdownShown: boolean = false; // when true the dropdwon element is shown
-    let text: string = ''; // the text in the text field
-    let selected: string; // the id of the selected option in the dropdown
-    let filteredOptions: SelectOption[]; // the list of filtered options that are shown in the dropdown
-    let allOptions: SelectOption[]; // all options as calculated by the editor
-    let textComponent: any;
-    let style: string = '';
+    let id: string = $state(!!box ? componentId(box) : 'itemgroup2-with-unknown-box');
+    let isEditing: boolean = $state(false); // becomes true when the text field gets focus
+    let dropdownShown: boolean = $state(false); // when true the dropdwon element is shown
+    let text: string = $state(''); // the text in the text field
+    let selected: string = $state(''); // the id of the selected option in the dropdown
+    let filteredOptions: SelectOption[] = $state([]); // the list of filtered options that are shown in the dropdown
+    let allOptions: SelectOption[] = $state([]); // all options as calculated by the editor
+    let textComponent: any = $state();
+    let style: string = $state('');
 
-    let contentElement: HTMLDivElement | null = null;
-    let label: string;
-    let child: Box;
-    let isExpanded: boolean = false;
-    let contentStyle: string = 'display: none';
-    let isDraggable: boolean = true;
-    let canEdit: boolean = true;
+    let contentElement: HTMLDivElement | null = $state(null);
+    let label: string = $state('');
+    let child: Box = $state();
+    let isExpanded: boolean = $state(false);
+    let contentStyle: string = $state('display: none');
+    let isDraggable: boolean = $state(true);
+    let canEdit: boolean = $state(true);
 
     let setText = (value: string) => {
         if (value === null || value === undefined) {
@@ -472,11 +471,17 @@
 
     refresh();
 
-    const selectItem = (event: MouseEvent) => {
+    const selectItem = (event: MouseEvent | KeyboardEvent) => {
         editor.selectElementForBox(box);
         event.preventDefault();
         event.stopPropagation();
     };
+
+    function handleKeydown(event: KeyboardEvent) {
+        if (event.key === "Enter" || event.key === " ") {
+            selectItem(event);
+        }
+    }
 
     function toggleExpanded() {
         if (contentElement) {
@@ -523,14 +528,15 @@
     }
 </script>
 
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions a11y-click-events-have-key-events a11y-interactive-supports-focus -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events a11y_interactive_supports_focus -->
 <div
     id="{id}-group"
     class="item-group {cssClass} w-full"
     {style}
     onclick={selectItem}
+    onkeydown={handleKeydown}
     role="button"
->
+    tabindex="0">
     {#key isDraggable}
         <IconGripVertical />
     {/key}
@@ -547,7 +553,7 @@
                 {/if}
             </button>
         {:else}
-            <span class="w-5" />
+            <span class="w-5"></span>
         {/if}
     {/key}
     <span class="item-group-label">{label}</span>

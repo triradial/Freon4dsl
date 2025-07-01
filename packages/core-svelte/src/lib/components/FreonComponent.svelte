@@ -32,7 +32,7 @@
         draggedFrom,
         selectedBoxes,
         shouldBeHandledByBrowser,
-        contextMenu, contextMenuVisible
+        contextMenu, contextMenuVisible, viewport
     } from './stores/AllStores.svelte.js';
     import type { MainComponentProps } from './svelte-utils/FreComponentProps.js';
 
@@ -218,44 +218,37 @@
         LOGGER.log(`FreonComponent clientRect`)
         return element?.getBoundingClientRect() || UndefinedRectangle
     }
-    // function setViewportSizes(elem?: Element) {
-    //     // Note that entry.contentRect gives slightly different results to entry.target.getBoundingClientRect().
-    //     // A: I have no idea why.
-    //     if (!isNullOrUndefined(elem)) {
-    //         let rect = elem.getBoundingClientRect();
-    //         if (!isNullOrUndefined(elem.parentElement)) {
-    //             let parentRect = elem.parentElement.getBoundingClientRect();
-    //             viewport.value.setSizes(rect.height, rect.width, parentRect.top, parentRect.left);
-    //         } else {
-    //             viewport.value.setSizes(rect.height, rect.width, 0, 0);
-    //         }
-    //         console.log('setViewportSizes')
-    //     }
-    // }
 
-    // onMount(() => {
-    //     setViewportSizes(element);
-    //
-    //     // We keep track of the size of the editor component, to be able to position any context menu correctly.
-    //     // For this we use a ResizeObserver.
-    //
-    //     // Define the observer and its callback.
-    //     const resizeObserver = new ResizeObserver((entries) => {
-    //         // Hide any contextmenu upon resize, because its position will not be correct.
-    //         contextMenuVisible.value = false;
-    //         // Use a timeOut to improve performance, otherwise every slight change will activate this function.
-    //         setTimeout(() => {
-    //             // We're only watching one element, this is the first of the entries. Get it's size.
-    //             setViewportSizes(entries.at(0)?.target);
-    //         }, 400); // Might use another value for the delay, but this seems ok.
-    //     });
-    //
-    //     // Observe the FreonComponent element.
-    //     resizeObserver.observe(element);
-    //
-    //     // This callback cleans up the observer.
-    //     return () => resizeObserver.unobserve(element);
-    // });
+    function setViewportSizes(elem?: Element) {
+        if (elem) {
+            let rect = elem.getBoundingClientRect();
+            let top = 0, left = 0;
+            if (elem.parentElement) {
+                let parentRect = elem.parentElement.getBoundingClientRect();
+                top = parentRect.top;
+                left = parentRect.left;
+            }
+            viewport.update(vp => {
+                vp.setSizes(rect.height, rect.width, top, left);
+                return vp;
+            });
+        }
+    }
+
+    onMount(() => {
+        setViewportSizes(element);
+
+        // We keep track of the size of the editor component, to be able to position any context menu correctly.
+        // For this we use a ResizeObserver.
+        const resizeObserver = new ResizeObserver((entries) => {
+            contextMenuVisible.value = false;
+            setTimeout(() => {
+                setViewportSizes(entries.at(0)?.target);
+            }, 400);
+        });
+        resizeObserver.observe(element);
+        return () => resizeObserver.unobserve(element);
+    });
 
     const refreshSelection = async (why?: string) => {
         LOGGER.log(
@@ -338,7 +331,7 @@
 >
     <div class="gutter"></div>
     <div class="editor-component">
-        <RenderComponent {editor} box={rootBox} />
+        <RenderComponent {editor} box={rootBox} cssClass="" />
     </div>
 </div>
 <!-- Here the only instance of ContextMenu is defined -->

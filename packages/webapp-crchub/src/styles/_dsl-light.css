@@ -459,7 +459,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 /* #region Render Component */
 .render-component-selected {
-  background-color: var(--black-2t);
+  background-color: #a57cc718;
+  /* border: 1px dashed #470080 !important; */
 }
 /* #endregion */
 

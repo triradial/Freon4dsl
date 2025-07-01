@@ -22,7 +22,7 @@
         <h3 class="main-label-text mr-2">Patient</h3>
         <button type="button" class="icon-button primary inverted" onclick={onEditClick}><IconPencil /></button>
     </div>
-    <div class="space-y-2">
+    <div class="space-y-4">
         <div>
             <div class="small-label-text">Patient Number</div>
             <p class="standard-text">{patient.patientNumber}</p>

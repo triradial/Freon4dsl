@@ -12,7 +12,7 @@
     import { type MainComponentProps } from './svelte-utils/FreComponentProps.js';
     import { tick } from 'svelte';
     import {FreEditor, MenuItem} from '@freon4dsl/core';
-    import { contextMenuVisible } from './stores/AllStores.svelte.js';
+    import { contextMenuVisible, viewport } from './stores/AllStores.svelte.js';
 
     // items for the context menu
     let { editor }: MainComponentProps = $props();
@@ -55,13 +55,36 @@
         // wait for the menu to be rendered, because we need its sizes for the positioning
         await tick();
         // get the position of the mouse relative to the editor view
-        const rect = editor.getClientRectangle();
-        let posX: number = event.pageX - rect.x;
-        let posY: number = event.pageY - rect.y;
-        // calculate the right position of the context menu
-        left = calculatePos(rect.width, menuWidth, posX);
-        top = calculatePos(rect.height, menuHeight, posY);
+        getContextMenuPosition(event);
     }
+
+    /** M+G: This function is used to get the position of the context menu. */
+    function getContextMenuPosition(event: MouseEvent) {
+        // Svelte auto-subscription: use $viewport
+        let posX: number = event.pageX - $viewport.left;
+        let posY: number = event.pageY - $viewport.top;
+        // calculate the right position of the context menu
+
+        let useMousePosition = true;
+
+        if (!useMousePosition) {
+            left = calculatePos($viewport.width, menuWidth, posX);
+            top = calculatePos($viewport.height, menuHeight, posY);
+        } else {
+            left = event.clientX;
+            top = event.clientY;
+
+            if (left > $viewport.left + $viewport.width - menuWidth) {
+                left = left - menuWidth;
+            }
+            if (top > $viewport.top + $viewport.height - menuHeight) {
+                top = top - menuHeight;
+            }
+        }
+        LOGGER.log("ContextMenu.show: " + " left=" + left + " top=" + top);
+    }
+
+
 
     /**
      * This function hides the context menu
