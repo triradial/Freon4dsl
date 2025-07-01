@@ -117,7 +117,6 @@ router.put("/saveModelUnit", async (ctx: Router.IRouterContext) => {
         ctx.response.type = 'application/json';
         ctx.response.body = { error: "Missing query parameter 'model' or 'unit'" };
     }
-    // ModelRequests.generateChart(ctx.request.body);
     ctx.response.body = { massage: (ctx.request as any).body };
 });
 

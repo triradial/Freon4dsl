@@ -57,14 +57,8 @@ export class ModelManager {
     async createModel(modelName: string) {
         try {
             LOGGER.log("ModelHandler.createModel name: " + modelName);
-            // await this.saveCurrentUnit();
             this.resetGlobalVariables();
-            await this.modelStore.createModel(modelName);
-            if (modelName === "StudyConfiguration") {
-                await this.createStudyConfigurationModelUnits();
-            } else {
-                LOGGER.info("ModelHandler.createModel units: none");
-            }
+            await this.createStudyConfigurationModelUnits();
         } catch (error) {
             LOGGER.error("Error in newModel: " + error);
         }

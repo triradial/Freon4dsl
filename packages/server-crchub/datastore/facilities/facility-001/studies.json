@@ -132,6 +132,15 @@
     "currentProtocol": ""
   },
   {
+    "id": "ce96de44-b612-4d97-9e02-0ae4f40f738f",
+    "name": "Demo4",
+    "title": "",
+    "status": "Planning",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
+  },
+  {
     "id": "6cbeca36-13a8-4ecf-b68d-4944fc590184",
     "name": "UI-Testing",
     "title": "this is a study created to explore how the Freon UI has improved",
