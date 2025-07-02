@@ -593,3 +593,29 @@
         <RenderComponent box={box.child} {editor} {cssClass} />
     </div>
 {/key}
+
+<style>
+    .toggle-button:focus {
+        outline: 2px solid var(--primary-600) !important;
+        outline-offset: 2px !important;
+        background-color: var(--primary-50) !important;
+        border-radius: 4px !important;
+    }
+
+    .action-button:focus {
+        outline: 2px solid var(--primary-600) !important;
+        outline-offset: 2px !important;
+        background-color: var(--primary-600) !important;
+        color: var(--white) !important;
+        border-color: var(--white) !important;
+        box-shadow: 0 0 0 2px var(--primary-600), 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+        transform: scale(1.1) !important;
+        transition: all 0.2s ease !important;
+        z-index: 10 !important;
+    }
+
+    /* Show action buttons when item-group is focused */
+    .item-group:focus-within .action-button {
+        display: inline-block !important;
+    }
+</style>
