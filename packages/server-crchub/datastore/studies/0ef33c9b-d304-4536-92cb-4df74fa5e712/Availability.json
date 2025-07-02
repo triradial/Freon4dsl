@@ -1,9 +1,14 @@
 {
    "serializationFormatVersion": "2023.1",
-   "languages": [],
+   "languages": [
+      {
+         "key": "-key-StudyConfigurationModel",
+         "version": "2023.1"
+      }
+   ],
    "nodes": [
       {
-         "id": "ID-56",
+         "id": "ID-36",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",

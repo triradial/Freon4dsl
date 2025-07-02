@@ -19,6 +19,7 @@
 
     let study = $state<Study | undefined>(undefined);
     let editorLoaded = $state(false);
+    let noModelAvailable = $state(false);
     let activeTab = $state('patients');
 
     let dslEditor = $state<FreEditor | undefined>(undefined);
@@ -58,13 +59,14 @@
         
         // Get the model data for the study
         const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration");
-        if (result !== undefined) {
+        if (result !== undefined && result !== null) {
             unit = result as StudyConfiguration;
             setTimeout(() => {
                 editorLoaded = true;
             }, 3000);
         } else {
-            console.error("Failed to load study configuration");
+            console.error("No model to load");
+            noModelAvailable = true;
         }
     }
 
@@ -131,7 +133,7 @@
                         </div>
                     </Tabs.Panel>
                     <Tabs.Panel value="design">
-                        <!-- {#if editorLoaded} -->
+                       {#if editorLoaded}
                             <div class="flex gap-2 mb-2">
                                 <button type="button" class="icon-button primary inverted" onclick={handleSaveStudy}><IconSave /></button>
                                 <button type="button" class="icon-button primary inverted" onclick={handleUndoAction}><IconUndo /></button>
@@ -143,6 +145,17 @@
                             <div class="crc-editor-footer h-8 crc-content-width">
                                 <DSLFooter items={footerItems()} onCheckboxChange={handleCheckboxChange} />
                             </div>
+                        {:else}
+                            {#if noModelAvailable === false}
+                                <div class="crc-editor crc-content-width">
+                                    <div class="placeholder animate-pulse"></div>
+                                </div>
+                            {:else}
+                                <div class="crc-editor crc-content-width">
+                                    <span class="editor-message">No model available</span>
+                                </div>
+                            {/if}
+                        {/if}
                     </Tabs.Panel>
                 {/snippet}
             </Tabs>

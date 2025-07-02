@@ -621,6 +621,12 @@ appbar header {
   margin-left: 0.5rem;
   font-size: 0.675rem;
 }
+
+.editor-message {
+  padding: 0.5rem;
+  font-size: var(--standard-font-size);
+  font-weight: 500;
+}
 /* #endregion */
 
 /* #region Toast */

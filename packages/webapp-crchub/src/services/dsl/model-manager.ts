@@ -58,6 +58,7 @@ export class ModelManager {
         try {
             LOGGER.log("ModelHandler.createModel name: " + modelName);
             this.resetGlobalVariables();
+            await this.modelStore.createModel(modelName);
             await this.createStudyConfigurationModelUnits();
         } catch (error) {
             LOGGER.error("Error in newModel: " + error);

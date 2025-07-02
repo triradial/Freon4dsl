@@ -32,34 +32,6 @@
     ]
   },
   {
-    "id": "4b5c6d7e-8f9a-4f1b-2a3c-4e5d6e7a8e9e",
-    "name": "Demo3",
-    "identifiers": [
-      {
-        "type": "nct",
-        "identifier": "NCT44429081"
-      }
-    ],
-    "status": "Active",
-    "title": "Effect of Different Doses of SAR110894 on Growths in Patients With Mild to Moderate Cancerous Tumors",
-    "phase": "III",
-    "interventions": [
-      {
-        "type": "drug",
-        "name": "SAR110894"
-      }
-    ],
-    "therapeuticArea": "Oncology",
-    "currentProtocol": "v1",
-    "protocolAmendments": [
-      {
-        "version": "v1",
-        "date": "01-MAY-2023",
-        "description": "initial protocol"
-      }
-    ]
-  },
-  {
     "id": "e0b1dc36-07ee-4f0f-8ba6-8d9c69724c67",
     "name": "StartMinusDays",
     "title": "Study used for automated tests",
@@ -132,10 +104,37 @@
     "currentProtocol": ""
   },
   {
-    "id": "c107bebf-de79-4940-85ac-600fee0b1148",
-    "name": "T3",
-    "title": "T3",
-    "status": "Active",
+    "id": "6cbeca36-13a8-4ecf-b68d-4944fc590184",
+    "name": "UI-Testing",
+    "title": "this is a study created to explore how the Freon UI has improved",
+    "status": "Planning",
+    "phase": "I",
+    "therapeuticArea": "Test TPA",
+    "currentProtocol": ""
+  },
+  {
+    "id": "ad51228e-7e94-4827-9cd5-0f202d63971d",
+    "name": "t8",
+    "title": "t8",
+    "status": "",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
+  },
+  {
+    "id": "37c60a90-ffad-4e81-871d-b6bf79e1fe30",
+    "name": "t9",
+    "title": "tt",
+    "status": "",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
+  },
+  {
+    "id": "0ef33c9b-d304-4536-92cb-4df74fa5e712",
+    "name": "Demo11",
+    "title": "",
+    "status": "Planning",
     "phase": "",
     "therapeuticArea": "",
     "currentProtocol": ""

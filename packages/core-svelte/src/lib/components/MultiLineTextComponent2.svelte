@@ -11,6 +11,7 @@
     let id: string = $state('');
     id = !!box ? componentId(box) : "text-with-unknown-box";
     const placeholderStore = $derived(() => box.placeHolder);
+    let text: string = $state("");
     let cssClass: string = $state("");
     let editorDiv: HTMLDivElement | null = $state(null);
     let quill: any = $state(null);
