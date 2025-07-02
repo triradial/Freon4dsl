@@ -333,6 +333,28 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     //         return null
     //     },
     // }),
+    FreCustomAction.create({
+        activeInBoxRoles: ["deleteDateRange"],
+        trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const dateRange: DateRange = box.node as DateRange
+            const patientHistory: PatientHistory = ownerOfType(dateRange, "PatientHistory") as PatientHistory
+            const index = dateRange.freOwnerDescriptor().propertyIndex
+            patientHistory.patientNotAvailableDates.splice(index, 1)
+            return null
+        },
+    }),
+    FreCustomAction.create({
+        activeInBoxRoles: ["deletePatientVisit"],
+        trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const patientVisit: PatientVisit = box.node as PatientVisit
+            const patientHistory: PatientHistory = ownerOfType(patientVisit, "PatientHistory") as PatientHistory
+            const index = patientVisit.freOwnerDescriptor().propertyIndex
+            patientHistory.patientVisits.splice(index, 1)
+            return null
+        },
+    }),
 ]
 
 /* #region Task functions */

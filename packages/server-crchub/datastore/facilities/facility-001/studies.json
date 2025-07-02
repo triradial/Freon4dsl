@@ -113,9 +113,18 @@
     "currentProtocol": ""
   },
   {
-    "id": "2cbdbc39-a026-419b-9896-6b9333c7763f",
-    "name": "t7",
-    "title": "7",
+    "id": "ad51228e-7e94-4827-9cd5-0f202d63971d",
+    "name": "t8",
+    "title": "t8",
+    "status": "",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
+  },
+  {
+    "id": "37c60a90-ffad-4e81-871d-b6bf79e1fe30",
+    "name": "t9",
+    "title": "tt",
     "status": "",
     "phase": "",
     "therapeuticArea": "",

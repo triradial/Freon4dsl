@@ -32,7 +32,7 @@ StaffLevel {
 }
 
 DateRange {
-  [${startDate} thru:${endDate}]
+  [${startDate} thru:${endDate} [button text="❌" boxRole="deleteDateRange"]]
 }
 
 DateConcept {
@@ -57,7 +57,7 @@ PatientHistory {
 
 PatientVisit {
   [
-      Visit: '${visit}' on  ${actualVisitDate} 
+      Visit: '${visit}' on  ${actualVisitDate} [button text="❌" boxRole="deletePatientVisit"]
   ]
 }
 

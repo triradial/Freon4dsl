@@ -15,7 +15,7 @@ import {
     LimitedDisplay,
     NumberDisplay,
     TextBox,
-} from "@freon4dsl/core";
+} from "@freon4dsl/core"
 import {
     StudyConfiguration,
     Description,
@@ -32,8 +32,8 @@ import {
     PatientInfo,
     PatientHistory,
     NumberLiteralExpression,
-} from "../language/gen/index.js";
-import { StudyConfigurationModelEnvironment } from "../config/gen/StudyConfigurationModelEnvironment.js";
+} from "../language/gen/index.js"
+import { StudyConfigurationModelEnvironment } from "../config/gen/StudyConfigurationModelEnvironment.js"
 
 /**
  * Class CustomStudyConfigurationModelProjection provides an entry point for the language engineer to
@@ -46,8 +46,8 @@ import { StudyConfigurationModelEnvironment } from "../config/gen/StudyConfigura
  */
 
 export class CustomStudyConfigurationModelProjection implements FreProjection {
-    name: string = "Custom";
-    handler: FreProjectionHandler;
+    name: string = "Custom"
+    handler: FreProjectionHandler
     nodeTypeToBoxMethod: Map<string, (node: FreNode) => Box> = new Map<string, (node: FreNode) => Box>([
         ["StudyConfiguration", this.projectStudyConfiguration],
         ["Description", this.projectDescription],
@@ -62,15 +62,15 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         ["PatientInfo", this.projectPatientInfo],
         ["PatientHistory", this.projectPatientHistory],
         ["NumberLiteralExpression", this.createNumberLiteralBox],
-    ]);
+    ])
 
     nodeTypeToTableDefinition: Map<string, () => FreTableDefinition> = new Map<string, () => FreTableDefinition>([
         // register your custom table definition methods here
         // ['NAME_OF_CONCEPT', this.TABLE_DEFINITION_FOR_CONCEPT],
-    ]);
+    ])
 
     getTableHeadersFor(projectionName: string): TableRowBox {
-        return null;
+        return null
     }
 
     // For each table projection to override the meta-programming pattern is:
@@ -87,11 +87,11 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     ////////////////////////////////////////////////////////////////////
     createNumberLiteralBox(num: NumberLiteralExpression): Box {
-        const numBox: Box = BoxUtil.numberBox(num, "value", NumberDisplay.SELECT);
+        const numBox: Box = BoxUtil.numberBox(num, "value", NumberDisplay.SELECT)
         if (numBox instanceof TextBox) {
-            numBox.deleteWhenEmpty = true;
+            numBox.deleteWhenEmpty = true
         }
-        return createDefaultExpressionBox(num, [numBox], { selectable: false });
+        return createDefaultExpressionBox(num, [numBox], { selectable: false })
     }
 
     /**
@@ -101,159 +101,177 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
      * @returns The created study configuration box.
      */
     projectStudyConfiguration(studyconfig: StudyConfiguration): Box {
-        const element: StudyConfiguration = studyconfig;
+        const element: StudyConfiguration = studyconfig
         return BoxFactory.verticalLayout(element, "StudyConfiguration-overall", "", [
-            BoxUtil.listGroupBox( 
-                element, "periods", "Study Periods",
-                BoxUtil.verticalPartListBox( 
-                    element, element.periods, "periods", null, this.handler, 
-                    { cssClass: "vplb sc1 type1" }
-                ),
-                { cssClass: "lgb sc2 type1", canAdd: true, canExpand: true, isExpanded: true, selectable: false }
-            ),
-            ...(element.showSharedTasks === true ? [
-            BoxUtil.listGroupBox( 
-                element, "shared-tasks", "Shared Tasks",
-                BoxUtil.verticalPartListBox(
-                    element, element.tasks, "tasks", null, this.handler, 
-                    { cssClass: "vplb sc3 type1" }
-                ),
-                { cssClass: "lgb sc4 type1", isExpanded: true, canAdd: true, selectable: false }
-            ),
-            ] : []),
-            ...(element.showSystems === true ? [
             BoxUtil.listGroupBox(
-                element, "shared-systems", "Systems",
-                BoxUtil.verticalPartListBox(
-                    element, element.systemAccesses, "systemAccesses", null, this.handler, 
-                    { cssClass: "vplb sc5 type1" }
-                ),
-                { cssClass: "lgb sc6 type1", isExpanded: true, canAdd: true, selectable: false }
+                element,
+                "periods",
+                "Study Periods",
+                BoxUtil.verticalPartListBox(element, element.periods, "periods", null, this.handler, { cssClass: "vplb sc1 type1" }),
+                { cssClass: "lgb sc2 type1", canAdd: true, canExpand: true, isExpanded: true, selectable: false },
             ),
-            ] : []),
-            ...(element.showPeople === true ? [
-            BoxUtil.listGroupBox(
-                element, "shared-people", "People",
-                    BoxUtil.getBoxOrAction(
-                        element, "staffing", "Staffing", this.handler
-                    ),
-                { cssClass: "lgb sc8 type1", isExpanded: true, canAdd: true, selectable: false }
-            ),
-            ] : []),
-        ]);
+            ...(element.showSharedTasks === true
+                ? [
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-tasks",
+                          "Shared Tasks",
+                          BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "vplb sc3 type1" }),
+                          { cssClass: "lgb sc4 type1", isExpanded: true, canAdd: true, selectable: false },
+                      ),
+                  ]
+                : []),
+            ...(element.showSystems === true
+                ? [
+                      BoxUtil.listGroupBox(
+                          element,
+                          "shared-systems",
+                          "Systems",
+                          BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, { cssClass: "vplb sc5 type1" }),
+                          { cssClass: "lgb sc6 type1", isExpanded: true, canAdd: true, selectable: false },
+                      ),
+                  ]
+                : []),
+            ...(element.showPeople === true
+                ? [
+                      BoxUtil.listGroupBox(element, "shared-people", "People", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler), {
+                          cssClass: "lgb sc8 type1",
+                          isExpanded: true,
+                          canAdd: true,
+                          selectable: false,
+                      }),
+                  ]
+                : []),
+        ])
     }
 
     projectDescription(description: Description): Box {
-        const element: Description = description;
-        const ph = "<description>";
+        const element: Description = description
+        const ph = "<description>"
         return new MultiLineTextBox2(
-            element, "study-part-description", () => { return element.text; },
-            (t: string) => { element.text = t; },
+            element,
+            "study-part-description",
+            () => {
+                return element.text
+            },
+            (t: string) => {
+                element.text = t
+            },
             { placeHolder: ph, cssClass: "desc" },
-        );
+        )
     }
 
     projectPeriod(period: Period): Box {
-        const element: Period = period;
-        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
+        const element: Period = period
+        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
         let box: Box = BoxUtil.itemGroupBox(
-            element, "period", "Period:", "name",
+            element,
+            "period",
+            "Period:",
+            "name",
             BoxFactory.verticalLayout(
-                element, "period-detail", "",
+                element,
+                "period-detail",
+                "",
                 [
-                    ...(showDescriptions? [
-                        BoxFactory.horizontalLayout(
-                            element, "period-hlist-line-1", "",
-                            [
-                                BoxUtil.getBoxOrAction(
-                                    element, "description", "Description", this.handler
-                                )
-                            ],
-                            { selectable: false, cssClass: "per1 desc align-top" }
-                        ),
-                    ] : []),
+                    ...(showDescriptions
+                        ? [
+                              BoxFactory.horizontalLayout(
+                                  element,
+                                  "period-hlist-line-1",
+                                  "",
+                                  [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
+                                  { selectable: false, cssClass: "per1 desc align-top" },
+                              ),
+                          ]
+                        : []),
                     BoxUtil.listGroupBox(
-                        element, "events", "Events",
-                        BoxUtil.verticalPartListBox(
-                            element, element.events, "events", null, this.handler, 
-                            { cssClass: "vplb per2 type2 ml-6" }
-                        ),
+                        element,
+                        "events",
+                        "Events",
+                        BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler, { cssClass: "vplb per2 type2 ml-6" }),
                         { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
                     ),
                 ],
                 { cssClass: "vl per4 type2" },
             ),
             { cssClass: "igb per5 type2", placeHolder: "enter", canExpand: true, isExpanded: false, isRequired: true },
-        );
-        return box;
+        )
+        return box
     }
 
     projectEvent(event: Event): Box {
-        const element: Event = event;
-        const showScheduling = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showScheduling;
-        const showChecklists = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showChecklists;
-        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
+        const element: Event = event
+        const showScheduling = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showScheduling
+        const showChecklists = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showChecklists
+        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
         let box: Box = BoxUtil.itemGroupBox(
-            element, "event", "Event:", "name",
+            element,
+            "event",
+            "Event:",
+            "name",
             BoxFactory.verticalLayout(
-                element, "Event-detail", "",
+                element,
+                "Event-detail",
+                "",
                 [
                     BoxFactory.horizontalLayout(
-                        element as Event, "Event-hlist-line-1", "",
+                        element as Event,
+                        "Event-hlist-line-1",
+                        "",
                         [
-                            BoxUtil.labelBox(
-                                element as Event, "This is a", "top-1-line-1-item-0"
-                            ),
+                            BoxUtil.labelBox(element as Event, "This is a", "top-1-line-1-item-0"),
                             BoxUtil.limitedBox(
-                                element as Event, "typeOfEvent",
-                                (selected: string) => { (element as Event).typeOfEvent = FreNodeReference.create<TypeOfEvent>(selected, "TypeOfEvent"); },
-                                LimitedDisplay.SELECT, StudyConfigurationModelEnvironment.getInstance().scoper
+                                element as Event,
+                                "typeOfEvent",
+                                (selected: string) => {
+                                    ;(element as Event).typeOfEvent = FreNodeReference.create<TypeOfEvent>(selected, "TypeOfEvent")
+                                },
+                                LimitedDisplay.SELECT,
+                                StudyConfigurationModelEnvironment.getInstance().scoper,
                             ),
-                            BoxUtil.labelBox(
-                                element as Event, "that is also referred to as", "top-1-line-1-item-2"
-                            ),
-                            BoxUtil.textBox(
-                                element as Event, "alternativeName"
-                            ),
+                            BoxUtil.labelBox(element as Event, "that is also referred to as", "top-1-line-1-item-2"),
+                            BoxUtil.textBox(element as Event, "alternativeName"),
                         ],
                         { cssClass: "hl ev1 ml-6", selectable: false },
                     ),
 
-                    ...(showDescriptions === true ? [
-                        BoxUtil.getBoxOrAction(
-                            element, "description", "Description", this.handler
-                        )
-                    ] : []),
+                    ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
 
-                    ...(showScheduling === true ? [
-                        BoxUtil.listGroupBox(
-                            element, "schedule", "Schedule",
-                            BoxUtil.partWrapperBox(
-                                element as Event, "schedule", "ExpandCollapseWrapper",
-                                BoxUtil.getBoxOrAction(
-                                    element as Event, "schedule", "EventSchedule", this.handler
-                                )
-                            ),
-                            { cssClass: "lgb ev4 type3", isExpanded: true, selectable: false }
-                        ),
-                    ] : []),
+                    ...(showScheduling === true
+                        ? [
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "schedule",
+                                  "Schedule",
+                                  BoxUtil.partWrapperBox(
+                                      element as Event,
+                                      "schedule",
+                                      "ExpandCollapseWrapper",
+                                      BoxUtil.getBoxOrAction(element as Event, "schedule", "EventSchedule", this.handler),
+                                  ),
+                                  { cssClass: "lgb ev4 type3", isExpanded: true, selectable: false },
+                              ),
+                          ]
+                        : []),
 
-                    ...(showChecklists === true ? [
-                        BoxUtil.listGroupBox(
-                            element, "tasks", "Checklist",
-                            BoxUtil.verticalPartListBox(
-                                element, element.tasks, "tasks", null, this.handler, 
-                                { cssClass: "vplb ev5 type3" }
-                            ),
-                            { cssClass: "lgb ev6 type3", isExpanded: true, canAdd: true, selectable: false }
-                        ),
-                    ] : []),
+                    ...(showChecklists === true
+                        ? [
+                              BoxUtil.listGroupBox(
+                                  element,
+                                  "tasks",
+                                  "Checklist",
+                                  BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "vplb ev5 type3" }),
+                                  { cssClass: "lgb ev6 type3", isExpanded: true, canAdd: true, selectable: false },
+                              ),
+                          ]
+                        : []),
                 ],
-                { cssClass: "vl ev7 type3" }
+                { cssClass: "vl ev7 type3" },
             ),
-            { cssClass: "igb ev8 type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true }
-        );
-        return box;
+            { cssClass: "igb ev8 type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true },
+        )
+        return box
     }
 
     // projectSchedule(event: EventSchedule): Box {
@@ -313,259 +331,255 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     // }
 
     projectTask(abstract: AbstractTask) {
-        let box: Box;
-        let isShareable: boolean = true;
-        const event: Event = ownerOfType(abstract, "Event") as Event;
-        const studyConfiguration: StudyConfiguration = ownerOfType(abstract, "StudyConfiguration") as StudyConfiguration;
-        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false;
+        let box: Box
+        let isShareable: boolean = true
+        const event: Event = ownerOfType(abstract, "Event") as Event
+        const studyConfiguration: StudyConfiguration = ownerOfType(abstract, "StudyConfiguration") as StudyConfiguration
+        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false
         if (event) {
             // event task
             if (abstract instanceof Task) {
                 // in-line task
-                let element: Task = abstract as Task;
+                let element: Task = abstract as Task
                 box = BoxUtil.itemGroupBox(
-                    element, "task", "Task:", "name",
-                    BoxFactory.verticalLayout(
-                        element, "task-overall", "", 
-                        [
-                            ...(showDescriptions ? 
-                                [
-                                    BoxUtil.getBoxOrAction(
-                                        element, "description", "Description", this.handler
-                                    )
-                                ] : []),
-                            BoxUtil.listGroupBox(
-                                element, "steps", "Steps",
-                                BoxUtil.verticalPartListBox(
-                                    element, element.steps, "steps", null, this.handler,
-                                    { cssClass: "vplb tsk2 type4" }
-                                ),
-                                { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false }
-                            )
-                        ]),
+                    element,
+                    "task",
+                    "Task:",
+                    "name",
+                    BoxFactory.verticalLayout(element, "task-overall", "", [
+                        ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                        BoxUtil.listGroupBox(
+                            element,
+                            "steps",
+                            "Steps",
+                            BoxUtil.verticalPartListBox(element, element.steps, "steps", null, this.handler, { cssClass: "vplb tsk2 type4" }),
+                            { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false },
+                        ),
+                    ]),
                     { cssClass: "igb tsk4 type3", placeHolder: "enter", canShare: true, canDelete: true, isRequired: true },
-                );
+                )
             } else {
                 // task Reference
-                let taskRef: TaskReference = abstract as TaskReference;
-                let element: Task = taskRef.$task;
+                let taskRef: TaskReference = abstract as TaskReference
+                let element: Task = taskRef.$task
                 if (element) {
                     //with selection
                     box = BoxUtil.itemGroupBox2(
-                        element, "task", "Task:", "task", "AbstractTask",
-                        (selected: string) => { taskRef.task = FreNodeReference.create<Task>(
-                                StudyConfigurationModelEnvironment.getInstance().scoper.getFromVisibleElements(taskRef, selected, "Task") as Task,
-                                "Task",
-                            );
-                        },
-                        StudyConfigurationModelEnvironment.getInstance().scoper,
-                        BoxFactory.verticalLayout(
-                            element, "task-overall", "", 
-                            [
-                                ...(showDescriptions ? [
-                                    BoxUtil.getBoxOrAction(
-                                        element, "description", "Description", this.handler
-                                    )
-                                ] : []),
-                                BoxUtil.listGroupBox(
-                                    element, "steps", "Steps",
-                                    BoxUtil.verticalPartListBox(
-                                        element, element.steps, "steps", null, this.handler, 
-                                        { cssClass: "vplb tsk2 type4" }
-                                    ),
-                                    { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false }
-                                )
-                            ]
-                        ),
-                        { cssClass: "igb tsk4 type3", placeHolder: "enter", canDelete: true, isRequired: false },
-                    );
-                } else {
-                    // without selection
-                    box = BoxUtil.itemGroupBox2(
-                        taskRef, "task", "Task:", "task", "AbstractTask",
+                        element,
+                        "task",
+                        "Task:",
+                        "task",
+                        "AbstractTask",
                         (selected: string) => {
                             taskRef.task = FreNodeReference.create<Task>(
                                 StudyConfigurationModelEnvironment.getInstance().scoper.getFromVisibleElements(taskRef, selected, "Task") as Task,
                                 "Task",
-                            );
+                            )
+                        },
+                        StudyConfigurationModelEnvironment.getInstance().scoper,
+                        BoxFactory.verticalLayout(element, "task-overall", "", [
+                            ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                            BoxUtil.listGroupBox(
+                                element,
+                                "steps",
+                                "Steps",
+                                BoxUtil.verticalPartListBox(element, element.steps, "steps", null, this.handler, { cssClass: "vplb tsk2 type4" }),
+                                { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false },
+                            ),
+                        ]),
+                        { cssClass: "igb tsk4 type3", placeHolder: "enter", canDelete: true, isRequired: false },
+                    )
+                } else {
+                    // without selection
+                    box = BoxUtil.itemGroupBox2(
+                        taskRef,
+                        "task",
+                        "Task:",
+                        "task",
+                        "AbstractTask",
+                        (selected: string) => {
+                            taskRef.task = FreNodeReference.create<Task>(
+                                StudyConfigurationModelEnvironment.getInstance().scoper.getFromVisibleElements(taskRef, selected, "Task") as Task,
+                                "Task",
+                            )
                         },
                         StudyConfigurationModelEnvironment.getInstance().scoper,
                         BoxFactory.label(taskRef, "task-reference", "No task details"),
                         { cssClass: "igb2 tsk4 type3", placeHolder: "choose", canExpand: false, canDelete: true, isRequired: true },
-                    );
+                    )
                 }
             }
         } else {
             //shared task
-            let element: Task = abstract as Task;
-            let isShared = true;
+            let element: Task = abstract as Task
+            let isShared = true
             box = BoxUtil.itemGroupBox(
-                element, "task", "Task:", "name",
-                BoxFactory.verticalLayout(element, "task-overall", "", 
-                    [
-                        ...(showDescriptions ? 
-                            [
-                                BoxUtil.getBoxOrAction(
-                                    element, "description", "Description", this.handler
-                                )
-                            ] : []),
-                        BoxUtil.listGroupBox(
-                            element, "steps", "Steps",
-                            BoxUtil.verticalPartListBox(
-                                element, element.steps, "steps", null, this.handler, 
-                                { cssClass: "vplb tsk2 type4" }
-                            ),
-                            { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false }
-                        ),
-                    ]
-                ),
+                element,
+                "task",
+                "Task:",
+                "name",
+                BoxFactory.verticalLayout(element, "task-overall", "", [
+                    ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                    BoxUtil.listGroupBox(
+                        element,
+                        "steps",
+                        "Steps",
+                        BoxUtil.verticalPartListBox(element, element.steps, "steps", null, this.handler, { cssClass: "vplb tsk2 type4" }),
+                        { cssClass: "lgb tsk3 type4", isExpanded: true, canAdd: true, selectable: false },
+                    ),
+                ]),
                 { cssClass: "igb tsk4 type3", placeHolder: "enter", canShare: false, canDelete: !isShared, isRequired: true },
-            );
+            )
         }
-        return box;
+        return box
     }
 
     projectStep(element: Step) {
-        const studyConfiguration: StudyConfiguration = ownerOfType(element, "StudyConfiguration") as StudyConfiguration;
-        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false;
-        const showReferences = studyConfiguration ? studyConfiguration.showReferences : false;
-        const showSystems = studyConfiguration ? studyConfiguration.showSystems : false;
-        const showPeople = studyConfiguration ? studyConfiguration.showPeople : false;
+        const studyConfiguration: StudyConfiguration = ownerOfType(element, "StudyConfiguration") as StudyConfiguration
+        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false
+        const showReferences = studyConfiguration ? studyConfiguration.showReferences : false
+        const showSystems = studyConfiguration ? studyConfiguration.showSystems : false
+        const showPeople = studyConfiguration ? studyConfiguration.showPeople : false
         let box: Box = BoxUtil.itemGroupBox(
-            element, "step", "Step:", "title",
+            element,
+            "step",
+            "Step:",
+            "title",
             // BoxUtil.indentBox(
             //     element, 4, "ss1",
-                BoxFactory.verticalLayout(
-                    element, "step-overall", "", [
-                    ...(showDescriptions ? [
-                        BoxUtil.getBoxOrAction(
-                            element, "detailsDescription", "Description", this.handler
-                        )
-                    ] : []),
-                    ...(showReferences ? [
-                        BoxUtil.listGroupBox(
-                            element, "references", "References",
-                            BoxUtil.indentBox(
-                                element, 3, "ss11", 
-                                BoxUtil.verticalPartListBox(
-                                    element, element.references, "references", null, this.handler, 
-                                    { cssClass: "vplb st2 type4" }
-                                )
-                            ),
-                            { cssClass: "lgb st1 type4", isExpanded: false, canAdd: true, selectable: false },
-                        )
-                    ] : []),
-                    ...(showSystems ? [
-                        BoxUtil.listGroupBox(
-                            element, "systems", "Systems",
-                            BoxUtil.indentBox(
-                                element, 3, "ss12", 
-                                BoxUtil.verticalPartListBox(
-                                    element, element.systems, "systems", null, this.handler, 
-                                    { cssClass: "vplb st3 type4" }
-                                )
-                            ),
-                            { cssClass: "lgb st4 type4", isExpanded: false, canAdd: true, selectable: false },
-                        )
-                    ] : []),
-                    ...(showPeople ? [
-                        BoxUtil.listGroupBox(
-                            element, "people", "People",
-                            BoxUtil.indentBox(
-                                element, 3, "ss13", 
-                                BoxUtil.verticalPartListBox(
-                                    element, element.people, "people", null, this.handler, 
-                                    { cssClass: "vplb st5 type4" }
-                                )
-                            ),
-                            { cssClass: "lgb st6 type4", isExpanded: false, canAdd: true, selectable: false },
-                        )
-                    ] : []),
-                ]),
+            BoxFactory.verticalLayout(element, "step-overall", "", [
+                ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "detailsDescription", "Description", this.handler)] : []),
+                ...(showReferences
+                    ? [
+                          BoxUtil.listGroupBox(
+                              element,
+                              "references",
+                              "References",
+                              BoxUtil.indentBox(
+                                  element,
+                                  3,
+                                  "ss11",
+                                  BoxUtil.verticalPartListBox(element, element.references, "references", null, this.handler, { cssClass: "vplb st2 type4" }),
+                              ),
+                              { cssClass: "lgb st1 type4", isExpanded: false, canAdd: true, selectable: false },
+                          ),
+                      ]
+                    : []),
+                ...(showSystems
+                    ? [
+                          BoxUtil.listGroupBox(
+                              element,
+                              "systems",
+                              "Systems",
+                              BoxUtil.indentBox(
+                                  element,
+                                  3,
+                                  "ss12",
+                                  BoxUtil.verticalPartListBox(element, element.systems, "systems", null, this.handler, { cssClass: "vplb st3 type4" }),
+                              ),
+                              { cssClass: "lgb st4 type4", isExpanded: false, canAdd: true, selectable: false },
+                          ),
+                      ]
+                    : []),
+                ...(showPeople
+                    ? [
+                          BoxUtil.listGroupBox(
+                              element,
+                              "people",
+                              "People",
+                              BoxUtil.indentBox(
+                                  element,
+                                  3,
+                                  "ss13",
+                                  BoxUtil.verticalPartListBox(element, element.people, "people", null, this.handler, { cssClass: "vplb st5 type4" }),
+                              ),
+                              { cssClass: "lgb st6 type4", isExpanded: false, canAdd: true, selectable: false },
+                          ),
+                      ]
+                    : []),
+            ]),
             // ),
             { cssClass: "igb st7 type3", placeHolder: "enter", isRequired: true },
-        );
-        return box;
+        )
+        return box
     }
 
     projectReference(element: Reference) {
         let box: Box = BoxUtil.itemGroupBox(
-            element, "reference", "Reference", "title",
+            element,
+            "reference",
+            "Reference",
+            "title",
             // BoxUtil.indentBox(
-            //     element, 6.5, "ir1", 
-                BoxFactory.verticalLayout(
-                    element, "reference-overall", "", [
-                        BoxUtil.textBox(
-                            element, "link"
-                        )
-                    ]
-                ),
+            //     element, 6.5, "ir1",
+            BoxFactory.verticalLayout(element, "reference-overall", "", [BoxUtil.textBox(element, "link")]),
             // ),
             { cssClass: "w-full type3", placeHolder: "reference", canShare: true, isRequired: true },
-        );
-        return box;
+        )
+        return box
     }
 
     projectSystem(element: SystemAccess) {
-        const studyConfiguration: StudyConfiguration = ownerOfType(element, "StudyConfiguration") as StudyConfiguration;
-        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false;
+        const studyConfiguration: StudyConfiguration = ownerOfType(element, "StudyConfiguration") as StudyConfiguration
+        const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false
         let box: Box = BoxUtil.itemGroupBox(
-            element, "system", "System", "name",
+            element,
+            "system",
+            "System",
+            "name",
             // BoxUtil.indentBox(
             //     element, 6.5, "is1",
-                BoxFactory.verticalLayout(element, "system-overall", "", [
-                    BoxUtil.textBox(element, "functionName"),
-                    ...(showDescriptions ? [
-                        BoxUtil.getBoxOrAction(
-                            element, "description", "Description", this.handler
-                        )
-                    ] : []),
-                ]),
+            BoxFactory.verticalLayout(element, "system-overall", "", [
+                BoxUtil.textBox(element, "functionName"),
+                ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+            ]),
             // ),
             { cssClass: "w-full type3", placeHolder: "system", canShare: true, isRequired: true },
-        );
-        return box;
+        )
+        return box
     }
 
     projectPerson(element: Person) {
         let box: Box = BoxUtil.itemGroupBox(
-            element, "person", "Person", "name",
+            element,
+            "person",
+            "Person",
+            "name",
             // BoxUtil.indentBox(
             //     element, 6.5, "ip1",
-                BoxFactory.verticalLayout(
-                    element, "person-overall", "", [
-                        BoxUtil.textBox(element, "email"),
-                        BoxUtil.textBox(element, "phoneNumber"),
-                        BoxUtil.getBoxOrAction(element, "role", "StaffRole", this.handler),
-                    ]
-                ),
+            BoxFactory.verticalLayout(element, "person-overall", "", [
+                BoxUtil.textBox(element, "email"),
+                BoxUtil.textBox(element, "phoneNumber"),
+                BoxUtil.getBoxOrAction(element, "role", "StaffRole", this.handler),
+            ]),
             // ),
             { cssClass: "w-full type3", placeHolder: "name", canShare: true, isRequired: true },
-        );
-        return box;
+        )
+        return box
     }
 
     projectPatientInfo(patientInfo: PatientInfo) {
-        const element: PatientInfo = patientInfo;
+        const element: PatientInfo = patientInfo
         let box = BoxUtil.listGroupBox(
-            element, "patients", "patients",
-            BoxUtil.verticalPartListBox(
-                element, element.patientHistories, "patientHistories", null, this.handler, 
-                { cssClass: "ml-6 mb-2" }
-            ),
+            element,
+            "patients",
+            "patients",
+            BoxUtil.verticalPartListBox(element, element.patientHistories, "patientHistories", null, this.handler, { cssClass: "ml-6 mb-2" }),
             { cssClass: "type1 mt-2", isExpanded: true, canAdd: true, selectable: false },
-        );
-        return box;
+        )
+        return box
     }
 
     projectPatientHistory(patientHistory: PatientHistory) {
-        const element: PatientHistory = patientHistory;
+        const element: PatientHistory = patientHistory
         let box: Box = BoxFactory.verticalLayout(
             // Removed the item group box because the history is now only displayed under a single patient and entire histories are added by adding a patient in the
             element, "PatientHistory-overall", "",
             [
                 BoxUtil.listGroupBox(
-                    element, "patientvisits","Completed Visits",
+                    element,
+                    "patientvisits",
+                    "Completed Visits",
                     //TODO: add and deleted button needed; allow drag-and-drop reordering
                     //TODO: decide if it's worth auto-populating all the visits without a complete date
                     BoxUtil.verticalPartListBox(
@@ -585,6 +599,6 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             ],
             { cssClass: "w-full ml-8", selectable: false },
         )
-        return box;
+        return box
     }
 }
