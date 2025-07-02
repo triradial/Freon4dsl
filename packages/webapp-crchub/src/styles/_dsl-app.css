@@ -224,6 +224,12 @@ main {
   margin-top: 0 !important;
 }
 
+.list-group:focus .action-button {
+  display: inline-block;
+  margin-left: 0.25rem !important;
+  margin-top: 0 !important;
+}
+
 .list-group .toggle-button {
   margin-top: 0.3rem;
 }

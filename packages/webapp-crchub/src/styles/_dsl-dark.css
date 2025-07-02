@@ -180,6 +180,11 @@
   background-color: var(--white-20t);
 }
 
+.list-group .toggle-button:focus {
+  background-color: var(--white-20t);
+  outline: 1px dashed var(--white-20t);
+}
+
 .drag-handle svg {
   color: var(--green-90t);
 }
@@ -246,6 +251,11 @@
 
 .item-group .toggle-button:active {
   background-color: var(--white-20t);
+}
+
+.item-group .toggle-button:focus {
+  background-color: var(--white-20t);
+  outline: 1px dashed var(--white-20t);
 }
 
 .drag-button {
