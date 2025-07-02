@@ -57,7 +57,7 @@ PatientHistory {
 
 PatientVisit {
   [
-      Visit: '${visit}' on  ${actualVisitDate} [button text="❌" boxRole="deletePatientVisit"]
+      Visit: '${visit}' on  ${actualVisitDate}  [button text="❌" boxRole="deletePatientVisit"]
   ]
 }
 
