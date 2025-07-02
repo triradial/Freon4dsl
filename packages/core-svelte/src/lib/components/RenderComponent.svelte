@@ -132,15 +132,19 @@
             // do not set extra class, the control itself handles being selected
         } else {
             // Only apply selected/unselected classes if selectable, otherwise use a not-selectable class
-            let newSelectedCls = '';
-            LOGGER.log("box=" + box.node.name + " selectable=" + box.selectable);
-            if (box.selectable) {
-                newSelectedCls = isSelected ? 'render-component-selected' : 'render-component-unselected';
-            } else {
-                newSelectedCls = 'render-component-unselected';
-            }
+            // let newSelectedCls = '';
+            // LOGGER.log("box=" + box.node.name + " selectable=" + box.selectable);
+            // // if (box.selectable) {
+            //     newSelectedCls = isSelected ? 'render-component-selected' : 'render-component-unselected';
+            // // } else {
+            // //     newSelectedCls = 'render-component-unselected';
+            // // }
+            // selectedChanged = (newSelectedCls !== selectedCls)
+            // selectedCls = newSelectedCls
+            const newSelectedCls = isSelected ? 'render-component-selected' : 'render-component-unselected'
             selectedChanged = (newSelectedCls !== selectedCls)
             selectedCls = newSelectedCls
+
         }
     });
 

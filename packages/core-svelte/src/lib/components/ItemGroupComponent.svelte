@@ -510,9 +510,9 @@
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events a11y_interactive_supports_focus -->
-<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} onkeydown={handleKeydown} oncontextmenu={onContextMenu} role="button" tabindex="0">
+<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} onkeydown={handleKeydown} oncontextmenu={onContextMenu} aria-label="Item Group" role="button" tabindex="-1">
     {#if canExpand}
-        <button class="btn-icon p-0 ml-1 toggle-button" onclick={toggleExpanded}>
+        <button class="btn-icon p-0 ml-1 toggle-button" onclick={toggleExpanded} tabindex="0">
             {#if isExpanded}
                 <IconChevronDown size={16} />
             {:else}
@@ -520,12 +520,12 @@
             {/if}
         </button>
     {:else}
-        <span class="w-5"></span>
+        <span class="w-5" tabindex="-1"></span>
     {/if}
-    <span class="item-group-label">{box.getLabel()}</span>
+    <span class="item-group-label" tabindex="-1">{box.getLabel()}</span>
     <span {id} onclick={onClick} role="none">
         {#if isEditing}
-            <span {id}>
+            <span id="{id}-input-span">
                 <input
                     type="text"
                     class="text-component-input"
@@ -538,6 +538,7 @@
                     draggable="true"
                     ondragstart={onDragStart}
                     {placeholder}
+                    tabindex="0"
                 />
                 <span class="text-component-width" bind:this={widthSpan}></span>
             </span>
@@ -546,6 +547,7 @@
             <span
                 class="{box.role} text-box-{boxType} text-component-text"
                 onclick={startEditing}
+                onfocus={(e: FocusEvent) => startEditing(e)}
                 bind:this={spanElement}
                 contenteditable="true"
                 spellcheck="false"
@@ -561,27 +563,27 @@
         {/if}
     </span>
     {#if canCRUD}
-        <button class="circle-button action-button" onclick={shareItem} title="More...">
+        <button class="circle-button action-button" onclick={shareItem} title="More..." tabindex="0">
             <IconEllipsisVertical size={14} />
         </button>
     {/if}
     {#if canShare}
-        <button class="circle-button action-button" onclick={shareItem} title="Share">
+        <button class="circle-button action-button" onclick={shareItem} title="Share" tabindex="0">
             <IconShare2 size={14} />
         </button>
     {/if}
     {#if canUnlink}
-        <button class="circle-button action-button" onclick={shareItem} title="Unlink">
+        <button class="circle-button action-button" onclick={shareItem} title="Unlink" tabindex="0">
             <IconUnlink size={14} />
         </button>
     {/if}
     {#if canDuplicate}
-        <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate">
+        <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate" tabindex="0">
             <IconDuplicate size={14} />
         </button>
     {/if}
     {#if canDelete}
-        <button class="circle-button action-button" onclick={deleteItem} title="Delete">
+        <button class="circle-button action-button" onclick={deleteItem} title="Delete" tabindex="0">
             <IconTrash2 size={14} />
         </button>
     {/if}
