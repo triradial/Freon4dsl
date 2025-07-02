@@ -699,6 +699,7 @@ span:has(> .tinymce-wrapper) {
   display: block;
   white-space: nowrap;
   border: none;
+  padding: 0.25rem;
 }
 
 .dropdown-component-item:hover {}

@@ -563,6 +563,7 @@
             <span
                 class="{box?.role} text-box-{boxType} text-component-text {errorCls}"
                 onmousedown={onMousedown}
+                onfocus={(e: FocusEvent) => startEditing('UI')}
                 onfocusin={onFocusIn}
                 {tabindex}
                 bind:this={spanElement}
