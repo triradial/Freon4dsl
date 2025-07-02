@@ -562,9 +562,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         const element: PatientHistory = patientHistory;
         let box: Box = BoxFactory.verticalLayout(
             // Removed the item group box because the history is now only displayed under a single patient and entire histories are added by adding a patient in the
-            element,
-            "PatientHistory-overall",
-            "",
+            element, "PatientHistory-overall", "",
             [
                 BoxUtil.listGroupBox(
                     element, "patientvisits","Completed Visits",
@@ -572,7 +570,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     //TODO: decide if it's worth auto-populating all the visits without a complete date
                     BoxUtil.verticalPartListBox(
                         element, element.patientVisits, "patientVisits", null, this.handler,
-                        { cssClass: "vplb per2 type2 ml-6", selectable: false }
+                        { cssClass: "vplb per2 type2 ml-6" }
                     ),
                     { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
                 ),
@@ -580,7 +578,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     element, "patientNotAvailableDates", "Not Available",
                     BoxUtil.verticalPartListBox(
                         element, element.patientNotAvailableDates, "patientNotAvailableDates", null, this.handler,
-                        { cssClass: "vplb per2 type2 ml-6", selectable: false }
+                        { cssClass: "vplb per2 type2 ml-6" }
                     ),
                     { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
                 ),
