@@ -510,9 +510,9 @@
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events a11y_interactive_supports_focus -->
-<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} onkeydown={handleKeydown} oncontextmenu={onContextMenu} aria-label="Item Group" role="button" tabindex="-1">
+<div id="{id}-group" class="item-group {cssClass} w-full" {style} onclick={selectItem} oncontextmenu={onContextMenu} aria-label="Item Group" role="button" tabindex="-1">
     {#if canExpand}
-        <button class="btn-icon p-0 ml-1 toggle-button" onclick={toggleExpanded} tabindex="0">
+        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
             {#if isExpanded}
                 <IconChevronDown size={16} />
             {:else}
@@ -593,29 +593,3 @@
         <RenderComponent box={box.child} {editor} {cssClass} />
     </div>
 {/key}
-
-<style>
-    .toggle-button:focus {
-        outline: 2px solid var(--primary-600) !important;
-        outline-offset: 2px !important;
-        background-color: var(--primary-50) !important;
-        border-radius: 4px !important;
-    }
-
-    .action-button:focus {
-        outline: 2px solid var(--primary-600) !important;
-        outline-offset: 2px !important;
-        background-color: var(--primary-600) !important;
-        color: var(--white) !important;
-        border-color: var(--white) !important;
-        box-shadow: 0 0 0 2px var(--primary-600), 0 4px 8px rgba(0, 0, 0, 0.2) !important;
-        transform: scale(1.1) !important;
-        transition: all 0.2s ease !important;
-        z-index: 10 !important;
-    }
-
-    /* Show action buttons when item-group is focused */
-    .item-group:focus-within .action-button {
-        display: inline-block !important;
-    }
-</style>

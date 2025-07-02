@@ -78,7 +78,7 @@
 
 <div id="{id}" class="list-group {cssClass}" style="{style}" oncontextmenu={onContextMenu}>
     {#if canExpand}
-        <button class="p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded}>
+        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
             {#if isExpanded}
                 <IconChevronDown size={16} />
             {:else}
@@ -90,12 +90,12 @@
     {/if}
     <span class="list-group-label">{label()}</span>
     {#if canAdd}
-        <button class="circle-button action-button" onclick={addItem} title="Add">
+        <button class="circle-button action-button" onclick={addItem} title="Add" tabindex="0">
             <IconPlus size={14} />
         </button>
     {/if}
     {#if canCRUD}
-        <button class="circle-button action-button" title="More...">
+        <button class="circle-button action-button" title="More..." tabindex="0">
             <IconEllipsisVertical size={14} />
         </button> 
     {/if}
@@ -105,31 +105,3 @@
         <RenderComponent box={box.child} {editor} {cssClass} />
     </div>
 {/key}
-
-<style>
-    /* Toggle button focus styles */
-    .toggle-button:focus {
-        outline: 2px solid var(--primary-600) !important;
-        outline-offset: 2px !important;
-        background-color: var(--primary-50) !important;
-        border-radius: 4px !important;
-    }
-
-    /* Action button focus styles */
-    .action-button:focus {
-        outline: 2px solid var(--primary-600) !important;
-        outline-offset: 2px !important;
-        background-color: var(--primary-600) !important;
-        color: var(--white) !important;
-        border-color: var(--white) !important;
-        box-shadow: 0 0 0 2px var(--primary-600), 0 4px 8px rgba(0, 0, 0, 0.2) !important;
-        transform: scale(1.1) !important;
-        transition: all 0.2s ease !important;
-        z-index: 10 !important;
-    }
-
-    /* Show action buttons when list-group receives focus */
-    .list-group:focus-within .action-button {
-        display: inline-block !important;
-    }
-</style>

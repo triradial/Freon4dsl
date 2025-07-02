@@ -169,22 +169,23 @@
 }
 
 .list-group .toggle-button {
-  border: none;
+  border: 1px solid transparent;
   color: var(--gray-800);
   background-color: transparent;
 }
 
 .list-group .toggle-button:hover {
-  background-color: var(--black-10t);
+  background-color: var(--primary-600);
+  color: var(--white);
 }
 
 .list-group .toggle-button:active {
-  background-color: var(--black-20t);
+  background-color: var(--primary-600);
 }
 
 .list-group .toggle-button:focus {
-  background-color: var(--black-20t);
-  outline: 1px dashed var(--black-20t);
+  background-color: var(--primary-800);
+  color: var(--white);
 }
 
 .drag-handle svg {
@@ -192,23 +193,22 @@
 }
 
 .action-button {
-  color: var(--gray-800);
+  color: var(--gray-800) !important;
   background-color: transparent !important;
   border: 1px solid var(--gray-800) !important;
 }
 
 .action-button:hover {
-  color: var(--white);
+  color: var(--white) !important;
   background-color: var(--primary-600) !important;
   border: 1px solid var(--primary-600) !important;
 }
 
-.action-button:active {
-  background-color: var(--gray-900);
-}
-
+.action-button:active,
 .action-button:focus {
-  background-color: var(--primary-800);
+  color: var(--white) !important;
+  background-color: var(--primary-900) !important;
+  border: 1px solid var(--primary-900) !important;
 }
 
 /* #endregion */
@@ -242,22 +242,23 @@
 }
 
 .item-group .toggle-button {
-  border: none;
+  border: 1px solid transparent;
   color: var(--gray-800);
   background-color: transparent;
 }
 
 .item-group .toggle-button:hover {
-  background-color: var(--black-10t);
+  background-color: var(--primary-600);
+  color: var(--white);
 }
 
 .item-group .toggle-button:active {
-  background-color: var(--black-20t);
+  background-color: var(--primary-600);
 }
 
 .item-group .toggle-button:focus {
-  background-color: var(--black-20t);
-  outline: 1px dashed var(--black-20t);
+  background-color: var(--primary-800);
+  color: var(--white);
 }
 
 .drag-button {

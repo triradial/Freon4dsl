@@ -95,7 +95,7 @@ main {
   line-height: 20px !important;
   border-width: 0px;
   box-sizing: border-box;
-  margin: 0px 2px 0px 2px;
+  margin: 0px 1px 0px 2px;
   /* padding: 0.025rem 0.15rem 0.0625rem 0.2rem; */
   padding: 0 0.2rem 0 0.2rem;
   padding-block: 0px;
@@ -224,14 +224,13 @@ main {
   margin-top: 0 !important;
 }
 
-.list-group:focus .action-button {
-  display: inline-block;
-  margin-left: 0.25rem !important;
-  margin-top: 0 !important;
+.list-group:focus-within .action-button {
+  display: inline-block !important;
 }
 
 .list-group .toggle-button {
-  margin-top: 0.3rem;
+  margin: 0 0.25rem 0 0.5rem !important;
+  border-radius: 999px;
 }
 
 .list-group.type1 {
@@ -254,6 +253,7 @@ main {
 }
 
 .list-group-label {
+  margin-left: 0.25rem;
   padding-right: 0.5rem;
   padding-top: 0.2rem;
   white-space: normal;
@@ -353,8 +353,13 @@ main {
   margin-top: 0rem !important;
 }
 
+.item-group:focus-within .action-button {
+  display: inline-block !important;
+}
+
 .item-group .toggle-button {
-  margin-top: 0;
+    margin: 0 0.125rem 0 0.125rem !important;
+    border-radius: 999px;
 }
 
 .item-group .required {}
@@ -372,6 +377,7 @@ main {
 }
 
 .item-group-label {
+  margin-left: 0.25rem;
   padding-right: 0.1rem;
   white-space: normal;
   margin-left: 0.2rem;
