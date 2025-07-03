@@ -51,6 +51,11 @@ const ctrlZ: FreKey = {
     key: "z", // the key character
     code: "KeyZ", // the key code
 }
+const ctrlShiftZ: FreKey = {
+    meta: MetaKey.CtrlShift, // or MetaKey.None, MetaKey.Alt, MetaKey.Shift, etc.
+    key: "z", // the key character
+    code: "KeyShiftZ", // the key code
+}
 /**
  * Class CustomStudyConfigurationModelActions provides an entry point for the language engineer to
  * define custom build additions to the editor.
@@ -122,11 +127,60 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         },
     }),
     FreCustomAction.create({
-        activeInBoxRoles: ["period", "events", "event", "tasks", "task", "steps", "step", "references", "reference", "systems", "system", "people", "person", "patientvisits", "patientvisit", "patientnotavailabledates", "patientnotavailabledate"],
+        activeInBoxRoles: [
+            "",
+            "group",
+            "tablist",
+            "period",
+            "events",
+            "event",
+            "tasks",
+            "task",
+            "steps",
+            "step",
+            "references",
+            "reference",
+            "systems",
+            "system",
+            "people",
+            "person",
+            "patientvisits",
+            "patientvisit",
+            "patientnotavailabledates",
+            "patientnotavailabledate",
+        ],
         trigger: ctrlZ,
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            AstActionExecutor.getInstance(ed).undo()
+            AstActionExecutor.getInstance(ed).redo()
             console.log("undo action triggered")
+            return null
+        },
+    }),
+    FreCustomAction.create({
+        activeInBoxRoles: [
+            "",
+            "period",
+            "events",
+            "event",
+            "tasks",
+            "task",
+            "steps",
+            "step",
+            "references",
+            "reference",
+            "systems",
+            "system",
+            "people",
+            "person",
+            "patientvisits",
+            "patientvisit",
+            "patientnotavailabledates",
+            "patientnotavailabledate",
+        ],
+        trigger: ctrlShiftZ,
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            AstActionExecutor.getInstance(ed).undo()
+            console.log("redo action triggered")
             return null
         },
     }),
