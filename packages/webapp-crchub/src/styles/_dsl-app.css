@@ -851,7 +851,7 @@ span:has(> .tinymce-wrapper) {
   padding: 0 2px;
 }
 .datepicker-display {
-  font-size: 1rem;
+  font-size: var(--standard-font-size);
   padding: 2px 2px;
   cursor: pointer;
   user-select: text;

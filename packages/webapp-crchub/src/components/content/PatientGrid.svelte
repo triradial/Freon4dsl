@@ -23,15 +23,15 @@
     let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
 
     $effect(() => {
-        console.log("[PatientGrid] $effect patientsData:", patientsData);
+        // console.log("[PatientGrid] $effect patientsData:", patientsData);
         updateGridData();
     });
 
-    $effect(() => {
-        if (objectToDelete) {
-            console.log("[PatientGrid] $effect objectToDelete:", objectToDelete);
-        }
-    });
+    // $effect(() => {
+    //     if (objectToDelete) {
+    //         console.log("[PatientGrid] $effect objectToDelete:", objectToDelete);
+    //     }
+    // });
 
     function updateGridData() {
         if (gridApi && patientsData) {

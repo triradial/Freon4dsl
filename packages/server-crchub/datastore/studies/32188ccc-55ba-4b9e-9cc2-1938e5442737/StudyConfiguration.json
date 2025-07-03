@@ -312,7 +312,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": "ID-30"
+                     "reference": null
                   }
                ]
             }

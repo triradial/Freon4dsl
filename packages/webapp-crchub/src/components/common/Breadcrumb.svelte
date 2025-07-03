@@ -12,9 +12,9 @@
         goto(href, { invalidateAll: true });
     }
 
-    $effect(() => {
-        console.log("Breadcrumb items updated:", items);
-    });
+    // $effect(() => {
+    //     console.log("Breadcrumb items updated:", items);
+    // });
 </script>
 
 <ol class="breadcrumb" aria-label="breadcrumb">

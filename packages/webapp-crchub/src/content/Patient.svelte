@@ -23,7 +23,15 @@
     let dslEditor = $state<FreEditor | undefined>(undefined);
     let unit: PatientHistoryUnit | undefined;
     let patientInfo: PatientInfo | undefined;
+    let saveTimeout: ReturnType<typeof setTimeout> | null = null;
+    let unsubscribeEditorChange: (() => void) | undefined;
 
+    function debouncedSave() {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            handleSaveStudy();
+        }, 1000); // 1 second debounce
+    }
 
     onMount(async () => {
         // Load the patient data
@@ -70,6 +78,12 @@
             unit = patientHistoryUnit;
         });
 
+        if (dslEditor && typeof dslEditor.subscribeToChanges === 'function') {
+            unsubscribeEditorChange = dslEditor.subscribeToChanges((why) => {
+                debouncedSave();
+            });
+        }
+
         setTimeout(() => {
             isLoading = false;
         }, 300);
@@ -78,6 +92,7 @@
     onDestroy(() => {
         setDrawerVisibility("studyChecklist", false);
         setDrawerVisibility("patientTimelineChart", false);
+        if (unsubscribeEditorChange) unsubscribeEditorChange();
     });
 
     async function handleSaveStudy() {
@@ -110,12 +125,10 @@
 
     function handleUndoAction() {
         EditorRequestsHandler.getInstance().undo();
-        console.log("Undo action");
     }
 
     function handleRedoAction() {
         EditorRequestsHandler.getInstance().redo();
-        console.log("Redo action");
     }
 
     function clearPatientHistory(patientHistory: PatientHistory) {
@@ -142,7 +155,6 @@
                     <Tabs.Panel value="schedule">
                         {#if !isLoading}
                             <div class="flex gap-2 mb-2">
-                                <button type="button" class="icon-button primary inverted" onclick={handleSaveStudy}><IconSave /></button>
                                 <button type="button" class="icon-button primary inverted" onclick={handleUndoAction}><IconUndo /></button>
                                 <button type="button" class="icon-button primary inverted" onclick={handleRedoAction}><IconRedo /></button>
                             </div>

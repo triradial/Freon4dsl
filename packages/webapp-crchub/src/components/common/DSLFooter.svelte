@@ -10,11 +10,9 @@
     }>();
 
     onMount(() => {
-        console.log("[DSLFooter] onMount items:", items);
     });
 
     let hiddenItems = $derived(items.filter((item) => !item.visible));
-    console.log("[DSLFooter] $derived hiddenItems:", hiddenItems);
 
     function handleItemToggle(id: string) {
         const item = items.find(i => i.id === id);

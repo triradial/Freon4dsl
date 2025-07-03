@@ -54,6 +54,7 @@ export class FreEditor {
     private _selectedPosition: FreCaret = FreCaret.UNSPECIFIED; // The caret position within the _selectedBox.
     private NOSELECT: Boolean = false; // Do not accept "select" actions, used e.g. when an undo is going to come.
     private _errorDecorator: FreErrorDecorator = null;
+    private _changeSubscribers: Array<(why?: string) => void> = [];
 
     /**
      * The constructor makes a number of private properties observable.
@@ -87,7 +88,7 @@ export class FreEditor {
     // Called when the editor selection has changed
     selectionChanged(): void {
         if (this.refreshComponentSelection !== undefined && this.refreshComponentSelection !== null) {
-            LOGGER.log("selectionChanged() for FreEditor");
+            // LOGGER.log("selectionChanged() for FreEditor");
             this.refreshComponentSelection("====== FROM FreEditor");
         } else {
             LOGGER.log("No selectionChanged() for FreEditor");
@@ -100,6 +101,15 @@ export class FreEditor {
             this.refreshComponentRootBox("====== FROM FreEditor");
         } else {
             LOGGER.log("No refreshComponentRootBox() for FreEditor");
+        }
+        // Notify all subscribers
+        for (const fn of this._changeSubscribers) {
+            try {
+                // console.log("[DEBUG] FreEditor notifying subscriber", fn);
+                fn("====== FROM FreEditor (subscriber)");
+            } catch (e) {
+                console.error("Error in FreEditor change subscriber", e);
+            }
         }
     }
 
@@ -189,7 +199,7 @@ export class FreEditor {
                 this._selectedIndex = propertyIndex;
             }
             if (!isNullOrUndefined(caretPosition)) {
-                LOGGER.log("Set caretPosition to " + caretPosition);
+                // LOGGER.log("Set caretPosition to " + caretPosition);
                 this._selectedPosition = caretPosition;
             } else {
                 this._selectedPosition = FreCaret.UNSPECIFIED;
@@ -208,9 +218,9 @@ export class FreEditor {
      * @param propertyIndex
      */
     findBoxForNode(node: FreNode, propertyName?: string, propertyIndex?: number): Box | undefined {
-        LOGGER.log(
-            `findBoxForNode ${node?.freLanguageConcept()} with id ${node?.freId()}, property: ${propertyName}[${propertyIndex}]`
-        );
+        // LOGGER.log(
+        //     `findBoxForNode ${node?.freLanguageConcept()} with id ${node?.freId()}, property: ${propertyName}[${propertyIndex}]`
+        // );
         if (this.checkParam(node) && !node.freIsModel()) {
             const box: ElementBox = this.projection.getBox(node);
             // check whether the box is shown in the current projection
@@ -282,7 +292,7 @@ export class FreEditor {
                 this._selectedIndex = -1;
             }
             if (!isNullOrUndefined(caretPosition)) {
-                LOGGER.log("Set caretPosition to " + caretPosition);
+                // LOGGER.log("Set caretPosition to " + caretPosition);
                 this._selectedPosition = caretPosition;
             } else {
                 this._selectedPosition = FreCaret.UNSPECIFIED;
@@ -318,7 +328,7 @@ export class FreEditor {
             return false;
         }
         if (isNullOrUndefined(element)) {
-            LOGGER.error("FreEditor.selectedElement is null !");
+            // LOGGER.error("FreEditor.selectedElement is null !");
             return false;
         }
         return true;
@@ -782,4 +792,14 @@ export class FreEditor {
     // gatherErrorsPerLine() {
     //     this._errorDecorator.gatherMessagesForGutter();
     // }
+
+    public subscribeToChanges(fn: (why?: string) => void) {
+        console.log("[DEBUG] FreEditor.subscribeToChanges: adding subscriber", fn);
+        this._changeSubscribers.push(fn);
+        // Optionally return an unsubscribe function
+        return () => {
+            this._changeSubscribers = this._changeSubscribers.filter(sub => sub !== fn);
+            console.log("[DEBUG] FreEditor.subscribeToChanges: removed subscriber", fn);
+        };
+    }
 }

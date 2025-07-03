@@ -26,6 +26,16 @@
     let unit = $state<StudyConfiguration | undefined>(undefined);
     let mobxVersion = $state(0);
 
+    let saveTimeout: ReturnType<typeof setTimeout> | null = null;
+    let unsubscribeEditorChange: (() => void) | undefined;
+
+    function debouncedSave() {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            handleSaveStudy();
+        }, 1000); // 1 second debounce
+    }
+
     const footerConfig = [
         { id: "showScheduling", label: "Scheduling" },
         { id: "showChecklists", label: "Checklists" },
@@ -60,23 +70,30 @@
         // Get the model data for the study
         const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration");
         if (result !== undefined && result !== null) {
-            unit = result as StudyConfiguration;
+            unit = result;
             setTimeout(() => {
                 editorLoaded = true;
             }, 3000);
         } else {
-            console.error("No model to load");
             noModelAvailable = true;
         }
     }
 
     onMount(() => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+        console.log("[DEBUG] dslEditor instance in Study.svelte", dslEditor);
         initializeStudy();
+
+        if (dslEditor && typeof dslEditor.subscribeToChanges === 'function') {
+            unsubscribeEditorChange = dslEditor.subscribeToChanges((why) => {
+                debouncedSave();
+            });
+        }
     });
 
     onDestroy(() => {
         editorLoaded = false;
+        if (unsubscribeEditorChange) unsubscribeEditorChange();
         var activeDrawer = getActiveDrawer();
         if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors") {
             setActiveDrawer(null);
@@ -96,17 +113,14 @@
 
     function handleSaveStudy() {
         ModelManager.getInstance().saveCurrentUnit();
-        console.log("Study.Save study");
     }
 
     function handleUndoAction() {
         EditorRequestsHandler.getInstance().undo();
-        console.log("Undo action");
     }
 
     function handleRedoAction() {
         EditorRequestsHandler.getInstance().redo();
-        console.log("Redo action");
     }
 </script>
 
@@ -135,7 +149,6 @@
                     <Tabs.Panel value="design">
                        {#if editorLoaded}
                             <div class="flex gap-2 mb-2">
-                                <button type="button" class="icon-button primary inverted" onclick={handleSaveStudy}><IconSave /></button>
                                 <button type="button" class="icon-button primary inverted" onclick={handleUndoAction}><IconUndo /></button>
                                 <button type="button" class="icon-button primary inverted" onclick={handleRedoAction}><IconRedo /></button>
                             </div>

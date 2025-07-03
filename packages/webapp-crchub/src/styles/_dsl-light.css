@@ -440,6 +440,10 @@
   border: rgb(1, 95, 1);
 }
 
+.datepicker-display {
+  color: rgb(1, 95, 1);
+  background-color: transparent
+}
 /* #endregion */
 
 /* #region Timepicker */

@@ -564,7 +564,13 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             element,
             "patients",
             "patients",
-            BoxUtil.verticalPartListBox(element, element.patientHistories, "patientHistories", null, this.handler, { cssClass: "ml-6 mb-2" }),
+            BoxUtil.verticalPartListBox(
+                element, 
+                element.patientHistories, 
+                "patientHistories", 
+                null, 
+                this.handler, 
+                { cssClass: "ml-6 mb-2" }),
             { cssClass: "type1 mt-2", isExpanded: true, canAdd: true, selectable: false },
         )
         return box
@@ -583,21 +589,29 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     //TODO: add and deleted button needed; allow drag-and-drop reordering
                     //TODO: decide if it's worth auto-populating all the visits without a complete date
                     BoxUtil.verticalPartListBox(
-                        element, element.patientVisits, "patientVisits", null, this.handler,
-                        { cssClass: "vplb per2 type2 ml-6" }
+                        element, 
+                        element.patientVisits, 
+                        "patientVisits", 
+                        null, 
+                        this.handler,
+                        { cssClass: "vplb per2 type1 ml-6" }
                     ),
-                    { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
+                    { cssClass: "lgb per3 type1", isExpanded: true, canAdd: true, selectable: false },
                 ),
                 BoxUtil.listGroupBox(
                     element, "patientNotAvailableDates", "Not Available",
                     BoxUtil.verticalPartListBox(
-                        element, element.patientNotAvailableDates, "patientNotAvailableDates", null, this.handler,
-                        { cssClass: "vplb per2 type2 ml-6" }
+                        element, 
+                        element.patientNotAvailableDates, 
+                        "patientNotAvailableDates", 
+                        null, 
+                        this.handler,
+                        { cssClass: "vplb per2 type1 ml-6" }
                     ),
-                    { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
+                    { cssClass: "lgb per3 type1", isExpanded: true, canAdd: true, selectable: false },
                 ),
             ],
-            { cssClass: "w-full ml-8", selectable: false },
+            { cssClass: "w-full ml-2", selectable: false },
         )
         return box
     }
