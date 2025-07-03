@@ -99,7 +99,6 @@
         LOGGER.log(
             'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
         );
-        console.log("RenderComponent.onClick for box " + box.role + ", selectable:" + box.selectable);
         // Only allow selection if the box is selectable
         if (box.selectable) {
             editor.selectElementForBox(box);
@@ -235,6 +234,7 @@
         {:else if isMultiLineTextBox(box)}
             <MultiLineTextComponent {box} {editor} cssClass={box.cssClass} />
         {:else if isActionBox(box) || isSelectBox(box) || isReferenceBox(box)}
+            {console.log('Special action/select/reference box detected:', box.id , ' role: ' , box.role,  ' selectable: ' , box.selectable, ' parent role: ' , box.parent?.role, ' kind: ' , box.kind)}
             <TextDropdownComponent {box} {editor} cssClass={box.cssClass} />
         {:else if isEmptyLineBox(box)}
             <EmptyLineComponent {box} {editor} cssClass={box.cssClass} />

@@ -141,7 +141,7 @@ EventSchedule {
 
 
 EventReference {
-    [${event}${eventState radio} ]
+    [${event}${eventState} ]
     referenceShortcut = ${event}
     }
 

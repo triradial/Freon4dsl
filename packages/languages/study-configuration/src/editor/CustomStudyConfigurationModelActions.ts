@@ -15,6 +15,9 @@ import {
     ActionBox,
     ownerOfType,
     BoxUtil,
+    AstActionExecutor,
+    FreKey,
+    MetaKey,
 } from "@freon4dsl/core";
 
 // import { addListElement } from '@freon4dsl/core';
@@ -43,6 +46,11 @@ import {
 import { RoleProvider } from "@freon4dsl/core";
 import { ExtendedEvent, extension } from "../custom/extensions/ExtensionLib.js";
 
+const ctrlZ: FreKey = {
+    meta: MetaKey.Ctrl, // or MetaKey.None, MetaKey.Alt, MetaKey.Shift, etc.
+    key: "z", // the key character
+    code: "KeyZ", // the key code
+}
 /**
  * Class CustomStudyConfigurationModelActions provides an entry point for the language engineer to
  * define custom build additions to the editor.
@@ -110,6 +118,15 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
             const studyconfig: StudyConfiguration = box.node as StudyConfiguration
             const period: Period = Period.create({})
             studyconfig.periods.push(period)
+            return null
+        },
+    }),
+    FreCustomAction.create({
+        activeInBoxRoles: ["period", "events", "event", "tasks", "task", "steps", "step", "references", "reference", "systems", "system", "people", "person", "patientvisits", "patientvisit", "patientnotavailabledates", "patientnotavailabledate"],
+        trigger: ctrlZ,
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            AstActionExecutor.getInstance(ed).undo()
+            console.log("undo action triggered")
             return null
         },
     }),
