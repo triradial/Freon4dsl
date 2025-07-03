@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { dataStore } from "../../services/data/data-store.js";
-    import { editObject } from "../../services/stores/object-drawer-store.js";
+    import { dataStore } from "$services/data/data-store.js";
+    import { editObject } from "$services/stores/object-drawer-store.js";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
-    import { navigateTo } from "../../services/routing/route-action.js";
-    import { theme } from "../../services/stores/theme-store.js";
+    import { navigateTo } from "$services/routing/route-action.js";
+    import { theme } from "$services/stores/theme-store.js";
     import GridHeader from "../common/GridHeader.svelte";
-    import { getSVGIcon } from "../../services/utils.js";
+    import { getSVGIcon } from "$services/utils.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
     let deleteDialogOpen = $state(false);
@@ -19,6 +19,9 @@
     let studiesData = $derived($dataStore.studies);
     let canManageStudies = true;
     let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
+    let isGridReady = $state(false);
+    let hasFullReset = $state(false);
+    let isResetting = $state(false);
 
     $effect(() => {
         console.log("[StudyGrid] $effect studiesData:", studiesData);
@@ -31,6 +34,20 @@
         }
     });
 
+    $effect(() => {
+        if (isGridReady && gridApi) {
+            // Ensure headers and columns are sized correctly once the grid is fully visible
+            gridApi.sizeColumnsToFit();
+            gridApi.autoSizeAllColumns();
+            gridApi.refreshHeader();
+            // Force a redraw to ensure header and body are fully in sync
+            gridApi.redrawRows();
+            gridApi.refreshCells({ force: true });
+            // Perform full client-side model refresh → forces complete grid rerender
+            gridApi.refreshClientSideRowModel('map');
+        }
+    });
+
     function updateGridData() {
         if (gridApi && studiesData) {
             gridApi.setGridOption("rowData", studiesData);
@@ -40,6 +57,30 @@
             }, 100);
         }
     }
+
+    function initializeGrid() {
+        const gridElement = document.querySelector("#studyGrid") as HTMLElement;
+        if (gridApi) {
+            gridApi.destroy();
+        }
+        gridApi = createGrid(gridElement, gridOptions);
+        if (studiesData) {
+            gridApi.setGridOption("rowData", studiesData);
+        }
+    }
+
+    $effect(() => {
+        // After grid is first ready and initial sizing finished, fully recreate grid once
+        if (isGridReady && !hasFullReset) {
+            isResetting = true;
+            // small delay to allow overlay to appear
+            setTimeout(() => {
+                initializeGrid();
+                hasFullReset = true;
+                isResetting = false;
+            }, 100);
+        }
+    });
 
     onMount(async () => {
         gridOptions = {
@@ -88,6 +129,12 @@
                 if (studiesData.length > 0) {
                     updateGridData();
                 }
+                // Set grid as ready after a short delay to ensure everything is rendered properly
+                setTimeout(() => {
+                    isGridReady = true;
+                    // extra safety: trigger resize immediately after marking ready
+                    params.api.refreshHeader();
+                }, 100);
             },
         };
 
@@ -194,7 +241,15 @@
 </svelte:head>
 
 <GridHeader title="Studies" objectType="study" />
-<div id="studyGrid" class="{gridTheme} ag-grid"></div>
+<div class="grid-wrapper">
+    <div id="studyGrid" class="{gridTheme} ag-grid" style="visibility:{isResetting ? 'hidden' : 'visible'}"></div>
+    {#if !isGridReady || isResetting}
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading studies grid...</div>
+        </div>
+    {/if}
+</div>
 <DeleteObjectDialog
     bind:open={deleteDialogOpen}
     objectType="study"
@@ -209,3 +264,23 @@
         objectToDelete = null;
     }}
 />
+
+<style>
+.grid-wrapper {
+    position: relative;
+    height: 100%;
+}
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.75);
+    z-index: 10;
+}
+</style>
