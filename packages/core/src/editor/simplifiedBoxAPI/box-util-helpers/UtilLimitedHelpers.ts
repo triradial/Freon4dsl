@@ -96,6 +96,8 @@ export class UtilLimitedHelpers {
     ): LimitedControlBox {
         const possibleValues: string[] = UtilCheckers.checkLimitedType(propInfo, propertyName);
 
+        console.log("[DEBUG] LimitedControlBox possibleValues for", propertyName, ":", possibleValues);
+
         // console.log(`BoxUtil.limitedBox for ${propertyName} current value is ` + [node[propertyName]] + ", possibleValues: [" + possibleValues + "]");
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "limitedcontrolbox");
         let result: LimitedControlBox = BoxFactory.limited(
@@ -105,7 +107,7 @@ export class UtilLimitedHelpers {
             (v: string[]) => {
                     if (!!v[0]) {
                         // console.log("========> set property [" + propertyName + "] of " + node["name"] + " := " + v[0]);
-                        AST.changeNamed(`Limited for property ${propertyName} set to ${v[0]}`, () => {
+                        AST.changeNamed(`Limited for property ${propertyName} set to ${v[0]}` , () => {
                             setFunc(v[0]);
                         });
                     } else {
@@ -143,23 +145,33 @@ export class UtilLimitedHelpers {
         }
 
         let result: SelectBox;
-        // Note that this code is exactly the same as the code for creating a reference box
         result = BoxFactory.select(
             node,
             roleName,
             `<${propertyName}>`,
             () => {
-                return scoper
-                    .getVisibleNames(node, propType)
-                    .filter((name) => !!name && name !== "")
-                    .map((name) => ({
-                        id: name,
-                        label: name
+                // Use the new instanceKeyNamePairs property if available
+                const concept = FreLanguage.getInstance().concept(propType);
+                let options: { id: string, label: string }[] = [];
+                if (concept && Array.isArray(concept.instanceKeyNamePairs)) {
+                    options = concept.instanceKeyNamePairs.map(({ key, name }: { key: string, name: string }) => ({
+                        id: key,
+                        label: name || key
                     }));
+                } else if (scoper) {
+                    // fallback: use scoper keys
+                    options = scoper.getVisibleNames(node, propType)
+                        .filter((key) => !!key && key !== "")
+                        .map((key) => ({ id: key, label: key }));
+                }
+                return options;
             },
             () => {
-                // console.log("==> get selected option for property " + propertyName + " of " + element["name"] + " is " + property.name )
-                if (!!property) {
+                const concept = FreLanguage.getInstance().concept(propType);
+                if (!!property && concept && Array.isArray(concept.instanceKeyNamePairs)) {
+                    const found = concept.instanceKeyNamePairs.find((inst: { key: string }) => inst.key === property.name);
+                    return found ? { id: found.key, label: found.name || found.key } : { id: property.name, label: property.name };
+                } else if (!!property) {
                     return { id: property.name, label: property.name };
                 } else {
                     return null;
@@ -167,10 +179,8 @@ export class UtilLimitedHelpers {
             },
             // @ts-ignore
             (editor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
-                // L.log("==> SET selected option for property " + propertyName + " of " + element["name"] + " to " + option?.label);
                 if (!!option) {
-                    // console.log("========> set property [" + propertyName + "] of " + element["name"] + " := " + option.label);
-                    AST.changeNamed(`UtilLimitedHelpers.limitedSelectBox for property ${propertyName} set to ${option.label}`, () => {
+                    AST.changeNamed(`UtilLimitedHelpers.limitedSelectBox for property ${propertyName} set to ${option.label}` , () => {
                         setFunc(option.label);
                     });
                 } else {
