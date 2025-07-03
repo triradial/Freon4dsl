@@ -99,6 +99,7 @@
         LOGGER.log(
             'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
         );
+        console.log("RenderComponent.onClick for box " + box.role + ", selectable:" + box.selectable);
         // Only allow selection if the box is selectable
         if (box.selectable) {
             editor.selectElementForBox(box);
