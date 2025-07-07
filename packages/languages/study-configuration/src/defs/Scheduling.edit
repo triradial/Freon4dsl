@@ -141,7 +141,7 @@ EventSchedule {
 
 
 EventReference {
-    [${event} ${eventState} ]
+    [${event}${eventState} ]
     referenceShortcut = ${event}
     }
 
