@@ -127,64 +127,6 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         },
     }),
     FreCustomAction.create({
-        activeInBoxRoles: [
-            "",
-            "group",
-            "tablist",
-            "period",
-            "events",
-            "event",
-            "tasks",
-            "task",
-            "steps",
-            "step",
-            "references",
-            "reference",
-            "systems",
-            "system",
-            "people",
-            "person",
-            "patientvisits",
-            "patientvisit",
-            "patientnotavailabledates",
-            "patientnotavailabledate",
-        ],
-        trigger: ctrlZ,
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            AstActionExecutor.getInstance(ed).redo()
-            console.log("undo action triggered")
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: [
-            "",
-            "period",
-            "events",
-            "event",
-            "tasks",
-            "task",
-            "steps",
-            "step",
-            "references",
-            "reference",
-            "systems",
-            "system",
-            "people",
-            "person",
-            "patientvisits",
-            "patientvisit",
-            "patientnotavailabledates",
-            "patientnotavailabledate",
-        ],
-        trigger: ctrlShiftZ,
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            AstActionExecutor.getInstance(ed).undo()
-            console.log("redo action triggered")
-            return null
-        },
-    }),
-    FreCustomAction.create({
         activeInBoxRoles: ["period"],
         trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
