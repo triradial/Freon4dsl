@@ -47,14 +47,14 @@ import { RoleProvider } from "@freon4dsl/core";
 import { ExtendedEvent, extension } from "../custom/extensions/ExtensionLib.js";
 
 const ctrlZ: FreKey = {
-    meta: MetaKey.Ctrl, // or MetaKey.None, MetaKey.Alt, MetaKey.Shift, etc.
-    key: "z", // the key character
-    code: "KeyZ", // the key code
+    meta: MetaKey.Ctrl, 
+    key: "z", 
+    code: "KeyZ", 
 }
 const ctrlShiftZ: FreKey = {
-    meta: MetaKey.CtrlShift, // or MetaKey.None, MetaKey.Alt, MetaKey.Shift, etc.
-    key: "z", // the key character
-    code: "KeyShiftZ", // the key code
+    meta: MetaKey.CtrlAlt, 
+    key: "Z", 
+    code: "KeyShiftZ", 
 }
 /**
  * Class CustomStudyConfigurationModelActions provides an entry point for the language engineer to
