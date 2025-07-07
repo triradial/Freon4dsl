@@ -61,7 +61,7 @@
     async function initializeStudy() {
         // get the study data
         study = await dataStore.getStudy(id);
-        await dataStore.getStudyPatients(id);
+        // await dataStore.getStudyPatients(id); // Removed: PatientGrid now fetches patients
         if (!study) {
             console.error(`Study with id ${id} not found`);
             return;
@@ -79,7 +79,7 @@
         }
     }
 
-    onMount(() => {
+    onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         console.log("[DEBUG] dslEditor instance in Study.svelte", dslEditor);
         initializeStudy();
