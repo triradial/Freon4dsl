@@ -99,6 +99,7 @@ export interface ItemGroupProps<T extends Box> extends FreComponentProps<T> {
     canDuplicate: boolean;
     isRequired: boolean;
     isExpanded: boolean;
+    toParent: (eventType: string, details?: CaretDetails) => void;
 }
 
 export interface ItemGroup2Props<T extends Box> extends FreComponentProps<T> {
