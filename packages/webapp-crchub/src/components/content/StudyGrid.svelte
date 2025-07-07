@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { dataStore } from "$services/data/data-store.js";
-    import { editObject } from "$services/stores/object-drawer-store.js";
+    import { dataStore } from "../../services/data/data-store.js";
+    import { editObject } from "../../services/stores/object-drawer-store.js";
     import { onMount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
-    import { navigateTo } from "$services/routing/route-action.js";
-    import { theme } from "$services/stores/theme-store.js";
+    import { navigateTo } from "../../services/routing/route-action.js";
+    import { theme } from "../../services/stores/theme-store.js";
     import GridHeader from "../common/GridHeader.svelte";
-    import { getSVGIcon } from "$services/utils.js";
+    import { getSVGIcon } from "../../services/utils.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
     let deleteDialogOpen = $state(false);
@@ -24,16 +24,9 @@
     let isResetting = $state(false);
 
     $effect(() => {
-        console.log("[StudyGrid] $effect studiesData:", studiesData);
         updateGridData();
     });
     
-    $effect(() => {
-        if (objectToDelete) {
-            console.log("Object to delete:", objectToDelete);
-        }
-    });
-
     $effect(() => {
         if (isGridReady && gridApi) {
             // Ensure headers and columns are sized correctly once the grid is fully visible
@@ -128,13 +121,15 @@
             onGridReady: (params) => {
                 if (studiesData.length > 0) {
                     updateGridData();
+                } else {
+                    gridApi.setGridOption("loading", false);
                 }
                 // Set grid as ready after a short delay to ensure everything is rendered properly
-                setTimeout(() => {
-                    isGridReady = true;
-                    // extra safety: trigger resize immediately after marking ready
-                    params.api.refreshHeader();
-                }, 100);
+                // setTimeout(() => {
+                //     isGridReady = true;
+                //     // extra safety: trigger resize immediately after marking ready
+                //     params.api.refreshHeader();
+                // }, 100);
             },
         };
 
@@ -154,7 +149,6 @@
     });
 
     function onOpenClick(studyId: string) {
-        console.log("Open clicked for studyid:", studyId);
         navigateTo("study", studyId);
     }
 
@@ -167,7 +161,6 @@
     }
 
     function onEditClick(studyId: string) {
-        console.log("Edit clicked for study:", studyId);
         editObject("study", studyId);
     }
 
@@ -234,53 +227,36 @@
         // based on row data and button type
         return true; // For now, always render all buttons
     }
+
+    async function refreshStudies() {
+        await dataStore.getStudies();
+        updateGridData();
+    }
 </script>
 
 <svelte:head>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<GridHeader title="Studies" objectType="study" />
-<div class="grid-wrapper">
-    <div id="studyGrid" class="{gridTheme} ag-grid" style="visibility:{isResetting ? 'hidden' : 'visible'}"></div>
-    {#if !isGridReady || isResetting}
-        <div class="loading-overlay">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Loading studies grid...</div>
-        </div>
-    {/if}
-</div>
+<GridHeader title="Studies" objectType="study" onrefresh={refreshStudies} />
+<div id="studyGrid" class="{gridTheme} ag-grid" style="visibility:{isResetting ? 'hidden' : 'visible'}"></div>
+<!-- {#if !isGridReady || isResetting}
+    <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading studies grid...</div>
+    </div>
+{/if} -->
 <DeleteObjectDialog
-    bind:open={deleteDialogOpen}
+    open={deleteDialogOpen}
     objectType="study"
     object={objectToDelete}
-    on:delete={() => {
+    ondelete={() => {
         updateGridData();
         deleteDialogOpen = false;
         objectToDelete = null;
     }}
-    on:cancel={() => {
+    oncancel={() => {
         deleteDialogOpen = false;
         objectToDelete = null;
     }}
 />
-
-<style>
-.grid-wrapper {
-    position: relative;
-    height: 100%;
-}
-.loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.75);
-    z-index: 10;
-}
-</style>

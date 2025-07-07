@@ -15,6 +15,7 @@
 
     let deleteDialogOpen = $state(false);
     let objectToDelete = $state<any>(null);
+    let loading = $state(false);
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
@@ -22,16 +23,15 @@
     let canManageStudies = true;
     let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
 
+    async function fetchPatients() {
+        loading = true;
+        await dataStore.getStudyPatients(studyId);
+        loading = false;
+    }
+
     $effect(() => {
-        // console.log("[PatientGrid] $effect patientsData:", patientsData);
         updateGridData();
     });
-
-    // $effect(() => {
-    //     if (objectToDelete) {
-    //         console.log("[PatientGrid] $effect objectToDelete:", objectToDelete);
-    //     }
-    // });
 
     function updateGridData() {
         if (gridApi && patientsData) {
@@ -39,11 +39,16 @@
             setTimeout(() => {
                 gridApi.sizeColumnsToFit();
                 gridApi.autoSizeAllColumns();
+                // Hide AG-Grid loading overlay and show/hide no-rows overlay as appropriate
+                if (patientsData.length === 0) {
+                    gridApi.setGridOption("loading", false);
+                }
             }, 100);
         }
     }
 
     onMount(async () => {
+        await fetchPatients();
         gridOptions = {
             defaultColDef: {
                 sortable: true,
@@ -100,6 +105,8 @@
             onGridReady: (params) => {
                 if (patientsData.length > 0) {
                     updateGridData();
+                } else {
+                    gridApi.setGridOption("loading", false);
                 }
             },
         };
@@ -133,6 +140,11 @@
 
     function onEditClick(patientId: string) {
         editObject("patient", patientId);
+        fetchPatients();
+    }
+
+    function onPatientChanged() {
+        fetchPatients();
     }
 
     function createNameCell(params: any) {
@@ -202,18 +214,18 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<GridHeader title="Patients" objectType="patient" parentId={studyId} />
+<GridHeader title="Patients" objectType="patient" parentId={studyId} onrefresh={fetchPatients} />
 <div id="patientGrid" class="{gridTheme} ag-grid"></div>
 <DeleteObjectDialog
-    bind:open={deleteDialogOpen}
+    open={deleteDialogOpen}
     objectType="patient"
     object={objectToDelete}
-    on:delete={() => {
-        updateGridData();
+    ondelete={() => {
+        onPatientChanged();
         deleteDialogOpen = false;
         objectToDelete = null;
     }}
-    on:cancel={() => {
+    oncancel={() => {
         deleteDialogOpen = false;
         objectToDelete = null;
     }}

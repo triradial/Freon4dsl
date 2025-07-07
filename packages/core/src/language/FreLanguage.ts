@@ -60,6 +60,7 @@ export type FreLanguageConcept = {
     isPublic: boolean;
     isLimited: boolean;
     instanceNames: string[];
+    instanceKeyNamePairs?: { key: string; name: string }[];
     isNamespace: boolean;
     isNamedElement?: boolean;
     language: string;

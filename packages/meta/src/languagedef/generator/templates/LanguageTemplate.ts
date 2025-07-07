@@ -205,6 +205,12 @@ export class LanguageTemplate {
                         isLimited: ${concept instanceof FreMetaLimitedConcept},
                         isNamespace: false,
                         instanceNames: ${concept instanceof FreMetaLimitedConcept ? `[${concept.instances.map((inst) => `"${inst.name}"`)}]` : "[]"},
+                        instanceKeyNamePairs: ${concept instanceof FreMetaLimitedConcept ? `[${concept.instances.map((inst) => {
+                            // Find the 'name' property value
+                            const nameProp = inst.props.find(p => p.name === "name");
+                            const displayName = nameProp ? nameProp.value : inst.name;
+                            return `{ key: "${inst.name}", name: "${displayName}" }`;
+                        }).join(", ")}]` : "[]"},
                         language: "${concept.originalOwningLanguage.key}",
                         isNamedElement: ${concept.allPrimProperties().some((p) => p.name === "name")},
                         trigger: "${Names.concept(concept)}",

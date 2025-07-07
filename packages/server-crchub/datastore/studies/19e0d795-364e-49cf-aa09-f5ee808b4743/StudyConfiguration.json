@@ -1,6 +1,11 @@
 {
    "serializationFormatVersion": "2023.1",
-   "languages": [],
+   "languages": [
+      {
+         "key": "-key-StudyConfigurationModel",
+         "version": "2023.1"
+      }
+   ],
    "nodes": [
       {
          "id": "ID-64",
@@ -33,6 +38,14 @@
                   "key": "-key-StudyConfiguration-showScheduling"
                },
                "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showSchedulingDetails"
+               },
+               "value": "false"
             },
             {
                "property": {
@@ -71,6 +84,14 @@
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showDescriptions"
+               },
+               "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showNotes"
                },
                "value": "true"
             },
@@ -285,7 +306,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": "ID-30"
+                     "reference": null
                   }
                ]
             }
@@ -759,7 +780,7 @@
                "targets": [
                   {
                      "resolveInfo": "-",
-                     "reference": "ID-29"
+                     "reference": null
                   }
                ]
             }
@@ -795,7 +816,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": "ID-17"
+                     "reference": null
                   }
                ]
             }
@@ -964,7 +985,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": "ID-30"
+                     "reference": null
                   }
                ]
             }
@@ -1239,7 +1260,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": "ID-23"
+                     "reference": null
                   }
                ]
             }

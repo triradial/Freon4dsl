@@ -118,7 +118,7 @@
   },
   {
     "id": "7580431b-8e0c-45f6-9930-292b21a9fb41",
-    "patientNumber": "1234",
+    "patientNumber": "SE2-001",
     "displayName": "",
     "name": "",
     "dob": "1999",
@@ -151,7 +151,7 @@
   },
   {
     "id": "71c34826-3ac0-45b2-ae3d-c8be204fdfe8",
-    "patientNumber": "1234",
+    "patientNumber": "SE1-001",
     "displayName": "",
     "name": "",
     "dob": 2024,
@@ -247,16 +247,5 @@
     "gender": "",
     "studyId": "37c60a90-ffad-4e81-871d-b6bf79e1fe30",
     "study": "t9"
-  },
-  {
-    "id": "be515bc9-32a5-416a-8a13-52690c00b8b2",
-    "patientNumber": "ff",
-    "displayName": "",
-    "name": "",
-    "initials": "ff",
-    "dob": "",
-    "gender": "",
-    "studyId": "0ef33c9b-d304-4536-92cb-4df74fa5e712",
-    "study": "Demo11"
   }
 ]

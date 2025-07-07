@@ -40,7 +40,7 @@ export class ConceptTemplate {
         imports.core = ClassifierUtil.findMobxImportsForConcept(hasSuper, concept)
             .add(implementsFre)
             .add(Names.FreParseLocation)
-            if (hasReferences) imports.core.add(Names.FreNodeReference)
+        if (hasReferences) imports.core.add(Names.FreNodeReference)
         imports.language = this.findModelImports(concept, myName);
 
         const metaType: string = Names.metaType();
@@ -209,6 +209,14 @@ export class ConceptTemplate {
             .map((predef) => `static ${predef.name}: ${myName};  // implementation of instance ${predef.name}`)
             .join("\n")}
                      static $freANY : ${myName};        // default predefined instance
+
+                // --- GENERATED: allInstances method for limited concept ---
+                static allInstances(): { key: string, name: string }[] {
+                    return [
+                        ${concept.instances.map((predef) => `{ key: "${predef.name}", name: ${myName}.${predef.name}.name }`).join(",\n                        ")}
+                    ];
+                }
+                // --- END GENERATED ---
 
                 ${ConceptUtils.makeBasicProperties(metaType, myName, hasSuper)}
                 ${concept
