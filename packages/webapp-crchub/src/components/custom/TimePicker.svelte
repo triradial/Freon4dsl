@@ -1,7 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { ExternalStringBox } from "@freon4dsl/core";
-    import { Clock } from '@lucide/svelte';
+    /* ts-ignore */
+    import { Clock as ClockIcon } from '@lucide/svelte';
+
     const { box } = $props<{ box: ExternalStringBox }>();
 
     let inputElement: HTMLInputElement;
@@ -124,7 +126,7 @@
             style="margin-right: 0.25rem;"
         />
         <button class="timepicker-icon-btn" aria-label="Show time picker" type="button" onclick={onIconClick} tabindex="-1">
-            <Clock size={16} />
+            <ClockIcon size={16} />
         </button>
     {:else}
         <span class="timepicker-display" onclick={toEditMode} tabindex="0" aria-label="Edit time">

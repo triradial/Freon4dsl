@@ -1,7 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { ExternalStringBox } from "@freon4dsl/core";
-    import { CalendarDays } from '@lucide/svelte';
+    /* ts-ignore */
+    import { CalendarDays as CalendarIcon } from '@lucide/svelte';
+
     const { box } = $props<{ box: ExternalStringBox }>();
 
     let inputElement: HTMLInputElement;
@@ -115,17 +117,17 @@
             placeholder="Select date"
             bind:this={inputElement}
             aria-label="Date input"
-            on:input={onInput}
-            on:change={onChange}
-            on:keydown={onInputKeydown}
-            on:blur={onInputBlur}
+            oninput={onInput}
+            onchange={onChange}
+            onkeydown={onInputKeydown}
+            onblur={onInputBlur}
             style="margin-right: 0.25rem;"
         />
-        <button class="datepicker-icon-btn" aria-label="Show date picker" type="button" on:click={onIconClick} tabindex="-1">
-            <CalendarDays size={20} />
-        </button>
+        <!-- <button class="datepicker-icon-btn" aria-label="Show date picker" type="button" onclick={onIconClick} tabindex="-1">
+            <CalendarIcon size={20} />
+        </button> -->
     {:else}
-        <span class="datepicker-display" on:click={toEditMode} tabindex="0" aria-label="Edit date">
+        <span class="datepicker-display" onclick={toEditMode} tabindex="0" aria-label="Edit date">
             {value ? formatDate(value) : '—'}
         </span>
     {/if}

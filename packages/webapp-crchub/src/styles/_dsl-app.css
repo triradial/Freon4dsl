@@ -836,13 +836,14 @@ span:has(> .tinymce-wrapper) {
   position: relative;
 }
 .datepicker-input {
-  font-size: 1rem;
+  font-size: var(--standard-font-size);
   padding: 2px 2px;
   min-width: 80px;
   outline: none;
 }
 .datepicker-input::-webkit-calendar-picker-indicator {
   /* display: none; */
+  cursor: pointer;
 }
 .datepicker-icon-btn {
   cursor: pointer;

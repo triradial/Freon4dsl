@@ -65,11 +65,6 @@
                     cellRenderer: (params: any) => {
                         return createNameCell(params);
                     },
-                    // cellRenderer: (params: any) => {
-                    //     const patientId = params.data.id;
-                    //     const patientNumber = params.data.patientNumber;
-                    //     return `<a href="#" data-patient-id="${patientId}">${patientNumber}</a>`;
-                    // },
                     filter: "agSetColumnFilter",
                     filterParams: {
                         excelMode: "mac",
