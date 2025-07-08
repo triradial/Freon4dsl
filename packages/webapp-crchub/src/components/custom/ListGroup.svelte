@@ -18,12 +18,6 @@
     let isExpanded = $state(box && box.findParam("isExpanded") === "true");
     let label = $derived(() => box ? box.findParam("label") || "" : "");
 
-    console.log("ListGroupComponent canAdd:", canAdd);
-    console.log("ListGroupComponent canCRUD:", canCRUD);
-    console.log("ListGroupComponent canExpand:", canExpand);
-    console.log("ListGroupComponent isExpanded:", isExpanded);
-    console.log("ListGroupComponent label:", label());
-
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
     let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
@@ -61,7 +55,6 @@
     //     event.preventDefault();
     //     dispatcher("contextmenu", { event, box, editor });
     // }
-
 
 </script>
 

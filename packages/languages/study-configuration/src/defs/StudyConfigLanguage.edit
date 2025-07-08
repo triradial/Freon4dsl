@@ -30,7 +30,7 @@ Event {
         Schedule: 
             ${schedule wrap=ListGroup cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
         Checklist:
-            ${tasks}
+            ${tasks wrap=ListGroup cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
     ] 
 }
 

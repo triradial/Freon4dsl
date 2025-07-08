@@ -160,7 +160,7 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         },
     }),
     FreCustomAction.create({
-        activeInBoxRoles: ["tasks"],
+        activeInBoxRoles: ["tasks", "Event-tasks-wrapper"],
         trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const event: Event = box.node as Event

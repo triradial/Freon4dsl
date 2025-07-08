@@ -278,7 +278,12 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 element,
                                 "schedule",
                                 "ListGroup",
-                                BoxUtil.getBoxOrAction(element, "schedule", "EventSchedule", this.handler),
+                                BoxUtil.getBoxOrAction(
+                                    element, 
+                                    "schedule", 
+                                    "EventSchedule", 
+                                    this.handler
+                                ),
                                 {
                                     params: [
                                         { key: "cssClass", value: "type3" },
@@ -293,15 +298,30 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
                     ...(showChecklists === true
                         ? [
-                              BoxUtil.listGroupBox(
+                            BoxUtil.partWrapperBox(
                                   element,
                                   "tasks",
-                                  "Checklist",
-                                  BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "vplb ev5 type3" }),
-                                  { cssClass: "lgb ev6 type3", isExpanded: true, canAdd: true, selectable: false },
-                              ),
-                          ]
-                        : []),
+                                  "ListGroup",
+                                  BoxUtil.verticalPartListBox(
+                                    element, 
+                                    element.tasks, 
+                                    "tasks", 
+                                    null, 
+                                    this.handler, 
+                                    { cssClass: "vplb ev5 type3" }
+                                ),
+                                  {
+                                    params: [
+                                        { key: "cssClass", value: "type3" },
+                                        { key: "canAdd", value: "true" },
+                                        { key: "canExpand", value: "true" },
+                                        { key: "isExpanded", value: "true" },
+                                        { key: "selectable", value: "false" },
+                                        { key: "label", value: "Checklist" },
+                                    ],
+                                },
+                            ),
+                          ] : []),
                 ],
                 { cssClass: "vl ev7 type3" },
             ),
