@@ -29,6 +29,8 @@
   });
 
   $effect(() => {
+    // Depend on $dataStore.studies so this effect reruns when studies are loaded
+    void $dataStore.studies;
     (async () => {
       let study = await dataStore.getStudy(id);
       if (study) {

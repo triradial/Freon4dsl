@@ -157,6 +157,7 @@
         LOGGER.log(`setFocus for ${box?.id} ${isEditing} && ${inputElement}`);
         if (isEditing && !isNullOrUndefined(inputElement)) {
             inputElement.focus();
+            inputElement.select();
         } else {
             // set the local variables, then the inputElement will be shown
             await startEditing('editor');

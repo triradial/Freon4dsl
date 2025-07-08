@@ -30,8 +30,16 @@ export class CustomStudyConfigurationModelScoper implements FreScoper {
     }
 
     getFromVisibleElements(modelelement: FreNode, name: string, metatype?: string, excludeSurrounding?: boolean): FreNamedNode {
-        // Did not find anything, so return. The FreScoperComposite will try the next scoper in its list.
-        return undefined;
+        const visibleElements = this.mainScoper.getVisibleElements(modelelement, metatype, excludeSurrounding);
+        if (visibleElements !== null) {
+            for (const element of visibleElements) {
+                const n: string = element.name;
+                if (name === n) {
+                    return element;
+                }
+            }
+        }
+        return null;
     }
 
     getVisibleNames(modelelement: FreNode, metatype?: string, excludeSurrounding?: boolean): string[] {

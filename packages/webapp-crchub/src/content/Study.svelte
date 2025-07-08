@@ -61,7 +61,11 @@
     async function initializeStudy() {
         // get the study data
         study = await dataStore.getStudy(id);
-        // await dataStore.getStudyPatients(id); // Removed: PatientGrid now fetches patients
+        if (!study) {
+            // Try fetching all studies from backend, then try again
+            await dataStore.getStudies();
+            study = await dataStore.getStudy(id);
+        }
         if (!study) {
             console.error(`Study with id ${id} not found`);
             return;

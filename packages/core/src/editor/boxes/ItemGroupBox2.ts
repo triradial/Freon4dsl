@@ -12,10 +12,11 @@ export class ItemGroupBox2 extends AbstractChoiceBox {
     placeHolder: string = "";
     $label: string = "";
     $child: Box = null;
+    protected _children: Box[] = [];
+
     isExpanded: boolean = false;
     isDraggable: boolean = true;
     isRequired: boolean = false;
-
     canDelete: boolean = false;
     canUnlink: boolean = true;
     canExpand: boolean = true;
@@ -35,6 +36,9 @@ export class ItemGroupBox2 extends AbstractChoiceBox {
     ) {
         super(node, role, "<options>", initializer);
         FreUtils.initializeObject(this, initializer);
+        if (!!child) {
+            this.addChild(child);
+        }
         this.$child = child;
         this.setLabel(getLabel);
         this.getAllOptions = getOptions;
@@ -62,6 +66,21 @@ export class ItemGroupBox2 extends AbstractChoiceBox {
         return this.$label;
     }
 
+    get children(): Box[] {
+        return this._children;
+    }
+
+    addChildren(children?: Box[]): ItemGroupBox2 {
+        if (!!children) {
+            children.forEach((child) => {
+                this._children.push(child);
+                child.parent = this;
+            });
+            this.isDirty();
+        }
+        return this;
+    }
+
     get child() {
         return this.$child;
     }
@@ -70,6 +89,15 @@ export class ItemGroupBox2 extends AbstractChoiceBox {
         this.$child = v;
         this.$child.parent = this;
         this.isDirty();
+    }
+
+    addChild(child: Box | null): ItemGroupBox2 {
+        if (!!child) {
+            this._children.push(child);
+            child.parent = this;
+            this.isDirty();
+        }
+        return this;
     }
 
     getOptions(editor: FreEditor): SelectOption[] {

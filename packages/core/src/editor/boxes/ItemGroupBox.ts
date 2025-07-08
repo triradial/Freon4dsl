@@ -28,6 +28,7 @@ export class ItemGroupBox extends Box {
     private $setText: (newValue: string) => void;
     private $label: string = "";
     private $child: Box = null;
+    protected _children: Box[] = [];
 
     public isExpanded: boolean = false;
     public isDraggable: boolean = true;
@@ -40,9 +41,20 @@ export class ItemGroupBox extends Box {
     public canDuplicate: boolean = false;
     public canExpand: boolean = true;
 
-    constructor(node: FreNode, role: string, getLabel: string | (() => string), getText: () => string, setText: (text: string) => void, child: Box, initializer?: Partial<ItemGroupBox>) {
+    constructor(
+        node: FreNode, 
+        role: string, 
+        getLabel: string | (() => string), 
+        getText: () => string, 
+        setText: (text: string) => void, 
+        child: Box, 
+        initializer?: Partial<ItemGroupBox>
+    ) {
         super(node, role);
         FreUtils.initializeObject(this, initializer);
+        if (!!child) {
+            this.addChild(child);
+        }
         this.$getText = getText;
         this.$setText = setText;
         this.setLabel(getLabel);
@@ -83,6 +95,22 @@ export class ItemGroupBox extends Box {
         return this.$label;
     }
 
+    get children(): Box[] {
+        return this._children;
+    }
+
+    addChildren(children?: Box[]): ItemGroupBox {
+        if (!!children) {
+            children.forEach((child) => {
+                this._children.push(child);
+                child.parent = this;
+            });
+            this.isDirty();
+        }
+        return this;
+    }
+
+
     get child() {
         return this.$child;
     }
@@ -92,6 +120,16 @@ export class ItemGroupBox extends Box {
         this.$child.parent = this;
         this.isDirty();
     }
+
+    addChild(child: Box | null): ItemGroupBox {
+        if (!!child) {
+            this._children.push(child);
+            child.parent = this;
+            this.isDirty();
+        }
+        return this;
+    }
+
 
     public isCharAllowed: (currentText: string, key: string, index: number) => CharAllowed = () => {
         return CharAllowed.OK;
