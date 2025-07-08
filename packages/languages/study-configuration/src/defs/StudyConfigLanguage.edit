@@ -1,5 +1,15 @@
 editor default
 
+global {
+    external {
+        ListGroup,
+        DatePicker,
+        TimePicker,
+        ExpandCollapseWrapper
+    }
+}
+
+
 //boolean [YES | NO] // are the strings used to display a boolean value
 
 Period {
@@ -18,7 +28,7 @@ Event {
         Type: 
         Description: ${description}
         Schedule: 
-            ${schedule wrap=ExpandCollapseWrapper}
+            ${schedule wrap=ListGroup cssClass="lgb ev4 type3" isExpanded="true" selectable="false" label="Schedule"}
         Checklist:
             ${tasks}
     ] 

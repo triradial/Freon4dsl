@@ -1,13 +1,5 @@
 editor default
 
-global {
-    external {
-        DatePicker,
-        TimePicker,
-        ExpandCollapseWrapper
-    }
-}
-
 Availability {
   [
     STAFFING

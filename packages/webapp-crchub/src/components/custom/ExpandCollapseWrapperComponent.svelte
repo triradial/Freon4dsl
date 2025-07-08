@@ -5,41 +5,41 @@
     
     const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
 
-    let inputElement: any;
+    // let inputElement: any;
     let msg: string;
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
-        inputElement.focus();
+        // inputElement.focus();
     }
     const refresh = (why?: string): void => {
         // do whatever needs to be done to refresh the elements that show information from the model
     };
 
     $effect(() => {
-        // console.log("[ExpandCollapseWrapperComponent] $effect box.children:", box?.children);
-        msg = "Expand/Collapse Wrapper children:";
-        if (box?.children && Array.isArray(box.children)) {
-            let verticalBox = box.children[0];
-            msg +=
-                "<br>  First Box children:" +
-                verticalBox.kind +
-                " cssClass: " +
-                verticalBox.cssClass +
-                " concept: " +
-                verticalBox.node.freLanguageConcept() +
-                "<br>   ";
-            const verticalBoxChildren = verticalBox.children[0];
-            msg +=
-                "<br>  Second Box children:" + verticalBoxChildren.kind + " concept: " + verticalBoxChildren.node.freLanguageConcept() + " Children: <br>   ";
-            verticalBoxChildren.children.forEach((childBox: any) => {
-                const childName = childBox.kind ?? "Unnamed";
-                msg += "<br>  " + childName;
-            });
-        } else {
-            msg += " No children or invalid children property";
-        }
+        // // console.log("[ExpandCollapseWrapperComponent] $effect box.children:", box?.children);
+        // msg = "Expand/Collapse Wrapper children:";
+        // if (box?.children && Array.isArray(box.children)) {
+        //     let verticalBox = box.children[0];
+        //     msg +=
+        //         "<br>  First Box children:" +
+        //         verticalBox.kind +
+        //         " cssClass: " +
+        //         verticalBox.cssClass +
+        //         " concept: " +
+        //         verticalBox.node.freLanguageConcept() +
+        //         "<br>   ";
+        //     const verticalBoxChildren = verticalBox.children[0];
+        //     msg +=
+        //         "<br>  Second Box children:" + verticalBoxChildren.kind + " concept: " + verticalBoxChildren.node.freLanguageConcept() + " Children: <br>   ";
+        //     verticalBoxChildren.children.forEach((childBox: any) => {
+        //         const childName = childBox.kind ?? "Unnamed";
+        //         msg += "<br>  " + childName;
+        //     });
+        // } else {
+        //     msg += " No children or invalid children property";
+        // }
     });
 
     onMount(() => {
