@@ -7,6 +7,7 @@ import { env } from "./config/env.js";
 import DatePicker from "./components/custom/DatePicker.svelte";
 import ExpandCollapseWrapperComponent from "./components/custom/ExpandCollapseWrapperComponent.svelte";
 import TimePicker from "./components/custom/TimePicker.svelte";
+import ListGroupComponent from "./components/custom/ListGroup.svelte";
 
 console.log('Starting init.ts initialization');
 
@@ -36,6 +37,7 @@ setCustomComponents([
     { component: DatePicker, knownAs: "DatePicker" },
     { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
     { component: TimePicker, knownAs: "TimePicker" },
+    { component: ListGroupComponent, knownAs: "ListGroup" },
 ]);
 console.log('Custom components set');
 

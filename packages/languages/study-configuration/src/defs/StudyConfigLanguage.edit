@@ -28,7 +28,7 @@ Event {
         Type: 
         Description: ${description}
         Schedule: 
-            ${schedule wrap=ListGroup cssClass="lgb ev4 type3" isExpanded="true" selectable="false" label="Schedule"}
+            ${schedule wrap=ListGroup cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
         Checklist:
             ${tasks}
     ] 

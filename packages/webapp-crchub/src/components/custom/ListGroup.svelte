@@ -3,7 +3,7 @@
     import { FreEditor, FreLogger, PartWrapperBox } from "@freon4dsl/core";
     import { RenderComponent } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
-    /* ts-ignore */
+    // ts-ignore
     import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Plus as IconPlus,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
     
     const LOGGER = new FreLogger("ListGroupComponent");
@@ -11,38 +11,38 @@
     const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
 
     // Props
+    let cssClass = box && box.findParam("cssClass") || "";
+    let canAdd = box && box.findParam("canAdd") === "true";
+    let canCRUD = box && box.findParam("canCRUD") === "true";
+    let canExpand = box && box.findParam("canExpand") === "true";
+    let isExpanded = $state(box && box.findParam("isExpanded") === "true");
+    let label = $derived(() => box ? box.findParam("label") || "" : "");
 
-    let cssClass = box.findParam("cssClass") || "";
-    let canAdd = !!box.findParam("canAdd");
-    let canCRUD = !!box.findParam("canCRUD");
-    let canExpand = !!box.findParam("canExpand");
-    let isExpanded = $state(!!box.findParam("isExpanded"));
-    let label = box.findParam("label") || "";
-
+    console.log("ListGroupComponent canAdd:", canAdd);
+    console.log("ListGroupComponent canCRUD:", canCRUD);
+    console.log("ListGroupComponent canExpand:", canExpand);
+    console.log("ListGroupComponent isExpanded:", isExpanded);
+    console.log("ListGroupComponent label:", label());
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
-    let contentStyle = $derived(isExpanded ? 'display:block;' : 'display:none;');
+    let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
-    async function setFocus(): Promise<void> {
-        // inputElement.focus();
-    }
+    // async function setFocus(): Promise<void> {
+    // }
+
     const refresh = (why?: string): void => {
         LOGGER.log("REFRESH ListGroupBoxComponent (" + why + ")");
     };
-
-    $effect(() => {
-    });
 
     onMount(() => {
         box.refreshComponent = refresh;   
     });
 
+    // Replaces afterUpdate()
     $effect(() => {
-        // console.log("[ExpandCollapseWrapperComponent] $effect setFocus/refresh assignment");
-        box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
 
@@ -91,7 +91,7 @@
     {/if}
 </div>
 {#key contentStyle}
-    <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle}>
-        <RenderComponent box={box.child} {editor} {cssClass} />
+    <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
+        <RenderComponent box={box.childBox} {editor} {cssClass} />
     </div>
 {/key}

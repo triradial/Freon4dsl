@@ -82,7 +82,7 @@ export class ExternalBoxesHelper {
         // build the initializer with parameters to the external component
         let initializer: string = "";
         if (!!item.params && item.params.length > 0) {
-            initializer = `, { params: [${item.params.map((x) => `{key: "${x.key}", value: "${x.value}"}`).join(", ")}] }`;
+            initializer = ` { params: [${item.params.map((x) => `{key: "${x.key}", value: "${x.value}"}`).join(", ")}] }`;
         }
         this._myTemplate.imports.core.add("ExternalSimpleBox");
         return `new ExternalSimpleBox("${item.name}", ${element}, "${myRole}"${initializer})`;
@@ -109,8 +109,8 @@ export class ExternalBoxesHelper {
                         ${elementVarName},
                         "${property.name}",
                         "${item.externalInfo!.wrapBy}",
-                    ${innerResult},
-                    ${initializer}
+                    ${innerResult}
+                    ${initializer ? ', ' : ' '} ${initializer}
                     )`;
     }
 
@@ -129,7 +129,7 @@ export class ExternalBoxesHelper {
                         ${elementVarName},
                         "${property.name}",
                         "${item.externalInfo!.replaceBy}"
-                        ${initializer}
+                        ${initializer ? ', ' : ' '} ${initializer}
                     ),`;
     }
 
@@ -149,7 +149,7 @@ export class ExternalBoxesHelper {
                         "${property.name}",
                         "${item.externalInfo!.replaceBy}",
                         this.mainHandler
-                        ${initializer}
+                        ${initializer ? ', ' : ' '} ${initializer}
                     )`;
         } else {
             return `BoxUtil.externalReferenceListBox(
@@ -157,7 +157,7 @@ export class ExternalBoxesHelper {
                         "${property.name}",
                         "${item.externalInfo!.replaceBy}",
                         ${Names.LanguageEnvironment}.getInstance().scoper
-                        ${initializer}
+                        ${initializer ? ', ' : ' '} ${initializer}
                     )`;
         }
     }
@@ -186,7 +186,7 @@ export class ExternalBoxesHelper {
                         "${propertyConcept.name}",
                         "${item.externalInfo!.wrapBy}",
                         ${innerBoxStr}
-                        ${initializer}
+                        ${initializer ? ', ' : ' '} ${initializer}
                     )`;
     }
 
@@ -208,14 +208,14 @@ export class ExternalBoxesHelper {
             }
         }
         this._myTemplate.imports.core.add(`BoxUtil`);
-        return `BoxUtil.${methodName}(${elementVarName}, "${property.name}", "${item.externalInfo!.replaceBy}" ${initializer})`;
+        return `BoxUtil.${methodName}(${elementVarName}, "${property.name}", "${item.externalInfo!.replaceBy}" ${initializer ? ', ' : ' '} ${initializer})`;
     }
 
     private buildInitializer(item: FreEditPropertyProjection) {
         // build the initializer with parameters to the external component
         let initializer: string = "";
         if (!!item.externalInfo!.params && item.externalInfo!.params.length > 0) {
-            initializer = `, { params: [${item.externalInfo!.params.map((x) => `{key: "${x.key}", value: "${x.value}"}`).join(", ")}] }`;
+            initializer = ` { params: [${item.externalInfo!.params.map((x) => `{key: "${x.key}", value: "${x.value}"}`).join(", ")}] }`;
         }
         return initializer;
     }

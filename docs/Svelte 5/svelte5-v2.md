@@ -98,6 +98,8 @@
 
 ## **META**
 
-### **1. Limited Lists
+### **1. Limited Lists**
   - Updated the template to build the lists for a limited list with key/name pairs
 
+### **2. Extgernal Box Generator**
+  - Add comma before initializer, if it has a value in ExternalBoxesHelper.ts

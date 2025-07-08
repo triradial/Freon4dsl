@@ -274,22 +274,21 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
                     ...(showScheduling === true
                         ? [
-                              BoxUtil.listGroupBox(
-                                  element,
-                                  "schedule",
-                                  "Schedule",
-                                  BoxUtil.partWrapperBox(
-                                      element as Event,
-                                      "schedule",
-                                      "ExpandCollapseWrapper",
-                                      BoxUtil.getBoxOrAction(
-                                        element as Event, 
-                                        "schedule", 
-                                        "EventSchedule", 
-                                        this.handler),
-                                  ),
-                                  { cssClass: "lgb ev4 type3", isExpanded: true, selectable: false },
-                              ),
+                            BoxUtil.partWrapperBox(
+                                element,
+                                "schedule",
+                                "ListGroup",
+                                BoxUtil.getBoxOrAction(element, "schedule", "EventSchedule", this.handler),
+                                {
+                                    params: [
+                                        { key: "cssClass", value: "type3" },
+                                        { key: "canExpand", value: "true" },
+                                        { key: "isExpanded", value: "true" },
+                                        { key: "selectable", value: "false" },
+                                        { key: "label", value: "Schedule" },
+                                    ],
+                                },
+                            ),
                           ] : []),
 
                     ...(showChecklists === true
@@ -310,6 +309,102 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         )
         return box
     }
+    // projectEvent(event: Event): Box {
+    //     const element: Event = event
+    //     const showScheduling = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showScheduling
+    //     const showChecklists = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showChecklists
+    //     const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
+    //     let box: Box = BoxUtil.itemGroupBox(
+    //         element,
+    //         "event",
+    //         "Event:",
+    //         "name",
+    //         BoxFactory.verticalLayout(
+    //             element,
+    //             "Event-detail",
+    //             "",
+    //             [
+    //                 BoxFactory.horizontalLayout(
+    //                     element as Event,
+    //                     "Event-hlist-line-1",
+    //                     "",
+    //                     [
+    //                         BoxUtil.labelBox(
+    //                             element as Event, 
+    //                             "This is a", 
+    //                             "top-1-line-1-item-0",
+    //                             { selectable: false }
+    //                         ),
+    //                         BoxUtil.limitedBox(
+    //                             element as Event,
+    //                             "typeOfEvent",
+    //                             (selected: string) => {
+    //                                 ;(element as Event).typeOfEvent = FreNodeReference.create<TypeOfEvent>(selected, "TypeOfEvent")
+    //                             },
+    //                             LimitedDisplay.SELECT,
+    //                             StudyConfigurationModelEnvironment.getInstance().scoper,
+    //                         ),
+    //                         BoxUtil.labelBox(
+    //                             element as Event, 
+    //                             "that is also referred to as", 
+    //                             "top-1-line-1-item-2"
+    //                         ),
+    //                         BoxUtil.textBox(
+    //                             element as Event, 
+    //                             "alternativeName"
+    //                         ),
+    //                     ],
+    //                     { cssClass: "hl ev1 ml-6", selectable: true },
+    //                 ),
+
+    //                 ...(showDescriptions === true 
+    //                     ? [
+    //                         BoxUtil.getBoxOrAction(
+    //                             element, 
+    //                             "description", 
+    //                             "Description", 
+    //                             this.handler
+    //                         )
+    //                     ] : []),
+
+    //                 ...(showScheduling === true
+    //                     ? [
+    //                           BoxUtil.listGroupBox(
+    //                               element,
+    //                               "schedule",
+    //                               "Schedule",
+    //                               BoxUtil.partWrapperBox(
+    //                                   element as Event,
+    //                                   "schedule",
+    //                                   "ExpandCollapseWrapper",
+    //                                   BoxUtil.getBoxOrAction(
+    //                                     element as Event, 
+    //                                     "schedule", 
+    //                                     "EventSchedule", 
+    //                                     this.handler),
+    //                               ),
+    //                               { cssClass: "lgb ev4 type3", isExpanded: true, selectable: false },
+    //                           ),
+    //                       ] : []),
+
+    //                 ...(showChecklists === true
+    //                     ? [
+    //                           BoxUtil.listGroupBox(
+    //                               element,
+    //                               "tasks",
+    //                               "Checklist",
+    //                               BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "vplb ev5 type3" }),
+    //                               { cssClass: "lgb ev6 type3", isExpanded: true, canAdd: true, selectable: false },
+    //                           ),
+    //                       ]
+    //                     : []),
+    //             ],
+    //             { cssClass: "vl ev7 type3" },
+    //         ),
+    //         { cssClass: "igb ev8 type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true },
+    //     )
+    //     return box
+    // }
 
     // projectSchedule(event: EventSchedule): Box {
     //     const element: EventSchedule = event;
