@@ -1,7 +1,7 @@
 <script lang="ts">
     import { dataStore } from "../../services/data/data-store.js";
     import { editObject } from "../../services/stores/object-drawer-store.js";
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
@@ -10,6 +10,7 @@
     import GridHeader from "../common/GridHeader.svelte";
     import { getSVGIcon } from "../../services/utils.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
+    import { userStore } from "../../services/stores/users-store.js";
 
     let deleteDialogOpen = $state(false);
     let objectToDelete = $state<any>(null);
@@ -17,27 +18,41 @@
     let gridOptions: GridOptions;
     let gridApi: GridApi;
     let studiesData = $derived($dataStore.studies);
+    let user = null;
+    let showGrid = $derived(!!user);
     let canManageStudies = true;
-    let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
-    let isGridReady = $state(false);
-    let hasFullReset = $state(false);
     let isResetting = $state(false);
+    let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
+    let hasFetched = $state(false);
+
+    let updateTimeout: any = null;
+    let userUnsubscribe;
+    $effect(() => {
+        // keep the gridApi and studiesData in scope
+        void gridApi;
+        void studiesData;
+        if (gridApi && studiesData) {
+            if (updateTimeout) clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+                gridApi.setGridOption("rowData", studiesData);
+                gridApi.sizeColumnsToFit();
+                gridApi.autoSizeAllColumns();
+                // Hide loading overlay after data is set
+                gridApi.setGridOption("loading", false);
+            }, 100);
+        }
+    });
+
+    async function fetchStudies() {
+        if (gridApi) gridApi.setGridOption("loading", true);
+        await dataStore.getStudies();
+        // Do not set loading to false here; let the debounced effect handle it after data is set
+    }
 
     $effect(() => {
-        updateGridData();
-    });
-    
-    $effect(() => {
-        if (isGridReady && gridApi) {
-            // Ensure headers and columns are sized correctly once the grid is fully visible
-            gridApi.sizeColumnsToFit();
-            gridApi.autoSizeAllColumns();
-            gridApi.refreshHeader();
-            // Force a redraw to ensure header and body are fully in sync
-            gridApi.redrawRows();
-            gridApi.refreshCells({ force: true });
-            // Perform full client-side model refresh → forces complete grid rerender
-            gridApi.refreshClientSideRowModel('map');
+        if (user && studiesData.length === 0 && !hasFetched) {
+            hasFetched = true;
+            fetchStudies();
         }
     });
 
@@ -47,35 +62,18 @@
             setTimeout(() => {
                 gridApi.sizeColumnsToFit();
                 gridApi.autoSizeAllColumns();
+                if (studiesData.length === 0) {
+                    gridApi.setGridOption("loading", false);
+                }
             }, 100);
         }
     }
 
-    function initializeGrid() {
-        const gridElement = document.querySelector("#studyGrid") as HTMLElement;
-        if (gridApi) {
-            gridApi.destroy();
-        }
-        gridApi = createGrid(gridElement, gridOptions);
-        if (studiesData) {
-            gridApi.setGridOption("rowData", studiesData);
-        }
-    }
-
-    $effect(() => {
-        // After grid is first ready and initial sizing finished, fully recreate grid once
-        if (isGridReady && !hasFullReset) {
-            isResetting = true;
-            // small delay to allow overlay to appear
-            setTimeout(() => {
-                initializeGrid();
-                hasFullReset = true;
-                isResetting = false;
-            }, 100);
-        }
-    });
-
-    onMount(async () => {
+    onMount(() => {
+        userUnsubscribe = userStore.subscribe((val) => {
+            user = val;
+            console.debug('[StudyGrid] userStore subscription: user set to', user);
+        });
         gridOptions = {
             defaultColDef: {
                 sortable: true,
@@ -124,12 +122,6 @@
                 } else {
                     gridApi.setGridOption("loading", false);
                 }
-                // Set grid as ready after a short delay to ensure everything is rendered properly
-                // setTimeout(() => {
-                //     isGridReady = true;
-                //     // extra safety: trigger resize immediately after marking ready
-                //     params.api.refreshHeader();
-                // }, 100);
             },
         };
 
@@ -148,6 +140,10 @@
         });
     });
 
+    onDestroy(() => {
+        if (userUnsubscribe) userUnsubscribe();
+    });
+
     function onOpenClick(studyId: string) {
         navigateTo("study", studyId);
     }
@@ -162,6 +158,11 @@
 
     function onEditClick(studyId: string) {
         editObject("study", studyId);
+        fetchStudies();
+    }
+
+    function onStudyChanged() {
+        fetchStudies();
     }
 
     function createNameCell(params: any) {
@@ -229,8 +230,10 @@
     }
 
     async function refreshStudies() {
+        console.log("Refreshing studies");
+        if (gridApi) gridApi.setGridOption("loading", true);
         await dataStore.getStudies();
-        updateGridData();
+        // updateGridData() is not needed; debounced effect will handle
     }
 </script>
 
@@ -240,18 +243,12 @@
 
 <GridHeader title="Studies" objectType="study" onrefresh={refreshStudies} />
 <div id="studyGrid" class="{gridTheme} ag-grid" style="visibility:{isResetting ? 'hidden' : 'visible'}"></div>
-<!-- {#if !isGridReady || isResetting}
-    <div class="loading-overlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">Loading studies grid...</div>
-    </div>
-{/if} -->
 <DeleteObjectDialog
     open={deleteDialogOpen}
     objectType="study"
     object={objectToDelete}
     ondelete={() => {
-        updateGridData();
+        onStudyChanged();
         deleteDialogOpen = false;
         objectToDelete = null;
     }}

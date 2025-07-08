@@ -107,7 +107,14 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 element,
                 "periods",
                 "Study Periods",
-                BoxUtil.verticalPartListBox(element, element.periods, "periods", null, this.handler, { cssClass: "vplb sc1 type1" }),
+                BoxUtil.verticalPartListBox(
+                    element, 
+                    element.periods, 
+                    "periods", 
+                    null, 
+                    this.handler, 
+                    { cssClass: "vplb sc1 type1" }
+                ),
                 { cssClass: "lgb sc2 type1", canAdd: true, canExpand: true, isExpanded: true, selectable: false },
             ),
             ...(element.showSharedTasks === true
@@ -189,7 +196,14 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         element,
                         "events",
                         "Events",
-                        BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler, { cssClass: "vplb per2 type2 ml-6" }),
+                        BoxUtil.verticalPartListBox(
+                            element, 
+                            element.events, 
+                            "events", 
+                            null, 
+                            this.handler, 
+                            { cssClass: "vplb per2 type2 ml-6" }
+                        ),
                         { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
                     ),
                 ],
@@ -220,7 +234,12 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         "Event-hlist-line-1",
                         "",
                         [
-                            BoxUtil.labelBox(element as Event, "This is a", "top-1-line-1-item-0"),
+                            BoxUtil.labelBox(
+                                element as Event, 
+                                "This is a", 
+                                "top-1-line-1-item-0",
+                                { selectable: false }
+                            ),
                             BoxUtil.limitedBox(
                                 element as Event,
                                 "typeOfEvent",
@@ -230,13 +249,28 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 LimitedDisplay.SELECT,
                                 StudyConfigurationModelEnvironment.getInstance().scoper,
                             ),
-                            BoxUtil.labelBox(element as Event, "that is also referred to as", "top-1-line-1-item-2"),
-                            BoxUtil.textBox(element as Event, "alternativeName"),
+                            BoxUtil.labelBox(
+                                element as Event, 
+                                "that is also referred to as", 
+                                "top-1-line-1-item-2"
+                            ),
+                            BoxUtil.textBox(
+                                element as Event, 
+                                "alternativeName"
+                            ),
                         ],
-                        { cssClass: "hl ev1 ml-6", selectable: false },
+                        { cssClass: "hl ev1 ml-6", selectable: true },
                     ),
 
-                    ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                    ...(showDescriptions === true 
+                        ? [
+                            BoxUtil.getBoxOrAction(
+                                element, 
+                                "description", 
+                                "Description", 
+                                this.handler
+                            )
+                        ] : []),
 
                     ...(showScheduling === true
                         ? [
@@ -248,12 +282,15 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                       element as Event,
                                       "schedule",
                                       "ExpandCollapseWrapper",
-                                      BoxUtil.getBoxOrAction(element as Event, "schedule", "EventSchedule", this.handler),
+                                      BoxUtil.getBoxOrAction(
+                                        element as Event, 
+                                        "schedule", 
+                                        "EventSchedule", 
+                                        this.handler),
                                   ),
                                   { cssClass: "lgb ev4 type3", isExpanded: true, selectable: false },
                               ),
-                          ]
-                        : []),
+                          ] : []),
 
                     ...(showChecklists === true
                         ? [
@@ -419,7 +456,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 "Task:",
                 "name",
                 BoxFactory.verticalLayout(element, "task-overall", "", [
-                    ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                    ...(showDescriptions 
+                        ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                     BoxUtil.listGroupBox(
                         element,
                         "steps",
@@ -445,10 +483,16 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             "step",
             "Step:",
             "title",
-            // BoxUtil.indentBox(
-            //     element, 4, "ss1",
             BoxFactory.verticalLayout(element, "step-overall", "", [
-                ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "detailsDescription", "Description", this.handler)] : []),
+                ...(showDescriptions 
+                    ? [
+                        BoxUtil.getBoxOrAction(
+                            element, 
+                            "detailsDescription", 
+                            "Description", this.handler
+                        )
+                    ] 
+                    : []),
                 ...(showReferences
                     ? [
                           BoxUtil.listGroupBox(
@@ -498,7 +542,6 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                       ]
                     : []),
             ]),
-            // ),
             { cssClass: "igb st7 type3", placeHolder: "enter", isRequired: true },
         )
         return box

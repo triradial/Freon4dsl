@@ -234,7 +234,6 @@
         {:else if isMultiLineTextBox(box)}
             <MultiLineTextComponent {box} {editor} cssClass={box.cssClass} />
         {:else if isActionBox(box) || isSelectBox(box) || isReferenceBox(box)}
-            {console.log('Special action/select/reference box detected:', box.id , ' role: ' , box.role,  ' selectable: ' , box.selectable, ' parent role: ' , box.parent?.role, ' kind: ' , box.kind)}
             <TextDropdownComponent {box} {editor} cssClass={box.cssClass} />
         {:else if isEmptyLineBox(box)}
             <EmptyLineComponent {box} {editor} cssClass={box.cssClass} />

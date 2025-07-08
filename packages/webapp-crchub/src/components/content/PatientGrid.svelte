@@ -208,13 +208,21 @@
         // based on row data and button type
         return true; // For now, always render all buttons
     }
+
+    async function refreshPatients() {
+        console.log("Refreshing patients"); 
+        loading = true;
+        await dataStore.getStudyPatients(studyId);
+        updateGridData();
+        loading = false;
+    }
 </script>
 
 <svelte:head>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<GridHeader title="Patients" objectType="patient" parentId={studyId} onrefresh={fetchPatients} />
+<GridHeader title="Patients" objectType="patient" parentId={studyId} onrefresh={refreshPatients} />
 <div id="patientGrid" class="{gridTheme} ag-grid"></div>
 <DeleteObjectDialog
     open={deleteDialogOpen}
