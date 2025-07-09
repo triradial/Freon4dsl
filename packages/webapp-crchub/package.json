@@ -23,7 +23,7 @@
         "@lucide/svelte": "^0.513.0",
         "@tinymce/tinymce-svelte": "^3.0.0",
         "@types/node": "^20.14.1",
-        "bits-ui": "^2.4.1",
+        "bits-ui": "^2.8.10",
         "dotenv": "^16.4.5",
         "github-markdown-css": "^5.8.0",
         "koa2-ratelimit": "^1.1.3",
