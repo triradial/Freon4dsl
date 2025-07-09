@@ -102,54 +102,79 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
      */
     projectStudyConfiguration(studyconfig: StudyConfiguration): Box {
         const element: StudyConfiguration = studyconfig
-        return BoxFactory.verticalLayout(element, "StudyConfiguration-overall", "", [
-            BoxUtil.listGroupBox(
-                element,
-                "periods",
-                "Study Periods",
-                BoxUtil.verticalPartListBox(
-                    element, 
-                    element.periods, 
-                    "periods", 
-                    null, 
-                    this.handler, 
-                    { cssClass: "vplb sc1 type1" }
-                ),
-                { cssClass: "lgb sc2 type1", canAdd: true, canExpand: true, isExpanded: true, selectable: false },
-            ),
-            ...(element.showSharedTasks === true
-                ? [
-                      BoxUtil.listGroupBox(
-                          element,
-                          "shared-tasks",
-                          "Shared Tasks",
-                          BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "vplb sc3 type1" }),
-                          { cssClass: "lgb sc4 type1", isExpanded: true, canAdd: true, selectable: false },
-                      ),
-                  ]
-                : []),
-            ...(element.showSystems === true
-                ? [
-                      BoxUtil.listGroupBox(
-                          element,
-                          "shared-systems",
-                          "Systems",
-                          BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, { cssClass: "vplb sc5 type1" }),
-                          { cssClass: "lgb sc6 type1", isExpanded: true, canAdd: true, selectable: false },
-                      ),
-                  ]
-                : []),
-            ...(element.showPeople === true
-                ? [
-                      BoxUtil.listGroupBox(element, "shared-people", "People", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler), {
-                          cssClass: "lgb sc8 type1",
-                          isExpanded: true,
-                          canAdd: true,
-                          selectable: false,
-                      }),
-                  ]
-                : []),
-        ])
+        let box: Box = BoxFactory.verticalLayout(
+            element, 
+            "StudyConfiguration-overall", 
+            "", 
+            [
+                BoxUtil.partWrapperBox(
+                    element,
+                    "periods",
+                    "ListGroupComponent",
+                    BoxUtil.verticalPartListBox(
+                        element, 
+                        element.periods, 
+                        "periods", 
+                        null, 
+                        this.handler, 
+                        { cssClass: "vplb sc1 type1" }
+                    ),
+                    {
+                        params: [
+                            { key: "cssClass", value: "type1" },
+                            { key: "canAdd", value: "true" },
+                            { key: "canExpand", value: "true" },
+                            { key: "isExpanded", value: "true" },
+                            { key: "selectable", value: "false" },
+                            { key: "label", value: "Study Periods" },
+                        ],
+                    },
+                                ),
+                ...(element.showSharedTasks === true
+                    ? [
+                        BoxUtil.listGroupBox(
+                            element,
+                            "shared-tasks",
+                            "Shared Tasks",
+                            BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "vplb sc3 type1" }),
+                            { cssClass: "lgb sc4 type1", isExpanded: true, canAdd: true, selectable: false },
+                        ),
+                    ]
+                    : []),
+                ...(element.showSystems === true
+                    ? [
+                        BoxUtil.partWrapperBox(
+                            element,
+                            "shared-systems",
+                            "ListGroupComponent",
+                            BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, { cssClass: "vplb sc5 type1" }),
+                            {
+                                params: [
+                                    { key: "cssClass", value: "type1" },
+                                    { key: "canAdd", value: "true" },
+                                    { key: "canExpand", value: "true" },
+                                    { key: "isExpanded", value: "true" },
+                                    { key: "selectable", value: "false" },
+                                    { key: "label", value: "Systems" },
+                                ],
+                            },
+
+                        ),
+                    ]
+                    : []),
+                ...(element.showPeople === true
+                    ? [
+                        BoxUtil.listGroupBox(element, "shared-people", "People", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler), {
+                            cssClass: "lgb sc8 type1",
+                            isExpanded: true,
+                            canAdd: true,
+                            selectable: false,
+                        }),
+                    ]
+                    : []),
+            ]
+        )
+        return box;
     }
 
     projectDescription(description: Description): Box {
@@ -298,7 +323,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
                     ...(showChecklists === true
                         ? [
-                            BoxUtil.partWrapperBox(
+                            BoxUtil.partListWrapperBox(
                                   element,
                                   "tasks",
                                   "ListGroupComponent",
@@ -308,7 +333,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                     "tasks", 
                                     null, 
                                     this.handler, 
-                                    { cssClass: "vplb ev5 type3" }
+                                    { cssClass: "type3" }
                                 ),
                                   {
                                     params: [
