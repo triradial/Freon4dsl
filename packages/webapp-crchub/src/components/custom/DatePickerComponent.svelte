@@ -58,12 +58,10 @@
     }
 </script>
 
+<div class="ml-1">
 <DatePicker.Root bind:open={isOpen} value={value} on:valueChange={e => onValueChange(e.detail)} weekdayFormat="short" fixedWeeks={true}>
-    <div class="flex w-full max-w-[232px] flex-col gap-1.5">
-        <DatePicker.Label class="block select-none text-sm font-medium">Date</DatePicker.Label>
-        <DatePicker.Input
-            class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover flex w-full max-w-[232px] select-none items-center border px-2 py-3 text-sm tracking-[0.01em]"
-        >
+    <div class="flex w-full max-w-[232px] flex-col">
+        <DatePicker.Input class="datepicker-input">
             {#snippet children({ segments })}
                 {#each segments as { part, value }, i (part + i)}
                     <div class="inline-block select-none">
@@ -123,5 +121,6 @@
                 {/snippet}
             </DatePicker.Calendar>
         </DatePicker.Content>
-    </div>
-</DatePicker.Root>
+        </div>
+    </DatePicker.Root>
+</div>

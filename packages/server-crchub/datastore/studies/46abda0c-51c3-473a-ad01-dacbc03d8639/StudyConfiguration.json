@@ -299,7 +299,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "phone call",
+                     "resolveInfo": "site visit",
                      "reference": null
                   }
                ]
