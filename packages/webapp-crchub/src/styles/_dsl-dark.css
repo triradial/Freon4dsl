@@ -420,19 +420,11 @@
   background-color: var(--green-30t);
   border: 1px solid var(--green-90t);
 }
-.datepicker-input::-ms-input-placeholder {
+/* .datepicker-input::-ms-input-placeholder {
   color: var(--green-90t);
-}
+} */
 .datepicker-input::placeholder {
   color: var(--green-90t);
-}
-.datepicker-icon-btn {
-  background: transparent;
-  border: none;
-  color: var(--green-90t);
-}
-.datepicker-icon-btn:focus {
-  color: var(--green-70t);
 }
 .datepicker-display {
   color: var(--green-90t);
@@ -446,19 +438,11 @@
   color: var(--green-90t);
   border: 1px solid var(--green-90t);
 }
-.timepicker-input::-ms-input-placeholder {
+/* .timepicker-input::-ms-input-placeholder {
   color: var(--green-90t);
-}
+} */
 .timepicker-input::placeholder {
   color: var(--green-90t);
-}
-.timepicker-icon-btn {
-  background: transparent;
-  border: none;
-  color: var(--green-90t);
-}
-.timepicker-icon-btn:focus {
-  color: var(--green-70t);
 }
 .timepicker-display {
   color: var(--green-90t);

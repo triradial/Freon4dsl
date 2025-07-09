@@ -277,7 +277,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             BoxUtil.partWrapperBox(
                                 element,
                                 "schedule",
-                                "ListGroup",
+                                "ListGroupComponent",
                                 BoxUtil.getBoxOrAction(
                                     element, 
                                     "schedule", 
@@ -301,7 +301,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             BoxUtil.partWrapperBox(
                                   element,
                                   "tasks",
-                                  "ListGroup",
+                                  "ListGroupComponent",
                                   BoxUtil.verticalPartListBox(
                                     element, 
                                     element.tasks, 

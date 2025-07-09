@@ -4,10 +4,10 @@ import { ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
 import { env } from "./config/env.js";
 
-import DatePicker from "./components/custom/DatePicker.svelte";
-import ExpandCollapseWrapperComponent from "./components/custom/ExpandCollapseWrapperComponent.svelte";
-import TimePicker from "./components/custom/TimePicker.svelte";
-import ListGroupComponent from "./components/custom/ListGroup.svelte";
+import DatePickerComponent from "./components/custom/DatePickerComponent.svelte";
+import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
+import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
+import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 
 console.log('Starting init.ts initialization');
 
@@ -34,10 +34,10 @@ webappConfigurator.setServerCommunication(serverComm);
 console.log('Editor environment configured');
 
 setCustomComponents([
-    { component: DatePicker, knownAs: "DatePicker" },
-    { component: ExpandCollapseWrapperComponent, knownAs: "ExpandCollapseWrapper" },
-    { component: TimePicker, knownAs: "TimePicker" },
-    { component: ListGroupComponent, knownAs: "ListGroup" },
+    { component: DatePickerComponent, knownAs: "DatePickerComponent" },
+    { component: TimePickerComponent, knownAs: "TimePickerComponent" },
+    { component: ListGroupComponent, knownAs: "ListGroupComponent" },
+    { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
 ]);
 console.log('Custom components set');
 

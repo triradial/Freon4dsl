@@ -88,21 +88,21 @@ RepeatCount {
 
 BetweenTimes {
     [
-        starting by ${startTimeAsString replace=TimePicker} and ending by ${endTimeAsString replace=TimePicker}
+        starting by ${startTimeAsString replace=TimePickerComponent} and ending by ${endTimeAsString replace=TimePickerComponent}
     ] 
     trigger = "between times: Times of day event must start and end"
-} 
+}   
 
 StartingBy {
     [
-        starting by ${startTimeAsString replace=TimePicker}
+        starting by ${startTimeAsString replace=TimePickerComponent}
     ] 
     trigger = "starting by: Time of day event must start"
 } 
 
 EndingBy {
     [
-        ending by ${endTimeAsString replace=TimePicker}
+        ending by ${endTimeAsString replace=TimePickerComponent}
     ] 
     trigger = "ending by: Time of day event must end"
 } 
