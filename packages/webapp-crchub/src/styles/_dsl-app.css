@@ -38,7 +38,6 @@ main {
 
 .render-component {
   display: grid;
-  border: 1px solid transparent;
 }
 
 /* #endregion */
@@ -841,16 +840,7 @@ span:has(> .tinymce-wrapper) {
   min-width: 80px;
   outline: none;
 }
-.datepicker-input::-webkit-calendar-picker-indicator {
-  /* display: none; */
-  cursor: pointer;
-}
-.datepicker-icon-btn {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 0 2px;
-}
+
 .datepicker-display {
   font-size: var(--standard-font-size);
   padding: 2px 2px;
@@ -876,15 +866,9 @@ span:has(> .tinymce-wrapper) {
   height: 1.5rem;
   outline: none;
 }
-.timepicker-input::-webkit-calendar-picker-indicator {
-  /* display: none; */
-}
-.timepicker-icon-btn {
+/* .timepicker-input::-webkit-calendar-picker-indicator {
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 0 2px;
-}
+} */
 .timepicker-display {
   font-size: 0.75rem;
   padding: 2px 2px;

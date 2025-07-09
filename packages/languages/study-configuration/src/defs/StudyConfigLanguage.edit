@@ -2,10 +2,10 @@ editor default
 
 global {
     external {
-        ListGroup,
-        DatePicker,
-        TimePicker,
-        ExpandCollapseWrapper
+        ListGroupComponent,
+        ItemGroupComponent,
+        DatePickerComponent,
+        TimePickerComponent
     }
 }
 
@@ -28,9 +28,9 @@ Event {
         Type: 
         Description: ${description}
         Schedule: 
-            ${schedule wrap=ListGroup cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
+            ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
         Checklist:
-            ${tasks wrap=ListGroup cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
+            ${tasks wrap=ItemGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
     ] 
 }
 

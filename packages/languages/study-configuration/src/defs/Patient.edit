@@ -28,7 +28,7 @@ DateRange {
 }
 
 DateConcept {
-  [${dateAsString replace=DatePicker startDate="30/09/2024"}]
+  [${dateAsString replace=DatePickerComponent startDate="30/09/2024"}]
 }
 
 
