@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { AST, FreEditor, FreLanguage, FreLogger, ownerOfType, PartListWrapperBox } from "@freon4dsl/core";
-    import { RenderComponent } from "@freon4dsl/core-svelte";
+    import { RenderComponent, TextComponent, TextBox } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
     // ts-ignore
     import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Trash2 as IconDelete, Copy as IconDuplicate,Share2 as IconShare2,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
@@ -25,25 +25,10 @@
     let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
 
     let isEditing = $state(false);
-
-    const getText = () => {
-        const propertyName = "name";
-        const node = box.node;
-        return node[propertyName];
-    }
-    const setText = (value: string) => {
-        AST.change(() => {
-            const propertyName = "name";
-            const node = box.node;
-            node[propertyName] = value;
-        });
-    }
-
-    let text = $state(getText());
-
-    $effect(() => {
-        text = getText();
-    });
+    let nameBox = box.findChildBoxForProperty("name");
+    let text = $state("");
+    let textComponent: any = $state();
+    let fromInner = $state(false);
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
@@ -116,14 +101,17 @@
     {/if}
     <span class="list-group-label">{label()}:</span>
 
-    <input
-        type="text"
-        value={text}
-        oninput={(e) => {
-            text = (e.target as HTMLInputElement).value;
-            setText(text);
-        }}
+    <TextComponent
+        {editor}
+        cssClass="typeA"
+        box={nameBox}
+        partOfDropdown={false}
+        bind:isEditing
+        bind:text
+        bind:this={textComponent}
+        toParent={fromInner}
     />
+
     {#if canDuplicate}
         <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate" tabindex="0">
             <IconDuplicate size={14} />

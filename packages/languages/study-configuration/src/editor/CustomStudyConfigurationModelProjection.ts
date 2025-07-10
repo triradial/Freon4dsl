@@ -116,8 +116,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         element.periods, 
                         "periods", 
                         null, 
-                        this.handler, 
-                        { cssClass: "vplb sc1 type1" }
+                        this.handler
                     ),
                     {
                         params: [
@@ -147,7 +146,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             element,
                             "shared-systems",
                             "ListGroupComponent",
-                            BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler, { cssClass: "vplb sc5 type1" }),
+                            BoxUtil.verticalPartListBox(element, element.systemAccesses, "systemAccesses", null, this.handler),
                             {
                                 params: [
                                     { key: "cssClass", value: "type1" },
@@ -158,18 +157,27 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                     { key: "label", value: "Systems" },
                                 ],
                             },
-
                         ),
                     ]
                     : []),
                 ...(element.showPeople === true
                     ? [
-                        BoxUtil.listGroupBox(element, "shared-people", "People", BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler), {
-                            cssClass: "lgb sc8 type1",
-                            isExpanded: true,
-                            canAdd: true,
-                            selectable: false,
-                        }),
+                        BoxUtil.partWrapperBox(
+                            element, 
+                            "shared-people", 
+                            "ListGroupComponent", 
+                            BoxUtil.getBoxOrAction(element, "staffing", "Staffing", this.handler), 
+                            {
+                                params: [
+                                    { key: "cssClass", value: "type1" },
+                                    { key: "canAdd", value: "true" },
+                                    { key: "canExpand", value: "true" },
+                                    { key: "isExpanded", value: "true" },
+                                    { key: "selectable", value: "false" },
+                                    { key: "label", value: "People" },
+                                ],
+                            },
+                        ),
                     ]
                     : []),
             ]
@@ -196,11 +204,11 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectPeriod(period: Period): Box {
         const element: Period = period
         const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
-        let box: Box = BoxUtil.itemGroupBox(
+        let box: Box = 
+        BoxUtil.partWrapperBox(
             element,
             "period",
-            "Period:",
-            "name",
+            "ItemGroupComponent", 
             BoxFactory.verticalLayout(
                 element,
                 "period-detail",
@@ -234,10 +242,43 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 ],
                 { cssClass: "vl per4 type2" },
             ),
-            { cssClass: "igb per5 type2", placeHolder: "enter", canExpand: true, isExpanded: false, isRequired: true },
+            {
+                params: [
+                    { key: "cssClass", value: "type2" },
+                    { key: "canDelete", value: "true" },
+                    { key: "canDuplicate", value: "true" },
+                    { key: "canExpand", value: "true" },
+                    { key: "isExpanded", value: "true" },
+                    { key: "selectable", value: "false" },
+                    { key: "label", value: "Period:" },
+                ],
+            },
+            // { cssClass: "igb per5 type2", placeHolder: "enter", canExpand: true, isExpanded: false, isRequired: true },
         )
         return box
     }
+
+    // projectPeriod(period: Period): Box {
+    //     const element: Period = period
+    //     const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
+    //     let box: Box = 
+    //     BoxFactory.verticalLayout(element, "Period-overall", "", [
+    //         BoxUtil.stringWrapperBox(element, "name", "ItemGroupComponent", 
+    //             BoxUtil.textBox(element, "name"), {
+    //             params: [
+    //                 { key: "cssClass", value: "type1" },
+    //                 { key: "canDuplicate", value: "true" },
+    //                 { key: "canDelete", value: "true" },
+    //                 { key: "canExpand", value: "true" },
+    //                 { key: "isExpanded", value: "true" },
+    //                 { key: "selectable", value: "false" },
+    //                 { key: "label", value: "Period:" },
+    //             ],
+    //         }),
+    //         BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler),
+    //     ]);
+    //     return box
+    // }
 
     projectEvent(event: Event): Box {
         const element: Event = event

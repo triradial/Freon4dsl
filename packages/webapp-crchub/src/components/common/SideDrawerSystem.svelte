@@ -26,7 +26,6 @@
     let dragging = false;
 
     $effect(() => {
-        console.log("[SideDrawerSystem] $effect activeDrawer:", activeDrawer, "activeDrawerKey:", activeDrawerKey);
         if (activeDrawer !== activeDrawerKey) {
             activeDrawerKey = activeDrawer;
             activeDrawerInstance = null;

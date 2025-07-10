@@ -160,6 +160,17 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         },
     }),
     FreCustomAction.create({
+        activeInBoxRoles: ["task"],
+        trigger: "delete",
+        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+            const task: Task = box.node as Task
+            const event: Event = ownerOfType(task, "Event") as Event //box.parent.parent.parent.element as Event;
+            const index = task.freOwnerDescriptor().propertyIndex // event.tasks.indexOf(task);
+            event.tasks.splice(index, 1)
+            return null
+        },
+    }),
+    FreCustomAction.create({
         activeInBoxRoles: ["steps"],
         trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
