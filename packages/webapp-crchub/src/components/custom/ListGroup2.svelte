@@ -43,7 +43,10 @@
     };
 
     const addItem = () => {
+        console.log("JJJ addItem");
         AST.change(() => {
+            const childBox = box.childBox;
+            childBox.cssClass = cssClass;
             const language = FreLanguage.getInstance();
             const propertyName = box.propertyName;
             const node = box.node;

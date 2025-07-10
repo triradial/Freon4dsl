@@ -1,5 +1,6 @@
 editor default
 
+
 global {
     external {
         ListGroupComponent,
@@ -27,10 +28,8 @@ Event {
         This is a ${typeOfEvent} that is also referred to as ${alternativeName}
         Type: 
         Description: ${description}
-        Schedule: 
-            ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
-        Checklist:
-            ${tasks wrap=ItemGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
+        ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
+        ${tasks wrap=ItemGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
     ] 
 }
 
