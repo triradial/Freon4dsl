@@ -340,6 +340,18 @@ main {
   overflow: hidden;
 }
 
+.item-group.type1 {
+  height: 2rem;
+}
+
+.item-group.type2 {
+  height: 2rem;
+}
+
+.render-component:has(>.item-group.type2) {
+  width: calc(100% - 2.25rem) !important;
+} 
+
 .item-group .action-button {
   display: none;
   margin-left: 0.25rem !important;

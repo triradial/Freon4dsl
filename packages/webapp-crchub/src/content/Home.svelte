@@ -4,7 +4,6 @@
 
     
     onMount(async () => {
-        console.log("Home component mounted");
     });
 </script>
 

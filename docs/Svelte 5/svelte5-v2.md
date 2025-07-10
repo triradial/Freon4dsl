@@ -101,5 +101,5 @@
 ### **1. Limited Lists**
   - Updated the template to build the lists for a limited list with key/name pairs
 
-### **2. Extgernal Box Generator**
-  - Add comma before initializer, if it has a value in ExternalBoxesHelper.ts
+### **2. External Box Generator**
+  - Remove comma from wrapByExternal() before initializer as it already has comma when there parameters in ExternalBoxesHelper.ts

@@ -10,15 +10,22 @@ global {
     }
 }
 
+StudyConfiguration {
+    [
+    ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
+    ${tasks wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Tasks"}
+    ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
+    ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
+    ]
+}
 
 //boolean [YES | NO] // are the strings used to display a boolean value
 
 Period {
     [
-        Period: ${name}
-        Description: ${description}
-        EVENTS
-            ${events}
+        ${name}
+        ${description}
+        ${events wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Events"}
     ]
 }
 
