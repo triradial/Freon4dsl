@@ -103,14 +103,14 @@ export class FreEditor {
             LOGGER.log("No refreshComponentRootBox() for FreEditor");
         }
         // Notify all subscribers
-        for (const fn of this._changeSubscribers) {
-            try {
-                // console.log("[DEBUG] FreEditor notifying subscriber", fn);
-                fn("====== FROM FreEditor (subscriber)");
-            } catch (e) {
-                console.error("Error in FreEditor change subscriber", e);
-            }
-        }
+        // for (const fn of this._changeSubscribers) {
+        //     try {
+        //         // console.log("[DEBUG] FreEditor notifying subscriber", fn);
+        //         fn("====== FROM FreEditor (subscriber)");
+        //     } catch (e) {
+        //         console.error("Error in FreEditor change subscriber", e);
+        //     }
+        // }
     }
 
     auto = () => {

@@ -195,49 +195,56 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectPeriod(period: Period): Box {
         const element: Period = period
         const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
-        let box: Box = BoxUtil.partWrapperBox(
-            element,
-            "period",
-            "ItemGroupComponent",
-            BoxFactory.verticalLayout(
+        let box: Box = 
+            BoxUtil.partWrapperBox(
                 element,
-                "period-detail",
-                "",
-                [
-                    ...(showDescriptions
-                        ? [
-                              BoxFactory.horizontalLayout(
-                                  element,
-                                  "period-hlist-line-1",
-                                  "",
-                                  [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
-                                  { selectable: false, cssClass: "per1 desc align-top" },
-                              ),
-                          ]
-                        : []),
-                    BoxUtil.listGroupBox(
-                        element,
-                        "events",
-                        "Events",
-                        BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler, { cssClass: "vplb per2 type2 ml-6" }),
-                        { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
-                    ),
-                ],
-                { cssClass: "vl per4 type2" },
-            ),
-            {
-                params: [
-                    { key: "cssClass", value: "type2" },
-                    { key: "canDelete", value: "true" },
-                    { key: "canDuplicate", value: "true" },
-                    { key: "canExpand", value: "true" },
-                    { key: "isExpanded", value: "true" },
-                    { key: "selectable", value: "false" },
-                    { key: "label", value: "Period:" },
-                ],
-            },
-            // { cssClass: "igb per5 type2", placeHolder: "enter", canExpand: true, isExpanded: false, isRequired: true },
-        )
+                "period",
+                "ItemGroupComponent", 
+                BoxFactory.verticalLayout(
+                    element,
+                    "period-detail",
+                    "",
+                    [
+                        ...(showDescriptions
+                            ? [
+                                BoxFactory.horizontalLayout(
+                                    element,
+                                    "period-hlist-line-1",
+                                    "",
+                                    [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
+                                    { selectable: false, cssClass: "per1 desc align-top" },
+                                ),
+                            ]
+                            : []),
+                        BoxUtil.listGroupBox(
+                            element,
+                            "events",
+                            "Events",
+                            BoxUtil.verticalPartListBox(
+                                element, 
+                                element.events, 
+                                "events", 
+                                null, 
+                                this.handler, 
+                                { cssClass: "vplb per2 type2 ml-6" }
+                            ),
+                            { cssClass: "lgb per3 type2", isExpanded: true, canAdd: true, selectable: false },
+                        ),
+                    ],
+                    { cssClass: "vl per4 type2" },
+                ),
+                {
+                    params: [
+                        { key: "cssClass", value: "type2" },
+                        { key: "canDelete", value: "true" },
+                        { key: "canDuplicate", value: "true" },
+                        { key: "canExpand", value: "true" },
+                        { key: "isExpanded", value: "true" },
+                        { key: "selectable", value: "false" },
+                        { key: "label", value: "Period" },
+                    ],
+                },
+            )
         return box
     }
 
@@ -268,83 +275,123 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         const showScheduling = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showScheduling
         const showChecklists = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showChecklists
         const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
-        let box: Box = BoxUtil.itemGroupBox(
-            element,
-            "event",
-            "Event:",
-            "name",
-            BoxFactory.verticalLayout(
+        let box: Box = 
+            BoxUtil.partWrapperBox(
                 element,
-                "Event-detail",
-                "",
-                [
-                    BoxFactory.horizontalLayout(
-                        element as Event,
-                        "Event-hlist-line-1",
-                        "",
-                        [
-                            BoxUtil.labelBox(element as Event, "This is a", "top-1-line-1-item-0", { selectable: false }),
-                            BoxUtil.limitedBox(
-                                element as Event,
-                                "typeOfEvent",
-                                (selected: string) => {
-                                    ;(element as Event).typeOfEvent = FreNodeReference.create<TypeOfEvent>(selected, "TypeOfEvent")
-                                },
-                                LimitedDisplay.SELECT,
-                                StudyConfigurationModelEnvironment.getInstance().scoper,
-                            ),
-                            BoxUtil.labelBox(element as Event, "that is also referred to as", "top-1-line-1-item-2"),
-                            BoxUtil.textBox(element as Event, "alternativeName"),
-                        ],
-                        { cssClass: "hl ev1 ml-6", selectable: true },
-                    ),
+                "event",
+                "ItemGroupComponent",
+                BoxFactory.verticalLayout(
+                    element,
+                    "Event-detail",
+                    "",
+                    [
+                        BoxFactory.horizontalLayout(
+                            element as Event,
+                            "Event-hlist-line-1",
+                            "",
+                            [
+                                BoxUtil.labelBox(
+                                    element as Event, 
+                                    "This is a", 
+                                    "top-1-line-1-item-0",
+                                    { selectable: false }
+                                ),
+                                BoxUtil.limitedBox(
+                                    element as Event,
+                                    "typeOfEvent",
+                                    (selected: string) => {
+                                        ;(element as Event).typeOfEvent = FreNodeReference.create<TypeOfEvent>(selected, "TypeOfEvent")
+                                    },
+                                    LimitedDisplay.SELECT,
+                                    StudyConfigurationModelEnvironment.getInstance().scoper,
+                                ),
+                                BoxUtil.labelBox(
+                                    element as Event, 
+                                    "that is also referred to as", 
+                                    "top-1-line-1-item-2"
+                                ),
+                                BoxUtil.textBox(
+                                    element as Event, 
+                                    "alternativeName"
+                                ),
+                            ],
+                            { cssClass: "hl ev1 ml-6", selectable: true },
+                        ),
 
-                    ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                        ...(showDescriptions === true 
+                            ? [
+                                BoxUtil.getBoxOrAction(
+                                    element, 
+                                    "description", 
+                                    "Description", 
+                                    this.handler
+                                )
+                            ] : []),
 
-                    ...(showScheduling === true
-                        ? [
-                              BoxUtil.partWrapperBox(
-                                  element,
-                                  "schedule",
-                                  "ListGroupComponent",
-                                  BoxUtil.getBoxOrAction(element, "schedule", "EventSchedule", this.handler),
-                                  {
-                                      params: [
-                                          { key: "cssClass", value: "type3" },
-                                          { key: "canExpand", value: "true" },
-                                          { key: "isExpanded", value: "true" },
-                                          { key: "selectable", value: "false" },
-                                          { key: "label", value: "Schedule" },
-                                      ],
-                                  },
-                              ),
-                          ]
-                        : []),
+                        ...(showScheduling === true
+                            ? [
+                                BoxUtil.partWrapperBox(
+                                    element,
+                                    "schedule",
+                                    "ListGroupComponent",
+                                    BoxUtil.getBoxOrAction(
+                                        element, 
+                                        "schedule", 
+                                        "EventSchedule", 
+                                        this.handler
+                                    ),
+                                    {
+                                        params: [
+                                            { key: "cssClass", value: "type3" },
+                                            { key: "canExpand", value: "true" },
+                                            { key: "isExpanded", value: "true" },
+                                            { key: "selectable", value: "false" },
+                                            { key: "label", value: "Schedule" },
+                                        ],
+                                    },
+                                ),
+                            ] : []),
 
-                    ...(showChecklists === true
-                        ? [
-                              BoxUtil.partListWrapperBox(
-                                  element,
-                                  "tasks",
-                                  "ListGroupComponent",
-                                  BoxUtil.verticalPartListBox(element, element.tasks, "tasks", null, this.handler, { cssClass: "type3" }),
-                                  {
-                                      params: [
-                                          { key: "cssClass", value: "type3" },
-                                          { key: "canAdd", value: "true" },
-                                          { key: "canExpand", value: "true" },
-                                          { key: "isExpanded", value: "true" },
-                                          { key: "selectable", value: "false" },
-                                          { key: "label", value: "Checklist" },
-                                      ],
-                                  },
-                              ),
-                          ]
-                        : []),
-                ],
-                { cssClass: "vl ev7 type3" },
-            ),
-            { cssClass: "igb ev8 type2", placeHolder: "enter", isRequired: true, selectable: true, canDuplicate: true },
+                        ...(showChecklists === true
+                            ? [
+                                BoxUtil.partListWrapperBox(
+                                    element,
+                                    "tasks",
+                                    "ListGroupComponent",
+                                    BoxUtil.verticalPartListBox(
+                                        element, 
+                                        element.tasks, 
+                                        "tasks", 
+                                        null, 
+                                        this.handler, 
+                                        { cssClass: "type3" }
+                                    ),
+                                    {
+                                        params: [
+                                            { key: "cssClass", value: "type3" },
+                                            { key: "canAdd", value: "true" },
+                                            { key: "canExpand", value: "true" },
+                                            { key: "isExpanded", value: "true" },
+                                            { key: "selectable", value: "false" },
+                                            { key: "label", value: "Checklist" },
+                                        ],
+                                    },
+                                ),
+                            ] : []),
+                    ],
+                    { cssClass: "vl ev7 type3" },
+                ),
+                {
+                    params: [
+                        { key: "cssClass", value: "type2" },
+                        { key: "canDelete", value: "true" },
+                        { key: "canDuplicate", value: "true" },
+                        { key: "canExpand", value: "true" },
+                        { key: "isExpanded", value: "true" },
+                        { key: "selectable", value: "false" },
+                        { key: "label", value: "Event" },
+                    ],
+                },
         )
         return box
     }

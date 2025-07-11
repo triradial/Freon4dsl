@@ -1,10 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { AST, FreEditor, FreLanguage, FreLogger, ownerOfType, PartListWrapperBox } from "@freon4dsl/core";
+    import { AST, FreEditor, FreChangeManager, FreLanguage, FreLogger, ownerOfType, PartListWrapperBox } from "@freon4dsl/core";
     import { RenderComponent } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
     // ts-ignore
     import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Trash2 as IconDelete, Copy as IconDuplicate,Share2 as IconShare2,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
+    import CustomTextbox from "./helper/CustomTextbox.svelte";
     
     const LOGGER = new FreLogger("ItemGroupComponent");
     
@@ -19,6 +20,7 @@
     let canExpand = box && box.findParam("canExpand") === "true";
     let isExpanded = $state(box && box.findParam("isExpanded") === "true");
     let label = $derived(() => box ? box.findParam("label") || "" : "");
+    let placeholderText = "<enter>";
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
@@ -31,13 +33,16 @@
         const node = box.node;
         return node[propertyName];
     }
+
     const setText = (value: string) => {
-        AST.change(() => {
-            const propertyName = "name";
-            const node = box.node;
-            node[propertyName] = value;
-        });
-    }
+        const propertyName = "name";
+        const node = box.node;
+        const oldValue = node[propertyName];
+        console.debug(`[ItemGroupComponent] Changing property '${propertyName}' of node`, node, 'from', oldValue, 'to', value);
+        node[propertyName] = value;
+        // FreChangeManager.getInstance().setPrimitive(node, propertyName, value);
+        // console.debug(`[ItemGroupComponent] Change registered with FreChangeManager for property '${propertyName}' of node`, node);
+    };
 
     let text = $state(getText());
 
@@ -114,15 +119,13 @@
     {:else}
         <span class="w-5"></span>   
     {/if}
-    <span class="list-group-label">{label()}:</span>
-
-    <input
-        type="text"
+    <span class="item-group-label" tabindex="-1">{label()}:</span>
+    <CustomTextbox
+        id={id}
         value={text}
-        oninput={(e) => {
-            text = (e.target as HTMLInputElement).value;
-            setText(text);
-        }}
+        setValue={setText}
+        getValue={getText}
+        placeholder={placeholderText}
     />
     {#if canDuplicate}
         <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate" tabindex="0">

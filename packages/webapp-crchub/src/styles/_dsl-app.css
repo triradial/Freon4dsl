@@ -198,27 +198,27 @@ main {
 
 /* #region List Group Component */
 .list-group:empty:before {
-  content: attr(data-placeholdertext);
-  margin: 0;
-  padding: 0.5rem 0;
+  content: attr(data-placeholdertext) !important;
+  margin: 0 !important;
+  padding: 0.5rem 0 !important;
 }
 
 .list-group {
-  display: flex;
-  margin: 0;
-  padding: 0.5rem 0;
-  align-items: center;
-  overflow: hidden;
+  display: flex !important;
+  margin: 0 !important;
+  padding: 0.5rem 0 !important;
+  align-items: center !important;
+  overflow: hidden !important;
 }
 
 .list-group .action-button {
-  display: none;
+  display: none !important;
   margin-left: 0.25rem !important;
   margin-top: 0rem !important;
 }
 
 .list-group:hover .action-button {
-  display: inline-block;
+  display: inline-block !important;
   margin-left: 0.25rem !important;
   margin-top: 0 !important;
 }
@@ -233,65 +233,66 @@ main {
 }
 
 .list-group.type1 {
-  height: 2rem;
+  height: 2rem !important;
 }
 
 .list-group.type2 {
-  height: 2rem;
-  margin-left: 1.25rem;
+  height: 2rem !important;
+  margin-left: 0.25rem !important;
 }
 
 .list-group.type3 {
-  height: 2rem;
-  margin-left: 1.25rem;
+  height: 2rem !important;
+  margin-left: 1.25rem !important;
 }
 
 .list-group.type4 {
-  height: 2rem;
-  margin-left: 1.25rem;
+  height: 2rem !important;
+  margin-left: 1.25rem !important;
 }
 
 .list-group-label {
-  margin-left: 0.25rem;
-  padding-right: 0.5rem;
-  padding-top: 0.2rem;
-  white-space: normal;
-  font-style: normal;
-  font-weight: normal;
-  font-family: var(--font-family-sans);
-  text-transform: uppercase;
+  margin-left: 0.25rem !important;
+  padding-right: 0.5rem !important;
+  padding-top: 0.2rem !important;
+  white-space: normal !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-family: var(--font-family-sans) !important;
+  text-transform: uppercase !important;
 }
 
 .list-group.type1 .list-group-label {
-  font-size: var(--large-font-size);
+  font-size: var(--large-font-size) !important;
 }
 
 .list-group.type2 .list-group-label {
-  font-size: var(--standard-font-size);
+  font-size: var(--standard-font-size) !important;
 }
 
 .list-group.type3 .list-group-label {
-  font-size: 0.7rem;
+  font-size: 0.7rem !important;
 }
 
 .list-group.type4 .list-group-label {
-  font-size: 0.7rem;
+  font-size: 0.7rem !important;
 }
 
 .list-group-content.type1 {
-  margin-left: 0;
+  margin-left: 0 !important;
+  margin-bottom: 0.5rem !important;
 }
 
 .list-group-content.type2 {
-  margin-left: 1.25rem;
+  margin-left: 1.25rem !important;
 }
 
 .list-group-content.type3 {
-  margin-left: 2.25rem;
+  margin-left: 2.25rem !important;
 }
 
 .list-group-content.type4 {
-  margin-left: 1.25rem;
+  margin-left: 1.25rem !important;
 }
 
 .list-item {
@@ -300,17 +301,17 @@ main {
 }
 
 .list-item.type1 {
-  margin-left: 1.25rem;
+  margin-left: 1rem !important;
 }
 
 .list-item.type2 {
-  margin-left: 1.5rem;
+  margin-left: 0rem !important;
 }
 
 .drag-handle {
-  cursor: move;
-  z-index: 10;
-  margin-top: 0.5rem;
+  cursor: move !important;
+  z-index: 10 !important;
+  margin-top: 0.5rem !important;
 }
 
 /* #endregion */
@@ -329,9 +330,9 @@ main {
 }
 
 .item-group:empty:before {
-  content: attr(data-placeholdertext);
-  margin: 0;
-  padding: 0.25rem 0;
+  content: attr(data-placeholdertext) !important;
+  margin: 0 !important;
+  padding: 0.25rem 0 !important;
 }
 
 .item-group {

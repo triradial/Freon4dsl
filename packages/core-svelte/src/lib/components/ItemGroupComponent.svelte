@@ -758,7 +758,7 @@
             if (!isNullOrUndefined(value) && value.length === 0) {
                 value = placeholder;
                 if (placeholder.length === 0) {
-                    value = ' ';
+                    value = '<enter>';
                 }
             }
             // Ensure that HTML tags in value are encoded, otherwise they will be seen as HTML.
