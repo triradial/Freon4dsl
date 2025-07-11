@@ -55,7 +55,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         ["Period", this.projectPeriod],
         ["Event", this.projectEvent],
         ["Task", this.projectTask],
-        ["TaskReference", this.projectTaskReference],
+        // ["TaskReference", this.projectTaskReference],
         ["SharedTask", this.projectSharedTask],
         ["Step", this.projectStep],
         ["Reference", this.projectReference],

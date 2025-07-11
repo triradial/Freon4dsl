@@ -5,6 +5,7 @@ global {
     external {
         ListGroupComponent,
         ItemGroupComponent,
+        ItemGroupComponent2,
         DatePickerComponent,
         TimePickerComponent
     }
@@ -44,7 +45,29 @@ Task {
     [
         ${name}
         ${description}
+        Steps: ${steps}
     ]
+}
+
+SharedTask {
+    [
+        ${name}
+        ${description}
+        Steps: ${steps}
+    ]
+}
+
+TaskReference {
+    [
+        [fragment group wrap=ItemGroupComponent2]
+    ]
+    fragment group [
+        ${task} [fragment steps] 
+    ]
+    fragment steps [${steps wrap=ItemGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"} ]
+    fragment SharedTask [Shared Task: ${task}]
+    fragment TaskName [Task:${name}]
+
 }
 
 Step {
