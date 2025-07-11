@@ -1,14 +1,15 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { FreEditor, FreLogger, PartWrapperBox } from "@freon4dsl/core";
+    import { AST, FreEditor, FreLanguage, FreLogger, PartListWrapperBox } from "@freon4dsl/core";
     import { RenderComponent } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
     // ts-ignore
     import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Plus as IconPlus,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
     
     const LOGGER = new FreLogger("ListGroupComponent");
+    // LOGGER.active = true;
     
-    const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
+    const { box, editor } = $props<{ box: PartListWrapperBox, editor: FreEditor }>();
 
     // Props
     let cssClass = box && box.findParam("cssClass") || "";
@@ -28,11 +29,15 @@
     // }
 
     const refresh = (why?: string): void => {
-        LOGGER.log("REFRESH ListGroupBoxComponent (" + why + ")");
+        LOGGER.log("REFRESH (" + why + ")");
     };
 
     onMount(() => {
-        box.refreshComponent = refresh;   
+        box.refreshComponent = refresh; 
+        const childBox = box.childBox;
+        if (childBox) {
+            childBox.cssClass = cssClass;
+        }
     });
 
     // Replaces afterUpdate()
@@ -46,15 +51,26 @@
         event.stopPropagation();
     };
 
-    const addItem = (event: MouseEvent) => {
-        box.executeAction(editor, "add");
-        event.stopPropagation();
-    };
-
-    // function onContextMenu(event: MouseEvent) {
-    //     event.preventDefault();
-    //     dispatcher("contextmenu", { event, box, editor });
-    // }
+    const addItem = () => {
+        AST.change(() => {
+            const language = FreLanguage.getInstance();
+            const propertyName = box.propertyName;
+            const node = box.node;
+            const parentConceptName = node.freLanguageConcept();
+            const property = language.classifierProperty(parentConceptName, propertyName);
+            if (property.type) {
+                let newConceptName = property.type;
+                if (newConceptName.startsWith('Abstract')) {
+                    newConceptName = newConceptName.slice(8);
+                }
+                const newElement = language.createConceptOrUnit(newConceptName);
+                box.getPropertyValue().push(newElement);
+                LOGGER.log("Added item");
+            } else {
+                LOGGER.log("No property type");
+            }
+        });
+    }
 
 </script>
 

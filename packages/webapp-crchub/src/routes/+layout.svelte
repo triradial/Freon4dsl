@@ -1,6 +1,7 @@
 <script lang="ts">
     import "../init.ts";
     import { onMount } from "svelte";
+    import { FreLogger } from "@freon4dsl/core";
     import { get } from 'svelte/store';
     import { isAuthenticated } from "../services/security/auth.js";
     import { userStore } from "../services/stores/users-store.js";
@@ -11,7 +12,7 @@
     import Breadcrumb from '../components/common/Breadcrumb.svelte';
     import ObjectDrawerSystem from "../components/common/ObjectDrawerSystem.svelte";
     import SideDrawerSystem from "../components/common/SideDrawerSystem.svelte";
-    import { addDrawer, setDrawerVisibility } from '../services/stores/side-drawer-store.js';
+    import { addDrawer } from '../services/stores/side-drawer-store.js';
     import { drawerStore } from '../services/stores/side-drawer-store.js';
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
     import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
@@ -24,6 +25,8 @@
     // @ts-ignore
     import { Heart as IconHeart, SquareChartGantt as IconSquareChartGantt, Table2 as IconTable2, TriangleAlert as IconTriangleAlert, Info as IconInfo, CheckSquare as IconCheckSquare, Calendar as IconCalendar, Users as IconUsers } from '@lucide/svelte';
     
+    const LOGGER = new FreLogger("Routing");
+
     let auth = $derived($isAuthenticated);
     let { children } = $props();
 
@@ -45,12 +48,12 @@
             addDrawer({ key: "staffAvailability", icon: IconUsers, component: StaffAvailabilityDrawer, title: "Staff Availability", description: "View the availability of staff for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
 
             // Debug: log all drawers after registration
-            console.log("All drawers after registration:", get(drawerStore).drawers);
+            LOGGER.log("All drawers after registration: " + JSON.stringify(get(drawerStore).drawers));
         }
     });
 
     $effect(() => {
-        console.log('+layout.svelte loaded');
+        LOGGER.log('root +layout loaded');
     });
 </script>
 

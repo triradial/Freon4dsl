@@ -1,6 +1,6 @@
 import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 import { LanguageEnvironment } from "@freon4dsl/study-configuration";
-import { ServerCommunication } from "@freon4dsl/core";
+import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
 import { env } from "./config/env.js";
 
@@ -9,7 +9,15 @@ import TimePickerComponent from "./components/custom/TimePickerComponent.svelte"
 import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 
-console.log('Starting init.ts initialization');
+const LOGGER = new FreLogger("init");
+
+// FreLogger.unmuteAllLogs();
+// FreLogger.unmute("init");
+FreLogger.unmute("Routing");
+// FreLogger.unmute("ListGroupComponent");
+FreLogger.unmute("ItemGroupComponent");
+
+LOGGER.log('--- START ---');
 
 const serverUrl = env.serverUrl;
 const url = new URL(serverUrl);
@@ -18,20 +26,20 @@ const serverPort = url.port;
 
 // Configure the server connection settings
 const serverComm = ServerCommunication.getInstance();
-console.log('ServerCommunication instance created');
+LOGGER.log('ServerCommunication instance created');
 serverComm.SERVER_URL = serverUrl;
 serverComm.SERVER_IP = serverIp;
 serverComm.nodePort = parseInt(serverPort); 
-console.log('Server settings configured:', { url: serverUrl, timeout: env.serverTimeout });
+LOGGER.log(`Server settings configured: ${JSON.stringify({ url: serverUrl, timeout: env.serverTimeout })}`);
 
 // Configure the editor environment
-console.log('Creating editor environment');
+LOGGER.log('Creating editor environment');
 const webappConfigurator = WebappConfigurator.getInstance();
 const editorEnvironment = LanguageEnvironment.getInstance();
-console.log('Editor environment created');
+LOGGER.log('Editor environment created');
 webappConfigurator.setEditorEnvironment(editorEnvironment);
 webappConfigurator.setServerCommunication(serverComm);
-console.log('Editor environment configured');
+LOGGER.log('Editor environment configured');
 
 setCustomComponents([
     { component: DatePickerComponent, knownAs: "DatePickerComponent" },
@@ -39,7 +47,7 @@ setCustomComponents([
     { component: ListGroupComponent, knownAs: "ListGroupComponent" },
     { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
 ]);
-console.log('Custom components set');
 
-console.log('init.ts initialization complete');
+LOGGER.log('--- END ---');
+
 // Initialize the application done by the +layout.svelte
