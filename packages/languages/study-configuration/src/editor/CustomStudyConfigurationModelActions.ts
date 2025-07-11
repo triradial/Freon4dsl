@@ -18,6 +18,7 @@ import {
     AstActionExecutor,
     FreKey,
     MetaKey,
+    AST,
 } from "@freon4dsl/core";
 
 // import { addListElement } from '@freon4dsl/core';
@@ -41,6 +42,9 @@ import {
     PatientHistory,
     PatientVisit,
     DateRange,
+    TaskReference,
+    Description,
+    SharedTask,
 } from "../language/gen/index.js"
 
 import { RoleProvider } from "@freon4dsl/core";
@@ -163,10 +167,12 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         activeInBoxRoles: ["task"],
         trigger: "delete",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const task: Task = box.node as Task
-            const event: Event = ownerOfType(task, "Event") as Event //box.parent.parent.parent.element as Event;
-            const index = task.freOwnerDescriptor().propertyIndex // event.tasks.indexOf(task);
-            event.tasks.splice(index, 1)
+            AST.change( () => {
+                const task: Task = box.node as Task
+                const event: Event = ownerOfType(task, "Event") as Event 
+                const index = task.freOwnerDescriptor().propertyIndex 
+                event.tasks.splice(index, 1)
+            })
             return null
         },
     }),
@@ -363,33 +369,49 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
 /* #region Task functions */
 
 function makeTaskShareable(task: Task) {
-    console.log("SHARED: referencedTask is null so task is just becoming shared");
     // Get the study config context
-    let studyConfig = task.freOwner().freOwner().freOwner().freOwner() as StudyConfiguration;
-    // Create the shard task and wire together
-    let refToTask = FreNodeReference.create(task.name, "Task") as FreNodeReference<Task>;
-    let sharedTask = task.copy();
-    // sharedTask.type = "S";
-    task.name = "Original Task";
-    refToTask.referred = sharedTask;
-    //task.referencedTask = refToTask;
-    // task.type = "R";
-    // Add to the shared tasks list
-    studyConfig.tasks.push(sharedTask);
+    const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration
+    const event: Event = ownerOfType(task, "Event") as Event
+    AST.change( () => {
+        // Create the shard task and wire together
+        let newSharedTask = SharedTask.create({
+            name: task.name,
+            description: task.description,
+            numberedSteps: task.numberedSteps,
+            showDetails: task.showDetails,
+            steps: task.steps.map((step) => step.copy()),
+        })
+        let refToTask = FreNodeReference.create(task.name, "SharedTask") as FreNodeReference<SharedTask>;
+        refToTask.referred = newSharedTask;
+        let newTaskReference = TaskReference.create({
+            task: refToTask,
+            name: "Original Task",
+            description: task.description,
+            numberedSteps: task.numberedSteps,
+            showDetails: task.showDetails,
+            steps: task.steps.map((step) => step.copy()),
+        })
+        // Replace the original task in the event with the new task reference
+        event.tasks[event.tasks.indexOf(task)] = newTaskReference;
+        // Add the new shared task to the shared tasks list
+        studyConfig.tasks.push(newSharedTask);
+    })
 }
 
 function makeTaskUnreferenced(task: Task) {}
 
 function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
-    const methodName = "smartUpdate";
-    const args = [originalElement, duplicatedElement];
-    // Call methodName if it exists on the element
-    if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
-        console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
-        return (duplicatedElement as any)[methodName](...args);
-    } else {
-        console.log(`Method ${methodName} does not exist on the instance.`);
-    }
+    AST.change( () => {
+        const methodName = "smartUpdate";
+        const args = [originalElement, duplicatedElement];
+        // Call methodName if it exists on the element
+        if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
+            console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
+            return (duplicatedElement as any)[methodName](...args);
+        } else {
+            console.log(`Method ${methodName} does not exist on the instance.`);
+        }
+    })
 }
 
 /* #endregion */

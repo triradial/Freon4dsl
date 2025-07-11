@@ -6,7 +6,7 @@
     import { Tabs, AppBar } from "@skeletonlabs/skeleton-svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
     import { FreonComponent } from "@freon4dsl/core-svelte";
-    import { FreEditor } from "@freon4dsl/core";
+    import { FreEditor, FreProjectionHandler } from "@freon4dsl/core";
     import { type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
@@ -107,9 +107,95 @@
         setDrawerVisibility("studyTimelineChart", false);
     });
 
+    import { runInAction } from "mobx";
+
+    function updateVisibleProjections(id: string, visible: boolean) {
+        let fullListOfProjections = [
+            "SharedTaskShow",
+            "SharedTaskHide",
+            "SchedulingShow",
+            "SchedulingHide",
+            "SchedulingDetailsShow",
+            "SchedulingDetailsHide",
+            "ChecklistsShow",
+            "ChecklistsHide",
+            "ReferencesShow",
+            "ReferencesHide",
+            "SystemsShow",
+            "SystemsHide",
+            "PeopleShow",
+            "PeopleHide",
+            "DescriptionsShow",
+            "DescriptionsHide",
+            "NotesShow",
+            "NotesHide",
+        ]
+
+        let names = [];
+        if (id === "showSharedTasks" && visible) {
+            names.push("SharedTaskShow");
+        } else {
+            names.push("SharedTaskHide");
+        }
+        if (id === "showScheduling" && visible) {
+            names.push("SchedulingShow");
+        } else {
+            names.push("SchedulingHide");
+        }
+        if (id === "showSchedulingDetails" && visible) {
+            names.push("SchedulingDetailsShow");
+        } else {
+            names.push("SchedulingDetailsHide");
+        }
+        if (id === "showChecklists" && visible) {
+            names.push("ChecklistsShow");
+        } else {
+            names.push("ChecklistsHide");
+        }
+        if (id === "showReferences" && visible) {
+            names.push("ReferencesShow");
+        } else {
+            names.push("ReferencesHide");
+        }
+        if (id === "showSystems" && visible) {
+            names.push("SystemsShow");
+        } else {
+            names.push("SystemsHide");
+        }
+        if (id === "showPeople" && visible) {
+            names.push("PeopleShow");
+        } else {
+            names.push("PeopleHide");
+        }
+        if (id === "showDescriptions" && visible) {
+            names.push("DescriptionsShow");
+        } else {
+            names.push("DescriptionsHide");
+        }
+        if (id === "showNotes" && visible) {
+            names.push("NotesShow");
+        } else {
+            names.push("NotesHide");
+        }
+
+        const proj = dslEditor.projection;
+        proj.enableProjections(names);
+
+        // Let the editor know that the projections have changed.
+        // TODO: This should go automatically through mobx.
+        //       But observing the projections array does not work as expected.
+        runInAction( () => {
+            dslEditor.forceRecalculateProjection++;
+        })
+        // redo the validation to set the errors in the new box tree
+        // todo reinstate the following statement
+        // this.validate();
+    }
+
     function handleCheckboxChange(id: string, visible: boolean) {
         if (unit && id in unit) {
             (unit[id as keyof StudyConfiguration] as boolean) = visible;
+            // updateVisibleProjections(id, visible);
             ModelManager.getInstance().saveCurrentUnit();
             mobxVersion++;
         }

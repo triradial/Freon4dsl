@@ -56,26 +56,30 @@ concept Event {
     typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;
-    tasks: AbstractTask[];
+    tasks: AbstractEventTask[];
     description: Description;
     schedule: EventSchedule;
 }
 
 abstract concept AbstractTask {
-}
-
-concept TaskReference base AbstractTask {
-    reference task: Task;
-}
-
-concept Task base AbstractTask {
     name: identifier;
     description: Description;
     numberedSteps: boolean;
     showDetails: boolean;
-    steps: Step[];
+    steps: Step[];}
+
+abstract concept AbstractEventTask base AbstractTask {
 }
 
+concept Task base AbstractEventTask {
+}
+
+concept TaskReference base AbstractEventTask {
+    reference task: Task;
+}
+
+concept SharedTask base AbstractTask{
+}
 
 // TODO: Change title to name? 
 concept Step {
