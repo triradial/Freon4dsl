@@ -75,7 +75,7 @@ concept Task base AbstractEventTask {
 }
 
 concept TaskReference base AbstractEventTask {
-    reference task: Task;
+    reference task: SharedTask;
 }
 
 concept SharedTask base AbstractTask{

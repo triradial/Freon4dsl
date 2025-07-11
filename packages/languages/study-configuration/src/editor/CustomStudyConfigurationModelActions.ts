@@ -385,7 +385,7 @@ function makeTaskShareable(task: Task) {
         refToTask.referred = newSharedTask;
         let newTaskReference = TaskReference.create({
             task: refToTask,
-            name: "Original Task",
+            name: task.name,
             description: task.description,
             numberedSteps: task.numberedSteps,
             showDetails: task.showDetails,

@@ -427,15 +427,34 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         let box: Box
         const studyConfiguration: StudyConfiguration = ownerOfType(taskReference, "StudyConfiguration") as StudyConfiguration
         const showDescriptions = studyConfiguration ? studyConfiguration.showDescriptions : false
-        let element: Task = taskReference.$task
-        if (element) {
+        let element: TaskReference = taskReference
+        let sharedTask: SharedTask = element.$task as SharedTask;
+        if (sharedTask) {
             //with selection
             box = BoxUtil.itemGroupBox(
-                element,
+                element.$task as Task,
                 "taskReference",
-                "Task Reference:",
+                "Shared Task:",
                 "name",
                 BoxFactory.verticalLayout(element, "task-overall", "", [
+                    BoxFactory.horizontalLayout(
+                        element as TaskReference,
+                        "TaskReference-hlist-line-6",
+                        "",
+                        [
+                            BoxUtil.labelBox(element as TaskReference, "Shared Task:", "top-1-line-6-item-0"),
+                            BoxUtil.referenceBox(
+                                element as TaskReference,
+                                "task",
+                                (selected: string) => {
+                                    element.task = FreNodeReference.create<SharedTask>(selected, "SharedTask")
+                                },
+                                StudyConfigurationModelEnvironment.getInstance().scoper,
+                            ),
+                        ],
+                        { selectable: false, cssClass: "vplb tsk2 type4" },
+                    ),
+
                     ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                     BoxUtil.listGroupBox(
                         element,
@@ -446,16 +465,37 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     ),
                 ]),
                 { cssClass: "igb tsk4 type3", placeHolder: "enter", canShare: true, canDelete: true, isRequired: true },
-           )
+            )
         } else {
             // without selection
+            const tmpTask: SharedTask = SharedTask.create({ name: "" }) as SharedTask
+            let refToTask = FreNodeReference.create("", "SharedTask") as FreNodeReference<SharedTask>
+            refToTask.referred = tmpTask
+            element.task = refToTask;
             box = BoxUtil.itemGroupBox(
                 element,
                 "taskReference",
                 "Task:",
                 "name",
                 BoxFactory.verticalLayout(element, "task-overall", "", [
-                    ...(showDescriptions ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
+                    BoxFactory.horizontalLayout(
+                        element as TaskReference,
+                        "TaskReference-hlist-line-6",
+                        "",
+                        [
+                            BoxUtil.labelBox(element as TaskReference, "Shared Task:", "top-1-line-6-item-0"),
+                            BoxUtil.referenceBox(
+                                element as TaskReference,
+                                "task",
+                                (selected: string) => {
+                                    element.task = FreNodeReference.create<SharedTask>(selected, "SharedTask")
+                                },
+                                StudyConfigurationModelEnvironment.getInstance().scoper,
+                            ),
+                        ],
+                        { selectable: false, cssClass: "vplb tsk2 type4" },
+                    ),
+
                     BoxFactory.label(taskReference, "task-reference", "No task details"),
                 ]),
                 { cssClass: "igb2 tsk4 type3", placeHolder: "choose", canExpand: false, canDelete: true, isRequired: true },
