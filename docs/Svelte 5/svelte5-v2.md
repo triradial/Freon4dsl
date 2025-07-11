@@ -34,9 +34,9 @@
   - Removed redundant imports
 
 ### **3. Models**
-  - Detect changes to the model and units in the editor to provide autosaving Note:- did this `FreEditor`, not `FreChangeManager` (could not see how to do that)
+  - Detect changes to the model and units in the editor to provide autosaving by subscribing to `FreChangeManager`
   - Standardized Endpoints: Changed endpoint names to match conventions, e.g. getUnitList → getModelUnitList, putModelUnit  → saveModelUnit in ServerCommunication.ts
-  - Added parameter type and changed from folder/name to model/unit as paramater names
+  - Added parameter type and changed from folder/name to model/unit as paramater names in ServerCommunication
 
 ## **CORE-SVELTE** 
 

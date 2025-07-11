@@ -12,6 +12,7 @@
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { getActiveDrawer, setActiveDrawer, setDrawerVisibility } from "../services/stores/side-drawer-store.js";
+    import { FreChangeManager } from "@freon4dsl/core";
     // @ts-ignore
     import { User as IconUser, PencilRuler as IconPencilRuler, Save as IconSave, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
 
@@ -27,7 +28,7 @@
     let mobxVersion = $state(0);
 
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
-    let unsubscribeEditorChange: (() => void) | undefined;
+    let unsubscribeChangeManager: (() => void) | undefined;
 
     function debouncedSave() {
         if (saveTimeout) clearTimeout(saveTimeout);
@@ -62,7 +63,6 @@
         // get the study data
         study = await dataStore.getStudy(id);
         if (!study) {
-            // Try fetching all studies from backend, then try again
             await dataStore.getStudies();
             study = await dataStore.getStudy(id);
         }
@@ -88,16 +88,22 @@
         console.log("[DEBUG] dslEditor instance in Study.svelte", dslEditor);
         initializeStudy();
 
-        if (dslEditor && typeof dslEditor.subscribeToChanges === 'function') {
-            unsubscribeEditorChange = dslEditor.subscribeToChanges((why) => {
-                debouncedSave();
-            });
-        }
+        // Subscribe to FreChangeManager changes
+        const changeCallback = (delta) => {
+            console.debug("[Study] Detected change from FreChangeManager:", delta);
+            debouncedSave();
+        };
+        FreChangeManager.getInstance().changePrimCallbacks.push(changeCallback);
+        unsubscribeChangeManager = () => {
+            const arr = FreChangeManager.getInstance().changePrimCallbacks;
+            const idx = arr.indexOf(changeCallback);
+            if (idx !== -1) arr.splice(idx, 1);
+        };
     });
 
     onDestroy(() => {
         editorLoaded = false;
-        if (unsubscribeEditorChange) unsubscribeEditorChange();
+        if (unsubscribeChangeManager) unsubscribeChangeManager();
         var activeDrawer = getActiveDrawer();
         if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors") {
             setActiveDrawer(null);

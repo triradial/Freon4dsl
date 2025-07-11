@@ -11,6 +11,7 @@
     import { FreEditor } from "@freon4dsl/core"; 
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
     import { setDrawerVisibility } from "../services/stores/side-drawer-store.js";
+    import { FreChangeManager } from "@freon4dsl/core";
 
     // @ts-ignore
     import { CalendarDays as IconCalendarDays, ListTodo as IconListTodo, Save as IconSave, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
@@ -24,7 +25,7 @@
     let unit: PatientHistoryUnit | undefined;
     let patientInfo: PatientInfo | undefined;
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
-    let unsubscribeEditorChange: (() => void) | undefined;
+    let unsubscribeChangeManager: (() => void) | undefined;
 
     function debouncedSave() {
         if (saveTimeout) clearTimeout(saveTimeout);
@@ -69,7 +70,7 @@
                         patientHistoryUnit.patientHistory.id = aPatientHistory.id;
                         patientHistoryUnit.patientHistory.patient_id = aPatientHistory.patient_id;
                         found = true;
-                    };
+                        };
                 });
             }
             // Display the patientHistory for editing
@@ -78,11 +79,17 @@
             unit = patientHistoryUnit;
         });
 
-        if (dslEditor && typeof dslEditor.subscribeToChanges === 'function') {
-            unsubscribeEditorChange = dslEditor.subscribeToChanges((why) => {
-                debouncedSave();
-            });
-        }
+        // Subscribe to FreChangeManager changes
+        const changeCallback = (delta) => {
+            console.debug("[Patient] Detected change from FreChangeManager:", delta);
+            debouncedSave();
+        };
+        FreChangeManager.getInstance().changePrimCallbacks.push(changeCallback);
+        unsubscribeChangeManager = () => {
+            const arr = FreChangeManager.getInstance().changePrimCallbacks;
+            const idx = arr.indexOf(changeCallback);
+            if (idx !== -1) arr.splice(idx, 1);
+        };
 
         setTimeout(() => {
             isLoading = false;
@@ -92,7 +99,7 @@
     onDestroy(() => {
         setDrawerVisibility("studyChecklist", false);
         setDrawerVisibility("patientTimelineChart", false);
-        if (unsubscribeEditorChange) unsubscribeEditorChange();
+        if (unsubscribeChangeManager) unsubscribeChangeManager();
     });
 
     async function handleSaveStudy() {
