@@ -154,7 +154,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             },
                         ),
                     ]
-                    : []),
+                    : []
+                ),
                 ...(element.showSystems === true
                     ? [
                         BoxUtil.partWrapperBox(
@@ -180,7 +181,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             },
                         ),
                     ]
-                    : []),
+                    : []
+                ),
                 ...(element.showPeople === true
                     ? [
                         BoxUtil.partWrapperBox(
@@ -205,7 +207,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             },
                         ),
                     ]
-                    : []),
+                    : []
+                ),
             ]
         )
         return box;
@@ -260,8 +263,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 element.events, 
                                 "events", 
                                 null, 
-                                this.handler, 
-                                { cssClass: "type2" }
+                                this.handler
                             ),
                             { 
                                 params: [
@@ -274,8 +276,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 ],
                             },
                         ),
-                    ],
-                    { cssClass: "type1" },
+                    ]
                 ),
                 {
                     params: [
@@ -337,7 +338,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                     "alternativeName"
                                 ),
                             ],
-                            { cssClass: "hl ev1 ml-6", selectable: true },
+                            { selectable: true },
                         ),
 
                         ...(showDescriptions === true 
@@ -387,8 +388,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                         element.tasks, 
                                         "tasks", 
                                         null, 
-                                        this.handler, 
-                                        { cssClass: "type3" }
+                                        this.handler
                                     ),
                                     {
                                         params: [
@@ -403,8 +403,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 ),
                             ] : []
                         ),
-                    ],
-                    { cssClass: "type2" },
+                    ]
                 ),
                 {
                     params: [
@@ -459,8 +458,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 element.steps, 
                                 "steps", 
                                 null, 
-                                this.handler, 
-                                { cssClass: "type4" }
+                                this.handler
                             ),
                             { 
                                 params: [
@@ -473,8 +471,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 ],
                             },
                         ),
-                        ],
-                        { cssClass: "type3" },
+                        ]
                     ),
                     { 
                         params: [
@@ -485,8 +482,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             { key: "isExpanded", value: "false" },
                             { key: "selectable", value: "false" },
                             { key: "label", value: "Task" },
-                        ],
-                    },
+                        ]
+                    }
                 )
             } else {
                 // task Reference
@@ -504,7 +501,13 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                                 element,
                                 "steps",
                                 "ListGroupComponent",
-                                BoxUtil.verticalPartListBox(element, element.steps, "steps", null, this.handler, { cssClass: "type4" }),
+                                BoxUtil.verticalPartListBox(
+                                    element, 
+                                    element.steps, 
+                                    "steps", 
+                                    null, 
+                                    this.handler
+                                ),
                                 { 
                                     params: [
                                         { key: "cssClass", value: "type4" },
@@ -560,7 +563,13 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         element,
                         "steps",
                         "ListGroupComponent",
-                        BoxUtil.verticalPartListBox(element, element.steps, "steps", null, this.handler, { cssClass: "type4" }),
+                        BoxUtil.verticalPartListBox(
+                            element, 
+                            element.steps, 
+                            "steps", 
+                            null, 
+                            this.handler
+                        ),
                         { 
                             params: [
                                 { key: "cssClass", value: "type4" },
@@ -688,8 +697,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                             ),
                         ] : []
                     ),
-                ],
-                { cssClass: "type4" },
+                ]
             ),
             { 
                 params: [
@@ -709,7 +717,12 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             element,
             "reference",
             "ItemGroupComponent",
-            BoxFactory.verticalLayout(element, "reference-overall", "", [BoxUtil.textBox(element, "link")]),
+            BoxFactory.verticalLayout(
+                element, 
+                "reference-overall", 
+                "", 
+                [BoxUtil.textBox(element, "link")]
+            ),
             { 
                 params: [
                     { key: "cssClass", value: "type5" },
@@ -785,8 +798,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 element.patientHistories, 
                 "patientHistories", 
                 null, 
-                this.handler, 
-                { cssClass: "ml-6 mb-2" }),
+                this.handler
+            ),
             { 
                 params: [
                     { key: "cssClass", value: "type1" },
@@ -816,8 +829,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         element.patientVisits, 
                         "patientVisits", 
                         null, 
-                        this.handler,
-                        { cssClass: "type1 ml-6" }
+                        this.handler
                     ),
                     { 
                         params: [
@@ -837,8 +849,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         element.patientNotAvailableDates, 
                         "patientNotAvailableDates", 
                         null, 
-                        this.handler,
-                        { cssClass: "type1 ml-6" }
+                        this.handler
                     ),
                     { 
                         params: [
@@ -849,8 +860,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                         ],
                     },
                 ),
-            ],
-            { cssClass: "w-full ml-2", selectable: false },
+            ]
         )
         return box
     }

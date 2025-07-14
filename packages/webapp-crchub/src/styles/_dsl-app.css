@@ -238,22 +238,22 @@ main {
 
 .list-group.type2 {
   height: 2rem !important;
-  margin-left: 0.25rem !important;
+  margin-left: 0 !important;
 }
 
 .list-group.type3 {
   height: 2rem !important;
-  margin-left: 1.25rem !important;
+  margin-left: 0 !important;
 }
 
 .list-group.type4 {
   height: 2rem !important;
-  margin-left: 1.25rem !important;
+  margin-left: 0 !important;
 }
 
 .list-group.type5 {
   height: 2rem !important;
-  margin-left: 1.25rem !important;
+  margin-left: 0 !important;
 }
 
 .list-group-label {
@@ -288,7 +288,7 @@ main {
 }
 
 .list-group-content.type1 {
-  margin-left: 0 !important;
+  margin-left: 1.5rem !important;
   margin-bottom: 0.5rem !important;
 }
 
@@ -297,15 +297,15 @@ main {
 }
 
 .list-group-content.type3 {
-  margin-left: 1.25rem !important;
+  margin-left: 1.75rem !important;
 }
 
 .list-group-content.type4 {
-  margin-left: 1.25rem !important;
+  margin-left: 1.5rem !important;
 }
 
 .list-group-content.type5 {
-  margin-left: 1.25rem !important;
+  margin-left: 1.5rem !important;
 }
 
 .list-item {
@@ -314,7 +314,7 @@ main {
 }
 
 .list-item.type1 {
-  margin-left: 1rem !important;
+  margin-left: 0 !important;
 }
 
 .list-item.type2 {
@@ -367,7 +367,7 @@ main {
 .render-component:has(>.item-group.type3),
 .render-component:has(>.item-group.type4),
 .render-component:has(>.item-group.type5) {
-  width: calc(100% - 2rem) !important;
+  width: calc(100% - 1rem) !important;
 } 
 
 .item-group .action-button {
