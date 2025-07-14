@@ -164,7 +164,6 @@
     function handleCheckboxChange(id: string, visible: boolean) {
         if (unit && id in unit) {
             (unit[id as keyof StudyConfiguration] as boolean) = visible;
-            ModelManager.getInstance().saveCurrentUnit();
             updateVisibleProjections(unit as StudyConfiguration);
             mobxVersion++;
         }
