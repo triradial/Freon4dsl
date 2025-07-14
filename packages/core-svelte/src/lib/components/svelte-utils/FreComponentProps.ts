@@ -75,39 +75,3 @@ export interface ErrorProps<T extends Box> extends FreComponentProps<T> {
     children(): any; // replaces slot from Svelte version 4
 }
 
-/** M+G start updates */
-
-export interface ListProps<T extends Box> extends FreComponentProps<T> {
-}
-
-export interface ListGroupProps<T extends Box> extends FreComponentProps<T> {
-    canAdd: boolean;
-    canCRUD: boolean;
-    canExpand: boolean;
-    isExpanded: boolean;
-}
-
-export interface ItemGroupProps<T extends Box> extends FreComponentProps<T> {
-    isEditing: boolean;
-    partOfActionBox: boolean;
-    text: string;
-    canDelete: boolean;
-    canUnlink: boolean;
-    canExpand: boolean;
-    canShare: boolean;
-    canCRUD: boolean;
-    canDuplicate: boolean;
-    isRequired: boolean;
-    isExpanded: boolean;
-    toParent: (eventType: string, details?: CaretDetails) => void;
-}
-
-export interface ItemGroup2Props<T extends Box> extends FreComponentProps<T> {
-    isEditing: boolean;
-    canDelete: boolean;
-    canUnlink: boolean;
-    canExpand: boolean;
-    isDraggable: boolean;
-}
-
-/** M+G end updates */

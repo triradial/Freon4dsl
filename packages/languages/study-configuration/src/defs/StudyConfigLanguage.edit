@@ -133,11 +133,15 @@ WorkflowBranch {
 
 RobotMapping {
     [
+    [fragment first] [fragment second]
     From this Page: ${sourcePage}
     To this Page :   ${targetPage}
     These fields:
         ${sourceToTargetMappings}
     ]
+    fragment first [first]
+    fragment second [second]
+
 }
 
 SourceToTargetMapping {

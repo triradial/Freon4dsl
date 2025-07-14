@@ -28,9 +28,6 @@ import {
     isExternalPartListBox,
     ReferenceBox,
     /** START - M+G */
-    ItemGroupBox, 
-    ItemGroupBox2, 
-    ListGroupBox,
     MultiLineTextBox2,
     /** END - M+G */
 } from "./internal.js";
@@ -89,13 +86,7 @@ let cacheExternalsOff: boolean = true;
 
 /** START - M+G */
 let multiTextCache: BoxCache<MultiLineTextBox2> = {};
-let listGroupCache: BoxCache<ListGroupBox> = {};
-let itemGroupCache: BoxCache<ItemGroupBox> = {};
-let itemGroupCache2: BoxCache<ItemGroupBox2> = {};
 let cacheMultilineTextOff: boolean = false;
-let cacheListGroupOff: boolean = false;
-let cacheItemGroupOff: boolean = false;
-let cacheItemGroupOff2: boolean = false;
 /** END - M+G */
 
 /**
@@ -125,9 +116,6 @@ export class BoxFactory {
         externalCache = {};
         /** START - M+G */
         multiTextCache = {};
-        listGroupCache = {};
-        itemGroupCache = {};
-        itemGroupCache2 = {};
         /** END - M+G */
     }
 
@@ -150,9 +138,6 @@ export class BoxFactory {
         cacheExternalsOff = true;
         /** START - M+G */
         cacheMultilineTextOff = true;
-        cacheListGroupOff = true;
-        cacheItemGroupOff = true;
-        cacheItemGroupOff2 = true;
         /** END - M+G */
     }
 
@@ -175,9 +160,6 @@ export class BoxFactory {
         cacheExternalsOff = false;
         /** START - M+G */
         cacheMultilineTextOff = false;
-        cacheListGroupOff = false;
-        cacheItemGroupOff = false;
-        cacheItemGroupOff2 = false;
         /** END - M+G */
     }
 
@@ -672,59 +654,6 @@ export class BoxFactory {
         result.$getText = getText;
         result.$setText = setText;
         FreUtils.initializeObject(result, initializer);
-        return result;
-    }
-
-    static listGroup(element: FreNode, role: string, getLabel: string | (() => string), childBox: Box, initializer?: Partial<ListGroupBox>): ListGroupBox {
-        if (cacheListGroupOff) {
-            return new ListGroupBox(element, role, getLabel, childBox, initializer);
-        }
-        // 1. Create the  box, or find the one that already exists for this element and role
-        const creator = () => new ListGroupBox(element, role, getLabel, childBox, initializer);
-        const result: ListGroupBox = this.find<ListGroupBox>(element, role, creator, listGroupCache);
-
-        // 2. Apply the other arguments in case they have changed
-        result.setLabel(getLabel);
-        result.child = childBox;
-        FreUtils.initializeObject(result, initializer);
-
-        return result;
-    }
-
-    static itemGroup(element: FreNode, role: string, getLabel, getText: () => string, setText: (text: string) => void, childBox: Box, initializer?: Partial<ItemGroupBox>): ItemGroupBox {
-        if (cacheItemGroupOff) {
-            return new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer);
-        }
-        // 1. Create the  box, or find the one that already exists for this element and role
-        const creator = () => new ItemGroupBox(element, role, getLabel, getText, setText, childBox, initializer);
-        const result: ItemGroupBox = this.find<ItemGroupBox>(element, role, creator, itemGroupCache);
-
-        // 2. Apply the other arguments in case they have changed
-        result.setLabel(getLabel);
-        result.child = childBox;
-        FreUtils.initializeObject(result, initializer);
-
-        return result;
-    }
-
-    static itemGroup2(element: FreNode, role: string, getLabel, 
-        getOptions: (editor: FreEditor) => SelectOption[], 
-        getSelectedOption: () => SelectOption | null,
-        selectOption: (editor: FreEditor, option: SelectOption) => BehaviorExecutionResult,
-        childBox: Box, initializer?: Partial<ItemGroupBox2>): ItemGroupBox2 {
-
-        if (cacheItemGroupOff2) {
-            return new ItemGroupBox2(element, role, getLabel, getOptions, getSelectedOption, selectOption, childBox, initializer);
-        }
-        // 1. Create the  box, or find the one that already exists for this element and role
-        const creator = () => new ItemGroupBox2(element, role, getLabel, getOptions, getSelectedOption, selectOption, childBox, initializer);
-        const result: ItemGroupBox2 = this.find<ItemGroupBox2>(element, role, creator, itemGroupCache2);
-
-        // 2. Apply the other arguments in case they have changed
-        result.setLabel(getLabel);
-        result.child = childBox;
-        FreUtils.initializeObject(result, initializer);
-
         return result;
     }
     /** END - M+G */
