@@ -32,9 +32,6 @@ import {
     VerticalListBox,
     /** START - M+G */
     MultiLineTextBox2,
-    ItemGroupBox,
-    ItemGroupBox2,
-    ListGroupBox,
     /** END - M+G */
 } from "../boxes/index.js";
 import type { FreScoper } from "../../scoper/index.js";
@@ -47,7 +44,6 @@ import { UtilLimitedHelpers } from "./box-util-helpers/UtilLimitedHelpers.js";
 
 /** Start - M+G */
 import { FreUtils } from "../../util/index.js";
-import { BehaviorExecutionResult } from "../util/index.js";
 import { runInAction } from "mobx";
 /**End - M+G */
 
@@ -549,139 +545,6 @@ export class BoxUtil {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-wrapper";
         return new RefListWrapperBox(externalComponentName, node, roleName, propertyName, childBox, initializer);
     }
-
-    /** START - M+G */
-    static listGroupBox(
-        node: FreNode, 
-        roleName: string, 
-        label: string, 
-        childBox: Box, 
-        initializer?: Partial<ListGroupBox>
-    ): ListGroupBox {
-        const role = this.makeKeyName(roleName);
-        const updatedInitializer = {
-            ...initializer,
-            selectable: initializer?.selectable ?? true,
-            isExpanded: initializer?.isExpanded ?? false,
-            canAdd: initializer?.canAdd ?? false,
-            canCRUD: initializer?.canCRUD ?? false,
-            canExpand: initializer?.canExpand ?? true,
-        };
-        let result: ListGroupBox = BoxFactory.listGroup(node, role, label, childBox, updatedInitializer);
-        return result;
-    }
-
-    static itemGroupBox(
-        node: FreNode,
-        roleName: string,
-        label: string,
-        propertyName: string,
-        childBox: Box,
-        initializer?: Partial<ItemGroupBox>,
-    ): ItemGroupBox {
-        let result: ItemGroupBox = null;
-        let ph: string = BoxUtil.formatPlaceholder(initializer?.placeHolder, propertyName);
-        const role = this.makeKeyName(roleName);
-        const updatedInitializer = {
-            ...initializer,
-            selectable: initializer?.selectable ?? true,
-            isExpanded: initializer?.isExpanded ?? false,
-            isDraggable: initializer?.isDraggable ?? true,
-            canDelete: initializer?.canDelete ?? true,
-            canDuplicate: initializer?.canDuplicate ?? false,
-            canShare: initializer?.canShare ?? false,
-            canUnlink: initializer?.canUnlink ?? false,
-            canCRUD: initializer?.canCRUD ?? false,
-            canEdit: initializer?.canEdit ?? true,
-            canExpand: initializer?.canExpand ?? true,
-            placeHolder: ph,
-        };
-        const property = node[propertyName];
-        if (property !== undefined && property !== null && typeof property === "string") {
-            //const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "textbox");
-            result = BoxFactory.itemGroup(
-                node,
-                role,
-                label,
-                () => node[propertyName],
-                (v: string) =>
-                    runInAction(() => {
-                        node[propertyName] = v;
-                    }),
-                childBox,
-                updatedInitializer,
-            );
-            result.propertyName = propertyName;
-        } else {
-            FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + '"');
-        }
-        return result;
-    }
-
-    static itemGroupBox2(
-        node: FreNode,
-        roleName: string,
-        label: string,
-        propertyName: string,
-        propType: string,
-        setFunc: (selected: string) => void,
-        scoper: FreScoper,
-        childBox: Box,
-        initializer?: Partial<ItemGroupBox2>,
-    ): ItemGroupBox2 {
-        let result: ItemGroupBox2 = null;
-        //const propType: string = FreLanguage.getInstance().classifierProperty(node.freLanguageConcept(), propertyName)?.type;
-        let ph: string = BoxUtil.formatPlaceholder(initializer?.placeHolder, propertyName);
-        const role = this.makeKeyName(roleName);
-        const updatedInitializer = {
-            ...initializer,
-            selectable: initializer?.selectable ?? true,
-            isExpanded: initializer?.isExpanded ?? false,
-            isDraggable: initializer?.isDraggable ?? true,
-            canDelete: initializer?.canDelete ?? true,
-            canUnlink: initializer?.canUnlink ?? false,
-            canExpand: initializer?.canExpand ?? true,
-            placeHolder: ph,
-        };
-        const property = node[propertyName];
-        result = BoxFactory.itemGroup2(
-            node,
-            role,
-            label,
-            () => {
-                return scoper
-                    .getVisibleNames(node, propType)
-                    .filter((name) => !!name && name !== "")
-                    .map((name) => ({ id: name, label: name }));
-            },
-            () => {
-                if (!!property) {
-                    return { id: property.name, label: property.name };
-                } else {
-                    return null;
-                }
-            },
-            // @ts-ignore
-            (editor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
-                if (!!option) {
-                    runInAction(() => {
-                        setFunc(option.label);
-                    });
-                } else {
-                    runInAction(() => {
-                        node[propertyName] = null;
-                    });
-                }
-                return BehaviorExecutionResult.EXECUTED;
-            },
-            childBox,
-            updatedInitializer,
-        );
-        result.propertyName = propertyName;
-        //result.propertyIndex = index;
-        return result;
-    }
-    /** END - M+G */
     
     /**
      * Returns a textBox for property named 'propertyName' within 'element'.
@@ -740,11 +603,6 @@ export class BoxUtil {
     static formatPlaceholder(placeholder: string | undefined, propertyname: string): string {
         return placeholder !== undefined ? `${BoxUtil.BEGIN_CHAR}${placeholder}${BoxUtil.END_CHAR}` : `${BoxUtil.BEGIN_CHAR}${propertyname}${BoxUtil.END_CHAR}`;
     }
-
-    private static makeKeyName(value: string): string {
-        return value.replace(/ /g, "-").toLowerCase();
-    }
-
     /** END - M+G */
 
 }

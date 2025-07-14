@@ -26,7 +26,7 @@
 
 
 ### **2. Imports**
-  - Explicitly imported types using `import type { ... }` where necessary, especially for types like `RTBoolean`.
+  - Explicitly imported types using `import type { ... }` where necessary, especially for types like `RTBoolean`, e.g. FreEditor
   - Relative Imports changed in `core` from `$lib` to relative `../` paths:
     - `import { ... } from "../ast/index.js"`
     - `import { ... } from "../../util/index.js"`
@@ -34,9 +34,11 @@
   - Removed redundant imports
 
 ### **3. Models**
-  - Detect changes to the model and units in the editor to provide autosaving by subscribing to `FreChangeManager`
   - Standardized Endpoints: Changed endpoint names to match conventions, e.g. getUnitList → getModelUnitList, putModelUnit  → saveModelUnit in ServerCommunication.ts
   - Added parameter type and changed from folder/name to model/unit as paramater names in ServerCommunication
+
+  ### **4. Notes**
+  - Detect changes to the model and units in the editor to provide autosaving by subscribing to `FreChangeManager`
 
 ## **CORE-SVELTE** 
 

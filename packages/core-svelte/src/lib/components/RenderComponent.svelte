@@ -37,7 +37,7 @@
         isActionTextBox,
         isNullOrUndefined, type ClientRectangle, UndefinedRectangle,
         /** M+G: start updates */
-        isMultiLineTextBox2, isItemGroupBox, isItemGroupBox2, isListGroupBox
+        isMultiLineTextBox2,
         /** M+G: end updates */
     } from "@freon4dsl/core"
     import MultiLineTextComponent from './MultiLineTextComponent.svelte';
@@ -64,9 +64,6 @@
     import FragmentComponent from './FragmentComponent.svelte';
     /** M+G: start updates */
     import MultiLineTextComponent2 from './MultiLineTextComponent2.svelte';
-    import ItemGroupComponent from './ItemGroupComponent.svelte';
-    import ItemGroupComponent2 from './ItemGroupComponent2.svelte';
-    import ListGroupComponent from './ListGroupComponent.svelte';
     /** M+G: end updates */
     import { componentId, findCustomComponent } from '../index.js';
 
@@ -81,9 +78,7 @@
 
     const isFullWidth = $derived(
         !isNullOrUndefined(box) && (
-            isItemGroupBox(box)
-            || isItemGroupBox2(box)
-            || isMultiLineTextBox(box)
+            isMultiLineTextBox(box)
             || isMultiLineTextBox2(box)
         )
     );
@@ -240,39 +235,6 @@
         <!-- M+G: start updates -->
         {:else if isMultiLineTextBox2(box)}
             <MultiLineTextComponent2 {box} {editor} cssClass={box.cssClass} />
-        {:else if isItemGroupBox(box)}
-            <ItemGroupComponent 
-                {box} 
-                {editor} 
-                cssClass={box.cssClass}
-                isEditing={false}
-                partOfActionBox={false}
-                text={box.getText()}
-                canDelete={box.canDelete}
-                canUnlink={box.canUnlink}
-                canExpand={box.canExpand}
-                canShare={box.canShare}
-                canCRUD={box.canCRUD}
-                canDuplicate={box.canDuplicate}
-                isRequired={box.isRequired}
-                isExpanded={box.isExpanded}
-            />
-        {:else if isItemGroupBox2(box)}
-            <ItemGroupComponent2 
-                {box} 
-                {editor} 
-                cssClass={box.cssClass} 
-            />
-        {:else if isListGroupBox(box)}
-            <ListGroupComponent 
-                {box} 
-                {editor} 
-                cssClass={box.cssClass}
-                canAdd={box.canAdd}
-                canCRUD={box.canCRUD}
-                canExpand={box.canExpand}
-                isExpanded={box.isExpanded}
-            />
         <!-- M+G: end updates -->
         {:else}
             <!-- we use box["kind"] here instead of box.kind to avoid an error from svelte check-->
