@@ -120,31 +120,32 @@
         let names = [];
         // Scheduling and checklists are both part of Event so they need combined and separate projections.
         if (studyConfiguration.showScheduling && studyConfiguration.showChecklists) {
-            names.push("SchedulingAndChecklistsShow");
+            names.push("schedulingAndChecklistsShow");
         } else if (studyConfiguration.showScheduling) {
-            names.push("SchedulingShow");
+            names.push("schedulingShow");
         } else if (studyConfiguration.showChecklists) {
-            names.push("ChecklistsShow");
+            names.push("checklistsShow");
         }
         if (studyConfiguration.showSharedTasks) {
-            names.push("SharedTaskShow");
+            names.push("sharedTaskShow");
         }
         if (studyConfiguration.showReferences) {
-            names.push("ReferencesShow");
+            names.push("referencesShow");
         }
         if (studyConfiguration.showSystems) {
-            names.push("SystemsShow");
+            names.push("systemsShow");
         }
         if (studyConfiguration.showPeople) {
-            names.push("PeopleShow");
+            names.push("peopleShow");
         }
         if (studyConfiguration.showDescriptions) {
-            names.push("DescriptionsShow");
+            names.push("descriptionsShow");
         }
-        if (studyConfiguration.showNotes) {
-            names.push("NotesShow");
-        }
+        // if (studyConfiguration.showNotes) {
+        //     names.push("NotesShow");
+        // }
 
+        console.log("[DEBUG] updateVisibleProjections", names);
         const proj = dslEditor.projection;
         proj.enableProjections(names);
 
