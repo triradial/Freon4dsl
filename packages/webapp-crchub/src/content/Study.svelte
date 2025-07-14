@@ -81,6 +81,7 @@
         } else {
             noModelAvailable = true;
         }
+        updateVisibleProjections(unit as StudyConfiguration);
     }
 
     onMount(async () => {
@@ -127,7 +128,7 @@
             names.push("checklistsShow");
         }
         if (studyConfiguration.showSharedTasks) {
-            names.push("sharedTaskShow");
+            names.push("sharedTasksShow");
         }
         if (studyConfiguration.showReferences) {
             names.push("referencesShow");

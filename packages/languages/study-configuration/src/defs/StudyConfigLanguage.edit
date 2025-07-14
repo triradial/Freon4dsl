@@ -13,7 +13,6 @@ global {
 StudyConfiguration {
     [
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
-    ${tasks wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Tasks"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
     ]
@@ -33,7 +32,6 @@ Event {
     [
         Event: ${name}
         This is a ${typeOfEvent} that is also referred to as ${alternativeName}
-        Type: 
         ${description}
     ] 
 }
@@ -45,8 +43,6 @@ Task {
         Steps: ${steps}
     ]
 }
-
-SharedTask {}
 
 TaskReference {
     [
@@ -161,6 +157,5 @@ SourceToTargetMapping {
     ]
 }
 
-Description {}
+Description {[<Description is Hidden>] }
 
-EventSchedule {} 
