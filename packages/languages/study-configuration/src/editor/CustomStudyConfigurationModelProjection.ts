@@ -49,15 +49,14 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     name: string = "Custom"
     handler: FreProjectionHandler
     nodeTypeToBoxMethod: Map<string, (node: FreNode) => Box> = new Map<string, (node: FreNode) => Box>([
-        // ["StudyConfiguration", this.projectStudyConfiguration],
-        // ["Description", this.projectDescription],
-        // ["Period", this.projectPeriod],
-        // ["Event", this.projectEvent],
-        // ["Task", this.projectTask],
-        // ["TaskReference", this.projectTaskReference],
-        // ["SharedTask", this.projectSharedTask],
-        // ["Step", this.projectStep],
-        // ["Reference", this.projectReference],
+        ["StudyConfiguration", this.projectStudyConfiguration],
+        ["Description", this.projectDescription],
+        ["Period", this.projectPeriod],
+        ["Event", this.projectEvent],
+        ["Task", this.projectTask],
+        ["TaskReference", this.projectTask],
+        ["Step", this.projectStep],
+        ["Reference", this.projectReference],
         // ["SystemAccess", this.projectSystem],
         ["Person", this.projectPerson],
         ["PatientInfo", this.projectPatientInfo],
