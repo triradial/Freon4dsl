@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { AST, FreEditor, FreChangeManager, FreLanguage, FreLogger, ownerOfType, PartListWrapperBox, HorizontalLayoutBox, ReferenceBox } from "@freon4dsl/core";
+    import { AST, FreEditor, FreChangeManager, FreLanguage, FreLogger, ownerOfType, FragmentWrapperBox, HorizontalLayoutBox, ReferenceBox } from "@freon4dsl/core";
     import { RenderComponent } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
     // ts-ignore
@@ -9,7 +9,7 @@
     
     const LOGGER = new FreLogger("ItemGroupComponent");
     
-    const { box, editor } = $props<{ box: PartListWrapperBox, editor: FreEditor }>();
+    const { box, editor } = $props<{ box: FragmentWrapperBox, editor: FreEditor }>();
 
     // Props
     let cssClass = box && box.findParam("cssClass") || "";
@@ -62,8 +62,11 @@
     onMount(() => {
         box.refreshComponent = refresh;
         const horizontalLayoutBox = box.childBox as HorizontalLayoutBox;
+        console.log("horizontalLayoutBox", horizontalLayoutBox);
         const children = horizontalLayoutBox.children;
+        console.log("children", children);
         referenceBox = children[0] as ReferenceBox;
+        console.log("referenceBox", referenceBox);
     });
 
     // Replaces afterUpdate()
@@ -122,7 +125,7 @@
     {:else}
         <span class="w-5"></span>   
     {/if}
-    <span class="item-group-label" tabindex="-1">REFERENCE: {label()}:</span>
+    <span class="item-group-label" tabindex="-1">REFERENCE2: {label()}:</span>
     <RenderComponent box={referenceBox} {editor} {cssClass} />
     {#if canDuplicate}
         <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate" tabindex="0">
@@ -145,8 +148,8 @@
         </button> 
     {/if}
 </div>
-{#key contentStyle}
+<!-- {#key contentStyle}
     <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
         <RenderComponent box={box.childBox} {editor} {cssClass} />
     </div>
-{/key}
+{/key} -->

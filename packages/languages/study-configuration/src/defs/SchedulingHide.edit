@@ -1,7 +1,0 @@
-editor schedulingHide precedence 1
-
-// Default is to not show the schedule.
-
-EventSchedule {
-    [{}] 
-} 

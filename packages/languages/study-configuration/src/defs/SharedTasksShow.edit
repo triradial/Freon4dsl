@@ -1,0 +1,10 @@
+editor sharedTasksShow precedence 102
+
+SharedTask {
+    [
+        ${name}
+        ${description}
+        Steps: ${steps}
+    ]
+}
+

@@ -115,73 +115,34 @@
 
     import { runInAction } from "mobx";
 
-    function updateVisibleProjections(id: string, visible: boolean) {
-        let fullListOfProjections = [
-            "SharedTaskShow",
-            "SharedTaskHide",
-            "SchedulingShow",
-            "SchedulingHide",
-            "SchedulingDetailsShow",
-            "SchedulingDetailsHide",
-            "ChecklistsShow",
-            "ChecklistsHide",
-            "ReferencesShow",
-            "ReferencesHide",
-            "SystemsShow",
-            "SystemsHide",
-            "PeopleShow",
-            "PeopleHide",
-            "DescriptionsShow",
-            "DescriptionsHide",
-            "NotesShow",
-            "NotesHide",
-        ]
-
+    // Show the projections that are enabled in the study configuration.
+    function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
         let names = [];
-        if (id === "showSharedTasks" && visible) {
-            names.push("SharedTaskShow");
-        } else {
-            names.push("SharedTaskHide");
-        }
-        if (id === "showScheduling" && visible) {
+        // Scheduling and checklists are both part of Event so they need combined and separate projections.
+        if (studyConfiguration.showScheduling && studyConfiguration.showChecklists) {
+            names.push("SchedulingAndChecklistsShow");
+        } else if (studyConfiguration.showScheduling) {
             names.push("SchedulingShow");
-        } else {
-            names.push("SchedulingHide");
-        }
-        if (id === "showSchedulingDetails" && visible) {
-            names.push("SchedulingDetailsShow");
-        } else {
-            names.push("SchedulingDetailsHide");
-        }
-        if (id === "showChecklists" && visible) {
+        } else if (studyConfiguration.showChecklists) {
             names.push("ChecklistsShow");
-        } else {
-            names.push("ChecklistsHide");
         }
-        if (id === "showReferences" && visible) {
+        if (studyConfiguration.showSharedTasks) {
+            names.push("SharedTaskShow");
+        }
+        if (studyConfiguration.showReferences) {
             names.push("ReferencesShow");
-        } else {
-            names.push("ReferencesHide");
         }
-        if (id === "showSystems" && visible) {
+        if (studyConfiguration.showSystems) {
             names.push("SystemsShow");
-        } else {
-            names.push("SystemsHide");
         }
-        if (id === "showPeople" && visible) {
+        if (studyConfiguration.showPeople) {
             names.push("PeopleShow");
-        } else {
-            names.push("PeopleHide");
         }
-        if (id === "showDescriptions" && visible) {
+        if (studyConfiguration.showDescriptions) {
             names.push("DescriptionsShow");
-        } else {
-            names.push("DescriptionsHide");
         }
-        if (id === "showNotes" && visible) {
+        if (studyConfiguration.showNotes) {
             names.push("NotesShow");
-        } else {
-            names.push("NotesHide");
         }
 
         const proj = dslEditor.projection;
@@ -201,8 +162,8 @@
     function handleCheckboxChange(id: string, visible: boolean) {
         if (unit && id in unit) {
             (unit[id as keyof StudyConfiguration] as boolean) = visible;
-            // updateVisibleProjections(id, visible);
             ModelManager.getInstance().saveCurrentUnit();
+            updateVisibleProjections(unit as StudyConfiguration);
             mobxVersion++;
         }
     }

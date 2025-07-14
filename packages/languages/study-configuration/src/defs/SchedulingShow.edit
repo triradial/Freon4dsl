@@ -1,5 +1,16 @@
 editor schedulingShow precedence 100
 
+Event {
+    [
+        Event: ${name}
+        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
+        Type: 
+        ${description}
+        ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
+    ] 
+}
+
+
 TimeAmount {
     [${value}${unit}]
 }
