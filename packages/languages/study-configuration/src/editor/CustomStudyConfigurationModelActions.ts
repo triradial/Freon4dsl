@@ -120,138 +120,136 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     //IMPORTANT WARNING: the role name in the custom projection must be lowercase or it will not be matched by the code that calls these actions, e.g.,
     // listGroupBox that presents a variable named "PatientVisits" in a verticalPartListBox must have its role set to "patientvisits" to be matched.
 
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["periods"],
+    //     trigger: "add",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const studyconfig: StudyConfiguration = box.node as StudyConfiguration
+    //         const period: Period = Period.create({})
+    //         studyconfig.periods.push(period)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["period"],
+    //     trigger: "delete",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const period: Period = box.node as Period
+    //         const studyconfig: StudyConfiguration = ownerOfType(period, "StudyConfiguration") as StudyConfiguration //box.parent.parent.parent.element as StudyConfiguration;
+    //         const index = period.freOwnerDescriptor().propertyIndex //studyconfig.periods.indexOf(period);
+    //         studyconfig.periods.splice(index, 1)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["events"],
+    //     trigger: "add",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const period: Period = box.node as Period
+    //         const event: Event = Event.create({})
+    //         period.events.push(event)
+    //         console.log("event added to period")
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["event"],
+    //     trigger: "delete",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const event: Event = box.node as Event
+    //         const period: Period = ownerOfType(event, "Period") as Period //box.parent.parent.parent.element as Period;
+    //         const index = event.freOwnerDescriptor().propertyIndex //period.events.indexOf(event);
+    //         period.events.splice(index, 1)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["task"],
+    //     trigger: "delete",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         AST.change( () => {
+    //             const task: Task = box.node as Task
+    //             const event: Event = ownerOfType(task, "Event") as Event 
+    //             const index = task.freOwnerDescriptor().propertyIndex 
+    //             event.tasks.splice(index, 1)
+    //         })
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["steps"],
+    //     trigger: "add",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const task: Task = box.node as Task
+    //         const step: Step = Step.create({})
+    //         task.steps.push(step)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["step"],
+    //     trigger: "delete",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const step: Step = box.node as Step
+    //         const task: Task = ownerOfType(step, "Task") as Task //box.parent.parent.parent.element as Task;
+    //         const index = step.freOwnerDescriptor().propertyIndex // task.steps.indexOf(step);
+    //         task.steps.splice(index, 1)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["references"],
+    //     trigger: "add",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const step: Step = box.node as Step
+    //         const reference: Reference = Reference.create({})
+    //         step.references.push(reference)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["reference"],
+    //     trigger: "delete",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const reference: Reference = box.node as Reference
+    //         const step: Step = ownerOfType(reference, "Step") as Step //box.parent.parent.parent.element as Step;
+    //         const index = reference.freOwnerDescriptor().propertyIndex //step.references.indexOf(reference);
+    //         step.references.splice(index, 1)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["systems"],
+    //     trigger: "add",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const step: Step = box.node as Step
+    //         const system: SystemAccess = SystemAccess.create({})
+    //         step.systems.push(system)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["system"],
+    //     trigger: "delete",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const system: SystemAccess = box.node as SystemAccess
+    //         const step: Step = ownerOfType(system, "Step") as Step //box.parent.parent.parent.element as Step;
+    //         const index = system.freOwnerDescriptor().propertyIndex //step.systems.indexOf(system);
+    //         step.systems.splice(index, 1)
+    //         return null
+    //     },
+    // }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["people"],
+    //     trigger: "add",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const step: Step = box.node as Step
+    //         const person: Person = Person.create({})
+    //         step.people.push(person)
+    //         return null
+    //     },
+    // }),
     FreCustomAction.create({
-        activeInBoxRoles: ["periods"],
-        trigger: "add",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const studyconfig: StudyConfiguration = box.node as StudyConfiguration
-            const period: Period = Period.create({})
-            studyconfig.periods.push(period)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["period"],
-        trigger: "delete",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const period: Period = box.node as Period
-            const studyconfig: StudyConfiguration = ownerOfType(period, "StudyConfiguration") as StudyConfiguration //box.parent.parent.parent.element as StudyConfiguration;
-            const index = period.freOwnerDescriptor().propertyIndex //studyconfig.periods.indexOf(period);
-            studyconfig.periods.splice(index, 1)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["events"],
-        trigger: "add",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const period: Period = box.node as Period
-            const event: Event = Event.create({})
-            period.events.push(event)
-            console.log("event added to period")
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["event"],
-        trigger: "delete",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const event: Event = box.node as Event
-            const period: Period = ownerOfType(event, "Period") as Period //box.parent.parent.parent.element as Period;
-            const index = event.freOwnerDescriptor().propertyIndex //period.events.indexOf(event);
-            period.events.splice(index, 1)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["task"],
-        trigger: "delete",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            AST.change( () => {
-                const task: Task = box.node as Task
-                const event: Event = ownerOfType(task, "Event") as Event 
-                const index = task.freOwnerDescriptor().propertyIndex 
-                event.tasks.splice(index, 1)
-            })
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["steps"],
-        trigger: "add",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const task: Task = box.node as Task
-            const step: Step = Step.create({})
-            task.steps.push(step)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["step"],
-        trigger: "delete",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const step: Step = box.node as Step
-            const task: Task = ownerOfType(step, "Task") as Task //box.parent.parent.parent.element as Task;
-            const index = step.freOwnerDescriptor().propertyIndex // task.steps.indexOf(step);
-            task.steps.splice(index, 1)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["references"],
-        trigger: "add",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const step: Step = box.node as Step
-            const reference: Reference = Reference.create({})
-            step.references.push(reference)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["reference"],
-        trigger: "delete",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const reference: Reference = box.node as Reference
-            const step: Step = ownerOfType(reference, "Step") as Step //box.parent.parent.parent.element as Step;
-            const index = reference.freOwnerDescriptor().propertyIndex //step.references.indexOf(reference);
-            step.references.splice(index, 1)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["systems"],
-        trigger: "add",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const step: Step = box.node as Step
-            const system: SystemAccess = SystemAccess.create({})
-            step.systems.push(system)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["system"],
-        trigger: "delete",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const system: SystemAccess = box.node as SystemAccess
-            const step: Step = ownerOfType(system, "Step") as Step //box.parent.parent.parent.element as Step;
-            const index = system.freOwnerDescriptor().propertyIndex //step.systems.indexOf(system);
-            step.systems.splice(index, 1)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["people"],
-        trigger: "add",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const step: Step = box.node as Step
-            const person: Person = Person.create({})
-            step.people.push(person)
-            return null
-        },
-    }),
-    FreCustomAction.create({
-        activeInBoxRoles: ["event"],
-        trigger: "duplicate",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const event: Event = box.node as Event
             const period: Period = ownerOfType(event, "Period") as Period //box.parent.parent.parent.element as Period;
@@ -265,17 +263,17 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         },
     }),
 
-    FreCustomAction.create({
-        activeInBoxRoles: ["person"],
-        trigger: "delete",
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const person: Person = box.node as Person
-            const step: Step = ownerOfType(person, "Step") as Step //box.parent.parent.parent.element as Step;
-            const index = person.freOwnerDescriptor().propertyIndex //step.people.indexOf(person);
-            step.people.splice(index, 1)
-            return null
-        },
-    }),
+    // FreCustomAction.create({
+    //     activeInBoxRoles: ["person"],
+    //     trigger: "delete",
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const person: Person = box.node as Person
+    //         const step: Step = ownerOfType(person, "Step") as Step //box.parent.parent.parent.element as Step;
+    //         const index = person.freOwnerDescriptor().propertyIndex //step.people.indexOf(person);
+    //         step.people.splice(index, 1)
+    //         return null
+    //     },
+    // }),
 
     FreCustomAction.create({
         activeInBoxRoles: ["task"],

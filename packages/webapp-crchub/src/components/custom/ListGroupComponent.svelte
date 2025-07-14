@@ -56,8 +56,8 @@
             const language = FreLanguage.getInstance();
             const propertyName = box.propertyName;
             const node = box.node;
-            const parentConceptName = node.freLanguageConcept();
-            const property = language.classifierProperty(parentConceptName, propertyName);
+            const typeName = node.freLanguageConcept();
+            const property = language.classifierProperty(typeName, propertyName);
             if (property.type) {
                 let newConceptName = property.type;
                 if (newConceptName.startsWith('Abstract')) {

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { AST, FreEditor, FreChangeManager, FreLanguage, FreLogger, ownerOfType, PartListWrapperBox } from "@freon4dsl/core";
+    import { AST, FreEditor, FreLanguage, FreLogger, ownerOfType, PartListWrapperBox } from "@freon4dsl/core";
     import { RenderComponent } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
     // ts-ignore
@@ -35,13 +35,18 @@
     }
 
     const setText = (value: string) => {
-        const propertyName = "name";
-        const node = box.node;
-        const oldValue = node[propertyName];
-        console.debug(`[ItemGroupComponent] Changing property '${propertyName}' of node`, node, 'from', oldValue, 'to', value);
-        node[propertyName] = value;
-        // FreChangeManager.getInstance().setPrimitive(node, propertyName, value);
-        // console.debug(`[ItemGroupComponent] Change registered with FreChangeManager for property '${propertyName}' of node`, node);
+
+        //TODO: This is not being picked up by the undo/redo mechanism
+
+        AST.change(() => {
+            const propertyName = "name";
+            const node = box.node;
+            const oldValue = node[propertyName];
+            console.debug(`[ItemGroupComponent] Changing property '${propertyName}' of node`, node, 'from', oldValue, 'to', value);
+            node[propertyName] = value;
+            // FreChangeManager.getInstance().setPrimitive(node, propertyName, value);
+            // console.debug(`[ItemGroupComponent] Change registered with FreChangeManager for property '${propertyName}' of node`, node);
+        });
     };
 
     let text = $state(getText());
@@ -91,19 +96,60 @@
     }
 
     const duplicateItem = () => {
-        AST.change(() => {
-            const language = FreLanguage.getInstance();
-            const propertyName = box.propertyName;
-            const node = box.node;
-            const parentConceptName = node.freLanguageConcept();
-            const owner = ownerOfType(node, parentConceptName);
-            const index = owner.freOwnerDescriptor().propertyIndex //period.events.indexOf(event);
-        });
+        // AST.change(() => {
+        //     const propertyName = box.propertyName;
+        //     const currentElement = box.node;
+        //     const typeName = currentElement.freLanguageConcept();
+
+        //     const ownerDescriptor = box.node.freOwnerDescriptor();
+        //     const parent = ownerDescriptor.owner;
+        //     const propertyName = ownerDescriptor.propertyName;
+        //     const index = ownerDescriptor.propertyIndex;
+
+        //     const property = FreLanguage.getInstance().classifierProperty(typeName, propertyName);
+        //     if (property.type) {
+        //         let newConceptName = property.type;
+        //         if (newConceptName.startsWith('Abstract')) {
+        //             newConceptName = newConceptName.slice(8);
+        //         }
+        //         const newElement = FreLanguage.getInstance().createConceptOrUnit(newConceptName);
+        //         smartDuplicate(currentElement, newElement);
+        //         const currentIndex = box.getPropertyValue().indexOf(currentElement); 
+        //         box.getPropertyValue().splice(currentIndex + 1, 0, newElement);
+        //         LOGGER.log("custom action duplicate, splicing in copyOfEvent: " + newElement.name + " at index: " + currentIndex);
+        //     } else {
+        //         LOGGER.log("No property type");
+        //     }
+        // });
     }
 
     const shareItem = () => {
         LOGGER.log("Sharing item");
     }
+
+    function smartDuplicate(originalElement: any, duplicatedElement: any) {
+        const methodName = "smartUpdate";
+        const args = [originalElement, duplicatedElement];
+        // Call methodName if it exists on the element
+        if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
+            console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
+            return (duplicatedElement as any)[methodName](...args);
+        } else {
+            console.log(`Method ${methodName} does not exist on the instance.`);
+        }
+    }
+
+    // function duplicateItem(originalElement: FreNode, duplicatedElement: FreNode) {
+    //     const event: Event = box.node as Event
+    //         const period: Period = ownerOfType(event, "Period") as Period 
+    //         const copyOfEvent = event.copy();
+    //         extension(ExtendedEvent, Event);
+    //         smartDuplicate(event, copyOfEvent);
+    //         const index = period.events.indexOf(event);
+    //         console.log("custom action duplicate, splicing in copyOfEvent: " + copyOfEvent.name + " at index: " + index)
+    //         period.events.splice(index + 1, 0, copyOfEvent)
+    // }
+
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
