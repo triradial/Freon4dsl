@@ -1,10 +1,10 @@
 editor default
 
-
 global {
     external {
         ListGroupComponent,
         ItemGroupComponent,
+        ItemGroupComponent2,
         DatePickerComponent,
         TimePickerComponent
     }
@@ -13,7 +13,6 @@ global {
 StudyConfiguration {
     [
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
-    ${tasks wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Tasks"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
     ]
@@ -33,10 +32,7 @@ Event {
     [
         Event: ${name}
         This is a ${typeOfEvent} that is also referred to as ${alternativeName}
-        Type: 
-        Description: ${description}
-        ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
-        ${tasks wrap=ItemGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
+        ${description}
     ] 
 }
 
@@ -44,7 +40,19 @@ Task {
     [
         ${name}
         ${description}
+        Steps: ${steps}
     ]
+}
+
+TaskReference {
+    [
+        [fragment XX wrap = ItemGroupComponent2]
+    ]
+    fragment XX [
+        ${task}  
+        ${steps}
+    ]
+
 }
 
 Step {
@@ -102,7 +110,7 @@ Staffing {
 Reference {
     [
         Reference Title: ${title}    Link: ${link}
-        Description    : ${description}
+        ${description}
     ]
 }
 
@@ -149,6 +157,5 @@ SourceToTargetMapping {
     ]
 }
 
-Description {
-   [ ${text} ]
-}
+Description {[<Description is Hidden>] }
+

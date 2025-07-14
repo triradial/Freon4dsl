@@ -81,6 +81,7 @@
         } else {
             noModelAvailable = true;
         }
+        updateVisibleProjections(unit as StudyConfiguration);
     }
 
     onMount(async () => {
@@ -115,75 +116,37 @@
 
     import { runInAction } from "mobx";
 
-    function updateVisibleProjections(id: string, visible: boolean) {
-        let fullListOfProjections = [
-            "SharedTaskShow",
-            "SharedTaskHide",
-            "SchedulingShow",
-            "SchedulingHide",
-            "SchedulingDetailsShow",
-            "SchedulingDetailsHide",
-            "ChecklistsShow",
-            "ChecklistsHide",
-            "ReferencesShow",
-            "ReferencesHide",
-            "SystemsShow",
-            "SystemsHide",
-            "PeopleShow",
-            "PeopleHide",
-            "DescriptionsShow",
-            "DescriptionsHide",
-            "NotesShow",
-            "NotesHide",
-        ]
-
+    // Show the projections that are enabled in the study configuration.
+    function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
         let names = [];
-        if (id === "showSharedTasks" && visible) {
-            names.push("SharedTaskShow");
-        } else {
-            names.push("SharedTaskHide");
+        // Scheduling and checklists are both part of Event so they need combined and separate projections.
+        if (studyConfiguration.showScheduling && studyConfiguration.showChecklists) {
+            names.push("schedulingAndChecklistsShow");
+        } else if (studyConfiguration.showScheduling) {
+            names.push("schedulingShow");
+        } else if (studyConfiguration.showChecklists) {
+            names.push("checklistsShow");
         }
-        if (id === "showScheduling" && visible) {
-            names.push("SchedulingShow");
-        } else {
-            names.push("SchedulingHide");
+        if (studyConfiguration.showSharedTasks) {
+            names.push("sharedTasksShow");
         }
-        if (id === "showSchedulingDetails" && visible) {
-            names.push("SchedulingDetailsShow");
-        } else {
-            names.push("SchedulingDetailsHide");
+        if (studyConfiguration.showReferences) {
+            names.push("referencesShow");
         }
-        if (id === "showChecklists" && visible) {
-            names.push("ChecklistsShow");
-        } else {
-            names.push("ChecklistsHide");
+        if (studyConfiguration.showSystems) {
+            names.push("systemsShow");
         }
-        if (id === "showReferences" && visible) {
-            names.push("ReferencesShow");
-        } else {
-            names.push("ReferencesHide");
+        if (studyConfiguration.showPeople) {
+            names.push("peopleShow");
         }
-        if (id === "showSystems" && visible) {
-            names.push("SystemsShow");
-        } else {
-            names.push("SystemsHide");
+        if (studyConfiguration.showDescriptions) {
+            names.push("descriptionsShow");
         }
-        if (id === "showPeople" && visible) {
-            names.push("PeopleShow");
-        } else {
-            names.push("PeopleHide");
-        }
-        if (id === "showDescriptions" && visible) {
-            names.push("DescriptionsShow");
-        } else {
-            names.push("DescriptionsHide");
-        }
-        if (id === "showNotes" && visible) {
-            names.push("NotesShow");
-        } else {
-            names.push("NotesHide");
-        }
+        // if (studyConfiguration.showNotes) {
+        //     names.push("NotesShow");
+        // }
 
+        console.log("[DEBUG] updateVisibleProjections", names);
         const proj = dslEditor.projection;
         proj.enableProjections(names);
 
@@ -201,8 +164,7 @@
     function handleCheckboxChange(id: string, visible: boolean) {
         if (unit && id in unit) {
             (unit[id as keyof StudyConfiguration] as boolean) = visible;
-            // updateVisibleProjections(id, visible);
-            ModelManager.getInstance().saveCurrentUnit();
+            updateVisibleProjections(unit as StudyConfiguration);
             mobxVersion++;
         }
     }

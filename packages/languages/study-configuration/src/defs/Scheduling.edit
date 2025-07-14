@@ -139,7 +139,6 @@ EventSchedule {
     trigger = "event schedule"
 } 
 
-
 EventReference {
     [${event}${eventState} ]
     referenceShortcut = ${event}
