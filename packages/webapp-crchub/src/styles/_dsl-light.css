@@ -145,7 +145,10 @@
 
 .list-group.type4 {
   border-bottom: 1px solid #1191b9;
-  ;
+}
+
+.list-group.type5 {
+  border-bottom: 1px solid #1191b9;
 }
 
 .list-group.type1 .list-group-label {
@@ -161,11 +164,19 @@
 }
 
 .list-group.type4 .list-group-label {
-  color: #1191b9;
+  color: #666666 !important;
 }
 
 .list-group.type4 .toggle-button {
-  color: #1191b9;
+  color: #666666 !important;
+}
+
+.list-group.type4 .list-group-label {
+  color: #1191b9 !important;
+}
+
+.list-group.type4 .toggle-button {
+  color: #1191b9 !important;
 }
 
 .list-group .toggle-button {
