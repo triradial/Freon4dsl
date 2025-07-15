@@ -221,39 +221,51 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectPeriod(period: Period): Box {
         const element: Period = period
         const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
-        let box: Box = BoxUtil.partWrapperBox(
-            element,
-            "period",
-            "ItemGroupComponent",
-            BoxFactory.verticalLayout(element, "period-detail", "", [
-                ...(showDescriptions
-                    ? [
-                          BoxFactory.horizontalLayout(
-                              element,
-                              "period-hlist-line-1",
-                              "",
-                              [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
-                              { selectable: false, cssClass: "align-top" },
-                          ),
-                      ]
-                    : []),
-                BoxUtil.partWrapperBox(
+        let box: Box = 
+            BoxUtil.partWrapperBox(
+                element,
+                "period",
+                "ItemGroupComponent", 
+                BoxFactory.verticalLayout(
                     element,
-                    "events",
-                    "ListGroupComponent",
-                    BoxUtil.verticalPartListBox(element, element.events, "events", null, this.handler),
-                    {
-                        params: [
-                            { key: "cssClass", value: "type2" },
-                            { key: "canAdd", value: "true" },
-                            { key: "canExpand", value: "true" },
-                            { key: "isExpanded", value: "false" },
-                            { key: "selectable", value: "false" },
-                            { key: "label", value: "Events" },
-                        ],
-                    },
+                    "period-detail",
+                    "",
+                    [
+                        ...(showDescriptions
+                            ? [
+                                BoxFactory.horizontalLayout(
+                                    element,
+                                    "period-hlist-line-1",
+                                    "",
+                                    [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
+                                    { selectable: false, cssClass: "align-top" },
+                                ),
+                            ] : []
+                        ),
+                        BoxUtil.partWrapperBox(
+                            element,
+                            "events",
+                            "ListGroupComponent",
+                            BoxUtil.verticalPartListBox(
+                                element, 
+                                element.events, 
+                                "events", 
+                                null, 
+                                this.handler
+                            ),
+                            { 
+                                params: [
+                                    { key: "cssClass", value: "type2" },
+                                    { key: "canAdd", value: "true" },
+                                    { key: "canExpand", value: "true" },
+                                    { key: "isExpanded", value: "false" },
+                                    { key: "selectable", value: "false" },
+                                    { key: "label", value: "Events" },
+                                ],
+                            },
+                        ),
+                    ]
                 ),
-<<<<<<< HEAD
                 {
                     params: [
                         { key: "cssClass", value: "type1" },
@@ -267,147 +279,6 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 },
             )
         return box;
-    }
-
-    projectEvent(event: Event): Box {
-        const element: Event = event;
-        const showScheduling = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showScheduling;
-        const showChecklists = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showChecklists;
-        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions;
-        let box: Box = 
-            BoxUtil.partWrapperBox(
-                element,
-                "event",
-                "ItemGroupComponent",
-                BoxFactory.verticalLayout(
-                    element,
-                    "Event-detail",
-                    "",
-                    [
-                        BoxFactory.horizontalLayout(
-                            element as Event,
-                            "Event-hlist-line-1",
-                            "",
-                            [
-                                BoxUtil.labelBox(
-                                    element as Event, 
-                                    "This is a", 
-                                    "top-1-line-1-item-0",
-                                    { selectable: false }
-                                ),
-                                BoxUtil.limitedBox(
-                                    element as Event,
-                                    "typeOfEvent",
-                                    (selected: string) => {
-                                        ;(element as Event).typeOfEvent = FreNodeReference.create<TypeOfEvent>(selected, "TypeOfEvent")
-                                    },
-                                    LimitedDisplay.SELECT,
-                                    StudyConfigurationModelEnvironment.getInstance().scoper,
-                                ),
-                                BoxUtil.labelBox(
-                                    element as Event, 
-                                    "that is also referred to as", 
-                                    "top-1-line-1-item-2"
-                                ),
-                                BoxUtil.textBox(
-                                    element as Event, 
-                                    "alternativeName"
-                                ),
-                            ],
-                            { selectable: true },
-                        ),
-
-                        ...(showDescriptions === true 
-                            ? [
-                                BoxUtil.getBoxOrAction(
-                                    element, 
-                                    "description", 
-                                    "Description", 
-                                    this.handler
-                                )
-                            ] : []
-                        ),
-
-                        ...(showScheduling === true
-                            ? [
-                                BoxUtil.partWrapperBox(
-                                    element,
-                                    "schedule",
-                                    "ListGroupComponent",
-                                    BoxUtil.getBoxOrAction(
-                                        element, 
-                                        "schedule", 
-                                        "EventSchedule", 
-                                        this.handler
-                                    ),
-                                    {
-                                        params: [
-                                            { key: "cssClass", value: "type3" },
-                                            { key: "canExpand", value: "true" },
-                                            { key: "isExpanded", value: "false" },
-                                            { key: "selectable", value: "false" },
-                                            { key: "label", value: "Schedule" },
-                                        ],
-                                    },
-                                ),
-                            ] : []
-                        ),
-
-                        ...(showChecklists === true
-                            ? [
-                                BoxUtil.partListWrapperBox(
-                                    element,
-                                    "tasks",
-                                    "ListGroupComponent",
-                                    BoxUtil.verticalPartListBox(
-                                        element, 
-                                        element.tasks, 
-                                        "tasks", 
-                                        null, 
-                                        this.handler
-                                    ),
-                                    {
-                                        params: [
-                                            { key: "cssClass", value: "type3" },
-                                            { key: "canAdd", value: "true" },
-                                            { key: "canExpand", value: "true" },
-                                            { key: "isExpanded", value: "false" },
-                                            { key: "selectable", value: "false" },
-                                            { key: "label", value: "Checklist" },
-                                        ],
-                                    },
-                                ),
-                            ] : []
-                        ),
-                    ]
-                ),
-                {
-                    params: [
-                        { key: "cssClass", value: "type2" },
-                        { key: "canDelete", value: "true" },
-                        { key: "canDuplicate", value: "true" },
-                        { key: "canExpand", value: "true" },
-                        { key: "isExpanded", value: "false" },
-                        { key: "selectable", value: "false" },
-                        { key: "label", value: "Event" },
-                    ],
-                },
-=======
-            ]),
-            {
-                params: [
-                    { key: "cssClass", value: "type1" },
-                    { key: "canDelete", value: "true" },
-                    { key: "canDuplicate", value: "true" },
-                    { key: "canExpand", value: "true" },
-                    { key: "isExpanded", value: "false" },
-                    { key: "selectable", value: "false" },
-                    { key: "label", value: "Period" },
-                ],
-            },
->>>>>>> 9a7540156d3e299404eceabf0c7eb695e8cf9761
-        )
-        return box
     }
 
     projectEvent(event: Event): Box {
@@ -899,7 +770,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             ]),
             {
                 params: [
-                    { key: "cssClass", value: "type3" },
+                    { key: "cssClass", value: "type5" },
                     { key: "canShare", value: "true" },
                     { key: "isRequired", value: "true" },
                 ],
@@ -920,7 +791,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
             ]),
             {
                 params: [
-                    { key: "cssClass", value: "type3" },
+                    { key: "cssClass", value: "type5" },
                     { key: "canShare", value: "true" },
                     { key: "isRequired", value: "true" },
                 ],
