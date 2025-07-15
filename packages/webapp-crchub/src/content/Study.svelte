@@ -145,6 +145,8 @@
         // if (studyConfiguration.showNotes) {
         //     names.push("NotesShow");
         // }
+        
+        names.push("Custom");
 
         console.log("[DEBUG] updateVisibleProjections", names);
         const proj = dslEditor.projection;
