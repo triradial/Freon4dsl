@@ -8,7 +8,6 @@ import {
     Box,
     createDefaultExpressionBox,
     TableRowBox,
-    MultiLineTextBox2,
     BoxFactory,
     BoxUtil,
     FreNodeReference,
