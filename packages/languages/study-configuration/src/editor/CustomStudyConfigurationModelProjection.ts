@@ -217,18 +217,33 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     projectDescription(description: Description): Box {
         const element: Description = description
         const ph = "<description>"
-        return new MultiLineTextBox2(
-            element,
-            "study-part-description",
-            () => {
-                return element.text
-            },
-            (t: string) => {
-                element.text = t
-            },
-            { placeHolder: ph, cssClass: "desc" },
-        )
-    }
+        let box: Box = 
+            BoxUtil.partWrapperBox(
+                element,
+                "study-part-description",
+                "MultilineTextComponent", 
+                BoxUtil.textBox(element, "text"),
+                {
+                    params: [
+                        { key: "selectable", value: "false" }
+                    ],
+                },
+            )
+        return box;  
+    }        
+
+    //     return new MultiLineTextBox2(
+    //         element,
+    //         "study-part-description",
+    //         () => {
+    //             return element.text
+    //         },
+    //         (t: string) => {
+    //             element.text = t
+    //         },
+    //         { placeHolder: ph, cssClass: "desc" },
+    //     )
+    // }
 
     projectPeriod(period: Period): Box {
         const element: Period = period
@@ -290,7 +305,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     ],
                 },
             )
-        return box
+        return box;
     }
 
     projectEvent(event: Event): Box {

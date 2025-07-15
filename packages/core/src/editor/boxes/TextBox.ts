@@ -5,9 +5,15 @@ import { FreCaret, FreCaretPosition } from "../util/index.js";
 import type { FreNode } from "../../ast/index.js";
 import { Box } from "./Box.js";
 import { FreLogger } from "../../logging/index.js";
-import { CharAllowed } from "./CharAllowed.js";
 
 const LOGGER: FreLogger = new FreLogger("TextBox");
+
+export enum CharAllowed {
+    OK,
+    GOTO_NEXT,
+    GOTO_PREVIOUS,
+    NOT_OK,
+}
 
 export class TextBox extends Box {
     kind: string = "TextBox";

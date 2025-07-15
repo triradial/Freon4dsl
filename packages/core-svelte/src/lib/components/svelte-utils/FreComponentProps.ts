@@ -14,7 +14,6 @@ export interface MainComponentProps {
  */
 export interface FreComponentProps<T extends Box> extends MainComponentProps {
     box: T;
-    cssClass: string;
 }
 
 /**

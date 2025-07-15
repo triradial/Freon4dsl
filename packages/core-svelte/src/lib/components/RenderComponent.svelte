@@ -36,9 +36,6 @@
         LimitedDisplay,
         isActionTextBox,
         isNullOrUndefined, type ClientRectangle, UndefinedRectangle,
-        /** M+G: start updates */
-        isMultiLineTextBox2,
-        /** M+G: end updates */
     } from "@freon4dsl/core"
     import MultiLineTextComponent from './MultiLineTextComponent.svelte';
     import EmptyLineComponent from './EmptyLineComponent.svelte';
@@ -62,9 +59,6 @@
     import SwitchComponent from './BooleanSwitchComponent.svelte';
     import ButtonComponent from './ButtonComponent.svelte';
     import FragmentComponent from './FragmentComponent.svelte';
-    /** M+G: start updates */
-    import MultiLineTextComponent2 from './MultiLineTextComponent2.svelte';
-    /** M+G: end updates */
     import { componentId, findCustomComponent } from '../index.js';
 
     import ErrorMarker from './ErrorMarker.svelte';
@@ -74,14 +68,7 @@
 
     const LOGGER = RENDER_LOGGER;
 
-    let { editor, box, cssClass }: FreComponentProps<Box> = $props();
-
-    const isFullWidth = $derived(
-        !isNullOrUndefined(box) && (
-            isMultiLineTextBox(box)
-            || isMultiLineTextBox2(box)
-        )
-    );
+    let { editor, box }: FreComponentProps<Box> = $props();
     
     let id: string = $state('');
     let element: HTMLElement | undefined = $state(undefined);
@@ -166,16 +153,16 @@
      Their children are, and each child gets its own surrounding RenderComponent.
 -->
 {#if isElementBox(box)}
-    <ElementComponent {box} {editor} cssClass={box.cssClass} />
+    <ElementComponent {box} {editor} />
 {:else}
     {#if errMess.length > 0 && !isNullOrUndefined(element)}
-        <ErrorMarker {box} {editor} cssClass={box.cssClass} />
+        <ErrorMarker {box} {editor} />
     {/if}
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events -->
     <!--	svelte-ignore a11y_click_events_have_key_events -->
     <span
         {id}
-        class="render-component {errorCls} {selectedCls} {isFullWidth ? 'w-full' : ''}"
+        class="render-component {errorCls} {selectedCls}}"
         onclick={onClick}
         bind:this={element}
         role="group"
@@ -183,71 +170,58 @@
         {#if box === null || box === undefined}
             <p class="error">[BOX IS NULL OR UNDEFINED]</p>
         {:else if isBooleanControlBox(box) && box.showAs === BoolDisplay.CHECKBOX}
-            <BooleanCheckboxComponent {box} {editor} cssClass={box.cssClass} />
+            <BooleanCheckboxComponent {box} {editor} />
         {:else if isBooleanControlBox(box) && box.showAs === BoolDisplay.RADIO_BUTTON}
-            <BooleanRadioComponent {box} {editor} cssClass={box.cssClass} />
+            <BooleanRadioComponent {box} {editor} />
         {:else if isBooleanControlBox(box) && box.showAs === BoolDisplay.SWITCH}
-            <SwitchComponent {box} {editor} cssClass={box.cssClass} />
+            <SwitchComponent {box} {editor} />
         {:else if isBooleanControlBox(box) && box.showAs === BoolDisplay.INNER_SWITCH}
-            <InnerSwitchComponent {box} {editor} cssClass={box.cssClass} />
+            <InnerSwitchComponent {box} {editor} />
         {:else if isNumberControlBox(box)}
-            <NumericSliderComponent {box} {editor} cssClass={box.cssClass} />
+            <NumericSliderComponent {box} {editor} />
         {:else if isLimitedControlBox(box) && box.showAs === LimitedDisplay.RADIO_BUTTON}
-            <LimitedRadioComponent {box} {editor} cssClass={box.cssClass} />
+            <LimitedRadioComponent {box} {editor} />
         {:else if isLimitedControlBox(box) && box.showAs === LimitedDisplay.CHECKBOX}
-            <LimitedCheckboxComponent {box} {editor} cssClass={box.cssClass} />
+            <LimitedCheckboxComponent {box} {editor} />
         {:else if isButtonBox(box)}
-            <ButtonComponent {box} {editor} cssClass={box.cssClass} />
+            <ButtonComponent {box} {editor}  />
         {:else if isExternalBox(box)}
             {#if !isNullOrUndefined(ExternalComponent)}
-                <ExternalComponent {box} {editor} cssClass={box.cssClass}></ExternalComponent>
+                <ExternalComponent {box} {editor}></ExternalComponent>
             {:else}
                 <p class="render-component-error">
                     [UNKNOWN EXTERNAL BOX TYPE: {box.externalComponentName}]
                 </p>
             {/if}
         {:else if isFragmentBox(box)}
-            <FragmentComponent {box} {editor} cssClass={box.cssClass} />
+            <FragmentComponent {box} {editor} />
         {:else if isGridBox(box)}
-            <GridComponent {box} {editor} cssClass={box.cssClass} />
+            <GridComponent {box} {editor} />
         {:else if isIndentBox(box)}
-            <IndentComponent {box} {editor} cssClass={box.cssClass} />
+            <IndentComponent {box} {editor} />
         {:else if isLabelBox(box)}
-            <LabelComponent {box} {editor} cssClass={box.cssClass} />
+            <LabelComponent {box} {editor} />
         {:else if isLayoutBox(box)}
-            <LayoutComponent {box} {editor} cssClass={box.cssClass} />
+            <LayoutComponent {box} {editor} />
         {:else if isListBox(box)}
-            <ListComponent {box} {editor} cssClass={box.cssClass} />
+            <ListComponent {box} {editor} />
         {:else if isOptionalBox2(box)}
-            <OptionalComponent {box} {editor} cssClass={box.cssClass} />
+            <OptionalComponent {box} {editor} />
         {:else if isSvgBox(box)}
-            <SvgComponent {box} {editor} cssClass={box.cssClass} />
+            <SvgComponent {box} {editor}  />
         {:else if isTableBox(box)}
-            <TableComponent {box} {editor} cssClass={box.cssClass} />
+            <TableComponent {box} {editor} />
         {:else if isTextBox(box)}
-            <TextComponent {box} {editor} cssClass={box.cssClass} partOfDropdown={false} text="" isEditing={false} toParent={() => {} } />
+            <TextComponent {box} {editor} partOfDropdown={false} text="" isEditing={false} toParent={() => {} } />
         {:else if isMultiLineTextBox(box)}
-            <MultiLineTextComponent {box} {editor} cssClass={box.cssClass} />
+            <MultiLineTextComponent {box} {editor} />
         {:else if isActionBox(box) || isSelectBox(box) || isReferenceBox(box)}
-            <TextDropdownComponent {box} {editor} cssClass={box.cssClass} />
+            <TextDropdownComponent {box} {editor} />
         {:else if isEmptyLineBox(box)}
-            <EmptyLineComponent {box} {editor} cssClass={box.cssClass} />
-        <!-- M+G: start updates -->
-        {:else if isMultiLineTextBox2(box)}
-            <MultiLineTextComponent2 {box} {editor} cssClass={box.cssClass} />
-        <!-- M+G: end updates -->
+            <EmptyLineComponent {box} {editor} />
         {:else}
             <!-- we use box["kind"] here instead of box.kind to avoid an error from svelte check-->
             <p class="render-component-unknown-box">[UNKNOWN BOX TYPE: {box['kind']}]</p>
         {/if}
     </span>
 {/if}
-
-<style>
-/* Add a style for non-selectable boxes */
-.render-component-not-selectable {
-    opacity: 0.5;
-    pointer-events: none;
-    /* You can adjust the style as needed for better UX */
-}
-</style>

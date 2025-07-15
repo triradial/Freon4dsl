@@ -26,10 +26,7 @@ import {
     AbstractExternalBox,
     ExternalPartListBox,
     isExternalPartListBox,
-    ReferenceBox,
-    /** START - M+G */
-    MultiLineTextBox2,
-    /** END - M+G */
+    ReferenceBox
 } from "./internal.js";
 import type { SelectOption } from "./internal.js";
 import type { BoolFunctie } from "./internal.js";
@@ -84,11 +81,6 @@ const cacheGridcellOff: boolean = true;
 const cacheTablecellOff: boolean = true;
 let cacheExternalsOff: boolean = true;
 
-/** START - M+G */
-let multiTextCache: BoxCache<MultiLineTextBox2> = {};
-let cacheMultilineTextOff: boolean = false;
-/** END - M+G */
-
 /**
  * Caching of boxes, avoid recalculating them.
  */
@@ -114,9 +106,6 @@ export class BoxFactory {
         gridcellCache = {};
         tableCellCache = {};
         externalCache = {};
-        /** START - M+G */
-        multiTextCache = {};
-        /** END - M+G */
     }
 
     public static cachesOff() {
@@ -136,9 +125,6 @@ export class BoxFactory {
         cacheHorizontalListOff = true;
         cacheVerticalListOff = true;
         cacheExternalsOff = true;
-        /** START - M+G */
-        cacheMultilineTextOff = true;
-        /** END - M+G */
     }
 
     public static cachesOn() {
@@ -158,9 +144,6 @@ export class BoxFactory {
         cacheHorizontalListOff = false;
         cacheVerticalListOff = false;
         cacheExternalsOff = false;
-        /** START - M+G */
-        cacheMultilineTextOff = false;
-        /** END - M+G */
     }
 
     /**
@@ -640,23 +623,6 @@ export class BoxFactory {
             return creator();
         }
     }
-
-    /** START - M+G */
-    static multitext(element: FreNode, role: string, getText: () => string, setText: (text: string) => void, initializer?: Partial<MultiLineTextBox2>): MultiLineTextBox2 {
-        if (cacheMultilineTextOff) {
-            return new MultiLineTextBox2(element, role, getText, setText, initializer);
-        }
-        // 1. Create the text box, or find the one that already exists for this element and role
-        const creator = () => new MultiLineTextBox2(element, role, getText, setText);
-        const result: MultiLineTextBox2 = this.find<MultiLineTextBox2>(element, role, creator, multiTextCache);
-
-        // 2. Apply the other arguments in case they have changed
-        result.$getText = getText;
-        result.$setText = setText;
-        FreUtils.initializeObject(result, initializer);
-        return result;
-    }
-    /** END - M+G */
 }
 
 const equals = (a, b): boolean | any => {

@@ -9,6 +9,7 @@ import TimePickerComponent from "./components/custom/TimePickerComponent.svelte"
 import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 import ItemGroupComponent2 from "./components/custom/ItemGroupComponent2.svelte";
+import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
 
 const LOGGER = new FreLogger("init");
 
@@ -48,6 +49,7 @@ setCustomComponents([
     { component: ListGroupComponent, knownAs: "ListGroupComponent" },
     { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
     { component: ItemGroupComponent2, knownAs: "ItemGroupComponent2" },
+    { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
 ])
 
 LOGGER.log('--- END ---');

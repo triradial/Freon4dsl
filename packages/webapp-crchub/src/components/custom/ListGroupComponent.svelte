@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { AST, FreEditor, FreLanguage, FreLogger, PartListWrapperBox } from "@freon4dsl/core";
+    import { AST, FreEditor, FreLanguage, FreLogger, PartWrapperBox } from "@freon4dsl/core";
     import { RenderComponent } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
     // ts-ignore
@@ -9,7 +9,7 @@
     const LOGGER = new FreLogger("ListGroupComponent");
     // LOGGER.active = true;
     
-    const { box, editor } = $props<{ box: PartListWrapperBox, editor: FreEditor }>();
+    const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
 
     // Props
     let cssClass = box && box.findParam("cssClass") || "";

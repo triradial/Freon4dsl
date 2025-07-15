@@ -6,7 +6,8 @@ global {
         ItemGroupComponent,
         ItemGroupComponent2,
         DatePickerComponent,
-        TimePickerComponent
+        TimePickerComponent,
+        MultilineTextComponent
     }
 }
 

@@ -449,9 +449,9 @@ main {
 /* #endregion */
 
 /* #region MultilineText2 Component */
-.multiline2-component {
+/* .multiline2-component {
   padding-right: 0.75rem;
-}
+} */
 
 .multiline-container {
   padding: 0 0 0 0.125rem;
@@ -548,6 +548,30 @@ span:has(> .tinymce-wrapper) {
   display: list-item !important;
   list-style: inherit !important;
 }
+
+/* New */
+.multiline2-component {
+  width: 100%;
+}
+.multiline2-editor.edit-mode {
+  width: 100%;
+  position: relative;
+}
+.multiline2-text.view-mode {
+  display: block;
+  min-height: 2em;
+  padding: 0.5em;
+  background: #222;
+  color: #eee;
+  border-radius: 4px;
+  border: 1px solid #444;
+}
+.text-component-placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+
 
 
 /* #endregion */

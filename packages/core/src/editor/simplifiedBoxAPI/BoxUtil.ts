@@ -30,9 +30,6 @@ import {
     StringWrapperBox,
     TextBox,
     VerticalListBox,
-    /** START - M+G */
-    MultiLineTextBox2,
-    /** END - M+G */
 } from "../boxes/index.js";
 import type { FreScoper } from "../../scoper/index.js";
 import { RoleProvider } from "./RoleProvider.js";
@@ -43,8 +40,8 @@ import { UtilPartHelpers } from "./box-util-helpers/UtilPartHelpers.js";
 import { UtilLimitedHelpers } from "./box-util-helpers/UtilLimitedHelpers.js";
 
 /** Start - M+G */
-import { FreUtils } from "../../util/index.js";
-import { runInAction } from "mobx";
+// import { FreUtils } from "../../util/index.js";
+// import { runInAction } from "mobx";
 /**End - M+G */
 
 export class FreListInfo {
@@ -545,64 +542,4 @@ export class BoxUtil {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-wrapper";
         return new RefListWrapperBox(externalComponentName, node, roleName, propertyName, childBox, initializer);
     }
-    
-    /**
-     * Returns a textBox for property named 'propertyName' within 'element'.
-     * When the property is a list (the type is "string[]", or "identifier[]"), this method can be
-     * called for each item in the list. In that case an index to the item needs to be provided.
-     * @param node the owning FreNode of the displayed property
-     * @param propertyName the name of the displayed property
-     * @param index the index of the item in the list, if the property is a list
-     */
-    static multiLineTextBox(node: FreNode, propertyName: string, index?: number, initializer?: Partial<MultiLineTextBox2>): MultiLineTextBox2 {
-        let result: MultiLineTextBox2 = null;
-        const updatedInitializer = {
-            selectable: initializer?.selectable ?? true,
-            placeHolder: BoxUtil.formatPlaceholder(initializer?.placeHolder, initializer?.propertyName),
-            ...initializer,
-        };
-        const property = node[propertyName];
-        // create the box
-        if (property !== undefined && property !== null && typeof property === "string") {
-            const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "MultiLineTextBox2", index);
-            result = BoxFactory.multitext(
-                node,
-                roleName,
-                () => node[propertyName],
-                (v: string) =>
-                    runInAction(() => {
-                        node[propertyName] = v;
-                    }),
-                updatedInitializer,
-            );
-            result.propertyName = propertyName;
-            result.propertyIndex = index;
-        } else {
-            FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + '"');
-        }
-        return result;
-    }
-
-    static emptyLineBox2(node: FreNode, role: string, cssClass?: string): EmptyLineBox {
-        const updatedInitializer: Partial<EmptyLineBox> = {
-            cssClass: cssClass,
-        };
-        return new EmptyLineBox(node, role, updatedInitializer);
-    }
-
-    static switchElement(element: FreNode, id: string, label: string): Box {
-        return BoxFactory.horizontalLayout(
-            element,
-            id + "group",
-            "",
-            [this.booleanBox(element, id, { yes: "YES", no: "NO" }, BoolDisplay.SWITCH), this.labelBox(element, label, id + "_label")],
-            { selectable: false, cssClass: "align-center" },
-        );
-    }
-
-    static formatPlaceholder(placeholder: string | undefined, propertyname: string): string {
-        return placeholder !== undefined ? `${BoxUtil.BEGIN_CHAR}${placeholder}${BoxUtil.END_CHAR}` : `${BoxUtil.BEGIN_CHAR}${propertyname}${BoxUtil.END_CHAR}`;
-    }
-    /** END - M+G */
-
 }
