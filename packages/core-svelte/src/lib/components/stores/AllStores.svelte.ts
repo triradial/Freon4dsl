@@ -35,4 +35,5 @@ export const activeElem: { value: GridIndex | undefined } = $state({ value: unde
 // id of the svelte component that contains the 'active' element
 export const activeIn: { value: string } = $state({ value: '' });
 
+// GM: added to store the viewport sizes
 export const viewport = writable(new ViewportSizes());

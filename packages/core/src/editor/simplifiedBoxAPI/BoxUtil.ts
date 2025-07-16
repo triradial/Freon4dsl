@@ -12,14 +12,14 @@ import {
     ExternalPartListBox,
     ExternalRefBox,
     ExternalRefListBox,
-    ExternalStringBox,
+    ExternalStringBox, 
+    FragmentWrapperBox,
     HorizontalListBox,
     IndentBox,
     LabelBox,
     LimitedControlBox,
     LimitedDisplay,
     NumberDisplay,
-    type NumberDisplayInfo,
     NumberWrapperBox,
     PartListWrapperBox,
     PartWrapperBox,
@@ -29,8 +29,9 @@ import {
     SelectBox,
     StringWrapperBox,
     TextBox,
-    VerticalListBox,
-} from "../boxes/index.js";
+    VerticalListBox
+} from "../boxes/index.js"
+import type { NumberDisplayInfo } from "../boxes/internal.js";
 import type { FreScoper } from "../../scoper/index.js";
 import { RoleProvider } from "./RoleProvider.js";
 import { FreProjectionHandler } from "../projections/index.js";
@@ -38,11 +39,6 @@ import { UtilPrimHelper } from "./box-util-helpers/UtilPrimHelper.js";
 import { UtilRefHelpers } from "./box-util-helpers/UtilRefHelpers.js";
 import { UtilPartHelpers } from "./box-util-helpers/UtilPartHelpers.js";
 import { UtilLimitedHelpers } from "./box-util-helpers/UtilLimitedHelpers.js";
-
-/** Start - M+G */
-// import { FreUtils } from "../../util/index.js";
-// import { runInAction } from "mobx";
-/**End - M+G */
 
 export class FreListInfo {
     text: string;
@@ -498,6 +494,16 @@ export class BoxUtil {
     ): BooleanWrapperBox {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-wrapper";
         return new BooleanWrapperBox(externalComponentName, node, roleName, propertyName, childBox, initializer);
+    }
+    
+    static fragmentWrapperBox(
+        node: FreNode,
+        externalComponentName: string,
+        childBox: Box,
+        initializer?: Partial<BooleanWrapperBox>,
+    ): FragmentWrapperBox {
+        const roleName: string = RoleProvider.property(node.freLanguageConcept(), externalComponentName) + "-wrapper-" + childBox.id;
+        return new FragmentWrapperBox(externalComponentName, node, roleName,childBox, initializer);
     }
 
     static partWrapperBox(

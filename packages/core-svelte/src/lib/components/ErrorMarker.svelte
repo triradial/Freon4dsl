@@ -1,8 +1,8 @@
 <script lang="ts">
     import { tick } from 'svelte';
     import ErrorTooltip from './ErrorTooltip.svelte';
-    import type { FreComponentProps } from "$lib";
-    import type {Box} from "@freon4dsl/core";
+    import type { FreComponentProps } from "../index.js";
+    import {Box} from "@freon4dsl/core";
 
     let { editor, box }: FreComponentProps<Box> = $props();
 
@@ -38,11 +38,11 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <span
     onclick={ignore}
-    class="error-positioning"
+    class="error-positioning {box.cssClass}"
     style="top: {top}px; height: {height}px;"
     role="contentinfo"
 >
-    <ErrorTooltip {box} {editor} hasErr={true} parentTop={top} parentLeft={2} cssClass="">
+    <ErrorTooltip {box} {editor} hasErr={true} parentTop={top} parentLeft={2}>
         <span class="error-marker" style="height: {height}px;">&nbsp</span>
     </ErrorTooltip>
 </span>

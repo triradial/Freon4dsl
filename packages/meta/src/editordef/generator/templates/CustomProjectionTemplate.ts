@@ -1,10 +1,10 @@
-import { Names, Imports } from "../../../utils/index.js"
+import { Names, Imports } from "../../../utils/on-lang/index.js"
 import { FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
 
 export class CustomProjectionTemplate {
     generate(language: FreMetaLanguage): string {
         const imports = new Imports()
-        imports.core.add(Names.FreNode).add(Names.Box).add(Names.FreProjection).add(Names.FreTableDefinition)
+        imports.core.add(Names.FreNode).add(Names.Box).add(Names.FreProjectionHandler).add(Names.FreProjection).add(Names.FreTableDefinition)
         return `
             // TEMPLATE: CustomProjectionTemplate.generate(...)
             ${imports.makeImports(language)}
@@ -20,6 +20,7 @@ export class CustomProjectionTemplate {
              */
             export class ${Names.customProjection(language)} implements ${Names.FreProjection} {
                 name: string = "Custom";
+                handler: FreProjectionHandler;
                 nodeTypeToBoxMethod: Map<string, (node: ${Names.FreNode}) => ${Names.Box}> =
                     new Map<string, (node: ${Names.FreNode}) => ${Names.Box}>([
                         // register your custom box methods here

@@ -5,12 +5,10 @@ import {
     FreMetaLimitedConcept,
     FreMetaProperty,
 } from "../../../languagedef/metalanguage/index.js";
-import {
-    CONFIGURATION_FOLDER,
-    isNullOrUndefined,
-    Names,
-    LOG2USER, Imports
-} from "../../../utils/index.js"
+import { CONFIGURATION_FOLDER, Names, Imports } from "../../../utils/on-lang/index.js";
+import { LOG2USER } from "../../../utils/basic-dependencies/index.js";
+import { isNullOrUndefined } from "../../../utils/file-utils/index.js";
+import { NamesForEditor } from "../../../utils/on-lang-and-editor/index.js";
 import {
     FreEditExtraClassifierInfo,
     FreEditClassifierProjection,
@@ -64,16 +62,16 @@ export class EditorDefTemplate {
         language.concepts.forEach((concept) => {
             if (!(concept instanceof FreMetaLimitedConcept) && !concept.isAbstract) {
                 constructors.push(`["${Names.concept(concept)}", () => {
-                        return new ${Names.boxProvider(concept)}(${handlerVarName})
+                        return new ${NamesForEditor.boxProvider(concept)}(${handlerVarName})
                     }]`);
-                imports.editor.add(Names.boxProvider(concept));
+                imports.editor.add(NamesForEditor.boxProvider(concept));
             }
         });
         language.units.forEach((unit) => {
             constructors.push(`["${Names.classifier(unit)}", () => {
-                        return new ${Names.boxProvider(unit)}(${handlerVarName})
+                        return new ${NamesForEditor.boxProvider(unit)}(${handlerVarName})
                     }]`);
-            imports.editor.add(Names.boxProvider(unit));
+            imports.editor.add(NamesForEditor.boxProvider(unit));
         });
 
         // get all the table header info
@@ -191,7 +189,7 @@ export class EditorDefTemplate {
                 ${hasBinExps ? `${handlerVarName}.addProjection("${Names.brackets}");` : ``}
                 ${editorDef
                     .getAllNonDefaultProjectiongroups()
-                    .map((group) => `${handlerVarName}.addProjection("${Names.projection(group)}")`)
+                    .map((group) => `${handlerVarName}.addProjection("${NamesForEditor.projection(group)}")`)
                     .join(";\n")}
                 for (const p of freonConfiguration.customProjection) {
                     p.handler = ${handlerVarName};

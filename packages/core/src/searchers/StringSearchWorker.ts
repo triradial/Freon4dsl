@@ -1,4 +1,5 @@
 import type { FreNode } from "../ast/index.js";
+import { notNullOrUndefined } from "../util/index.js"
 import type { FreWriter } from "../writer/index.js";
 import type { FreSearchWorker } from "./FreSearchWorker.js";
 
@@ -57,7 +58,7 @@ export class StringSearchWorker implements FreSearchWorker {
     }
 
     execBefore(node: FreNode): boolean {
-        if (!!this.writer) {
+        if (notNullOrUndefined(this.writer)) {
             if (!!this.metatype && this.metatype.length > 0) {
                 if (this.metatype === node.freLanguageConcept() || this.metatype === "FreNodeReference") {
                     if (this.writer.writeToString(node).includes(this.toFind)) {

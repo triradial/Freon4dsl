@@ -1,6 +1,15 @@
 <script lang="ts">
     import { LIMITEDCHECKBOX_LOGGER } from './ComponentLoggers.js';
-    import { SHIFT, CONTROL, ALT, SPACEBAR, ARROW_RIGHT, ARROW_LEFT, ARROW_DOWN, ARROW_UP } from '@freon4dsl/core';
+    import {
+        SHIFT,
+        CONTROL,
+        ALT,
+        SPACEBAR,
+        ARROW_RIGHT,
+        ARROW_LEFT,
+        ARROW_DOWN,
+        ARROW_UP
+    } from '@freon4dsl/core';
     import type { LimitedControlBox } from '@freon4dsl/core';
     import { onMount } from 'svelte';
     import { MdCheckbox } from '@material/web/all.js';
@@ -61,8 +70,14 @@
     });
 
     $effect(() => {
+        // runs after the initial onMount
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+    });
+
+    $effect(() => {
+        // Evaluated and re-evaluated when the box changes.
+        refresh('Refresh limited checkbox box changed ' + box?.id);
     });
 
     function setFocusToNext() {
@@ -144,7 +159,7 @@
     role="group"
     aria-labelledby={ariaLabel}
     {id}
-    class="limited-checkbox-component-group"
+    class="limited-checkbox-component-group {box.cssClass}"
     class:limited-checkbox-component-vertical={!isHorizontal}
 >
     {#each myEnum as nn, i}

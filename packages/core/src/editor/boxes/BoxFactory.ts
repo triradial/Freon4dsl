@@ -26,7 +26,7 @@ import {
     AbstractExternalBox,
     ExternalPartListBox,
     isExternalPartListBox,
-    ReferenceBox
+    ReferenceBox,
 } from "./internal.js";
 import type { SelectOption } from "./internal.js";
 import type { BoolFunctie } from "./internal.js";
@@ -382,17 +382,17 @@ export class BoxFactory {
     }
 
     static verticalList(
-        node: FreNode,
+        element: FreNode,
         role: string,
         propertyName: string,
         children?: (Box | null)[],
         initializer?: Partial<VerticalListBox>,
     ): VerticalListBox {
         if (cacheVerticalListOff) {
-            return new VerticalListBox(node, role, propertyName, children, initializer);
+            return new VerticalListBox(element, role, propertyName, children, initializer);
         }
-        const creator = () => new VerticalListBox(node, role, propertyName, children);
-        const result: VerticalListBox = this.find<VerticalListBox>(node, role, creator, verticalListCache);
+        const creator = () => new VerticalListBox(element, role, propertyName, children);
+        const result: VerticalListBox = this.find<VerticalListBox>(element, role, creator, verticalListCache);
         // 2. Apply the other arguments in case they have changed
         if (!equals(result.children, children)) {
             result.replaceChildren(children);

@@ -17,7 +17,9 @@ import {
     FreMetaPrimitiveProperty,
     FreMetaProperty,
 } from "../../../../languagedef/metalanguage/index.js";
-import { LOG2USER, Names } from "../../../../utils/index.js";
+import { LOG2USER } from '../../../../utils/basic-dependencies/index.js';
+import { Names } from '../../../../utils/on-lang/index.js';
+import { NamesForEditor } from '../../../../utils/on-lang-and-editor/index.js';
 import { ParserGenUtil } from "../../../../parsergen/parserTemplates/ParserGenUtil.js";
 import {
     PrimitivePropertyBoxesHelper,
@@ -322,11 +324,17 @@ export class ItemBoxHelper {
             this._myTemplate.imports.core.add("FragmentBox");
 
             this._myTemplate.fragmentMethods.push(
-                `private ${Names.fragment(fragmentDefinition)}(): FragmentBox {
-                    return new FragmentBox(${elementVarName}, "${myRole}", ${fragmentDefinitionStr});
+                `private ${NamesForEditor.fragment(fragmentDefinition)}(): FragmentBox {
+                    return new FragmentBox(${elementVarName}, "${myRole}", ${fragmentDefinitionStr}, {cssClass: "${myRole}"});
                 }`
             );
-            return `this.${Names.fragment(fragmentDefinition)}()`;
+            const resultBox = `this.${NamesForEditor.fragment(fragmentDefinition)}()`;
+
+            if (!!item.wrapperInfo) {
+                return this._myExternalHelper.wrapFragmentByExternal(item, elementVarName, resultBox)
+            } else {
+                return resultBox;
+            }
         } else {
             return "";
         }

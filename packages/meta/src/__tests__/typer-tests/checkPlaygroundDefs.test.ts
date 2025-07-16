@@ -1,12 +1,12 @@
 import { FreMetaLanguage } from '../../languagedef/metalanguage';
 import { LanguageParser } from "../../languagedef/parser/LanguageParser";
-import { MetaLogger } from '../../utils';
+import { MetaLogger } from "../../utils/no-dependencies/index.js";
 import { TyperDef } from '../../typerdef/metalanguage';
 import { FreTyperMerger } from '../../typerdef/parser';
 import { describe, test, expect, beforeEach } from "vitest";
 import { FretClassifierSpec } from "../../typerdef/metalanguage"
 
-describe("Checking new typer", () => {
+describe("Checking typer", () => {
     const testdir = "src/__tests__/typer-tests/";
     let parser: FreTyperMerger;
     let language: FreMetaLanguage | undefined;

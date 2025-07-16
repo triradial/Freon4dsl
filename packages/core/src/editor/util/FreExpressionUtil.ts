@@ -1,14 +1,13 @@
 import { AST } from "../../change-manager/index.js";
 import {
     Box,
-    type HorizontalLayoutBox,
     isHorizontalBox,
-    type SelectOption,
     FreEditor,
     triggerTypeToString,
     BoxFactory,
-    type FreProjectionHandler,
+
 } from "../index.js";
+import type { HorizontalLayoutBox, SelectOption, FreProjectionHandler } from "../index.js";
 import type { FreBinaryExpression, FreExpressionNode } from "../../ast/index.js";
 import { FreLanguage } from "../../language/index.js";
 import {
@@ -23,8 +22,7 @@ import {
     LEFT_MOST,
     RIGHT_MOST,
     FreUtils,
-} from "../../util/index.js";
-import { NBSP } from "../index.js";
+} from "../../util/index.js";import { NBSP } from "../index.js";
 import { BehaviorExecutionResult } from "./BehaviorUtils.js";
 
 // const LOGGER = new FreLogger("FreExpressionNodeHelpers");

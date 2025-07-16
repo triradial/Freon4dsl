@@ -129,5 +129,14 @@
     "phase": "",
     "therapeuticArea": "",
     "currentProtocol": ""
+  },
+  {
+    "id": "30f3afa3-357c-4fe1-916c-10609703f8bd",
+    "name": "NewFreon",
+    "title": "",
+    "status": "Planning",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
   }
 ]

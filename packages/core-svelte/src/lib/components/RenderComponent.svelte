@@ -35,7 +35,7 @@
         BoolDisplay,
         LimitedDisplay,
         isActionTextBox,
-        isNullOrUndefined, type ClientRectangle, UndefinedRectangle,
+        isNullOrUndefined, type ClientRectangle, UndefinedRectangle
     } from "@freon4dsl/core"
     import MultiLineTextComponent from './MultiLineTextComponent.svelte';
     import EmptyLineComponent from './EmptyLineComponent.svelte';
@@ -69,7 +69,7 @@
     const LOGGER = RENDER_LOGGER;
 
     let { editor, box }: FreComponentProps<Box> = $props();
-    
+
     let id: string = $state('');
     let element: HTMLElement | undefined = $state(undefined);
     let selectedCls: string = $state(''); // css class name for when the node is selected
@@ -81,6 +81,8 @@
         LOGGER.log(
             'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
         );
+        // Note that click events on some components, like TextComponent, are already caught.
+        // These components need to take care of setting the currently selected element themselves.
         // Only allow selection if the box is selectable
         if (box.selectable) {
             editor.selectElementForBox(box);
@@ -115,7 +117,8 @@
         } else {
             const newSelectedCls = isSelected ? 'render-component-selected' : 'render-component-unselected'
             selectedChanged = (newSelectedCls !== selectedCls)
-            selectedCls = newSelectedCls        }
+            selectedCls = newSelectedCls
+        }
     });
 
     const refresh = (why?: string): void => {
@@ -162,7 +165,7 @@
     <!--	svelte-ignore a11y_click_events_have_key_events -->
     <span
         {id}
-        class="render-component {errorCls} {selectedCls}}"
+        class="render-component {errorCls} {selectedCls} "
         onclick={onClick}
         bind:this={element}
         role="group"
@@ -184,7 +187,7 @@
         {:else if isLimitedControlBox(box) && box.showAs === LimitedDisplay.CHECKBOX}
             <LimitedCheckboxComponent {box} {editor} />
         {:else if isButtonBox(box)}
-            <ButtonComponent {box} {editor}  />
+            <ButtonComponent {box} {editor} />
         {:else if isExternalBox(box)}
             {#if !isNullOrUndefined(ExternalComponent)}
                 <ExternalComponent {box} {editor}></ExternalComponent>
@@ -208,7 +211,7 @@
         {:else if isOptionalBox2(box)}
             <OptionalComponent {box} {editor} />
         {:else if isSvgBox(box)}
-            <SvgComponent {box} {editor}  />
+            <SvgComponent {box} {editor} />
         {:else if isTableBox(box)}
             <TableComponent {box} {editor} />
         {:else if isTextBox(box)}

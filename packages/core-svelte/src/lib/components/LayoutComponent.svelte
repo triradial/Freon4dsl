@@ -13,7 +13,7 @@
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
     // Props
-    let { editor, box, cssClass }: FreComponentProps<LayoutBox> = $props();
+    let { editor, box }: FreComponentProps<LayoutBox> = $props();
 
     let LOGGER: FreLogger = LAYOUT_LOGGER;
     let id: string = $state('');
@@ -31,8 +31,14 @@
     }
 
     $effect(() => {
+        // runs after the initial onMount
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+    });
+
+    $effect(() => {
+        // Evaluated and re-evaluated when the box changes.
+        refresh('Refresh Layout box changed ' + box?.id);
     });
 
     const refresh = (why?: string): void => {
@@ -50,32 +56,30 @@
             errMess = [];
         }
     };
-
-    $effect(() => {
-        // Evaluated and re-evaluated when the box changes.
-        refresh('Refresh Layout box changed ' + box?.id);
-    });
 </script>
 
 {#if errMess.length > 0}
-    <ErrorMarker {editor} {box} cssClass={box.cssClass} />
+    <ErrorMarker {editor} {box} />
 {/if}
 <span
+    class="layout-component {errorCls} {box.cssClass}"
     {id}
-    class="layout-component {errorCls} {cssClass}"
     class:layout-component-horizontal={isHorizontal}
     class:layout-component-vertical={!isHorizontal}
-
     tabindex="-1"
     bind:this={element}
 >
     {#if isHorizontal}
         {#each children as child (child.id)}
-            <RenderComponent box={child} {editor} cssClass={child.cssClass} />
+            <RenderComponent box={child} {editor} />
         {/each}
     {:else}
         {#each children as child (child.id)}
-            <RenderComponent box={child} {editor} cssClass={child.cssClass} />
+            <!--            {#if i > 0 && i < children.length && !(isEmptyLineBox(children[i - 1]))}
+                <br/>
+            {/if}
+-->
+            <RenderComponent box={child} {editor} />
         {/each}
     {/if}
 </span>

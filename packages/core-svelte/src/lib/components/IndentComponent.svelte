@@ -24,6 +24,8 @@
     $effect(() => {
         // runs after the initial onMount
         box.refreshComponent = refresh;
+        // Evaluated and re-evaluated when the box changes.
+        refresh(box?.$id);
     });
 
     const refresh = (why?: string): void => {

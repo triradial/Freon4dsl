@@ -61,8 +61,14 @@
     });
 
     $effect(() => {
+        // runs after the initial onMount
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+    });
+
+    $effect(() => {
+        // Evaluated and re-evaluated when the box changes.
+        refresh('Refresh limited radio box changed ' + box?.id);
     });
 
     const onChange = (event: MouseEvent) => {
@@ -101,7 +107,7 @@
     role="radiogroup"
     aria-labelledby={ariaLabel}
     {id}
-    class="limited-radio-component-group"
+    class="limited-radio-component-group {box.cssClass}"
     class:limited-radio-component-vertical={!isHorizontal}
 >
     {#each myEnum as nn, i}

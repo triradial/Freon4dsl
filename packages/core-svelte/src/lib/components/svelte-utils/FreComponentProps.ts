@@ -1,4 +1,4 @@
-import { type Box, FreEditor, type GridBox, type SelectOption } from '@freon4dsl/core';
+import { type Box, FreEditor, type GridBox, MenuItem, type SelectOption } from '@freon4dsl/core';
 import type { CaretDetails } from './CaretDetails';
 import type { TableDetails } from './TableDetails';
 
@@ -19,7 +19,9 @@ export interface FreComponentProps<T extends Box> extends MainComponentProps {
 /**
  * Properties for a GridComponent
  */
-export interface GridProps extends FreComponentProps<GridBox> {
+export interface GridProps {
+    editor: FreEditor;
+    box: GridBox;
 }
 
 /**
@@ -73,4 +75,3 @@ export interface ErrorProps<T extends Box> extends FreComponentProps<T> {
     parentLeft: number;
     children(): any; // replaces slot from Svelte version 4
 }
-

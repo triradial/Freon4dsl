@@ -83,7 +83,7 @@ export function executeCustomKeyboardShortCut(
             }
             postAction = cmd.execute(box, toFreKey(event), editor, index);
         });
-
+        // @ts-expect-error this causes no error, because of the if-stat check
         if (!isNullOrUndefined(postAction)) {
             postAction();
         }

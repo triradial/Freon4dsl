@@ -3,7 +3,8 @@ import { FreLogger } from "../../logging/index.js";
 import { Box, FreAction, FreEditor } from "../index.js";
 import type { FreExpressionNode } from "../../ast/index.js";
 import { isFreExpression } from "../../ast-utils/index.js";
-import { isProKey, type FreTriggerUse } from "../actions/index.js";
+import { isProKey } from "../actions/index.js";
+import type { FreTriggerUse } from "../actions/index.js";
 import { FreUtils } from "../../util/index.js";
 
 export type BooleanCallback = () => boolean;
