@@ -54,8 +54,14 @@
     });
 
     $effect(() => {
+        // runs after the initial onMount
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+    });
+
+    $effect(() => {
+        // Evaluated and re-evaluated when the box changes.
+        refresh('Refresh numeric slider box changed ' + box?.id);
     });
 
     /**
@@ -68,7 +74,7 @@
     };
 </script>
 
-<span class="numeric-slider-component" {id}>
+<span class="numeric-slider-component {box.cssClass}" {id}>
     <md-slider
         labeled
         ticks={showMarks}

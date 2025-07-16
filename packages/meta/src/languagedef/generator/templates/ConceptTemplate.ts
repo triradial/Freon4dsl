@@ -1,4 +1,4 @@
-import { GenerationUtil, Imports, Names } from "../../../utils/index.js"
+import { Imports, Names } from "../../../utils/on-lang/index.js"
 import {
     FreMetaPrimitiveProperty,
     FreMetaBinaryExpressionConcept,
@@ -9,6 +9,7 @@ import {
     FreMetaInstanceProperty,
     FreMetaClassifier,
     FreMetaPrimitiveType,
+    LangUtil,
 } from "../../metalanguage/index.js";
 import { ClassifierUtil } from "./ClassifierUtil.js";
 import { ConceptUtils } from "./ConceptUtils.js"
@@ -40,7 +41,7 @@ export class ConceptTemplate {
         imports.core = ClassifierUtil.findMobxImportsForConcept(hasSuper, concept)
             .add(implementsFre)
             .add(Names.FreParseLocation)
-        if (hasReferences) imports.core.add(Names.FreNodeReference)
+            if (hasReferences) imports.core.add(Names.FreNodeReference)
         imports.language = this.findModelImports(concept, myName);
 
         const metaType: string = Names.metaType();
@@ -93,7 +94,7 @@ export class ConceptTemplate {
         const hasSuper = !!concept.base;
         const extendsClass = hasSuper ? Names.concept(concept.base.referred) : "MobxModelElementImpl";
         const isAbstract = concept.isAbstract;
-        const baseExpressionName = Names.concept(GenerationUtil.findExpressionBase(concept));
+        const baseExpressionName = Names.concept(LangUtil.findExpressionBase(concept));
         const abstract = concept.isAbstract ? "abstract" : "";
         const imports = new Imports()
         imports.core = ClassifierUtil.findMobxImportsForConcept(hasSuper, concept)
@@ -209,14 +210,6 @@ export class ConceptTemplate {
             .map((predef) => `static ${predef.name}: ${myName};  // implementation of instance ${predef.name}`)
             .join("\n")}
                      static $freANY : ${myName};        // default predefined instance
-
-                // --- GENERATED: allInstances method for limited concept ---
-                static allInstances(): { key: string, name: string }[] {
-                    return [
-                        ${concept.instances.map((predef) => `{ key: "${predef.name}", name: ${myName}.${predef.name}.name }`).join(",\n                        ")}
-                    ];
-                }
-                // --- END GENERATED ---
 
                 ${ConceptUtils.makeBasicProperties(metaType, myName, hasSuper)}
                 ${concept

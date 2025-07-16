@@ -86,6 +86,11 @@
         box.setFocus = setFocus;
     });
 
+    $effect(() => {
+        // Evaluated and re-evaluated when the box changes.
+        refresh(box?.id);
+    });
+
     const onKeydown = (event: KeyboardEvent) => {
         // todo this does not work anymore because the key down is handled by the box inside the table cell, remove it?
         LOGGER.log('GridCellComponent onKeyDown');
@@ -96,11 +101,6 @@
             executeCustomKeyboardShortCut(event, index, box, editor);
         }
     };
-
-    $effect(() => {
-        // Evaluated and re-evaluated when the box changes.
-        refresh(box?.id);
-    });
 </script>
 
 <div

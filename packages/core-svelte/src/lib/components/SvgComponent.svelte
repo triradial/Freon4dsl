@@ -1,6 +1,5 @@
 <script lang="ts">
     import { isNullOrUndefined, type SvgBox } from '@freon4dsl/core';
-    import { onMount } from 'svelte';
     import { componentId } from '../index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
     import { LABEL_LOGGER } from './ComponentLoggers.js';
@@ -15,11 +14,8 @@
     let viewBoxHeight: number = $state(0);
     let css: string = $state('');
 
-    onMount(() => {
-        box.refreshComponent = refresh;
-    });
-
     $effect(() => {
+        // runs after the initial onMount
         box.refreshComponent = refresh;
     });
 

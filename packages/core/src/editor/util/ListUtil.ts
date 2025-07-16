@@ -149,18 +149,6 @@ export function dropListElement(
     }
 }
 
-export function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
-    const methodName = 'smartUpdate';
-    const args = [originalElement];
-    // Call methodName if it exists on the element
-    if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === 'function') {
-        console.log(`Calling ${methodName} on the instance.`);
-        return (duplicatedElement as any)[methodName](...args);
-    } else {
-        console.log(`Method ${methodName} does not exist on the instance.`);
-    }
-}
-
 /**
  * This function builds the MenuItems for the context menu that is coupled to a list box.
  * @param conceptName       the expected type of the elements in the list
@@ -271,16 +259,7 @@ export function getContextMenuOptions(
         (element: FreNode, index: number, editor: FreEditor) =>
             pasteListElement(listParent, propertyName, index, editor, false),
     );
-    const smartDup = new MenuItem(
-        "Duplicate",
-        "Ctrl+D",
-        // @ts-ignore
-        (element: FreNode, index: number, editor: FreEditor) => {
-            copyListElement(element, editor);
-            smartDuplicate(element, editor.copiedElement);
-            pasteListElement(listParent, propertyName, index, editor, false);
-        }       
-    );
+
     // now create the whole item list
     if (optionsType === MenuOptionsType.placeholder) {
         // add lesser items for a placeholder
@@ -321,7 +300,6 @@ export function getContextMenuOptions(
             ),
             pasteBefore,
             pasteAfter,
-            smartDup,
         ];
     }
     return items;

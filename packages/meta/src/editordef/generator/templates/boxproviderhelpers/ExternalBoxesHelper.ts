@@ -1,11 +1,11 @@
-import { FreEditPropertyProjection, FreEditSimpleExternal } from "../../../metalanguage/index.js";
+import { FreEditExternalInfo, FreEditFragmentProjection, FreEditPropertyProjection, FreEditSimpleExternal } from "../../../metalanguage/index.js"
 import {
     FreMetaConceptProperty,
     FreMetaLanguage,
     FreMetaPrimitiveProperty,
     FreMetaProperty,
 } from "../../../../languagedef/metalanguage/index.js";
-import { Names } from "../../../../utils/index.js";
+import { Names } from '../../../../utils/on-lang/index.js';
 import { BoxProviderTemplate } from "../BoxProviderTemplate.js";
 
 export class ExternalBoxesHelper {
@@ -212,11 +212,31 @@ export class ExternalBoxesHelper {
     }
 
     private buildInitializer(item: FreEditPropertyProjection) {
+        return this.buildExternalInitializer(item.externalInfo!)
+    }
+ 
+    private buildFragmentInitializer(item: FreEditFragmentProjection) {
+        return this.buildExternalInitializer(item.wrapperInfo!)
+    }
+
+    private buildExternalInitializer(externalInfo: FreEditExternalInfo) {
         // build the initializer with parameters to the external component
         let initializer: string = "";
-        if (!!item.externalInfo!.params && item.externalInfo!.params.length > 0) {
-            initializer = `, { params: [${item.externalInfo!.params.map((x) => `{key: "${x.key}", value: "${x.value}"}`).join(", ")}] }`;
+        if (!!externalInfo.params && externalInfo.params.length > 0) {
+            initializer = `, { params: [${externalInfo.params.map((x) => `{key: "${x.key}", value: "${x.value}"}`).join(", ")}] }`;
         }
         return initializer;
+    }
+
+    wrapFragmentByExternal(item: FreEditFragmentProjection, elementVarName: string, innerBoxStr: string,): string {
+        let initializer: string = this.buildFragmentInitializer(item);
+        let methodName: string = "fragmentWrapperBox";
+        this._myTemplate.imports.core.add('BoxUtil')
+        return `BoxUtil.${methodName}(
+                        ${elementVarName},
+                        "${item.wrapperInfo!.wrapBy}",
+                        ${innerBoxStr}
+                        ${initializer}
+                    )`;
     }
 }

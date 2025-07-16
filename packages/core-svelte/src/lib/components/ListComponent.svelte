@@ -31,7 +31,7 @@
     } from "@freon4dsl/core"
     import RenderComponent from './RenderComponent.svelte';
     import { componentId, rememberDraggedNode } from '../index.js';
-    import type { ListProps } from './svelte-utils/FreComponentProps.js';
+    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
     import {
         activeElem,
         activeIn,
@@ -42,14 +42,10 @@
     } from './stores/AllStores.svelte.js';
     import { 
         GripVertical as IconGripVertical, 
-    } from '@lucide/svelte';      
+    } from '@lucide/svelte';   
 
     // Props
-    let { 
-        editor, 
-        box,
-        cssClass
-    }: ListProps<ListBox> = $props();
+    let { editor, box }: FreComponentProps<ListBox> = $props();
 
     // Local state variables
     let LOGGER: FreLogger = LIST_LOGGER;
@@ -61,13 +57,24 @@
     // determine the type of the elements in the list
     // this speeds up the check whether an element may be dropped here
     let myMetaType: DragAndDropType;
+    
     $effect(() => {
         // console.log(`EFFECT ${box.conceptName} : ${box.node.freLanguageConcept()}`)
         myMetaType = {
             type: box.conceptName,
             isRef: FreLanguage.getInstance().classifierProperty(box.node.freLanguageConcept(), box.propertyName)?.propertyKind === 'reference'
         }
+        // runs after the initial onMount
+        LOGGER.log('ListComponent.effect for ' + box.role);
+        box.setFocus = setFocus;
+        box.refreshComponent = refresh;
     });
+
+    $effect(() => {
+        // Evaluated and re-evaluated when the box changes.
+        refresh('ListComponent changed ' + box?.id);
+    });
+
 
     const drop = (event: DragEvent, targetIndex: number) => {
         const data: ListElementInfo | null = draggedElem.value;
@@ -185,12 +192,6 @@
         }
     }
 
-    $effect(() => {
-        LOGGER.log('ListComponent.effect for ' + box.role);
-        box.setFocus = setFocus;
-        box.refreshComponent = refresh;
-    });
-
     const refresh = (why?: string): void => {
         LOGGER.log('REFRESH ListComponent( ' + why + ') ' + box?.node?.freLanguageConcept());
         shownElements = [...box.children];
@@ -199,11 +200,6 @@
             ? box.getDirection() === ListDirection.HORIZONTAL
             : false;
     };
-
-    $effect(() => {
-        // Evaluated and re-evaluated when the box changes.
-        refresh('Refresh from ListComponent box changed:   ' + box?.id);
-    });
 
     const onKeyDown = (event: KeyboardEvent, index: number) => {
         if (event.key === ENTER) {
@@ -230,7 +226,7 @@
 
 <!-- onblur is needed for onmouseout -->
 <span
-    class={isHorizontal ? 'list-component-horizontal' : 'list-component-vertical'}
+    class="{isHorizontal ? 'list-component-horizontal' : 'list-component-vertical'} {box.cssClass}"
     {id}
     bind:this={htmlElement}
     style:grid-template-columns="auto"
@@ -238,7 +234,7 @@
 >
     {#each shownElements as box, index (box.id)}
         <span
-            class="list-item {cssClass} w-full"
+            class="list-item"
             class:is-active={activeElem.value?.row === index && activeIn.value === id}
             class:dragged={draggedElem.value?.propertyIndex === index && draggedFrom.value === id}
             style:grid-column={!isHorizontal ? 1 : index + 1}
@@ -264,7 +260,7 @@
                   ondragstart={(event) => dragstart(event, id, index)}
                   role="listitem"><IconGripVertical size={16} /></span>
             {/if}
-            <RenderComponent {box} {editor} {cssClass} />
+            <RenderComponent {box} {editor} />
         </span>
     {/each}
 </span>

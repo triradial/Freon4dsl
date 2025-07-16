@@ -39,11 +39,9 @@
 
     onMount(() => {
         value = box.getBoolean();
-        box.setFocus = setFocus;
-        box.refreshComponent = refresh;
     });
+
     $effect(() => {
-        // runs after the initial onMount
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
@@ -62,7 +60,7 @@
     }
 </script>
 
-<span class="switch-component">
+<span class="switch-component {box.cssClass}">
     <button
         {id}
         bind:this={switchElement}

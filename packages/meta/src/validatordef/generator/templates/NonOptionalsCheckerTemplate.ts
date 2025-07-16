@@ -1,4 +1,4 @@
-import { Names, Imports } from "../../../utils/index.js"
+import { Names, Imports } from "../../../utils/on-lang/index.js"
 import { FreMetaLanguage, FreMetaClassifier, FreMetaPrimitiveType } from "../../../languagedef/metalanguage/index.js";
 import { ValidationUtils } from "../ValidationUtils.js";
 
@@ -6,7 +6,7 @@ const paramName: string = "node";
 const commentBefore = `/**
                         * Checks '${paramName}' before checking its children.
                         * Found errors are pushed onto 'errorlist'.
-                        * If an error is found, it is considered 'fatal', which means that no other checks on
+                        * If an error is found, it is NOT considered 'fatal', which means that other checks on
                         * '${paramName}' are performed.
                         *
                         * @param ${paramName}
@@ -47,7 +47,7 @@ export class NonOptionalsCheckerTemplate {
         }`;
 
         const imports = new Imports(relativePath)
-        imports.core = new Set<string>([errorClassName, errorSeverityName, writerInterfaceName, Names.FreLanguageEnvironment])
+        imports.core = new Set<string>([errorClassName, errorSeverityName, writerInterfaceName, Names.FreLanguageEnvironment, Names.isNullOrUndefined])
         imports.language = new Set<string>(this.done.map(cls => Names.classifier(cls)) )
         imports.utils.add(defaultWorkerName)
         
@@ -77,7 +77,7 @@ export class NonOptionalsCheckerTemplate {
                     additionalStringCheck = `|| ${paramName}.${prop.name}?.length === 0`;
                 }
 
-                result += `if (${paramName}.${prop.name} === null || ${paramName}.${prop.name} === undefined ${additionalStringCheck}) {
+                result += `if (${Names.isNullOrUndefined}(${paramName}.${prop.name}) ${additionalStringCheck}) {
                     this.errorList.push(new ${Names.FreError}("Property '${prop.name}' must have a value", ${paramName}, ${locationdescription}, '${prop.name}', ${Names.FreErrorSeverity}.Error));
                 }
                 `;

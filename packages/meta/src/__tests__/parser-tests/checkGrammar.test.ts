@@ -1,6 +1,7 @@
 import { LanguageParser } from "../../languagedef/parser/LanguageParser";
 import { FreMetaLanguage } from "../../languagedef/metalanguage/index.js";
-import { FileUtil, MetaLogger } from "../../utils/index.js";
+import { FileUtil } from "../../utils/file-utils/index.js";
+import { MetaLogger } from "../../utils/no-dependencies/index.js";
 import { ReaderWriterGenerator } from "../../parsergen/ReaderWriterGenerator";
 import { FreEditParser } from "../../editordef/parser/FreEditParser";
 import * as fs from "fs";
@@ -51,7 +52,7 @@ describe("Checking parser generation", () => {
             generator.outputfolder = outputDir;
             generator.generate(editor!);
             const grammarFile = outputDir + "reader/gen/TEST1Grammar.ts";
-            const isPresent: boolean = fs.existsSync(grammarFile);
+            const isPresent: boolean = FileUtil.exists(grammarFile);
             expect(isPresent).toBe(true);
             if (isPresent) {
                 const result = fs.readFileSync(grammarFile, "utf8");
@@ -89,7 +90,7 @@ describe("Checking parser generation", () => {
                 generator.outputfolder = outputDir;
                 generator.generate(editor);
                 const grammarFile = outputDir + "reader/gen/TEST2Grammar.ts";
-                const isPresent: boolean = fs.existsSync(grammarFile);
+                const isPresent: boolean = FileUtil.exists(grammarFile);
                 expect(isPresent).toBe(true);
                 if (isPresent) {
                     const result = fs.readFileSync(grammarFile, "utf8");
@@ -128,7 +129,7 @@ describe("Checking parser generation", () => {
                 generator.outputfolder = outputDir;
                 generator.generate(editor);
                 const grammarFile = outputDir + "reader/gen/TEST3Grammar.ts";
-                const isPresent: boolean = fs.existsSync(grammarFile);
+                const isPresent: boolean = FileUtil.exists(grammarFile);
                 expect(isPresent).toBe(true);
                 if (isPresent) {
                     const result = fs.readFileSync(grammarFile, "utf8");
@@ -167,7 +168,7 @@ describe("Checking parser generation", () => {
                 generator.outputfolder = outputDir;
                 generator.generate(editor);
                 const grammarFile = outputDir + "reader/gen/TEST4Grammar.ts";
-                const isPresent: boolean = fs.existsSync(grammarFile);
+                const isPresent: boolean = FileUtil.exists(grammarFile);
                 expect(isPresent).toBe(true);
                 if (isPresent) {
                     const result = fs.readFileSync(grammarFile, "utf8");

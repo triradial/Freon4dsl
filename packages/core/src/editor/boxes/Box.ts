@@ -1,12 +1,8 @@
 import type { FreNode } from "../../ast/index.js";
-import { isNullOrUndefined, FreUtils, FRE_BINARY_EXPRESSION_LEFT, FRE_BINARY_EXPRESSION_RIGHT } from "../../util/index.js";
+import { isNullOrUndefined, FreUtils, FRE_BINARY_EXPRESSION_LEFT, FRE_BINARY_EXPRESSION_RIGHT, isExpressionPreOrPost } from "../../util/index.js";
 import { FreLogger } from "../../logging/index.js";
 import type { ClientRectangle } from "../ClientRectangleTypes.js";
 import { UndefinedRectangle } from "../ClientRectangleTypes.js";
-import { BehaviorExecutionResult } from "../util/index.js";
-import type { FrePostAction } from "../actions/index.js";
-import { runInAction } from "mobx";
-import { FreEditor } from "../FreEditor.js";
 
 const LOGGER = new FreLogger("Box");
 
@@ -186,9 +182,9 @@ export abstract class Box {
         }
         const thisIndex: number = this.parent.children.indexOf(this);
         if (thisIndex === -1) {
-            // LOGGER.error(`nextLeafRight: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
-            // LOGGER.error(`  boxid: ${this.id} parent [id: ${this.parent.id}, id: ${this.parent.kind}, node: ${this.parent.node.freLanguageConcept()}]`)
-            // LOGGER.error(`  tree: ${(this.parent.parent !== undefined && this.parent.parent !== null) ? this.parent.parent.toStringRecursive("  "):this.parent.toStringRecursive("  ")}`)
+            LOGGER.error(`nextLeafRight: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
+            LOGGER.error(`  boxid: ${this.id} parent [id: ${this.parent.id}, id: ${this.parent.kind}, node: ${this.parent.node.freLanguageConcept()}]`)
+            LOGGER.error(`  tree: ${(this.parent.parent !== undefined && this.parent.parent !== null) ? this.parent.parent.toStringRecursive("  "):this.parent.toStringRecursive("  ")}`)
             return null
         }
         const rightSiblings: Box[] = this.parent.children.slice(thisIndex + 1, this.parent.children.length);
@@ -201,8 +197,44 @@ export abstract class Box {
                 return sibling;
             }
         }
-        // LOGGER.log(`${this.id} nextLeafRight: referring to parent`)
+        LOGGER.log(`${this.id} nextLeafRight: referring to parent`)
         return this.parent.nextLeafRight;
+    }
+
+    /**
+     * Get the left (previous) leaf box, but ignore the expression placeholders at the start and end of an expression
+     * and the placeholders arounf binary symbols.
+     * Used when tabbing through an expression.
+     */
+    get nextLeafLeftWithoutExpressionPlaceHolders(): Box {
+        const boxLeft: Box = this.nextLeafLeft;
+        if (!isNullOrUndefined(boxLeft)) {
+            if (isExpressionPreOrPost(boxLeft)) {
+                // Special expression prefix or postfix box, don't return it
+                return boxLeft.nextLeafLeftWithoutExpressionPlaceHolders;
+            } else {
+                return boxLeft;
+            }
+        }
+        return null
+    }
+
+    /**
+     * Get the right (next) leaf box, but ignore the expression placeholders at the start and end of an expression
+     * and the placeholders arounf binary symbols.
+     * Used when tabbing through an expression.
+     */
+    get nextLeafRightWithoutExpressionPlaceHolders(): Box {
+        const boxRight: Box = this.nextLeafRight;
+        if (!isNullOrUndefined(boxRight)) {
+            if (isExpressionPreOrPost(boxRight)) {
+                // Special expression prefix or postfix box, don't return it
+                return boxRight.nextLeafRightWithoutExpressionPlaceHolders;
+            } else {
+                return boxRight;
+            }
+        }
+        return null
     }
 
     // TODO change name into nextSelectableLeafLeft or something similar?
@@ -349,9 +381,9 @@ export abstract class Box {
      * AND this method is not overridden, then the focus will be set to the parent box.
      */
     setFocus: () => void = async () => {
-        // console.log(
-        //     this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id
-        // );
+        console.log(
+            this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id
+        );
         // this.parent?.setFocus();
     };
 
@@ -398,20 +430,5 @@ export abstract class Box {
             result += "\n" + child.toStringRecursive(indent + "  ")
         })
         return result
-    }
-
-    /* GM - execute actions */
-    executeAction(editor: FreEditor, trigger: string): BehaviorExecutionResult {
-        for (const action of editor.newFreActions.filter((action) => action.activeInBoxRoles.includes(this.role) && action.trigger === trigger)) {
-            let postAction: FrePostAction = null;
-            runInAction(() => {
-                postAction = action.execute(this, trigger, editor, -1);
-            });
-            if (!!postAction) {
-                postAction();
-            }
-            return BehaviorExecutionResult.EXECUTED;
-        }
-        return BehaviorExecutionResult.NULL;
     }
 }

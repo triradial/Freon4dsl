@@ -6,9 +6,9 @@ import {
     ExternalRefListBox,
     HorizontalListBox,
     ReferenceBox,
-    type SelectOption,
     VerticalListBox,
 } from "../../boxes/index.js";
+import type { SelectOption } from "../../boxes/index.js";
 import type { FreNamedNode, FreNode, FreNodeReference } from '../../../ast/index.js';
 import { qualifiedName } from '../../../ast/index.js';
 import { RoleProvider } from "../RoleProvider.js";
@@ -53,7 +53,7 @@ export class UtilRefHelpers {
             `<${propertyName}>`,
             () => {
                 return scoper
-                    .getVisibleElements(node, propType)
+                    .getVisibleNodes(node, propType)
                     .filter((node) => !!node.name && node.name !== "")
                     .map((node) => ({
                         id: node.name,

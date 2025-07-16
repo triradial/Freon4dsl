@@ -1,4 +1,4 @@
-scoper SharedTaskScoper for language StudyConfigurationModel
+scoper for language StudyConfigurationModel
 
-isnamespace { SharedTask }
+isNamespace { SharedTask }
 

@@ -13,11 +13,9 @@ import {
     FreMetaExpressionConcept,
     FreMetaLanguage,
 } from "../../../languagedef/metalanguage/index.js";
-import {
-    Imports,
-    ListUtil,
-    Names
-} from "../../../utils/index.js"
+import { ListUtil } from "../../../utils/no-dependencies/index.js";
+import { Names, Imports } from "../../../utils/on-lang/index.js";
+import { NamesForEditor } from "../../../utils/on-lang-and-editor/index.js";
 import {
     PrimitivePropertyBoxesHelper,
     LimitedBoxHelper,
@@ -147,7 +145,7 @@ export class BoxProviderTemplate {
 
         if (this.supersUsed.length > 0) {
             this.supersUsed.forEach((c) => {
-                this.imports.editor.add(Names.boxProvider(c))
+                this.imports.editor.add(NamesForEditor.boxProvider(c))
             })
         }
 
@@ -163,7 +161,7 @@ export class BoxProviderTemplate {
              * a box that will never be rendered itself, only its content will. Thus, we
              * have a stable entry in the complete box tree for every ${Names.FreNode} node.
              */
-            export class ${Names.boxProvider(concept)} extends FreBoxProvider {
+            export class ${NamesForEditor.boxProvider(concept)} extends FreBoxProvider {
                 ${coreText}
                 
                 ${tableText}
@@ -240,7 +238,7 @@ export class BoxProviderTemplate {
                         ${supers
                             .map(
                                 (s) => `case "${s.name}": {
-                            superBoxProvider = new ${Names.boxProvider(s)}(this.mainHandler);
+                            superBoxProvider = new ${NamesForEditor.boxProvider(s)}(this.mainHandler);
                             break;
                         }`,
                             )
@@ -269,11 +267,11 @@ export class BoxProviderTemplate {
             const result: string = this.generateLines(projection.lines, elementVarName, concept.name, language, 1);
             if (concept instanceof FreMetaExpressionConcept) {
                 this.imports.core.add("createDefaultExpressionBox");
-                return `private ${Names.projectionMethod(projection)} () : Box {
+                return `private ${NamesForEditor.projectionMethod(projection)} () : Box {
                     return createDefaultExpressionBox( ${elementVarName}, [${result}], { selectable: false } );
                 }`;
             } else {
-                return `private ${Names.projectionMethod(projection)} () : Box {
+                return `private ${NamesForEditor.projectionMethod(projection)} () : Box {
                     return ${result};
                 }`;
             }
@@ -311,7 +309,7 @@ export class BoxProviderTemplate {
             this.imports.core.add("BoxFactory");
             result = `BoxFactory.verticalLayout(${elementVarName}, "${boxLabel}-overall", '', [
                 ${result}
-            ])`;
+            ], {cssClass: "${boxLabel}"})`;
         }
         if (result === "") {
             result = "null";

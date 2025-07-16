@@ -3,7 +3,7 @@ import type { FreEnvironment } from "./FreEnvironment.js";
 import type { FreModel } from "../ast/index.js";
 import type { FreInterpreter } from "../interpreter/index.js";
 import type { FreReader } from "../reader/index.js";
-import type { FreScoperComposite } from "../scoper/index.js";
+import type { FreCompositeScoper } from "../scoper/index.js";
 import type { FreStdlib } from "../stdlib/index.js";
 import { FreCompositeTyper } from "../typer/index.js";
 import type { FreValidator } from "../validator/index.js";
@@ -24,7 +24,7 @@ export class FreLanguageEnvironment implements FreEnvironment {
         return FreLanguageEnvironment.theInstance;
     }
 
-    public scoper: FreScoperComposite = null;
+    public scoper: FreCompositeScoper = null;
     public typer: FreCompositeTyper = null;
     public projection: FreProjectionHandler = null;
     public editor: FreEditor;

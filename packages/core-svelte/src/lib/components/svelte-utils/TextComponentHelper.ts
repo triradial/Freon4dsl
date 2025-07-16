@@ -82,6 +82,7 @@ export class TextComponentHelper {
                 // Without propagation but with event Default, the browser handles which char(s) to be deleted.
                 // With event.ctrlKey: delete text from caret to start, is also handled by the browser.
                 event.stopPropagation();
+                // If needed, the afterUpdate function dispatches a 'textUpdate' to the parent TextDropdownComponent
             } else {
                 // nothing left in this component to delete at the right
                 event.preventDefault();
@@ -104,6 +105,7 @@ export class TextComponentHelper {
             // Without propagation but with event Default, the browser handles which char(s) to be deleted.
             // With event.ctrlKey: delete text from caret to start, is also handled by the browser.
             event.stopPropagation();
+            // If needed, the afterUpdate function dispatches a 'textUpdate' to the parent TextDropdownComponent
         } else {
             // nothing left in this component to delete at the left
             if (this.isTextEmpty()) {

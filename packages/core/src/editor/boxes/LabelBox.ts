@@ -7,12 +7,11 @@ export class LabelBox extends Box {
 
     private $label: string = "";
 
-    constructor(node: FreNode, role: string, getLabel: string | (() => string), initializer?: Partial<LabelBox>, cssClass?: string) {
+    constructor(node: FreNode, role: string, getLabel: string | (() => string), initializer?: Partial<LabelBox>) {
         super(node, role);
         this.selectable = false; // default
         FreUtils.initializeObject(this, initializer);
         this.setLabel(getLabel);
-        this.cssClass = cssClass;
     }
 
     setLabel(getLabel: string | (() => string)) {
