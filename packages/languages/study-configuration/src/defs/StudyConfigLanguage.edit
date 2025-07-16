@@ -45,6 +45,15 @@ Task {
     ]
 }
 
+SharedTask {
+    [
+        ${name}
+        ${description}
+        Steps: ${steps}
+    ]
+}
+
+
 TaskReference {
     [
         [fragment XX wrap = ItemGroupComponent2]

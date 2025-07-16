@@ -57,7 +57,7 @@ concept Event {
     showSequenced: boolean;
     eventNumber: number;
     tasks: EventTask[];
-    description: Description;
+    description?: Description;
     schedule: EventSchedule;
 }
 
