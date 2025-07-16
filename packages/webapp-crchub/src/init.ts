@@ -18,6 +18,8 @@ const LOGGER = new FreLogger("init");
 FreLogger.unmute("Routing");
 // FreLogger.unmute("ListGroupComponent");
 FreLogger.unmute("ItemGroupComponent");
+FreLogger.unmute("ActionBox");
+
 
 LOGGER.log('--- START ---');
 
