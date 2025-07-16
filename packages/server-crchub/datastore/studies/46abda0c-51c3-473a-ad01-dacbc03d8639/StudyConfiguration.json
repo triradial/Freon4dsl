@@ -85,7 +85,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showDescriptions"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -307,7 +307,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -490,7 +490,7 @@
                "targets": [
                   {
                      "resolveInfo": "-",
-                     "reference": null
+                     "reference": "ID-29"
                   }
                ]
             }
@@ -526,7 +526,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": null
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -717,7 +717,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -889,7 +889,7 @@
                "targets": [
                   {
                      "resolveInfo": "V1 Randomization",
-                     "reference": null
+                     "reference": "ID-362"
                   }
                ]
             },
@@ -902,7 +902,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": null
+                     "reference": "ID-23"
                   }
                ]
             }
@@ -940,7 +940,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -976,7 +976,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": null
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -1168,7 +1168,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -1341,7 +1341,7 @@
                "targets": [
                   {
                      "resolveInfo": "-",
-                     "reference": null
+                     "reference": "ID-29"
                   }
                ]
             }
@@ -1377,7 +1377,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": null
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -1569,7 +1569,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -1741,7 +1741,7 @@
                "targets": [
                   {
                      "resolveInfo": "V2 Randomization",
-                     "reference": null
+                     "reference": "ID-396"
                   }
                ]
             },
@@ -1754,7 +1754,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": null
+                     "reference": "ID-23"
                   }
                ]
             }
@@ -1792,7 +1792,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -1828,7 +1828,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": null
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -2101,7 +2101,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -2415,7 +2415,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -2550,7 +2550,7 @@
                "targets": [
                   {
                      "resolveInfo": "V3 Randomization",
-                     "reference": null
+                     "reference": "ID-419"
                   }
                ]
             },
@@ -2563,7 +2563,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": null
+                     "reference": "ID-23"
                   }
                ]
             }
@@ -2601,7 +2601,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -2637,7 +2637,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": null
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -2873,7 +2873,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -3008,7 +3008,7 @@
                "targets": [
                   {
                      "resolveInfo": "V4-V7 Randomization",
-                     "reference": null
+                     "reference": "ID-426"
                   }
                ]
             },
@@ -3021,7 +3021,7 @@
                "targets": [
                   {
                      "resolveInfo": "each completed",
-                     "reference": null
+                     "reference": "ID-24"
                   }
                ]
             }
@@ -3059,7 +3059,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -3095,7 +3095,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": null
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -3331,7 +3331,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -3466,7 +3466,7 @@
                "targets": [
                   {
                      "resolveInfo": "V4-V7 Randomization",
-                     "reference": null
+                     "reference": "ID-426"
                   }
                ]
             },
@@ -3479,7 +3479,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": null
+                     "reference": "ID-23"
                   }
                ]
             }
@@ -3517,7 +3517,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -3553,7 +3553,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": null
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -3747,7 +3747,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": null
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -3836,7 +3836,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -3971,7 +3971,7 @@
                "targets": [
                   {
                      "resolveInfo": "V8-V13 Randomization",
-                     "reference": null
+                     "reference": "ID-32"
                   }
                ]
             },
@@ -3984,7 +3984,7 @@
                "targets": [
                   {
                      "resolveInfo": "each completed",
-                     "reference": null
+                     "reference": "ID-24"
                   }
                ]
             }
@@ -4022,7 +4022,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -4058,7 +4058,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": null
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -4294,7 +4294,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -4429,7 +4429,7 @@
                "targets": [
                   {
                      "resolveInfo": "V8-V13 Randomization",
-                     "reference": null
+                     "reference": "ID-32"
                   }
                ]
             },
@@ -4442,7 +4442,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": null
+                     "reference": "ID-23"
                   }
                ]
             }
@@ -4480,7 +4480,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -4516,7 +4516,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": null
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -4710,7 +4710,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": null
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -4799,7 +4799,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -4934,7 +4934,7 @@
                "targets": [
                   {
                      "resolveInfo": "V14-V18 Randomization",
-                     "reference": null
+                     "reference": "ID-52"
                   }
                ]
             },
@@ -4947,7 +4947,7 @@
                "targets": [
                   {
                      "resolveInfo": "each completed",
-                     "reference": null
+                     "reference": "ID-24"
                   }
                ]
             }
@@ -4985,7 +4985,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -5021,7 +5021,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": null
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -5257,7 +5257,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -5382,7 +5382,7 @@
                "targets": [
                   {
                      "resolveInfo": "V14-V18 Randomization",
-                     "reference": null
+                     "reference": "ID-52"
                   }
                ]
             },
@@ -5395,7 +5395,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": null
+                     "reference": "ID-23"
                   }
                ]
             }
@@ -5433,7 +5433,7 @@
                "targets": [
                   {
                      "resolveInfo": "+",
-                     "reference": null
+                     "reference": "ID-28"
                   }
                ]
             }
@@ -5469,7 +5469,7 @@
                "targets": [
                   {
                      "resolveInfo": "weeks",
-                     "reference": null
+                     "reference": "ID-18"
                   }
                ]
             }
@@ -5659,7 +5659,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -5774,7 +5774,7 @@
                "targets": [
                   {
                      "resolveInfo": "V19 Randomization",
-                     "reference": null
+                     "reference": "ID-72"
                   }
                ]
             },
@@ -5787,7 +5787,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": null
+                     "reference": "ID-23"
                   }
                ]
             }
