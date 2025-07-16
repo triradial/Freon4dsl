@@ -249,19 +249,19 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
     //         return null
     //     },
     // }),
-    FreCustomAction.create({
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            const event: Event = box.node as Event
-            const period: Period = ownerOfType(event, "Period") as Period //box.parent.parent.parent.element as Period;
-            const copyOfEvent = event.copy()
-            extension(ExtendedEvent, Event)
-            smartDuplicate(event, copyOfEvent)
-            const index = period.events.indexOf(event)
-            console.log("custom action duplicate, splicing in copyOfEvent: " + copyOfEvent.name + " at index: " + index)
-            period.events.splice(index + 1, 0, copyOfEvent)
-            return null
-        },
-    }),
+    // FreCustomAction.create({
+    //     action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
+    //         const event: Event = box.node as Event
+    //         const period: Period = ownerOfType(event, "Period") as Period //box.parent.parent.parent.element as Period;
+    //         const copyOfEvent = event.copy()
+    //         extension(ExtendedEvent, Event)
+    //         smartDuplicate(event, copyOfEvent)
+    //         const index = period.events.indexOf(event)
+    //         console.log("custom action duplicate, splicing in copyOfEvent: " + copyOfEvent.name + " at index: " + index)
+    //         period.events.splice(index + 1, 0, copyOfEvent)
+    //         return null
+    //     },
+    // }),
 
     // FreCustomAction.create({
     //     activeInBoxRoles: ["person"],
