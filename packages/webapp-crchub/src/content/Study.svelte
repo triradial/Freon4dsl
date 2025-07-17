@@ -148,16 +148,16 @@
         
         names.push("Custom");
 
-        // console.log("[DEBUG] updateVisibleProjections", names);
-        // const proj = dslEditor.projection;
-        // proj.enableProjections(names);
+        console.log("[DEBUG] updateVisibleProjections", names);
+        const proj = dslEditor.projection;
+        proj.enableProjections(names);
 
         // Let the editor know that the projections have changed.
         // TODO: This should go automatically through mobx.
         //       But observing the projections array does not work as expected.
-        // runInAction( () => {
-        //     dslEditor.forceRecalculateProjection++;
-        // })
+        runInAction( () => {
+            dslEditor.forceRecalculateProjection++;
+        })
         // redo the validation to set the errors in the new box tree
         // todo reinstate the following statement
         // this.validate();

@@ -1,12 +1,14 @@
 editor schedulingAndChecklistsShow precedence 100
 
 Event {
-    [
-        Event: ${name}
-        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
+    [ 
+        [fragment schedulingAndChecklistsEventDetails wrap = ItemGroupComponent ]
+    ]
+    fragment schedulingAndChecklistsEventDetails [
+        ${typeOfEvent} that is also referred to as ${alternativeName}
         ${description}
-        ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
-        ${tasks wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
-    ] 
+        ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="false" selectable="false" label="Schedule"}
+        ${tasks wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
+    ]
 }
 

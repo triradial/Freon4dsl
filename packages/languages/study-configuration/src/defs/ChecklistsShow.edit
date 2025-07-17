@@ -1,11 +1,13 @@
 editor checklistsShow precedence 104
 
 Event {
-    [
-        Event: ${name}
-        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
+    [ 
+        [fragment checklistEventDetails wrap = ItemGroupComponent ]
+    ]
+    fragment checklistEventDetails [
+        ${typeOfEvent} that is also referred to as ${alternativeName}
         ${description}
-        ${tasks wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
-    ] 
+        ${tasks wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
+    ]
 }
 

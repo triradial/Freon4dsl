@@ -25,16 +25,18 @@ Period {
     [
         ${name}
         ${description}
-        ${events wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Events"}
+        ${events wrap=ListGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Events"}
     ]
 }
 
 Event {
-    [
-        Event: ${name}
-        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
+    [ 
+        [fragment noEventDetails wrap = ItemGroupComponent ]
+    ]
+    fragment noEventDetails [
+        ${typeOfEvent} that is also referred to as ${alternativeName}
         ${description}
-    ] 
+    ]
 }
 
 Task {
@@ -56,7 +58,7 @@ SharedTask {
 
 TaskReference {
     [
-        [fragment XX wrap = ItemGroupComponent2]
+        [fragment XX wrap = ItemGroupComponent2 ]
     ]
     fragment XX [
         ${task}  
