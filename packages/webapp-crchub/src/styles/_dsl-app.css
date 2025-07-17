@@ -351,7 +351,7 @@ main {
 .item-group {
   display: flex;
   align-items: center;
-  overflow: hidden;
+  /* overflow-x: hidden; */
 }
 
 .item-group.type1 {

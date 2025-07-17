@@ -7,7 +7,8 @@ global {
         ItemGroupComponent2,
         DatePickerComponent,
         TimePickerComponent,
-        MultilineTextComponent
+        MultilineTextComponent,
+        DisplayNothingComponent
     }
 }
 
@@ -43,7 +44,7 @@ Event {
 
 Task {
     [
-        [fragment taskDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
+        [fragment taskDetails wrap = ItemGroupComponent cssClass="type3" canShare="true" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
     ]
     fragment taskDetails [
         ${description}
@@ -63,10 +64,10 @@ SharedTask {
 
 TaskReference {
     [
-        [fragment taskReferenceDetails wrap = ItemGroupComponent2 cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
+        [fragment taskReferenceDetails wrap = ItemGroupComponent2 cssClass="type3" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
     ]
     fragment taskReferenceDetails [
-        ${task}  
+        ${task wrap=DisplayNothingComponent}  
         ${description}
         ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
     ]

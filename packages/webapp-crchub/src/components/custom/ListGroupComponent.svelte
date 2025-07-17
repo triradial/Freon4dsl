@@ -62,10 +62,13 @@
                 let newConceptName = property.type;
                 if (newConceptName.startsWith('Abstract')) {
                     newConceptName = newConceptName.slice(8);
+                } else if (newConceptName === "EventTask") { // HACK: Needed because of the multiple kinds of tasks
+                    newConceptName = "Task";
                 }
                 const newElement = language.createConceptOrUnit(newConceptName);
                 box.getPropertyValue().push(newElement);
-                LOGGER.log("Added item");
+                LOGGER.log("Added item: "+ newConceptName);
+                console.log("Added item: "+ newConceptName);
             } else {
                 LOGGER.log("No property type");
             }

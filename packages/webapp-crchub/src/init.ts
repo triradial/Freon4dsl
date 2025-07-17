@@ -10,15 +10,17 @@ import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 import ItemGroupComponent2 from "./components/custom/ItemGroupComponent2.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
+import DisplayNothingComponent from "./components/custom/DisplayNothingComponent.svelte";
 
 const LOGGER = new FreLogger("init");
 
 // FreLogger.unmuteAllLogs();
 // FreLogger.unmute("init");
 FreLogger.unmute("Routing");
-// FreLogger.unmute("ListGroupComponent");
+FreLogger.unmute("ListGroupComponent"); 
 FreLogger.unmute("ItemGroupComponent");
 FreLogger.unmute("ActionBox");
+FreLogger.unmute("DisplayNothingComponent");
 
 
 LOGGER.log('--- START ---');
@@ -52,6 +54,7 @@ setCustomComponents([
     { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
     { component: ItemGroupComponent2, knownAs: "ItemGroupComponent2" },
     { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
+    { component: DisplayNothingComponent, knownAs: "DisplayNothingComponent" },
 ])
 
 LOGGER.log('--- END ---');

@@ -1,11 +1,12 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { AST, FreEditor, FreChangeManager, FreLanguage, FreLogger, ownerOfType, FragmentWrapperBox, HorizontalLayoutBox, ReferenceBox } from "@freon4dsl/core";
+    import { AST, FreEditor, FreChangeManager, FreLanguage, FreLogger, ownerOfType, FragmentWrapperBox, HorizontalLayoutBox, ReferenceBox, FreNodeReference, VerticalLayoutBox, FragmentBox, Box, RefWrapperBox } from "@freon4dsl/core";
     import { RenderComponent } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
     // ts-ignore
     import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Trash2 as IconDelete, Copy as IconDuplicate,Share2 as IconShare2,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
     import CustomTextbox from "./helper/CustomTextbox.svelte";
+    import { SharedTask, TaskReference, Event, type StudyConfiguration, type Task } from "@freon4dsl/study-configuration"
     
     const LOGGER = new FreLogger("ItemGroupComponent");
     
@@ -27,6 +28,7 @@
     let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
     let referenceBox: ReferenceBox | undefined = $state();
     let isEditing = $state(false);
+    let cssContainerClass = "h-20";
 
     const getText = () => {
         const propertyName = "name";
@@ -61,11 +63,14 @@
 
     onMount(() => {
         box.refreshComponent = refresh;
-        const horizontalLayoutBox = box.childBox as HorizontalLayoutBox;
-        console.log("horizontalLayoutBox", horizontalLayoutBox);
-        const children = horizontalLayoutBox.children;
+        const fragmentBox = box.childBox as FragmentBox;
+        const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox;
+        console.log("verticalLayoutBox", verticalLayoutBox);
+        const children = verticalLayoutBox.children;
         console.log("children", children);
-        referenceBox = children[0] as ReferenceBox;
+        const refWrapperBox = children[0] as RefWrapperBox;
+        console.log("refWrapperBox", refWrapperBox);
+        referenceBox = refWrapperBox.childBox as ReferenceBox;
         console.log("referenceBox", referenceBox);
     });
 
@@ -109,6 +114,36 @@
 
     const shareItem = () => {
         LOGGER.log("Sharing item");
+        console.log("Sharing ItemGroupComponent2: box.node", box.node);
+        // Get the study config context
+        const task = box.node as Task;
+        const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration
+        const event: Event = ownerOfType(task, "Event") as unknown as Event
+        AST.change( () => {
+            // Create the shard task and wire together
+            let newSharedTask = SharedTask.create({
+                name: task.name,
+                description: task.description,
+                numberedSteps: task.numberedSteps,
+                showDetails: task.showDetails,
+                steps: task.steps.map((step) => step.copy()),
+            })
+            let refToTask = FreNodeReference.create(task.name, "SharedTask") as FreNodeReference<SharedTask>;
+            refToTask.referred = newSharedTask;
+            let newTaskReference = TaskReference.create({
+                task: refToTask,
+                name: task.name,
+                description: task.description,
+                numberedSteps: task.numberedSteps,
+                showDetails: task.showDetails,
+                steps: task.steps.map((step) => step.copy()),
+            })
+            // Replace the original task in the event with the new task reference
+            event.tasks[event.tasks.indexOf(task)] = newTaskReference;
+            // Add the new shared task to the shared tasks list
+            studyConfig.tasks.push(newSharedTask);
+        })
+
     }
 </script>
 
@@ -125,8 +160,8 @@
     {:else}
         <span class="w-5"></span>   
     {/if}
-    <span class="item-group-label" tabindex="-1">REFERENCE2: {label()}:</span>
-    <RenderComponent box={referenceBox} {editor} {cssClass} />
+    <span class="item-group-label" tabindex="-1">{label()}:</span>
+    <RenderComponent box={referenceBox} {editor} cssClass={cssContainerClass} />
     {#if canDuplicate}
         <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate" tabindex="0">
             <IconDuplicate size={14} />
@@ -148,8 +183,8 @@
         </button> 
     {/if}
 </div>
-<!-- {#key contentStyle}
+{#key contentStyle}
     <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
         <RenderComponent box={box.childBox} {editor} {cssClass} />
     </div>
-{/key} -->
+{/key}
