@@ -89,7 +89,7 @@ export class StudyChecklistDocumentTemplate {
 
                                             ${t.steps
                                                 .map(
-                                                    (step, stepCounter) => dedent`#### Step ${stepCounter + 1}: ${step.title}
+                                                    (step, stepCounter) => dedent`#### Step ${stepCounter + 1}: ${step.name}
 
                                                     ${step.detailsDescription.text}
 

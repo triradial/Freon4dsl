@@ -84,7 +84,7 @@ concept SharedTask base AbstractTask{
 // TODO: Change title to name? 
 concept Step {
     name: identifier = "Step";
-    title: string;
+    // title: string;
     detailsDescription: Description;
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
     references: Reference[];
