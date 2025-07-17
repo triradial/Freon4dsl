@@ -64,9 +64,6 @@
         // runs after the initial onMount
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
-    });
-
-    $effect(() => {
         // Evaluated and re-evaluated when the box changes.
         refresh('Refresh limited radio box changed ' + box?.id);
     });

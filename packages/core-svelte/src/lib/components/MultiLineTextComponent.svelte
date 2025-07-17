@@ -27,9 +27,6 @@
         placeholder = box.placeHolder;
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
-    });
-
-    $effect(() => {
         // Evaluated and re-evaluated when the box changes.
         refresh('Refresh multiline text box changed ' + box?.id);
     });

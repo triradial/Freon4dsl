@@ -35,11 +35,6 @@
         child = box?.child;
         style = `margin-left: ${box?.indent * indentWidth}px;`;
     };
-
-    $effect(() => {
-        // Evaluated and re-evaluated when the box changes.
-        refresh(box?.$id);
-    });
 </script>
 
 {#if !isNullOrUndefined(child)}

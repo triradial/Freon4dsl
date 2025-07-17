@@ -2,7 +2,7 @@
     /**
      * This component shows an empty line in the projection.
      */
-     import { componentId } from '../index.js';
+    import { componentId } from '../index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
     import type { EmptyLineBox } from '@freon4dsl/core';
     import { isNullOrUndefined } from '@freon4dsl/core';

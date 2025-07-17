@@ -23,6 +23,9 @@
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
     import { activeElem, activeIn, draggedElem, draggedFrom } from './stores/AllStores.svelte';
     import type { TableDetails } from './svelte-utils/TableDetails';
+    import { onMount } from 'svelte';
+    let initialized = false;
+    onMount(() => { initialized = true; });
 
     const LOGGER = TABLE_LOGGER;
 
@@ -38,6 +41,9 @@
     let myMetaType: DragAndDropType;
     
     $effect(() => {
+        if (!initialized) return;
+        LOGGER.log('Effect:' + box.id);
+
         // console.log(`EFFECT ${box.conceptName} : ${box.node.freLanguageConcept()}`)
         myMetaType = {
             type: box.conceptName,
@@ -55,11 +61,8 @@
                 child.refreshComponent = refresh;
             }
         }
-    });
-
-    $effect(() => {
         // Evaluated and re-evaluated when the box changes.
-        refresh('Refresh new table box: ' + box?.id);
+        refresh('Refresh new box: ' + box?.id);
     });
 
     const refresh = (why?: string): void => {

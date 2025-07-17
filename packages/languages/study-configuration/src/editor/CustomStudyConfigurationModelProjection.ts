@@ -197,7 +197,8 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                 BoxUtil.textBox(element, "text"),
                 {
                     params: [
-                        { key: "selectable", value: "false" }
+                        { key: "selectable", value: "false" },
+                        { key: "placeholder", value: ph }
                     ],
                 },
             )

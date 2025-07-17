@@ -1,5 +1,6 @@
 <script lang="ts">
     import { LAYOUT_LOGGER } from './ComponentLoggers.js';
+    import { onMount } from 'svelte';
 
     /**
      * This component shows a list of various boxes (no 'true' list). It can be shown
@@ -24,6 +25,13 @@
     let errorCls: string = $state(''); // css class name for when the node is erroneous
     let errMess: string[] = $state([]); // error message to be shown when element is hovered
 
+    let initialized = false;
+    let singularity = false;
+
+    onMount(() => { 
+        initialized = true; 
+    });
+
     async function setFocus(): Promise<void> {
         if (!isNullOrUndefined(element)) {
             element.focus();
@@ -31,14 +39,17 @@
     }
 
     $effect(() => {
+        if (!initialized) return;
+        if (singularity) return;
+
+        LOGGER.log('Effect:' + box.id);
+
         // runs after the initial onMount
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
-    });
-
-    $effect(() => {
         // Evaluated and re-evaluated when the box changes.
         refresh('Refresh Layout box changed ' + box?.id);
+        singularity = true;
     });
 
     const refresh = (why?: string): void => {

@@ -3,15 +3,18 @@
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { onMount } from "svelte";
     import type { FreError } from "@freon4dsl/core";
+    import { FreLogger } from "@freon4dsl/core";
     // @ts-ignore
     import { ArrowUpRight as IconArrowUpRight, X as IconX } from '@lucide/svelte';
 
     const dispatch = createEventDispatcher();
     let modelErrors = $state<FreError[]>([]);
 
+    const LOGGER = new FreLogger("DSLErrorsDrawer");
+
     onMount(() => {
         modelErrors = ModelManager.getInstance().runValidator();
-        console.log("[DSLErrorsDrawer] onMount modelErrors:", modelErrors.length);
+        LOGGER.log("onMount modelErrors:", modelErrors.length);
     });
 
     function closeDrawer() {
@@ -21,12 +24,12 @@
     export function refresh() {
         modelErrors = ModelManager.getInstance().runValidator();
         dispatch("refresh");
-        console.log("DSLErrorsDrawer refresh errors", modelErrors.length);
+        LOGGER.log("refresh errors", modelErrors.length);
     }
 
     let selected: number = 0;
     $effect(() => {
-        console.log("[DSLErrorsDrawer] $effect handleClick, selected:", selected);
+        LOGGER.log("Effect: handleClick, selected:", selected);
         handleClick(selected);
     });
 

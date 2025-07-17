@@ -6,7 +6,7 @@
     // ts-ignore
     import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Trash2 as IconDelete, Copy as IconDuplicate,Share2 as IconShare2,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
     import CustomTextbox from "./helper/CustomTextbox.svelte";
-    
+
     const LOGGER = new FreLogger("ItemGroupComponent");
     
     const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
@@ -35,14 +35,12 @@
     }
 
     const setText = (value: string) => {
-
         //TODO: This is not being picked up by the undo/redo mechanism
-
         AST.change(() => {
             const propertyName = "name";
             const node = box.node;
             const oldValue = node[propertyName];
-            console.debug(`[ItemGroupComponent] Changing property '${propertyName}' of node`, node, 'from', oldValue, 'to', value);
+            LOGGER.log(`Changing property: '${propertyName}' of node: '${node}' from '${oldValue}' to '${value}'`);
             node[propertyName] = value;
             // FreChangeManager.getInstance().setPrimitive(node, propertyName, value);
             // console.debug(`[ItemGroupComponent] Change registered with FreChangeManager for property '${propertyName}' of node`, node);
@@ -57,8 +55,9 @@
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
-    // async function setFocus(): Promise<void> {
-    // }
+    async function setFocus(): Promise<void> {
+        // CustomTextbox.setFocus();
+    }
 
     const refresh = (why?: string): void => {
         LOGGER.log("REFRESH (" + why + ")");

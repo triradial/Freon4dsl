@@ -14,11 +14,20 @@ import MultilineTextComponent from "./components/custom/MultilineTextComponent.s
 const LOGGER = new FreLogger("init");
 
 // FreLogger.unmuteAllLogs();
-// FreLogger.unmute("init");
+FreLogger.unmute("init");
 FreLogger.unmute("Routing");
-// FreLogger.unmute("ListGroupComponent");
+FreLogger.unmute("ListGroupComponent");
 FreLogger.unmute("ItemGroupComponent");
-FreLogger.unmute("ActionBox");
+// FreLogger.unmute("ActionBox");
+//FreLogger.unmute("DSLErrorsDrawer");
+
+// FreLogger.unmute("RenderComponent");
+// FreLogger.unmute("ElementComponent");
+// FreLogger.unmute("FragmentComponent");
+// FreLogger.unmute("FreonComponent");
+// FreLogger.unmute("LayoutComponent");
+// FreLogger.unmute("ListComponent");
+
 
 
 LOGGER.log('--- START ---');

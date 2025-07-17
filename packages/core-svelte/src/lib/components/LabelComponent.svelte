@@ -24,8 +24,6 @@
         if (!isNullOrUndefined(box)) {
             box.refreshComponent = refresh;
         }
-    });
-    $effect(() => {
         // Evaluated and re-evaluated when the box changes.
         refresh('FROM component ' + box?.id);
     });

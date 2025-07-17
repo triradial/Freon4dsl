@@ -44,6 +44,13 @@
         rootBox && rootBox !== dummyBox ? componentId(rootBox) : 'freon-component-with-unknown-box'
     );
 
+    let initialized = false;
+    let singularity = false;
+
+    onMount(() => { 
+        initialized = true; 
+    });
+
     function stopEvent(event: KeyboardEvent) {
         event.preventDefault();
         event.stopPropagation();
@@ -256,14 +263,20 @@
     // });
 
     $effect(() => {
+        if (!initialized) return;
+
         if (editor) {
+            if (singularity) return;
+            LOGGER.log('Effect');
             editor.refreshComponentSelection = refreshSelection;
             editor.refreshComponentRootBox = refreshRootBox;
             editor.getClientRectangle = clientRectangle
+            singularity = true;
         }
     });
 
     const refreshSelection = async (why?: string) => {
+        if (!initialized) return;
         LOGGER.log(
             'FreonComponent.refreshSelection: ' +
                 why +

@@ -465,109 +465,78 @@ main {
   min-height: 32px;
 }
 
-.multiline2-text {
-  padding: 0 0 0 0.125rem;
-  margin: 0 0.25rem 0 0.125rem;
-  white-space: normal;
-  height: auto;
-  min-height: unset;
-  line-height: unset;
-  display: flex !important;
-}
-
-.multiline2-editor {
-  outline: 1px solid transparent;
-  outline-offset: 1px;
-  --tw-ring-inset: var(--tw-empty,
-      /*!*/
-      /*!*/
-    );
-  --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: #32cd3275;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  margin: 0 0.25rem 0 0 !important;
-  display: none !important;
-}
-
-.tinymce-wrapper {
+.multiline2-component {
   width: 100%;
+  padding: 0 0 0 0.125rem;
+  margin: 0 0.25rem 0 0;
+  min-height: 2em;
+}
+
+.multiline2-component .view-mode {
+  padding: 0 0 0 0.125rem;
+  margin: 0 0.25rem 0 0;
+  /* white-space: normal; */
+  height: auto;
+  min-height: 2em;
+  line-height: unset;
+  display: block !important;
+  /* align-items: center; */
+  border: 1px solid transparent;
+}
+
+.tinymce-inline {
   /* min-height: 3rem; */
   margin-left: 0.25rem;
   all: unset;
 }
 
-.tinymce-wrapper>div {
+.tinymce-inline>div {
   margin-left: 0;
   /* min-height: 1.5rem; */
 }
 
-span:has(> .tinymce-wrapper) {
+span:has(> .tinymce-inline) {
   width: 100%;
 }
 
-.multiline2-editor.edit-mode,
-.multiline2-text.view-mode {
-  display: flex !important;
-}
-
-.multiline2-editor.view-mode,
-.multiline2-text.edit-mode {
-  display: none !important;
-}
-
 /* Target list elements in both editor and display view */
-.multiline2-editor ul,
-.multiline2-editor ol,
-.multiline2-editor li,
-.multiline2-text ul,
-.multiline2-text ol,
-.multiline2-text li {
+.multiline2-component .edit-mode ul,
+.multiline2-component .edit-mode ol,
+.multiline2-component .edit-mode li,
+.multiline2-component .view-mode ul,
+.multiline2-component .view-mode ol,
+.multiline2-component .view-mode li {
   all: revert;
 }
 
 /* Explicitly force list styles */
-.multiline2-editor ul,
-.multiline2-text ul {
+.multiline2-component .edit-mode ul,
+.multiline2-component .view-mode ul {
   list-style-type: disc !important;
   padding-left: 1rem !important;
   display: block !important;
 }
 
-.multiline2-editor ol,
-.multiline2-text ol {
+.multiline2-component .edit-mode ol,
+.multiline2-component .view-mode ol {
   list-style-type: decimal !important;
   padding-left: 1rem !important;
   display: block !important;
 }
 
-.multiline2-editor li,
-.multiline2-text li {
+.multiline2-component .edit-mode li,
+.multiline2-component .view-mode li {
   display: list-item !important;
   list-style: inherit !important;
 }
 
 /* New */
-.multiline2-component {
-  width: 100%;
-}
-.multiline2-editor.edit-mode {
+.multiline2-component .edit-mode {
   width: 100%;
   position: relative;
 }
-.multiline2-text.view-mode {
-  display: block;
-  min-height: 2em;
-  padding: 0.5em;
-  background: #222;
-  color: #eee;
-  border-radius: 4px;
-  border: 1px solid #444;
-}
-.text-component-placeholder {
-  color: #888;
+
+.multiline2-component-placeholder {
   font-style: italic;
 }
 

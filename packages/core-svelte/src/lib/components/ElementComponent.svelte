@@ -4,6 +4,10 @@
     import { Box, ElementBox, isNullOrUndefined } from '@freon4dsl/core';
     import { componentId } from '../index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
+    import { onMount } from 'svelte';
+
+    let initialized = false;
+    let singularity = false;
 
     let { editor, box }: FreComponentProps<ElementBox> = $props();
 
@@ -12,9 +16,13 @@
     let id: string = $state('');
 
     let childBox: Box | undefined = $state(undefined);
+    
+    onMount(() => { 
+        initialized = true; 
+    });
 
     const refresh = (why?: string): void => {
-        LOGGER.log('REFRESH ElementComponent (' + why + ')' + box?.node?.freLanguageConcept());
+        LOGGER.log('Refresh (' + why + ')' + box?.node?.freLanguageConcept());
         if (!isNullOrUndefined(box)) {
             id = componentId(box);
             childBox = box.content;
@@ -31,15 +39,17 @@
     }
 
     $effect(() => {
+        if (!initialized) return;
+        if (singularity) return;
+
         // runs after the initial onMount
+        LOGGER.log('Effect:' + box.id);
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+        refresh(box?.$id);
+        singularity = true;
     });
 
-    $effect(() => {
-        // Evaluated and re-evaluated when the box changes.
-        refresh(box?.$id);
-    });
 </script>
 
 {#if !isNullOrUndefined(childBox)}

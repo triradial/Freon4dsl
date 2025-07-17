@@ -283,12 +283,17 @@
 /* #endregion */
 
 /* #region MultlineText Component */
-.multiline2-text {
+.multiline2-component .view-mode {
   color: var(--gray-200) !important;
   background: inherit !important;
 }
 
-.multiline2-editor {
+.multiline2-component .view-mode:hover {
+  color: var(--green-90t) !important;
+  background-color: var(--green-30t) !important;
+}
+
+.multiline2-component .edit-mode {
   outline: 1px solid transparent !important;
   outline-offset: 1px !important;
   --tw-ring-inset: var(--tw-empty,
@@ -307,6 +312,10 @@
 
 .tinymce-wrapper>div {
   color: var(--gray-200);
+}
+
+.multiline2-component-placeholder {
+  color: var(--green-90t);
 }
 
 /* #endregion */

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { LIST_LOGGER } from './ComponentLoggers.js';
+    import { onMount } from 'svelte';
 
     /**
      * This component shows a list of elements that have the same type (a 'true' list).
@@ -57,24 +58,32 @@
     // determine the type of the elements in the list
     // this speeds up the check whether an element may be dropped here
     let myMetaType: DragAndDropType;
-    
+
+    let initialized = false;
+    let singularity = false;
+
+    onMount(() => { 
+        initialized = true; 
+    });
+
     $effect(() => {
+        if (!initialized) return;
+        if (singularity) return;
         // console.log(`EFFECT ${box.conceptName} : ${box.node.freLanguageConcept()}`)
+        
+        LOGGER.log('Effect:' + box.id);
+
         myMetaType = {
             type: box.conceptName,
             isRef: FreLanguage.getInstance().classifierProperty(box.node.freLanguageConcept(), box.propertyName)?.propertyKind === 'reference'
         }
         // runs after the initial onMount
-        LOGGER.log('ListComponent.effect for ' + box.role);
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
-    });
-
-    $effect(() => {
         // Evaluated and re-evaluated when the box changes.
         refresh('ListComponent changed ' + box?.id);
+        singularity = true;
     });
-
 
     const drop = (event: DragEvent, targetIndex: number) => {
         const data: ListElementInfo | null = draggedElem.value;
@@ -110,7 +119,7 @@
     };
 
     const dragstart = (event: DragEvent, listId: string, listIndex: number) => {
-        console.log('Drag Start ' + box.id + ' index: ' + listIndex);
+        LOGGER.log('Drag Start ' + box.id + ' index: ' + listIndex);
         event.stopPropagation();
         // close any context menu
         contextMenuVisible.value = false;
@@ -125,7 +134,7 @@
         // which explains why we cannot use event.dataTransfer.setData. We use a svelte store instead.
         // Create the data to be transferred and notify the store that something is being dragged.
         rememberDraggedNode(listId, box, shownElements[listIndex]);
-        // console.log(`dragstart: ${draggedElem.value.element.freLanguageConcept()}`)
+        LOGGER.log(`dragstart: ${draggedElem.value.element.freLanguageConcept()}`)
     };
 
     const dragleave = (event: DragEvent, index: number): boolean => {

@@ -75,9 +75,7 @@
         const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration");
         if (result !== undefined && result !== null) {
             unit = result;
-            setTimeout(() => {
-                editorLoaded = true;
-            }, 3000);
+            editorLoaded = true;
         } else {
             noModelAvailable = true;
         }
@@ -87,12 +85,14 @@
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         console.log("[DEBUG] dslEditor instance in Study.svelte", dslEditor);
-        initializeStudy();
+        await initializeStudy();
 
         // Subscribe to FreChangeManager changes
         const changeCallback = (delta) => {
-            console.debug("[Study] Detected change from FreChangeManager:", delta);
-            debouncedSave();
+            if (delta.oldValue != delta.newValue) {
+                console.debug("[Study] Detected change from FreChangeManager:", delta);
+                debouncedSave();
+            }
         };
         FreChangeManager.getInstance().changePrimCallbacks.push(changeCallback);
         unsubscribeChangeManager = () => {
@@ -113,8 +113,6 @@
         setDrawerVisibility("studyTimelineTable", false);
         setDrawerVisibility("studyTimelineChart", false);
     });
-
-    import { runInAction } from "mobx";
 
     // Show the projections that are enabled in the study configuration.
     function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
@@ -142,25 +140,9 @@
         if (studyConfiguration.showDescriptions) {
             names.push("descriptionsShow");
         }
-        // if (studyConfiguration.showNotes) {
-        //     names.push("NotesShow");
-        // }
         
         names.push("Custom");
 
-        // console.log("[DEBUG] updateVisibleProjections", names);
-        // const proj = dslEditor.projection;
-        // proj.enableProjections(names);
-
-        // Let the editor know that the projections have changed.
-        // TODO: This should go automatically through mobx.
-        //       But observing the projections array does not work as expected.
-        // runInAction( () => {
-        //     dslEditor.forceRecalculateProjection++;
-        // })
-        // redo the validation to set the errors in the new box tree
-        // todo reinstate the following statement
-        // this.validate();
     }
 
     function handleCheckboxChange(id: string, visible: boolean) {
