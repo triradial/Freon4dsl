@@ -7,7 +7,7 @@
     import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Plus as IconPlus,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
     
     const LOGGER = new FreLogger("ListGroupComponent");
-    // LOGGER.active = true;
+    FreLogger.unmute("ListGroupComponent");
     
     const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
 

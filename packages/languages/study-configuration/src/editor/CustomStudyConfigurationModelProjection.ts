@@ -49,19 +49,19 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
     name: string = "Custom"
     handler: FreProjectionHandler
     nodeTypeToBoxMethod: Map<string, (node: FreNode) => Box> = new Map<string, (node: FreNode) => Box>([
-        // ["StudyConfiguration", this.projectStudyConfiguration],
-        // ["Description", this.projectDescription],
-        // ["Period", this.projectPeriod],
-        // ["Event", this.projectEvent],
+        ["StudyConfiguration", this.projectStudyConfiguration],
+        ["Description", this.projectDescription],
+        ["Period", this.projectPeriod],
+        ["Event", this.projectEvent],
         // ["Task", this.projectTaskOLD],
         // ["TaskReference", this.projectTaskOLD],
         // ["Task", this.projectTask],
         // ["TaskReference", this.projectTaskReference],
-        // ["SharedTask", this.projectSharedTask],
-        // ["Step", this.projectStep],
-        // ["Reference", this.projectReference],
-        // ["SystemAccess", this.projectSystem],
-        // ["Person", this.projectPerson],
+        ["SharedTask", this.projectSharedTask],
+        ["Step", this.projectStep],
+        ["Reference", this.projectReference],
+        ["SystemAccess", this.projectSystem],
+        ["Person", this.projectPerson],
         ["PatientInfo", this.projectPatientInfo],
         ["PatientHistory", this.projectPatientHistory],
         ["NumberLiteralExpression", this.createNumberLiteralBox],
@@ -220,7 +220,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
 
     projectPeriod(period: Period): Box {
         const element: Period = period
-        const showDescriptions = ((element.freOwner() as Period).freOwner() as StudyConfiguration).showDescriptions
+        const showDescriptions = (element.freOwner() as StudyConfiguration).showDescriptions
         let box: Box = 
             BoxUtil.partWrapperBox(
                 element,
@@ -231,17 +231,7 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
                     "period-detail",
                     "",
                     [
-                        ...(showDescriptions
-                            ? [
-                                BoxFactory.horizontalLayout(
-                                    element,
-                                    "period-hlist-line-1",
-                                    "",
-                                    [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)],
-                                    { selectable: false, cssClass: "align-top" },
-                                ),
-                            ] : []
-                        ),
+                        ...(showDescriptions === true ? [BoxUtil.getBoxOrAction(element, "description", "Description", this.handler)] : []),
                         BoxUtil.partWrapperBox(
                             element,
                             "events",

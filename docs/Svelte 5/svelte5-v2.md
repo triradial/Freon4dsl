@@ -54,7 +54,6 @@
   - Updated to use `$props()` to pass variables
   - Updated to use `$state()`, `derived()` and `$effect()`  for state management
   - Changed from `on:{event}` to `on{event}` style e.g `on:click` to `onclick`
-  - Enhanced multi-line text editing with Quill editor integration
   - Updated item group to use newest structure of text component
 
 ### **2. Existing Components**

@@ -131,10 +131,12 @@
 /* #region List Group Component */
 .list-group.type1 {
   background-color: var(--primary-900t);
+  border-bottom: 1px solid #000;
 }
 
 .list-group.type2 {
   background-color: var(--white-20t);
+  border-bottom: 1px solid #000;
 }
 
 .list-group.type3 {

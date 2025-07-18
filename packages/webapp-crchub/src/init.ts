@@ -17,10 +17,18 @@ const LOGGER = new FreLogger("init");
 // FreLogger.unmuteAllLogs();
 FreLogger.unmute("init");
 FreLogger.unmute("Routing");
+
+/* Custom Components */
 FreLogger.unmute("ListGroupComponent");
 FreLogger.unmute("ItemGroupComponent");
+FreLogger.unmute("MultilineTextComponent");
+// FreLogger.unmute("DatePickerComponent");
+// FreLogger.unmute("TimePickerComponent");
+// FreLogger.unmute("ItemGroupComponent2");
+// FreLogger.unmute("CustomTextbox");
+
+/* Freon Components */
 // FreLogger.unmute("ActionBox");
-//FreLogger.unmute("DSLErrorsDrawer");
 
 // FreLogger.unmute("RenderComponent");
 // FreLogger.unmute("ElementComponent");

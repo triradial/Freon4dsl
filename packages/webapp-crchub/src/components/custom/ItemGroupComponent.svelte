@@ -8,6 +8,7 @@
     import CustomTextbox from "./helper/CustomTextbox.svelte";
 
     const LOGGER = new FreLogger("ItemGroupComponent");
+    FreLogger.unmute("ItemGroupComponent");
     
     const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
 
@@ -40,10 +41,12 @@
             const propertyName = "name";
             const node = box.node;
             const oldValue = node[propertyName];
-            LOGGER.log(`Changing property: '${propertyName}' of node: '${node}' from '${oldValue}' to '${value}'`);
-            node[propertyName] = value;
-            // FreChangeManager.getInstance().setPrimitive(node, propertyName, value);
-            // console.debug(`[ItemGroupComponent] Change registered with FreChangeManager for property '${propertyName}' of node`, node);
+            if (oldValue != value) {
+                LOGGER.log(`Changing property: '${propertyName}' of node: '${node}' from '${oldValue}' to '${value}'`);
+                node[propertyName] = value;
+                // FreChangeManager.getInstance().setPrimitive(node, propertyName, value);
+                // console.debug(`[ItemGroupComponent] Change registered with FreChangeManager for property '${propertyName}' of node`, node);
+            }
         });
     };
 
