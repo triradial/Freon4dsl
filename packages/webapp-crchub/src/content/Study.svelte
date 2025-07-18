@@ -165,7 +165,7 @@
         if (unit && id in unit) {
             (unit[id as keyof StudyConfiguration] as boolean) = visible;
             updateVisibleProjections(unit as StudyConfiguration);
-            // mobxVersion++;
+            mobxVersion++;
         }
     }
 
