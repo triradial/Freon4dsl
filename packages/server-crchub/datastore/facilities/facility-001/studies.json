@@ -95,33 +95,6 @@
     "currentProtocol": ""
   },
   {
-    "id": "6cbeca36-13a8-4ecf-b68d-4944fc590184",
-    "name": "UI-Testing",
-    "title": "this is a study created to explore how the Freon UI has improved",
-    "status": "Planning",
-    "phase": "I",
-    "therapeuticArea": "Test TPA",
-    "currentProtocol": ""
-  },
-  {
-    "id": "0ef33c9b-d304-4536-92cb-4df74fa5e712",
-    "name": "Demo11",
-    "title": "",
-    "status": "Planning",
-    "phase": "",
-    "therapeuticArea": "",
-    "currentProtocol": ""
-  },
-  {
-    "id": "32188ccc-55ba-4b9e-9cc2-1938e5442737",
-    "name": "limited",
-    "title": "limited",
-    "status": "",
-    "phase": "",
-    "therapeuticArea": "",
-    "currentProtocol": ""
-  },
-  {
     "id": "30f3afa3-357c-4fe1-916c-10609703f8bd",
     "name": "NewFreon",
     "title": "",
@@ -131,10 +104,10 @@
     "currentProtocol": ""
   },
   {
-    "id": "1c749bc2-bafd-4a15-b2bd-869f0a18dc28",
-    "name": "sss",
-    "title": "sss",
-    "status": "",
+    "id": "39da2150-7e2a-4e39-944b-d13d3a7ba306",
+    "name": "UI-Testing",
+    "title": "UI-Testing",
+    "status": "Planning",
     "phase": "",
     "therapeuticArea": "",
     "currentProtocol": ""

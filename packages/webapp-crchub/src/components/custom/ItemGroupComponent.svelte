@@ -80,6 +80,8 @@
 
     const deleteItem = () => {
         AST.change(() => {
+            console.log("deleteItem box: ", box);
+            console.log("deleteItem box.node: ", box.node);
             const ownerDescriptor = box.node.freOwnerDescriptor();
             const parent = ownerDescriptor.owner;
             const propertyName = ownerDescriptor.propertyName;
