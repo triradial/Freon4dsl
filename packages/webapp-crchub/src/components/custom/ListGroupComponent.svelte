@@ -7,7 +7,7 @@
     import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Plus as IconPlus,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
     
     const LOGGER = new FreLogger("ListGroupComponent");
-    // LOGGER.active = true;
+    FreLogger.unmute("ListGroupComponent");
     
     const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
 
@@ -67,10 +67,9 @@
                 }
                 const newElement = language.createConceptOrUnit(newConceptName);
                 box.getPropertyValue().push(newElement);
-                LOGGER.log("Added item: "+ newConceptName);
-                console.log("Added item: "+ newConceptName);
-            } else {
-                LOGGER.log("No property type");
+                LOGGER.log("Added item: " + newConceptName);
+             } else {
+                LOGGER.error("Cannot add item " + newConceptName);
             }
         });
     }

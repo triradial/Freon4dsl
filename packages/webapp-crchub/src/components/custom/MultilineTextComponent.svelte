@@ -8,7 +8,8 @@
         tinymce: any;
     }
 
-    const LOGGER = new FreLogger("ItemGroupComponent");
+    const LOGGER = new FreLogger("MultilineTextComponent");
+    FreLogger.unmute("MultilineTextComponent");
 
     const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
     
@@ -38,18 +39,18 @@
     };
 
     const getText = () => {
-        const propertyName = "name";
+        const propertyName = "text";
         const node = box.node;
         return node[propertyName];
     }
 
     const setText = (value: string) => {
-        console.log("[MultilineTextComponent] setText called with:", value);
         AST.change(() => {
-            const propertyName = "name";
+            const propertyName = "text";
             const node = box.node;
             const oldValue = node[propertyName];
             if (oldValue !== value) {
+                LOGGER.log(`Changing property: '${propertyName}' of node: '${node}' from '${oldValue}' to '${value}'`);
                 node[propertyName] = value;
                 text = value; // update local state immediately
             }
@@ -123,18 +124,18 @@
                         e.stopPropagation();
                     }
                 });
-                editor.on("change keyup", () => {
-                    if (isProgrammaticUpdate) return;
-                    const val = editor.getContent();
-                    console.log("[MultilineTextComponent] TinyMCE change/keyup, value:", val);
-                    setText(val);
-                });
+                // editor.on("change keyup", () => {
+                //     if (isProgrammaticUpdate) return;
+                //     const val = editor.getContent();
+                //     setText(val);
+                // });
                 editor.on("blur", () => {
                     if (isProgrammaticUpdate) return;
                     const val = editor.getContent();
                     setText(val);
                     text = getText();
                     editor.setContent(text || "");
+                    endEditing(); // Exit editing mode when TinyMCE loses focus
                 });
             },
             init_instance_callback: (editor) => {
@@ -230,7 +231,7 @@
             role="button"
             style="cursor: pointer;"
         >
-            {#if !!text && text.length > 0}
+            {#if !!text && text.trim().length > 0}
                 {@html text}
             {:else}
                 <span class="multiline2-component-placeholder">{placeholder}</span>

@@ -133,10 +133,12 @@
 /* #region List Group Component */
 .list-group.type1 {
   background-color: var(--primary-900t);
+  border-bottom: 1px solid #fff;
 }
 
 .list-group.type2 {
   background-color: var(--black-20t);
+  border-bottom: 1px solid #fff;
 }
 
 .list-group.type3 {

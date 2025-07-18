@@ -9,31 +9,52 @@
         items: Array<{ id: string; label: string; visible: boolean; parent?: string }>;
     }>();
 
-    onMount(() => {
+    // Local state for items that can be mutated
+    let localItems = $state<Array<{ id: string; label: string; visible: boolean; parent?: string }>>([]);
+    let hiddenItems = $state<Array<{ id: string; label: string; visible: boolean; parent?: string }>>([]);  
+    
+    // Update local items when props change
+    $effect(() => {
+        localItems = [...items];
+    });
+    
+    // Update hidden items when local items change
+    $effect(() => {
+        hiddenItems = localItems.filter((item) => !item.visible);
     });
 
-    let hiddenItems = $derived(items.filter((item) => !item.visible));
-
     function handleItemToggle(id: string) {
-        const item = items.find(i => i.id === id);
+        const item = localItems.find(i => i.id === id);
         if (item) {
-            onCheckboxChange(id, !item.visible);
+            // Toggle the item's visible property
+            item.visible = !item.visible;
+            onCheckboxChange(id, item.visible);
+            
+            // Handle parent-child relationships
+            if (!item.parent) {
+                // This is a parent item
+                if (!item.visible) {
+                    // Parent unchecked - uncheck all children
+                    const children = localItems.filter(i => i.parent === id);
+                    children.forEach(child => {
+                        if (child.visible) {
+                            child.visible = false;
+                            onCheckboxChange(child.id, false);
+                        }
+                    });
+                }
+                // If parent is checked, don't automatically check children (user must do this manually)
+            }
         }
     }
 
     function isParentVisible(id: string): boolean {
-        const index = items.findIndex((item) => item.id === id);
-        let result = true;
-        if (index !== -1) {
-            const item = items[index];           
-            if (!item.parent) {
-                result = true;
-            } else {
-                const parent = items.find(i => i.id === item.parent);
-                result = parent ? parent.visible : true;
-            }
+        const item = localItems.find((item) => item.id === id);
+        if (!item || !item.parent) {
+            return true;
         }
-        return result;
+        const parent = localItems.find(i => i.id === item.parent);
+        return parent ? parent.visible : true;
     }
 
     let openState = $state(false);
@@ -62,7 +83,7 @@
             <!-- svelte-ignore a11y_click_events_have_key_events -->
             <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div onclick={() => {}}>
-                {#each items as item}
+                {#each localItems as item}
                     <div class="flex items-center editor-display-options {item.parent ? 'ml-6' : ''}">
                         <input
                             id={item.id}
@@ -78,7 +99,6 @@
             </div>
         {/snippet}
     </Popover>
-    <span class="editor-footer-text flex-grow">
-        Hidden Items: {hiddenItems.length > 0 ? `${hiddenItems.map((item) => item.label).join(", ")}` : "None"}
-    </span>
+    <span class="editor-footer-label">Hidden Items: </span>
+    <span class="editor-footer-text flex-grow">{hiddenItems.length > 0 ? `${hiddenItems.map((item) => item.label).join(", ")}` : "None"}</span>
 </div>

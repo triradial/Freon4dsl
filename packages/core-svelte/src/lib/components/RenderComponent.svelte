@@ -76,15 +76,15 @@
 
     // css class name for when the node is selected
     let selectedCls: string = $derived.by(() => {
-        LOGGER.log(`Render derived: selectedCls ${box.id}`)
+        // LOGGER.log(`Render derived: selectedCls ${box.id}`)
         // the following is done in the afterUpdate(), because then we are sure that all boxes are rendered by their respective components
-        LOGGER.log(
-        'setCurrentSelectedElement selectedBoxes: [' +
-        selectedBoxes.value.map(
-            (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
-        ) +
-        ']'
-        );
+        // LOGGER.log(
+        // 'setCurrentSelectedElement selectedBoxes: [' +
+        // selectedBoxes.value.map(
+        //     (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
+        // ) +
+        // ']'
+        // );
         let isSelected: boolean = selectedBoxes.value.includes(box);
         // Ensure that the internal textbox inside an Action/Select/Reference box is selected if its parent box is.
         if (isActionTextBox(box)) {
@@ -123,9 +123,9 @@
     let ExternalComponent: Component<FreComponentProps<any>> | undefined = $state(undefined);
 
     const onClick = (event: MouseEvent) => {
-        LOGGER.log(
-            'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
-        );
+        // LOGGER.log(
+        //     'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
+        // );
         // Note that click events on some components, like TextComponent, are already caught.
         // These components need to take care of setting the currently selected element themselves.
         editor.selectElementForBox(box);
@@ -135,17 +135,16 @@
 
     // Two separate effects, because they implement non-associated things
     $effect(() => {
-        LOGGER.log(`Render effect1: set external component ${box.id}`)
+        // LOGGER.log(`Render effect1: set external component ${box.id}`)
         if (isExternalBox(box)) {
             ExternalComponent = findCustomComponent(box.externalComponentName);
         }
     });
 
     $effect(() => {
-        LOGGER.log(`Render effect3: set client rectangle function ${box.id}`)
+        // LOGGER.log(`Render effect3: set client rectangle function ${box.id}`)
         if (!isNullOrUndefined(box) && !isTextBox(box) ) {
             box.getClientRectangle = (): ClientRectangle => {
-                LOGGER.log(`Render clientRect ${box.id} `)
                 return element?.getBoundingClientRect() || UndefinedRectangle
             }
         }
