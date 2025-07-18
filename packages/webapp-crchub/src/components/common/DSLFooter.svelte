@@ -99,7 +99,6 @@
             </div>
         {/snippet}
     </Popover>
-    <span class="editor-footer-text flex-grow">
-        Hidden Items: {hiddenItems.length > 0 ? `${hiddenItems.map((item) => item.label).join(", ")}` : "None"}
-    </span>
+    <span class="editor-footer-label">Hidden Items: </span>
+    <span class="editor-footer-text flex-grow">{hiddenItems.length > 0 ? `${hiddenItems.map((item) => item.label).join(", ")}` : "None"}</span>
 </div>
