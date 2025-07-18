@@ -67,10 +67,9 @@
                 }
                 const newElement = language.createConceptOrUnit(newConceptName);
                 box.getPropertyValue().push(newElement);
-                LOGGER.log("Added item: "+ newConceptName);
-                console.log("Added item: "+ newConceptName);
-            } else {
-                LOGGER.log("No property type");
+                LOGGER.log("Added item: " + newConceptName);
+             } else {
+                LOGGER.error("Cannot add item " + newConceptName);
             }
         });
     }

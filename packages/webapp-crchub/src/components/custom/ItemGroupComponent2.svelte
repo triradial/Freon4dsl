@@ -183,6 +183,7 @@
         </button> 
     {/if}
 </div>
+
 {#key contentStyle}
     <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
         <RenderComponent box={box.childBox} {editor} {cssClass} />

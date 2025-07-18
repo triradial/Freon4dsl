@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { AST } from "@freon4dsl/core";
     import { onMount, onDestroy, getContext } from "svelte";
     import StudyCard from "../components/cards/StudyCard.svelte";
     import PatientGrid from "../components/content/PatientGrid.svelte";
@@ -13,6 +14,7 @@
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { getActiveDrawer, setActiveDrawer, setDrawerVisibility } from "../services/stores/side-drawer-store.js";
     import { FreChangeManager } from "@freon4dsl/core";
+    import { runInAction } from "mobx";
     // @ts-ignore
     import { User as IconUser, PencilRuler as IconPencilRuler, Save as IconSave, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
 
@@ -72,19 +74,19 @@
         }
         
         // Get the model data for the study
-        const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration");
+        const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration") as StudyConfiguration;
         if (result !== undefined && result !== null) {
             unit = result;
             editorLoaded = true;
         } else {
             noModelAvailable = true;
         }
-        updateVisibleProjections(unit as StudyConfiguration);
+        updateVisibleProjections(unit);
     }
 
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
-        console.log("[DEBUG] dslEditor instance in Study.svelte", dslEditor);
+        console.log("[Study] dslEditor instance in Study.svelte", dslEditor);
         await initializeStudy();
 
         // Subscribe to FreChangeManager changes
@@ -144,24 +146,26 @@
         names.push("Custom");
 
         const proj = dslEditor.projection;
-        proj.enableProjections(names);
 
-        // Let the editor know that the projections have changed.
-        // TODO: This should go automatically through mobx.
-        //       But observing the projections array does not work as expected.
-        // runInAction( () => {
-        //     dslEditor.forceRecalculateProjection++;
-        // })
-        // redo the validation to set the errors in the new box tree
-        // todo reinstate the following statement
-        // this.validate();
+        AST.change(() => {
+            proj.enableProjections(names);
+            // Let the editor know that the projections have changed.
+            // TODO: This should go automatically through mobx.
+            //       But observing the projections array does not work as expected.
+            runInAction( () => {
+                dslEditor.forceRecalculateProjection++;
+            });
+            // redo the validation to set the errors in the new box tree
+            // todo reinstate the following statement
+            // this.validate();
+        });
     }
 
     function handleCheckboxChange(id: string, visible: boolean) {
         if (unit && id in unit) {
             (unit[id as keyof StudyConfiguration] as boolean) = visible;
             updateVisibleProjections(unit as StudyConfiguration);
-            mobxVersion++;
+            // mobxVersion++;
         }
     }
 
