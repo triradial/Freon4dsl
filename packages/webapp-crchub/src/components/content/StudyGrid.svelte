@@ -1,7 +1,7 @@
 <script lang="ts">
     import { dataStore } from "../../services/data/data-store.js";
     import { editObject, addObject } from "../../services/stores/object-drawer-store.js";
-    import { onMount, onDestroy } from "svelte";
+    import { onMount, onDestroy, tick } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
@@ -10,10 +10,12 @@
     import GridHeader from "../common/GridHeader.svelte";
     import { getSVGIcon } from "../../services/utils.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
+    import SaveViewDialog from "../dialogs/SaveViewDialog.svelte";
     import { userStore } from "../../services/stores/users-store.js";
     // @ts-ignore
-    import { Plus as IconPlus, RefreshCcw as IconRefresh } from '@lucide/svelte';
+    import { Plus as IconPlus, RefreshCcw as IconRefresh, EllipsisVertical as IconEllipsisVertical } from '@lucide/svelte';
     import type { SelectOption } from '@freon4dsl/core';
+    import ConfirmUnsavedDialog from '../dialogs/ConfirmUnsavedDialog.svelte';
 
     let deleteDialogOpen = $state(false);
     let objectToDelete = $state<any>(null);
@@ -33,21 +35,58 @@
     // LocalStorage key for saving column state
     const STUDIES_COLUMN_STATE_KEY = "crchub-studies-column-state";
     const STUDIES_VIEW_KEY = "crchub-studies-view";
+    const ACTIVE_VIEW_KEY = "crchub-studies-active-view";
     
     // Reactive variable to track if there's saved state
     let hasSavedState = $state(false);
     let hasCustomGrouping = $state(false);
     let selectedView = $state("default");
+
+    // Stores the column configuration that represents the default view
+    let defaultColumnState: any[] = [];
+    // Keeps the column state of the currently applied non-custom view so we can detect real changes
+    let referenceViewState: any[] = [];
+
+    // Flag to suppress saveColumnState reactions while programmatically applying a view
+    let isApplyingView = false;
     
     // Predefined views
-    const viewOptions: SelectOption[] = [
-        { id: "default", label: "Default (No Grouping)" },
-        { id: "phase", label: "Group by Phase" },
-        { id: "status", label: "Group by Status" },
-        { id: "therapeuticArea", label: "Group by Therapeutic Area" }
+    const predefinedViews: SelectOption[] = [
+        { id: "default", label: "Default" }
     ];
-    
+
+    const SAVED_VIEWS_KEY = "crchub-studies-saved-views";
+
+    // Helper to load previously saved named views
+    function loadSavedViews(): any[] {
+        const raw = localStorage.getItem(SAVED_VIEWS_KEY);
+        return raw ? JSON.parse(raw) : [];
+    }
+
+    // Saved views loaded at start
+    let savedViews: any[] = loadSavedViews();
+
+    // Mutable list so we can push saved views
+    let viewOptions: SelectOption[] = [
+        ...predefinedViews,
+        ...savedViews.map(v => ({ id: v.id, label: v.label }))
+    ];
+
+    // The currently selected option object for the dropdown
     let selectedViewOption = $state<SelectOption>(viewOptions[0]);
+    let showMenu = $state(false);
+    let menuAnchor: HTMLElement | null = null;
+    let hasUnsavedChanges = $state(false);
+    let menuRef: HTMLDivElement | null = null;
+
+    // Retrieve previously active view from sessionStorage (applied after grid ready)
+    let initialActiveView: string | null = sessionStorage.getItem(ACTIVE_VIEW_KEY);
+
+    // Dialog state
+    let saveDialogOpen = $state(false);
+    
+    let confirmUnsavedOpen = $state(false);
+    let pendingViewChange: string | null = null;
 
     $effect(() => {
         // keep the gridApi and studiesData in scope
@@ -93,33 +132,36 @@
 
     // Save column state to localStorage
     function saveColumnState() {
-        if (gridApi) {
-            const columnState = gridApi.getColumnState();
-            localStorage.setItem(STUDIES_COLUMN_STATE_KEY, JSON.stringify(columnState));
-            
-            // Check if there's custom grouping (user manually grouped columns)
-            const hasGrouping = columnState.some(col => col.rowGroup && !isPredefinedView(columnState));
-            hasCustomGrouping = hasGrouping;
-            hasSavedState = hasGrouping;
-            
-            console.log("[StudyGrid] Column state saved to localStorage:", columnState);
+        // Ignore events during predefined view application
+        if (isApplyingView) return;
+
+        const columnState = gridApi.getColumnState();
+
+        // If current view is not "custom", compare with referenceViewState
+        if (selectedView !== "default" && referenceViewState.length > 0) {
+            if (stateEquals(columnState, referenceViewState)) {
+                // Still same as the selected view, nothing to do
+                hasUnsavedChanges = false;
+                return;
+            }
         }
+
+        // Determine if current state equals default (for safety)
+        const isDefault = columnState.every(col => !col.rowGroup && !col.hide && !col.pinned && !col.sort);
+        if (isDefault && selectedView === "default") {
+            hasUnsavedChanges = false;
+            referenceViewState = defaultColumnState;
+            return;
+        }
+
+        hasUnsavedChanges = true;
     }
 
     // Check if current grouping matches any predefined view
     function isPredefinedView(columnState) {
-        for (const view of viewOptions) {
-            if (view.id === "default") continue;
-            
-            const expectedGrouping = getGroupingForView(view.id);
-            const actualGrouping = columnState.filter(col => col.rowGroup).map(col => col.colId);
-            
-            if (actualGrouping.length === expectedGrouping.length &&
-                actualGrouping.every(col => expectedGrouping.includes(col))) {
-                return true;
-            }
-        }
-        return false;
+        // Only 'default' is considered predefined now (no grouping)
+        const hasGrouping = columnState.some(col => col.rowGroup);
+        return !hasGrouping;
     }
 
     // Get grouping configuration for a view
@@ -139,52 +181,90 @@
     // Apply a predefined view
     function applyView(viewValue) {
         if (!gridApi) return;
-        
-        // First, clear all row grouping
-        gridApi.applyColumnState({
-            state: gridApi.getColumnState().map(col => ({
-                ...col,
-                rowGroup: false,
-                rowGroupIndex: null
-            }))
-        });
-        
-        // Apply the selected view's grouping
-        const groupingFields = getGroupingForView(viewValue);
-        if (groupingFields.length > 0) {
-            const columnState = gridApi.getColumnState();
-            const newColumnState = columnState.map(col => {
-                const groupIndex = groupingFields.indexOf(col.colId);
-                return {
-                    ...col,
-                    rowGroup: groupIndex !== -1,
-                    rowGroupIndex: groupIndex !== -1 ? groupIndex : null
-                };
-            });
-            gridApi.applyColumnState({
-                state: newColumnState
-            });
+
+        // Handle 'custom' specially: keep current grid state intact
+        const savedStateRaw = localStorage.getItem(`${STUDIES_COLUMN_STATE_KEY}-${viewValue}`);
+        if (savedStateRaw) {
+            const savedState = JSON.parse(savedStateRaw);
+            isApplyingView = true;
+            gridApi.applyColumnState({ state: savedState, applyOrder: true });
+            selectedView = viewValue;
+            referenceViewState = savedState;
+            hasUnsavedChanges = false;
+            sessionStorage.setItem(ACTIVE_VIEW_KEY, viewValue);
+            setTimeout(() => { isApplyingView = false; }, 100);
+            return;
         }
-        
-        // Save the view preference
+
+        // Default view
+        isApplyingView = true;
+        const resetState = gridApi.getColumnState().map(col => ({
+            colId: col.colId,
+            rowGroup: false,
+            rowGroupIndex: null,
+            sort: null,
+            sortIndex: null,
+            hide: false,
+            pinned: null
+        }));
+        gridApi.applyColumnState({ state: resetState, applyOrder: true });
+        defaultColumnState = resetState;
+        referenceViewState = resetState;
         selectedView = viewValue;
         localStorage.setItem(STUDIES_VIEW_KEY, viewValue);
-        
-        // Reset custom grouping flag since this is a predefined view
-        hasCustomGrouping = false;
-        hasSavedState = false;
-        
+        sessionStorage.setItem(ACTIVE_VIEW_KEY, viewValue);
+        hasUnsavedChanges = false;
+        setTimeout(() => {
+            isApplyingView = false;
+        }, 100);
     }
 
     // Save current grouping as custom view
     function saveCustomView() {
-        if (gridApi) {
-            const columnState = gridApi.getColumnState();
-            localStorage.setItem(STUDIES_COLUMN_STATE_KEY, JSON.stringify(columnState));
-            hasCustomGrouping = false;
-            hasSavedState = true;
-            console.log("[StudyGrid] Custom view saved");
-        }
+        saveDialogOpen = true;
+    }
+
+    // Handle save dialog confirmation
+    async function handleSaveView(event) {
+        const viewName: string = event.detail;
+        if (!gridApi || !viewName) return;
+
+        const columnState = gridApi.getColumnState();
+
+        // Retrieve existing saved views
+        savedViews = loadSavedViews();
+
+        const id = viewName.toLowerCase().replace(/\s+/g, "-");
+        const newViewMeta = { id, label: viewName, state: columnState };
+        savedViews.push(newViewMeta);
+        localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(savedViews));
+
+        // Persist column state under KEY specific to this view as well
+        localStorage.setItem(`${STUDIES_COLUMN_STATE_KEY}-${id}`, JSON.stringify(columnState));
+
+        // update dropdown options
+        // Place new view before 'custom'
+        viewOptions = [...predefinedViews, ...savedViews.map(v => ({ id: v.id, label: v.label }))];
+
+        // Wait for DOM to update with new option before selecting
+        await tick();
+
+        selectedView = id;
+        selectedViewOption = viewOptions.find(v => v.id === id) as any;
+
+        // Programmatically apply the saved view (so grid events match reference state)
+        applyView(id);
+
+        // Reload page so dropdown is fresh and grid re-inits with new view
+        location.reload();
+
+        referenceViewState = columnState;
+        hasUnsavedChanges = false;
+        saveDialogOpen = false;
+    }
+
+    function handleCancelSaveView() {
+        saveDialogOpen = false;
     }
 
     // Clear saved column state
@@ -194,6 +274,49 @@
         console.log("[StudyGrid] Saved column state cleared");
     }
 
+    // Add menu logic
+    function openMenu(event) {
+        if (showMenu) {
+            closeMenu();
+        } else {
+            menuAnchor = event.currentTarget;
+            showMenu = true;
+        }
+    }
+    function closeMenu() {
+        showMenu = false;
+    }
+    async function handleSave() {
+        if (!gridApi || selectedView === "default") return;
+        const columnState = gridApi.getColumnState();
+        localStorage.setItem(`${STUDIES_COLUMN_STATE_KEY}-${selectedView}`, JSON.stringify(columnState));
+        // Update savedViews
+        savedViews = loadSavedViews();
+        const idx = savedViews.findIndex(v => v.id === selectedView);
+        if (idx !== -1) {
+            savedViews[idx].state = columnState;
+            localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(savedViews));
+        }
+        referenceViewState = columnState;
+        hasUnsavedChanges = false;
+        closeMenu();
+    }
+    async function handleSaveAs() {
+        saveDialogOpen = true;
+        closeMenu();
+    }
+    async function handleDelete() {
+        if (selectedView === "default") return;
+        // Remove from savedViews
+        savedViews = loadSavedViews().filter(v => v.id !== selectedView);
+        localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(savedViews));
+        localStorage.removeItem(`${STUDIES_COLUMN_STATE_KEY}-${selectedView}`);
+        // Update viewOptions
+        viewOptions = [...predefinedViews, ...savedViews.map(v => ({ id: v.id, label: v.label }))];
+        selectedView = "default";
+        applyView("default");
+        closeMenu();
+    }
 
 
     // Get initial column definitions with saved state applied
@@ -243,6 +366,7 @@
                 }
             });
             selectedView = savedView;
+            referenceViewState = gridApi.getColumnState(); // Initialize referenceViewState for saved views
         } else {
             // Apply saved custom state if no predefined view
             try {
@@ -285,6 +409,7 @@
                     });
                     
                     hasSavedState = true;
+                    referenceViewState = columnState; // Initialize referenceViewState for saved custom state
                 }
             } catch (error) {
                 console.warn("[StudyGrid] Failed to apply saved state to column definitions:", error);
@@ -302,9 +427,14 @@
         
         // Initialize selected view
         const savedView = localStorage.getItem(STUDIES_VIEW_KEY);
-        if (savedView && viewOptions.find(v => v.id === savedView)) {
+        // Override selectedView with previously active one if present in session and exists in options
+        if (initialActiveView && viewOptions.find(v => v.id === initialActiveView)) {
+            selectedView = initialActiveView;
+        } else if (savedView && viewOptions.find(v => v.id === savedView)) {
             selectedView = savedView;
-            selectedViewOption = viewOptions.find(v => v.id === savedView) || viewOptions[0];
+            // Find the option that matches the selectedView, including saved views
+            const foundOption = viewOptions.find(v => v.id === savedView) || viewOptions[0];
+            selectedViewOption = foundOption;
         }
         
         userUnsubscribe = userStore.subscribe((val) => {
@@ -327,7 +457,13 @@
                 if (studiesData.length > 0) {
                     updateGridData();
                 } else {
-                    gridApi.setGridOption("loading", false);
+                    // Trigger initial data load with loading overlay
+                    refreshStudies();
+                }
+
+                // Apply the stored active view if it isn't default and grid is ready
+                if (initialActiveView && initialActiveView !== "default" && initialActiveView !== "custom") {
+                    applyView(initialActiveView);
                 }
             },
             // Save column state when columns change
@@ -356,6 +492,10 @@
 
         const gridElement = document.querySelector("#studyGrid") as HTMLElement;
         gridApi = createGrid(gridElement, gridOptions);
+
+        // Capture the default column state after grid is initialized
+        defaultColumnState = gridApi.getColumnState();
+        referenceViewState = defaultColumnState; // Initialize referenceViewState for default view
 
         gridElement.addEventListener("click", (event: MouseEvent) => {
             const target = event.target as HTMLElement;
@@ -464,6 +604,57 @@
         await dataStore.getStudies();
         // updateGridData() is not needed; debounced effect will handle
     }
+
+    function stateEquals(a: any[], b: any[]): boolean {
+        if (!a || !b || a.length !== b.length) return false;
+        const mapB = new Map(b.map(col => [col.colId, col]));
+        for (const colA of a) {
+            const colB = mapB.get(colA.colId);
+            if (!colB) return false;
+            const props = ["rowGroup", "rowGroupIndex", "sort", "sortIndex", "hide", "pinned"];
+            for (const p of props) {
+                if ((colA as any)[p] !== (colB as any)[p]) return false;
+            }
+        }
+        return true;
+    }
+
+    function onViewSelect(event) {
+        const newView = event.target.value;
+        if (hasUnsavedChanges) {
+            pendingViewChange = newView;
+            confirmUnsavedOpen = true;
+        } else {
+            applyView(newView);
+            refreshStudies();
+        }
+    }
+
+    function handleConfirmSave() {
+        if (pendingViewChange) {
+            if (selectedView === 'default') {
+                // Save as new view
+                saveDialogOpen = true;
+                // After saveDialogOpen, in handleSaveView, apply pendingViewChange
+            } else {
+                // Save current view
+                handleSave();
+                applyView(pendingViewChange);
+                refreshStudies();
+            }
+        }
+        confirmUnsavedOpen = false;
+        pendingViewChange = null;
+    }
+
+    function handleConfirmDiscard() {
+        if (pendingViewChange) {
+            applyView(pendingViewChange);
+            refreshStudies();
+        }
+        confirmUnsavedOpen = false;
+        pendingViewChange = null;
+    }
 </script>
 
 <svelte:head>
@@ -479,32 +670,32 @@
         </div>
         
         <div class="flex items-center gap-2">
-            <div class="view-controls">
+            <div class="view-controls" style="position: relative; display: inline-block;">
                 <select 
                     id="view-select" 
                     bind:value={selectedView} 
-                    onchange={() => {
-                        applyView(selectedView);
-                        refreshStudies();
-                    }}
+                    onchange={onViewSelect}
                     class="view-select"
                 >
                     {#each viewOptions as option}
                         <option value={option.id}>{option.label}</option>
                     {/each}
                 </select>
-            </div>
-            
-            {#if hasCustomGrouping}
-                <button 
-                    type="button" 
-                    class="save-view-button" 
-                    onclick={saveCustomView}
-                    title="Save current custom grouping"
-                >
-                    Save View
+                <button type="button" class="icon-button save-view-button" onclick={openMenu} disabled={selectedView === 'default' && !hasUnsavedChanges} title="View options">
+                    <IconEllipsisVertical size={18} />
                 </button>
-            {/if}
+                {#if showMenu}
+                    <div bind:this={menuRef} class="menu-popup-dropdown">
+                        {#if selectedView !== 'default'}
+                            <button class="menu-item" onclick={handleSave}>Save</button>
+                            <button class="menu-item" onclick={handleSaveAs}>Save As</button>
+                            <button class="menu-item" onclick={handleDelete}>Delete</button>
+                        {:else if hasUnsavedChanges}
+                            <button class="menu-item" onclick={handleSaveAs}>Save As</button>
+                        {/if}
+                    </div>
+                {/if}
+            </div>
         </div>
     </div>
 </div>
@@ -524,60 +715,63 @@
     }}
 />
 
+<SaveViewDialog
+    open={saveDialogOpen}
+    on:save={handleSaveView}
+    on:cancel={handleCancelSaveView}
+/>
+
+<ConfirmUnsavedDialog
+    open={confirmUnsavedOpen}
+    on:save={handleConfirmSave}
+    on:discard={handleConfirmDiscard}
+/>
+
 <style>
-.view-controls {
+.menu-popup-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
+    margin-right: 4px;
+    background: var(--dropdown-bg, #23272f);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    padding: 8px 0;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex-direction: column;
+    z-index: 1000;
+    transform: translateY(4px);
 }
-
-.view-label {
-    font-size: 0.875rem;
-    color: white;
-    font-weight: 500;
-}
-
-.view-select {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    border: 1px solid var(--primary-600);
-    border-radius: 0.5rem;
-    background-color: transparent;
-    color: var(--primary-600);
+.menu-item {
+    background: none;
+    border: none;
+    color: var(--dropdown-fg, #fff);
+    text-align: left;
+    padding: 10px 20px;
+    font-size: 15px;
     cursor: pointer;
-    min-width: 220px;
+    transition: background 0.15s;
 }
-
-.view-select:hover {
-    color: white;
+.menu-item:hover {
+    background: var(--dropdown-hover, #2a2e38);
 }
-
-.view-select:focus {
-    outline: none;
-    color: white;
-    border-color: var(--primary-600);
-}
-
 .save-view-button {
-    padding: 0.3125rem 0.5625rem;
-    font-size: 0.875rem;
-    background-color: transparent;
-    color: var(--primary-600);
-    border: 1px solid var(--primary-600);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
+    background: var(--button-bg, #2a2e38);
+    color: var(--button-fg, #fff);
+    border: 1px solid var(--button-border, #3a3f4b);
+    border-radius: 6px;
+    padding: 6px 12px;
     font-weight: 500;
-    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, border 0.15s;
 }
-
-.save-view-button:hover {
-    background-color: var(--primary-600);
-    color: white;
+.save-view-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
-
-.save-view-button:active {
-    background-color: var(--primary-600);
-    color: white;
+.save-view-button:hover:not(:disabled), .save-view-button:focus:not(:disabled) {
+    background: var(--button-hover-bg, #3a3f4b);
+    color: var(--button-hover-fg, #fff);
+    border-color: var(--button-hover-border, #4a4f5b);
 }
 </style>
