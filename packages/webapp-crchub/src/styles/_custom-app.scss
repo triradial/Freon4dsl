@@ -1522,3 +1522,117 @@ body > div[role="presentation"]:not([class*="ag-"]) {
 }
 
 /* #endregion */
+
+/* #region StudyGrid */
+.view-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.view-label {
+    font-size: 0.875rem;
+    color: white;
+    font-weight: 500;
+}
+
+.view-select {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--primary-600);
+    border-radius: 0.5rem;
+    background-color: transparent;
+    color: var(--primary-600);
+    cursor: pointer;
+    min-width: 220px;
+}
+
+// Improve contrast on hover/focus (light theme was showing white text on white bg)
+.view-select:hover,
+.view-select:focus {
+    background-color: var(--primary-600);
+    color: white;
+    outline: none;
+    border-color: var(--primary-600);
+}
+
+.save-view-button {
+    padding: 0.3125rem 0.5625rem;
+    font-size: 0.875rem;
+    background-color: transparent;
+    color: var(--primary-600);
+    border: 1px solid var(--primary-600);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.save-view-button:hover {
+    background-color: var(--primary-600);
+    color: white;
+}
+
+.save-view-button:active {
+    background-color: var(--primary-600);
+    color: white;
+}
+/* #endregion StudyGrid */
+
+/* #region Save View Dialog */
+
+/* Match DeleteDialog dimensions/colors */
+.save-view-dialog {
+  padding: 1rem;
+  width: 20rem;
+  min-height: 8rem;
+  background-color: var(--gray-900) !important;
+  color: var(--white);
+}
+
+.save-view-dialog h3 {
+  font-size: var(--large-font-size);
+}
+
+.save-view-dialog label {
+  font-size: var(--standard-font-size);
+  font-weight: 500;
+  color: var(--gray-500);
+}
+
+.save-view-dialog input {
+  border: 1px solid var(--gray-300);
+}
+/* #endregion Save View Dialog */
+
+/* #region Confirm Unsaved Dialog */
+.confirm-unsaved-bg {
+    background: #181d26;
+    border-radius: 12px;
+    border: 1px solid #23272f;
+    width: 30rem;
+    max-width: 95vw;
+    height: auto;
+    padding: 32px 32px 24px 32px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.confirm-unsaved-bg header,
+.confirm-unsaved-bg div,
+.confirm-unsaved-bg footer {
+    width: 100%;
+}
+.confirm-unsaved-bg footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 2.5rem;
+}
+.confirm-unsaved-bg h3 {
+    color: var(--primary-600);
+    font-weight: bold;
+}
+/* #endregion Confirm Unsaved Dialog */
