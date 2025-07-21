@@ -62,23 +62,29 @@ concept Event {
 }
 
 abstract concept AbstractTask {
-    name: identifier;
-    description: Description;
-    numberedSteps: boolean;
-    showDetails: boolean;
-    steps: Step[];}
+}
 
 abstract concept EventTask base AbstractTask {
 }
 
 concept Task base EventTask {
+    name: identifier;
+    description: Description;
+    numberedSteps: boolean;
+    showDetails: boolean;
+    steps: Step[];
+}
+
+concept SharedTask base AbstractTask{
+    name: identifier;
+    description: Description;
+    numberedSteps: boolean;
+    showDetails: boolean;
+    steps: Step[];
 }
 
 concept TaskReference base EventTask {
     reference task: SharedTask;
-}
-
-concept SharedTask base AbstractTask{
 }
 
 // TODO: Change title to name? 
