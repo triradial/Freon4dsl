@@ -50,7 +50,6 @@
         const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox
         const children = verticalLayoutBox.children
         otherChildren = children.slice(1)
-        console.log("children: ", children);
         nameBox = children[0] as TextBox
         console.log("ItemGroupComponent onMount nameBox: ", nameBox);
     });
@@ -148,17 +147,17 @@
         })
     }
 
-    function smartDuplicate(originalElement: any, duplicatedElement: any) {
-        const methodName = "smartUpdate";
-        const args = [originalElement, duplicatedElement];
-        // Call methodName if it exists on the element
-        if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
-            console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
-            return (duplicatedElement as any)[methodName](...args);
-        } else {
-            console.log(`Method ${methodName} does not exist on the instance.`);
-        }
-    }
+    // function smartDuplicate(originalElement: any, duplicatedElement: any) {
+    //     const methodName = "smartUpdate";
+    //     const args = [originalElement, duplicatedElement];
+    //     // Call methodName if it exists on the element
+    //     if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
+    //         console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
+    //         return (duplicatedElement as any)[methodName](...args);
+    //     } else {
+    //         console.log(`Method ${methodName} does not exist on the instance.`);
+    //     }
+    // }
 
     // function duplicateItem(originalElement: FreNode, duplicatedElement: FreNode) {
     //     const event: Event = box.node as Event
