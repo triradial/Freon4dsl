@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { AST, Box, FragmentBox, FragmentWrapperBox, FreEditor, FreLogger, FreNodeReference, ownerOfType, TextBox, VerticalLayoutBox } from "@freon4dsl/core";
-    import { componentId, RenderComponent } from "@freon4dsl/core-svelte";
+    import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, TextBox, VerticalLayoutBox } from "@freon4dsl/core";
+    import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onMount } from "svelte";
 // ts-ignore
     import { Event, SharedTask, TaskReference, type StudyConfiguration, type Task } from "@freon4dsl/study-configuration";
@@ -9,7 +9,9 @@
     const LOGGER = new FreLogger("ItemGroupComponent");
     FreLogger.unmute("ItemGroupComponent");
     
-    const { box, editor } = $props<{ box: FragmentWrapperBox, editor: FreEditor }>();
+    // const { box, editor } = $props<{ box: FragmentWrapperBox, editor: FreEditor }>();
+    let { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
+    let inputElement: HTMLInputElement;
 
     // Props
     let cssClass = box && box.findParam("cssClass") || "";
@@ -28,15 +30,17 @@
     let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
     let cssContainerClass = "h-20"
 
-    // The following four functions need to be included for the editor to function properly.
+    // The following three functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
+        console.log("setFocus nameBox: ", nameBox);
         nameBox?.setFocus();
     }
 
     const refresh = (why?: string): void => {
-        LOGGER.log("REFRESH (" + why + ")");
-        // nameBox?.refreshComponent(why);
+        console.log("REFRESH (" + why + ")");
+        box.childBox.refreshComponent(why);
+        box.refreshComponent = refresh;
     };
 
     onMount(() => {
@@ -46,19 +50,27 @@
         const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox
         const children = verticalLayoutBox.children
         otherChildren = children.slice(1)
+        console.log("children: ", children);
         nameBox = children[0] as TextBox
         console.log("ItemGroupComponent onMount nameBox: ", nameBox);
     });
 
     $effect(() => {
-        console.log("nameBox: ", nameBox);
+        console.log("$effect nameBox: ", nameBox);
         console.log("namebox.node: ", nameBox?.node);
-        box.refreshComponent = refresh
+        console.log("namebox.node.freLanguageConcept: ", nameBox?.node.freLanguageConcept());
+        if(nameBox?.node.freLanguageConcept() === "Event") {
+            let event = box.node as unknown as Event
+            console.log("event: ", event);
+        }
+        box.refreshComponent = refresh;
+
     })
 
+    
     const toggleExpanded = (event: MouseEvent) => {
         isExpanded = !isExpanded;
-        box.isExpanded = isExpanded;
+        // box.isExpanded = isExpanded;
         event.stopPropagation();
     };
 
