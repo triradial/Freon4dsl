@@ -25,7 +25,7 @@ export class ModelHandler {
             ctx.response.type = 'application/json';
             ctx.response.body = models;
         } catch (e) {
-            console.log(e.message);
+            console.log(String(e));
             ctx.status = 500;
             ctx.response.type = 'application/json';
             ctx.response.body = { error: "Error getting model list" };
@@ -43,7 +43,7 @@ export class ModelHandler {
             // Note: We might need to add a deleteDirectory method to IStorageHandler
             // For now, the directory might remain empty
         } catch (e) {
-            console.log(e.message);
+            console.log(String(e));
             ctx.status = 500;
             ctx.response.body = { error: "Error deleting model" };
         }
@@ -102,7 +102,7 @@ export class ModelHandler {
             ctx.response.type = 'application/json';
             ctx.response.body = content;
         } catch (e) {
-            console.log(e.message);
+            console.log(String(e));
             ctx.status = 500;
             ctx.response.type = 'application/json';
             ctx.response.body = { error: "Error getting model unit" };
@@ -115,7 +115,7 @@ export class ModelHandler {
             const filePath = path.join(modelPath, `${unit}.json`);
             await storage.writeFile(filePath, JSON.stringify(ctx.request.body, null, 3));
         } catch (e) {
-            console.log(e.message);
+            console.log(String(e));
         }
     }
 
@@ -124,8 +124,8 @@ export class ModelHandler {
             const filePath = path.join(this.getModelPath(model), `${unit}.json`);
             await storage.deleteFile(filePath);
         } catch (e) {
-            console.log(e.message);
-            ctx.request.body = e.message;
+            console.log(String(e));
+            ctx.request.body = String(e);
         }
     }
 

@@ -207,8 +207,8 @@
                     <Tabs.Panel value="design">
                        {#if editorLoaded}
                             <div class="flex gap-2 mb-2">
-                                <button type="button" class="icon-button primary inverted" onclick={handleUndoAction}><IconUndo /></button>
-                                <button type="button" class="icon-button primary inverted" onclick={handleRedoAction}><IconRedo /></button>
+                                <button type="button" class="icon-button primary inverted" onclick={handleUndoAction} tabindex="-1"><IconUndo /></button>
+                                <button type="button" class="icon-button primary inverted" onclick={handleRedoAction} tabindex="-1"><IconRedo /></button>
                             </div>
                             <div class="crc-editor crc-content-width">
                                 <FreonComponent editor={dslEditor} />

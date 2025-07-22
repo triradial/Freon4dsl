@@ -14,6 +14,8 @@
     const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
     
     let cssClass = box && box.findParam("cssClass") || "";
+    let textPropertyName = box && box.findParam("textPropertyName") || "text";
+    let rawTextPropertyName = box && box.findParam("rawTextPropertyName") || "rawText";
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let placeholder = $state(box ? box.findParam("placeholder") || "<enter>" : "<enter>");
@@ -21,7 +23,9 @@
     let isEditing = $state(false);
     let spanRef = $state<HTMLSpanElement | null>(null);
     let editorInstance: any = null;
-
+    
+    let currentTheme = $theme;
+    let isProgrammaticUpdate = false;
     // let editorElement: TinyMCEEditor;
     // let ed: TinyEditor;
 
@@ -39,27 +43,24 @@
     };
 
     const getText = () => {
-        const propertyName = "text";
         const node = box.node;
-        return node[propertyName];
+        return node[textPropertyName];
     }
 
-    const setText = (value: string) => {
+    const setText = (value: string, rawValue: string) => {
         AST.change(() => {
-            const propertyName = "text";
             const node = box.node;
-            const oldValue = node[propertyName];
+            const oldValue = node[textPropertyName];
             if (oldValue !== value) {
-                LOGGER.log(`Changing property: '${propertyName}' of node: '${node}' from '${oldValue}' to '${value}'`);
-                node[propertyName] = value;
+                LOGGER.log(`Changing property: '${textPropertyName}' of node: '${node}' from '${oldValue}' to '${value}'`);
+                node[textPropertyName] = value;
+                node[rawTextPropertyName] = rawValue;
                 text = value; // update local state immediately
             }
         });
     };
 
-    let text = $state(getText());
-
-    let isProgrammaticUpdate = false;
+        let text = $state(getText());
 
     // Expose setFocus and refreshComponent on the box
     function setFocus() {
@@ -100,8 +101,6 @@
         });
     }
 
-    let currentTheme = $theme;
-
     function getTinyMCEConfig() {
         const isDark = currentTheme === "dark";
         return {
@@ -124,17 +123,11 @@
                         e.stopPropagation();
                     }
                 });
-                // editor.on("change keyup", () => {
-                //     if (isProgrammaticUpdate) return;
-                //     const val = editor.getContent();
-                //     setText(val);
-                // });
                 editor.on("blur", () => {
                     if (isProgrammaticUpdate) return;
                     const val = editor.getContent();
-                    setText(val);
-                    text = getText();
-                    editor.setContent(text || "");
+                    const rawVal = editor.getContent({ format: "text" });
+                    setText(val, rawVal);
                     endEditing(); // Exit editing mode when TinyMCE loses focus
                 });
             },
@@ -202,9 +195,9 @@
 
     function endEditing() {
         isEditing = false;
-        if (text !== box.getText?.()) {
-            box.setText?.(text);
-        }
+        // if (text !== box.getText?.()) {
+        //     box.setText?.(text);
+        // }
     }
 
     function onSpanKeydown(event: KeyboardEvent) {

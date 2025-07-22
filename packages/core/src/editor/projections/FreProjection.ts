@@ -12,6 +12,7 @@ export interface FreProjection {
     // Name of the custom projection
     name: string;
 
+    // The projection handler that this projection is registered in.
     handler: FreProjectionHandler;
 
     // A map from the name of the concept (or the freLanguageConcept() of the FreElement node) to

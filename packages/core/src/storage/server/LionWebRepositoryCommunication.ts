@@ -73,7 +73,7 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
      * @param unitIdentifier
      * @param unit
      */
-    async putModelUnit(modelName: string, unitIdentifier: FreUnitIdentifier, unit: FreNamedNode) {
+    async saveModelUnit(modelName: string, unitIdentifier: FreUnitIdentifier, unit: FreNamedNode) {
         LOGGER.log(`LionWebRepositoryCommunication.putModelUnit ${modelName}/${unitIdentifier.name}`);
         if (
             !!unitIdentifier.name &&
@@ -174,13 +174,12 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
             const res = await this.client.bulk.retrieve([unit.id]);
             if (!!res) {
                 try {
-                    console.log(JSON.stringify(res, null, 2));
+                    LOGGER.log(JSON.stringify(res, null, 2));
                     let unit = this.lionweb_serial.toTypeScriptInstance(res.body.chunk);
                     return unit as FreNode;
                 } catch (e) {
-                    LOGGER.error("loadModelUnit, " + e.message);
+                    LOGGER.error("loadModelUnit, " + e.message + e.stack);
                     this.onError(e.message, FreErrorSeverity.NONE);
-                    console.log(e.stack);
                 }
             }
         }
@@ -202,7 +201,7 @@ export class LionWebRepositoryCommunication implements IServerCommunication {
         LOGGER.log(`renameModelUnit ${modelName}/${oldName} to ${modelName}/${newName}`);
         this.client.repository = modelName;
         // put the unit and its interface under the new name
-        await this.putModelUnit(modelName, { name: newName, id: unit.freId(), type: unit.freLanguageConcept() }, unit);
+        await this.saveModelUnit(modelName, { name: newName, id: unit.freId(), type: unit.freLanguageConcept() }, unit);
         // remove the old unit and interface
         await this.deleteModelUnit(modelName, { name: unit.name, id: unit.freId(), type: unit.freLanguageConcept() });
     }

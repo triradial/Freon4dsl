@@ -1,7 +1,7 @@
 import type { FreNode } from "../ast/index.js";
-import { notNullOrUndefined } from "../util/index.js"
 import type { FreWriter } from "../writer/index.js";
 import type { FreSearchWorker } from "./FreSearchWorker.js";
+import { notNullOrUndefined } from '../util/index.js';
 
 export class StringSearchWorker implements FreSearchWorker {
     /**

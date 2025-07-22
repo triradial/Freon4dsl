@@ -919,5 +919,10 @@ border-bottom: 1px solid var(--white-5t) !important;
 .markdown-body a {
   color: var(--white-70t) !important;
 }
-
 /* #endregion */  
+
+/* #region Custom Components */
+.abbreviation-text {
+  color: var(--gray-200) !important;
+}
+/* #endregion */ 

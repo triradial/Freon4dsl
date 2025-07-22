@@ -54,11 +54,11 @@ app.use(async (ctx, next) => {
     } catch (err) {
         // Log error and set appropriate response
         console.error('Server error:', err);
-        ctx.status = err.status || 500;
+        ctx.status = (err as any).status || 500;
         ctx.body = {
             message: 'Internal server error',
             // Only show detailed error in non-production environments
-            error: process.env.NODE_ENV === 'production' ? undefined : err.message
+            error: process.env.NODE_ENV === 'production' ? undefined : String(err)
         };
 
         // Ensure CORS headers are set even in error responses
@@ -128,7 +128,7 @@ async function killPortProcess(port: number): Promise<void> {
             await new Promise(resolve => setTimeout(resolve, 3000));
         }
     } catch (error) {
-        console.log(`Error checking/killing process on port ${port}:`, error.message);
+        console.log(`Error checking/killing process on port ${port}:`, String(error));
     }
 }
 

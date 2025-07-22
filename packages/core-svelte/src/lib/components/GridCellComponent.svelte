@@ -84,6 +84,8 @@
         // runs after the initial onMount
         box.refreshComponent = refresh;
         box.setFocus = setFocus;
+        // Evaluated and re-evaluated when the box changes.
+        refresh(box?.id);
     });
 
     $effect(() => {

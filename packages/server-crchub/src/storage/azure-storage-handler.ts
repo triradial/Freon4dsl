@@ -107,9 +107,9 @@ export class AzureStorageHandler implements IStorageHandler {
             }
         } catch (error) {
             console.error('Error listing files:', {
-                message: error.message,
-                code: error.code,
-                details: error.details
+                message: String(error),
+                code: (error as any).code,
+                details: (error as any).details
             });
             throw error;
         }

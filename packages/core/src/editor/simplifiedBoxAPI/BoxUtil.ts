@@ -12,7 +12,7 @@ import {
     ExternalPartListBox,
     ExternalRefBox,
     ExternalRefListBox,
-    ExternalStringBox, 
+    ExternalStringBox,
     FragmentWrapperBox,
     HorizontalListBox,
     IndentBox,
@@ -20,6 +20,7 @@ import {
     LimitedControlBox,
     LimitedDisplay,
     NumberDisplay,
+    type NumberDisplayInfo,
     NumberWrapperBox,
     PartListWrapperBox,
     PartWrapperBox,
@@ -30,8 +31,7 @@ import {
     StringWrapperBox,
     TextBox,
     VerticalListBox
-} from "../boxes/index.js"
-import type { NumberDisplayInfo } from "../boxes/internal.js";
+} from '../boxes/index.js';
 import type { FreScoper } from "../../scoper/index.js";
 import { RoleProvider } from "./RoleProvider.js";
 import { FreProjectionHandler } from "../projections/index.js";

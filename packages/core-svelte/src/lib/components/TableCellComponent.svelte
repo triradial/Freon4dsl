@@ -122,6 +122,7 @@
         refresh('New TableCellComponent created for ' + box?.id); //+ " element name: " + box?.element["name"]);
     });
 
+
     const onKeydown = (event: KeyboardEvent) => {
         LOGGER.log("GridCellComponent onKeyDown");
         if (event.key === ENTER) {

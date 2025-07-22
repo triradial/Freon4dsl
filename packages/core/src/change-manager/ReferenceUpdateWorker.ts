@@ -1,8 +1,6 @@
-import type { FreNode } from "../ast/index.js";
-import { FreNodeReference } from "../ast/index.js";
+import { type FreNode, FreNodeReference } from "../ast/index.js";
 import type { AstWorker } from "../ast-utils/index.js";
-import { FreLanguage } from "../language/index.js";
-import type { FreLanguageProperty } from "../language/index.js";
+import { FreLanguage, type FreLanguageProperty } from "../language/index.js";
 import { FreLogger } from "../logging/index.js";
 import { FrePrimDelta } from "./FreDelta.js"
 
