@@ -1637,63 +1637,6 @@ body > div[role="presentation"]:not([class*="ag-"]) {
 }
 /* #endregion Confirm Unsaved Dialog */
 
-/* #region StudyGrid */
-.view-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.view-label {
-    font-size: 0.875rem;
-    color: white;
-    font-weight: 500;
-}
-
-.view-select {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    border: 1px solid var(--primary-600);
-    border-radius: 0.5rem;
-    background-color: transparent;
-    color: var(--primary-600);
-    cursor: pointer;
-    min-width: 220px;
-}
-
-// Improve contrast on hover/focus (light theme was showing white text on white bg)
-.view-select:hover,
-.view-select:focus {
-    background-color: var(--primary-600);
-    color: white;
-    outline: none;
-    border-color: var(--primary-600);
-}
-
-.save-view-button {
-    padding: 0.3125rem 0.5625rem;
-    font-size: 0.875rem;
-    background-color: transparent;
-    color: var(--primary-600);
-    border: 1px solid var(--primary-600);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.save-view-button:hover {
-    background-color: var(--primary-600);
-    color: white;
-}
-
-.save-view-button:active {
-    background-color: var(--primary-600);
-    color: white;
-}
-/* #endregion StudyGrid */
-
 /* #region Save View Dialog */
 
 /* Match DeleteDialog dimensions/colors */
