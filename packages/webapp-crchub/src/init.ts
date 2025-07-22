@@ -1,16 +1,17 @@
-import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
-import { LanguageEnvironment } from "@freon4dsl/study-configuration";
 import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
+import { LanguageEnvironment } from "@freon4dsl/study-configuration";
 import { env } from "./config/env.js";
+import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 
 import DatePickerComponent from "./components/custom/DatePickerComponent.svelte";
-import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
-import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
+import DisplayNothingComponent from "./components/custom/DisplayNothingComponent.svelte";
 import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 import ItemGroupComponent2 from "./components/custom/ItemGroupComponent2.svelte";
+import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
-import DisplayNothingComponent from "./components/custom/DisplayNothingComponent.svelte";
+import TaskReferenceComponent from "./components/custom/TaskReferenceComponent.svelte";
+import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
 import AbbreviationComponent from "./components/custom/AbbreviationComponent.svelte";
 
 const LOGGER = new FreLogger("init");
@@ -73,6 +74,7 @@ setCustomComponents([
     { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
     { component: DisplayNothingComponent, knownAs: "DisplayNothingComponent" },
     { component: AbbreviationComponent, knownAs: "AbbreviationComponent" },
+    { component: TaskReferenceComponent, knownAs: "TaskReferenceComponent" },
 ])
 
 LOGGER.log('--- END ---');
