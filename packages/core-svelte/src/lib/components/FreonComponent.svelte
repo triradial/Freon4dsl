@@ -23,7 +23,7 @@
     } from '@freon4dsl/core';
     import RenderComponent from './RenderComponent.svelte';
     import ContextMenu from './ContextMenu.svelte';
-    import { onMount, tick } from 'svelte';
+    import { tick } from 'svelte';
     import { componentId, dummyBox } from './svelte-utils/index.js';
     import {
         contextMenu,
@@ -43,13 +43,6 @@
         // an id for the html element showing the rootBox
         rootBox && rootBox !== dummyBox ? componentId(rootBox) : 'freon-component-with-unknown-box'
     );
-
-    let initialized = false;
-    let singularity = false;
-
-    onMount(() => { 
-        initialized = true; 
-    });
 
     function stopEvent(event: KeyboardEvent) {
         event.preventDefault();
@@ -263,20 +256,12 @@
     // });
 
     $effect(() => {
-        if (!initialized) return;
-
-        if (editor) {
-            if (singularity) return;
-            LOGGER.log('Effect');
-            editor.refreshComponentSelection = refreshSelection;
-            editor.refreshComponentRootBox = refreshRootBox;
-            editor.getClientRectangle = clientRectangle
-            singularity = true;
-        }
+        editor.refreshComponentSelection = refreshSelection;
+        editor.refreshComponentRootBox = refreshRootBox;
+        editor.getClientRectangle = clientRectangle
     });
 
     const refreshSelection = async (why?: string) => {
-        if (!initialized) return;
         LOGGER.log(
             'FreonComponent.refreshSelection: ' +
                 why +

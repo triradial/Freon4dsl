@@ -47,11 +47,17 @@ export async function logger(ctx: Koa.Context, next: () => Promise<any>) {
         logData.statusCode = ctx.status;
     } catch (e) {
         errorThrown = e;
-        logData.errorMessage = e.message;
-        logData.errorStack = e.stack;
-        logData.statusCode = e.status || 500;
-        if (e.data) {
-            logData.data = e.data;
+        if (e instanceof Error) {
+            logData.errorMessage = e.message;
+            logData.errorStack = e.stack;
+            logData.statusCode = (e as any).status || 500;
+            if ((e as any).data) {
+                logData.data = (e as any).data;
+            }
+        } else {
+            logData.errorMessage = String(e);
+            logData.errorStack = undefined;
+            logData.statusCode = 500;
         }
     }
 

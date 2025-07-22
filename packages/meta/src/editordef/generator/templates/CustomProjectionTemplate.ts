@@ -4,7 +4,7 @@ import { FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
 export class CustomProjectionTemplate {
     generate(language: FreMetaLanguage): string {
         const imports = new Imports()
-        imports.core.add(Names.FreNode).add(Names.Box).add(Names.FreProjectionHandler).add(Names.FreProjection).add(Names.FreTableDefinition)
+        imports.core.add(Names.FreNode).add(Names.Box).add(Names.FreProjection).add(Names.FreTableDefinition).add(Names.FreProjectionHandler)
         return `
             // TEMPLATE: CustomProjectionTemplate.generate(...)
             ${imports.makeImports(language)}

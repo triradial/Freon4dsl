@@ -1,16 +1,17 @@
 <script lang="ts">
+    import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, TextBox, VerticalLayoutBox } from "@freon4dsl/core";
+    import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onMount } from "svelte";
-    import { AST, FreEditor, FreLanguage, FreLogger, ownerOfType, PartWrapperBox } from "@freon4dsl/core";
-    import { RenderComponent } from "@freon4dsl/core-svelte";
-    import { componentId } from "@freon4dsl/core-svelte";
-    // ts-ignore
-    import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Trash2 as IconDelete, Copy as IconDuplicate,Share2 as IconShare2,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
-    import CustomTextbox from "./helper/CustomTextbox.svelte";
+// ts-ignore
+    import { Event, SharedTask, TaskReference, type StudyConfiguration, type Task } from "@freon4dsl/study-configuration";
+    import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, Trash2 as IconDelete, Copy as IconDuplicate, EllipsisVertical as IconEllipsisVertical, Share2 as IconShare2 } from '@lucide/svelte';
 
     const LOGGER = new FreLogger("ItemGroupComponent");
     FreLogger.unmute("ItemGroupComponent");
     
-    const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
+    // const { box, editor } = $props<{ box: FragmentWrapperBox, editor: FreEditor }>();
+    let { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
+    let inputElement: HTMLInputElement;
 
     // Props
     let cssClass = box && box.findParam("cssClass") || "";
@@ -21,63 +22,54 @@
     let canExpand = box && box.findParam("canExpand") === "true";
     let isExpanded = $state(box && box.findParam("isExpanded") === "true");
     let label = $derived(() => box ? box.findParam("label") || "" : "");
-    let placeholderText = "<enter>";
+    let nameBox: TextBox | undefined = $state()
+    let otherChildren: Box[] | undefined = $state()
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
     let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
+    let cssContainerClass = "h-20"
 
-    let isEditing = $state(false);
-
-    const getText = () => {
-        const propertyName = "name";
-        const node = box.node;
-        return node[propertyName];
-    }
-
-    const setText = (value: string) => {
-        //TODO: This is not being picked up by the undo/redo mechanism
-        AST.change(() => {
-            const propertyName = "name";
-            const node = box.node;
-            const oldValue = node[propertyName];
-            if (oldValue != value) {
-                LOGGER.log(`Changing property: '${propertyName}' of node: '${node}' from '${oldValue}' to '${value}'`);
-                node[propertyName] = value;
-                // FreChangeManager.getInstance().setPrimitive(node, propertyName, value);
-                // console.debug(`[ItemGroupComponent] Change registered with FreChangeManager for property '${propertyName}' of node`, node);
-            }
-        });
-    };
-
-    let text = $state(getText());
-
-    $effect(() => {
-        text = getText();
-    });
-
-    // The following four functions need to be included for the editor to function properly.
+    // The following three functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
-        // CustomTextbox.setFocus();
+        console.log("setFocus nameBox: ", nameBox);
+        nameBox?.setFocus();
     }
 
     const refresh = (why?: string): void => {
-        LOGGER.log("REFRESH (" + why + ")");
+        console.log("REFRESH (" + why + ")");
+        box.childBox.refreshComponent(why);
+        box.refreshComponent = refresh;
     };
 
     onMount(() => {
         box.refreshComponent = refresh;   
+        box.setFocus = setFocus;
+        const fragmentBox = box.childBox as FragmentBox
+        const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox
+        const children = verticalLayoutBox.children
+        otherChildren = children.slice(1)
+        nameBox = children[0] as TextBox
+        console.log("ItemGroupComponent onMount nameBox: ", nameBox);
     });
 
-    // Replaces afterUpdate()
     $effect(() => {
+        console.log("$effect nameBox: ", nameBox);
+        console.log("namebox.node: ", nameBox?.node);
+        console.log("namebox.node.freLanguageConcept: ", nameBox?.node.freLanguageConcept());
+        if(nameBox?.node.freLanguageConcept() === "Event") {
+            let event = box.node as unknown as Event
+            console.log("event: ", event);
+        }
         box.refreshComponent = refresh;
-    });
 
+    })
+
+    
     const toggleExpanded = (event: MouseEvent) => {
         isExpanded = !isExpanded;
-        box.isExpanded = isExpanded;
+        // box.isExpanded = isExpanded;
         event.stopPropagation();
     };
 
@@ -128,20 +120,44 @@
     }
 
     const shareItem = () => {
-        LOGGER.log("Sharing item");
+        LOGGER.log("Sharing item")
+        console.log("Sharing ItemGroupComponent2: box.node", box.node)
+        // Get the study config context
+        const task = box.node as Task
+        const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration
+        const event: Event = ownerOfType(task, "Event") as unknown as Event
+        AST.change(() => {
+            // Create the shard task and wire together
+            let newSharedTask = SharedTask.create({
+                name: task.name,
+                description: task.description,
+                numberedSteps: task.numberedSteps,
+                showDetails: task.showDetails,
+                steps: task.steps.map((step) => step.copy()),
+            })
+            let refToTask = FreNodeReference.create(task.name, "SharedTask") as FreNodeReference<SharedTask>
+            refToTask.referred = newSharedTask
+            let newTaskReference = TaskReference.create({
+                task: refToTask
+            })
+            // Replace the original task in the event with the new task reference
+            event.tasks[event.tasks.indexOf(task)] = newTaskReference
+            // Add the new shared task to the shared tasks list
+            studyConfig.tasks.push(newSharedTask)
+        })
     }
 
-    function smartDuplicate(originalElement: any, duplicatedElement: any) {
-        const methodName = "smartUpdate";
-        const args = [originalElement, duplicatedElement];
-        // Call methodName if it exists on the element
-        if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
-            console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
-            return (duplicatedElement as any)[methodName](...args);
-        } else {
-            console.log(`Method ${methodName} does not exist on the instance.`);
-        }
-    }
+    // function smartDuplicate(originalElement: any, duplicatedElement: any) {
+    //     const methodName = "smartUpdate";
+    //     const args = [originalElement, duplicatedElement];
+    //     // Call methodName if it exists on the element
+    //     if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
+    //         console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
+    //         return (duplicatedElement as any)[methodName](...args);
+    //     } else {
+    //         console.log(`Method ${methodName} does not exist on the instance.`);
+    //     }
+    // }
 
     // function duplicateItem(originalElement: FreNode, duplicatedElement: FreNode) {
     //     const event: Event = box.node as Event
@@ -170,13 +186,7 @@
         <span class="w-5"></span>   
     {/if}
     <span class="item-group-label" tabindex="-1">{label()}:</span>
-    <CustomTextbox
-        id={id}
-        value={text}
-        setValue={setText}
-        getValue={getText}
-        placeholder={placeholderText}
-    />
+    <RenderComponent box={nameBox} editor={editor} />
     {#if canDuplicate}
         <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate" tabindex="0">
             <IconDuplicate size={14} />
@@ -200,6 +210,8 @@
 </div>
 {#key contentStyle}
     <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
-        <RenderComponent box={box.childBox} {editor} {cssClass} />
+        {#each otherChildren as child}
+            <RenderComponent box={child} editor={editor} />
+        {/each}
     </div>
 {/key}

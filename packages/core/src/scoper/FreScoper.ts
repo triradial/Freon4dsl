@@ -1,4 +1,4 @@
-import type { FreNode, FreNamedNode, FreNodeReference } from '../ast/index.js';
+import { type FreNode, type FreNamedNode, type FreNodeReference } from '../ast/index.js';
 import { FreCompositeScoper } from "./FreCompositeScoper.js";
 import { FreNamespaceInfo } from './FreNamespaceInfo.js';
 

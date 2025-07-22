@@ -8,7 +8,9 @@ global {
         DatePickerComponent,
         TimePickerComponent,
         MultilineTextComponent,
-        DisplayNothingComponent
+        AbbreviationComponent,
+        DisplayNothingComponent,
+        TaskReferenceComponent
     }
 }
 
@@ -27,6 +29,7 @@ Period {
         [fragment periodDetails wrap = ItemGroupComponent cssClass="type1" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="true" selectable="false" label="Period"]
     ]
     fragment periodDetails [
+        ${name}
         ${description}
         ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Events"}
     ]   
@@ -37,16 +40,18 @@ Event {
         [fragment noEventDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
     ]
     fragment noEventDetails [
+       ${name}
        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
-        ${description}
+       ${description}
     ]
 }
 
 Task {
     [
-        [fragment taskDetails wrap = ItemGroupComponent cssClass="type3" canShare="true" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Shared Tasks"]
+        [fragment taskDetails wrap = ItemGroupComponent cssClass="type3" canShare="true" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
     ]
     fragment taskDetails [
+        ${name}
         ${description}
         ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
     ]
@@ -54,9 +59,10 @@ Task {
 
 SharedTask {
     [
-        [fragment sharedTaskDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
+        [fragment sharedTaskDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="true" label="Task"]
     ]
     fragment sharedTaskDetails [
+        ${name}
         ${description}
         ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
     ]
@@ -64,12 +70,7 @@ SharedTask {
 
 TaskReference {
     [
-        [fragment taskReferenceDetails wrap = ItemGroupComponent2 cssClass="type3" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
-    ]
-    fragment taskReferenceDetails [
-        ${task}  
-        ${description}
-        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
+        ${task wrap =  TaskReferenceComponent cssClass="type3" canDelete="true" selectable="true" label="Shared Task"}
     ]
 
 }
@@ -79,6 +80,7 @@ Step {
         [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Step"]
     ]
     fragment stepDetails [
+        ${name}
         ${detailsDescription}
         ${references wrap=ListGroupComponent cssClass="type5" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="References"   }
         Systems Used: ${systems table rows}
@@ -178,5 +180,6 @@ SourceToTargetMapping {
     ]
 }
 
-Description {[<Description is Hidden>] }
-
+Description {
+    [ ${rawText wrap=AbbreviationComponent} ]
+ }

@@ -11,12 +11,12 @@ TimeAmountPart {
 
 Day {
     [ day ${startDay} ]
-    trigger = "day:         A day of the study"
+    trigger = "d"
 }
 
 When {
     [ when ${startWhen} ${timeAmountPart}]
-    trigger = "when:        Depends on when another event occurs"
+    trigger = "w"
 }  
 
 StudyStart {

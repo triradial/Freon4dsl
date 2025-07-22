@@ -71,7 +71,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving study", details: e.message };
+            ctx.response.body = { error: "Error retrieving study", details: String(e) };
         }
     }
 
@@ -93,7 +93,7 @@ export class DataHandler {
             ctx.response.body = newStudy;
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error adding study", details: e.message };
+            ctx.response.body = { error: "Error adding study", details: String(e) };
         }
     }
 
@@ -122,7 +122,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error updating study", details: e.message };
+            ctx.response.body = { error: "Error updating study", details: String(e) };
         }
     }
 
@@ -150,7 +150,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error deleting study", details: e.message };
+            ctx.response.body = { error: "Error deleting study", details: String(e) };
         }
     }
 
@@ -171,7 +171,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving patients", details: e.message };
+            ctx.response.body = { error: "Error retrieving patients", details: String(e) };
         }
     }
 
@@ -193,7 +193,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving study patients", details: e.message };
+            ctx.response.body = { error: "Error retrieving study patients", details: String(e) };
         }
     }
 
@@ -220,7 +220,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving patient", details: e.message };
+            ctx.response.body = { error: "Error retrieving patient", details: String(e) };
         }
     }
 
@@ -242,7 +242,7 @@ export class DataHandler {
             ctx.response.body = newPatient;
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error adding patient", details: e.message };
+            ctx.response.body = { error: "Error adding patient", details: String(e) };
         }
     }
 
@@ -271,7 +271,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error updating patient", details: e.message };
+            ctx.response.body = { error: "Error updating patient", details: String(e) };
         }
     }
 
@@ -299,7 +299,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error deleting patient", details: e.message };
+            ctx.response.body = { error: "Error deleting patient", details: String(e) };
         }
     }
 
@@ -319,7 +319,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving users", details: e.message };
+                ctx.response.body = { error: "Error retrieving users", details: String(e) };
         }
     }
 
@@ -345,7 +345,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving user", details: e.message };
+            ctx.response.body = { error: "Error retrieving user", details: String(e) };
         }
     }
 
@@ -372,7 +372,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving user", details: e.message };
+            ctx.response.body = { error: "Error retrieving user", details: String(e) };
         }
     }
 }

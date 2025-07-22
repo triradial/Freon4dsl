@@ -19,7 +19,7 @@ export class AuthHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving study", details: e.message };
+            ctx.response.body = { error: "Error retrieving study", details: String(e) };
         }
     }
 

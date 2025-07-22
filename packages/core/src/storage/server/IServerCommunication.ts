@@ -34,7 +34,7 @@ export interface IServerCommunication {
      * @param unitId
      * @param unit
      */
-    putModelUnit(modelName: string, unitId: FreUnitIdentifier, unit: FreNode): void;
+    saveModelUnit(modelName: string, unitId: FreUnitIdentifier, unit: FreNode): void;
 
     /**
      * Deletes the unit according to the data in 'modelInfo' from the server

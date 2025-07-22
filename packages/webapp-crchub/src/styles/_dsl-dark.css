@@ -486,3 +486,9 @@
   fill: var(--freon-dark-base-150);
 }
 /* #endregion */
+
+/* #region Abbreviation Components */
+.abbreviation-text {
+  color: var(--gray-200) !important;
+}
+/* #endregion */ 
