@@ -507,6 +507,7 @@
                 }
             }
         });
+        refreshStudies(); // Always trigger refresh when the view is opened
     });
 
     onDestroy(() => {
