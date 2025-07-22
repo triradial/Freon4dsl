@@ -20,7 +20,7 @@ export class LocalStorageHandler implements IStorageHandler {
             const content = await fs.readFile(fullPath, 'utf8');
             return content;
         } catch (error) {
-            throw new Error(`LocalStorageHandler.readFile: Error reading file ${fullPath}: ${error.message}`);
+            throw new Error(`LocalStorageHandler.readFile: Error reading file ${fullPath}: ${String(error)}`);
         }
     }
 
@@ -30,7 +30,7 @@ export class LocalStorageHandler implements IStorageHandler {
             await fs.mkdir(path.dirname(fullPath), { recursive: true });
             await fs.writeFile(fullPath, content);
         } catch (error) {
-            throw new Error(`LocalStorageHandler.writeFile: Error writing file ${fullPath}: ${error.message}`);
+            throw new Error(`LocalStorageHandler.writeFile: Error writing file ${fullPath}: ${String(error)}`);
         }
     }
 
@@ -39,7 +39,7 @@ export class LocalStorageHandler implements IStorageHandler {
         try {
             await fs.unlink(fullPath);
         } catch (error) {
-            throw new Error(`Error deleting file ${fullPath}: ${error.message}`);
+            throw new Error(`Error deleting file ${fullPath}: ${String(error)}`);
         }
     }
 
@@ -58,7 +58,7 @@ export class LocalStorageHandler implements IStorageHandler {
         try {
             return await fs.readdir(fullPath);
         } catch (error) {
-            throw new Error(`Error listing files in directory ${fullPath}: ${error.message}`);
+            throw new Error(`Error listing files in directory ${fullPath}: ${String(error)}`);
         }
     }
 
@@ -67,7 +67,7 @@ export class LocalStorageHandler implements IStorageHandler {
         try {
             return await fs.readdir(fullPath);
         } catch (error) {
-            throw new Error(`Error listing directories in directory ${fullPath}: ${error.message}`);
+            throw new Error(`Error listing directories in directory ${fullPath}: ${String(error)}`);
         }
     }
 
@@ -76,7 +76,7 @@ export class LocalStorageHandler implements IStorageHandler {
         try {
             await fs.mkdir(fullPath, { recursive: true });
         } catch (error) {
-            throw new Error(`Error creating directory ${fullPath}: ${error.message}`);
+            throw new Error(`Error creating directory ${fullPath}: ${String(error)}`);
         }
     }
 

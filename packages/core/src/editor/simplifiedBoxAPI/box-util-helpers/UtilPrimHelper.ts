@@ -8,15 +8,15 @@ import {
     CharAllowed,
     NumberControlBox,
     NumberDisplay,
+    type NumberDisplayInfo,
     SelectBox,
+    type SelectOption,
     TextBox,
 } from "../../boxes/index.js";
-import type { NumberDisplayInfo, SelectOption } from "../../boxes/internal.js";
 import { FreEditor } from "../../FreEditor.js";
 import { BehaviorExecutionResult } from "../../util/index.js";
 import { UtilCheckers } from "./UtilCheckers.js";
-import { FreLanguage } from "../../../language/index.js";
-import type { FreLanguageProperty } from "../../../language/index.js";
+import { FreLanguage, type FreLanguageProperty } from "../../../language/index.js";
 import { RoleProvider } from "../RoleProvider.js";
 import { FreUtils } from "../../../util/index.js";
 

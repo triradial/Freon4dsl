@@ -2,7 +2,7 @@ import { runInAction } from "mobx";
 import type { FreNode } from "../../ast/index.js";
 import { FreLanguage } from "../../language/index.js";
 import type { FreLanguageProperty } from "../../language/index.js";
-import { isNullOrUndefined } from "../../util/index.js";
+import { isNullOrUndefined, notNullOrUndefined } from "../../util/index.js";
 import type { FreSerializer } from "./FreSerializer.js";
 
 /**
@@ -87,12 +87,12 @@ export class FreModelSerializer implements FreSerializer {
                     // console.log("    list property of size "+ value.length);
                     // result[property.name] = [];
                     for (const item in value) {
-                        if (!isNullOrUndefined(value[item])) {
+                        if (notNullOrUndefined(value[item])) {
                             result[property.name].push(this.toTypeScriptInstance(value[item]));
                         }
                     }
                 } else {
-                    if (!isNullOrUndefined(value)) {
+                    if (notNullOrUndefined(value)) {
                         result[property.name] = this.toTypeScriptInstance(value);
                     }
                 }
@@ -100,12 +100,12 @@ export class FreModelSerializer implements FreSerializer {
             case "reference":
                 if (property.isList) {
                     for (const item in value) {
-                        if (!isNullOrUndefined(value[item])) {
+                        if (notNullOrUndefined(value[item])) {
                             result[property.name].push(this.language.referenceCreator(value[item], property.type));
                         }
                     }
                 } else {
-                    if (!isNullOrUndefined(value)) {
+                    if (notNullOrUndefined(value)) {
                         result[property.name] = this.language.referenceCreator(value, property.type);
                     }
                 }

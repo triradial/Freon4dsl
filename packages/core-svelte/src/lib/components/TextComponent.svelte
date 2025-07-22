@@ -157,7 +157,7 @@
         LOGGER.log(`setFocus for ${box?.id} ${isEditing} && ${inputElement}`);
         if (isEditing && !isNullOrUndefined(inputElement)) {
             inputElement.focus();
-            inputElement.select(); // GM: added to select the text in the input element
+            inputElement.select(); // selects all the text in the <input> element.
         } else {
             // set the local variables, then the inputElement will be shown
             await startEditing('editor');
@@ -243,7 +243,7 @@
      */
     function onMousedown(event: MouseEvent) {
         LOGGER.log(`onMousedown for ${box?.id}`);
-        if (event.button === 0) { 
+        if (event.button === 0) {
             // a 'left' click
             event.preventDefault();
             event.stopPropagation();
@@ -443,8 +443,7 @@
             }
             // Ensure that HTML tags in value are encoded, otherwise they will be seen as HTML.
             widthSpan.innerHTML = replaceHTML(value);
-            const width = widthSpan.offsetWidth + 2 + "px"; // GM: added 2px to the width
-            inputElement.style.width = width;
+            inputElement.style.width = widthSpan.offsetWidth + 2 + 'px';
         }
     }
 

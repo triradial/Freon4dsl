@@ -973,3 +973,11 @@ select:focus {
   vertical-align: text-bottom;
 }
 /* #endregion */
+
+/* #region Custom Components */
+.abbreviation-text {
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.5rem;
+}
+/* #endregion */  

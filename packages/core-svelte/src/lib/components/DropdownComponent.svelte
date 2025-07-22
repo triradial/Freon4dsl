@@ -27,7 +27,7 @@
                     class="dropdown-component-item"
                     class:dropdown-component-selected={options.length === 1 ||
                         option.id === selected?.id}
-                    onmousedown={(event) => {
+                        onmousedown={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
                         handleClick(option);

@@ -152,7 +152,7 @@
 
 </script>
 
-<!-- TableRows are not included here, because they use the CSS grid and table cells must in HTML
+<!-- TableRows are not included here, because they use the CSS grid and table cells, which must in HTML
      always be directly under the main grid.
 -->
 <!-- ElementBoxes are without span, because they are not shown themselves.
@@ -168,7 +168,7 @@
     <!--	svelte-ignore a11y_click_events_have_key_events -->
     <span
         {id}
-        class="render-component {errorCls} {selectedCls} "
+        class="render-component {errorCls} {selectedCls}"
         onclick={onClick}
         bind:this={element}
         role="group"

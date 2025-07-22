@@ -6,9 +6,9 @@ import {
     ExternalRefListBox,
     HorizontalListBox,
     ReferenceBox,
+    type SelectOption,
     VerticalListBox,
 } from "../../boxes/index.js";
-import type { SelectOption } from "../../boxes/index.js";
 import type { FreNamedNode, FreNode, FreNodeReference } from '../../../ast/index.js';
 import { qualifiedName } from '../../../ast/index.js';
 import { RoleProvider } from "../RoleProvider.js";

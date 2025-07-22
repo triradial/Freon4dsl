@@ -5,10 +5,6 @@
     import type { FragmentBox } from '@freon4dsl/core';
     import { componentId } from './svelte-utils/index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
-    import { onMount } from 'svelte';
-   
-    let initialized = false;
-    let singularity = false;
 
     let { editor, box }: FreComponentProps<FragmentBox> = $props();
 
@@ -16,10 +12,6 @@
     let id: string = $state('');
     let childBox: Box | undefined = $state(undefined);
     let cssClass: string = $state('');
-
-    onMount(() => { 
-        initialized = true; 
-    });
         
     const refresh = (why?: string): void => {
         LOGGER.log('Refresh (' + why + ') ' + box?.node?.freLanguageConcept());
@@ -40,8 +32,6 @@
     }
 
     $effect(() => {
-        if (!initialized) return;
-        if (singularity) return;
         LOGGER.log('Effect:' + box.id);
 
         // runs after the initial onMount
@@ -49,7 +39,6 @@
         box.setFocus = setFocus;
         // Evaluated and re-evaluated when the box changes.
         refresh(box?.$id);
-        singularity = true;
     });
 </script>
 

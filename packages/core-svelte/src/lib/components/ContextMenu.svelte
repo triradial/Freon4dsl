@@ -8,7 +8,7 @@
      */
     import { calculatePos } from './svelte-utils/CommonFunctions.js';
     import { clickOutsideConditional } from './svelte-utils/ClickOutside.js';
-    import { type MainComponentProps } from './svelte-utils/FreComponentProps.js';    
+    import { type MainComponentProps } from './svelte-utils/FreComponentProps.js';
     import { tick } from 'svelte';
     import { MenuItem} from '@freon4dsl/core';
     import { contextMenuVisible, viewport } from './stores/AllStores.svelte.js';

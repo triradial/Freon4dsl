@@ -8,6 +8,7 @@ global {
         DatePickerComponent,
         TimePickerComponent,
         MultilineTextComponent,
+        AbbreviationComponent,
         DisplayNothingComponent,
         TaskReferenceComponent
     }
@@ -179,5 +180,6 @@ SourceToTargetMapping {
     ]
 }
 
-Description {[<Description is Hidden>] }
-
+Description {
+    [ ${rawText wrap=AbbreviationComponent} ]
+ }

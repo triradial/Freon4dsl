@@ -12,7 +12,7 @@
     } from '@freon4dsl/core';
     import type { LimitedControlBox } from '@freon4dsl/core';
     import { onMount } from 'svelte';
-    import { MdCheckbox } from '@material/web/all.js';
+    import { MdCheckbox } from '@material/web/checkbox/checkbox.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
     // Props

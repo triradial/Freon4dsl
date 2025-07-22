@@ -12,6 +12,7 @@ import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
 import TaskReferenceComponent from "./components/custom/TaskReferenceComponent.svelte";
 import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
+import AbbreviationComponent from "./components/custom/AbbreviationComponent.svelte";
 
 const LOGGER = new FreLogger("init");
 
@@ -72,6 +73,7 @@ setCustomComponents([
     { component: ItemGroupComponent2, knownAs: "ItemGroupComponent2" },
     { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
     { component: DisplayNothingComponent, knownAs: "DisplayNothingComponent" },
+    { component: AbbreviationComponent, knownAs: "AbbreviationComponent" },
     { component: TaskReferenceComponent, knownAs: "TaskReferenceComponent" },
 ])
 

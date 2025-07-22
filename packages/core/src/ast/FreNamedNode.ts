@@ -1,7 +1,7 @@
 import type { FreNode } from "./FreNode.js";
 import { FreLanguage } from '../language/index.js';
 import type { FreLanguageClassifier } from '../language/index.js';
-import { isNullOrUndefined } from '../util/index.js';
+import { notNullOrUndefined } from '../util/index.js';
 import { FreLogger } from '../logging/index.js';
 
 export interface FreNamedNode extends FreNode {
@@ -22,8 +22,8 @@ export function qualifiedName(node: FreNamedNode): string[] {
     const LOGGER = new FreLogger("FreNamedNode").mute();
     const result: string[] = [node.name];
     let owner = node.freOwner()
-    while (!isNullOrUndefined(owner) ){
-        if (!isNullOrUndefined(owner.freOwner())) { // to avoid adding the name of the model!
+    while (notNullOrUndefined(owner) ){
+        if (notNullOrUndefined(owner.freOwner())) { // to avoid adding the name of the model!
             let typeDescription: FreLanguageClassifier = FreLanguage.getInstance().classifier(owner.freLanguageConcept());
             if (typeDescription) {
                 if (typeDescription.isNamespace) {

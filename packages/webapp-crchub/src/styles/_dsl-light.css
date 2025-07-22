@@ -497,3 +497,9 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   fill: var(--freon-light-base-250);
 }
 /* #endregion */
+
+/* #region Abbreviation Components */
+.abbreviation-text {
+  color: var(--gray-700) !important;
+}
+/* #endregion */ 

@@ -1,6 +1,5 @@
 import { type Component } from 'svelte';
 import type {FreComponentProps} from ".";
-import {Box} from "@freon4dsl/core";
 
 /**
  * The type 'FreExternal' couples a custom (or external) component to a certain box kind.
