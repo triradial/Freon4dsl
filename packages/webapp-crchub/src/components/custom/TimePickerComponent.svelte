@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { TimeField } from "bits-ui";
-    import { ExternalStringBox } from "@freon4dsl/core";
+    import { StringReplacerBox } from "@freon4dsl/core";
     import { parseTime, type TimeValue } from "@internationalized/date";
 
-    const { box } = $props<{ box: ExternalStringBox }>();
+    const { box } = $props<{ box: StringReplacerBox }>();
     let value = $state<TimeValue | null>(null);
     let isOpen = $state(false);
     let triggerElement: HTMLButtonElement | null = null;

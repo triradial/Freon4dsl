@@ -4,11 +4,11 @@
     import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
     import CaretLeft from "phosphor-svelte/lib/CaretLeft";
     import CaretRight from "phosphor-svelte/lib/CaretRight";
-    import { ExternalStringBox } from "@freon4dsl/core";
+    import { StringReplacerBox } from "@freon4dsl/core";
     import { parseDate } from "@internationalized/date";
     import type { DateValue } from "@internationalized/date";
 
-    const { box } = $props<{ box: ExternalStringBox }>();
+    const { box } = $props<{ box: StringReplacerBox }>();
     let value = $state<DateValue | null>(null);
     let isOpen = $state(false);
     let triggerElement: HTMLButtonElement | null = null;

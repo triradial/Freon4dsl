@@ -2,7 +2,7 @@ import type { FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreLogger } from "../../logging/index.js";
 import { FreLionwebSerializer, type ParameterType } from "../index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
-import type { IServerCommunication, FreUnitIdentifier } from "./IServerCommunication.js";
+import type { IServerCommunication, FreUnitIdentifier, ServerResponse, VoidServerResponse } from "./IServerCommunication.js";
 import { ServerCommunication } from "./ServerCommunication.js";
 // import * as process from "process";
 
@@ -31,21 +31,19 @@ export class LionWebCommunicationWithMPS extends ServerCommunication implements 
         console.error(`ServerCommunication ${severity}: ${msg}`);
     }
 
-    async loadModelList(): Promise<string[]> {
-        return [modelName];
+    async loadModelList(): Promise<ServerResponse<string[]>> {
+        return { result: [modelName], errors: [] };
     }
 
-    // @ts-ignore
-    async loadUnitList(modelName: string): Promise<FreUnitIdentifier[]> {
-        return [];
+    async loadUnitList(_modelName: string): Promise<ServerResponse<FreUnitIdentifier[]>> {
+        return { result: [], errors: [] };
     }
 
-    // @ts-ignore
-    // todo reimplement with use of callback or change signature
-    async generateIds(quantity: number, callback: (strings: string[]) => void): Promise<string[]> {
+    async generateIds(quantity: number, callback: (strings: string[]) => void): Promise<ServerResponse<string[]>> {
         LOGGER.log(`generateIds ${quantity}`);
         let result = ["10000", "10010", "10020", "10030", "10040"];
-        return result;
+        callback(result);
+        return { result, errors: [] };
     }
 
     /**
@@ -55,11 +53,9 @@ export class LionWebCommunicationWithMPS extends ServerCommunication implements 
      * @param unitName
      * @param loadCallback
      */
-    // @ts-ignore
-    // parameter present to adhere to interface
-    async loadModelUnit(modelName: string, unitName: string, loadCallback: (piUnit: FreNamedNode) => void) {
-        LOGGER.log(`ServerCommunication.loadModelUnit ${unitName}`);
-        if (!!unitName && unitName.length > 0) {
+    async loadModelUnit(_modelName: string, unit: FreUnitIdentifier): Promise<ServerResponse<FreNode>> {
+        LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
+        if (!!unit.name && unit.name.length > 0) {
             const res = await this.getWithTimeout<Object>(modelPath, {});
             if (!!res) {
                 try {
@@ -67,20 +63,19 @@ export class LionWebCommunicationWithMPS extends ServerCommunication implements 
                     const unit = serializer.toTypeScriptInstance(res);
                     //TODO: Hardcoded to avoid empty default property for units
                     unit["name"] = "PropertyRoot";
-                    return unit;
+                    return { result: unit, errors: [] };
                 } catch (e) {
                     LOGGER.error("loadModelUnit, " + e.message);
                     this.onError("loadModelUnit: " + e.message, FreErrorSeverity.Error);
                     console.log(e.stack);
+                    return { result: null, errors: [e.message] };
                 }
             }
         }
-        return null;
+        return { result: null, errors: [] };
     }
 
-    // @ts-ignore
-    // parameter present to adhere to interface
-    async saveModelUnit(modelName: string, unitIdentifier: FreUnitIdentifier, unit: FreNode) {
+    async saveModelUnit(_modelName: string, unitIdentifier: FreUnitIdentifier, unit: FreNode): Promise<VoidServerResponse> {
         console.log("unit", unit);
         if (!!unitIdentifier.name && unitIdentifier.name.length > 0 && !!unit) {
             try {
@@ -94,12 +89,40 @@ export class LionWebCommunicationWithMPS extends ServerCommunication implements 
                     nodes: lionWebNodes,
                 };
                 await this.postWithTimeoutLionWeb(modelPath, output, "");
+                return { errors: [] };
             } catch (e) {
-                LOGGER.error("loadModelUnit, " + e.message);
-                this.onError("loadModelUnit: " + e.message, FreErrorSeverity.Error);
+                LOGGER.error("saveModelUnit, " + e.message);
+                this.onError("saveModelUnit: " + e.message, FreErrorSeverity.Error);
                 console.log(e.stack);
+                return { errors: [e.message] };
             }
         }
+        return { errors: [] };
+    }
+
+    async deleteModelUnit(_modelName: string, _unit: FreUnitIdentifier): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
+
+    async deleteModel(_modelName: string): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
+
+    async renameModelUnit(_modelName: string, _oldName: string, _newName: string, _unit: FreNamedNode): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
+
+    async createModel(_modelName: string): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
+
+    async createModelUnit(_modelName: string, _unit: FreNamedNode): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
     }
 
     override async getWithTimeout<T>(path: string, params: ParameterType): Promise<T> {
