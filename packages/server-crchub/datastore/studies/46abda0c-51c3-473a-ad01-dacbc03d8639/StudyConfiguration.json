@@ -407,7 +407,7 @@
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-AbstractTask-name"
+                  "key": "-key-Task-name"
                },
                "value": ""
             },
@@ -415,7 +415,7 @@
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-AbstractTask-numberedSteps"
+                  "key": "-key-Task-numberedSteps"
                },
                "value": "false"
             },
@@ -423,7 +423,7 @@
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-AbstractTask-showDetails"
+                  "key": "-key-Task-showDetails"
                },
                "value": "false"
             }
@@ -433,7 +433,7 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-AbstractTask-steps"
+                  "key": "-key-Task-steps"
                },
                "children": []
             }
@@ -3878,7 +3878,7 @@
                   "version": "2023.1",
                   "key": "-key-Period-name"
                },
-               "value": ""
+               "value": "Period 2"
             }
          ],
          "containments": [
