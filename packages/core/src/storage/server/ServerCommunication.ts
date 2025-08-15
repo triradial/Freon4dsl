@@ -77,8 +77,8 @@ export class ServerCommunication implements IServerCommunication {
         }
     }
 
-    private _nodePort = 8001; // process.env.NODE_PORT || 8001;
-    private _SERVER_IP = `http://127.0.0.1`;
+    private _nodePort = 8080; // process.env.NODE_PORT || 8001;
+    private _SERVER_IP = `http://localhost`;
     private _SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
 
     onError(msg: string, severity: FreErrorSeverity): void {
@@ -178,7 +178,7 @@ export class ServerCommunication implements IServerCommunication {
      */
     async loadUnitList(modelName: string): Promise<ServerResponse<FreUnitIdentifier[]>> {
         LOGGER.log(`ServerCommunication.loadUnitList`);
-        let response = await this.getWithTimeout<string[]>(`getUnitList`, {model: modelName });
+        let response = await this.getWithTimeout<string[]>(`getModelUnitList`, {model: modelName });
         if (response.errors.length > 0) {
             return {
                 result: null,
@@ -219,7 +219,7 @@ export class ServerCommunication implements IServerCommunication {
                     if (response["$typename"] === undefined) {
                         unit = ServerCommunication.lionweb_serial.toTypeScriptInstance(response.result);
                     } else {
-                        // Old internal Freon formast
+                        // Old internal Freon format
                         unit = ServerCommunication.serial.toTypeScriptInstance(response.result);
                     }
                     return {
