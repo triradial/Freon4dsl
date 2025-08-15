@@ -23,7 +23,8 @@ import {
     LEFT_MOST,
     RIGHT_MOST,
     FreUtils,
-} from "../../util/index.js";import { NBSP } from "../index.js";
+} from "../../util/index.js";
+import { NBSP } from "../index.js";
 import { BehaviorExecutionResult } from "./BehaviorUtils.js";
 
 // const LOGGER = new FreLogger("FreExpressionNodeHelpers");
@@ -125,6 +126,7 @@ export function createOperatorBox(editor: FreEditor, exp: FreBinaryExpression, s
                         id: e.trigger as string,
                         label: e.trigger as string,
                         description: "empty description for operator",
+                        // TODO icon and hideInList do not adhere to the SelectOption interface. What is happening here?
                         icon: null,
                         hideInList: false,
                     }));

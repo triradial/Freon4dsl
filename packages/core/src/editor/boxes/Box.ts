@@ -4,8 +4,8 @@ import {
     FreUtils,
     FRE_BINARY_EXPRESSION_LEFT,
     FRE_BINARY_EXPRESSION_RIGHT,
-    isExpressionPreOrPost
-} from '../../util/index.js';
+    isExpressionPreOrPost, isNullOrUndefined
+} from "../../util/index.js"
 import { FreLogger } from "../../logging/index.js";
 import type { ClientRectangle } from "../ClientRectangleTypes.js";
 import { UndefinedRectangle } from "../ClientRectangleTypes.js";
@@ -106,6 +106,7 @@ export abstract class Box {
         this.isDirty();
     }
 
+    i: number = 0
     protected constructor(node: FreNode, role: string) {
         FreUtils.CHECK(!!node, "Element cannot be empty in Box constructor");
         this.node = node;
@@ -114,8 +115,8 @@ export abstract class Box {
     }
 
     get id(): string {
-        if (!!this.node) {
-            return this.node.freId() + (this.role === null ? "" : "-" + this.role);
+        if (notNullOrUndefined(this.node)) {
+            return this.node.freId() + (isNullOrUndefined(this.role) ? `-${this.i++}` : "-" + this.role);
         } else {
             return "unknown-element-" + this.role;
         }
@@ -347,18 +348,16 @@ export abstract class Box {
      */
     findChildBoxForProperty(propertyName?: string, propertyIndex?: number): Box | null {
         // if (propertyName === "value" && propertyIndex === undefined) {
-        LOGGER.log("findChildBoxForProperty " + this.role + "[" + propertyName + ", " + propertyIndex + "]");
+        LOGGER.log(`findChildBoxForProperty ${this.kind}  ` + this.role + "[" + propertyName + ", " + propertyIndex + "]");
         // }
         for (const child of this.children) {
-            // console.log('===> child: [' + child.propertyName + ", " + child.propertyIndex + "]")
-            if (notNullOrUndefined(propertyName)) {
-                if (notNullOrUndefined(propertyIndex)) {
-                    if (child.propertyName === propertyName && child.propertyIndex === propertyIndex) {
+            if (!isNullOrUndefined(propertyName)) {
+                if (!isNullOrUndefined(propertyIndex)) {
+                    if (child.propertyName === propertyName && (child.propertyIndex === propertyIndex || child.propertyIndex === undefined)) {
                         return child;
                     }
                 } else {
                     if (child.propertyName === propertyName) {
-                        // console.log('returning child box ' + child.role);
                         return child;
                     }
                 }
@@ -370,7 +369,6 @@ export abstract class Box {
                 return result;
             }
         }
-        // console.log('not found!!!');
         return null;
     }
 

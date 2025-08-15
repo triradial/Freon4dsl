@@ -32,9 +32,9 @@ export class SelectBox extends AbstractChoiceBox {
     }
     
     getOptions(editor: FreEditor): SelectOption[] {
-        console.log("Options for " + this.node.freLanguageConcept() + this.getAllOptions(editor).map(opt => {
-            opt.label
-        }))
+        // console.log("Options for " + this.element.freLanguageConcept() + this.getAllOptions(editor).map(opt => {
+        //     opt.label
+        // }))
         return this.getAllOptions(editor);
     }
 
@@ -45,7 +45,7 @@ export class SelectBox extends AbstractChoiceBox {
             // TODO Might need an index as well
             const nodeBox: Box = editor.findBoxForNode(this.node, this.propertyName)?.nextLeafRight
             editor.selectElementForBox(nodeBox)
-            console.log(`SelectBox: executeOption: ${option.label} box.kind: ${nodeBox.role}`)
+            // console.log(`SelectBox: executeOption: ${option.label} box.kind: ${nodeBox.role}`)
         }
         return result
     }

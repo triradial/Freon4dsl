@@ -1,48 +1,18 @@
 import { defineConfig } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
+// @ts-expect-error Cannot find module @sveltejs/kit/vite
+import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
-  plugins: [
-    svelte({
-      compilerOptions: {
-        runes: true // Enable Svelte 5 runes
-      }
-    })
-  ],
-  build: {
-    sourcemap: true,
-    lib: {
-      entry: 'src/lib/index.ts',
-      formats: ['es'],
-      fileName: 'index'
-    },
-    rollupOptions: {
-      external: [
-        'svelte',
-        '@freon4dsl/core',
-        'lodash',
-        'debug',
-        '@lionweb/validation',
-        '@lionweb/repository-client',
-        'mobx',
-        'reflect-metadata',
-        'tslib',
-        '@material/web',
-        '@material/slider',
-        '@material/switch'
-      ]
-    }
-  },
-  esbuild: {
-    target: 'esnext',
-    supported: {
-      'top-level-await': true
-    }
-  },
-  optimizeDeps: {
-    exclude: ['@freon4dsl/core'],
-    esbuildOptions: {
-      target: 'esnext'
-    }
-  }
-}); 
+	plugins: [sveltekit()],
+	build: {
+		rollupOptions: {
+			external: [ // Add all dependencies from package.json here, so they remain external to the bundle.
+				'@freon4dsl/core',
+				'@material/web',
+				'@material/slider',
+				'@material/switch'
+			]
+		}
+	}
+});
+

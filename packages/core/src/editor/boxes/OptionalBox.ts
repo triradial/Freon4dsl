@@ -7,7 +7,7 @@ export type BoolFunctie = () => boolean;
 /**
  * OptionalBox holds the content from a projection that is optional. This content is always present in the
  * attribute 'content'. Next to the content there is a 'placeholder' box, which is shown when the content is not
- * present in the FreElement model.
+ * present in the FreNode model.
  * The attributes 'mustShow' and 'condition' determine which of the pair [content, placeholder] is shown. If the 'condition'
  * results in true, then the content box is shown. If 'mustShow' is true, then the content box is also shown, even though
  * there may not be actual content within the FreNode model. The latter is set by the custom action, that is coupled

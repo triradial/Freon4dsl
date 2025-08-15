@@ -8,7 +8,7 @@ const LOGGER: FreLogger = new FreLogger("MultiLineTextBox").mute();
 
 export class MultiLineTextBox extends Box {
     kind: string = "MultiLineTextBox";
-    placeHolder: string = "<enter>";
+    placeHolder: string = "type text";
     $getText: () => string;
     $setText: (newValue: string) => void;
 

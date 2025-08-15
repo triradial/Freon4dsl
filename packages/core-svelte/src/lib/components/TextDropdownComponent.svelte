@@ -21,7 +21,7 @@
         type SelectOption,
         TextBox,
         BehaviorExecutionResult,
-        isNullOrUndefined
+        isNullOrUndefined, notNullOrUndefined, jsonAsString
     } from '@freon4dsl/core';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
     import { selectedBoxes } from './stores/AllStores.svelte.js';
@@ -47,7 +47,7 @@
     });
     
     let id: string = $state(''); // an id for the html element
-    id = !isNullOrUndefined(box) ? componentId(box) : 'textdropdown-with-unknown-box';
+    id = notNullOrUndefined(box) ? componentId(box) : 'textdropdown-with-unknown-box';
     let isEditing: boolean = $state(false); // becomes true when the text field gets focus
     let dropdownShown: boolean = $state(false); // when true the dropdown element is shown
     let text: string = $state(''); // the text in the text field
@@ -82,7 +82,7 @@
      */
     const setFocus = () => {
         LOGGER.log('TextDropdownComponent.setFocus ' + box.kind + id);
-        if (!isNullOrUndefined(textComponent)) {
+        if (notNullOrUndefined(textComponent)) {
             textComponent.setFocus();
         } else {
             LOGGER.error('TextDropdownComponent ' + id + ' has no textComponent');
@@ -108,7 +108,7 @@
         if (isSelectBox(box)) {
             let selectedOption = box.getSelectedOption();
             LOGGER.log('    selectedOption is ' + selectedOption?.label);
-            if (!isNullOrUndefined(selectedOption)) {
+            if (notNullOrUndefined(selectedOption)) {
                 setTextLocalAndInBox(selectedOption.label);
                 selected = selectedOption;
             } else {
@@ -133,7 +133,7 @@
      */
     const textUpdate = (details: CaretDetails) => {
         LOGGER.log(
-            `textUpdate for ${box.kind}: ${JSON.stringify(details)}, start: ${text.substring(0, details.caret)}`
+            `textUpdate for ${box.kind}: ${jsonAsString(details)}, start: ${text.substring(0, details.caret)}`
         );
         if (!dropdownShown) {
             showDropdown();
@@ -167,7 +167,7 @@
     const caretChanged = (details: CaretDetails) => {
         LOGGER.log(
             `caretChanged for ${box.kind}: ` +
-                JSON.stringify(details) +
+                jsonAsString(details) +
                 ', start: ' +
                 text.substring(0, details.caret)
         );
@@ -187,14 +187,14 @@
     };
 
     function makeFilteredOptionsUnique() {
-        // remove doubles, to avoid errors
+        // Remove doubles, to avoid errors. Check on the id, because identical labels are allowed!
         const seen: string[] = [];
         const result: SelectOption[] = [];
         filteredOptions.forEach((option) => {
-            if (seen.includes(option.label)) {
-                LOGGER.log('Option ' + JSON.stringify(option) + ' is a duplicate');
+            if (seen.includes(option.id)) {
+                LOGGER.log('Option ' + jsonAsString(option) + ' is a duplicate');
             } else {
-                seen.push(option.label);
+                seen.push(option.id);
                 result.push(option);
             }
         });
@@ -294,7 +294,7 @@
                             }
                         }
                         // store or execute the option
-                        if (!isNullOrUndefined(chosenOption)) {
+                        if (notNullOrUndefined(chosenOption)) {
                             storeOrExecute(chosenOption);
                         } else {
                             //  no valid option, restore the original text
@@ -348,7 +348,7 @@
         const index = filteredOptions.findIndex((o) => o === sel);
         if (index >= 0 && index < filteredOptions.length) {
             const chosenOption = filteredOptions[index];
-            if (!isNullOrUndefined(chosenOption)) {
+            if (notNullOrUndefined(chosenOption)) {
                 storeOrExecute(chosenOption);
             }
         }
@@ -366,7 +366,7 @@
      */
     const startEditing = (details?: CaretDetails) => {
         LOGGER.log(
-            'startEditing detail: ' + JSON.stringify(details) + ` dropDown: ${dropdownShown}`
+            'startEditing detail: ' + jsonAsString(details) + ` dropDown: ${dropdownShown}`
         );
         isEditing = true;
         showDropdown();
@@ -374,13 +374,13 @@
         LOGGER.log(
             `    startEditing allOptions ${allOptions.map((o) => o.label)} dropDown: ${dropdownShown}`
         );
-        if (!isNullOrUndefined(details)) {
+        if (notNullOrUndefined(details)) {
             if (isNullOrUndefined(text) || text.length === 0) {
                 setFiltered(allOptions.filter(() => true));
             } else {
                 setFiltered(
                     allOptions.filter((o) => {
-                        LOGGER.log(`    startsWith text [${text}], option is ${JSON.stringify(o)}`);
+                        LOGGER.log(`    startsWith text [${text}], option is ${o.id}`);
                         return o?.label?.startsWith(text.substring(0, details.caret));
                     })
                 );

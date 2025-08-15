@@ -27,8 +27,8 @@
         FreCreatePartAction,
         MetaKey,
         AST,
-        ENTER
-    } from "@freon4dsl/core"
+        ENTER, notNullOrUndefined
+    } from '@freon4dsl/core';
     import RenderComponent from './RenderComponent.svelte';
     import { componentId, rememberDraggedNode } from '../index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
@@ -40,9 +40,7 @@
         draggedElem,
         draggedFrom
     } from './stores/AllStores.svelte.js';
-    import { 
-        GripVertical as IconGripVertical, 
-    } from '@lucide/svelte';   
+    import DragHandle from "$lib/components/images/DragHandle.svelte";
 
     // Props
     let { editor, box }: FreComponentProps<ListBox> = $props();
@@ -59,8 +57,7 @@
     let myMetaType: DragAndDropType;
     
     $effect(() => {
-        LOGGER.log('Effect:' + box.id);
-
+        // console.log(`EFFECT ${box.conceptName} : ${box.node.freLanguageConcept()}`)
         myMetaType = {
             type: box.conceptName,
             isRef: FreLanguage.getInstance().classifierProperty(box.node.freLanguageConcept(), box.propertyName)?.propertyKind === 'reference'
@@ -77,7 +74,7 @@
         const data: ListElementInfo | null = draggedElem.value;
         event.stopPropagation();
 
-        if (!isNullOrUndefined(data)) {
+        if (notNullOrUndefined(data)) {
             if (isFreNodeReference(data.element)) {
                 LOGGER.log(`DROPPING item [${data.element.name}] from [${data.componentId}] in list [${id}] on position [${targetIndex}]`);
             } else if (isFreNode(data.element)) {
@@ -113,7 +110,7 @@
         contextMenuVisible.value = false;
 
         // give the drag an effect
-        if (!isNullOrUndefined(event.dataTransfer)) {
+        if (notNullOrUndefined(event.dataTransfer)) {
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.dropEffect = 'move';
         }
@@ -122,7 +119,7 @@
         // which explains why we cannot use event.dataTransfer.setData. We use a svelte store instead.
         // Create the data to be transferred and notify the store that something is being dragged.
         rememberDraggedNode(listId, box, shownElements[listIndex]);
-        LOGGER.log(`dragstart: ${draggedElem.value.element.freLanguageConcept()}`)
+        // console.log(`dragstart: ${draggedElem.value.element.freLanguageConcept()}`)
     };
 
     const dragleave = (event: DragEvent, index: number): boolean => {
@@ -140,7 +137,7 @@
         if (isNullOrUndefined(data)) {
             return false;
         }
-        // console.log(JSON.stringify(data.elementType) + ' compares to ' + JSON.stringify(myMetaType))
+        // console.log(JSON.stringify(data.elementType) + ' compares to ' + jsonAsString(myMetaType))
         // only show this item as active when the type of the element to be dropped is the right one
         if (FreLanguage.getInstance().dragMetaConformsToType(data.elementType, myMetaType)) {
             activeElem.value = { row: index, column: -1 };
@@ -184,7 +181,7 @@
 
     async function setFocus(): Promise<void> {
         LOGGER.log('ListComponent.setFocus for box ' + box.role);
-        if (!isNullOrUndefined(htmlElement)) {
+        if (notNullOrUndefined(htmlElement)) {
             htmlElement.focus();
         }
     }
@@ -192,8 +189,8 @@
     const refresh = (why?: string): void => {
         LOGGER.log('REFRESH ListComponent( ' + why + ') ' + box?.node?.freLanguageConcept());
         shownElements = [...box.children];
-        id = !isNullOrUndefined(box) ? componentId(box) : 'list-for-unknown-box';
-        isHorizontal = !isNullOrUndefined(box)
+        id = notNullOrUndefined(box) ? componentId(box) : 'list-for-unknown-box';
+        isHorizontal = notNullOrUndefined(box)
             ? box.getDirection() === ListDirection.HORIZONTAL
             : false;
     };
@@ -255,7 +252,7 @@
             <span class="drag-handle"
                   draggable="true"
                   ondragstart={(event) => dragstart(event, id, index)}
-                  role="listitem"><IconGripVertical size={16} /></span>
+                  role="listitem"><DragHandle/></span>
             {/if}
             <RenderComponent {box} {editor} />
         </span>

@@ -1,7 +1,7 @@
 <script lang="ts">
     import { FRAGMENT_LOGGER } from './ComponentLoggers.js';
     import RenderComponent from './RenderComponent.svelte';
-    import { Box, isNullOrUndefined } from '@freon4dsl/core';
+    import { Box, notNullOrUndefined } from '@freon4dsl/core';
     import type { FragmentBox } from '@freon4dsl/core';
     import { componentId } from './svelte-utils/index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
@@ -12,10 +12,10 @@
     let id: string = $state('');
     let childBox: Box | undefined = $state(undefined);
     let cssClass: string = $state('');
-        
+
     const refresh = (why?: string): void => {
-        LOGGER.log('Refresh (' + why + ') ' + box?.node?.freLanguageConcept());
-        if (!isNullOrUndefined(box)) {
+        LOGGER.log('REFRESH FragmentComponent (' + why + ') ' + box?.node?.freLanguageConcept());
+        if (notNullOrUndefined(box)) {
             id = componentId(box);
             childBox = box.childBox;
             cssClass = box.cssClass;
@@ -26,14 +26,12 @@
 
     async function setFocus(): Promise<void> {
         LOGGER.log('FragmentComponent.setFocus for box ' + box.role);
-        if (!isNullOrUndefined(box)) {
+        if (notNullOrUndefined(box)) {
             box.childBox.setFocus();
         }
     }
 
     $effect(() => {
-        LOGGER.log('Effect:' + box.id);
-
         // runs after the initial onMount
         box.refreshComponent = refresh;
         box.setFocus = setFocus;
@@ -42,7 +40,7 @@
     });
 </script>
 
-{#if !isNullOrUndefined(childBox)}
+{#if notNullOrUndefined(childBox)}
     <span class="fragment-component {cssClass}" {id}>
         <RenderComponent box={childBox} {editor} />
     </span>

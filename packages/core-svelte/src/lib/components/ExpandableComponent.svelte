@@ -32,3 +32,10 @@
         </div>
     {/key}
 </span>
+
+<!--   todo move this style to freon.css as soon as this component is available through the .edit file -->
+<style>
+    .expandable-component {
+        display: flex;
+    }
+</style>

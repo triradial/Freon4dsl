@@ -15,12 +15,12 @@
         DELETE,
         ENTER,
         ARROW_RIGHT,
-        isNullOrUndefined,
+        notNullOrUndefined,
         isTableRowBox,
         isElementBox,
         AstActionExecutor,
-        type FreNode, type ClientRectangle, UndefinedRectangle
-    } from '@freon4dsl/core';
+        type FreNode, type ClientRectangle, UndefinedRectangle, FreEditorUtil
+    } from "@freon4dsl/core"
     import RenderComponent from './RenderComponent.svelte';
     import ContextMenu from './ContextMenu.svelte';
     import { tick } from 'svelte';
@@ -75,14 +75,25 @@
                     case 'z': // ctrl-z => UNDO
                         if (!shouldBeHandledByBrowser.value) {
                             LOGGER.log('Ctrl-z: UNDO');
-                            AstActionExecutor.getInstance(editor).undo();
+                            const delta = AstActionExecutor.getInstance(editor).undo();
+                            console.log(`FreonComponent undu '${delta?.toString()} || ${editor.isBoxInTree(editor.selectedBox)}'`)
+                            if (delta !== undefined && !editor.isBoxInTree(editor.selectedBox)) {
+                                FreEditorUtil.selectAfterUndo(editor, delta)
+                            }
+                            editor.selectionChanged()
                             stopEvent(event);
+                            
                         }
                         break;
                     case 'y': // ctrl-y => REDO
                         if (!shouldBeHandledByBrowser.value) {
                             LOGGER.log('Ctrl-y: REDO');
-                            AstActionExecutor.getInstance(editor).redo();
+                            const delta = AstActionExecutor.getInstance(editor).redo();
+                            LOGGER.log(`FreonComponent undo '${delta?.toString()} || ${editor.isBoxInTree(editor.selectedBox)}'`)
+                            if (delta !== undefined && !editor.isBoxInTree(editor.selectedBox)) {
+                                FreEditorUtil.selectAfterUndo(editor, delta)
+                            }
+                            editor.selectionChanged()
                             stopEvent(event);
                         }
                         break;
@@ -219,9 +230,9 @@
     // function setViewportSizes(elem?: Element) {
     //     // Note that entry.contentRect gives slightly different results to entry.target.getBoundingClientRect().
     //     // A: I have no idea why.
-    //     if (!isNullOrUndefined(elem)) {
+    //     if (notNullOrUndefined(elem)) {
     //         let rect = elem.getBoundingClientRect();
-    //         if (!isNullOrUndefined(elem.parentElement)) {
+    //         if (notNullOrUndefined(elem.parentElement)) {
     //             let parentRect = elem.parentElement.getBoundingClientRect();
     //             viewport.value.setSizes(rect.height, rect.width, parentRect.top, parentRect.left);
     //         } else {
@@ -268,7 +279,7 @@
                 ' editor selectedBox is ' +
                 editor?.selectedBox?.kind
         );
-        if (!isNullOrUndefined(editor.selectedBox)) {
+        if (notNullOrUndefined(editor.selectedBox)) {
             //&& !$selectedBoxes.includes(editor.selectedBox)) { // selection is no longer in sync with editor
             await tick();
             selectedBoxes.value = getSelectableChildren(editor.selectedBox);
@@ -300,7 +311,7 @@
                 ' ==================> FreonComponent with rootbox ' +
                 rootBox?.id +
                 ' unit ' +
-                (!isNullOrUndefined(rootBox?.node)
+                (notNullOrUndefined(rootBox?.node)
                     ? rootBox.node['name' as keyof FreNode]
                     : 'undefined')
         );

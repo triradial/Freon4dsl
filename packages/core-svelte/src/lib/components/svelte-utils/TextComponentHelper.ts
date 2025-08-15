@@ -6,8 +6,8 @@ import {
     FreEditor,
     FreErrorSeverity,
     FreLogger,
-    isActionTextBox,
-    isNullOrUndefined,
+    isActionTextBox, jsonAsString,
+    notNullOrUndefined,
     TextBox
 } from '@freon4dsl/core';
 import { executeCustomKeyboardShortCut } from './CommonFunctions.js';
@@ -164,7 +164,7 @@ export class TextComponentHelper {
     handleAltOrCtrlKey(event: KeyboardEvent, editor: FreEditor) {
         // see https://en.wikipedia.org/wiki/Table_of_keyboard_shortcuts
         LOGGER.log(
-            `AltOrCtrlKey, key: ${JSON.stringify(event.key)}, ctrl: ${event.ctrlKey}, alt: ${event.altKey}`
+            `AltOrCtrlKey, key: ${jsonAsString(event.key)}, ctrl: ${event.ctrlKey}, alt: ${event.altKey}`
         );
         // assert (event.altKey || event.ctrlKey)
         // first check if this event has a command defined for it
@@ -178,6 +178,7 @@ export class TextComponentHelper {
                     case 'z': // ctrl-z
                     case 'y': // ctrl-y
                         shouldBeHandledByBrowser.value = this._hasChanges();
+                        this._dispatcher("hideDropdown")
                         break;
                     case 'x': // ctrl-x
                         this.cut();
@@ -258,7 +259,7 @@ export class TextComponentHelper {
      * @param inTo
      */
     setFromAndTo(inFrom: number | undefined | null, inTo: number | undefined | null) {
-        if (!isNullOrUndefined(inFrom) && !isNullOrUndefined(inTo)) {
+        if (notNullOrUndefined(inFrom) && notNullOrUndefined(inTo)) {
             if ((inFrom as number) < (inTo as number)) {
                 this._from = inFrom as number;
                 this._to = inTo as number;

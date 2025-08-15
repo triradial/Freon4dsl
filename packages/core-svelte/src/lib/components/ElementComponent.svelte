@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ELEMENT_LOGGER } from './ComponentLoggers.js';
     import RenderComponent from './RenderComponent.svelte';
-    import { Box, ElementBox, isNullOrUndefined } from '@freon4dsl/core';
+    import { Box, ElementBox, notNullOrUndefined } from '@freon4dsl/core';
     import { componentId } from '../index.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
@@ -14,8 +14,8 @@
     let childBox: Box | undefined = $state(undefined);
 
     const refresh = (why?: string): void => {
-        LOGGER.log('Refresh (' + why + ')' + box?.node?.freLanguageConcept());
-        if (!isNullOrUndefined(box)) {
+        LOGGER.log('REFRESH ElementComponent (' + why + ')' + box?.node?.freLanguageConcept());
+        if (notNullOrUndefined(box)) {
             id = componentId(box);
             childBox = box.content;
         } else {
@@ -25,22 +25,20 @@
 
     async function setFocus(): Promise<void> {
         LOGGER.log('ElementComponent.setFocus for box ' + box.role);
-        if (!isNullOrUndefined(box)) {
+        if (notNullOrUndefined(box)) {
             box.content.setFocus();
         }
     }
 
     $effect(() => {
         // runs after the initial onMount
-        LOGGER.log('Effect:' + box.id);
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
         // Evaluated and re-evaluated when the box changes.
         refresh(box?.$id);
     });
-
 </script>
 
-{#if !isNullOrUndefined(childBox)}
+{#if notNullOrUndefined(childBox)}
     <RenderComponent box={childBox} {editor} />
 {/if}

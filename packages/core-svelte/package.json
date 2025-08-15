@@ -3,7 +3,7 @@
     "access": "public"
   },
   "name": "@freon4dsl/core-svelte",
-  "version": "1.1.0-beta.3",
+  "version": "2.0.0-beta.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -15,8 +15,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "npm run clean && vite build && npm run prepack",
-    "build:verbose": "vite build --debug --logLevel debug && npm run prepack",
+    "build": "vite build && npm run prepack",
+    "build-dev": "tsc --noEmit && vite build && npm run prepack",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "prepack": "svelte-kit sync && svelte-package && publint",
@@ -41,10 +41,9 @@
     "**/*.css"
   ],
   "exports": {
-    "./package.json": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "svelte": "./dist/index.js"
     }
   },
   "peerDependencies": {
@@ -63,15 +62,14 @@
     "svelte": "^5.0.0",
     "svelte-check": "^4.3.0",
     "typescript": "^5.8.3",
-    "vite": "^7.0.4",
+    "vite": "^7.0.5",
     "vitest": "^3.2.4"
 },
   "dependencies": {
     "@material/web": "^2.3.0",
     "@material/slider": "^14.0.0",
     "@material/switch": "^14.0.0",
-    "@freon4dsl/core": "1.1.0-beta.3",
-    "@lucide/svelte": "^0.513.0"
+    "@freon4dsl/core": "2.0.0-beta.2"
   },
   "keywords": [
     "svelte", "freon", "dsl"

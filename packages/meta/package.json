@@ -4,10 +4,10 @@
     "access": "public"
   },
   "name": "@freon4dsl/meta",
-  "version": "1.1.0-beta.3",
+  "version": "2.0.0-beta.2",
   "license": "MIT",
   "main": "dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "type": "module",
   "repository": {
     "type": "git",
@@ -42,7 +42,6 @@
     "publish-local": "npm publish --verbose --registry http://localhost:4873",
     "unpublish-local": "npm unpublish --force --registry http://localhost:4873",
     "republish-local": "npm run unpublish-local && npm run publish-local",
-    "lint": "tslint -c ./tslint.json './src/**/*.ts*'",
     "test": "vitest run",
     "circular": "madge --circular src/* > DEPENDENCIES.md"
   },

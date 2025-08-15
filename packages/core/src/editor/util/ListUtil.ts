@@ -76,12 +76,10 @@ export function moveListElement(
         AST.change(() => {
             const tmpProp = property[oldIndex];
             property.splice(oldIndex, 1);
-            /* START GM - This doesn't seem to work
             // Make sure the item is added at the correct index
-            // if (targetIndex > 0) {
-            //     targetIndex -= 1;
-            // }
-            END GM */
+            if (targetIndex > 0) {
+                targetIndex -= 1;
+            }
             property.splice(targetIndex, 0, tmpProp);
         });
     }
@@ -216,7 +214,7 @@ export function getContextMenuOptions(
         // @ts-ignore
         addBefore = new MenuItem(
             `Add before ${contextMsg}`,
-            "Ctrl+A",
+            '', //"Ctrl+A",
             // @ts-ignore
             (element: FreNode, index: number, editor: FreEditor) => {},
             submenuItemsBefore,
@@ -224,7 +222,7 @@ export function getContextMenuOptions(
         // @ts-ignore
         addAfter = new MenuItem(
             `Add after ${contextMsg}`,
-            "Ctrl+I",
+          '', //"Ctrl+I",
             // @ts-ignore
             (element: FreNode, index: number, editor: FreEditor) => {},
             submenuItemsAfter,
@@ -232,14 +230,14 @@ export function getContextMenuOptions(
     } else {
         addBefore = new MenuItem(
             `Add before ${contextMsg}`,
-            "Ctrl+A",
+          '', //"Ctrl+A",
             // @ts-ignore
             (element: FreNode, index: number, editor: FreEditor) =>
                 addListElement(editor, listParent, propertyName, index, conceptName, true),
         );
         addAfter = new MenuItem(
             `Add after ${contextMsg}`,
-            "Ctrl+I",
+          '', //"Ctrl+I",
             // @ts-ignore
             (element: FreNode, index: number, editor: FreEditor) =>
                 addListElement(editor, listParent, propertyName, index, conceptName, false),

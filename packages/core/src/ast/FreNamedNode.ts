@@ -1,5 +1,5 @@
 import type { FreNode } from "./FreNode.js";
-import { FreLanguage } from '../language/index.js';
+import { FreLanguage, } from '../language/index.js';
 import type { FreLanguageClassifier } from '../language/index.js';
 import { notNullOrUndefined } from '../util/index.js';
 import { FreLogger } from '../logging/index.js';
