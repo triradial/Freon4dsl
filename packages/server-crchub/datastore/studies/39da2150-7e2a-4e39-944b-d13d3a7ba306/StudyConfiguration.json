@@ -29,7 +29,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showSharedTasks"
                },
-               "value": "true"
+               "value": "false"
             },
             {
                "property": {
@@ -113,8 +113,7 @@
                },
                "children": [
                   "ID-41",
-                  "ID-91",
-                  "ID-65"
+                  "ID-79"
                ]
             },
             {
@@ -219,7 +218,7 @@
                   "version": "2023.1",
                   "key": "-key-Description-text"
                },
-               "value": "<p>ssss</p>"
+               "value": "<p>this is the description of this Period</p>\n<p>&nbsp;</p>\n<p>Multil-line in the editor jumps out and adds another period as if the '+' button was pressed. Tabbing into the description gives it the focus but with no visible indication. tabbing again goes to '&gt;' of Event. Only clicking in text area activates the editor</p>"
             },
             {
                "property": {
@@ -227,7 +226,7 @@
                   "version": "2023.1",
                   "key": "-key-Description-rawText"
                },
-               "value": " "
+               "value": "this is the description of this Period\n\n\n\nMultil-line in the editor jumps out and adds another period as if the '+' button was pressed. Tabbing into the description gives it the focus but with no visible indication. tabbing again goes to '>' of Event. Only clicking in text area activates the editor"
             }
          ],
          "containments": [],
@@ -257,7 +256,7 @@
                   "version": "2023.1",
                   "key": "-key-Event-alternativeName"
                },
-               "value": ""
+               "value": "video discussion"
             },
             {
                "property": {
@@ -320,8 +319,8 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "site visit",
-                     "reference": "ID-30"
+                     "resolveInfo": "video session",
+                     "reference": "ID-32"
                   }
                ]
             }
@@ -591,7 +590,7 @@
                   "version": "2023.1",
                   "key": "-key-Description-text"
                },
-               "value": " "
+               "value": ""
             },
             {
                "property": {
@@ -599,7 +598,7 @@
                   "version": "2023.1",
                   "key": "-key-Description-rawText"
                },
-               "value": " "
+               "value": ""
             }
          ],
          "containments": [],
@@ -679,7 +678,7 @@
                   "version": "2023.1",
                   "key": "-key-Days-count"
                },
-               "value": "0"
+               "value": "10"
             }
          ],
          "containments": [],
@@ -701,7 +700,7 @@
                   "version": "2023.1",
                   "key": "-key-Days-count"
                },
-               "value": "0"
+               "value": "5"
             }
          ],
          "containments": [],
@@ -840,6 +839,16 @@
                "children": [
                   "ID-61"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-91"
+               ]
             }
          ],
          "references": [],
@@ -895,34 +904,81 @@
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-Period"
+            "key": "-key-ComplianceWindowOf"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-ComplianceWindowOf-maxDaysBefore"
+               },
+               "children": [
+                  "ID-92"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-ComplianceWindowOf-maxDaysAfter"
+               },
+               "children": [
+                  "ID-93"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-59"
+      },
+      {
+         "id": "ID-92",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Days"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-Period-name"
+                  "key": "-key-Days-count"
                },
-               "value": "Test"
+               "value": "NaN"
             }
          ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Period-events"
-               },
-               "children": []
-            }
-         ],
+         "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-38"
+         "parent": "ID-91"
       },
       {
-         "id": "ID-65",
+         "id": "ID-93",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Days"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Days-count"
+               },
+               "value": "2"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-91"
+      },
+      {
+         "id": "ID-79",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -943,6 +999,16 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-key-Period-description"
+               },
+               "children": [
+                  "ID-80"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-key-Period-events"
                },
                "children": []
@@ -951,6 +1017,36 @@
          "references": [],
          "annotations": [],
          "parent": "ID-38"
+      },
+      {
+         "id": "ID-80",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-79"
       },
       {
          "id": "ID-52",
