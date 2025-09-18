@@ -20,7 +20,7 @@ When {
 }  
 
 StudyStart {
-    [ as the start day of the study ${timeAmountPart} ] 
+    [ as the start day of the study ] 
     trigger = "study start: Declares this event to be the start of the study"
 } 
 
@@ -121,7 +121,7 @@ ComplianceWindowOf {
 EventWindow {
     [
         ${daysBefore} day(s) before and ${daysAfter}day(s) after
-        and a compliance window of: ${complianceWindow}
+        and a compliance window of: \u27e8 ${complianceWindow} \u27e9
     ] trigger = "event window"
 }
 
@@ -131,10 +131,10 @@ EventWindow {
 
 EventSchedule {
     [
-        First scheduled ${eventStart}
-        with a window of ${eventWindow}
-        and then repeats ${eventRepeat}
-        limited to ${eventTimeOfDay}
+        First scheduled \u27e8 ${eventStart} \u27e9
+        with a window of \u27e8 ${eventWindow} \u27e9
+        and then repeats \u27e8 ${eventRepeat} \u27e9
+        limited to \u27e8 ${eventTimeOfDay} \u27e9
     ] 
     trigger = "event schedule"
 } 
