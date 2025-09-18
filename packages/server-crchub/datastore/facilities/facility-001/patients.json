@@ -258,5 +258,16 @@
     "gender": "Female",
     "studyId": "5069dcf5-efea-429c-bc23-1d934fa5b7a9",
     "study": "A022104 Checklist"
+  },
+  {
+    "id": "51654783-cfc4-4d13-a8b6-138fc115f847",
+    "patientNumber": "123456",
+    "displayName": "",
+    "name": "",
+    "initials": "DD",
+    "dob": "",
+    "gender": "",
+    "studyId": "65a6658b-5772-4ee9-a139-4fd7c792291a",
+    "study": "ALLIANCE A022104"
   }
 ]

@@ -20,7 +20,7 @@
     "clean-custom": "rm */*/Custom*.ts"
   },
   "dependencies": {
-    "@freon4dsl/core": "1.1.0-beta.3",
+    "@freon4dsl/core": "2.0.0-beta.2",
     "@types/node": "^24.0.0",
     "kotlin": "^1.5.21",
     "lodash": "^4.17.21",
