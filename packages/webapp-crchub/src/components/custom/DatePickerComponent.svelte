@@ -69,7 +69,7 @@ import type { DateValue } from "@internationalized/date";
 </script>
 
 <div class="ml-1">
-<DatePicker.Root bind:open={isOpen} value={value} on:valueChange={e => onValueChange(e.detail)} weekdayFormat="short" fixedWeeks={true}>
+<DatePicker.Root bind:open={isOpen} value={value} on:valueChange={e => onValueChange(e.detail)} weekdayFormat="short" fixedWeeks={false}>
     <div class="flex w-full max-w-[232px] flex-col">
         <DatePicker.Input class="datepicker-input">
             {#snippet children({ segments })}
@@ -88,15 +88,15 @@ import type { DateValue } from "@internationalized/date";
             {/snippet}
         </DatePicker.Input>
         <DatePicker.Content sideOffset={6} class="z-50">
-            <DatePicker.Calendar class="card border border-surface-200-800 bg-surface-50-950 shadow-xl p-4">
+            <DatePicker.Calendar class="border-dark-10 shadow-popover rounded-[15px] border p-[22px]" style="background: var(--card-background, var(--gray-800)); opacity: 1; color: var(--green-90t);">
                 {#snippet children({ months, weekdays })}
                     <DatePicker.Header class="flex items-center justify-between">
-                        <DatePicker.PrevButton class="rounded-9px bg-background hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]">
-                            <CaretLeft class="size-6 text-foreground" />
+                        <DatePicker.PrevButton class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]" style="color: var(--green-90t);">
+                            <CaretLeft class="size-6" />
                         </DatePicker.PrevButton>
-                        <DatePicker.Heading class="text-[15px] font-medium text-foreground" />
-                        <DatePicker.NextButton class="rounded-9px bg-background hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]">
-                            <CaretRight class="size-6 text-foreground" />
+                        <DatePicker.Heading class="text-[15px] font-medium" style="color: var(--green-90t);" />
+                        <DatePicker.NextButton class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]" style="color: var(--green-90t);">
+                            <CaretRight class="size-6" />
                         </DatePicker.NextButton>
                     </DatePicker.Header>
                     <div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
@@ -105,8 +105,8 @@ import type { DateValue } from "@internationalized/date";
                                 <DatePicker.GridHead>
                                     <DatePicker.GridRow class="mb-1 grid w-full grid-cols-7 gap-1">
                                         {#each weekdays as day (day)}
-                                            <DatePicker.HeadCell class="text-muted-foreground font-normal! w-10 rounded-md text-xs text-center">
-                                                <div class="w-10 text-center text-foreground/70">{day.slice(0, 2)}</div>
+                                            <DatePicker.HeadCell class="font-normal! w-10 rounded-md text-xs text-center" style="color: var(--green-90t);">
+                                                <div class="w-10 text-center">{day.slice(0, 2)}</div>
                                             </DatePicker.HeadCell>
                                         {/each}
                                     </DatePicker.GridRow>
@@ -115,10 +115,9 @@ import type { DateValue } from "@internationalized/date";
                                     {#each month.weeks as weekDates (weekDates)}
                                         <DatePicker.GridRow class="grid w-full grid-cols-7 gap-1">
                                             {#each weekDates as date (date)}
-                                                <DatePicker.Cell {date} month={month.value} class="p-0! relative size-10 text-center text-sm">
-                                                    <DatePicker.Day class="rounded-9px text-foreground hover:border-foreground data-selected:bg-foreground data-disabled:text-foreground/30 data-selected:text-background data-unavailable:text-muted-foreground data-disabled:pointer-events-none data-outside-month:pointer-events-none data-selected:font-medium data-unavailable:line-through group relative inline-flex size-10 items-center justify-center whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal transition-all">
-                                                        <div class="bg-foreground group-data-selected:bg-background group-data-today:block absolute top-[5px] hidden size-1 rounded-full transition-all"></div>
-                                                        <span class="text-foreground">{date.day}</span>
+                                                <DatePicker.Cell {date} month={month.value} class="p-0 relative size-10 text-center text-sm">
+                                                    <DatePicker.Day class="w-10 h-10 flex items-center justify-center rounded-md text-sm hover:bg-muted focus:bg-muted aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary aria-selected:hover:text-primary-foreground aria-selected:focus:bg-primary aria-selected:focus:text-primary-foreground disabled:pointer-events-none disabled:opacity-50 data-outside-month:hidden" style="color: var(--green-90t);">
+                                                        {date.day}
                                                     </DatePicker.Day>
                                                 </DatePicker.Cell>
                                             {/each}

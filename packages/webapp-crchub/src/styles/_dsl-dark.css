@@ -439,7 +439,7 @@
 /* #endregion */
 
 /* #region Datepicker */
-.datepicker-input {
+.datepicker-input .date-picker-segment {
   color: var(--green-90t);
   background-color: var(--green-30t);
   border: 1px solid var(--green-90t);
