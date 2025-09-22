@@ -52,6 +52,8 @@
         otherChildren = children.slice(1)
         nameBox = children[0] as TextBox
         console.log("ItemGroupComponent onMount nameBox: ", nameBox);
+        console.log("ItemGroupComponent onMount children: ", children);
+        console.log("ItemGroupComponent onMount otherChildren: ", otherChildren);
     });
 
     $effect(() => {
@@ -66,14 +68,21 @@
 
     })
 
-    
-    const toggleExpanded = (event: MouseEvent) => {
+    const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
+        console.log("toggleExpanded event: ", event);
+        console.log("Before toggle - isExpanded: ", isExpanded);
         isExpanded = !isExpanded;
-        // box.isExpanded = isExpanded;
+        console.log("After toggle - isExpanded: ", isExpanded);
+        console.log("contentStyle: ", contentStyle());
+        box.isExpanded = isExpanded;
         event.stopPropagation();
+        event.preventDefault();
     };
 
-    const deleteItem = () => {
+    const deleteItem = (event?: MouseEvent | KeyboardEvent) => {
+        if (event) {
+            event.stopPropagation();
+        }
         AST.change(() => {
             console.log("deleteItem box: ", box);
             console.log("deleteItem box.node: ", box.node);
@@ -91,7 +100,10 @@
         });
     }
 
-    const duplicateItem = () => {
+    const duplicateItem = (event?: MouseEvent | KeyboardEvent) => {
+        if (event) {
+            event.stopPropagation();
+        }
         // AST.change(() => {
         //     const propertyName = box.propertyName;
         //     const currentElement = box.node;
@@ -119,13 +131,16 @@
         // });
     }
 
-    const shareItem = () => {
+    const shareItem = (event?: MouseEvent | KeyboardEvent) => {
+        if (event) {
+            event.stopPropagation();
+        }
         LOGGER.log("Sharing item")
         console.log("Sharing ItemGroupComponent2: box.node", box.node)
         // Get the study config context
         const task = box.node as Task
         const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration
-        const event: Event = ownerOfType(task, "Event") as unknown as Event
+        const eventObj: Event = ownerOfType(task, "Event") as unknown as Event
         AST.change(() => {
             // Create the shard task and wire together
             let newSharedTask = SharedTask.create({
@@ -141,7 +156,7 @@
                 task: refToTask
             })
             // Replace the original task in the event with the new task reference
-            event.tasks[event.tasks.indexOf(task)] = newTaskReference
+            eventObj.tasks[eventObj.tasks.indexOf(task)] = newTaskReference
             // Add the new shared task to the shared tasks list
             studyConfig.tasks.push(newSharedTask)
         })
@@ -175,7 +190,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div id="{id}" class="item-group {cssClass}">
     {#if canExpand}
-        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
+        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), toggleExpanded(e))} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
             {#if isExpanded}
                 <IconChevronDown size={16} />
             {:else}
@@ -188,17 +203,17 @@
     <span class="item-group-label" tabindex="-1">{label()}:</span>
     <RenderComponent box={nameBox} editor={editor} />
     {#if canDuplicate}
-        <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate" tabindex="0">
+        <button class="circle-button action-button" onclick={duplicateItem} onkeydown={(e) => e.key === 'Enter' && duplicateItem(e)} title="Duplicate" tabindex="0">
             <IconDuplicate size={14} />
         </button>
     {/if}
     {#if canDelete}
-        <button class="circle-button action-button" onclick={deleteItem} title="Delete" tabindex="0">
+        <button class="circle-button action-button" onclick={deleteItem} onkeydown={(e) => e.key === 'Enter' && deleteItem(e)} title="Delete" tabindex="0">
             <IconDelete size={14} />
         </button>
     {/if}
     {#if canShare}
-        <button class="circle-button action-button" onclick={shareItem} title="Share" tabindex="0">
+        <button class="circle-button action-button" onclick={shareItem} onkeydown={(e) => e.key === 'Enter' && shareItem(e)} title="Share" tabindex="0">
             <IconShare2 size={14} />
         </button>
     {/if}
