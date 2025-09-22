@@ -105,6 +105,11 @@
         toParent
     );
 
+    // Convert placeholder to readable text using camelCase conversion
+    if (notNullOrUndefined(box) && placeholder !== '<..>') {
+        placeholder = myHelper.camelCaseToReadable(placeholder);
+    }
+
     /* ========	The following functions are called from @freon4dsl/core =========== */
 
     /**
@@ -119,7 +124,7 @@
         if (notNullOrUndefined(box)) {
             // 'id' does not change, because it solely depends upon the id of the box, which remains constant,
             // 'placeholderStyle' depends on the type of the box, which remains constant.
-            if (placeholder !== box.placeHolder) placeholder = box.placeHolder;
+            if (placeholder !== box.placeHolder) placeholder = myHelper.camelCaseToReadable(box.placeHolder);
             if (originalText !== box.getText()) originalText = box.getText();
             if (text !== box.getText()) text = box.getText();
             boxType =
@@ -518,9 +523,9 @@
     <ErrorMarker {editor} {box} />
 {/if}
 <ErrorTooltip {editor} {box} {hasErr} parentTop={0} parentLeft={0}>
-    <span {id} role="none" bind:this={surroundingElement}>
+    <span {id} role="none" bind:this={surroundingElement} class="text-component-parent">
         {#if isEditing}
-            <span class="text-component-input">
+            <span class="text-component-input-wrapper">
                 <input
                     type="text"
                     class="text-component-input"
@@ -537,10 +542,10 @@
                 />
                 <span class="text-component-width" bind:this={widthSpan}></span>
             </span>
-        {:else}
+            {:else}
             <!-- contenteditable must be true, otherwise there is no cursor position in the span after a click,
-				 But ... this is only a problem when this component is inside a draggable element (like List or table)
-			-->
+                 But ... this is only a problem when this component is inside a draggable element (like List or table)
+            -->
             <span
                 class="{box?.cssClass} text-box-{boxType} text-component-text {errorCls}"
                 onmousedown={onMousedown}
