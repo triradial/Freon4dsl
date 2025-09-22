@@ -89,7 +89,7 @@ concept TaskReference base EventTask {
 
 // TODO: Change title to name? 
 concept Step {
-    name: identifier = "Step";
+    name: identifier;
     // title: string;
     detailsDescription: Description;
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.

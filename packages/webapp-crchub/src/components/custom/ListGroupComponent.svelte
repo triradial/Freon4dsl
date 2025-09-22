@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import { AST, FreEditor, FreLanguage, FreLogger, PartWrapperBox } from "@freon4dsl/core";
-    import { RenderComponent } from "@freon4dsl/core-svelte";
-    import { componentId } from "@freon4dsl/core-svelte";
-    // ts-ignore
-    import {  ChevronDown as IconChevronDown,  ChevronRight as IconChevronRight,  Plus as IconPlus,  EllipsisVertical as IconEllipsisVertical  } from '@lucide/svelte';
+    import { componentId, RenderComponent } from "@freon4dsl/core-svelte";
+    import { onMount } from "svelte";
+// ts-ignore
+    import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, EllipsisVertical as IconEllipsisVertical, Plus as IconPlus } from '@lucide/svelte';
     
     const LOGGER = new FreLogger("ListGroupComponent");
     FreLogger.unmute("ListGroupComponent");
@@ -25,8 +24,10 @@
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
-    // async function setFocus(): Promise<void> {
-    // }
+
+    async function setFocus(): Promise<void> {
+        box?.setFocus();
+    }
 
     const refresh = (why?: string): void => {
         LOGGER.log("REFRESH (" + why + ")");

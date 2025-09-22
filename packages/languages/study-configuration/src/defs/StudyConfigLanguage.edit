@@ -77,7 +77,7 @@ TaskReference {
 
 Step {
     [
-        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true"  canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
     ]
     fragment stepDetails [
         ${name}
@@ -132,7 +132,12 @@ Staffing {
 
 Reference {
     [
-        Reference Title: ${title}    Link: ${link}
+        [fragment referenceDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="false" label="Ref"]
+    ]
+    fragment referenceDetails [
+        
+        ${title} 
+        Link: ${link}
         ${description}
     ]
 }
