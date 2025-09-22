@@ -41,10 +41,10 @@ concept PatientNotAvailable {
 }
 
 concept StaffLevel {
-  staffAvailable: number;
+  staffAvailable: string;
   startDate: DateConcept;
   endDate?: DateConcept;
-  
+
   dateOrRange: DateRange;
 }
 
