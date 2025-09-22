@@ -85,13 +85,17 @@
         box.refreshComponent = refresh
     })
 
-    const toggleExpanded = (event: MouseEvent) => {
+    const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
         isExpanded = !isExpanded
         box.isExpanded = isExpanded
         event.stopPropagation()
+        event.preventDefault()
     }
 
-    const deleteItem = () => {
+    const deleteItem = (event?: MouseEvent | KeyboardEvent) => {
+        if (event) {
+            event.stopPropagation()
+        }
         AST.change(() => {
             const ownerDescriptor = box.node.freOwnerDescriptor()
             const parent = ownerDescriptor.owner
@@ -107,7 +111,10 @@
         })
     }
 
-    const duplicateItem = () => {
+    const duplicateItem = (event?: MouseEvent | KeyboardEvent) => {
+        if (event) {
+            event.stopPropagation()
+        }
         AST.change(() => {
             const language = FreLanguage.getInstance()
             const propertyName = box.propertyName
@@ -118,7 +125,10 @@
         })
     }
 
-    const shareItem = () => {
+    const shareItem = (event?: MouseEvent | KeyboardEvent) => {
+        if (event) {
+            event.stopPropagation()
+        }
         LOGGER.log("Not allowed to Sharing this item");
     }
 </script>
@@ -126,7 +136,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div {id} class="item-group {cssClass}">
     {#if canExpand}
-        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
+        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), toggleExpanded(e))} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
             {#if isExpanded}
                 <IconChevronDown size={16} />
             {:else}
@@ -139,17 +149,17 @@
     <span class="item-group-label" tabindex="-1">{label()}:</span>
     <RenderComponent box={referenceBox} {editor} cssClass={cssContainerClass} />
     {#if canDuplicate}
-        <button class="circle-button action-button" onclick={duplicateItem} title="Duplicate" tabindex="0">
+        <button class="circle-button action-button" onclick={duplicateItem} onkeydown={(e) => e.key === 'Enter' && duplicateItem(e)} title="Duplicate" tabindex="0">
             <IconDuplicate size={14} />
         </button>
     {/if}
     {#if canDelete}
-        <button class="circle-button action-button" onclick={deleteItem} title="Delete" tabindex="0">
+        <button class="circle-button action-button" onclick={deleteItem} onkeydown={(e) => e.key === 'Enter' && deleteItem(e)} title="Delete" tabindex="0">
             <IconDelete size={14} />
         </button>
     {/if}
     {#if canShare}
-        <button class="circle-button action-button" onclick={shareItem} title="Share" tabindex="0">
+        <button class="circle-button action-button" onclick={shareItem} onkeydown={(e) => e.key === 'Enter' && shareItem(e)} title="Share" tabindex="0">
             <IconShare2 size={14} />
         </button>
     {/if}

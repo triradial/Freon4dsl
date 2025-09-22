@@ -92,15 +92,9 @@
   background-color: var(--green-30t);
 }
 
-.text-dropdown-component .text-component-placeholder,
-.text-component-placeholder {
-  color: #35a52b;
-  background-color: transparent;
-}
-
-.text-component-action-placeholder {
-  color: #35a52b;
-  background-color: transparent;
+.text-component-input::placeholder {
+  color: #865fce;
+  opacity: 1;
 }
 
 /* #endregion */
@@ -494,7 +488,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 /* #region Drag Handle */
 .drag-handle-icon {
-  fill: var(--freon-light-base-250);
+  fill: var(--black);
 }
 /* #endregion */
 

@@ -46,13 +46,18 @@
         box.refreshComponent = refresh;
     });
 
-    const toggleExpanded = (event: MouseEvent) => {
+    const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
         isExpanded = !isExpanded;
         box.isExpanded = isExpanded;
         event.stopPropagation();
+        event.preventDefault();
     };
 
-    const addItem = () => {
+    const addItem = (event?: MouseEvent | KeyboardEvent) => {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
         AST.change(() => {
             const language = FreLanguage.getInstance();
             const propertyName = box.propertyName;
@@ -80,7 +85,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div id="{id}" class="list-group {cssClass}">
     {#if canExpand}
-        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
+        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), toggleExpanded(e))} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
             {#if isExpanded}
                 <IconChevronDown size={16} />
             {:else}
@@ -92,7 +97,7 @@
     {/if}
     <span class="list-group-label">{label()}</span>
     {#if canAdd}
-        <button class="circle-button action-button" onclick={addItem} title="Add" tabindex="0">
+        <button class="circle-button action-button" onclick={addItem} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addItem(e))} title="Add" tabindex="0">
             <IconPlus size={14} />
         </button>
     {/if}

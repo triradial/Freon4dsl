@@ -76,14 +76,19 @@ main {
   position: absolute;
   left: -9999px;
   display: inline-block;
-  margin: 0px 2px 0px 2px;
-  padding: 2px 2px 0px 2px;
+  margin: 0px 8px 0px 2px;
+  padding: 2px 4px 0px 2px;
   border: none;
   box-sizing: border-box;
   font-family: var(--font-family-sans);
   font-size: var(--standard-font-size);
   font-weight: normal;
   font-style: normal;
+}
+
+.text-component-input-wrapper {
+  margin-left: 0.125rem;
+  margin-right: 0.125rem;
 }
 
 .text-component-input {
@@ -95,10 +100,13 @@ main {
   border-width: 0px;
   box-sizing: border-box;
   margin: 0px 1px 0px 2px;
-  /* padding: 0.025rem 0.15rem 0.0625rem 0.2rem; */
-  padding: 0 0.2rem 0 0.2rem;
-  padding-block: 0px;
+  padding: 0.125rem 0.15rem 0 0.2rem;
+  padding-block: 0.15rem;
   height: 24px;
+}
+
+.text-component-input::placeholder {
+  font-style: italic;
 }
 
 .text-component-text {
@@ -108,14 +116,59 @@ main {
   font-style: normal;
   line-height: 20px !important;
   margin: 0 0.125rem 0 0.125rem;
-  padding: 0.125rem 0.15rem 0 0.2rem;
+  padding: 0.15rem 0.25rem 0 0.3rem;
   white-space: normal;
   display: inline-block;
   height: 24px;
 }
 
-.text-dropdown-component {
+.text-dropdown-component .text-component-text {
+  border-radius: 0.125rem;
+}
 
+.text-dropdown-component .text-component-input::placeholder {
+  /* text-decoration: underline;
+  text-decoration-style: dashed; */
+}
+
+/* Add plus icon before placeholder text using the input wrapper - only for dropdown components */
+.text-dropdown-component .text-component-input-wrapper {
+  position: relative;
+}
+
+/* Hide the plus icon when input has content - using :has() for modern browsers */
+.text-dropdown-component .text-component-input-wrapper:has(.text-component-input:not(:placeholder-shown))::before {
+  content: "";
+  width: 0;
+}
+
+.text-dropdown-component .text-component-input-wrapper:has(.text-component-input:placeholder-shown)::before {
+  content: "+";
+  position: absolute;
+  left: 0.3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Fallback for browsers that don't support :has() - hide when input has value */
+.text-dropdown-component .text-component-input:not(:placeholder-shown) {
+  padding-left: 0.2rem !important;
+}
+
+/* Adjust padding to make room for the plus icon when placeholder is shown */
+.text-dropdown-component .text-component-input:placeholder-shown {
+  padding-left: 0.75rem !important;
+}
+
+.text-dropdown-component .text-component-width::before {
+  content: "+-";
+}
+
+/* Hide the width calculation content when input has value (no placeholder shown) */
+.text-dropdown-component .text-component-input-wrapper:has(.text-component-input:not(:placeholder-shown)) .text-component-width::before {
+  content: "";
 }
 
 .text-dropdown-component .text-component-text:hover,
@@ -127,20 +180,28 @@ main {
   font-family: var(--font-family-sans);
   font-size: var(--standard-font-size);
   font-weight: normal;
-  font-style: normal;
+  font-style: italic;
   white-space: normal;
+  line-height: 20px !important;
   display: inline-block;
+  height: 24px;
 }
 
-.text-component-actionPlaceholder {
+.text-component-action-placeholder {
   font-family: var(--font-family-sans);
   font-size: var(--standard-font-size);
   font-weight: normal;
   font-style: normal;
   white-space: normal;
   display: inline-block;
+  line-height: 20px !important;
+  height: 24px;
 }
 
+.text-component-action-placeholder::before {
+  content: "+";
+  margin-right:0.125rem;
+}
 /* #endregion */
 
 /* #region Switch Component */
@@ -311,6 +372,10 @@ main {
 .list-item {
   display: flex;
   align-items: flex-start;
+}
+
+.list-item:last-child {
+  margin-top: 0.5rem !important;
 }
 
 .list-item.type1 {
