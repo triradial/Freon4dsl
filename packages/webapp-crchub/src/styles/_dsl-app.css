@@ -122,6 +122,11 @@ main {
   height: 24px;
 }
 
+.text-dropdown-component-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
 .text-dropdown-component .text-component-text {
   border-radius: 0.125rem;
 }
@@ -129,6 +134,7 @@ main {
 .text-dropdown-component .text-component-input::placeholder {
   /* text-decoration: underline;
   text-decoration-style: dashed; */
+  font-style: normal;
 }
 
 /* Add plus icon before placeholder text using the input wrapper - only for dropdown components */
@@ -809,7 +815,12 @@ span:has(> .tinymce-inline) {
 
 .reference-button {
   border: 0;
-  margin: 0 0 0.125rem 0;
+  margin: 0;
+  width: 1rem;
+}
+
+.reference-arrow {
+  margin-left: 0.25rem;
 }
 
 .dropdown-component-container {

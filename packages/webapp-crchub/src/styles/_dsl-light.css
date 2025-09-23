@@ -362,9 +362,9 @@
   background-color: var(--black-10t);
 }
 
-.reference-button {
+.reference-arrow {
   background-color: transparent !important;
-  color: var(--gray-700) !important;
+  fill: var(--gray-700) !important;
 }
 
 .reference-button:hover {
