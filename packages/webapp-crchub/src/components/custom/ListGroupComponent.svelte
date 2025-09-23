@@ -20,13 +20,18 @@
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
+    let toggleButton: HTMLButtonElement | undefined = $state();
     let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
 
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
 
     async function setFocus(): Promise<void> {
-        box?.setFocus();
+        // list group has no editable element, but does have a selectable child
+        // set to none if there is no expandable child
+        if (canExpand && toggleButton) {
+            toggleButton?.focus();
+        }
     }
 
     const refresh = (why?: string): void => {
@@ -86,7 +91,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div id="{id}" class="list-group {cssClass}">
     {#if canExpand}
-        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), toggleExpanded(e))} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
+        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" bind:this={toggleButton} onclick={toggleExpanded} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), toggleExpanded(e))} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
             {#if isExpanded}
                 <IconChevronDown size={16} />
             {:else}
