@@ -397,17 +397,20 @@
   background-color: var(--white-10t);
 }
 
+.reference-arrow {
+  fill: var(--white) !important;
+}
+
 .reference-button {
   background-color: transparent !important;
-  color: var(--gray-400) !important;
 }
 
 .reference-button:hover {
-  background-color: var(--white-10t) !important;
+  background-color: var(--white-30t) !important;
 }
 
 .reference-button:active {
-  background-color: var(--white-20t) !important;
+  background-color: var(--white-40t) !important;
 }
 
 /* #endregion */

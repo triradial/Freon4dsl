@@ -27,6 +27,9 @@
     // Please, set the focus to the first editable/selectable element in this component.
     // async function setFocus(): Promise<void> {
     // }
+    async function setFocus(): Promise<void> {
+        console.log("listgroupcomponent setFocus none");
+    }
 
     const refresh = (why?: string): void => {
         LOGGER.log("REFRESH (" + why + ")");
@@ -34,6 +37,7 @@
 
     onMount(() => {
         box.refreshComponent = refresh; 
+        box.setFocus = setFocus;
         const childBox = box.childBox;
         if (childBox) {
             childBox.cssClass = cssClass;
