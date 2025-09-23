@@ -19,6 +19,10 @@ StudyConfiguration {
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
+    [fragment studyRoles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"]
+    ]
+    fragment studyRoles [
+        ${roles}
     ]
 }
 
@@ -77,23 +81,29 @@ TaskReference {
 
 Step {
     [
-        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true"  canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
     ]
     fragment stepDetails [
         ${name}
         ${detailsDescription}
-        ${references wrap=ListGroupComponent cssClass="type5" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="References"   }
-        Systems Used: ${systems table rows}
-        ${people wrap=ListGroupComponent cssClass="type5" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
+        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
+        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="References"   }
+        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Systems Used"}
     ]
 }
 
 SystemAccess {
-    table [ 
-             System    
-             ${name}
-        ]
+    [
+        [fragment systemAccessDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="System Access"]
+    ]
+    fragment systemAccessDetails [
+        ${name}
+        ${description}
+        ${accessedAt}
+        ${robotMappings}
+    ]
 }
+
 
 SystemAccessReference {
     [
@@ -115,38 +125,31 @@ AccessedAPhoneNumber {
 
 Person {
     [
-        Name: ${name}  ${useSystemContact} Use System Contact   Email: ${email}
-                                                                Phone: ${phoneNumber}
-                                                                Role : ${role} 
+        [fragment personDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Person"]
     ]
-}
-
-Staffing {
-    [
-        Roles: 
-            ${roles}
-        Assignments: 
-            ${assignments}
+    fragment personDetails [
+        ${name}
+        ${description}
+        Email: ${email}
+        Phone: ${phoneNumber}
+        Role: ${role}
     ]
 }
 
 Reference {
     [
-        Reference Title: ${title}    Link: ${link}
-        ${description}
+        [fragment referenceDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Ref"]
     ]
-}
-
-Assignment {
-    [
-        Role  : ${role}
-        Person: ${person}
+    fragment referenceDetails [
+    ${name} 
+    Link: ${link}
+    ${description}
     ]
 }
 
 StaffRole {
     [
-        role: ${name}
+        ${name} 
     ]
 }
 

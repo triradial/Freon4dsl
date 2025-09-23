@@ -8,7 +8,7 @@
    ],
    "nodes": [
       {
-         "id": "ID-38",
+         "id": "ID-123",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -53,7 +53,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showChecklists"
                },
-               "value": "true"
+               "value": "false"
             },
             {
                "property": {
@@ -85,7 +85,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showDescriptions"
                },
-               "value": "true"
+               "value": "false"
             },
             {
                "property": {
@@ -112,7 +112,7 @@
                   "key": "-key-StudyConfiguration-periods"
                },
                "children": [
-                  "ID-41"
+                  "ID-125"
                ]
             },
             {
@@ -121,10 +121,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-tasks"
                },
-               "children": [
-                  "ID-52",
-                  "ID-55"
-               ]
+               "children": []
             },
             {
                "containment": {
@@ -140,8 +137,18 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-staffing"
                },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-roles"
+               },
                "children": [
-                  "ID-39"
+                  "ID-108",
+                  "ID-109",
+                  "ID-110"
                ]
             },
             {
@@ -151,7 +158,7 @@
                   "key": "-key-StudyConfiguration-notes"
                },
                "children": [
-                  "ID-40"
+                  "ID-124"
                ]
             }
          ],
@@ -160,7 +167,7 @@
          "parent": null
       },
       {
-         "id": "ID-41",
+         "id": "ID-125",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -184,7 +191,7 @@
                   "key": "-key-Period-description"
                },
                "children": [
-                  "ID-42"
+                  "ID-126"
                ]
             },
             {
@@ -194,17 +201,16 @@
                   "key": "-key-Period-events"
                },
                "children": [
-                  "ID-43",
-                  "ID-247"
+                  "ID-127"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-38"
+         "parent": "ID-123"
       },
       {
-         "id": "ID-42",
+         "id": "ID-126",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -217,7 +223,7 @@
                   "version": "2023.1",
                   "key": "-key-Description-text"
                },
-               "value": "<p>this is the description of this Period</p>\n<p>&nbsp;</p>\n<p>Multil-line in the editor jumps out and adds another period as if the '+' button was pressed. Tabbing into the description gives it the focus but with no visible indication. tabbing again goes to '&gt;' of Event. Only clicking in text area activates the editor</p>"
+               "value": " "
             },
             {
                "property": {
@@ -225,16 +231,16 @@
                   "version": "2023.1",
                   "key": "-key-Description-rawText"
                },
-               "value": "this is the description of this Period\n\n\n\nMultil-line in the editor jumps out and adds another period as if the '+' button was pressed. Tabbing into the description gives it the focus but with no visible indication. tabbing again goes to '>' of Event. Only clicking in text area activates the editor"
+               "value": " "
             }
          ],
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-41"
+         "parent": "ID-125"
       },
       {
-         "id": "ID-43",
+         "id": "ID-127",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -255,7 +261,7 @@
                   "version": "2023.1",
                   "key": "-key-Event-alternativeName"
                },
-               "value": "first visit"
+               "value": ""
             },
             {
                "property": {
@@ -281,16 +287,8 @@
                   "version": "2023.1",
                   "key": "-key-Event-tasks"
                },
-               "children": []
-            },
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Event-description"
-               },
                "children": [
-                  "ID-71"
+                  "ID-132"
                ]
             },
             {
@@ -300,7 +298,7 @@
                   "key": "-key-Event-schedule"
                },
                "children": [
-                  "ID-44"
+                  "ID-128"
                ]
             }
          ],
@@ -314,16 +312,73 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": "ID-30"
+                     "reference": "ID-101"
                   }
                ]
             }
          ],
          "annotations": [],
-         "parent": "ID-41"
+         "parent": "ID-125"
       },
       {
-         "id": "ID-71",
+         "id": "ID-132",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Task"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-name"
+               },
+               "value": "Task 1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-numberedSteps"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-showDetails"
+               },
+               "value": "false"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-description"
+               },
+               "children": [
+                  "ID-133"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-steps"
+               },
+               "children": []
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-127"
+      },
+      {
+         "id": "ID-133",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -336,7 +391,7 @@
                   "version": "2023.1",
                   "key": "-key-Description-text"
                },
-               "value": "<p>this is the description of the first visit</p>"
+               "value": " "
             },
             {
                "property": {
@@ -344,16 +399,16 @@
                   "version": "2023.1",
                   "key": "-key-Description-rawText"
                },
-               "value": "this is the description of the first visit"
+               "value": " "
             }
          ],
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-43"
+         "parent": "ID-132"
       },
       {
-         "id": "ID-44",
+         "id": "ID-128",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -368,16 +423,16 @@
                   "key": "-key-EventSchedule-eventWindow"
                },
                "children": [
-                  "ID-45"
+                  "ID-129"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-43"
+         "parent": "ID-127"
       },
       {
-         "id": "ID-45",
+         "id": "ID-129",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -392,7 +447,7 @@
                   "key": "-key-EventWindow-daysBefore"
                },
                "children": [
-                  "ID-46"
+                  "ID-130"
                ]
             },
             {
@@ -402,16 +457,16 @@
                   "key": "-key-EventWindow-daysAfter"
                },
                "children": [
-                  "ID-47"
+                  "ID-131"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-44"
+         "parent": "ID-128"
       },
       {
-         "id": "ID-46",
+         "id": "ID-130",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -423,232 +478,105 @@
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
                   "key": "-key-Days-count"
-               },
-               "value": "10"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-45"
-      },
-      {
-         "id": "ID-47",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-Days"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Days-count"
-               },
-               "value": "5"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-45"
-      },
-      {
-         "id": "ID-247",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-Event"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Event-name"
-               },
-               "value": "E2"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Event-alternativeName"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Event-showSequenced"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Event-eventNumber"
                },
                "value": "0"
             }
          ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Event-tasks"
-               },
-               "children": []
-            }
-         ],
-         "references": [
-            {
-               "reference": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Event-typeOfEvent"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "site visit",
-                     "reference": "ID-30"
-                  }
-               ]
-            }
-         ],
+         "containments": [],
+         "references": [],
          "annotations": [],
-         "parent": "ID-41"
+         "parent": "ID-129"
       },
       {
-         "id": "ID-52",
+         "id": "ID-131",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-SharedTask"
+            "key": "-key-Days"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-SharedTask-name"
+                  "key": "-key-Days-count"
                },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-SharedTask-numberedSteps"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-SharedTask-showDetails"
-               },
-               "value": "false"
+               "value": "0"
             }
          ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-SharedTask-steps"
-               },
-               "children": []
-            }
-         ],
+         "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-38"
+         "parent": "ID-129"
       },
       {
-         "id": "ID-55",
+         "id": "ID-108",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-SharedTask"
+            "key": "-key-StaffRole"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-SharedTask-name"
+                  "key": "-key-StaffRole-name"
                },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-SharedTask-numberedSteps"
-               },
-               "value": "false"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-SharedTask-showDetails"
-               },
-               "value": "false"
+               "value": "pharma"
             }
          ],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-SharedTask-steps"
-               },
-               "children": []
-            }
-         ],
+         "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-38"
+         "parent": "ID-123"
       },
       {
-         "id": "ID-39",
+         "id": "ID-109",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-Staffing"
+            "key": "-key-StaffRole"
          },
-         "properties": [],
-         "containments": [
+         "properties": [
             {
-               "containment": {
+               "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-Staffing-roles"
+                  "key": "-key-StaffRole-name"
                },
-               "children": []
-            },
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Staffing-assignments"
-               },
-               "children": []
+               "value": "CRC"
             }
          ],
+         "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-38"
+         "parent": "ID-123"
       },
       {
-         "id": "ID-40",
+         "id": "ID-110",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-StaffRole"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-name"
+               },
+               "value": "helper"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-123"
+      },
+      {
+         "id": "ID-124",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -675,7 +603,7 @@
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-38"
+         "parent": "ID-123"
       }
    ]
 }
