@@ -34,7 +34,7 @@ Period {
     ]
     fragment periodDetails [
         ${name}
-        ${description}
+        ${description wrap=MultilineTextComponent}
         ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Events"}
     ]   
 }
@@ -46,7 +46,7 @@ Event {
     fragment noEventDetails [
        ${name}
        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
-       ${description}
+       ${description wrap=MultilineTextComponent}
     ]
 }
 
@@ -56,7 +56,7 @@ Task {
     ]
     fragment taskDetails [
         ${name}
-        ${description}
+        ${description wrap=MultilineTextComponent}
         ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
     ]
 }
@@ -67,7 +67,7 @@ SharedTask {
     ]
     fragment sharedTaskDetails [
         ${name}
-        ${description}
+        ${description wrap=MultilineTextComponent}
         ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
     ]
 }
@@ -98,7 +98,7 @@ SystemAccess {
     ]
     fragment systemAccessDetails [
         ${name}
-        ${description}
+        ${description wrap=MultilineTextComponent}
         ${accessedAt}
         ${robotMappings}
     ]
@@ -129,10 +129,10 @@ Person {
     ]
     fragment personDetails [
         ${name}
-        ${description}
         Email: ${email}
         Phone: ${phoneNumber}
         Role: ${role}
+        Notes:${description wrap=MultilineTextComponent}
     ]
 }
 
@@ -143,7 +143,7 @@ Reference {
     fragment referenceDetails [
     ${name} 
     Link: ${link}
-    ${description}
+    ${description wrap=MultilineTextComponent}
     ]
 }
 
