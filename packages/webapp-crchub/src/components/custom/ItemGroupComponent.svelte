@@ -58,22 +58,11 @@
 
     $effect(() => {
         console.log("$effect nameBox: ", nameBox);
-        console.log("namebox.node: ", nameBox?.node);
-        console.log("namebox.node.freLanguageConcept: ", nameBox?.node.freLanguageConcept());
-        if(nameBox?.node.freLanguageConcept() === "Event") {
-            let event = box.node as unknown as Event
-            console.log("event: ", event);
-        }
         box.refreshComponent = refresh;
-
     })
 
     const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
-        console.log("toggleExpanded event: ", event);
-        console.log("Before toggle - isExpanded: ", isExpanded);
         isExpanded = !isExpanded;
-        console.log("After toggle - isExpanded: ", isExpanded);
-        console.log("contentStyle: ", contentStyle());
         box.isExpanded = isExpanded;
         event.stopPropagation();
         event.preventDefault();

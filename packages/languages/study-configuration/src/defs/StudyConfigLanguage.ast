@@ -22,7 +22,8 @@ modelunit StudyConfiguration {
     periods: Period[];
     tasks: SharedTask[];
     systemAccesses: SystemAccess[];
-    staffing: Staffing;
+    staffing: Person[];
+    roles: StaffRole[];
     notes: Description;
 }
 
@@ -30,20 +31,6 @@ concept Period {
     name: identifier;
     description: Description;
     events: Event[];
-}
-
-concept Staffing {
-    roles: StaffRole[]; 
-    assignments: Assignment[];
-}
-
-concept StaffRole {
-    name: identifier;
-}
-
-concept Assignment {
-    reference role: StaffRole;
-    reference person: Person;
 }
 
 limited TypeOfEvent {
@@ -87,14 +74,12 @@ concept TaskReference base EventTask {
     reference task: SharedTask;
 }
 
-// TODO: Change title to name? 
 concept Step {
     name: identifier;
-    // title: string;
     detailsDescription: Description;
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
     references: Reference[];
-    people: Person[];
+    reference people: Person[];
     systems: SystemAccess[];
 }
 
@@ -119,7 +104,6 @@ concept SystemAccess {
     name: identifier;
     description: Description;
     isShared: boolean;
-    reference referencedSystemAccess: SystemAccess;
     functionName: string;
     accessedAt: AccessedAt;
     robotMappings?: RobotMapping;
@@ -132,7 +116,6 @@ concept SystemAccessReference {
 interface AccessedAt {
 }
 
-
 concept AccessedAtURL implements AccessedAt {
     url: string;
 }
@@ -141,8 +124,20 @@ concept AccessedAPhoneNumber implements AccessedAt {
     phoneNumber: string;
 }
 
+concept StaffRole {
+    name: identifier;
+}
+
+concept Person {
+    name: identifier;
+    description: Description;
+    email: string;
+    phoneNumber: string;
+    reference role: StaffRole;
+}
+
 concept Reference {
-    title: string;
+    name: string;
     link: string;
     description: Description;
 }
@@ -160,11 +155,3 @@ concept SourceToTargetMapping {
     targetField : string;
 }
 
-concept Person {
-    name: identifier;
-    useSystemContact: boolean;
-    email: string;
-    phoneNumber: string;
-    role: StaffRole;
-}
- 
