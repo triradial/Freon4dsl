@@ -10,7 +10,8 @@ global {
         MultilineTextComponent,
         AbbreviationComponent,
         DisplayNothingComponent,
-        TaskReferenceComponent
+        TaskReferenceComponent,
+        TabFixComponent
     }
 }
 
