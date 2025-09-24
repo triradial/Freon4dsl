@@ -103,5 +103,3 @@ The source code for Freon is organised into the following packages.
   This package import the `webapp-lib` for the full web app and one language from `samples` to be used in the webapp.
 * _/*_: the usual suspects.
 
-Test
-*Test*
