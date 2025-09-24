@@ -53,7 +53,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showChecklists"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -139,9 +139,15 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-staffing"
                },
-               "children": [
-                  "ID-71"
-               ]
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-roles"
+               },
+               "children": []
             }
          ],
          "references": [],
@@ -4797,36 +4803,6 @@
          "references": [],
          "annotations": [],
          "parent": "ID-201"
-      },
-      {
-         "id": "ID-71",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-Staffing"
-         },
-         "properties": [],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Staffing-roles"
-               },
-               "children": []
-            },
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Staffing-assignments"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-70"
       }
    ]
 }

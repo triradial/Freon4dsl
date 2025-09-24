@@ -76,7 +76,7 @@ concept TaskReference base EventTask {
 
 concept Step {
     name: identifier;
-    detailsDescription: Description;
+    description: Description;
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
     references: Reference[];
     reference people: Person[];

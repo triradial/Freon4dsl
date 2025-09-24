@@ -53,7 +53,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showChecklists"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -61,7 +61,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showReferences"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -69,7 +69,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showSystems"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -77,7 +77,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showPeople"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -85,7 +85,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showDescriptions"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -112,7 +112,8 @@
                   "key": "-key-StudyConfiguration-periods"
                },
                "children": [
-                  "ID-125"
+                  "ID-125",
+                  "ID-54"
                ]
             },
             {
@@ -137,7 +138,9 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-staffing"
                },
-               "children": []
+               "children": [
+                  "ID-36"
+               ]
             },
             {
                "containment": {
@@ -146,9 +149,9 @@
                   "key": "-key-StudyConfiguration-roles"
                },
                "children": [
+                  "ID-110",
                   "ID-108",
-                  "ID-109",
-                  "ID-110"
+                  "ID-109"
                ]
             },
             {
@@ -202,7 +205,7 @@
                },
                "children": [
                   "ID-127",
-                  "ID-36"
+                  "ID-44"
                ]
             }
          ],
@@ -289,7 +292,18 @@
                   "key": "-key-Event-tasks"
                },
                "children": [
-                  "ID-132"
+                  "ID-132",
+                  "ID-122"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Event-description"
+               },
+               "children": [
+                  "ID-43"
                ]
             },
             {
@@ -409,6 +423,138 @@
          "parent": "ID-132"
       },
       {
+         "id": "ID-122",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Task"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-name"
+               },
+               "value": "t2"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-numberedSteps"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-showDetails"
+               },
+               "value": "false"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Task-steps"
+               },
+               "children": [
+                  "ID-134"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-127"
+      },
+      {
+         "id": "ID-134",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Step"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Step-name"
+               },
+               "value": "S1"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Step-references"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Step-systems"
+               },
+               "children": []
+            }
+         ],
+         "references": [
+            {
+               "reference": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Step-people"
+               },
+               "targets": [
+                  {
+                     "resolveInfo": "Mike Vogel",
+                     "reference": "ID-36"
+                  }
+               ]
+            }
+         ],
+         "annotations": [],
+         "parent": "ID-122"
+      },
+      {
+         "id": "ID-43",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-127"
+      },
+      {
          "id": "ID-128",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
@@ -421,16 +567,49 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
+                  "key": "-key-EventSchedule-eventStart"
+               },
+               "children": [
+                  "ID-57"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
                   "key": "-key-EventSchedule-eventWindow"
                },
                "children": [
                   "ID-129"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventSchedule-eventRepeat"
+               },
+               "children": [
+                  "ID-58"
                ]
             }
          ],
          "references": [],
          "annotations": [],
          "parent": "ID-127"
+      },
+      {
+         "id": "ID-57",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-StudyStart"
+         },
+         "properties": [],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-128"
       },
       {
          "id": "ID-129",
@@ -511,7 +690,29 @@
          "parent": "ID-129"
       },
       {
-         "id": "ID-36",
+         "id": "ID-58",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-RepeatCount"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-RepeatCount-repeatCount"
+               },
+               "value": "2"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-128"
+      },
+      {
+         "id": "ID-44",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -524,7 +725,7 @@
                   "version": "2023.1",
                   "key": "-key-Event-name"
                },
-               "value": "Post-Screen"
+               "value": "Other"
             },
             {
                "property": {
@@ -532,7 +733,7 @@
                   "version": "2023.1",
                   "key": "-key-Event-alternativeName"
                },
-               "value": "screening"
+               "value": ""
             },
             {
                "property": {
@@ -567,7 +768,7 @@
                   "key": "-key-Event-schedule"
                },
                "children": [
-                  "ID-37"
+                  "ID-45"
                ]
             }
          ],
@@ -590,7 +791,7 @@
          "parent": "ID-125"
       },
       {
-         "id": "ID-37",
+         "id": "ID-45",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -605,16 +806,16 @@
                   "key": "-key-EventSchedule-eventWindow"
                },
                "children": [
-                  "ID-38"
+                  "ID-46"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-36"
+         "parent": "ID-44"
       },
       {
-         "id": "ID-38",
+         "id": "ID-46",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -629,7 +830,7 @@
                   "key": "-key-EventWindow-daysBefore"
                },
                "children": [
-                  "ID-39"
+                  "ID-47"
                ]
             },
             {
@@ -639,16 +840,16 @@
                   "key": "-key-EventWindow-daysAfter"
                },
                "children": [
-                  "ID-40"
+                  "ID-48"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-37"
+         "parent": "ID-45"
       },
       {
-         "id": "ID-39",
+         "id": "ID-47",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -667,10 +868,10 @@
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-38"
+         "parent": "ID-46"
       },
       {
-         "id": "ID-40",
+         "id": "ID-48",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -689,7 +890,153 @@
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-38"
+         "parent": "ID-46"
+      },
+      {
+         "id": "ID-54",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Period"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Period-name"
+               },
+               "value": "Treatment"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Period-events"
+               },
+               "children": []
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-123"
+      },
+      {
+         "id": "ID-36",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Person"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Person-name"
+               },
+               "value": "Mike Vogel"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Person-email"
+               },
+               "value": "mike.vogel@google.com"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Person-phoneNumber"
+               },
+               "value": "908-399-7196"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Person-description"
+               },
+               "children": [
+                  "ID-41"
+               ]
+            }
+         ],
+         "references": [
+            {
+               "reference": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Person-role"
+               },
+               "targets": [
+                  {
+                     "resolveInfo": "pharma",
+                     "reference": "ID-108"
+                  }
+               ]
+            }
+         ],
+         "annotations": [],
+         "parent": "ID-123"
+      },
+      {
+         "id": "ID-41",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-36"
+      },
+      {
+         "id": "ID-110",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-StaffRole"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-name"
+               },
+               "value": "helper"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-123"
       },
       {
          "id": "ID-108",
@@ -728,28 +1075,6 @@
                   "key": "-key-StaffRole-name"
                },
                "value": "CRC"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-123"
-      },
-      {
-         "id": "ID-110",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-StaffRole"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-StaffRole-name"
-               },
-               "value": "helper"
             }
          ],
          "containments": [],
