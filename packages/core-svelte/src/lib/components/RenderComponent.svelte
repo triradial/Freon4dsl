@@ -76,29 +76,75 @@
 
     // css class name for when the node is selected
     let selectedCls: string = $derived.by(() => {
-        LOGGER.log(`Render derived: selectedCls ${box?.id}`)
+        console.log(`Render derived: selectedCls ${box?.id}`)
         // the following is done in the afterUpdate(), because then we are sure that all boxes are rendered by their respective components
-        LOGGER.log(
+        console.log(
           'setCurrentSelectedElement selectedBoxes: [' +
           selectedBoxes.value.map(
             (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
           ) +
           ']'
         );
-        let isSelected: boolean = selectedBoxes.value.includes(box);
-        // Ensure that the internal textbox inside an Action/Select/Reference box is selected if its parent box is.
-        if (isActionTextBox(box)) {
-            isSelected = isSelected || selectedBoxes.value.includes(box.parent);
+        let cls = 'render-component-unselected';
+
+        if (notNullOrUndefined(box)) {
+            let isSelected: boolean = selectedBoxes.value.includes(box);
+            // Ensure that the internal textbox inside an Action/Select/Reference box is selected if its parent box is.
+            if (isActionTextBox(box)) {
+                isSelected = isSelected || selectedBoxes.value.includes(box.parent);
+            }
+            if (isActionBox(box) || isSelectBox(box) || isReferenceBox(box)) {
+                isSelected = isSelected || selectedBoxes.value.includes(box._textBox);
+            }
+            if (isBooleanControlBox(box) || isLimitedControlBox(box)) {
+                // do not set extra class, the control itself handles being selected
+                cls = 'render-component-unselected';
+            } else {
+                cls = isSelected ? 'render-component-selected' : 'render-component-unselected';
+            }
         }
-        if (isActionBox(box) || isSelectBox(box) || isReferenceBox(box)) {
-            isSelected = isSelected || selectedBoxes.value.includes(box._textBox);
+        return cls;
+    });
+
+  
+    // Function to calculate how many levels up the selection will go
+    const getSelectionLevels = (box: Box): number => {
+        if (box.selectable) {
+            return 0; // This box itself is selectable
         }
-        if (isBooleanControlBox(box) || isLimitedControlBox(box)) {
-            // do not set extra class, the control itself handles being selected
-            return 'render-component-unselected';
-        } else {
-            return isSelected ? 'render-component-selected' : 'render-component-unselected';
+        
+        let levels = 0;
+        let currentBox = box.parent;
+        
+        while (currentBox && !currentBox.selectable) {
+            levels++;
+            currentBox = currentBox.parent;
         }
+        
+        return levels + 1; // +1 because we need to go up one more level to the selectable parent
+    };
+
+    // css class name for selectable vs non-selectable components
+    let selectableCls: string = $derived.by(() => {
+        let cls = '';
+        if (notNullOrUndefined(box)) {
+            
+            if (isLabelBox(box) || isLayoutBox(box)) {
+                // Calculate how many levels up the selection will go
+                const selectionLevels = getSelectionLevels(box);
+                
+                // Elements that go 1 level up (like "as the start day of the study") should be highlighted
+                // Elements that go 2+ levels up (like "First scheduled") should not be highlighted
+                const shouldHighlight = selectionLevels <= 1;
+                
+                console.log(`Render selectableCls: box ${box.id} (${box.kind}) role=${box.role} selectable=${box.selectable} selectionLevels=${selectionLevels} shouldHighlight=${shouldHighlight}`);
+                cls = shouldHighlight ? 'render-component-selectable' : '';
+            } else if (box.selectable) {
+                // For other selectable boxes, use normal selectable logic
+                cls = 'render-component-selectable';
+            }
+        }
+        return cls;
     });
 
     // css class name for when the node is erroneous
@@ -123,7 +169,7 @@
     let ExternalComponent: Component<FreComponentProps<any>> | undefined = $state(undefined);
 
     const onClick = (event: MouseEvent) => {
-        LOGGER.log(
+        console.log(
             'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
         );
         // Note that click events on some components, like TextComponent, are already caught.
@@ -135,17 +181,17 @@
 
     // Two separate effects, because they implement non-associated things
     $effect(() => {
-        LOGGER.log(`Render effect1: set external component ${box?.id}`)
+        console.log(`Render effect1: set external component ${box?.id}`)
         if (isExternalBox(box)) {
             ExternalComponent = findCustomComponent(box.externalComponentName);
         }
     });
 
     $effect(() => {
-        LOGGER.log(`Render effect2: set client rectangle function ${box?.id}`)
+        console.log(`Render effect2: set client rectangle function ${box?.id}`)
         if (notNullOrUndefined(box) && !isTextBox(box) ) {
             box.getClientRectangle = (): ClientRectangle => {
-                LOGGER.log(`Render clientRect ${box.id} `)
+                console.log(`Render clientRect ${box.id} `)
                 return element?.getBoundingClientRect() || UndefinedRectangle
             }
         }
@@ -169,7 +215,7 @@
     <!--	svelte-ignore a11y_click_events_have_key_events -->
     <span
         {id}
-        class="render-component {errorCls} {selectedCls}"
+        class="render-component {errorCls} {selectedCls} {selectableCls}"
         onclick={onClick}
         bind:this={element}
         role="group"

@@ -880,9 +880,31 @@ span:has(> .tinymce-inline) {
 /* #endregion */
 
 /* #region Render Component */
+
 .render-component-selected {
   outline-style: none;
   outline-width: 0px;
+}
+
+/* Selectable components - can be clicked and selected */
+.render-component-selectable {
+  cursor: pointer;
+}
+
+/* .render-component-selectable:hover {
+  outline: 1px dashed var(--white);
+} */
+
+/* Prevent selection when immediate parent has editor-component class */
+.editor-component > .render-component-selectable {
+  cursor: default !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+.editor-component > .render-component-selectable:hover {
+  border: none !important;
+  background-color: transparent !important;
 }
 
 /* #endregion */

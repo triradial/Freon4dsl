@@ -503,9 +503,9 @@
 
 /* #region Render Component */
 .render-component-selected {
-  background-color: #c9daff40;
-  /* border: 1px dashed #531388 !important; */
+  background-color: #c9daff40 !important;
 }
+
 /* #endregion */
 
 /* #region Drag Handle */

@@ -1,6 +1,5 @@
 import { Box } from "../Box.js";
 import type { FreNode } from "../../../ast/index.js";
-import { FreUtils } from "../../../util/index.js";
 import { AbstractPropertyWrapperBox } from "./AbstractPropertyWrapperBox.js";
 
 /**
@@ -17,8 +16,7 @@ export class BooleanWrapperBox extends AbstractPropertyWrapperBox {
         childBox: Box,
         initializer?: Partial<BooleanWrapperBox>,
     ) {
-        super(externalComponentName, node, role, propertyName, childBox);
-        FreUtils.initializeObject(this, initializer);
+        super(externalComponentName, node, role, propertyName, childBox, initializer);
     }
 
     getPropertyValue(): boolean | undefined {

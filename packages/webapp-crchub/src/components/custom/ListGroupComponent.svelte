@@ -41,6 +41,7 @@
     onMount(() => {
         box.refreshComponent = refresh; 
         box.setFocus = setFocus;
+        box.selectable = false;
         const childBox = box.childBox;
         if (childBox) {
             childBox.cssClass = cssClass;
