@@ -1,7 +1,7 @@
-import { dedent } from "../utils/dedent.js";
 import { Timeline } from "../../custom/timeline/Timeline.js";
-import { AbstractTask, ComplianceWindowOf, NoComplianceWindow, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
+import { ComplianceWindowOf, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
+import { dedent } from "../utils/dedent.js";
 
 export class StudyChecklistDocumentTemplate {
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
@@ -91,7 +91,7 @@ export class StudyChecklistDocumentTemplate {
                                                 .map(
                                                     (step, stepCounter) => dedent`#### Step ${stepCounter + 1}: ${step.name}
 
-                                                    ${step.detailsDescription.text}
+                                                    ${step.description.text}
 
                                                     ${step.references.length > 0 ? "**REFERENCES**" : ""}
                                                     ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}

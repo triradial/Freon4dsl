@@ -112,7 +112,8 @@
                   "key": "-key-StudyConfiguration-periods"
                },
                "children": [
-                  "ID-125"
+                  "ID-125",
+                  "ID-54"
                ]
             },
             {
@@ -569,7 +570,7 @@
                   "key": "-key-EventSchedule-eventStart"
                },
                "children": [
-                  "ID-40"
+                  "ID-57"
                ]
             },
             {
@@ -581,6 +582,16 @@
                "children": [
                   "ID-129"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventSchedule-eventRepeat"
+               },
+               "children": [
+                  "ID-58"
+               ]
             }
          ],
          "references": [],
@@ -588,68 +599,17 @@
          "parent": "ID-127"
       },
       {
-         "id": "ID-40",
+         "id": "ID-57",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-When"
-         },
-         "properties": [],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-When-startWhen"
-               },
-               "children": [
-                  "ID-42"
-               ]
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-128"
-      },
-      {
-         "id": "ID-42",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-EventReference"
+            "key": "-key-StudyStart"
          },
          "properties": [],
          "containments": [],
-         "references": [
-            {
-               "reference": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-EventReference-event"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "Screen",
-                     "reference": "ID-127"
-                  }
-               ]
-            },
-            {
-               "reference": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-EventReference-eventState"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "completed",
-                     "reference": "ID-23"
-                  }
-               ]
-            }
-         ],
+         "references": [],
          "annotations": [],
-         "parent": "ID-40"
+         "parent": "ID-128"
       },
       {
          "id": "ID-129",
@@ -728,6 +688,28 @@
          "references": [],
          "annotations": [],
          "parent": "ID-129"
+      },
+      {
+         "id": "ID-58",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-RepeatCount"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-RepeatCount-repeatCount"
+               },
+               "value": "2"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-128"
       },
       {
          "id": "ID-44",
@@ -909,6 +891,37 @@
          "references": [],
          "annotations": [],
          "parent": "ID-46"
+      },
+      {
+         "id": "ID-54",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Period"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Period-name"
+               },
+               "value": "Treatment"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Period-events"
+               },
+               "children": []
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-123"
       },
       {
          "id": "ID-36",

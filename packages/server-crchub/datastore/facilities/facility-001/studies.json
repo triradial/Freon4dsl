@@ -111,5 +111,14 @@
     "phase": "",
     "therapeuticArea": "",
     "currentProtocol": ""
+  },
+  {
+    "id": "3a91fe63-6c45-4175-b1bf-484ae8d8deb7",
+    "name": "demo",
+    "title": "",
+    "status": "",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
   }
 ]
