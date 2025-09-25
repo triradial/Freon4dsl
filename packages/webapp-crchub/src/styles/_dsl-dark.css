@@ -483,6 +483,105 @@
 }
 /* #endregion */
 
+/* #region DateRangePicker */
+/* Force all calendar popup elements to be opaque with dark background */
+[data-bits-floating-content-wrapper],
+[data-bits-floating-content-wrapper] *,
+[data-bits-floating-content-wrapper] > div,
+[data-bits-floating-content-wrapper] > div > div,
+[data-bits-floating-content-wrapper] > div > div > div,
+.bg-background-alt,
+[data-range-calendar-root],
+[data-range-calendar-root] *,
+[data-range-calendar-grid],
+[data-range-calendar-grid] *,
+[data-range-calendar-grid-body],
+[data-range-calendar-grid-body] *,
+[data-range-calendar-cell],
+[data-range-calendar-cell] *,
+[data-range-calendar-day],
+[data-range-calendar-day] * {
+  background: #22272e !important;
+  opacity: 1 !important;
+}
+
+/* Override all opacity classes except for outside-month days */
+[data-bits-floating-content-wrapper] .disabled\:opacity-50:not([data-outside-month]),
+[data-bits-floating-content-wrapper] [disabled]:not([data-outside-month]),
+[data-bits-floating-content-wrapper] .opacity-50:not([data-outside-month]),
+[data-range-calendar-root] .disabled\:opacity-50:not([data-outside-month]),
+[data-range-calendar-root] [disabled]:not([data-outside-month]),
+[data-range-calendar-root] .opacity-50:not([data-outside-month]) {
+  opacity: 1 !important;
+}
+
+/* Ensure outside-month days are properly dimmed */
+[data-bits-floating-content-wrapper] [data-outside-month],
+[data-bits-floating-content-wrapper] [data-outside-month] *,
+[data-range-calendar-root] [data-outside-month],
+[data-range-calendar-root] [data-outside-month] *,
+[data-range-calendar-day][data-outside-month],
+[data-range-calendar-day][data-outside-month] * {
+  opacity: 0.5 !important;
+  color: var(--text-primary-300) !important;
+}
+
+/* Additional aggressive targeting */
+div[data-bits-floating-content-wrapper],
+div[data-bits-floating-content-wrapper] div,
+div[data-bits-floating-content-wrapper] span,
+div[data-bits-floating-content-wrapper] button,
+div[data-bits-floating-content-wrapper] td,
+div[data-bits-floating-content-wrapper] th,
+div[data-range-calendar-root],
+div[data-range-calendar-root] div,
+div[data-range-calendar-root] span,
+div[data-range-calendar-root] button,
+div[data-range-calendar-root] td,
+div[data-range-calendar-root] th {
+  background: #22272e !important;
+  opacity: 1 !important;
+}
+
+/* Range selection highlighting - more specific selectors */
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selection-start],
+[data-range-calendar-root] [data-range-calendar-day][data-selection-start],
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-start],
+[data-range-calendar-root] [data-range-calendar-day][data-range-start] {
+  background: var(--green-90t) !important;
+  color: #ffffff !important;
+  border-radius: 9px !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selection-end],
+[data-range-calendar-root] [data-range-calendar-day][data-selection-end],
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-end],
+[data-range-calendar-root] [data-range-calendar-day][data-range-end] {
+  background: var(--green-90t) !important;
+  color: #ffffff !important;
+  border-radius: 9px !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-middle],
+[data-range-calendar-root] [data-range-calendar-day][data-range-middle] {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selected]:not([data-selection-start]):not([data-selection-end]),
+[data-range-calendar-root] [data-range-calendar-day][data-selected]:not([data-selection-start]):not([data-selection-end]) {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
+
+/* Additional targeting for any selected dates */
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selected],
+[data-range-calendar-root] [data-range-calendar-day][data-selected] {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
+/* #endregion */
+
 /* #region Timepicker */
 .timepicker-input {
   background-color: var(--green-30t);
@@ -517,5 +616,20 @@
 /* #region Abbreviation Components */
 .abbreviation-text {
   color: var(--gray-200) !important;
+}
+/* #endregion */
+
+/* #region TabFixComponent highlighting - CSS-only approach */
+/* Highlight only the narrow input field with red background */
+.narrow-input:focus {
+  background-color: red !important;
+  border: 1px solid red !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 /* #endregion */ 

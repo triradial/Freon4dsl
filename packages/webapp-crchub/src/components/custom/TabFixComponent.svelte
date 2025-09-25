@@ -53,7 +53,7 @@
     };
 
     onMount(() => {
-        console.log("TabFixComponent: onMount");        
+        console.log("TabFixComponent: onMount1");
     });
 
     // Replaces afterUpdate()
@@ -74,18 +74,17 @@
         bind:value={hiddenValue}
     />
 </div>
-
 <style>
     .narrow-input {
-        width: 1px !important;
-        height: 1px !important;
-        padding: 0 !important;
+        width: 20px !important;
+        height: 20px !important;
+        padding: 2px !important;
         margin: 0 !important;
         border: 1px solid transparent !important;
         background: transparent !important;
         color: transparent !important;
-        font-size: 1px !important;
-        line-height: 1px !important;
+        font-size: 12px !important;
+        line-height: 1 !important;
         overflow: hidden !important;
         outline: none !important;
         resize: none !important;
@@ -95,12 +94,25 @@
         border-color: red !important;
         box-shadow: 0 0 5px red !important;
         background-color: yellow !important;
+        width: 50px !important;
+        height: 30px !important;
     }
     
-    /* Highlight the parent div when the input has focus */
-    .TabHereFix:focus-within {
-        background-color: lightblue !important;
-        border: 2px solid blue !important;
-        outline: 3px solid orange !important;
+    /* CSS-only approach: Highlight layout-component when input has focus */
+    .layout-component:has(.TabHereFix:focus-within) {
+        background-color: lightsteelblue !important;
+        border: 8px solid steelblue !important;
+        outline: 10px solid navy !important;
+        box-shadow: 0 0 30px rgba(70, 130, 180, 0.6) !important;
+        transform: scale(1.01) !important;
+        transition: all 0.4s ease !important;
+    }
+    
+    /* Highlight all children of the focused layout-component */
+    .layout-component:has(.TabHereFix:focus-within) * {
+        background-color: rgba(70, 130, 180, 0.05) !important;
+        border: 1px solid rgba(70, 130, 180, 0.2) !important;
+        transition: all 0.3s ease !important;
     }
 </style>
+

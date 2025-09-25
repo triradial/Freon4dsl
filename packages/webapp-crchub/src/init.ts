@@ -6,6 +6,7 @@ import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 
 import AbbreviationComponent from "./components/custom/AbbreviationComponent.svelte";
 import DatePickerComponent from "./components/custom/DatePickerComponent.svelte";
+import DateRangePickerComponent from "./components/custom/DateRangePickerComponent.svelte";
 import DisplayNothingComponent from "./components/custom/DisplayNothingComponent.svelte";
 import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 import ItemGroupComponent2 from "./components/custom/ItemGroupComponent2.svelte";
@@ -22,10 +23,11 @@ FreLogger.unmute("init");
 FreLogger.unmute("Routing");
 
 /* Custom Components */
-FreLogger.unmute("ListGroupComponent");
-FreLogger.unmute("ItemGroupComponent");
-FreLogger.unmute("MultilineTextComponent");
+// FreLogger.unmute("ListGroupComponent");
+// FreLogger.unmute("ItemGroupComponent");
+// FreLogger.unmute("MultilineTextComponent");
 // FreLogger.unmute("DatePickerComponent");
+FreLogger.unmute("DateRangePickerComponent");
 // FreLogger.unmute("TimePickerComponent");
 // FreLogger.unmute("ItemGroupComponent2");
 // FreLogger.unmute("CustomTextbox");
@@ -68,6 +70,7 @@ LOGGER.log('Editor environment configured');
 
 setCustomComponents([
     { component: DatePickerComponent, knownAs: "DatePickerComponent" },
+    { component: DateRangePickerComponent, knownAs: "DateRangePickerComponent" },
     { component: TimePickerComponent, knownAs: "TimePickerComponent" },
     { component: ListGroupComponent, knownAs: "ListGroupComponent" },
     { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
