@@ -1,12 +1,11 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
-import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, FreUtils } from "@freon4dsl/core";
-import type { FreEnvironment, FreNode, FreModel, FreModelUnit, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
+import type { FreEnvironment, FreModel, FreModelUnit, FreNode, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
+import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel } from "@freon4dsl/core";
+import { Event, Period, StudyConfiguration, Task } from "@freon4dsl/study-configuration";
 import { runInAction } from "mobx";
-import { get } from "svelte/store";
-import { updateModelState, updateEditorState, updateUnitLists, setCurrentModelName, setCurrentUnitName, editorProgressShown, units, unitNames } from "./model-store.js";
+import { editorProgressShown, setCurrentModelName, setCurrentUnitName, unitNames, units, updateEditorState, updateModelState, updateUnitLists } from "./model-store.js";
 import { setUserMessage } from "./usermessage-store.js";
 import { WebappConfigurator } from "./webapp-configurator.js";
-import { Event, Task, Period, StudyConfiguration } from "@freon4dsl/study-configuration";
 
 const LOGGER = new FreLogger("EditorState").mute();
 
@@ -127,9 +126,12 @@ export class ModelManager {
     }
 
     getModelUnit(unitName: string): FreModelUnit | undefined {
+        console.log("ModelManager.getModelUnit: " + unitName);
         if (this.modelStore) {
+            console.log("ModelManager.getModelUnit: this.modelStore.getUnitByName(unitName): " + this.modelStore.getUnitByName(unitName));
             return this.modelStore.getUnitByName(unitName);
         }
+        console.log("ModelManager.getModelUnit: undefined");
         return undefined;
     }
 

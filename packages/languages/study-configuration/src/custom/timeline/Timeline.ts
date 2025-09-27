@@ -1,13 +1,13 @@
 import { FreNodeReference, RtBoolean, RtObject, RtString } from "@freon4dsl/core";
-import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
-import { Availability, DateConcept, Event, Month, PatientHistory, PatientVisit } from "../../language/gen/index.js";
-import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
-import { PeriodEventInstance } from "./PeriodEventInstance.js";
-import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
-import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance.js";
-import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance.js";
-import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
+import { Availability, DateConcept, Event, Month, PatientHistory } from "../../language/gen/index.js";
 import { TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
+import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
+import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance.js";
+import { PeriodEventInstance } from "./PeriodEventInstance.js";
+import { ScheduledEvent } from "./ScheduledEvent.js";
+import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
+import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance.js";
+import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
 
 /*
  * A Timeline records the events and the days they occur on.
@@ -556,6 +556,17 @@ export class Timeline extends RtObject {
         const html = `<div class="limited-width-container">${chartHTML}</div>`;
         return new RtString(html);
     }
+    
+    // The DateConcept is updated inline hence no return value.
+    public static fillDateConceptFromAsString(dateConcept: DateConcept) {
+        console.log("fillDateConceptFromAsString: " + dateConcept.dateAsString);
+        // Add "T00:00:00" to ensure the date is interpreted at midnight local time
+        const actualDate = new Date(dateConcept.dateAsString + "T00:00:00");
+        console.log("actualDate: " + actualDate);
+        dateConcept.day = actualDate.getDate().toString();
+        dateConcept.month = getMonthFromString(actualDate.toLocaleString('en-US', { month: 'long' }));
+        dateConcept.year = actualDate.getFullYear().toString();
+    }
 }
 
 /*
@@ -618,15 +629,5 @@ export function getMonthFromString(month: string): FreNodeReference<Month> {
     }
 }
 
-// The DateConcept is updated inline hence no return value.
-export function fillDateConceptFromAsString(dateConcept: DateConcept) {
-    console.log("fillDateConceptFromAsString: " + dateConcept.dateAsString);
-    // Add "T00:00:00" to ensure the date is interpreted at midnight local time
-    const actualDate = new Date(dateConcept.dateAsString + "T00:00:00");
-    console.log("actualDate: " + actualDate);
-    dateConcept.day = actualDate.getDate().toString();
-    dateConcept.month = getMonthFromString(actualDate.toLocaleString('en-US', { month: 'long' }));
-    dateConcept.year = actualDate.getFullYear().toString();
-}
 
 

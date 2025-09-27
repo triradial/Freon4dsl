@@ -1,8 +1,8 @@
-import { AbstractExternalBox } from "./AbstractExternalBox.js";
 import type { FreNode } from "../../../ast/index.js";
 import { FreLanguage } from "../../../language/index.js";
 import { FreUtils } from "../../../util/index.js";
 import { Box } from "../Box.js";
+import { AbstractExternalBox } from "./AbstractExternalBox.js";
 
 export abstract class AbstractPropertyWrapperBox extends AbstractExternalBox {
     // the following two are inherit from Box
@@ -20,24 +20,24 @@ export abstract class AbstractPropertyWrapperBox extends AbstractExternalBox {
             propertyName,
         )?.type;
         // Apply any initializer properties (including selectable from edit file)
-        console.log(`AbstractPropertyWrapperBox: role=${role} initializer=`, initializer);
+        // console.log(`AbstractPropertyWrapperBox: role=${role} initializer=`, initializer);
         if (initializer && initializer.params) {
-            console.log(`AbstractPropertyWrapperBox: params array:`, initializer.params);
+            // console.log(`AbstractPropertyWrapperBox: params array:`, initializer.params);
             // Log each param individually
             initializer.params.forEach((param: any, index: number) => {
-                console.log(`AbstractPropertyWrapperBox: param[${index}]:`, param);
+                // console.log(`AbstractPropertyWrapperBox: param[${index}]:`, param);
             });
             // Check for selectable parameter in params array
             const selectableParam = initializer.params.find((param: any) => param.key === 'selectable');
             if (selectableParam) {
-                console.log(`AbstractPropertyWrapperBox: found selectable param:`, selectableParam);
+                // console.log(`AbstractPropertyWrapperBox: found selectable param:`, selectableParam);
                 this.selectable = selectableParam.value === 'true';
             } else {
                 console.log(`AbstractPropertyWrapperBox: no selectable param found`);
             }
         }
         FreUtils.initializeObject(this, initializer);
-        console.log(`AbstractPropertyWrapperBox: after init selectable=${this.selectable}`);
+        // console.log(`AbstractPropertyWrapperBox: after init selectable=${this.selectable}`);
     }
 
     getPropertyName(): string {

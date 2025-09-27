@@ -1,6 +1,5 @@
 <script lang="ts">
     import { RENDER_LOGGER } from './ComponentLoggers.js';
-    import { tick } from "svelte"
     // This component renders any box from the box model.
     // Depending on the box type the right component is used.
     // It also makes the rendered element selectable, including changing the style.
@@ -10,61 +9,62 @@
     // strongly coupled to a box. Each box is coupled to the corresponding
     // component in the if-statement.
     import {
+        BoolDisplay,
+        Box,
+        LimitedDisplay,
+        UndefinedRectangle,
         isActionBox,
+        isActionTextBox,
+        isBooleanControlBox,
+        isButtonBox,
+        isElementBox,
         isEmptyLineBox,
+        isExternalBox,
+        isFragmentBox,
         isGridBox,
-        isTableBox,
         isIndentBox,
         isLabelBox,
         isLayoutBox,
-        isListBox,
-        isSelectBox,
-        isTextBox,
-        isSvgBox,
-        isBooleanControlBox,
-        isNumberControlBox,
-        isElementBox,
-        isOptionalBox2,
-        isMultiLineTextBox,
         isLimitedControlBox,
-        isButtonBox,
-        isExternalBox,
-        isFragmentBox,
+        isListBox,
+        isMultiLineTextBox,
+        isNumberControlBox,
+        isOptionalBox2,
         isReferenceBox,
-        Box,
-        BoolDisplay,
-        LimitedDisplay,
-        isActionTextBox,
-        notNullOrUndefined, type ClientRectangle, UndefinedRectangle
-    } from "@freon4dsl/core"
-    import MultiLineTextComponent from './MultiLineTextComponent.svelte';
+        isSelectBox,
+        isSvgBox,
+        isTableBox,
+        isTextBox,
+        notNullOrUndefined, type ClientRectangle
+    } from "@freon4dsl/core";
+    import { componentId, findCustomComponent } from '../index.js';
+    import BooleanCheckboxComponent from './BooleanCheckboxComponent.svelte';
+    import InnerSwitchComponent from './BooleanInnerSwitchComponent.svelte';
+    import BooleanRadioComponent from './BooleanRadioComponent.svelte';
+    import SwitchComponent from './BooleanSwitchComponent.svelte';
+    import ButtonComponent from './ButtonComponent.svelte';
+    import ElementComponent from './ElementComponent.svelte';
     import EmptyLineComponent from './EmptyLineComponent.svelte';
+    import FragmentComponent from './FragmentComponent.svelte';
     import GridComponent from './GridComponent.svelte';
     import IndentComponent from './IndentComponent.svelte';
     import LabelComponent from './LabelComponent.svelte';
     import LayoutComponent from './LayoutComponent.svelte';
+    import LimitedCheckboxComponent from './LimitedCheckboxComponent.svelte';
+    import LimitedRadioComponent from './LimitedRadioComponent.svelte';
     import ListComponent from './ListComponent.svelte';
+    import MultiLineTextComponent from './MultiLineTextComponent.svelte';
+    import NumericSliderComponent from './NumericSliderComponent.svelte';
     import OptionalComponent from './OptionalComponent.svelte';
+    import SvgComponent from './SvgComponent.svelte';
     import TableComponent from './TableComponent.svelte';
     import TextComponent from './TextComponent.svelte';
     import TextDropdownComponent from './TextDropdownComponent.svelte';
-    import SvgComponent from './SvgComponent.svelte';
-    import ElementComponent from './ElementComponent.svelte';
-    import BooleanCheckboxComponent from './BooleanCheckboxComponent.svelte';
-    import BooleanRadioComponent from './BooleanRadioComponent.svelte';
-    import InnerSwitchComponent from './BooleanInnerSwitchComponent.svelte';
-    import NumericSliderComponent from './NumericSliderComponent.svelte';
-    import LimitedCheckboxComponent from './LimitedCheckboxComponent.svelte';
-    import LimitedRadioComponent from './LimitedRadioComponent.svelte';
-    import SwitchComponent from './BooleanSwitchComponent.svelte';
-    import ButtonComponent from './ButtonComponent.svelte';
-    import FragmentComponent from './FragmentComponent.svelte';
-    import { componentId, findCustomComponent } from '../index.js';
 
+    import type { Component } from 'svelte';
     import ErrorMarker from './ErrorMarker.svelte';
     import { selectedBoxes } from './stores/AllStores.svelte.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
-    import type { Component } from 'svelte';
 
     const LOGGER = RENDER_LOGGER;
 
@@ -76,15 +76,15 @@
 
     // css class name for when the node is selected
     let selectedCls: string = $derived.by(() => {
-        console.log(`Render derived: selectedCls ${box?.id}`)
+        // console.log(`Render derived: selectedCls ${box?.id}`)
         // the following is done in the afterUpdate(), because then we are sure that all boxes are rendered by their respective components
-        console.log(
-          'setCurrentSelectedElement selectedBoxes: [' +
-          selectedBoxes.value.map(
-            (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
-          ) +
-          ']'
-        );
+        // console.log(
+        //   'setCurrentSelectedElement selectedBoxes: [' +
+        //   selectedBoxes.value.map(
+        //     (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
+        //   ) +
+        //   ']'
+        // );
         let cls = 'render-component-unselected';
 
         if (notNullOrUndefined(box)) {
@@ -169,9 +169,9 @@
     let ExternalComponent: Component<FreComponentProps<any>> | undefined = $state(undefined);
 
     const onClick = (event: MouseEvent) => {
-        console.log(
-            'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
-        );
+        // console.log(
+        //     'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
+        // );
         // Note that click events on some components, like TextComponent, are already caught.
         // These components need to take care of setting the currently selected element themselves.
         editor.selectElementForBox(box);
@@ -181,17 +181,17 @@
 
     // Two separate effects, because they implement non-associated things
     $effect(() => {
-        console.log(`Render effect1: set external component ${box?.id}`)
+        // console.log(`Render effect1: set external component ${box?.id}`)
         if (isExternalBox(box)) {
             ExternalComponent = findCustomComponent(box.externalComponentName);
         }
     });
 
     $effect(() => {
-        console.log(`Render effect2: set client rectangle function ${box?.id}`)
+        // console.log(`Render effect2: set client rectangle function ${box?.id}`)
         if (notNullOrUndefined(box) && !isTextBox(box) ) {
             box.getClientRectangle = (): ClientRectangle => {
-                console.log(`Render clientRect ${box.id} `)
+                // console.log(`Render clientRect ${box.id} `)
                 return element?.getBoundingClientRect() || UndefinedRectangle
             }
         }

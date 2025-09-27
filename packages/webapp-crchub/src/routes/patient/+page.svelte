@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import { setBreadcrumb } from '../../services/stores/breadcrumb-store.js';
-  import { setAllDrawersVisibility, setDrawerVisibility, setDrawerProps, drawerStore } from '../../services/stores/side-drawer-store.js';
-  import PatientContent from '../../content/Patient.svelte';
   import { LABEL } from '../../constants/label-constants.js';
+  import PatientContent from '../../content/Patient.svelte';
   import { dataStore } from '../../services/data/data-store.js';
+  import { setBreadcrumb } from '../../services/stores/breadcrumb-store.js';
+  import { drawerStore, setAllDrawersVisibility, setDrawerProps, setDrawerVisibility } from '../../services/stores/side-drawer-store.js';
 
   let patientName = '';
   let studyName = '';
@@ -40,6 +40,9 @@
             { label: LABEL.STUDY + ": " + studyName, href: "/study?id=" + study.id },
             { label: LABEL.PATIENT + ": " + patientName }
           ]);
+          
+          // Set the studyId prop for the patientTimelineChart drawer
+          setDrawerProps("patientTimelineChart", { id: id, studyId: patient.studyId });
         } else {
           setBreadcrumb([
             { label: LABEL.STUDIES, href: "/studies" },
