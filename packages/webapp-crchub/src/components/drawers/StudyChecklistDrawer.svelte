@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount } from "svelte";
-    import { ModelManager } from "../../services/dsl/model-manager.js";
     import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
-    import { getChecklistAsMarkdown } from "../../services/app/study-timeline.js";
-    import ContentLoader from "./ContentLoader.svelte";
+    import MarkdownIt from "markdown-it";
     import pdfMake from "pdfmake/build/pdfmake.js";
     import pdfFonts from "pdfmake/build/vfs_fonts.js";
-    import MarkdownIt from "markdown-it";
+    import { createEventDispatcher, onMount } from "svelte";
+    import { getChecklistAsMarkdown } from "../../services/app/study-timeline.js";
     import { dataStore } from "../../services/data/data-store.js";
+    import { ModelManager } from "../../services/dsl/model-manager.js";
+    import ContentLoader from "./ContentLoader.svelte";
 
     pdfMake.vfs = pdfFonts as any;
     const md = new MarkdownIt();
@@ -31,14 +31,16 @@
         dispatch("close");
     }
 
-    function openPdf() {
-
-        const model = ModelManager.getInstance().getModelUnit("StudyConfigurationModel") as StudyConfigurationModel;
-
-        if (!model) {
-            error = "Model not loaded, cannot generate PDF.";
-            return;
-        }
+    async function openPdf() {
+        try {
+            const modelManager = ModelManager.getInstance();
+            await modelManager.openModel(studyId);
+            const model = modelManager.currentModel as StudyConfigurationModel;
+            
+            if (!model) {
+                error = "Model not loaded, cannot generate PDF.";
+                return;
+            }
         const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
         const tokens = md.parse(markdown, {});
 
@@ -151,9 +153,6 @@
                 subject: "Study Checklist"
             },
             header: function(currentPage: number, pageCount: number) {
-                // Use public ModelManager API
-                const model = ModelManager.getInstance().getModelUnit("StudyConfigurationModel") as StudyConfigurationModel;
-                // const studyName = model.name || "Study Checklist";
                 return {
                     text: `${studyName} - ${new Date().toLocaleDateString()}`,
                     alignment: 'center',
@@ -203,6 +202,10 @@
             
             URL.revokeObjectURL(url);
         });
+        } catch (err: unknown) {
+            console.error('Error generating PDF:', err);
+            error = err instanceof Error ? err.message : "An error occurred while generating PDF";
+        }
     }
 
     export function refresh() {

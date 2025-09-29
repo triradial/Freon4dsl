@@ -5,22 +5,22 @@ import { dedent } from "../utils/dedent.js";
 
 export class StudyChecklistDocumentTemplate {
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
-        var template = dedent`
-      | Visit Name | Alternative Name | Phase | Window (-) | Day/Date | Window (+) |
-      | :---------------------- | :--------------- | :-------- | :--------- | :------- | :--------- |
-      ${timeline
-          .getDays()
-          .map((timelineDay, counter) =>
-              timelineDay
-                  .getEventInstances()
-                  .map(
-                      (eventInstance, index) =>
-                          dedent`| ${eventInstance.getName()} | ${eventInstance.getScheduledEvent().configuredEvent.alternativeName} | ${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""} | ${(eventInstance.getStartDay() + 1).toString() ?? ""} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""} |`,
-                  )
-                  .join(""),
-          )
-          .join("\n")}`;
-        return template;
+        const header = "| Visit Name | Alternative Name | Phase | Window (-) | Day/Date | Window (+) |\n| :---------------------- | :--------------- | :-------- | :--------- | :------- | :--------- |";
+        
+        const rows = timeline
+            .getDays()
+            .map((timelineDay, counter) =>
+                timelineDay
+                    .getEventInstances()
+                    .map(
+                        (eventInstance, index) =>
+                            `| ${eventInstance.getName()} | ${eventInstance.getScheduledEvent().configuredEvent.alternativeName} | ${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""} | ${(eventInstance.getStartDay() + 1).toString() ?? ""} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""} |`,
+                    )
+                    .join("\n"),
+            )
+            .join("\n");
+            
+        return `${header}\n${rows}`;
     }
 
     static getReferencesAsMarkdown(references) {
@@ -110,6 +110,7 @@ export class StudyChecklistDocumentTemplate {
                 `,
             )
             .join("\n");
+        console.log("template: ", template);
         return template;
     }
 

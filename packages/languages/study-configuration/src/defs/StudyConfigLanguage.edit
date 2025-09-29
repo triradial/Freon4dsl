@@ -6,11 +6,13 @@ global {
         ItemGroupComponent,
         ItemGroupComponent2,
         DatePickerComponent,
+        DateRangePickerComponent,
         TimePickerComponent,
         MultilineTextComponent,
         AbbreviationComponent,
         DisplayNothingComponent,
-        TaskReferenceComponent
+        TaskReferenceComponent,
+        TabFixComponent
     }
 }
 

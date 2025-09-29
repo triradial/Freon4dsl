@@ -20,7 +20,7 @@ When {
 }  
 
 StudyStart {
-    [ as the start day of the study  ] 
+    [${dummyText wrap=TabFixComponent} as the start day of the study] 
     trigger = "study start: Declares this event to be the start of the study"
 } 
 

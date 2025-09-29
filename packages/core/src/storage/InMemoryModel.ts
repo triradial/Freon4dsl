@@ -225,6 +225,8 @@ export class InMemoryModel {
      */
     getUnitByName(name: string) {
         LOGGER.log(`getUnitByName`)
+        console.log("InMemoryModel.getUnitByName: " + name);
+        console.log("InMemoryModel.getUnitByName: this.model.findUnit(name): " + this.model.findUnit(name));
         return this.model.findUnit(name)
     }
 

@@ -1,13 +1,12 @@
 <script lang="ts">
+    import { RtString } from "@freon4dsl/core";
+    import { PatientHistory, PatientInfo, Timeline, type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { createEventDispatcher } from "svelte";
-    import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { AST, RtString } from "@freon4dsl/core";
-    import { PatientHistory, PatientHistoryUnit, PatientInfo, type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { getTimelineAsOfADate } from "../../services/app/patient-timeline.js";
-    import { Timeline } from "@freon4dsl/study-configuration";
-    import { dataStore, type Patient } from "../../services/data/data-store.js";
+    import { dataStore } from "../../services/data/data-store.js";
+    import { ModelManager } from "../../services/dsl/model-manager.js";
 
-    let { id } = $props<{ id: string }>();
+    let { id, studyId } = $props<{ id: string; studyId: string }>();
 
     let isLoading = $state(true);
     let showChart = $state(false);
@@ -66,20 +65,20 @@
             if (!found && aPatientHistory.patient_id === fetchedPatient!.patientNumber) {
                 console.log("Found matching patient history!");
                 console.log("Patient visits:", aPatientHistory.patientVisits.length);
-                console.log("Not available dates:", aPatientHistory.patientNotAvailableDates.dates.length);
+                console.log("Not available dates:", aPatientHistory.patientNotAvailableDates.length);
                 
                 aPatientHistory.patientVisits.forEach(visit => {
                     let updatedVisit = visit.copy(); 
                     fillDateConcept(updatedVisit.actualVisitDate);  // Use the action wrapper
                     patientHistory.patientVisits.push(updatedVisit);
                 });
-                aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => {
+                aPatientHistory.patientNotAvailableDates.forEach(dateRange => {
                     let updatedDateRange = dateRange.copy();
                     fillDateConcept(updatedDateRange.startDate);  // Use the action wrapper
                     if (updatedDateRange.endDate) {
                         fillDateConcept(updatedDateRange.endDate);  // Use the action wrapper
                     }
-                    patientHistory.patientNotAvailableDates.dates.push(updatedDateRange);
+                    patientHistory.patientNotAvailableDates.push(updatedDateRange);
                 });
                 found = true;
             };
@@ -100,7 +99,10 @@
             }
         }
 
-        const model = ModelManager.getInstance().getModelUnit("StudyConfigurationModel") as StudyConfigurationModel;
+        // Get the model and configuration unit
+        const studyModelManager = ModelManager.getInstance();
+        await studyModelManager.openModel(studyId);
+        const model = studyModelManager.currentModel as StudyConfigurationModel;
         const studyConfig = model.configuration;
         studyConfig.studyStartDayNumber = 0;
         
