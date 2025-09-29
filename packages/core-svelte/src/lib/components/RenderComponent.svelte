@@ -76,15 +76,15 @@
 
     // css class name for when the node is selected
     let selectedCls: string = $derived.by(() => {
-        console.log(`Render derived: selectedCls ${box?.id}`)
+        // console.log(`Render derived: selectedCls ${box?.id}`)
         // the following is done in the afterUpdate(), because then we are sure that all boxes are rendered by their respective components
-        console.log(
-          'setCurrentSelectedElement selectedBoxes: [' +
-          selectedBoxes.value.map(
-            (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
-          ) +
-          ']'
-        );
+        // console.log(
+        //   'setCurrentSelectedElement selectedBoxes: [' +
+        //   selectedBoxes.value.map(
+        //     (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
+        //   ) +
+        //   ']'
+        // );
         let cls = 'render-component-unselected';
 
         if (notNullOrUndefined(box)) {
@@ -137,7 +137,7 @@
                 // Elements that go 2+ levels up (like "First scheduled") should not be highlighted
                 const shouldHighlight = selectionLevels <= 1;
                 
-                console.log(`Render selectableCls: box ${box.id} (${box.kind}) role=${box.role} selectable=${box.selectable} selectionLevels=${selectionLevels} shouldHighlight=${shouldHighlight}`);
+                // console.log(`Render selectableCls: box ${box.id} (${box.kind}) role=${box.role} selectable=${box.selectable} selectionLevels=${selectionLevels} shouldHighlight=${shouldHighlight}`);
                 cls = shouldHighlight ? 'render-component-selectable' : '';
             } else if (box.selectable) {
                 // For other selectable boxes, use normal selectable logic
@@ -169,9 +169,9 @@
     let ExternalComponent: Component<FreComponentProps<any>> | undefined = $state(undefined);
 
     const onClick = (event: MouseEvent) => {
-        console.log(
-            'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
-        );
+        // console.log(
+        //     'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
+        // );
         // Note that click events on some components, like TextComponent, are already caught.
         // These components need to take care of setting the currently selected element themselves.
         editor.selectElementForBox(box);
@@ -181,17 +181,17 @@
 
     // Two separate effects, because they implement non-associated things
     $effect(() => {
-        console.log(`Render effect1: set external component ${box?.id}`)
+        // console.log(`Render effect1: set external component ${box?.id}`)
         if (isExternalBox(box)) {
             ExternalComponent = findCustomComponent(box.externalComponentName);
         }
     });
 
     $effect(() => {
-        console.log(`Render effect2: set client rectangle function ${box?.id}`)
+        // console.log(`Render effect2: set client rectangle function ${box?.id}`)
         if (notNullOrUndefined(box) && !isTextBox(box) ) {
             box.getClientRectangle = (): ClientRectangle => {
-                console.log(`Render clientRect ${box.id} `)
+                // console.log(`Render clientRect ${box.id} `)
                 return element?.getBoundingClientRect() || UndefinedRectangle
             }
         }
