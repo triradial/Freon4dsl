@@ -36,7 +36,7 @@ Period {
     ]
     fragment periodDetails [
         ${name}
-        ${description wrap=MultilineTextComponent}
+        ${description}
         ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Events"}
     ]   
 }
@@ -48,7 +48,7 @@ Event {
     fragment noEventDetails [
        ${name}
        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
-       ${description wrap=MultilineTextComponent}
+       ${description}
     ]
 }
 
@@ -58,7 +58,7 @@ Task {
     ]
     fragment taskDetails [
         ${name}
-        ${description wrap=MultilineTextComponent}
+        ${description}
         ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
     ]
 }
@@ -100,7 +100,7 @@ SystemAccess {
     ]
     fragment systemAccessDetails [
         ${name}
-        ${description wrap=MultilineTextComponent}
+        ${description}
         ${accessedAt}
         ${robotMappings}
     ]
@@ -145,7 +145,7 @@ Reference {
     fragment referenceDetails [
     ${name} 
     Link: ${link}
-    ${description wrap=MultilineTextComponent}
+    ${description}
     ]
 }
 
@@ -187,4 +187,4 @@ SourceToTargetMapping {
 
 Description {
     [ ${rawText wrap=AbbreviationComponent} ]
- }
+}

@@ -24,9 +24,9 @@ export abstract class AbstractPropertyWrapperBox extends AbstractExternalBox {
         if (initializer && initializer.params) {
             // console.log(`AbstractPropertyWrapperBox: params array:`, initializer.params);
             // Log each param individually
-            initializer.params.forEach((param: any, index: number) => {
+            // initializer.params.forEach((param: any, index: number) => {
                 // console.log(`AbstractPropertyWrapperBox: param[${index}]:`, param);
-            });
+            // });
             // Check for selectable parameter in params array
             const selectableParam = initializer.params.find((param: any) => param.key === 'selectable');
             if (selectableParam) {

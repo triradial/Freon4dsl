@@ -86,13 +86,13 @@
 
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
-        console.log("[Study] dslEditor instance in Study.svelte", dslEditor);
+        // console.log("[Study] dslEditor instance in Study.svelte", dslEditor);
         await initializeStudy();
 
         // Subscribe to FreChangeManager changes
         const changeCallback = (delta) => {
             if (delta.oldValue != delta.newValue) {
-                console.debug("[Study] Detected change from FreChangeManager:", delta);
+                // console.debug("[Study] Detected change from FreChangeManager:", delta);
                 debouncedSave();
             }
         };
