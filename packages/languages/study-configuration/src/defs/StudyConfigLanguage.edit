@@ -48,7 +48,7 @@ Event {
     fragment noEventDetails [
        ${name}
        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
-       ${description wrap=MultilineTextComponent}
+       ${description}
     ]
 }
 
@@ -58,18 +58,7 @@ Task {
     ]
     fragment taskDetails [
         ${name}
-        ${description wrap=MultilineTextComponent}
-        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
-    ]
-}
-
-SharedTask {
-    [
-        [fragment sharedTaskDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="true" label="Task"]
-    ]
-    fragment sharedTaskDetails [
-        ${name}
-        ${description wrap=MultilineTextComponent}
+        ${description}
         ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
     ]
 }
@@ -78,7 +67,6 @@ TaskReference {
     [
         ${task wrap =  TaskReferenceComponent cssClass="type3" canDelete="true" selectable="true" label="Shared Task"}
     ]
-
 }
 
 Step {
@@ -100,7 +88,7 @@ SystemAccess {
     ]
     fragment systemAccessDetails [
         ${name}
-        ${description wrap=MultilineTextComponent}
+        ${description}
         ${accessedAt}
         ${robotMappings}
     ]
@@ -145,7 +133,7 @@ Reference {
     fragment referenceDetails [
     ${name} 
     Link: ${link}
-    ${description wrap=MultilineTextComponent}
+    ${description}
     ]
 }
 
@@ -187,4 +175,4 @@ SourceToTargetMapping {
 
 Description {
     [ ${rawText wrap=AbbreviationComponent} ]
- }
+}

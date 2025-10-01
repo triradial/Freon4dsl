@@ -33,12 +33,12 @@
     // The following three functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
-        console.log("setFocus nameBox: ", nameBox);
+        // console.log("setFocus nameBox: ", nameBox);
         nameBox?.setFocus();
     }
 
     const refresh = (why?: string): void => {
-        console.log("REFRESH (" + why + ")");
+        // console.log("REFRESH (" + why + ")");
         box.childBox.refreshComponent(why);
         box.refreshComponent = refresh;
     };
@@ -51,13 +51,13 @@
         const children = verticalLayoutBox.children
         otherChildren = children.slice(1)
         nameBox = children[0] as TextBox
-        console.log("ItemGroupComponent onMount nameBox: ", nameBox);
-        console.log("ItemGroupComponent onMount children: ", children);
-        console.log("ItemGroupComponent onMount otherChildren: ", otherChildren);
+        // console.log("ItemGroupComponent onMount nameBox: ", nameBox);
+        // console.log("ItemGroupComponent onMount children: ", children);
+        // console.log("ItemGroupComponent onMount otherChildren: ", otherChildren);
     });
 
     $effect(() => {
-        console.log("$effect nameBox: ", nameBox);
+        // console.log("$effect nameBox: ", nameBox);
         box.refreshComponent = refresh;
     })
 
@@ -73,8 +73,8 @@
             event.stopPropagation();
         }
         AST.change(() => {
-            console.log("deleteItem box: ", box);
-            console.log("deleteItem box.node: ", box.node);
+            // console.log("deleteItem box: ", box);
+            // console.log("deleteItem box.node: ", box.node);
             const ownerDescriptor = box.node.freOwnerDescriptor();
             const parent = ownerDescriptor.owner;
             const propertyName = ownerDescriptor.propertyName;
@@ -124,8 +124,8 @@
         if (event) {
             event.stopPropagation();
         }
-        LOGGER.log("Sharing item")
-        console.log("Sharing ItemGroupComponent2: box.node", box.node)
+        // LOGGER.log("Sharing item")
+        // console.log("Sharing ItemGroupComponent2: box.node", box.node)
         // Get the study config context
         const task = box.node as Task
         const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration

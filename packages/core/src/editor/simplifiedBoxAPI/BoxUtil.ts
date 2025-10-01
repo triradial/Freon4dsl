@@ -516,7 +516,7 @@ export class BoxUtil {
         initializer?: Partial<PartListWrapperBox>,
     ): PartListWrapperBox {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-wrapper";
-        console.log(`BoxUtil.partListWrapperBox: roleName=${roleName} initializer=`, initializer);
+        // console.log(`BoxUtil.partListWrapperBox: roleName=${roleName} initializer=`, initializer);
         return new PartListWrapperBox(externalComponentName, node, roleName, propertyName, childBox, initializer);
     }
 

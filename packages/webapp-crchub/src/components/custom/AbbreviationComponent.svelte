@@ -46,4 +46,6 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
+<#if abbreviatedText()>
 <div id="{id}" class="abbreviation-text">{abbreviatedText()}</div>
+</#if>
