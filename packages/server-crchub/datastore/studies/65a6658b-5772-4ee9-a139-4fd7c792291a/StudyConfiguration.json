@@ -1541,7 +1541,16 @@
             "version": "2023.1",
             "key": "-key-StudyStart"
          },
-         "properties": [],
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyStart-dummyText"
+               },
+               "value": ""
+            }
+         ],
          "containments": [],
          "references": [],
          "annotations": [],

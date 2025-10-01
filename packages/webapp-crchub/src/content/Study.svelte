@@ -1,22 +1,20 @@
 <script lang="ts">
-    import { AST } from "@freon4dsl/core";
-    import { onMount, onDestroy, getContext } from "svelte";
-    import StudyCard from "../components/cards/StudyCard.svelte";
-    import PatientGrid from "../components/content/PatientGrid.svelte";
-    import DSLFooter from "../components/common/DSLFooter.svelte";
-    import { Tabs, AppBar } from "@skeletonlabs/skeleton-svelte";
-    import { dataStore, type Study } from "../services/data/data-store.js";
+    import { AST, FreChangeManager, FreEditor } from "@freon4dsl/core";
     import { FreonComponent } from "@freon4dsl/core-svelte";
-    import { FreEditor, FreProjectionHandler } from "@freon4dsl/core";
     import { type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { Tabs } from "@skeletonlabs/skeleton-svelte";
+    import { runInAction } from "mobx";
+    import { onDestroy, onMount } from "svelte";
+    import StudyCard from "../components/cards/StudyCard.svelte";
+    import DSLFooter from "../components/common/DSLFooter.svelte";
+    import PatientGrid from "../components/content/PatientGrid.svelte";
+    import { dataStore, type Study } from "../services/data/data-store.js";
+    import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
-    import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { getActiveDrawer, setActiveDrawer, setDrawerVisibility } from "../services/stores/side-drawer-store.js";
-    import { FreChangeManager } from "@freon4dsl/core";
-    import { runInAction } from "mobx";
-    // @ts-ignore
-    import { User as IconUser, PencilRuler as IconPencilRuler, Save as IconSave, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
+// @ts-ignore
+    import { PencilRuler as IconPencilRuler, Redo as IconRedo, Undo as IconUndo, User as IconUser } from '@lucide/svelte';
 
     let { id } = $props<{ id: string }>();
 
@@ -96,9 +94,9 @@
                 debouncedSave();
             }
         };
-        FreChangeManager.getInstance().changePrimCallbacks.push(changeCallback);
+        FreChangeManager.getInstance().subscribeToPrimitive(changeCallback);
         unsubscribeChangeManager = () => {
-            const arr = FreChangeManager.getInstance().changePrimCallbacks;
+            const arr = (FreChangeManager.getInstance() as any).changePrimCallbacks;
             const idx = arr.indexOf(changeCallback);
             if (idx !== -1) arr.splice(idx, 1);
         };

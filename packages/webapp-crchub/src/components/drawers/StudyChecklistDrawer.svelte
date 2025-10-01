@@ -226,13 +226,10 @@
     async function loadChecklistAsMarkdown() {
         isLoading = true;
         error = null;
-        try {
-            // const model = ModelManager.getInstance().getModelUnit("StudyConfigurationModel") as StudyConfigurationModel;
-            
+        try {          
             const modelManager = ModelManager.getInstance();
             await modelManager.openModel(studyId);
             const model = modelManager.currentModel as StudyConfigurationModel;
-            const unit = model.configuration;
             if (!model) {
                 error = "Model not loaded.";
                 isLoading = false;
@@ -267,9 +264,21 @@
             // Use markdown-it for rendering
             let bodyHtml = md.render(markdown);
             
+            // Debug: Log the rendered HTML to check if markdown is being converted properly
+            console.log("🔍 [Markdown Debug] Rendered HTML:", bodyHtml.substring(0, 500) + "...");
+            
+            // Wrap the content in the limited-width container
+            bodyHtml = `<div class="limited-width-container">${bodyHtml}</div>`;
+            
             // Manually add IDs to headings in the rendered HTML using DOM manipulation
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = bodyHtml;
+            
+            // Add proper CSS classes to tables
+            const tables = tempDiv.querySelectorAll('table');
+            tables.forEach(table => {
+                table.classList.add('table_component');
+            });
             
             toc.forEach(item => {
                 const headings = tempDiv.querySelectorAll(`h${item.level}`);
@@ -305,7 +314,7 @@
     }
 </script>
 
-<div class="checklist-drawer">
+<div class="drawer-content-area p-2">
     {#if error}
         <div class="drawer-error p-4">{error}</div>
     {:else}

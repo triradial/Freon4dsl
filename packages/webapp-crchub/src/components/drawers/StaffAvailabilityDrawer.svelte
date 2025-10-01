@@ -1,13 +1,12 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-    import { ModelManager } from "../../services/dsl/model-manager.js";
     import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
+    import { createEventDispatcher } from "svelte";
     import { getChecklistAsMarkdown } from "../../services/app/study-timeline.js";
-
-    // PDFMake and Markdown-it imports
+    import { ModelManager } from "../../services/dsl/model-manager.js";
+// PDFMake and Markdown-it imports
+    import MarkdownIt from "markdown-it";
     import pdfMake from "pdfmake/build/pdfmake.js";
     import pdfFonts from "pdfmake/build/vfs_fonts.js";
-    import MarkdownIt from "markdown-it";
 
     pdfMake.vfs = pdfFonts as any;
     const md = new MarkdownIt();
@@ -74,9 +73,18 @@
             // Use markdown-it for rendering
             let bodyHtml = md.render(markdown);
             
+            // Wrap the content in the limited-width container
+            bodyHtml = `<div class="limited-width-container">${bodyHtml}</div>`;
+            
             // Manually add IDs to headings in the rendered HTML using DOM manipulation
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = bodyHtml;
+            
+            // Add proper CSS classes to tables
+            const tables = tempDiv.querySelectorAll('table');
+            tables.forEach(table => {
+                table.classList.add('table_component');
+            });
             
             toc.forEach(item => {
                 const headings = tempDiv.querySelectorAll(`h${item.level}`);

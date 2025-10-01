@@ -52,9 +52,9 @@ export class StudyChecklistDocumentTemplate {
     static getVisitsByPeriodAsMarkdown(studyConfiguration: StudyConfiguration): string {
         let writer = new StudyConfigurationModelModelUnitWriter();
 
-        var template = studyConfiguration.periods
+        var visitsByPeriodMarkdown = studyConfiguration.periods
             .map(
-                (period, periodCounter) => dedent`
+                (period, periodCounter) => `
                 # ${period.name}
                     ${period.events
                         .map((event, eventCounter) => {
@@ -72,46 +72,53 @@ export class StudyChecklistDocumentTemplate {
                                 complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
                             }
 
-                            return `## ${event.name}
+                            return `
+                ## ${event.name}
 
-                                ${event.description.text}
+                    ${event.description ? event.description.text : ""}
 
-                                This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
-                                with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}  
-                                ${eventRepeat}
-                                ${timeOfDay}
-                                ${event.tasks
-                                    .map((task, taskCounter) => {
-                                        let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
-                                        return `### Task:${t.name}
+                    This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
+                    with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}  
+                    ${eventRepeat}
+                    ${timeOfDay}
+                    ${event.tasks
+                        .map((task, taskCounter) => {
+                            let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
+                            return `
+                ### Task:${t.name}
 
-                                            ${t.description.text}
+                    ${t.description ? t.description.text : ""}
 
-                                            ${t.steps
-                                                .map(
-                                                    (step, stepCounter) => dedent`#### Step ${stepCounter + 1}: ${step.name}
+                    ${t.steps
+                        .map(
+                            (step, stepCounter) => dedent`#### Step ${stepCounter + 1}: ${step.name}
 
-                                                    ${step.description.text}
+                            ${step.description.text}
 
-                                                    ${step.references.length > 0 ? "**REFERENCES**" : ""}
-                                                    ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
-                                                
-                                                    ${step.people.length > 0 ? "**PEOPLE**" : ""}
-                                                    ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
+                            ${step.references.length > 0 ? "**REFERENCES**" : ""}
+                            ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
+                        
+                            ${step.people.length > 0 ? "**PEOPLE**" : ""}
+                            ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
 
-                                                    `,
-                                                )
-                                                .join("\n")}`;
-                                    })
-                                    .join("\n")}
-                                `;
+                            `,
+                        )
+                        .join("\n")}`;
                         })
-                        .join("--- \n")}
+                    .join("\n")}
+                    `;
+                    })
+                    .join(`
+
+                    ---
+                    
+                    `)}
                 `,
-            )
+                )
             .join("\n");
-        console.log("template: ", template);
-        return template;
+        visitsByPeriodMarkdown = dedent`${visitsByPeriodMarkdown}`;
+        console.log("getVisitsByPeriodAsMarkdown visitsByPeriodMarkdown: ", visitsByPeriodMarkdown);
+        return visitsByPeriodMarkdown;
     }
 
     /**
