@@ -5,8 +5,8 @@
     import CaretLeft from "phosphor-svelte/lib/CaretLeft";
     import CaretRight from "phosphor-svelte/lib/CaretRight";
     import { StringReplacerBox } from "@freon4dsl/core";
-import { parseDate } from "@internationalized/date";
-import type { DateValue } from "@internationalized/date";
+    import { parseDate } from "@internationalized/date";
+    import type { DateValue } from "@internationalized/date";
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let value = $state<DateValue>(parseDate(formatToday()));

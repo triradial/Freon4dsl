@@ -121,7 +121,7 @@
   onValueChange={onRangeValueChange} 
   weekdayFormat="short" 
   fixedWeeks={false}
-  class="flex w-full max-w-[400px] flex-col"
+  class="datapicker-container"
 >
   <div class="flex w-full max-w-[400px] flex-col">
     <div class="flex items-center gap-2">
@@ -131,16 +131,16 @@
             {#each segments as { part, value }, i (part + i)}
               <div class="inline-block select-none">
                 {#if part === "literal"}
-                  <DateRangePicker.Segment {part} class="p-1" style="color: var(--green-90t);">{value}</DateRangePicker.Segment>
+                  <DateRangePicker.Segment {part} style="color: var(--green-90t);">{value}</DateRangePicker.Segment>
                 {:else}
-                  <DateRangePicker.Segment {part} class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1" style="color: var(--green-90t);">{value}</DateRangePicker.Segment>
+                  <DateRangePicker.Segment {part} class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground focus-visible:ring-0! focus-visible:ring-offset-0!" style="color: var(--green-90t);">{value}</DateRangePicker.Segment>
                 {/if}
               </div>
             {/each}
           {/snippet}
         </DateRangePicker.Input>
         {#if type === "start"}
-          <div aria-hidden="true" class="px-1" style="color: var(--text-primary-500);">–</div>
+          <div aria-hidden="true" class="datepicker-separator">–</div>
         {/if}
       {/each}
       <DateRangePicker.Trigger class="hover:bg-muted active:bg-dark-10 inline-flex size-8 items-center justify-center rounded-[5px] transition-all" style="color: var(--text-primary-500);">

@@ -951,9 +951,9 @@ span:has(> .tinymce-inline) {
 
 /* #region Datepicker */
 .datepicker-container {
-  display: inline-flex;
-  align-items: center;
-  position: relative;
+  flex: 1 1 auto;
+  max-width: 400px;
+  flex-direction: column;
 }
 .datepicker-input {
   font-size: var(--standard-font-size);
@@ -971,6 +971,11 @@ span:has(> .tinymce-inline) {
   min-width: 80px;
   display: inline-block;
 }
+
+[data-bits-floating-content-wrapper] {
+  z-index: 999 !important;
+}
+
 /* #endregion */
 
 /* #region Timepicker */
