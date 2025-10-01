@@ -11,9 +11,12 @@ StudyConfiguration {
 
 SharedTask {
     [
+        [fragment sharedTaskDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="true" label="Task"]
+    ]
+    fragment sharedTaskDetails [
         ${name}
         ${description}
-        Steps: ${steps}
+        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
     ]
 }
 

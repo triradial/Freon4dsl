@@ -36,7 +36,7 @@ Period {
     ]
     fragment periodDetails [
         ${name}
-        ${description}
+        ${description wrap=MultilineTextComponent}
         ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Events"}
     ]   
 }
@@ -63,22 +63,10 @@ Task {
     ]
 }
 
-SharedTask {
-    [
-        [fragment sharedTaskDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="true" label="Task"]
-    ]
-    fragment sharedTaskDetails [
-        ${name}
-        ${description wrap=MultilineTextComponent}
-        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
-    ]
-}
-
 TaskReference {
     [
         ${task wrap =  TaskReferenceComponent cssClass="type3" canDelete="true" selectable="true" label="Shared Task"}
     ]
-
 }
 
 Step {
