@@ -481,6 +481,11 @@
   color: var(--green-90t);
   background-color: transparent
 }
+
+.datepicker-separator {
+  color: var(--text-primary-500);
+  background-color: transparent;
+}
 /* #endregion */
 
 /* #region DateRangePicker */

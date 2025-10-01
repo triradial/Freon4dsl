@@ -36,7 +36,7 @@ Period {
     ]
     fragment periodDetails [
         ${name}
-        ${description wrap=MultilineTextComponent}
+        ${description}
         ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Events"}
     ]   
 }
