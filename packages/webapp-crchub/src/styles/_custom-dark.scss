@@ -919,4 +919,10 @@ border-bottom: 1px solid var(--white-5t) !important;
 .markdown-body a {
   color: var(--white-70t) !important;
 }
+
+.markdown-body table,
+.markdown-body th,
+.markdown-body td {
+  color: var(--white-70t) !important;
+}
 /* #endregion */  

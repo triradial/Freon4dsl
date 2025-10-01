@@ -137,7 +137,7 @@
                 // Elements that go 2+ levels up (like "First scheduled") should not be highlighted
                 const shouldHighlight = selectionLevels <= 1;
                 
-                console.log(`Render selectableCls: box ${box.id} (${box.kind}) role=${box.role} selectable=${box.selectable} selectionLevels=${selectionLevels} shouldHighlight=${shouldHighlight}`);
+                // console.log(`Render selectableCls: box ${box.id} (${box.kind}) role=${box.role} selectable=${box.selectable} selectionLevels=${selectionLevels} shouldHighlight=${shouldHighlight}`);
                 cls = shouldHighlight ? 'render-component-selectable' : '';
             } else if (box.selectable) {
                 // For other selectable boxes, use normal selectable logic

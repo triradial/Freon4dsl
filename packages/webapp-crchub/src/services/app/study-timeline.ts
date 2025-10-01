@@ -1,8 +1,6 @@
-import { StudyConfiguration } from "@freon4dsl/study-configuration";
-import { Simulator, StudyChecklistDocumentTemplate, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/study-configuration";
-import type { Timeline } from "@freon4dsl/study-configuration";
-import * as Sim from "@freon4dsl/study-configuration";
 import { RtString } from "@freon4dsl/core";
+import * as Sim from "@freon4dsl/study-configuration";
+import { Simulator, StudyChecklistDocumentTemplate, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/study-configuration";
 
 
 export function getTimelineTable(node: StudyConfiguration) {
@@ -39,6 +37,5 @@ function getTimeline(node: StudyConfiguration) {
 export function getChecklistAsMarkdown(studyConfigurationUnit: StudyConfiguration, showHeadingNumbers: boolean = false) {
     let timeline = getTimeline(studyConfigurationUnit);
     const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline, showHeadingNumbers);
-    const html = `<div class="limited-width-container">${studyChecklistAsMarkdown}</div>`;
-    return html;
+    return studyChecklistAsMarkdown;
 }
