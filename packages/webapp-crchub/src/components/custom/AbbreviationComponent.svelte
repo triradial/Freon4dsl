@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { AST, FreEditor, FreLanguage, FreLogger, ownerOfType, PartWrapperBox } from "@freon4dsl/core";
+    import { FreEditor, FreLogger, PartWrapperBox } from "@freon4dsl/core";
     import { componentId } from "@freon4dsl/core-svelte";
+    import { onMount } from "svelte";
     // ts-ignore
     const LOGGER = new FreLogger("ItemGroupComponent");
     
@@ -46,6 +46,6 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<#if abbreviatedText()>
+{#if abbreviatedText()}
 <div id="{id}" class="abbreviation-text">{abbreviatedText()}</div>
-</#if>
+{/if}

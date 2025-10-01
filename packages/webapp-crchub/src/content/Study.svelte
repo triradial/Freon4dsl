@@ -84,6 +84,14 @@
 
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+        dslEditor.projection.addProjection("schedulingAndChecklistsShow");
+        dslEditor.projection.addProjection("schedulingShow");
+        dslEditor.projection.addProjection("checklistsShow");
+        dslEditor.projection.addProjection("sharedTasksShow");
+        dslEditor.projection.addProjection("referencesShow");
+        dslEditor.projection.addProjection("systemsShow");
+        dslEditor.projection.addProjection("peopleShow");
+        dslEditor.projection.addProjection("descriptionsShow");
         // console.log("[Study] dslEditor instance in Study.svelte", dslEditor);
         await initializeStudy();
 
@@ -116,6 +124,7 @@
 
     // Show the projections that are enabled in the study configuration.
     function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
+        console.log("all projections: ", dslEditor.projection.projectionNames());
         let names = [];
         // Scheduling and checklists are both part of Event so they need combined and separate projections.
         if (studyConfiguration.showScheduling && studyConfiguration.showChecklists) {
@@ -141,12 +150,15 @@
             names.push("descriptionsShow");
         }
         
-        names.push("Custom");
+        //TODO: determine why this projection is needed
+        // names.push("Custom");
 
         const proj = dslEditor.projection;
-
+    
         AST.change(() => {
             proj.enableProjections(names);
+            console.log("enable projections: ", proj.enabledProjections());
+
             // Let the editor know that the projections have changed.
             // TODO: This should go automatically through mobx.
             //       But observing the projections array does not work as expected.

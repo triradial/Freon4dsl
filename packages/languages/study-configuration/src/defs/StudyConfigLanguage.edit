@@ -36,7 +36,7 @@ Period {
     ]
     fragment periodDetails [
         ${name}
-        ${description wrap=MultilineTextComponent}
+        ${description}
         ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Events"}
     ]   
 }
@@ -75,7 +75,7 @@ Step {
     ]
     fragment stepDetails [
         ${name}
-        ${description wrap=MultilineTextComponent}
+        ${description}
         ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
         ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="References"   }
         ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Systems Used"}
@@ -122,7 +122,7 @@ Person {
         Email: ${email}
         Phone: ${phoneNumber}
         Role: ${role}
-        Notes:${description wrap=MultilineTextComponent}
+        Notes:${description}
     ]
 }
 
