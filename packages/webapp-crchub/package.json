@@ -16,8 +16,8 @@
         "prepare-app": "npx gulp"
     },
     "dependencies": {
-        "@freon4dsl/core": "2.0.0-beta.2",
-        "@freon4dsl/core-svelte": "2.0.0-beta.2",
+        "@freon4dsl/core": "2.0.0-beta.4",
+        "@freon4dsl/core-svelte": "2.0.0-beta.4",
         "@freon4dsl/study-configuration": "1.1.0-beta.3",
         "@internationalized/date": "^3.8.2",
         "@lucide/svelte": "^0.513.0",

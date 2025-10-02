@@ -11,7 +11,7 @@
       RefWrapperBox,
       VerticalLayoutBox
     } from "@freon4dsl/core";
-    import { componentId, RenderComponent } from "@freon4dsl/core-svelte";
+    import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onMount } from "svelte";
 // ts-ignore
     import {
@@ -25,7 +25,8 @@
 
     const LOGGER = new FreLogger("ItemGroupComponent")
 
-    const { box, editor } = $props<{ box: FragmentWrapperBox; editor: FreEditor }>()
+    // const { box, editor } = $props<{ box: FragmentWrapperBox; editor: FreEditor }>()
+    const { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
 
     // Props
     let cssClass = (box && box.findParam("cssClass")) || ""

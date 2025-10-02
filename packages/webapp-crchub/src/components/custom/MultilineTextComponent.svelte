@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
     import { AST, PartWrapperBox, FreEditor, FreLogger } from "@freon4dsl/core";
-    import { componentId } from "@freon4dsl/core-svelte";
+    import { componentId, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { theme } from "../../services/stores/theme-store.js";
 
     interface Window {
@@ -11,7 +11,7 @@
     const LOGGER = new FreLogger("MultilineTextComponent");
     FreLogger.unmute("MultilineTextComponent");
 
-    const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
+    const { editor, box }: FreComponentProps<PartWrapperBox> = $props();
     
     let cssClass = box && box.findParam("cssClass") || "";
     let textPropertyName = box && box.findParam("textPropertyName") || "text";

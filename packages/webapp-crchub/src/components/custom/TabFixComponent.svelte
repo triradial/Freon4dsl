@@ -1,12 +1,12 @@
 
 <script lang="ts">
     import { AST, FreEditor, FreLogger, PartWrapperBox } from "@freon4dsl/core";
-    import { componentId } from "@freon4dsl/core-svelte";
+    import { componentId, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onMount } from "svelte";
     // ts-ignore
     const LOGGER = new FreLogger("TabFixComponent");
     
-    const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
+    const { editor, box }: FreComponentProps<PartWrapperBox> = $props();
 
     // Props
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');

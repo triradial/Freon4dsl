@@ -1,6 +1,6 @@
 <script lang="ts">
     import { AST, FreEditor, FreLogger, RefWrapperBox } from "@freon4dsl/core";
-    import { componentId, RenderComponent } from "@freon4dsl/core-svelte";
+    import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onMount } from "svelte";
 // ts-ignore
     import { Trash2 as IconDelete, EllipsisVertical as IconEllipsisVertical } from '@lucide/svelte';
@@ -8,7 +8,7 @@
     const LOGGER = new FreLogger("ItemGroupComponent");
     FreLogger.unmute("ItemGroupComponent");
     
-    const { box, editor } = $props<{ box: RefWrapperBox, editor: FreEditor }>();
+    const { editor, box }: FreComponentProps<RefWrapperBox> = $props();
 
     // Props
     let cssClass = box && box.findParam("cssClass") || "";

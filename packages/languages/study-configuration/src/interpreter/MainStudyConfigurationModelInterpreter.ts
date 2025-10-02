@@ -39,24 +39,22 @@ const getConceptFunction: ConceptFunction = (node: Object) => {
  * Ensures all internal interpreter state is cleaned when creating a new instance.
  */
 export class MainStudyConfigurationModelInterpreter implements FreInterpreter {
-    private static main: IMainInterpreter = null;
+    private static main: IMainInterpreter | null = null;
 
     constructor() {
-        if (MainStudyConfigurationModelInterpreter.main === null) {
-            MainStudyConfigurationModelInterpreter.main = MainInterpreter.instance(
-                StudyConfigurationModelInterpreterInit,
-                getConceptFunction,
-                getPropertyFunction,
-            );
-        }
+        MainStudyConfigurationModelInterpreter.getMain();
+    }
+
+    private static getMain(): IMainInterpreter {
+        return (this.main ??= MainInterpreter.instance(StudyConfigurationModelInterpreterInit, getConceptFunction, getPropertyFunction));
     }
 
     setTracing(value: boolean) {
-        MainStudyConfigurationModelInterpreter.main.setTracing(value);
+        MainStudyConfigurationModelInterpreter.getMain().setTracing(value);
     }
 
     getTrace(): InterpreterTracer {
-        return MainStudyConfigurationModelInterpreter.main.getTrace();
+        return MainStudyConfigurationModelInterpreter.getMain().getTrace();
     }
 
     evaluate(node: Object): RtObject {
@@ -64,9 +62,9 @@ export class MainStudyConfigurationModelInterpreter implements FreInterpreter {
     }
 
     evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
-        MainStudyConfigurationModelInterpreter.main.reset();
+        MainStudyConfigurationModelInterpreter.getMain().reset();
         try {
-            return MainStudyConfigurationModelInterpreter.main.evaluate(node, ctx);
+            return MainStudyConfigurationModelInterpreter.getMain().evaluate(node, ctx);
         } catch (e: any) {
             return new RtError(e.message);
         }

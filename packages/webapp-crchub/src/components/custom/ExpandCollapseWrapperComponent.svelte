@@ -1,9 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { FreEditor, FreUtils, PartWrapperBox } from "@freon4dsl/core";
-    import { RenderComponent } from "@freon4dsl/core-svelte";
+    import { RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     
-    const { box, editor } = $props<{ box: PartWrapperBox, editor: FreEditor }>();
+    const { editor, box }: FreComponentProps<PartWrapperBox> = $props();
 
     // let inputElement: any;
     let msg: string;
