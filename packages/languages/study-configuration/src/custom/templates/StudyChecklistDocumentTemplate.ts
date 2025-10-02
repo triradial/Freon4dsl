@@ -1,46 +1,103 @@
 import { Timeline } from "../../custom/timeline/Timeline.js";
 import { NoComplianceWindow, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
-import { dedent } from "../utils/dedent.js";
+
+class MarkdownBuilder {
+    private sections: string[] = [];
+    
+    addHeading(level: number, text: string): this {
+        this.sections.push('#'.repeat(level) + ' ' + text);
+        return this;
+    }
+    
+    addParagraph(text: string): this {
+        if (text?.trim()) {
+            this.sections.push(text);
+        }
+        return this;
+    }
+    
+    addEmptyLine(): this {
+        this.sections.push('');
+        return this;
+    }
+    
+    addSeparator(): this {
+        this.sections.push('\n---\n');
+        return this;
+    }
+    
+    addTable(headers: string[], rows: string[][]): this {
+        const headerRow = '| ' + headers.join(' | ') + ' |';
+        const separatorRow = '| ' + headers.map(() => ':----------').join(' | ') + ' |';
+        const dataRows = rows.map(row => '| ' + row.join(' | ') + ' |');
+        
+        this.sections.push(headerRow);
+        this.sections.push(separatorRow);
+        this.sections.push(...dataRows);
+        return this;
+    }
+    
+    addList(items: string[], ordered: boolean = false): this {
+        items.forEach((item, index) => {
+            const prefix = ordered ? `${index + 1}. ` : '- ';
+            this.sections.push(prefix + item);
+        });
+        return this;
+    }
+    
+    addRaw(content: string): this {
+        this.sections.push(content);
+        return this;
+    }
+    
+    build(): string {
+        return this.sections.join('\n');
+    }
+    
+    clear(): this {
+        this.sections = [];
+        return this;
+    }
+}
 
 export class StudyChecklistDocumentTemplate {
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
-        const header = "| Visit Name | Alternative Name | Phase | Window (-) | Day/Date | Window (+) |\n| :---------------------- | :--------------- | :-------- | :--------- | :------- | :--------- |";
+        const builder = new MarkdownBuilder();
         
+        const headers = ["Visit Name", "Alternative Name", "Phase", "Window (-)", "Day/Date", "Window (+)"];
         const rows = timeline
             .getDays()
-            .map((timelineDay, counter) =>
+            .flatMap((timelineDay, counter) =>
                 timelineDay
                     .getEventInstances()
-                    .map(
-                        (eventInstance, index) =>
-                            `| ${eventInstance.getName()} | ${eventInstance.getScheduledEvent().configuredEvent.alternativeName} | ${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""} | ${(eventInstance.getStartDay() + 1).toString() ?? ""} | ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""} |`,
-                    )
-                    .join("\n"),
-            )
-            .join("\n");
+                    .map((eventInstance, index) => [
+                        eventInstance.getName(),
+                        eventInstance.getScheduledEvent().configuredEvent.alternativeName,
+                        (eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name,
+                        eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count?.toString() ?? "",
+                        (eventInstance.getStartDay() + 1).toString(),
+                        eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count?.toString() ?? ""
+                    ])
+            );
             
-        return `${header}\n${rows}`;
+        return builder.addTable(headers, rows).build();
     }
 
     static getReferencesAsMarkdown(references) {
-        let template = references
-            .map(
-                (reference, referenceCounter) => `- ${reference.title} ${reference.link}
-    `,
-            )
-            .join("");
-        return template;
+        if (!references || references.length === 0) return '';
+        
+        const builder = new MarkdownBuilder();
+        const items = references.map(reference => `${reference.title} ${reference.link}`);
+        return builder.addList(items).build();
     }
 
     static getPeopleAsMarkdown(people) {
-        let template = people
-            .map(
-                (person, personCounter) => `- ${person.name} (${person.role}) ${person.email} ${person.phoneNumber}
-    `,
-            )
-            .join("");
-        return template;
+        if (!people || people.length === 0) return '';
+        
+        const builder = new MarkdownBuilder();
+        const items = people.map(person => `${person.name} (${person.role}) ${person.email} ${person.phoneNumber}`);
+        return builder.addList(items).build();
     }
 
     /**
@@ -50,76 +107,83 @@ export class StudyChecklistDocumentTemplate {
      * @returns
      */
     static getVisitsByPeriodAsMarkdown(studyConfiguration: StudyConfiguration): string {
-        let writer = new StudyConfigurationModelModelUnitWriter();
-        console.log(
-          "studyConfiguration language text: " +
-            (writer.writeToString(studyConfiguration))
-        );
+        const builder = new MarkdownBuilder();
+        const writer = new StudyConfigurationModelModelUnitWriter();
 
-        var visitsByPeriodMarkdown = studyConfiguration.periods
-            .map(
-                (period, periodCounter) => `
-                # ${period.name}
-                    ${period.events
-                        .map((event) => {
-                            const timeOfDay = event.schedule.eventTimeOfDay
-                                ? "limited to" + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
-                                : "";
-                            const eventRepeat = event.schedule.eventRepeat
-                                ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
-                                : "";
-                            if (!event.schedule.eventWindow.complianceWindow) {
-                                event.schedule.eventWindow.complianceWindow = new NoComplianceWindow();
-                            }
+        studyConfiguration.periods.forEach((period, periodCounter) => {
+            builder.addHeading(1, period.name);
 
-                            return `
-                ## ${event.name}
+            period.events.forEach((event, eventCounter) => {
+                const timeOfDay = event.schedule.eventTimeOfDay
+                    ? "limited to " + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
+                    : "";
+                const eventRepeat = event.schedule.eventRepeat
+                    ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
+                    : "";
+                let complianceWindow = " with no extra compliance window";
+                if (
+                    event.schedule.eventWindow.complianceWindow != undefined ||
+                    event.schedule.eventWindow.complianceWindow instanceof ComplianceWindowOf
+                ) {
+                    complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
+                }
 
-                ${event.description ? event.description.text : ""}
-
-                This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}
-                with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}  
-                ${eventRepeat}
-                ${timeOfDay}
-                ${event.tasks
-                    .map((task, taskCounter) => {
-                        let t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
-                        return `
-                ### Task:${t.name}
-
-                ${t.description ? t.description.text : ""}
-
-                ${t.steps
-                    .map(
-                        (step, stepCounter) => `
-                #### Step ${stepCounter + 1}: ${step.name}
-
-                ${step.description.text}
-
-                ${step.references.length > 0 ? "**REFERENCES**" : ""}
-                ${StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references)}
-            
-                ${step.people.length > 0 ? "**PEOPLE**" : ""}
-                ${StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people)}
-
-                `,
-                        )
-                        .join("\n")}`;
-                        })
-                    .join("\n")}
-                `;
-                })
-                .join(`
-
-                ---
+                builder.addHeading(2, event.name);
                 
-                `)}
-                `,
-                )
-            .join("\n");
-        visitsByPeriodMarkdown = dedent`${visitsByPeriodMarkdown}`;
-        // console.log("getVisitsByPeriodAsMarkdown visitsByPeriodMarkdown: ", visitsByPeriodMarkdown);
-        return visitsByPeriodMarkdown;
+                if (event.description?.text) {
+                    builder.addParagraph(event.description.text);
+                }
+
+                const schedulingInfo = [
+                    `This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}`,
+                    `with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}`
+                ];
+                
+                if (eventRepeat) schedulingInfo.push(eventRepeat);
+                if (timeOfDay) schedulingInfo.push(timeOfDay);
+                
+                builder.addParagraph(schedulingInfo.join(' '));
+
+                event.tasks.forEach((task, taskCounter) => {
+                    const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
+                    
+                    builder.addHeading(3, `Task: ${t.name}`);
+                    
+                    if (t.description?.text) {
+                        builder.addParagraph(t.description.text);
+                    }
+
+                    t.steps.forEach((step, stepCounter) => {
+                        builder.addHeading(4, `Step ${stepCounter + 1}: ${step.name}`);
+                        builder.addParagraph(step.description.text);
+
+                        if (step.references.length > 0) {
+                            builder.addParagraph("**REFERENCES**");
+                            const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
+                            if (referencesMarkdown) {
+                                builder.addRaw(referencesMarkdown);
+                            }
+                        }
+
+                        if (step.people.length > 0) {
+                            builder.addParagraph("**PEOPLE**");
+                            const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
+                            if (peopleMarkdown) {
+                                builder.addRaw(peopleMarkdown);
+                            }
+                        }
+                    });
+                });
+            });
+
+            if (periodCounter < studyConfiguration.periods.length - 1) {
+                builder.addSeparator();
+            }
+        });
+
+        const result = builder.build();
+        console.log("getVisitsByPeriodAsMarkdown visitsByPeriodMarkdown: ", result);
+        return result;
     }
 
     /**
@@ -154,19 +218,20 @@ export class StudyChecklistDocumentTemplate {
     }
 
     static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline, showHeadingNumbers: boolean = false): string {
-        let markdown = dedent` 
+        const builder = new MarkdownBuilder();
+        
+        builder
+            .addSeparator()
+            .addEmptyLine()
+            .addHeading(1, "Timeline")
+            .addEmptyLine()
+            .addRaw(StudyChecklistDocumentTemplate.getTimelineTablAsMarkdown(timeline))
+            .addEmptyLine()
+            .addSeparator()
+            .addEmptyLine()
+            .addRaw(StudyChecklistDocumentTemplate.getVisitsByPeriodAsMarkdown(studyConfiguration));
 
----
-
-
-# Timeline 
-
-${StudyChecklistDocumentTemplate.getTimelineTablAsMarkdown(timeline)}
-
----
-
-${StudyChecklistDocumentTemplate.getVisitsByPeriodAsMarkdown(studyConfiguration)}
-`;
+        let markdown = builder.build();
 
         // Apply heading numbers if requested
         if (showHeadingNumbers) {
