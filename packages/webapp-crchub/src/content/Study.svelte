@@ -84,6 +84,7 @@
 
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+        //TODO: determine if this is needed. Added to make sure that the projections are available.
         dslEditor.projection.addProjection("schedulingAndChecklistsShow");
         dslEditor.projection.addProjection("schedulingShow");
         dslEditor.projection.addProjection("checklistsShow");
@@ -92,7 +93,6 @@
         dslEditor.projection.addProjection("systemsShow");
         dslEditor.projection.addProjection("peopleShow");
         dslEditor.projection.addProjection("descriptionsShow");
-        // console.log("[Study] dslEditor instance in Study.svelte", dslEditor);
         await initializeStudy();
 
         // Subscribe to FreChangeManager changes
