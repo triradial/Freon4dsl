@@ -16,13 +16,14 @@ export class ConceptUtils {
     public static makeBasicProperties(metaType: string, conceptName: string, hasSuper: boolean): string {
         return `readonly $typename: ${metaType} = "${conceptName}";    // holds the metatype in the form of a string
                 ${!hasSuper ? "$id: string = '';     // a unique identifier" : ""}
-                parseLocation: ${Names.FreParseLocation};    // if relevant, the location of this element within the source from which it is parsed`
+                parseLocation: ${Names.FreParseLocation} | undefined;    // if relevant, the location of this element within the source from which it is parsed`
     }
 
     public static makePrimitiveProperty(freProp: FreMetaPrimitiveProperty): string {
-        const comment = "// implementation of " + freProp.name
-        const arrayType = freProp.isList ? "[]" : ""
-        return `${freProp.name} : ${GenerationUtil.getBaseTypeAsString(freProp)}${arrayType}; \t${comment}`
+        const comment: string = "// implementation of " + freProp.name
+        const arrayType: string = freProp.isList ? "[]" : ""
+        const optionalType: string = !freProp.isList && freProp.isOptional ? " | undefined" : ""
+        return `${freProp.name}${freProp.isOptional ? `` : `!`} : ${GenerationUtil.getBaseTypeAsString(freProp)}${arrayType}${optionalType}; \t${comment}`
     }
 
     private static initEnumValue(freProp: FreMetaConceptProperty): string {
@@ -34,6 +35,9 @@ export class ConceptUtils {
     }
 
     private static initializer(freProp: FreMetaPrimitiveProperty): string {
+        if (freProp.isOptional) { // do not initialize an optional property
+            return "";
+        }
         let initializer = ""
         const myType: FreMetaClassifier = freProp.type
         if (!freProp.isList) {
@@ -68,15 +72,17 @@ export class ConceptUtils {
     }
 
     public static makePartProperty(freProp: FreMetaConceptProperty): string {
-        const comment = "// implementation of part '" + freProp.name + "'"
-        const arrayType = freProp.isList ? "[]" : ""
-        return `${freProp.name} : ${Names.classifier(freProp.type)}${arrayType}; ${comment}`
+        const comment: string = "// implementation of part '" + freProp.name + "'"
+        const arrayType: string = freProp.isList ? "[]" : ""
+        const optionalType: string = !freProp.isList && freProp.isOptional ? " | undefined" : ""
+        return `${freProp.name}${freProp.isOptional ? `` : `!`} : ${Names.classifier(freProp.type)}${arrayType}${optionalType}; ${comment}`
     }
 
     public static makeReferenceProperty(freProp: FreMetaConceptProperty): string {
         const comment = "// implementation of reference '" + freProp.name + "'"
         const arrayType = freProp.isList ? "[]" : ""
-        return `${freProp.name} : ${Names.FreNodeReference}<${Names.classifier(freProp.type)}>${arrayType}; ${comment}`
+        const optionalType: string = !freProp.isList && freProp.isOptional ? " | undefined" : ""
+        return `${freProp.name}${freProp.isOptional ? `` : `!`}: ${Names.FreNodeReference}<${Names.classifier(freProp.type)}>${arrayType}${optionalType}; ${comment}`
     }
 
     public static makeConvenienceMethods(list: FreMetaConceptProperty[]): string {
@@ -91,11 +97,11 @@ export class ConceptUtils {
              * Instead of returning a '${Names.FreNodeReference}<${propType}>' object,
              * it returns the referred '${propType}' object, if it can be found.
              */
-            get ${Names.refName(prop)}(): ${propType} {
+            get ${Names.refName(prop)}(): ${propType} | undefined {
                 if (!!this.${prop.name}) {
                     return this.${prop.name}.referred;
                 }
-                return null;
+                return undefined;
             }`
                 } else {
                     result += `
@@ -262,12 +268,12 @@ export class ConceptUtils {
                 (freProp) =>
                     `${
                         freProp.isList
-                            ? `if (!!data.${freProp.name}) {
+                            ? `if (notNullOrUndefined(data.${freProp.name})) {
                                 data.${freProp.name}.forEach(x =>
                                     result.${freProp.name}.push(x)
                                 );
                             }`
-                            : `if (!!data.${freProp.name}) {
+                            : `if (notNullOrUndefined(data.${freProp.name})) {
                                 result.${freProp.name} = data.${freProp.name};
                             ${
                                 allPartsToInitialize.find((ip) => ip.part === freProp)
@@ -279,7 +285,7 @@ export class ConceptUtils {
                     }`,
             )
             .join("\n")}
-                    if (!!data.parseLocation) {
+                    if (notNullOrUndefined(data.parseLocation)) {
                         result.parseLocation = data.parseLocation;
                     }
                     return result;
@@ -292,21 +298,16 @@ export class ConceptUtils {
                  */`
         if (isAbstract) {
             return `${comment}
-                copy(): ${myName} {
-                    console.log("${myName}: copy method should be implemented by concrete subclass");
-                    return null;
-                }`
+                abstract copy(): ${myName};`
         } else {
-            return `/**
-                 * A convenience method that copies this instance into a new object.
-                 */
+            return `${comment}
                 copy(): ${myName} {
                     const result = new ${myName}();
                     ${concept
                 .allProperties()
                 .map(
                     (freProperty) =>
-                        `if (!!this.${freProperty.name}) {
+                        `if (notNullOrUndefined(this.${freProperty.name})) {
                             ${this.makeCopyProperty(freProperty)}
                         }`,
                 )
@@ -365,7 +366,7 @@ export class ConceptUtils {
             if (freProperty.isList) {
                 // here we know that matchPrimitiveList needs to be imported => add to imports
                 imports.core.add("matchPrimitiveList")
-                result = `if (result && !!toBeMatched.${freProperty.name}) {
+                result = `if (result && notNullOrUndefined(toBeMatched.${freProperty.name})) {
                                 result = result && matchPrimitiveList(this.${freProperty.name}, toBeMatched.${freProperty.name});
                           }`
             } else {
@@ -383,21 +384,28 @@ export class ConceptUtils {
             if (freProperty.isPart) {
                 // here we know that matchElementList needs to be imported => add to imports
                 imports.core.add("matchElementList")
-                result = `if (result && !!toBeMatched.${freProperty.name}) {
+                result = `if (result && notNullOrUndefined(toBeMatched.${freProperty.name})) {
                               result = result && matchElementList(this.${freProperty.name}, toBeMatched.${freProperty.name});
                           }`
             } else {
                 // here we know that matchReferenceList needs to be imported => add to imports
                 imports.core.add("matchReferenceList")
-                result = `if (result && !!toBeMatched.${freProperty.name}) {
+                result = `if (result && notNullOrUndefined(toBeMatched.${freProperty.name})) {
                               result = result && matchReferenceList(this.${freProperty.name}, toBeMatched.${freProperty.name});
                           }`
             }
+        } else if (freProperty.isOptional) {
+            // same for both parts and references
+            result = `if (result && notNullOrUndefined(toBeMatched.${freProperty.name})) {
+                        if (this.${freProperty.name}) {
+                            result = result && this.${freProperty.name}.match(toBeMatched.${freProperty.name});
+                        }
+                      }`
         } else {
             // same for both parts and references
-            result = `if (result && !!toBeMatched.${freProperty.name}) {
-                                result = result && this.${freProperty.name}.match(toBeMatched.${freProperty.name});
-                            }`
+            result = `if (result && notNullOrUndefined(toBeMatched.${freProperty.name})) {
+                            result = result && this.${freProperty.name}.match(toBeMatched.${freProperty.name});
+                      }`
         }
         return result
     }

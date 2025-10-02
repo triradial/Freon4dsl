@@ -211,7 +211,7 @@ export class InMemoryModel {
      * @param unit
      */
     async renameUnit(oldName: string, newName: string, unit: FreModelUnit): Promise<void | InMemoryError> {
-        console.log(`renameUnit from ${oldName} to ${newName}`)
+        LOGGER.log(`renameUnit from ${oldName} to ${newName}`)
         const response = await this.server.renameModelUnit(this.model.name, oldName, newName, unit)
         if (response.errors.length > 0) {
             this.onInMemoryError(response.errors[0])
@@ -225,8 +225,6 @@ export class InMemoryModel {
      */
     getUnitByName(name: string) {
         LOGGER.log(`getUnitByName`)
-        console.log("InMemoryModel.getUnitByName: " + name);
-        console.log("InMemoryModel.getUnitByName: this.model.findUnit(name): " + this.model.findUnit(name));
         return this.model.findUnit(name)
     }
 

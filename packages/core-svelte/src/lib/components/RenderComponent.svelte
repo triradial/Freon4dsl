@@ -1,5 +1,6 @@
 <script lang="ts">
     import { RENDER_LOGGER } from './ComponentLoggers.js';
+    import { tick } from "svelte"
     // This component renders any box from the box model.
     // Depending on the box type the right component is used.
     // It also makes the rendered element selectable, including changing the style.
@@ -9,62 +10,61 @@
     // strongly coupled to a box. Each box is coupled to the corresponding
     // component in the if-statement.
     import {
-        BoolDisplay,
-        Box,
-        LimitedDisplay,
-        UndefinedRectangle,
         isActionBox,
-        isActionTextBox,
-        isBooleanControlBox,
-        isButtonBox,
-        isElementBox,
         isEmptyLineBox,
-        isExternalBox,
-        isFragmentBox,
         isGridBox,
+        isTableBox,
         isIndentBox,
         isLabelBox,
         isLayoutBox,
-        isLimitedControlBox,
         isListBox,
-        isMultiLineTextBox,
-        isNumberControlBox,
-        isOptionalBox2,
-        isReferenceBox,
         isSelectBox,
-        isSvgBox,
-        isTableBox,
         isTextBox,
-        notNullOrUndefined, type ClientRectangle
-    } from "@freon4dsl/core";
-    import { componentId, findCustomComponent } from '../index.js';
-    import BooleanCheckboxComponent from './BooleanCheckboxComponent.svelte';
-    import InnerSwitchComponent from './BooleanInnerSwitchComponent.svelte';
-    import BooleanRadioComponent from './BooleanRadioComponent.svelte';
-    import SwitchComponent from './BooleanSwitchComponent.svelte';
-    import ButtonComponent from './ButtonComponent.svelte';
-    import ElementComponent from './ElementComponent.svelte';
+        isSvgBox,
+        isBooleanControlBox,
+        isNumberControlBox,
+        isElementBox,
+        isOptionalBox2,
+        isMultiLineTextBox,
+        isLimitedControlBox,
+        isButtonBox,
+        isExternalBox,
+        isFragmentBox,
+        isReferenceBox,
+        Box,
+        BoolDisplay,
+        LimitedDisplay,
+        isActionTextBox,
+        notNullOrUndefined, type ClientRectangle, UndefinedRectangle
+    } from "@freon4dsl/core"
+    import MultiLineTextComponent from './MultiLineTextComponent.svelte';
     import EmptyLineComponent from './EmptyLineComponent.svelte';
-    import FragmentComponent from './FragmentComponent.svelte';
     import GridComponent from './GridComponent.svelte';
     import IndentComponent from './IndentComponent.svelte';
     import LabelComponent from './LabelComponent.svelte';
     import LayoutComponent from './LayoutComponent.svelte';
-    import LimitedCheckboxComponent from './LimitedCheckboxComponent.svelte';
-    import LimitedRadioComponent from './LimitedRadioComponent.svelte';
     import ListComponent from './ListComponent.svelte';
-    import MultiLineTextComponent from './MultiLineTextComponent.svelte';
-    import NumericSliderComponent from './NumericSliderComponent.svelte';
     import OptionalComponent from './OptionalComponent.svelte';
-    import SvgComponent from './SvgComponent.svelte';
     import TableComponent from './TableComponent.svelte';
     import TextComponent from './TextComponent.svelte';
     import TextDropdownComponent from './TextDropdownComponent.svelte';
+    import SvgComponent from './SvgComponent.svelte';
+    import ElementComponent from './ElementComponent.svelte';
+    import BooleanCheckboxComponent from './BooleanCheckboxComponent.svelte';
+    import BooleanRadioComponent from './BooleanRadioComponent.svelte';
+    import InnerSwitchComponent from './BooleanInnerSwitchComponent.svelte';
+    import NumericSliderComponent from './NumericSliderComponent.svelte';
+    import LimitedCheckboxComponent from './LimitedCheckboxComponent.svelte';
+    import LimitedRadioComponent from './LimitedRadioComponent.svelte';
+    import SwitchComponent from './BooleanSwitchComponent.svelte';
+    import ButtonComponent from './ButtonComponent.svelte';
+    import FragmentComponent from './FragmentComponent.svelte';
+    import { componentId, findCustomComponent } from '../index.js';
 
-    import type { Component } from 'svelte';
     import ErrorMarker from './ErrorMarker.svelte';
     import { selectedBoxes } from './stores/AllStores.svelte.js';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
+    import type { Component } from 'svelte';
 
     const LOGGER = RENDER_LOGGER;
 
@@ -76,75 +76,29 @@
 
     // css class name for when the node is selected
     let selectedCls: string = $derived.by(() => {
-        // console.log(`Render derived: selectedCls ${box?.id}`)
+        LOGGER.log(`Render derived: selectedCls ${box?.id}`)
         // the following is done in the afterUpdate(), because then we are sure that all boxes are rendered by their respective components
-        // console.log(
-        //   'setCurrentSelectedElement selectedBoxes: [' +
-        //   selectedBoxes.value.map(
-        //     (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
-        //   ) +
-        //   ']'
-        // );
-        let cls = 'render-component-unselected';
-
-        if (notNullOrUndefined(box)) {
-            let isSelected: boolean = selectedBoxes.value.includes(box);
-            // Ensure that the internal textbox inside an Action/Select/Reference box is selected if its parent box is.
-            if (isActionTextBox(box)) {
-                isSelected = isSelected || selectedBoxes.value.includes(box.parent);
-            }
-            if (isActionBox(box) || isSelectBox(box) || isReferenceBox(box)) {
-                isSelected = isSelected || selectedBoxes.value.includes(box._textBox);
-            }
-            if (isBooleanControlBox(box) || isLimitedControlBox(box)) {
-                // do not set extra class, the control itself handles being selected
-                cls = 'render-component-unselected';
-            } else {
-                cls = isSelected ? 'render-component-selected' : 'render-component-unselected';
-            }
+        LOGGER.log(
+          'setCurrentSelectedElement selectedBoxes: [' +
+          selectedBoxes.value.map(
+            (b) => b?.node?.freId() + '=' + b?.node?.freLanguageConcept() + '=' + b?.kind
+          ) +
+          ']'
+        );
+        let isSelected: boolean = selectedBoxes.value.includes(box);
+        // Ensure that the internal textbox inside an Action/Select/Reference box is selected if its parent box is.
+        if (isActionTextBox(box)) {
+            isSelected = isSelected || selectedBoxes.value.includes(box.parent);
         }
-        return cls;
-    });
-
-  
-    // Function to calculate how many levels up the selection will go
-    const getSelectionLevels = (box: Box): number => {
-        if (box.selectable) {
-            return 0; // This box itself is selectable
+        if (isActionBox(box) || isSelectBox(box) || isReferenceBox(box)) {
+            isSelected = isSelected || selectedBoxes.value.includes(box._textBox);
         }
-        
-        let levels = 0;
-        let currentBox = box.parent;
-        
-        while (currentBox && !currentBox.selectable) {
-            levels++;
-            currentBox = currentBox.parent;
+        if (isBooleanControlBox(box) || isLimitedControlBox(box)) {
+            // do not set extra class, the control itself handles being selected
+            return 'render-component-unselected';
+        } else {
+            return isSelected ? 'render-component-selected' : 'render-component-unselected';
         }
-        
-        return levels + 1; // +1 because we need to go up one more level to the selectable parent
-    };
-
-    // css class name for selectable vs non-selectable components
-    let selectableCls: string = $derived.by(() => {
-        let cls = '';
-        if (notNullOrUndefined(box)) {
-            
-            if (isLabelBox(box) || isLayoutBox(box)) {
-                // Calculate how many levels up the selection will go
-                const selectionLevels = getSelectionLevels(box);
-                
-                // Elements that go 1 level up (like "as the start day of the study") should be highlighted
-                // Elements that go 2+ levels up (like "First scheduled") should not be highlighted
-                const shouldHighlight = selectionLevels <= 1;
-                
-                // console.log(`Render selectableCls: box ${box.id} (${box.kind}) role=${box.role} selectable=${box.selectable} selectionLevels=${selectionLevels} shouldHighlight=${shouldHighlight}`);
-                cls = shouldHighlight ? 'render-component-selectable' : '';
-            } else if (box.selectable) {
-                // For other selectable boxes, use normal selectable logic
-                cls = 'render-component-selectable';
-            }
-        }
-        return cls;
     });
 
     // css class name for when the node is erroneous
@@ -169,9 +123,9 @@
     let ExternalComponent: Component<FreComponentProps<any>> | undefined = $state(undefined);
 
     const onClick = (event: MouseEvent) => {
-        // console.log(
-        //     'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
-        // );
+        LOGGER.log(
+            'RenderComponent.onClick for box ' + box.role + ', selectable:' + box.selectable
+        );
         // Note that click events on some components, like TextComponent, are already caught.
         // These components need to take care of setting the currently selected element themselves.
         editor.selectElementForBox(box);
@@ -181,17 +135,17 @@
 
     // Two separate effects, because they implement non-associated things
     $effect(() => {
-        // console.log(`Render effect1: set external component ${box?.id}`)
+        LOGGER.log(`Render effect1: set external component ${box?.id}`)
         if (isExternalBox(box)) {
             ExternalComponent = findCustomComponent(box.externalComponentName);
         }
     });
 
     $effect(() => {
-        // console.log(`Render effect2: set client rectangle function ${box?.id}`)
+        LOGGER.log(`Render effect2: set client rectangle function ${box?.id}`)
         if (notNullOrUndefined(box) && !isTextBox(box) ) {
             box.getClientRectangle = (): ClientRectangle => {
-                // console.log(`Render clientRect ${box.id} `)
+                LOGGER.log(`Render clientRect ${box.id} `)
                 return element?.getBoundingClientRect() || UndefinedRectangle
             }
         }
@@ -215,7 +169,7 @@
     <!--	svelte-ignore a11y_click_events_have_key_events -->
     <span
         {id}
-        class="render-component {errorCls} {selectedCls} {selectableCls}"
+        class="render-component {errorCls} {selectedCls}"
         onclick={onClick}
         bind:this={element}
         role="group"

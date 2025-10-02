@@ -21,12 +21,14 @@
         type SelectOption,
         TextBox,
         BehaviorExecutionResult,
-        isNullOrUndefined, notNullOrUndefined, jsonAsString
-    } from '@freon4dsl/core';
+        isNullOrUndefined, notNullOrUndefined, jsonAsString, MatchUtil, SPACEBAR
+    } from "@freon4dsl/core"
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
     import { selectedBoxes } from './stores/AllStores.svelte.js';
     import { clickOutsideConditional } from './svelte-utils/ClickOutside.js';
     import { type CaretDetails } from './svelte-utils/CaretDetails';
+    import { tick } from 'svelte';
+    import type DropdownCmp from "./DropdownComponent.svelte";
 
     const LOGGER = TEXTDROPDOWN_LOGGER;
 
@@ -36,6 +38,8 @@
     let textBox: TextBox = $state(box.textBox)!; // NB the initial value must be here, the effect starts to function after initialization
     // True if box is a referencebox and referred is in the same unit
     let selectAbleReference: boolean = $state(false)
+    // the dropdown part of this component
+    let dropdownCmp: DropdownCmp | undefined = $state(undefined);
 
     $effect(() => {
         // runs after the initial onMount
@@ -140,7 +144,7 @@
         }
         allOptions = getOptions();
         setFiltered(
-            allOptions.filter((o) => o.label.startsWith(text.substring(0, details.caret)))
+            MatchUtil.partiallyMatchingOptions(text.substring(0, details.caret), allOptions)
         );
         makeFilteredOptionsUnique();
         // Only one option and has been fully typed in, use this option without waiting for the ENTER key
@@ -149,7 +153,7 @@
         );
         if (
             filteredOptions.length === 1 &&
-            filteredOptions[0].label === text &&
+            MatchUtil.isPrefixOf(text, filteredOptions[0].label) &&
             filteredOptions[0].label.length === details.caret
         ) {
             storeOrExecute(filteredOptions[0]);
@@ -173,7 +177,7 @@
         );
         allOptions = getOptions();
         setFiltered(
-            allOptions.filter((o) => o.label.startsWith(text.substring(0, details.caret)))
+            MatchUtil.partiallyMatchingOptions(text.substring(0, details.caret), allOptions)
         );
         makeFilteredOptionsUnique();
     };
@@ -182,8 +186,17 @@
         dropdownShown = false;
     };
 
-    const showDropdown = () => {
+    const showDropdown = async () => {
         dropdownShown = true;
+        // wait until DOM updates and styles/layout settle
+        await tick();
+
+        // now wait one more frame so images/css apply
+        requestAnimationFrame(() => {
+            if (dropdownCmp) {
+                dropdownCmp?.scrollIntoViewIfNeeded();
+            }
+        });
     };
 
     function makeFilteredOptionsUnique() {
@@ -277,35 +290,7 @@
                     case ENTER: { 
                         // user wants current selection
                         // find the chosen option
-                        let chosenOption: SelectOption | null = null;
-                        if (filteredOptions.length <= 1) {
-                            if (filteredOptions.length !== 0) {
-                                // if there is just one option left, choose that one
-                                chosenOption = filteredOptions[0];
-                            } else {
-                                // there are no valid options left
-                                editor.setUserMessage('No valid selection');
-                            }
-                        } else {
-                            // find the selected option and choose that one
-                            const index = filteredOptions.findIndex((o) => o.id === selected?.id);
-                            if (index >= 0 && index < filteredOptions.length) {
-                                chosenOption = filteredOptions[index];
-                            }
-                        }
-                        // store or execute the option
-                        if (notNullOrUndefined(chosenOption)) {
-                            storeOrExecute(chosenOption);
-                        } else {
-                            //  no valid option, restore the original text
-                            setText(textBox.getText()); // line : using setText
-                            // stop editing
-                            isEditing = false;
-                            hideDropdown();
-                            editor.selectNextLeaf();
-                        }
-                        event.preventDefault();
-                        event.stopPropagation();
+                        handleEnterOrControlSpace(event)
                         break;
                     }
                     default: {
@@ -315,9 +300,13 @@
             }
         } else {
             // this component was selected using keystrokes, not by clicking, therefore dropDownShown = false
-            if (!event.ctrlKey && !event.altKey) {
+            if (event.ctrlKey && event.key === SPACEBAR) {
+                LOGGER.log("CONTRIOL_SPACE")
+                handleEnterOrControlSpace(event)
+            } else if (!event.ctrlKey && !event.altKey) {
                 switch (event.key) {
                     case ENTER: {
+                        LOGGER.log("ENTER")
                         // Check whether there is only one option, if so execute immediately
                         const allOptions = getOptions();
                         if (allOptions.length === 1) {
@@ -338,6 +327,39 @@
             }
         }
     };
+    
+    const handleEnterOrControlSpace = (event: KeyboardEvent): void => {
+        let chosenOption: SelectOption | null = null;
+        if (filteredOptions.length <= 1) {
+            if (filteredOptions.length !== 0) {
+                // if there is just one option left, choose that one
+                chosenOption = filteredOptions[0];
+            } else {
+                // there are no valid options left
+                editor.setUserMessage('No valid selection');
+            }
+        } else {
+            // find the selected option and choose that one
+            const index = filteredOptions.findIndex((o) => o.id === selected?.id);
+            if (index >= 0 && index < filteredOptions.length) {
+                chosenOption = filteredOptions[index];
+            }
+        }
+        // store or execute the option
+        if (notNullOrUndefined(chosenOption)) {
+            storeOrExecute(chosenOption);
+        } else {
+            //  no valid option, restore the original text
+            setText(textBox.getText()); // line : using setText
+            // stop editing
+            isEditing = false;
+            hideDropdown();
+            editor.selectNextLeaf();
+        }
+        event.preventDefault();
+        event.stopPropagation();
+
+    }
 
     /**
      * This custom event is triggered by a click in the dropdown. The option that is clicked
@@ -379,14 +401,11 @@
                 setFiltered(allOptions.filter(() => true));
             } else {
                 setFiltered(
-                    allOptions.filter((o) => {
-                        LOGGER.log(`    startsWith text [${text}], option is ${o.id}`);
-                        return o?.label?.startsWith(text.substring(0, details.caret));
-                    })
+                    MatchUtil.partiallyMatchingOptions(text.substring(0, details.caret), allOptions)
                 );
             }
         } else {
-            setFiltered(allOptions.filter((o) => o?.label?.startsWith(text.substring(0, 0))));
+            setFiltered(MatchUtil.partiallyMatchingOptions(text.substring(0, 0), allOptions))
         }
         makeFilteredOptionsUnique();
     };
@@ -421,9 +440,11 @@
         isEditing = false;
         if (dropdownShown) {
             allOptions = getOptions();
-            let validOption = allOptions.find((o) => o.label === text);
-            if (!!validOption && validOption.id !== noOptionsId) {
-                storeOrExecute(validOption);
+            let matchingOptions: SelectOption[] = MatchUtil.fullMatchingOptions(text, allOptions)
+            // let validOption = allOptions.find((o) => o.label === text);
+            if (matchingOptions.length === 1 && MatchUtil.isPrefixOf(text, matchingOptions[0].label)) {
+            // if (!!validOption && validOption.id !== noOptionsId) {
+                storeOrExecute(matchingOptions[0]);
             } else {
                 // no valid option, restore the previous value
                 setText(textBox.getText());
@@ -482,8 +503,18 @@
      * @param details
      */
     function fromInner(eventType: string, details?: CaretDetails) {
+        LOGGER.log(`fromInner (toParent) event: ${eventType}`)
         switch (eventType) {
-            case 'showDropdown': { showDropdown(); break;}
+            case 'showDropdown': {
+                showDropdown(); 
+                allOptions = getOptions();
+                setFiltered(
+                    allOptions
+                );
+                makeFilteredOptionsUnique();
+
+                break;
+            }
             case 'hideDropdown': { hideDropdown(); break;}
             case 'startEditing': { startEditing(details as CaretDetails); break;} // has details
             case 'caretChanged': { caretChanged(details as CaretDetails); break;} // has details
@@ -507,7 +538,7 @@
     class="text-dropdown-component {box.cssClass}"
     role="none"
 >
-    <div class="text-dropdown-component-wrapper">
+    <div class="text-dropdown-component-text-wrapper">
         <TextComponent
             {editor}
             box={textBox}
@@ -530,6 +561,7 @@
     </div>
     {#if dropdownShown}
         <DropdownComponent
+            bind:this={dropdownCmp}
             bind:selected
             bind:options={filteredOptions}
             selectionChanged={itemSelected}

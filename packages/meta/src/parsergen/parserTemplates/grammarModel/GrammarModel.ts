@@ -48,11 +48,14 @@ skip SINGLE_LINE_COMMENT = "//[^\\\\r\\\\n]*" ;
 skip MULTI_LINE_COMMENT = "/\\\\*[^*]*\\\\*+(?:[^*/][^*]*\\\\*+)*/" ;
 
 // the predefined basic types
-leaf identifier          = "\\\`[a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/][a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/]*\\\`" ;
+leaf identifier        = "\\\`[a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/][a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/]*\\\`" ;
 /* see https://stackoverflow.com/questions/37032620/regex-for-matching-a-string-literal-in-java */
-leaf stringLiteral       = '"' "[^\\\\"\\\\\\\\]*(\\\\\\\\.[^\\\\"\\\\\\\\]*)*" '"' ;
-leaf numberLiteral       = "[0-9]+";
-leaf booleanLiteral      = '${this.falseValue}' | '${this.trueValue}';
+leaf optStringLiteral  = "<no-value>" | stringLiteral ;
+leaf stringLiteral     = '"' "[^\\\\"\\\\\\\\]*(\\\\\\\\.[^\\\\"\\\\\\\\]*)*" '"' ;
+leaf optNumberLiteral  = "<no-value>" | numberLiteral;
+leaf numberLiteral     = "[0-9]+";
+leaf optBooleanLiteral = "<no-value>" | booleanLiteral;
+leaf booleanLiteral    = '${this.falseValue}' | '${this.trueValue}';
 
 }\`; // end of grammar`;
     }
@@ -78,11 +81,11 @@ leaf booleanLiteral      = '${this.falseValue}' | '${this.trueValue}';
         this.parts.forEach((part) =>
             part.rules.map((rule) => {
                 const name: string = rule.ruleName;
-                handlerRegistration += `super.registerFor('${name}', (n, c, s) => this.${this.getPartAnalyserName(part)}.transform${name}(n, c, s));`;
+                handlerRegistration += `super.registerFor('${name}', (n: SpptDataNodeInfo, c: KtList<object>, s: Sentence) => this.${this.getPartAnalyserName(part)}.transform${name}(n, c, s));`;
             }),
         );
 
-        handlerRegistration += `super.registerFor('${refRuleName}', (n, c, s) => this.transform${refRuleName}(n, c, s));`
+        handlerRegistration += `super.registerFor('${refRuleName}', (n: SpptDataNodeInfo, c: KtList<object>, s: Sentence) => this.transform${refRuleName}(n, c, s));`
 
         const imports = new Imports(relativePath)
         imports.core = new Set([Names.FreParseLocation, Names.FreNamedNode, Names.FreNode, Names.FreNodeReference, Names.FreOwnerDescriptor])
@@ -95,9 +98,9 @@ leaf booleanLiteral      = '${this.falseValue}' | '${this.trueValue}';
             SyntaxAnalyserByMethodRegistrationAbstract,
             type KtList,
             type Sentence,
-            type SpptDataNodeInfo
-        } from "net.akehurst.language-agl-processor/net.akehurst.language-agl-processor.mjs";
-        import { type SpptDataNode } from "net.akehurst.language-agl-processor";
+            type SpptDataNodeInfo,
+            type SpptDataNode
+        } from "net.akehurst.language-agl-processor";
         import { ${this.parts.map((part) => `${Names.unitAnalyser(this.language, part.unit)}`).join(", ")} } from "./index.js";
 
         export enum PrimValueType {

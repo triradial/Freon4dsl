@@ -330,7 +330,7 @@ function addListElement(
     // targetPropertyName ${propertyName}, index: ${index}`);
 
     // make the change, if the property is a list and the type of the new element conforms to the type of elements in the list
-    const newElement: FreNode = FreLanguage.getInstance().classifier(typeOfAdded)?.creator({});
+    const newElement: FreNode = FreLanguage.getInstance().concept(typeOfAdded)?.creator({});
     if (newElement === undefined || newElement === null) {
         console.error("New element undefined"); // TODO Find out why this happens sometimes
         return;
@@ -476,7 +476,7 @@ export type PropertyInfo = {
  * @param propertyName
  */
 function getPropertyInfo(element: FreNode, propertyName: string): PropertyInfo {
-    console.log(`element: ${element.freId()}, element type: ${element.freLanguageConcept()}, propertyName: ${propertyName}`)
+    LOGGER.log(`element: ${element.freId()}, element type: ${element.freLanguageConcept()}, propertyName: ${propertyName}`)
     const property = element[propertyName];
     const propInfo = FreLanguage.getInstance().classifierProperty(element.freLanguageConcept(), propertyName);
     const isList: boolean = propInfo.isList;

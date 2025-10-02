@@ -6,8 +6,10 @@ import {
     FreEditor,
     FreErrorSeverity,
     FreLogger,
-    isActionTextBox, jsonAsString,
+    isActionTextBox,
+    jsonAsString,
     notNullOrUndefined,
+    SPACEBAR,
     TextBox
 } from '@freon4dsl/core';
 import { executeCustomKeyboardShortCut } from './CommonFunctions.js';
@@ -181,16 +183,23 @@ export class TextComponentHelper {
                         this._dispatcher("hideDropdown")
                         break;
                     case 'x': // ctrl-x
+                        LOGGER.log('TextComponentHelper cut')
                         this.cut();
                         break;
                     case 'a': // ctrl-a
                         // todo SELECT ALL in focused control
                         break;
                     case 'c': // ctrl-c
+                        LOGGER.log('TextComponentHelper copy')
                         this.copy(event, editor);
                         break;
                     case 'v': // ctrl-v
+                        LOGGER.log('TextComponentHelper paste')
                         this.paste(event);
+                        break;
+                    case SPACEBAR:
+                        LOGGER.log('TextComponentHelper startEditing')
+                        this._dispatcher("startEditing")
                         break;
                 }
             } else {
@@ -249,6 +258,7 @@ export class TextComponentHelper {
     getCaretPosition(event: KeyboardEvent) {
         // the following type cast satisfies the type checking, as the event can only be generated from the <input> element
         const target = event.target as HTMLInputElement;
+        LOGGER.log(`getCaretPosition ${target.selectionStart} - ${target.selectionEnd}`)
         this.setFromAndTo(target.selectionStart, target.selectionEnd);
     }
 
@@ -330,7 +340,7 @@ export class TextComponentHelper {
         // Firefox only supports reading the clipboard in browser extensions, using the "clipboardRead" extension permission.
         // TODO add a check on the browser used
         // navigator.clipboard.readText().then(
-        // 		clipText => LOGGER.log('adding ' + clipText + ' after ' + this._getText()[to - 1]));
+        // 		clipText => LOGGER.log('adding ' + clipText + ' after ' + this._getText()[this._to - 1]));
         // TODO add the clipText to 'text'
     }
 

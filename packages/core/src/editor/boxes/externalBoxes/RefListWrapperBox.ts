@@ -1,5 +1,6 @@
 import { Box } from "../Box.js";
 import type { FreNode, FreNodeReference } from "../../../ast/index.js";
+import { FreUtils } from "../../../util/index.js";
 import { AbstractPropertyWrapperBox } from "./AbstractPropertyWrapperBox.js";
 
 /**
@@ -16,7 +17,8 @@ export class RefListWrapperBox extends AbstractPropertyWrapperBox {
         childBox: Box,
         initializer?: Partial<RefListWrapperBox>,
     ) {
-        super(externalComponentName, node, role, propertyName, childBox, initializer);
+        super(externalComponentName, node, role, propertyName, childBox);
+        FreUtils.initializeObject(this, initializer);
     }
 
     getPropertyValue(): FreNodeReference<any>[] {

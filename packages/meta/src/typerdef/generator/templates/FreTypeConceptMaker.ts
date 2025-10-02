@@ -17,7 +17,10 @@ export class FreTypeConceptMaker {
         imports.core = new Set<string>([Names.FreUtils, Names.FreWriter, Names.FreParseLocation]);
         if (!hasSuper) {
             imports.core.add(this.freTypeName);
-            imports.core.add(Names.FreNode);
+            imports.core.add(Names.FreNode).add(Names.notNullOrUndefined);
+        }
+        if (concept.allProperties().length > 0) {
+            imports.core.add("notNullOrUndefined")
         }
         imports.language = this.findModelImports(concept);
         imports.typer = this.findTypeImports(concept, hasSuper);
@@ -53,8 +56,8 @@ export class FreTypeConceptMaker {
 
                 ${
                     !hasSuper
-                        ? `toAstElement(): ${Names.FreNode} {
-                    return null;
+                        ? `toAstElement(): ${Names.FreNode} | undefined {
+                    return undefined;
                 }`
                         : ``
                 }

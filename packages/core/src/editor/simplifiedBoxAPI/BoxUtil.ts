@@ -41,6 +41,7 @@ import { UtilPartHelpers } from "./box-util-helpers/UtilPartHelpers.js";
 import { UtilLimitedHelpers } from "./box-util-helpers/UtilLimitedHelpers.js";
 
 export class FreListInfo {
+    static NullListInfo: FreListInfo = { text: '', type: ''};
     text: string;
     type: string;
 }
@@ -150,7 +151,7 @@ export class BoxUtil {
     public static booleanBox(
         node: FreNode,
         propertyName: string,
-        labels: { yes: string; no: string } = {
+        labels: { yes: string; no: string, unknown?: string } = {
             yes: "yes",
             no: "no",
         },
@@ -516,7 +517,6 @@ export class BoxUtil {
         initializer?: Partial<PartListWrapperBox>,
     ): PartListWrapperBox {
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName) + "-wrapper";
-        // console.log(`BoxUtil.partListWrapperBox: roleName=${roleName} initializer=`, initializer);
         return new PartListWrapperBox(externalComponentName, node, roleName, propertyName, childBox, initializer);
     }
 

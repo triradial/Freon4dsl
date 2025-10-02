@@ -89,12 +89,21 @@ export class FreUtils {
 // Initialize the default ID providers
 FreUtils.resetId();
 
-export function isNullOrUndefined(obj: Object | null | undefined): obj is null | undefined {
-    return obj === undefined || obj === null;
+export function isNullOrUndefined<T>(obj: T | null | undefined): obj is null | undefined {
+    return obj == null; // catches both null and undefined
 }
 
-export function notNullOrUndefined(obj: Object | null | undefined): obj is Object {
-    return obj !== undefined && obj !== null;
+
+export function notNullOrUndefined<T>(obj: T | null | undefined): obj is NonNullable<T> {
+    return obj != null; // catches both null and undefined
+}
+
+/**
+ * Is string `str` empty, meaning null, undefined or the empty string.
+ * @param str
+ */
+export function isEmpty(str: string | null | undefined): str is null | undefined {
+    return str === undefined || str === null || str === "";
 }
 
 export function startWithUpperCase(word: string): string {
