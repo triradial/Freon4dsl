@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AST, FreChangeManager, FreEditor } from "@freon4dsl/core";
+    import { AST, FreChangeManager, FreEditor, FrePrimDelta, FrePartDelta, FrePrimListDelta, FrePartListDelta } from "@freon4dsl/core";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { Tabs } from "@skeletonlabs/skeleton-svelte";
@@ -101,16 +101,49 @@
 
         // Subscribe to FreChangeManager changes
         const changeCallback = (delta) => {
-            if (delta.oldValue != delta.newValue) {
-                // console.debug("[Study] Detected change from FreChangeManager:", delta);
+            if (delta instanceof FrePrimDelta) {
+                if (delta.oldValue != delta.newValue) {
+                    console.debug("✅ Data changed from FreChangeManager:", delta);
+                    debouncedSave();
+                }
+            } else             if (delta instanceof FrePrimListDelta) {
+                console.debug("✅ List change from FreChangeManager:", delta);
                 debouncedSave();
+            } else if (delta instanceof FrePartListDelta) {
+                console.debug("✅ Part List change from FreChangeManager:", delta);
+                debouncedSave();
+            } else if (delta instanceof FrePartDelta) {
+                console.debug("✅ Part change from FreChangeManager:", delta);
+                debouncedSave();
+            } else {
+                console.warn("⚠️ Unknown change from FreChangeManager:", delta);
             }
         };
         FreChangeManager.getInstance().subscribeToPrimitive(changeCallback);
+        FreChangeManager.getInstance().subscribeToPart(changeCallback);
+        FreChangeManager.getInstance().subscribeToListElement(changeCallback);
+        FreChangeManager.getInstance().subscribeToList(changeCallback);
         unsubscribeChangeManager = () => {
-            const arr = (FreChangeManager.getInstance() as any).changePrimCallbacks;
-            const idx = arr.indexOf(changeCallback);
-            if (idx !== -1) arr.splice(idx, 1);
+            const manager = FreChangeManager.getInstance();
+            // Remove from primitive callbacks
+            const primArr = manager.changePrimCallbacks;
+            const primIdx = primArr.indexOf(changeCallback);
+            if (primIdx !== -1) primArr.splice(primIdx, 1);
+
+            // Remove from part callbacks
+            const partArr = manager.changePartCallbacks;
+            const partIdx = partArr.indexOf(changeCallback);
+            if (partIdx !== -1) partArr.splice(partIdx, 1);
+
+            // Remove from list element callbacks
+            const listElemArr = manager.changeListElemCallbacks;
+            const listElemIdx = listElemArr.indexOf(changeCallback);
+            if (listElemIdx !== -1) listElemArr.splice(listElemIdx, 1);
+
+            // Remove from list callbacks
+            const listArr = manager.changeListCallbacks;
+            const listIdx = listArr.indexOf(changeCallback);
+            if (listIdx !== -1) listArr.splice(listIdx, 1);
         };
     });
 

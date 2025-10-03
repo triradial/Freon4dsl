@@ -395,7 +395,7 @@ main {
 .drag-handle {
   cursor: move !important;
   z-index: 10 !important;
-  margin-top: 0.5rem !important;
+  margin-top: 0.35rem !important;
 }
 
 /* #endregion */
@@ -430,6 +430,18 @@ main {
 }
 
 .item-group.type2 {
+  height: 2rem;
+}
+
+.item-group.type3 {
+  height: 2rem;
+}
+
+.item-group.type4 {
+  height: 2rem;
+}
+
+.item-group.type5 {
   height: 2rem;
 }
 
