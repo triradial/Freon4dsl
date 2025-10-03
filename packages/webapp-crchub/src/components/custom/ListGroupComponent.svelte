@@ -36,6 +36,7 @@
 
     const refresh = (why?: string): void => {
         LOGGER.log("REFRESH (" + why + ")");
+        box.childBox?.refreshComponent(why);
     };
 
     onMount(() => {
