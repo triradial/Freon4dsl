@@ -1,6 +1,6 @@
 
 <script lang="ts">
-    import { AST, FreEditor, FreLogger, PartWrapperBox } from "@freon4dsl/core";
+    import { AST, FreLogger, PartWrapperBox } from "@freon4dsl/core";
     import { componentId, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onMount } from "svelte";
     // ts-ignore
@@ -43,21 +43,26 @@
     // Please, set the focus to the first editable/selectable element in this component.
     async function setFocus(): Promise<void> {
         // Focus the hidden input field
-        const hiddenInput = document.querySelector(`#${id} .hidden-input`) as HTMLInputElement;
-        if (hiddenInput) {
-            hiddenInput.focus();
-        }
+        // const hiddenInput = document.querySelector(`#${id} .hidden-input`) as HTMLInputElement;
+        // if (hiddenInput) {
+        //     hiddenInput.focus();
+        // }
+        box.parent?.setFocus();
     }
 
     const refresh = (why?: string): void => {
     };
 
     onMount(() => {
-        console.log("TabFixComponent: onMount1");
+        console.log("TabFixComponent: onMount2");
+        box.setFocus = setFocus;
+        box.refreshComponent = refresh;
     });
 
     // Replaces afterUpdate()
     $effect(() => {
+        box.parent?.setFocus();
+        box.parent?.refreshComponent();
     });
 
 
