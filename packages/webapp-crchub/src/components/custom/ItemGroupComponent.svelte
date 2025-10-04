@@ -49,13 +49,12 @@
     });
 
     $effect(() => {
-        // Extract children from the box - this needs to be reactive to box changes
         box.refreshComponent = refresh;
-        const fragmentBox = box.childBox as FragmentBox
-        const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox
-        const children = verticalLayoutBox.children
-        otherChildren = children.slice(1)
-        nameBox = children[0] as TextBox
+        const fragmentBox = box.childBox as FragmentBox;
+        const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox;
+        const children = verticalLayoutBox.children;
+        otherChildren = children.slice(1);
+        nameBox = children[0] as TextBox;
     })
 
     const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
