@@ -120,5 +120,14 @@
     "phase": "",
     "therapeuticArea": "",
     "currentProtocol": ""
+  },
+  {
+    "id": "5dab56ae-bfae-48a8-8e0d-f3180716faf3",
+    "name": "PersonFix",
+    "title": "",
+    "status": "Planning",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
   }
 ]

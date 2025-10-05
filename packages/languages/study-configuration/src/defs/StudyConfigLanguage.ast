@@ -79,7 +79,7 @@ concept Step {
     description: Description;
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
     references: Reference[];
-    reference people: Person[];
+    people: PersonReference[];
     systems: SystemAccess[];
 }
 
@@ -126,6 +126,10 @@ concept AccessedAPhoneNumber implements AccessedAt {
 
 concept StaffRole {
     name: identifier;
+}
+
+concept PersonReference {
+    reference person: Person;
 }
 
 concept Person {

@@ -123,6 +123,13 @@ Person {
     ]
 }
 
+PersonReference {
+    [
+        Person: ${person}
+    ]
+}
+
+
 Reference {
     [
         [fragment referenceDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Ref"]
