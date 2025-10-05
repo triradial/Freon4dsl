@@ -80,7 +80,7 @@ concept Step {
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
     references: Reference[];
     people: AbstractPerson[];
-    systems: SystemAccess[];
+    systems: AbstractSystemAccess[];
 }
 
 interface WorkflowDecision {
@@ -100,7 +100,10 @@ concept Description {
     rawText: string = " ";
 }
 
-concept SystemAccess {
+abstract concept AbstractSystemAccess {
+}
+
+concept SystemAccess base AbstractSystemAccess {
     name: identifier;
     description: Description;
     isShared: boolean;
@@ -109,7 +112,7 @@ concept SystemAccess {
     robotMappings?: RobotMapping;
 }
 
-concept SystemAccessReference {
+concept SystemAccessReference base AbstractSystemAccess {
     reference system: SystemAccess;
 }
 

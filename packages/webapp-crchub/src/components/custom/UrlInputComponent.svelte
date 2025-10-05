@@ -42,6 +42,7 @@
         }, 0);
     }
 
+
     const refresh = (why?: string): void => {
         getValue();
     };
@@ -96,6 +97,7 @@
     }
 
     let showError = $state(false);
+    
     $effect(() => {
         const trimmed = value.trim();
         const next = isTouched && trimmed.length > 0 && !isValidUrl(trimmed);
@@ -104,16 +106,14 @@
         }
         console.log("[UrlInput] showError computed:", showError, "touched:", isTouched, "value:", trimmed);
     });
-    $effect(() => {
-        console.log("[UrlInput] showError:", showError, "touched:", isTouched, "value:", value.trim());
-    });
+
 </script>
 
-<span class="inline-flex flex-col align-middle">
+<span class="inline-flex flex-col align-middle w-full">
     <span class="relative inline-block">
         <input
             bind:this={inputElement}
-            class="text-component-input pr-8"
+            class="text-component-input pr-8 w-full"
             type="url"
             placeholder="https://example.com"
             bind:value={value}
