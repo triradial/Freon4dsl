@@ -12,7 +12,8 @@ global {
         AbbreviationComponent,
         DisplayNothingComponent,
         TaskReferenceComponent,
-        TabFixComponent
+        TabFixComponent,
+        ReferenceComponent
     }
 }
 
@@ -113,7 +114,7 @@ AccessedAPhoneNumber {
 Person {
     [
         [fragment personDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Person"]
-    ]
+    ] trigger = "Person just for this task"
     fragment personDetails [
         ${name}
         Email: ${email}
@@ -125,7 +126,10 @@ Person {
 
 PersonReference {
     [
-        Person: ${person}
+        [fragment personReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="Person"]
+    ] trigger = "Staff"
+    fragment personReferenceDetails [
+        ${person}
     ]
 }
 

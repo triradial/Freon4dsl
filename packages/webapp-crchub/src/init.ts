@@ -12,6 +12,7 @@ import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 import ItemGroupComponent2 from "./components/custom/ItemGroupComponent2.svelte";
 import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
+import ReferenceComponent from "./components/custom/ReferenceComponent.svelte";
 import TabFixComponent from "./components/custom/TabFixComponent.svelte";
 import TaskReferenceComponent from "./components/custom/TaskReferenceComponent.svelte";
 import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
@@ -77,6 +78,7 @@ setCustomComponents([
     { component: AbbreviationComponent, knownAs: "AbbreviationComponent" },
     { component: TaskReferenceComponent, knownAs: "TaskReferenceComponent" },
     { component: TabFixComponent, knownAs: "TabFixComponent" },
+    { component: ReferenceComponent, knownAs: "ReferenceComponent" },
 ])
 
 LOGGER.log('--- END ---');

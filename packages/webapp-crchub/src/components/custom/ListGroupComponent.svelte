@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AST, FreEditor, FreLanguage, FreLogger, PartWrapperBox } from "@freon4dsl/core";
+    import { AST, FreLanguage, FreLogger, PartWrapperBox, type FreNode } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onMount } from "svelte";
 // ts-ignore
@@ -72,15 +72,16 @@
             const node = box.node;
             const typeName = node.freLanguageConcept();
             const property = language.classifierProperty(typeName, propertyName);
+            let newConceptName = "";
             if (property.type) {
-                let newConceptName = property.type;
+                newConceptName = property.type;
                 if (newConceptName.startsWith('Abstract')) {
                     newConceptName = newConceptName.slice(8);
                 } else if (newConceptName === "EventTask") { // HACK: Needed because of the multiple kinds of tasks
                     newConceptName = "Task";
                 }
                 const newElement = language.createConceptOrUnit(newConceptName);
-                box.getPropertyValue().push(newElement);
+                (box.getPropertyValue() as unknown as FreNode[]).push(newElement);
                 LOGGER.log("Added item: " + newConceptName);
              } else {
                 LOGGER.error("Cannot add item " + newConceptName);
