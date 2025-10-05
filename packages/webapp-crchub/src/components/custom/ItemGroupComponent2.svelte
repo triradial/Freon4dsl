@@ -74,16 +74,16 @@
     onMount(() => {
         box.refreshComponent = refresh
         box.setFocus = setFocus
-        const fragmentBox = box.childBox as FragmentBox
-        const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox
-        const children = verticalLayoutBox.children
-        const refWrapperBox = children[0] as RefWrapperBox
-        referenceBox = refWrapperBox.childBox as ReferenceBox
-    })
 
-    // Replaces afterUpdate()
+    });
+
     $effect(() => {
-        box.refreshComponent = refresh
+        box.refreshComponent = refresh;
+        const fragmentBox = box.childBox as FragmentBox;
+        const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox;
+        const children = verticalLayoutBox.children;
+        const refWrapperBox = children[0] as RefWrapperBox;
+        referenceBox = refWrapperBox.childBox as ReferenceBox;
     })
 
     const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {

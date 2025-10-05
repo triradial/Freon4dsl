@@ -46,19 +46,15 @@
     onMount(() => {
         box.refreshComponent = refresh;   
         box.setFocus = setFocus;
-        const fragmentBox = box.childBox as FragmentBox
-        const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox
-        const children = verticalLayoutBox.children
-        otherChildren = children.slice(1)
-        nameBox = children[0] as TextBox
-        // console.log("ItemGroupComponent onMount nameBox: ", nameBox);
-        // console.log("ItemGroupComponent onMount children: ", children);
-        // console.log("ItemGroupComponent onMount otherChildren: ", otherChildren);
     });
 
     $effect(() => {
-        // console.log("$effect nameBox: ", nameBox);
         box.refreshComponent = refresh;
+        const fragmentBox = box.childBox as FragmentBox;
+        const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox;
+        const children = verticalLayoutBox.children;
+        otherChildren = children.slice(1);
+        nameBox = children[0] as TextBox;
     })
 
     const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
