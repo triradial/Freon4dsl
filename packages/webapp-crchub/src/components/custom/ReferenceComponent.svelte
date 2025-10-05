@@ -70,8 +70,6 @@
             event.stopPropagation();
         }
         AST.change(() => {
-            // console.log("deleteItem box: ", box);
-            // console.log("deleteItem box.node: ", box.node);
             const ownerDescriptor = box.node.freOwnerDescriptor();
             const parent = ownerDescriptor.owner;
             const propertyName = ownerDescriptor.propertyName;
@@ -79,7 +77,6 @@
 
             if (parent && propertyName && typeof index === "number" && index >= 0) {
                 parent[propertyName].splice(index, 1);
-                LOGGER.log(`Removed item at index ${index} from ${propertyName}`);
             } else {
                 LOGGER.log("Could not determine parent, property name, or index for deletion");
             }
