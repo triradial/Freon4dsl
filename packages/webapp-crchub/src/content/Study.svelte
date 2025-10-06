@@ -84,19 +84,19 @@
 
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
-        //TODO: determine if this is needed. Added to make sure that the projections are available.
-        dslEditor.projection.addProjection("schedulingAndChecklistsShow");
-        dslEditor.projection.addProjection("schedulingShow");
-        dslEditor.projection.addProjection("checklistsShow");
-        dslEditor.projection.addProjection("sharedTasksShow");
-        dslEditor.projection.addProjection("referencesShow");
-        dslEditor.projection.addProjection("systemsShow");
-        dslEditor.projection.addProjection("peopleShow");
-        dslEditor.projection.addProjection("peopleSystemsShow");
-        dslEditor.projection.addProjection("peopleReferencesShow");
-        dslEditor.projection.addProjection("systemsReferencesShow");
-        dslEditor.projection.addProjection("peopleSystemsReferencesShow");
-        dslEditor.projection.addProjection("descriptionsShow");
+        // //TODO: determine if this is needed. Added to make sure that the projections are available.
+        // dslEditor.projection.addProjection("schedulingAndChecklistsShow");
+        // dslEditor.projection.addProjection("schedulingShow");
+        // dslEditor.projection.addProjection("checklistsShow");
+        // dslEditor.projection.addProjection("sharedTasksShow");
+        // dslEditor.projection.addProjection("referencesShow");
+        // dslEditor.projection.addProjection("systemsShow");
+        // dslEditor.projection.addProjection("peopleShow");
+        // dslEditor.projection.addProjection("peopleSystemsShow");
+        // dslEditor.projection.addProjection("peopleReferencesShow");
+        // dslEditor.projection.addProjection("systemsReferencesShow");
+        // dslEditor.projection.addProjection("peopleSystemsReferencesShow");
+        // dslEditor.projection.addProjection("descriptionsShow");
         await initializeStudy();
 
         // Subscribe to FreChangeManager changes
@@ -161,28 +161,31 @@
 
     // Show the projections that are enabled in the study configuration.
     function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
-        console.log("all projections: ", dslEditor.projection.projectionNames());
         let names = [];
-        // Scheduling and checklists are both part of Event so they need combined and separate projections.
-        if (studyConfiguration.showScheduling && studyConfiguration.showChecklists) {
-            names.push("schedulingAndChecklistsShow");
-            console.log("schedulingAndChecklistsShow");
-        } else if (studyConfiguration.showScheduling) {
-            names.push("schedulingShow");
-            console.log("schedulingShow");
-        } else if (studyConfiguration.showChecklists) {
-            console.log("checklistsShow");
-            names.push("checklistsShow");
-        }
-        if (studyConfiguration.showSharedTasks) {
-            names.push("sharedTasksShow");
-        }
-        
-        // Handle combinations of people, systems, and references
+
+        const showScheduling = studyConfiguration.showScheduling;
+        const showChecklists = studyConfiguration.showChecklists;
+        const showSharedTasks = studyConfiguration.showSharedTasks;
         const showPeople = studyConfiguration.showPeople;
         const showSystems = studyConfiguration.showSystems;
         const showReferences = studyConfiguration.showReferences;
+        const showDescriptions = studyConfiguration.showDescriptions;
+
+        // Scheduling and checklists are both part of Event so they need combined and separate projections.
+        if (showScheduling && showChecklists) {
+            names.push("schedulingAndChecklistsShow");
+        } else if (showScheduling) {
+            names.push("schedulingShow");
+        } else if (showChecklists) {
+            names.push("checklistsShow");
+        }
+
+        // Shared tasks are part of AbstractTask so they need a separate projection.
+        if (showSharedTasks) {
+            names.push("sharedTasksShow");
+        }
         
+        // Handle combinations of people, systems, and references  
         if (showPeople && showSystems && showReferences) {
             names.push("peopleSystemsReferencesShow");
         } else if (showPeople && showSystems) {
@@ -213,15 +216,12 @@
         const proj = dslEditor.projection;
     
         AST.change(() => {
-            console.log("Enabling projections:", names);
             proj.enableProjections(names);
-            console.log("Enabled projections after:", proj.enabledProjections());
 
             // Let the editor know that the projections have changed.
             // TODO: This should go automatically through mobx.
             //       But observing the projections array does not work as expected.
             runInAction( () => {
-                console.log("Incrementing forceRecalculateProjection from", dslEditor.forceRecalculateProjection, "to", dslEditor.forceRecalculateProjection + 1);
                 dslEditor.forceRecalculateProjection++;
             });
             // redo the validation to set the errors in the new box tree
