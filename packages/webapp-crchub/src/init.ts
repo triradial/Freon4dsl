@@ -14,6 +14,7 @@ import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
 import PhoneInputComponent from "./components/custom/PhoneInputComponent.svelte";
 import ReferenceComponent from "./components/custom/ReferenceComponent.svelte";
+import SingleLineItemComponent from "./components/custom/SingleLineItemComponent.svelte";
 import TabFixComponent from "./components/custom/TabFixComponent.svelte";
 import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
 import UrlInputComponent from "./components/custom/UrlInputComponent.svelte";
@@ -81,6 +82,7 @@ setCustomComponents([
     { component: ReferenceComponent, knownAs: "ReferenceComponent" },
     { component: UrlInputComponent, knownAs: "UrlInputComponent" },
     { component: PhoneInputComponent, knownAs: "PhoneInputComponent" },
+    { component: SingleLineItemComponent, knownAs: "SingleLineItemComponent" },
 ])
 
 LOGGER.log('--- END ---');

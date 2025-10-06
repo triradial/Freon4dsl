@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, ReferenceBox } from "@freon4dsl/core";
+    import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, ReferenceBox, VerticalLayoutBox } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { Event, SharedTask, TaskReference, type StudyConfiguration, type Task } from "@freon4dsl/study-configuration";
     import { onMount } from "svelte";
@@ -51,11 +51,14 @@
     $effect(() => {
         box.refreshComponent = refresh;
         const fragmentBox = box.childBox as FragmentBox;
-        // const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox;
-        // const children = verticalLayoutBox.children;
-        // otherChildren = children.slice(1);
-        // referenceBox = children[0] as ReferenceBox;
-        referenceBox = fragmentBox.childBox as ReferenceBox;
+        if (fragmentBox.childBox.kind === "VerticalLayoutBox") {
+            const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox;
+            const children = verticalLayoutBox.children;
+            otherChildren = children.slice(1);
+            referenceBox = children[0] as ReferenceBox;
+        } else {
+            referenceBox = fragmentBox.childBox as ReferenceBox;
+        }
     })
 
     const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
@@ -206,10 +209,12 @@
         </button> 
     {/if}
 </div>
-{#key contentStyle}
-    <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
-        {#each otherChildren as child}
-            <RenderComponent box={child} editor={editor} />
-        {/each}
-    </div>
-{/key}
+{#if otherChildren}
+    {#key contentStyle}
+        <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
+            {#each otherChildren as child}
+                <RenderComponent box={child} editor={editor} />
+            {/each}
+        </div>
+    {/key}
+{/if}

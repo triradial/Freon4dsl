@@ -24,7 +24,12 @@ StaffLevel {
 }
 
 DateRange {
-  [${startDate} thru:${endDate} [button text="❌" boxRole="deleteDateRange"]]
+  [
+    [fragment dateRangeDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Dates"]
+  ]
+  fragment dateRangeDetails [
+    ${startDate} thru:${endDate}
+  ]
 }
 
 DateConcept {
@@ -48,7 +53,10 @@ PatientHistory {
 
 PatientVisit {
   [
-      Visit: '${visit}' on  ${actualVisitDate}  [button text="❌" boxRole="deletePatientVisit"]
+      [fragment visitDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Visit"]
+  ]
+  fragment visitDetails [
+    ${visit} On ${actualVisitDate}
   ]
 }
 

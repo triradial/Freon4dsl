@@ -5,6 +5,7 @@ global {
         ListGroupComponent,
         ItemGroupComponent,
         ItemGroupComponent2,
+        SingleLineItemComponent,
         DatePickerComponent,
         DateRangePickerComponent,
         TimePickerComponent,
