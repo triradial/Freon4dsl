@@ -44,7 +44,7 @@ concept Event {
     showSequenced: boolean;
     eventNumber: number;
     tasks: EventTask[];
-    description?: Description;
+    description: Description;
     schedule: EventSchedule;
 }
 
@@ -79,8 +79,8 @@ concept Step {
     description: Description;
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
     references: Reference[];
-    reference people: Person[];
-    systems: SystemAccess[];
+    people: AbstractPerson[];
+    systems: AbstractSystemAccess[];
 }
 
 interface WorkflowDecision {
@@ -100,7 +100,10 @@ concept Description {
     rawText: string = " ";
 }
 
-concept SystemAccess {
+abstract concept AbstractSystemAccess {
+}
+
+concept SystemAccess base AbstractSystemAccess {
     name: identifier;
     description: Description;
     isShared: boolean;
@@ -109,7 +112,7 @@ concept SystemAccess {
     robotMappings?: RobotMapping;
 }
 
-concept SystemAccessReference {
+concept SystemAccessReference base AbstractSystemAccess {
     reference system: SystemAccess;
 }
 
@@ -127,8 +130,14 @@ concept AccessedAPhoneNumber implements AccessedAt {
 concept StaffRole {
     name: identifier;
 }
+abstract concept AbstractPerson {
+}
 
-concept Person {
+concept PersonReference base AbstractPerson {
+    reference person: Person;
+}
+
+concept Person base AbstractPerson {
     name: identifier;
     description: Description;
     email: string;

@@ -12,9 +12,11 @@ import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 import ItemGroupComponent2 from "./components/custom/ItemGroupComponent2.svelte";
 import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
+import PhoneInputComponent from "./components/custom/PhoneInputComponent.svelte";
+import ReferenceComponent from "./components/custom/ReferenceComponent.svelte";
 import TabFixComponent from "./components/custom/TabFixComponent.svelte";
-import TaskReferenceComponent from "./components/custom/TaskReferenceComponent.svelte";
 import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
+import UrlInputComponent from "./components/custom/UrlInputComponent.svelte";
 
 const LOGGER = new FreLogger("init");
 
@@ -75,8 +77,10 @@ setCustomComponents([
     { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
     { component: DisplayNothingComponent, knownAs: "DisplayNothingComponent" },
     { component: AbbreviationComponent, knownAs: "AbbreviationComponent" },
-    { component: TaskReferenceComponent, knownAs: "TaskReferenceComponent" },
     { component: TabFixComponent, knownAs: "TabFixComponent" },
+    { component: ReferenceComponent, knownAs: "ReferenceComponent" },
+    { component: UrlInputComponent, knownAs: "UrlInputComponent" },
+    { component: PhoneInputComponent, knownAs: "PhoneInputComponent" },
 ])
 
 LOGGER.log('--- END ---');

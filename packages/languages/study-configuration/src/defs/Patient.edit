@@ -41,9 +41,8 @@ PatientInfo {
 PatientHistory {
   [
    ID ${patient_id} 
-   Patient completed: 
-   ${patientVisits} 
-   Not Available ${patientNotAvailableDates}
+   ${patientVisits wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Patient Visits"} 
+   ${patientNotAvailableDates wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Patient Not Available Dates"}
   ]
 }
 

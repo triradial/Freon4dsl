@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { StringReplacerBox } from "@freon4dsl/core";
+    import type { DateValue } from "@internationalized/date";
+    import { parseDate } from "@internationalized/date";
     import { DatePicker } from "bits-ui";
     import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
     import CaretLeft from "phosphor-svelte/lib/CaretLeft";
     import CaretRight from "phosphor-svelte/lib/CaretRight";
-    import { StringReplacerBox } from "@freon4dsl/core";
-    import { parseDate } from "@internationalized/date";
-    import type { DateValue } from "@internationalized/date";
+    import { onMount } from "svelte";
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let value = $state<DateValue>(parseDate(formatToday()));
@@ -57,6 +57,7 @@
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
     });
+    
     $effect(() => {
         box.setFocus = setFocus;
         box.refreshComponent = refresh;

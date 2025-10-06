@@ -11,8 +11,10 @@ global {
         MultilineTextComponent,
         AbbreviationComponent,
         DisplayNothingComponent,
-        TaskReferenceComponent,
-        TabFixComponent
+        TabFixComponent,
+        ReferenceComponent,
+        UrlInputComponent,
+        PhoneInputComponent
     }
 }
 
@@ -65,7 +67,10 @@ Task {
 
 TaskReference {
     [
-        ${task wrap =  TaskReferenceComponent cssClass="type3" canDelete="true" selectable="true" label="Shared Task"}
+        [fragment taskReferenceDetails wrap =  ReferenceComponent cssClass="type3" canDelete="true" canExpand="false" isExpanded="false" selectable="true" label="Task"]
+    ]
+    fragment taskReferenceDetails [
+        ${task}
     ]
 }
 
@@ -82,54 +87,67 @@ Step {
 SystemAccess {
     [
         [fragment systemAccessDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="System Access"]
-    ]
+    ] trigger = "System Access"
     fragment systemAccessDetails [
         ${name}
         ${description}
         ${accessedAt}
-        ${robotMappings}
+        ${robotMappings wrap=ListGroupComponent cssClass="type3" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Robot Mappings"}
     ]
 }
 
 
 SystemAccessReference {
     [
-        System: ${system}
+        [fragment systemAccessReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="System"]
+    ] trigger = "Shared System Access"
+    fragment systemAccessReferenceDetails [
+        ${system}
     ]
 }
 
 AccessedAtURL {
     [
-        URL: ${url}
+        URL: ${url wrap=UrlInputComponent}
     ]
 }
 
 AccessedAPhoneNumber {
     [
-        Phone Number: ${phoneNumber}
+        Phone Number: ${phoneNumber wrap=PhoneInputComponent}
     ]
 }
 
 Person {
     [
         [fragment personDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Person"]
-    ]
+    ] trigger = "Person just for this task"
     fragment personDetails [
         ${name}
         Email: ${email}
-        Phone: ${phoneNumber}
+        Phone: ${phoneNumber wrap=PhoneInputComponent}
         Role: ${role}
         Notes:${description}
     ]
 }
 
+PersonReference {
+    [
+        [fragment personReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="Person"]
+    ] trigger = "Staff"
+    fragment personReferenceDetails [
+        ${person}
+    ]
+}
+
+
 Reference {
     [
-        [fragment referenceDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Ref"]
+        [fragment referenceDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Reference"]
     ]
     fragment referenceDetails [
     ${name} 
-    Link: ${link}
+    Document is at: ${link wrap=UrlInputComponent}
     ${description}
     ]
 }
@@ -153,21 +171,17 @@ WorkflowBranch {
 
 RobotMapping {
     [
-    [fragment first] [fragment second]
-    From this Page: ${sourcePage}
-    To this Page :   ${targetPage}
-    These fields:
-        ${sourceToTargetMappings}
+        From this Page: ${sourcePage wrap=UrlInputComponent}
+        To this Page    :   ${targetPage wrap=UrlInputComponent}        
+        ${sourceToTargetMappings wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Map These fields"}
     ]
-    fragment first [first]
-    fragment second [second]
 
 }
 
 SourceToTargetMapping {
     [
         Source Field: ${sourceField}  Target Field: ${targetField}
-    ]
+    ] trigger = "Source to Target"
 }
 
 Description {
