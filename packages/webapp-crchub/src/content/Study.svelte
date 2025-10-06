@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { AST, FreChangeManager, FreEditor, FrePrimDelta, FrePartDelta, FrePrimListDelta, FrePartListDelta } from "@freon4dsl/core";
+    import { AST, FreChangeManager, FreEditor, FrePartDelta, FrePartListDelta, FrePrimDelta, FrePrimListDelta } from "@freon4dsl/core";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { Tabs } from "@skeletonlabs/skeleton-svelte";
@@ -103,17 +103,17 @@
         const changeCallback = (delta) => {
             if (delta instanceof FrePrimDelta) {
                 if (delta.oldValue != delta.newValue) {
-                    console.debug("✅ Data changed from FreChangeManager:", delta);
+                    // console.debug("✅ Data changed from FreChangeManager:", delta);
                     debouncedSave();
                 }
             } else             if (delta instanceof FrePrimListDelta) {
-                console.debug("✅ List change from FreChangeManager:", delta);
+                // console.debug("✅ List change from FreChangeManager:", delta);
                 debouncedSave();
             } else if (delta instanceof FrePartListDelta) {
-                console.debug("✅ Part List change from FreChangeManager:", delta);
+                // console.debug("✅ Part List change from FreChangeManager:", delta);
                 debouncedSave();
             } else if (delta instanceof FrePartDelta) {
-                console.debug("✅ Part change from FreChangeManager:", delta);
+                // console.debug("✅ Part change from FreChangeManager:", delta);
                 debouncedSave();
             } else {
                 console.warn("⚠️ Unknown change from FreChangeManager:", delta);

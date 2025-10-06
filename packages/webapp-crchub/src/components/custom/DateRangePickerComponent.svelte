@@ -1,9 +1,10 @@
 <script lang="ts">
-    import { StringReplacerBox } from "@freon4dsl/core";
+    import { AST, StringReplacerBox } from "@freon4dsl/core";
     import { DateConcept, DateRange as StudyDateRange } from "@freon4dsl/study-configuration";
     import { CalendarDate, parseDate, today } from "@internationalized/date";
     import type { DateRange as BitsDateRange } from "bits-ui";
     import { DateRangePicker } from "bits-ui";
+    import { runInAction } from "mobx";
     import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
     import CaretLeft from "phosphor-svelte/lib/CaretLeft";
     import CaretRight from "phosphor-svelte/lib/CaretRight";
@@ -79,40 +80,49 @@
 
     function onRangeValueChange(newValue: BitsDateRange | null) {
         if (newValue) {
-            value = newValue;
-            
-            let dateRange: StudyDateRange | undefined = box.getPropertyValue();
-            if (!dateRange) {
-                dateRange = new StudyDateRange();
-            }
-            
-            // Ensure startDate and endDate are initialized
-            if (!dateRange.startDate) {
-                // Create a new DateConcept with today's date as default
-                const todayDate = today("UTC");
-                dateRange.startDate = DateConcept.create({
-                    dateAsString: `${todayDate.year}-${String(todayDate.month).padStart(2, '0')}-${String(todayDate.day).padStart(2, '0')}`
+            runInAction(() => {
+                value = newValue;
+                AST.change(() => {
+                    let dateRange: StudyDateRange | undefined = box.getPropertyValue();
+                    if (!dateRange) {
+                        dateRange = new StudyDateRange();
+                    }
+                    
+                    // Ensure startDate and endDate are initialized
+                    if (!dateRange.startDate) {
+                        // Create a new DateConcept with today's date as default
+                        const todayDate = today("UTC");
+                        dateRange.startDate = DateConcept.create({
+                            dateAsString: `${todayDate.year}-${String(todayDate.month).padStart(2, '0')}-${String(todayDate.day).padStart(2, '0')}`
+                        });
+                    }
+                    if (!dateRange.endDate) {
+                        // Create a new DateConcept with today's date as default
+                        const todayDate = today("UTC");
+                        dateRange.endDate = DateConcept.create({
+                            dateAsString: `${todayDate.year}-${String(todayDate.month).padStart(2, '0')}-${String(todayDate.day).padStart(2, '0')}`
+                        });
+                    }
+                    
+                    // Only update if the values exist
+                    if (newValue.start) {
+                        dateRange.startDate.dateAsString = newValue.start.toString();
+                    }
+                    if (newValue.end) {
+                        dateRange.endDate.dateAsString = newValue.end.toString();
+                    }
+                    box.setPropertyValue(dateRange);
                 });
-            }
-            if (!dateRange.endDate) {
-                // Create a new DateConcept with today's date as default
-                const todayDate = today("UTC");
-                dateRange.endDate = DateConcept.create({
-                    dateAsString: `${todayDate.year}-${String(todayDate.month).padStart(2, '0')}-${String(todayDate.day).padStart(2, '0')}`
-                });
-            }
-            
-            // Only update if the values exist
-            if (newValue.start) {
-                dateRange.startDate.dateAsString = newValue.start.toString();
-            }
-            if (newValue.end) {
-                dateRange.endDate.dateAsString = newValue.end.toString();
-            }
-            box.setPropertyValue(dateRange);
+            });
         }
     }
 </script>
+
+<style>
+    .dsl-date-text {
+        color: #35a52b !important;
+    }
+</style>
 
 <div class="ml-1">
 <DateRangePicker.Root 
@@ -131,9 +141,9 @@
             {#each segments as { part, value }, i (part + i)}
               <div class="inline-block select-none">
                 {#if part === "literal"}
-                  <DateRangePicker.Segment {part} style="color: var(--green-90t);">{value}</DateRangePicker.Segment>
+                  <DateRangePicker.Segment {part} class="text-muted-foreground p-1">{value}</DateRangePicker.Segment>
                 {:else}
-                  <DateRangePicker.Segment {part} class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground focus-visible:ring-0! focus-visible:ring-offset-0!" style="color: var(--green-90t);">{value}</DateRangePicker.Segment>
+                  <DateRangePicker.Segment {part} class="rounded-5px hover:bg-muted focus:bg-muted focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1 dsl-date-text">{value}</DateRangePicker.Segment>
                 {/if}
               </div>
             {/each}
@@ -143,7 +153,7 @@
           <div aria-hidden="true" class="datepicker-separator">–</div>
         {/if}
       {/each}
-      <DateRangePicker.Trigger class="hover:bg-muted active:bg-dark-10 inline-flex size-8 items-center justify-center rounded-[5px] transition-all" style="color: var(--text-primary-500);">
+      <DateRangePicker.Trigger class="text-foreground/60 hover:bg-muted active:bg-dark-10 inline-flex size-8 items-center justify-center rounded-[5px] transition-all">
         <CalendarBlank class="size-6" />
       </DateRangePicker.Trigger>
     </div>

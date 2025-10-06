@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { StringReplacerBox } from "@freon4dsl/core";
+    import { AST, StringReplacerBox } from "@freon4dsl/core";
     import type { DateValue } from "@internationalized/date";
     import { parseDate } from "@internationalized/date";
     import { DatePicker } from "bits-ui";
+    import { runInAction } from "mobx";
     import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
     import CaretLeft from "phosphor-svelte/lib/CaretLeft";
     import CaretRight from "phosphor-svelte/lib/CaretRight";
@@ -30,11 +31,9 @@
         let startStr: string | undefined = box.getPropertyValue();
         if (typeof startStr === "string" && isValidDateString(startStr)) {
             value = parseDate(startStr);
-            console.log("getValue StartStr: ", startStr, " value: ", value);
         } else {
             // keep already-initialized valid default (today)
             value = parseDate(formatToday());
-            console.log("getValue no startStr using today value: ", value);
         }
         return value;
     }
@@ -64,13 +63,23 @@
     });
 
     function onValueChange(newValue: DateValue) {
-        value = newValue;
-        box.setPropertyValue(newValue?.toString());
+        runInAction(() => {
+            value = newValue;
+            AST.change(() => {
+                box.setPropertyValue(newValue?.toString());
+            });
+        });
     }
 </script>
 
+<style>
+    .dsl-input-text {
+        color: var(--input-text) !important;
+    }
+</style>
+
 <div class="ml-1">
-<DatePicker.Root bind:open={isOpen} value={value} on:valueChange={e => onValueChange(e.detail)} weekdayFormat="short" fixedWeeks={false}>
+<DatePicker.Root bind:open={isOpen} value={value} onValueChange={onValueChange} weekdayFormat="short" fixedWeeks={false}>
     <div class="flex w-full max-w-[232px] flex-col">
         <DatePicker.Input class="datepicker-input">
             {#snippet children({ segments })}
@@ -79,7 +88,7 @@
                         {#if part === "literal"}
                             <DatePicker.Segment {part} class="text-muted-foreground p-1">{value}</DatePicker.Segment>
                         {:else}
-                            <DatePicker.Segment {part} class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1">{value}</DatePicker.Segment>
+                            <DatePicker.Segment {part} class="rounded-5px hover:bg-muted focus:bg-muted focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1 dsl-input-text">{value}</DatePicker.Segment>
                         {/if}
                     </div>
                 {/each}

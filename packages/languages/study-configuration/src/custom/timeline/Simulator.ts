@@ -1,10 +1,10 @@
-import { Scheduler } from "./Scheduler.js";
+import { Availability, Event, PatientHistory, StudyConfiguration } from "../../language/gen/index.js";
 import * as Sim from "../simjs/sim.js";
 import log from "../utils/SimpleLogger.js";
-import { Timeline } from "./Timeline.js";
-import { Availability, PatientHistory } from "../../language/gen/index.js";
-import { StudyConfiguration, Event } from "../../language/gen/index.js";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration.js";
+import { Scheduler } from "./Scheduler.js";
+import { Timeline } from "./Timeline.js";
+import TimelineLogger from "./TimelineLogger.js";
 
 /*
  * A Simulator is the layer between the Scheduler and the use of the simjs.updated simulation engine. It is an attempt to isolate the TypeScript from the JavaScript and potentially allow a different implementation of the simulation engine.
@@ -27,6 +27,9 @@ export class Simulator {
     constructor(studyConfiguration: StudyConfiguration, patientHistory: PatientHistory);
     constructor(studyConfiguration: StudyConfiguration, patientHistory: PatientHistory, availability: Availability);
     constructor(studyConfiguration: StudyConfiguration, param2?: PatientHistory | Availability, param3?: Availability) {
+        // Disable timeline logging by default
+        TimelineLogger.disable();
+        
         // Setup the Scheduler
         this.scheduledStudyConfiguration = new ScheduledStudyConfiguration(studyConfiguration);
         this.timeline = new Timeline();
@@ -84,7 +87,7 @@ export class Simulator {
         });
         this.sim.addEntity(Scheduler, "Scheduler", this);
         // Run the simulation for the appropriate number of days
-        console.log("running simulation...");
+        TimelineLogger.log("running simulation...");
         let results = this.sim.simulate(500);
         return results;
     }

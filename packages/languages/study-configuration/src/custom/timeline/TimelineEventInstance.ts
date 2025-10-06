@@ -1,4 +1,5 @@
 import { Timeline } from "./Timeline.js";
+import TimelineLogger from "./TimelineLogger.js";
 
 export enum TimelineInstanceState {
     Ready,
@@ -50,7 +51,7 @@ export abstract class TimelineEventInstance {
 
     setEndDay(endDay: number) {
         if (endDay == 2) {
-            console.log("endDay == 2");
+            TimelineLogger.log("endDay == 2");
         }
         this.endDay = endDay;
     }

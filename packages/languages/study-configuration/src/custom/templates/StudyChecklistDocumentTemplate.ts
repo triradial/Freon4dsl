@@ -118,7 +118,7 @@ export class StudyChecklistDocumentTemplate {
                 )
             .join("\n");
         visitsByPeriodMarkdown = dedent`${visitsByPeriodMarkdown}`;
-        console.log("getVisitsByPeriodAsMarkdown visitsByPeriodMarkdown: ", visitsByPeriodMarkdown);
+        // console.log("getVisitsByPeriodAsMarkdown visitsByPeriodMarkdown: ", visitsByPeriodMarkdown);
         return visitsByPeriodMarkdown;
     }
 

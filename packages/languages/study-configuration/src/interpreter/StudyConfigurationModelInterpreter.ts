@@ -1,14 +1,14 @@
 // Generated my Freon once, will NEVER be overwritten.
-import { InterpreterContext, IMainInterpreter, RtObject, RtError, RtNumber, RtBoolean, RtString, ownerOfType } from "@freon4dsl/core";
-import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfigurationModelInterpreterBase.js";
-import * as language from "../language/gen/index.js";
-import { Timeline } from "../custom/timeline/Timeline.js";
+import { IMainInterpreter, InterpreterContext, RtBoolean, RtError, RtNumber, RtObject, RtString, ownerOfType } from "@freon4dsl/core";
 import * as Sim from "../custom/simjs/sim.js";
-import { Simulator } from "../custom/timeline/Simulator.js";
-import { StudyConfiguration, StudyConfigurationModel } from "../language/gen/index.js";
 import { TimelineChartTemplate } from "../custom/templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "../custom/templates/TimelineTableTemplate.js";
-import { RtObjectScheduledEventWrapper, ScheduledEvent } from "../custom/timeline/ScheduledEvent.js";
+import { RtObjectScheduledEventWrapper } from "../custom/timeline/ScheduledEvent.js";
+import { Simulator } from "../custom/timeline/Simulator.js";
+import { Timeline } from "../custom/timeline/Timeline.js";
+import * as language from "../language/gen/index.js";
+import { StudyConfiguration, StudyConfigurationModel } from "../language/gen/index.js";
+import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfigurationModelInterpreterBase.js";
 
 let main: IMainInterpreter;
 
@@ -108,13 +108,13 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
         let lastInstanceOfReferencedEvent = timeline.getLastScheduledEventInstanceForThisEventsName(referencedEvent);
         if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
-            console.log(
-                "The event '" +
-                    "owningEvent.name" +
-                    "' reference to: '" +
-                    "referencedEvent.name" +
-                    "' cannot be evaluated because the referenced event is not on the timeline",
-            );
+            // console.log(
+            //     "The event '" +
+            //         "owningEvent.name" +
+            //         "' reference to: '" +
+            //         "referencedEvent.name" +
+            //         "' cannot be evaluated because the referenced event is not on the timeline",
+            // );
             return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
         } else {
             if (lastInstanceOfReferencedEvent.getScheduledEvent().isRepeatingEvent()) {

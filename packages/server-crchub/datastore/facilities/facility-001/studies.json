@@ -104,8 +104,8 @@
     "currentProtocol": ""
   },
   {
-    "id": "f758c31e-8f1e-49ac-a0d0-6872057eb145",
-    "name": "UI-test3",
+    "id": "0477e3f5-7c2e-45b8-a09c-d638f229d6bd",
+    "name": "demo1",
     "title": "",
     "status": "",
     "phase": "",
@@ -113,8 +113,17 @@
     "currentProtocol": ""
   },
   {
-    "id": "0477e3f5-7c2e-45b8-a09c-d638f229d6bd",
-    "name": "demo1",
+    "id": "456d72ce-da14-48b7-ba88-55b2cc9d9158",
+    "name": "Paul-Demo",
+    "title": "A demo study...",
+    "status": "Planning",
+    "phase": "II",
+    "therapeuticArea": "Research",
+    "currentProtocol": ""
+  },
+  {
+    "id": "5d27f498-37c0-4630-b36a-d2b2f9a14b1b",
+    "name": "new-study1",
     "title": "",
     "status": "",
     "phase": "",

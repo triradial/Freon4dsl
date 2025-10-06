@@ -1,4 +1,5 @@
-import * as Sim from "../simjs/sim.js"
+import * as Sim from "../simjs/sim.js";
+import TimelineLogger from "./TimelineLogger.js";
 
 
    /*
@@ -37,8 +38,8 @@ import * as Sim from "../simjs/sim.js"
       return this.simulation.getAvailability();
     }
     // Common code for scheduling events.
-    #scheduleEvent(schedulingMsg, scheduledEventInstance, timeline, daysToWait) {
-      console.log(schedulingMsg + ": '" + scheduledEventInstance.getName() + "' on day: " + timeline.currentDay + " with wait of: " + daysToWait + " days");
+  #scheduleEvent(schedulingMsg, scheduledEventInstance, timeline, daysToWait) {
+      TimelineLogger.log(schedulingMsg + ": '" + scheduledEventInstance.getName() + "' on day: " + timeline.currentDay + " with wait of: " + daysToWait + " days");
       this.setTimer(daysToWait).done(this.eventStarted, this, [scheduledEventInstance]);
       this.setTimer(daysToWait).done(this.eventCompleted, this, [scheduledEventInstance]);
       timeline.setScheduled(scheduledEventInstance);
@@ -61,17 +62,17 @@ import * as Sim from "../simjs/sim.js"
       let timeline = this.getTimeline();
       // let currentDay = startedEvent.getScheduledEvent().day(timeline) - 1 + this.getScheduledStudyConfiguration().studyConfiguration.studyStartDayNumber;
       // if (isNaN(currentDay)) {
-      //   console.log("Error: Event:'" + startedEvent.getName() + "' has no current day");
+      //   TimelineLogger.log("Error: Event:'" + startedEvent.getName() + "' has no current day");
       // }
       timeline.setCurrentDay(this.time());
-      console.log("Started Event:'" + startedEvent.getName() + "' at time: " + this.time());
+      TimelineLogger.log("Started Event:'" + startedEvent.getName() + "' at time: " + this.time());
       startedEvent.getScheduledEvent().started(this.getScheduledStudyConfiguration(), timeline, this.time());
       timeline.addEvent(startedEvent);
     }
 
     eventCompleted(completedEvent) {
       // Complete the event
-      console.log("Completed Event:'" + completedEvent.getName() + "' at time: " + this.time());
+      TimelineLogger.log("Completed Event:'" + completedEvent.getName() + "' at time: " + this.time());
       let timeline = this.getTimeline();
       completedEvent.endDay = this.time();
       timeline.setCompleted(completedEvent);
@@ -81,7 +82,7 @@ import * as Sim from "../simjs/sim.js"
       // Schedule events that are ready as a result of the completion of the event.
       let readyScheduledEvents = this.getScheduledStudyConfiguration().getEventsReadyToBeScheduled(completedEvent, this.time(), timeline);
       if (readyScheduledEvents.length === 0) {
-          console.log('No Events to Schedule');
+          TimelineLogger.log('No Events to Schedule');
           if (this.getScheduledStudyConfiguration().allEventsCompleted()) {
             this.getTimeline().printTimelineOfScheduledEventInstances();
             completedEvent.completeCurrentPeriod(this.getTimeline(), this.time());
@@ -93,15 +94,15 @@ import * as Sim from "../simjs/sim.js"
               timeline.addStaffAvailability(this.getAvailability());
             }
 
-            console.log('Simulation Complete');
+            TimelineLogger.log('Simulation Complete');
           }      
       } else {
-        console.log('Scheduling Next Event(s)');
+        TimelineLogger.log('Scheduling Next Event(s)');
         for (let scheduledEventInstance of readyScheduledEvents) {
           let daysToWait = scheduledEventInstance.getScheduledEvent().daysToWait(completedEvent, timeline, this.time());
           this.#scheduleEvent('Scheduling Event', scheduledEventInstance, timeline, daysToWait);
         }
-        console.log("End of Scheduling Next Event(s)");
+        TimelineLogger.log("End of Scheduling Next Event(s)");
       }
     }
   }

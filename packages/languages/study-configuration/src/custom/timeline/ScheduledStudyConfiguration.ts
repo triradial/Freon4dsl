@@ -1,8 +1,9 @@
-import { Timeline } from "./Timeline.js";
-import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
-import { BinaryExpression, Day, EventStart, Period, StudyConfiguration, StudyStart } from "../../language/gen/index.js";
+import { Day, Period, StudyConfiguration } from "../../language/gen/index.js";
 import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
+import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
 import { ScheduledPeriod } from "./ScheduledPeriod.js";
+import { Timeline } from "./Timeline.js";
+import TimelineLogger from "./TimelineLogger.js";
 
 // StudyConfigurationSchedule is a wrapper around a StudyConfiguration that manages access to instances of ScheduledPeriods and ScheduledEvents of those periods.
 // These classes have the behavior needed for simulation and timelines that are not part of the DSL-based StudyConfiguration.
@@ -30,7 +31,7 @@ export class ScheduledStudyConfiguration {
         const events = this.getAllEventsInSchedule()
             .map((e) => `${e.getName()} ${ScheduledEventState[e.getState()]}`)
             .join("\n");
-        console.log("All Events In Schedule\n" + events);
+        TimelineLogger.log("All Events In Schedule\n" + events);
     }
 
     getConfiguredPeriods() {
@@ -58,7 +59,7 @@ export class ScheduledStudyConfiguration {
     getScheduledPeriod(period: Period) {
         let scheduledPeriod = this.scheduledPeriods.find((scheduledPeriod) => scheduledPeriod.configuredPeriod === period);
         if (!scheduledPeriod) {
-            console.log("no scheduledPeriod found", scheduledPeriod);
+            TimelineLogger.log("no scheduledPeriod found", scheduledPeriod);
         }
         return scheduledPeriod;
     }
@@ -72,14 +73,14 @@ export class ScheduledStudyConfiguration {
                 return false;
             }
         });
-        console.log("getFirstStudyStartEvent firstEventOnDay1: " + firstEventOnDay1.getName());
+        TimelineLogger.log("getFirstStudyStartEvent firstEventOnDay1: " + firstEventOnDay1.getName());
         return firstEventOnDay1;
     }
 
     getEventsScheduledOnASpecificDay(): ScheduledEvent[] {
         //TODO: sort in order of day so scheduling happens in order.
         let eventsOnASpecificDayInAnyPeriod = this.getAllEventsInSchedule().filter((scheduledEvent) => scheduledEvent.isScheduledOnASpecificDay());
-        console.log("There are: " + eventsOnASpecificDayInAnyPeriod.length + " events on a Specific Day across all the periods");
+        TimelineLogger.log("There are: " + eventsOnASpecificDayInAnyPeriod.length + " events on a Specific Day across all the periods");
         return eventsOnASpecificDayInAnyPeriod;
     }
 
@@ -89,11 +90,11 @@ export class ScheduledStudyConfiguration {
     // }
 
     getEventsReadyToBeScheduled(completedEvent: ScheduledEventInstance, time: number, timeline: Timeline): ScheduledEventInstance[] {
-        console.log("Searching schedule for all events ready to be scheduled");
+        TimelineLogger.log("Searching schedule for all events ready to be scheduled");
         let readyEvents = this.getAllEventsInSchedule()
             .map((scheduledEvent) => scheduledEvent.getInstanceIfEventIsReadyToSchedule(completedEvent, time, timeline))
             .filter((instance) => instance !== null) as ScheduledEventInstance[];
-        console.log("There are: " + readyEvents.length + " events ready to be scheduled");
+        TimelineLogger.log("There are: " + readyEvents.length + " events ready to be scheduled");
         return readyEvents;
     }
 }

@@ -1,6 +1,7 @@
 import { ScheduledEvent } from "./ScheduledEvent.js";
 import { Timeline } from "./Timeline.js";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
+import TimelineLogger from "./TimelineLogger.js";
 
 /*
  * Represents an instance of a scheduled event on a day on the timeline.
@@ -13,7 +14,7 @@ export class ScheduledEventInstance extends TimelineEventInstance {
 
     constructor(scheduledEvent: ScheduledEvent, startDay: number, instanceNumber: number = 1) {
         if (instanceNumber > 1)
-            console.log("creating ScheduledEventInstance: " + scheduledEvent.getName() + " instance:" + instanceNumber + " startDay:" + startDay);
+            TimelineLogger.log("creating ScheduledEventInstance: " + scheduledEvent.getName() + " instance:" + instanceNumber + " startDay:" + startDay);
         super(startDay);
         this.scheduledEvent = scheduledEvent;
         this.instanceNumber = instanceNumber;
@@ -64,10 +65,10 @@ export class ScheduledEventInstance extends TimelineEventInstance {
     anyDaysBefore() {
         const daysBefore = this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count;
         if (this.getName() == "V1 Randomization") {
-            console.log("ScheduledEventInstance.anyDaysBefore() for: V1 Randomization daysBefore: " + daysBefore);
+            TimelineLogger.log("ScheduledEventInstance.anyDaysBefore() for: V1 Randomization daysBefore: " + daysBefore);
         }
         if (daysBefore !== 0 && daysBefore != undefined) {
-            console.log("ScheduledEventInstance.anyDaysBefore() for: " + this.getName() + " daysBefore: " + daysBefore);
+            TimelineLogger.log("ScheduledEventInstance.anyDaysBefore() for: " + this.getName() + " daysBefore: " + daysBefore);
         }
         return daysBefore !== 0 && daysBefore != undefined;
     }

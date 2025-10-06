@@ -8,6 +8,7 @@ import { ScheduledEvent } from "./ScheduledEvent.js";
 import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
 import { StaffAvailabilityEventInstance } from "./StaffAvailabilityEventInstance.js";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
+import TimelineLogger from "./TimelineLogger.js";
 
 /*
  * A Timeline records the events and the days they occur on.
@@ -176,11 +177,11 @@ export class Timeline extends RtObject {
     }
 
     printTimeline() {
-        console.log("Timeline:");
+        TimelineLogger.log("Timeline:");
         this.days.forEach((day) => {
-            console.log("Day: " + day.day);
+            TimelineLogger.log("Day: " + day.day);
             day.events.forEach((event) => {
-                console.log("Event: " + event.getName() + " day: " + event.startDay + " status: " + event.getState());
+                TimelineLogger.log("Event: " + event.getName() + " day: " + event.startDay + " status: " + event.getState());
             });
         });
     }
@@ -204,7 +205,7 @@ export class Timeline extends RtObject {
                 }
             });
         });
-        console.log(output);
+        TimelineLogger.log(output);
     }
 
     // Return true if the event has already been completed on a previous day at least once
@@ -215,7 +216,7 @@ export class Timeline extends RtObject {
                     let eventInstance = event as ScheduledEventInstance;
                     // console.log("hasCompletedInstanceOf checking if completed instance of: " + scheduledEvent.getName() + " matches event: " + eventInstance.getName() + " in state: " + eventInstance.state + " one day: " + day.day);
                     if (eventInstance.getScheduledEvent().getName() === scheduledEvent.getName() && event.state === TimelineInstanceState.Completed) {
-                        console.log("There is a completed instance of: '" + scheduledEvent.getName() + "'" + " on day: " + day.day);
+                        TimelineLogger.log("There is a completed instance of: '" + scheduledEvent.getName() + "'" + " on day: " + day.day);
                         return true; // Exit nested loops early if we find a completed instance
                     }
                 }
@@ -239,7 +240,7 @@ export class Timeline extends RtObject {
                 }
             }
         }
-        if (this.completedEventLogging) console.log("numberCompletedInstancesOf scheduledEvent: " + scheduledEvent.getName() + " is: " + count);
+        if (this.completedEventLogging) TimelineLogger.log("numberCompletedInstancesOf scheduledEvent: " + scheduledEvent.getName() + " is: " + count);
         return count;
     }
 
@@ -274,9 +275,9 @@ export class Timeline extends RtObject {
         ) as PeriodEventInstance;
         if (this.periodLogging) {
             if (firstActivePeriodOnTimeline) {
-                console.log("The first Active Period On the timeline is: " + firstActivePeriodOnTimeline.getName());
+                TimelineLogger.log("The first Active Period On the timeline is: " + firstActivePeriodOnTimeline.getName());
             } else {
-                console.log("No active period found on the timeline");
+                TimelineLogger.log("No active period found on the timeline");
             }
         }
         return firstActivePeriodOnTimeline;
@@ -405,7 +406,7 @@ export class Timeline extends RtObject {
     // }
 
     addStaffAvailability(availability: Availability) {
-        console.log("Adding Staff Availability to Timeline");
+        TimelineLogger.log("Adding Staff Availability to Timeline");
         this.availability = availability;
 
         availability.staffLevels.forEach((staffLevel) => {
@@ -559,10 +560,10 @@ export class Timeline extends RtObject {
     
     // The DateConcept is updated inline hence no return value.
     public static fillDateConceptFromAsString(dateConcept: DateConcept) {
-        console.log("fillDateConceptFromAsString: " + dateConcept.dateAsString);
+        TimelineLogger.log("fillDateConceptFromAsString: " + dateConcept.dateAsString);
         // Add "T00:00:00" to ensure the date is interpreted at midnight local time
         const actualDate = new Date(dateConcept.dateAsString + "T00:00:00");
-        console.log("actualDate: " + actualDate);
+        TimelineLogger.log("actualDate: " + actualDate);
         dateConcept.day = actualDate.getDate().toString();
         dateConcept.month = getMonthFromString(actualDate.toLocaleString('en-US', { month: 'long' }));
         dateConcept.year = actualDate.getFullYear().toString();
