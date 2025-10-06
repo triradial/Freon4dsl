@@ -19,14 +19,17 @@ PatientNotAvailable {
 
 StaffLevel {
   [ 
-    # Staff: ${staffAvailable} on: ${dateOrRange replace=DateRangePickerComponent}
+    [fragment staffLevelDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="# Staff"]
   ] trigger = "Staff Level"
+  fragment staffLevelDetails [
+    ${staffAvailable} on: ${dateOrRange replace=DateRangePickerComponent}
+  ]
 }
 
 DateRange {
   [
     [fragment dateRangeDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Dates"]
-  ]
+  ] trigger = "Dates"
   fragment dateRangeDetails [
     ${startDate} thru:${endDate}
   ]
@@ -54,7 +57,7 @@ PatientHistory {
 PatientVisit {
   [
       [fragment visitDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Visit"]
-  ]
+  ] trigger = "Patient Visit"
   fragment visitDetails [
     ${visit} On ${actualVisitDate}
   ]

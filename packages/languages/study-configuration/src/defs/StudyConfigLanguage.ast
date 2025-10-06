@@ -129,6 +129,7 @@ concept AccessedAPhoneNumber implements AccessedAt {
 
 concept StaffRole {
     name: identifier;
+    description: Description;
 }
 abstract concept AbstractPerson {
 }

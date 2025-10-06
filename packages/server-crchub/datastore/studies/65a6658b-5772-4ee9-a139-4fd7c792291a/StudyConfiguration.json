@@ -147,7 +147,11 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-roles"
                },
-               "children": []
+               "children": [
+                  "ID-37",
+                  "ID-39",
+                  "ID-41"
+               ]
             }
          ],
          "references": [],
@@ -508,6 +512,16 @@
                "children": [
                   "ID-132"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-196"
+               ]
             }
          ],
          "references": [],
@@ -553,6 +567,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-130"
+      },
+      {
+         "id": "ID-196",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -837,6 +864,16 @@
                "children": [
                   "ID-140"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-197"
+               ]
             }
          ],
          "references": [],
@@ -882,6 +919,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-138"
+      },
+      {
+         "id": "ID-197",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -1255,6 +1305,16 @@
                "children": [
                   "ID-79"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-198"
+               ]
             }
          ],
          "references": [],
@@ -1300,6 +1360,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-77"
+      },
+      {
+         "id": "ID-198",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -1584,6 +1657,16 @@
                "children": [
                   "ID-146"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-199"
+               ]
             }
          ],
          "references": [],
@@ -1629,6 +1712,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-144"
+      },
+      {
+         "id": "ID-199",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -1913,6 +2009,16 @@
                "children": [
                   "ID-163"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-204"
+               ]
             }
          ],
          "references": [],
@@ -1958,6 +2064,19 @@
                "value": "14"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-161"
+      },
+      {
+         "id": "ID-204",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -2302,6 +2421,16 @@
                "children": [
                   "ID-172"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-205"
+               ]
             }
          ],
          "references": [],
@@ -2347,6 +2476,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-170"
+      },
+      {
+         "id": "ID-205",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -3247,6 +3389,16 @@
                "children": [
                   "ID-97"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-206"
+               ]
             }
          ],
          "references": [],
@@ -3292,6 +3444,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-95"
+      },
+      {
+         "id": "ID-206",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -3626,6 +3791,16 @@
                "children": [
                   "ID-87"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-207"
+               ]
             }
          ],
          "references": [],
@@ -3671,6 +3846,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-85"
+      },
+      {
+         "id": "ID-207",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -4005,6 +4193,16 @@
                "children": [
                   "ID-111"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-208"
+               ]
             }
          ],
          "references": [],
@@ -4050,6 +4248,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-109"
+      },
+      {
+         "id": "ID-208",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -4384,6 +4595,16 @@
                "children": [
                   "ID-121"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-209"
+               ]
             }
          ],
          "references": [],
@@ -4429,6 +4650,19 @@
                "value": "0"
             }
          ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-119"
+      },
+      {
+         "id": "ID-209",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
          "containments": [],
          "references": [],
          "annotations": [],
@@ -4763,6 +4997,16 @@
                "children": [
                   "ID-203"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-210"
+               ]
             }
          ],
          "references": [],
@@ -4812,6 +5056,208 @@
          "references": [],
          "annotations": [],
          "parent": "ID-201"
+      },
+      {
+         "id": "ID-210",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-201"
+      },
+      {
+         "id": "ID-37",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-StaffRole"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-name"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-description"
+               },
+               "children": [
+                  "ID-38"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-70"
+      },
+      {
+         "id": "ID-38",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-37"
+      },
+      {
+         "id": "ID-39",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-StaffRole"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-name"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-description"
+               },
+               "children": [
+                  "ID-40"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-70"
+      },
+      {
+         "id": "ID-40",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-39"
+      },
+      {
+         "id": "ID-41",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-StaffRole"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-name"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-description"
+               },
+               "children": [
+                  "ID-42"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-70"
+      },
+      {
+         "id": "ID-42",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-41"
       }
    ]
 }

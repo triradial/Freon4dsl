@@ -29,7 +29,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showSharedTasks"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -61,7 +61,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showReferences"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -69,7 +69,7 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-showSystems"
                },
-               "value": "false"
+               "value": "true"
             },
             {
                "property": {
@@ -137,9 +137,15 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-staffing"
                },
-               "children": [
-                  "ID-65"
-               ]
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-roles"
+               },
+               "children": []
             }
          ],
          "references": [],
@@ -306,7 +312,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -780,7 +786,7 @@
                "targets": [
                   {
                      "resolveInfo": "-",
-                     "reference": null
+                     "reference": "ID-29"
                   }
                ]
             }
@@ -816,7 +822,7 @@
                "targets": [
                   {
                      "resolveInfo": "days",
-                     "reference": null
+                     "reference": "ID-17"
                   }
                ]
             }
@@ -985,7 +991,7 @@
                "targets": [
                   {
                      "resolveInfo": "site visit",
-                     "reference": null
+                     "reference": "ID-30"
                   }
                ]
             }
@@ -1097,27 +1103,9 @@
                   "key": "-key-Step-name"
                },
                "value": "Step"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Step-title"
-               },
-               "value": ""
             }
          ],
          "containments": [
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Step-detailsDescription"
-               },
-               "children": [
-                  "ID-238"
-               ]
-            },
             {
                "containment": {
                   "language": "-key-StudyConfigurationModel",
@@ -1146,36 +1134,6 @@
          "references": [],
          "annotations": [],
          "parent": "ID-235"
-      },
-      {
-         "id": "ID-238",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-Description"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Description-text"
-               },
-               "value": " "
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Description-rawText"
-               },
-               "value": " "
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-237"
       },
       {
          "id": "ID-221",
@@ -1260,7 +1218,7 @@
                "targets": [
                   {
                      "resolveInfo": "completed",
-                     "reference": null
+                     "reference": "ID-23"
                   }
                ]
             }
@@ -1345,36 +1303,6 @@
          "references": [],
          "annotations": [],
          "parent": "ID-223"
-      },
-      {
-         "id": "ID-65",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-Staffing"
-         },
-         "properties": [],
-         "containments": [
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Staffing-roles"
-               },
-               "children": []
-            },
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-Staffing-assignments"
-               },
-               "children": []
-            }
-         ],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-64"
       }
    ]
 }

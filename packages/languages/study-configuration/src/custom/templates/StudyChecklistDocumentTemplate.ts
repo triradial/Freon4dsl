@@ -51,6 +51,10 @@ export class StudyChecklistDocumentTemplate {
      */
     static getVisitsByPeriodAsMarkdown(studyConfiguration: StudyConfiguration): string {
         let writer = new StudyConfigurationModelModelUnitWriter();
+        console.log(
+          "studyConfiguration language text: " +
+            (writer.writeToString(studyConfiguration))
+        );
 
         var visitsByPeriodMarkdown = studyConfiguration.periods
             .map(

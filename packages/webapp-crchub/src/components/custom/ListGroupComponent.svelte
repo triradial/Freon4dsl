@@ -71,6 +71,9 @@
             const propertyName = box.propertyName;
             const node = box.node;
             const typeName = node.freLanguageConcept();
+            console.log("typeName: ", typeName);
+            console.log("propertyName: ", propertyName);
+            console.log("node: ", node);
             const property = language.classifierProperty(typeName, propertyName);
             let newConceptName = "";
             if (property.type) {

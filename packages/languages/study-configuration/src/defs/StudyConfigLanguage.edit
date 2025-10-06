@@ -24,10 +24,7 @@ StudyConfiguration {
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
-    [fragment studyRoles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"]
-    ]
-    fragment studyRoles [
-        ${roles}
+    ${roles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"}
     ]
 }
 
@@ -122,7 +119,7 @@ AccessedAPhoneNumber {
 Person {
     [
         [fragment personDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Person"]
-    ] trigger = "Person just for this task"
+    ] trigger = "Person"
     fragment personDetails [
         ${name}
         Email: ${email}
@@ -156,6 +153,7 @@ Reference {
 StaffRole {
     [
         ${name} 
+        ${description}
     ]
 }
 

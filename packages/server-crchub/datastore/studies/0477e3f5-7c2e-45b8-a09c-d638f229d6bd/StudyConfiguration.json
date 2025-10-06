@@ -148,7 +148,10 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-roles"
                },
-               "children": []
+               "children": [
+                  "ID-37",
+                  "ID-68"
+               ]
             },
             {
                "containment": {
@@ -1940,6 +1943,50 @@
          "references": [],
          "annotations": [],
          "parent": "ID-65"
+      },
+      {
+         "id": "ID-37",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-StaffRole"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-name"
+               },
+               "value": "xyz"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-38"
+      },
+      {
+         "id": "ID-68",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-StaffRole"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StaffRole-name"
+               },
+               "value": "abc"
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-38"
       },
       {
          "id": "ID-39",
