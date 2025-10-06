@@ -8,6 +8,8 @@
     let value = $state("");
     let inputElement: HTMLInputElement | null = null;
     let isTouched = $state(false);
+    // Tracks when user explicitly confirms country code with a space after +<cc>
+    let confirmedCountryCodeLength: number | null = null;
 
     const MAX_DIGITS = 15; // E.164 max digits (excluding '+')
     function isValidPhone(str: string): boolean {
@@ -26,6 +28,30 @@
         return (hasPlus ? "+" : "") + digits;
     }
 
+    // Minimal country code list for auto-detection; user can always confirm with a space
+    const COUNTRY_CODES = [
+        "1",  // US/CA
+        "44", // UK
+        "49", // DE
+        "61", // AU
+        "81", // JP
+        "82", // KR
+        "86", // CN
+        "91"  // IN
+    ];
+
+    function resolveCountryCodeLength(digits: string): number | null {
+        if (confirmedCountryCodeLength && confirmedCountryCodeLength <= digits.length) {
+            return confirmedCountryCodeLength;
+        }
+        // Try to resolve uniquely among known codes by prefix (1-3 digits)
+        const candidates = COUNTRY_CODES.filter((cc) => digits.startsWith(cc));
+        if (candidates.length === 1) {
+            return candidates[0].length;
+        }
+        return null; // ambiguous; wait for more digits or a space confirmation
+    }
+
     function formatForDisplay(stored: string): string {
         if (!stored) return "";
         if (stored === "+") {
@@ -35,14 +61,14 @@
         if (stored.startsWith("+")) {
             // Basic international grouping: +<cc> <xxx> <xxx> <xxxx>
             const digits = stored.slice(1);
-            if (digits.length <= 3) {
-                // Until we have more digits, just show + and the country code being typed
-                return "+" + digits;
-            }
             const parts: string[] = [];
-            // heuristics: first up to 3 for country code
-            const cc = digits.slice(0, 3);
-            let rest = digits.slice(cc.length);
+            // Determine cc length: confirmed by space or uniquely detected; otherwise show raw +digits until more info
+            const ccLen = resolveCountryCodeLength(digits);
+            if (!ccLen) {
+                return "+" + digits; // defer formatting until cc resolved
+            }
+            const cc = digits.slice(0, ccLen);
+            let rest = digits.slice(ccLen);
             if (cc.length > 0) parts.push("+" + cc);
             while (rest.length > 4) {
                 parts.push(rest.slice(0, 3));
@@ -112,6 +138,9 @@
 
     function onInputChange(e: Event) {
         const raw = (e.target as HTMLInputElement).value;
+        // If user types a space after +<cc>, lock that country code length
+        const match = raw.match(/^\+(\d{1,3})\s/);
+        confirmedCountryCodeLength = match ? match[1].length : confirmedCountryCodeLength;
         const stored = normalizeForStorage(raw);
         const display = formatForDisplay(stored);
         value = display;
@@ -163,7 +192,10 @@
             onpaste={(e) => {
                 setTimeout(() => {
                     const el = e.target as HTMLInputElement;
-                    const stored = normalizeForStorage(el.value);
+                    const raw = el.value;
+                    const match = raw.match(/^\+(\d{1,3})\s/);
+                    confirmedCountryCodeLength = match ? match[1].length : confirmedCountryCodeLength;
+                    const stored = normalizeForStorage(raw);
                     value = formatForDisplay(stored);
                     const setter: any = theBox as any;
                     if (setter && typeof setter.setPropertyValue === "function") {
@@ -173,7 +205,10 @@
             }}
             onblur={() => {
                 if (inputElement) {
-                    const stored = normalizeForStorage(inputElement.value);
+                    const raw = inputElement.value;
+                    const match = raw.match(/^\+(\d{1,3})\s/);
+                    confirmedCountryCodeLength = match ? match[1].length : confirmedCountryCodeLength;
+                    const stored = normalizeForStorage(raw);
                     value = formatForDisplay(stored);
                     const setter: any = theBox as any;
                     if (setter && typeof setter.setPropertyValue === "function") {

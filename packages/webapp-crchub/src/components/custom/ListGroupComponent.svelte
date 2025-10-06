@@ -80,7 +80,7 @@
                 } else if (newConceptName === "EventTask") { // HACK: Needed because of the multiple kinds of tasks
                     newConceptName = "Task";
                 }
-                const newElement = language.createConceptOrUnit(newConceptName);
+                const newElement = language.concept(newConceptName)?.creator({});
                 (box.getPropertyValue() as unknown as FreNode[]).push(newElement);
                 LOGGER.log("Added item: " + newConceptName);
              } else {
