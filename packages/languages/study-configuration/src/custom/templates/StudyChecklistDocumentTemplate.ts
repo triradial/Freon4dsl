@@ -193,12 +193,10 @@ export class StudyChecklistDocumentTemplate {
                     ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
                     : "";
                 let complianceWindow = " with no extra compliance window";
-                if (
-                    event.schedule.eventWindow.complianceWindow != undefined ||
-                    event.schedule.eventWindow.complianceWindow instanceof ComplianceWindowOf
-                ) {
-                    complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
+                if (!event.schedule.eventWindow.complianceWindow) {
+                    event.schedule.eventWindow.complianceWindow = new NoComplianceWindow();
                 }
+                complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
 
                 // Event heading with spacing and visual indicator
                 builder.addHeading(2, `📋 ${event.name}`);
