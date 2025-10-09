@@ -72,6 +72,7 @@
         }
         
         // Get the model data for the study
+        console.log("initializeStudy: openModelUnit: " + study.id);
         const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration") as StudyConfiguration;
         if (result !== undefined && result !== null) {
             unit = result;
