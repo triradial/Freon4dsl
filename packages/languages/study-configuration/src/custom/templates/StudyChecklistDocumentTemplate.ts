@@ -4,15 +4,28 @@ import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyCo
 
 class MarkdownBuilder {
     private sections: string[] = [];
-    
-    addHeading(level: number, text: string): this {
+    private currentLevel: number = 0;
+
+    addHeading(level: number, text: string, addSpacing: boolean = true): this {
+        if (addSpacing && this.sections.length > 0) {
+            // Add extra spacing before headings (except the first one)
+            this.sections.push('');
+            this.sections.push(''); // Extra line for better visual separation
+        }
         this.sections.push('#'.repeat(level) + ' ' + text);
+        if (addSpacing) {
+            // Add spacing after headings
+            this.sections.push('');
+        }
         return this;
     }
     
-    addParagraph(text: string): this {
+    addParagraph(text: string, addSpacing: boolean = false): this {
         if (text?.trim()) {
             this.sections.push(text);
+            if (addSpacing) {
+                this.sections.push('');
+            }
         }
         return this;
     }
@@ -23,7 +36,9 @@ class MarkdownBuilder {
     }
     
     addSeparator(): this {
-        this.sections.push('\n---\n');
+        this.sections.push('');
+        this.sections.push('---');
+        this.sections.push('');
         return this;
     }
     
@@ -32,17 +47,47 @@ class MarkdownBuilder {
         const separatorRow = '| ' + headers.map(() => ':----------').join(' | ') + ' |';
         const dataRows = rows.map(row => '| ' + row.join(' | ') + ' |');
         
+        this.sections.push('');
         this.sections.push(headerRow);
         this.sections.push(separatorRow);
         this.sections.push(...dataRows);
+        this.sections.push('');
         return this;
     }
     
     addList(items: string[], ordered: boolean = false): this {
+        this.sections.push('');
         items.forEach((item, index) => {
             const prefix = ordered ? `${index + 1}. ` : '- ';
             this.sections.push(prefix + item);
         });
+        this.sections.push('');
+        return this;
+    }
+    
+    addVisualSeparator(): this {
+        this.sections.push('');
+        this.sections.push('---');
+        this.sections.push('');
+        return this;
+    }
+
+    addSectionBreak(): this {
+        this.sections.push('');
+        this.sections.push('');
+        this.sections.push('---');
+        this.sections.push('');
+        this.sections.push('');
+        return this;
+    }
+    
+    addSpace(): this {
+        this.sections.push('<br/><br/><br/>');
+        return this;
+    }
+    
+    addExtraSpace(): this {
+        this.sections.push('<br/><br/><br/><br/><br/><br/>');
         return this;
     }
     
@@ -80,8 +125,29 @@ export class StudyChecklistDocumentTemplate {
                         eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count?.toString() ?? ""
                     ])
             );
+        
+        // Create table with spacing between each row
+        const headerRow = '| ' + headers.join(' | ') + ' |';
+        const separatorRow = '| ' + headers.map(() => ':----------').join(' | ') + ' |';
+        
+        builder.addRaw(headerRow);
+        builder.addRaw(separatorRow);
+        
+        // Add each row with extra spacing after it
+        rows.forEach((row, index) => {
+            const dataRow = '| ' + row.join(' | ') + ' |';
+            builder.addRaw(dataRow);
             
-        return builder.addTable(headers, rows).build();
+            // Add extra spacing after each row (except the last one)
+            if (index < rows.length - 1) {
+                builder.addExtraSpace(); // Added extra spacing after each row
+            }
+        });
+        
+        // Add extra spacing after the timeline table
+        builder.addSpace(); // Added extra spacing after the timeline table
+            
+        return builder.build();
     }
 
     static getReferencesAsMarkdown(references) {
@@ -111,7 +177,13 @@ export class StudyChecklistDocumentTemplate {
         const writer = new StudyConfigurationModelModelUnitWriter();
 
         studyConfiguration.periods.forEach((period, periodCounter) => {
+            // Add period heading with proper spacing
             builder.addHeading(1, period.name);
+            
+            // Add extra spacing after period heading (except for first period)
+            if (periodCounter > 0) {
+                builder.addExtraSpace();
+            }
 
             period.events.forEach((event, eventCounter) => {
                 const timeOfDay = event.schedule.eventTimeOfDay
@@ -128,10 +200,11 @@ export class StudyChecklistDocumentTemplate {
                     complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
                 }
 
-                builder.addHeading(2, event.name);
+                // Event heading with spacing and visual indicator
+                builder.addHeading(2, `📋 ${event.name}`);
                 
                 if (event.description?.text) {
-                    builder.addParagraph(event.description.text);
+                    builder.addParagraph(event.description.text, true);
                 }
 
                 const schedulingInfo = [
@@ -142,23 +215,25 @@ export class StudyChecklistDocumentTemplate {
                 if (eventRepeat) schedulingInfo.push(eventRepeat);
                 if (timeOfDay) schedulingInfo.push(timeOfDay);
                 
-                builder.addParagraph(schedulingInfo.join(' '));
+                builder.addParagraph(schedulingInfo.join(' '), true);
 
                 event.tasks.forEach((task, taskCounter) => {
                     const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
                     
-                    builder.addHeading(3, `Task: ${t.name}`);
+                    // Task heading with spacing and visual indicator
+                    builder.addHeading(3, `✅ Task: ${t.name}`);
                     
                     if (t.description?.text) {
-                        builder.addParagraph(t.description.text);
+                        builder.addParagraph(t.description.text, true);
                     }
 
                     t.steps.forEach((step, stepCounter) => {
-                        builder.addHeading(4, `Step ${stepCounter + 1}: ${step.name}`);
-                        builder.addParagraph(step.description.text);
+                        // Step heading with spacing and visual indicator
+                        builder.addHeading(4, `🔢 Step ${stepCounter + 1}: ${step.name}`);
+                        builder.addParagraph(step.description.text, true);
 
                         if (step.references.length > 0) {
-                            builder.addParagraph("**REFERENCES**");
+                            builder.addParagraph("**📚 REFERENCES**");
                             const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
                             if (referencesMarkdown) {
                                 builder.addRaw(referencesMarkdown);
@@ -166,7 +241,7 @@ export class StudyChecklistDocumentTemplate {
                         }
 
                         if (step.people.length > 0) {
-                            builder.addParagraph("**PEOPLE**");
+                            builder.addParagraph("**👥 PEOPLE**");
                             const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
                             if (peopleMarkdown) {
                                 builder.addRaw(peopleMarkdown);
@@ -174,10 +249,16 @@ export class StudyChecklistDocumentTemplate {
                         }
                     });
                 });
+                
+                // Add extra spacing between events (4.1, 4.2, 4.3, etc.)
+                if (eventCounter < period.events.length - 1) {
+                    builder.addExtraSpace();
+                }
             });
 
+            // Add visual separator between periods (except after the last one)
             if (periodCounter < studyConfiguration.periods.length - 1) {
-                builder.addSeparator();
+                builder.addSectionBreak();
             }
         });
 
@@ -220,16 +301,20 @@ export class StudyChecklistDocumentTemplate {
     static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline, showHeadingNumbers: boolean = false): string {
         const builder = new MarkdownBuilder();
         
+        // Add timeline section with enhanced visual spacing
         builder
-            .addSeparator()
-            .addEmptyLine()
-            .addHeading(1, "Timeline")
-            .addEmptyLine()
+            .addVisualSeparator()
+            .addSpace()
+            .addVisualSeparator()
+            .addSpace()
+            .addHeading(1, "📅 Timeline", false)  // Don't add extra spacing for first heading
+            .addSpace()
             .addRaw(StudyChecklistDocumentTemplate.getTimelineTablAsMarkdown(timeline))
-            .addEmptyLine()
-            .addSeparator()
-            .addEmptyLine()
-            .addRaw(StudyChecklistDocumentTemplate.getVisitsByPeriodAsMarkdown(studyConfiguration));
+            .addSectionBreak();
+
+        // Add visits by period section with enhanced visual spacing
+        const visitsMarkdown = StudyChecklistDocumentTemplate.getVisitsByPeriodAsMarkdown(studyConfiguration);
+        builder.addRaw(visitsMarkdown);
 
         let markdown = builder.build();
 

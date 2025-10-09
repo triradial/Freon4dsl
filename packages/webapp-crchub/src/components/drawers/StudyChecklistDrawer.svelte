@@ -10,7 +10,7 @@
     import ContentLoader from "./ContentLoader.svelte";
 
     pdfMake.vfs = pdfFonts as any;
-    const md = new MarkdownIt();
+    const md = new MarkdownIt({ html: true });
 
     let { studyId } = $props<{ studyId: string }>();
 
@@ -263,6 +263,7 @@
             
             // Use markdown-it for rendering
             let bodyHtml = md.render(markdown);
+            console.log("Markdown: " + markdown);
             
             // Debug: Log the rendered HTML to check if markdown is being converted properly
             console.log("🔍 [Markdown Debug] Rendered HTML:", bodyHtml.substring(0, 500) + "...");
@@ -299,11 +300,13 @@
             tocHtml += "</ul>";
 
             // Replace the <!--TOC--> marker with the generated TOC, or prepend if no marker found
-            if (bodyHtml.includes('<!--TOC-->')) {
-                checklistHtml = bodyHtml.replace('<!--TOC-->', tocHtml);
-            } else {
-                checklistHtml = tocHtml + bodyHtml;
-            }
+      //      if (bodyHtml.includes('<!--TOC-->')) {
+         //       checklistHtml = bodyHtml.replace('<!--TOC-->', tocHtml);
+       //     } else {
+       //         checklistHtml = tocHtml + bodyHtml;
+     //       }
+
+            checklistHtml = bodyHtml;
 
         } catch (err: unknown) {
             console.error(`Error fetching data for study: ${studyId}`, err);
