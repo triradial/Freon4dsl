@@ -133,15 +133,10 @@ export class StudyChecklistDocumentTemplate {
         builder.addRaw(headerRow);
         builder.addRaw(separatorRow);
         
-        // Add each row with extra spacing after it
-        rows.forEach((row, index) => {
+        // Add each row without extra spacing
+        rows.forEach((row) => {
             const dataRow = '| ' + row.join(' | ') + ' |';
             builder.addRaw(dataRow);
-            
-            // Add extra spacing after each row (except the last one)
-            if (index < rows.length - 1) {
-                builder.addExtraSpace(); // Added extra spacing after each row
-            }
         });
         
         // Add extra spacing after the timeline table
