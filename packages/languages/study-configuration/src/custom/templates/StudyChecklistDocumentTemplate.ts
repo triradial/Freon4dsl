@@ -138,9 +138,6 @@ export class StudyChecklistDocumentTemplate {
             const dataRow = '| ' + row.join(' | ') + ' |';
             builder.addRaw(dataRow);
         });
-        
-        // Add extra spacing after the timeline table
-        builder.addSpace(); // Added extra spacing after the timeline table
             
         return builder.build();
     }
