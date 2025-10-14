@@ -8,9 +8,8 @@ class MarkdownBuilder {
 
     addHeading(level: number, text: string, addSpacing: boolean = true): this {
         if (addSpacing && this.sections.length > 0) {
-            // Add extra spacing before headings (except the first one)
+            // Add single line spacing before headings (except the first one)
             this.sections.push('');
-            this.sections.push(''); // Extra line for better visual separation
         }
         this.sections.push('#'.repeat(level) + ' ' + text);
         if (addSpacing) {
@@ -74,20 +73,18 @@ class MarkdownBuilder {
 
     addSectionBreak(): this {
         this.sections.push('');
-        this.sections.push('');
         this.sections.push('---');
-        this.sections.push('');
         this.sections.push('');
         return this;
     }
     
     addSpace(): this {
-        this.sections.push('<br/><br/><br/>');
+        this.sections.push('');
         return this;
     }
     
     addExtraSpace(): this {
-        this.sections.push('<br/><br/><br/><br/><br/><br/>');
+        this.sections.push('');
         return this;
     }
     
@@ -171,11 +168,6 @@ export class StudyChecklistDocumentTemplate {
         studyConfiguration.periods.forEach((period, periodCounter) => {
             // Add period heading with proper spacing
             builder.addHeading(1, period.name);
-            
-            // Add extra spacing after period heading (except for first period)
-            if (periodCounter > 0) {
-                builder.addExtraSpace();
-            }
 
             period.events.forEach((event, eventCounter) => {
                 const timeOfDay = event.schedule.eventTimeOfDay
@@ -239,11 +231,6 @@ export class StudyChecklistDocumentTemplate {
                         }
                     });
                 });
-                
-                // Add extra spacing between events (4.1, 4.2, 4.3, etc.)
-                if (eventCounter < period.events.length - 1) {
-                    builder.addExtraSpace();
-                }
             });
 
             // Add visual separator between periods (except after the last one)
@@ -291,14 +278,9 @@ export class StudyChecklistDocumentTemplate {
     static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline, showHeadingNumbers: boolean = false): string {
         const builder = new MarkdownBuilder();
         
-        // Add timeline section with enhanced visual spacing
+        // Add timeline section
         builder
-            .addVisualSeparator()
-            .addSpace()
-            .addVisualSeparator()
-            .addSpace()
             .addHeading(1, "📅 Timeline", false)  // Don't add extra spacing for first heading
-            .addSpace()
             .addRaw(StudyChecklistDocumentTemplate.getTimelineTablAsMarkdown(timeline))
             .addSectionBreak();
 
