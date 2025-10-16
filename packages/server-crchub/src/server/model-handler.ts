@@ -40,8 +40,10 @@ export class ModelHandler {
             for (const unit of units) {
                 await storage.deleteFile(path.join(modelPath, unit));
             }
-            // Note: We might need to add a deleteDirectory method to IStorageHandler
-            // For now, the directory might remain empty
+            // Now delete the directory itself
+            await storage.deleteDirectory(modelPath);
+            ctx.status = 200;
+            ctx.response.body = { message: "Model deleted successfully" };
         } catch (e) {
             console.log(String(e));
             ctx.status = 500;

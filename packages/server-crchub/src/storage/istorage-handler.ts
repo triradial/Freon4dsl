@@ -7,4 +7,5 @@ export interface IStorageHandler {
     listDirectories(dirPath: string): Promise<string[]>;
     ensureDirectory(dirPath: string): Promise<void>;
     directoryExists(dirPath: string): Promise<boolean>;
+    deleteDirectory(dirPath: string): Promise<void>;
 } 

@@ -1,5 +1,5 @@
 import * as fs from "fs/promises";
-import { stat, access } from "fs/promises";
+import { access, stat } from "fs/promises";
 import path from 'path';
 import { IStorageHandler } from './istorage-handler.js';
 
@@ -87,6 +87,15 @@ export class LocalStorageHandler implements IStorageHandler {
             return stats.isDirectory();
         } catch {
             return false;
+        }
+    }
+
+    async deleteDirectory(dirPath: string): Promise<void> {
+        const fullPath = this.getFullPath(dirPath);
+        try {
+            await fs.rm(fullPath, { recursive: true, force: true });
+        } catch (error) {
+            throw new Error(`Error deleting directory ${fullPath}: ${String(error)}`);
         }
     }
 }

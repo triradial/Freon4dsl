@@ -1,4 +1,4 @@
-import { ShareServiceClient, ShareClient, ShareDirectoryClient } from '@azure/storage-file-share';
+import { ShareClient, ShareDirectoryClient, ShareServiceClient } from '@azure/storage-file-share';
 import { IStorageHandler } from './istorage-handler.js';
 
 export class AzureStorageHandler implements IStorageHandler {
@@ -153,6 +153,20 @@ export class AzureStorageHandler implements IStorageHandler {
         if (!dirPath) return true; // Root directory always exists
         const directoryClient = this.getDirectoryClient(dirPath);
         return await directoryClient.exists();
+    }
+
+    async deleteDirectory(dirPath: string): Promise<void> {
+        console.log('Azure Storage Delete Directory Request:', {
+            requestedPath: dirPath,
+            shareName: this.fileShare.name
+        });
+
+        const directoryClient = this.getDirectoryClient(dirPath);
+        try {
+            await directoryClient.deleteIfExists();
+        } catch (error) {
+            throw new Error(`Error deleting directory ${dirPath}: ${String(error)}`);
+        }
     }
 
     private getDirectoryClient(dirPath: string): ShareDirectoryClient {
