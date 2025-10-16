@@ -882,8 +882,9 @@ appbar header {
   top: 5.5rem;
   right: 0;
   bottom: 0;
+  height: calc(100vh - 5.5rem);
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   z-index: 850;
 }
 
@@ -904,7 +905,11 @@ appbar header {
 .drawer-content-wrapper {
   position: relative;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
+  height: 100%;
+  align-items: stretch;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .drawer-content {
@@ -912,6 +917,10 @@ appbar header {
   display: flex;
   flex-direction: column;
   margin-left: 4px;
+  height: 100%;
+  align-self: stretch;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .drawer-header {
@@ -956,13 +965,13 @@ appbar header {
 
 .resize-handle {
   position: absolute;
-  left: 0;
+  left: -4px;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 8px;
   cursor: ew-resize;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   z-index: 2000;
 }
@@ -972,6 +981,8 @@ appbar header {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 .tooltip-popover {
@@ -1260,10 +1271,13 @@ appbar header {
   height: 100% !important;
   box-sizing: border-box !important;
   margin: 0px !important;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 
 .table_component {
-  overflow-y: auto;
+  overflow-x: auto;
+  overflow-y: visible;
   width: 100%;
   font-size: 0.75rem;
 }
@@ -1271,6 +1285,7 @@ appbar header {
 .table_component table {
   height: 100%;
   width: 100%;
+  min-width: 100%;
   table-layout: auto !important;
   border-collapse: collapse;
   border-spacing: 1px;

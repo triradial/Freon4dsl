@@ -467,8 +467,8 @@
         word-wrap: break-word;
         box-sizing: border-box;
         min-width: 200px;
-        max-width: 980px;
-        margin: 0 auto;
+        max-width: none;
+        margin: 0;
         padding: 16px;
     }
 
@@ -517,9 +517,10 @@
         border-spacing: 0;
         border-collapse: collapse;
         display: block;
-        width: max-content;
-        max-width: 100%;
-        overflow: auto;
+        width: 100%;
+        max-width: none;
+        overflow-x: auto;
+        overflow-y: visible;
     }
 
     :global(.markdown-body table th),
