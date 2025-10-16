@@ -131,16 +131,6 @@
     </div>
     {#if isOpen && activeDrawer}
         <div class="drawer-content-wrapper" style="width: {drawerWidth}px">
-            <!-- svelte-ignore a11y_no_static_element_interactions -->
-            <div
-                class="resize-handle"
-                class:bright={isHandleBright}
-                role="button"
-                tabindex="0"
-                onmousedown={startResize}
-                onmouseenter={handleResizeHandleMouseEnter}
-                onmouseleave={handleResizeHandleMouseLeave}>
-            </div>
             <div class="drawer-content">
                 <div class="drawer-header">
                     <div class="drawer-title-container">
@@ -159,6 +149,16 @@
                         <DrawerComponent {...getDrawer(activeDrawer)?.props} bind:this={activeDrawerInstance} />
                     </div>
                 {/if}
+            </div>
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <div
+                class="resize-handle"
+                class:bright={isHandleBright}
+                aria-hidden="true"
+                tabindex="-1"
+                onmousedown={startResize}
+                onmouseenter={handleResizeHandleMouseEnter}
+                onmouseleave={handleResizeHandleMouseLeave}>
             </div>
         </div>
     {/if}
