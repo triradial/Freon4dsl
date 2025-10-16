@@ -271,17 +271,6 @@
     "study": "ALLIANCE A022104"
   },
   {
-    "id": "441a61d4-e8f9-46bf-92e2-3863fb243ffb",
-    "patientNumber": "1212",
-    "displayName": "",
-    "name": "",
-    "initials": "MV",
-    "dob": 1988,
-    "gender": "Male",
-    "studyId": "30f3afa3-357c-4fe1-916c-10609703f8bd",
-    "study": "NewFreon"
-  },
-  {
     "id": "a2c7ef78-5b09-487a-9a66-b3bbb3581421",
     "patientNumber": "12345",
     "displayName": "",
