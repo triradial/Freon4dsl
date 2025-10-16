@@ -12,7 +12,7 @@
     const { box } = $props<{ box: StringReplacerBox }>();
     let value = $state<DateValue>(parseDate(formatToday()));
     let isOpen = $state(false);
-    let triggerElement: HTMLButtonElement | null = null;
+    let triggerElement = $state<HTMLElement | null>(null);
 
     function isValidDateString(val: string): boolean {
         // Checks for YYYY-MM-DD
@@ -72,6 +72,19 @@
     }
 </script>
 
+<style>
+    /* Ensure date text and separators render white inside the input */
+    :global(.dsl-input-text) {
+        color: var(--white) !important;
+    }
+    :global(.datepicker-input .text-muted-foreground) {
+        color: var(--white) !important;
+    }
+    /* Optional: make the calendar icon match */
+    :global(.datepicker-input) button {
+        color: var(--white);
+    }
+</style>
 
 <div class="ml-1">
 <DatePicker.Root bind:open={isOpen} value={value} onValueChange={onValueChange} weekdayFormat="short" fixedWeeks={false}>
@@ -81,13 +94,13 @@
                 {#each segments as { part, value }, i (part + i)}
                     <div class="inline-block select-none">
                         {#if part === "literal"}
-                            <DatePicker.Segment {part} class="text-muted-foreground p-1">{value}</DatePicker.Segment>
+                            <DatePicker.Segment {part} class="p-1 dsl-input-text">{value}</DatePicker.Segment>
                         {:else}
                             <DatePicker.Segment {part} class="rounded-5px hover:bg-muted focus:bg-muted focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1 dsl-input-text">{value}</DatePicker.Segment>
                         {/if}
                     </div>
                 {/each}
-                <DatePicker.Trigger bind:this={triggerElement} class="text-foreground/60 hover:bg-muted active:bg-dark-10 ml-auto inline-flex size-8 items-center justify-center rounded-[5px] transition-all">
+                <DatePicker.Trigger bind:ref={triggerElement} class="text-foreground/60 hover:bg-muted active:bg-dark-10 ml-auto inline-flex size-8 items-center justify-center rounded-[5px] transition-all">
                     <CalendarBlank class="size-6" />
                 </DatePicker.Trigger>
             {/snippet}
