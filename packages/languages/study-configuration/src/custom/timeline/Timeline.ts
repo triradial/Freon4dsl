@@ -542,18 +542,20 @@ export class Timeline extends RtObject {
         return new RtString(html);
     }
 
-    public getTimelineChart(): RtString {
-        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
-        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
-        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
-        const html = `<div class="limited-width-container">${chartHTML}</div>`;
-        return new RtString(html);
-    }
+    // public getTimelineChart(): RtString {
+    //     const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
+    //     const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
+    //     const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+    //     const html = `<div class="limited-width-container">${chartHTML}</div>`;
+    //     return new RtString(html);
+    // }
 
     public getTimelineChartHtml(): RtString {
         const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
         const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
-        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
+        console.log("anyPatientEventInstances: " + this.anyPatientEventInstances());
+        console.log("anyStaffAvailabilityEventInstances: " + this.anyStaffAvailabilityEventInstances());
+        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, this.anyPatientEventInstances(), this.anyStaffAvailabilityEventInstances() );
         const html = `<div class="limited-width-container">${chartHTML}</div>`;
         return new RtString(html);
     }

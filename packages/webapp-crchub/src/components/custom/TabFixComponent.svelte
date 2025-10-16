@@ -103,21 +103,5 @@
         height: 30px !important;
     }
     
-    /* CSS-only approach: Highlight layout-component when input has focus */
-    .layout-component:has(.TabHereFix:focus-within) {
-        background-color: lightsteelblue !important;
-        border: 8px solid steelblue !important;
-        outline: 10px solid navy !important;
-        box-shadow: 0 0 30px rgba(70, 130, 180, 0.6) !important;
-        transform: scale(1.01) !important;
-        transition: all 0.4s ease !important;
-    }
-    
-    /* Highlight all children of the focused layout-component */
-    .layout-component:has(.TabHereFix:focus-within) * {
-        background-color: rgba(70, 130, 180, 0.05) !important;
-        border: 1px solid rgba(70, 130, 180, 0.2) !important;
-        transition: all 0.3s ease !important;
-    }
 </style>
 

@@ -72,11 +72,6 @@
     }
 </script>
 
-<style>
-    .dsl-input-text {
-        color: var(--input-text) !important;
-    }
-</style>
 
 <div class="ml-1">
 <DatePicker.Root bind:open={isOpen} value={value} onValueChange={onValueChange} weekdayFormat="short" fixedWeeks={false}>

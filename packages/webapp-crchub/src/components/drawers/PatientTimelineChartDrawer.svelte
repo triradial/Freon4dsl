@@ -12,7 +12,7 @@
     let showChart = $state(false);
     let chartHtml = $state<string>("");
     let error = $state<string | null>(null);
-    let container: HTMLElement | null = null;
+    let container = $state<HTMLElement | null>(null);
     let patientInfo: PatientInfo | undefined;
 
     const dispatch = createEventDispatcher();

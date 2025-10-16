@@ -1,32 +1,25 @@
 {
    "serializationFormatVersion": "2023.1",
-   "languages": [],
+   "languages": [
+      {
+         "key": "-key-StudyConfigurationModel",
+         "version": "2023.1"
+      }
+   ],
    "nodes": [
       {
          "id": "ID-62",
          "classifier": {
-<<<<<<< HEAD:packages/server-crchub/datastore/studies/20fd7b12-a9ab-40b7-ad5b-331f74d8b210/Availability.json
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
             "key": "-key-Availability"
-=======
-            "language": "-key-Example",
-            "version": "2023.1",
-            "key": "-key-ExampleUnit"
->>>>>>> upstream/development:packages/server/modelstore/Model7/extra23.json
          },
          "properties": [
             {
                "property": {
-<<<<<<< HEAD:packages/server-crchub/datastore/studies/20fd7b12-a9ab-40b7-ad5b-331f74d8b210/Availability.json
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
                   "key": "-key-Availability-name"
-=======
-                  "language": "-key-Example",
-                  "version": "2023.1",
-                  "key": "-key-ExampleUnit-name"
->>>>>>> upstream/development:packages/server/modelstore/Model7/extra23.json
                },
                "value": "Availability"
             },
@@ -36,37 +29,15 @@
                   "version": "2023.1",
                   "key": "-key-Availability-baselineStaff"
                },
-               "value": ""
+               "value": "2"
             }
          ],
          "containments": [
             {
                "containment": {
-<<<<<<< HEAD:packages/server-crchub/datastore/studies/20fd7b12-a9ab-40b7-ad5b-331f74d8b210/Availability.json
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
                   "key": "-key-Availability-staffLevels"
-=======
-                  "language": "-key-Example",
-                  "version": "2023.1",
-                  "key": "-key-ExampleUnit-entities"
-               },
-               "children": []
-            },
-            {
-               "containment": {
-                  "language": "-key-Example",
-                  "version": "2023.1",
-                  "key": "-key-ExampleUnit-interfaces"
-               },
-               "children": []
-            },
-            {
-               "containment": {
-                  "language": "-key-Example",
-                  "version": "2023.1",
-                  "key": "-key-ExampleUnit-methods"
->>>>>>> upstream/development:packages/server/modelstore/Model7/extra23.json
                },
                "children": []
             }

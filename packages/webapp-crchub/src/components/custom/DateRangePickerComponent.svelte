@@ -118,11 +118,6 @@
     }
 </script>
 
-<style>
-    .dsl-date-text {
-        color: #35a52b !important;
-    }
-</style>
 
 <div class="ml-1">
 <DateRangePicker.Root 
