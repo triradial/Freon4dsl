@@ -125,3 +125,56 @@
         </div>
     {/if}
 </div>
+
+<style>
+    /* Consistent table styling for timeline content */
+    :global(.table_component table) {
+        border: 1px solid var(--white-30t);
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+    }
+    
+    :global(.table_component caption) {
+        color: var(--white-70t);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-align: left;
+    }
+    
+    :global(.table_component th) {
+        border: 1px solid var(--white-40t);
+        background-color: var(--black-10t);
+        color: var(--white);
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    :global(.table_component td) {
+        border: 1px solid var(--white-20t);
+        color: var(--white-90t);
+        padding: 0.75rem;
+    }
+    
+    :global(.table_component tbody tr:nth-child(even) td) {
+        background-color: var(--white-10t);
+    }
+    
+    :global(.table_component tbody tr:nth-child(odd) td) {
+        background-color: var(--white-5t);
+    }
+    
+    :global(.table_component td.text-center) {
+        text-align: center;
+    }
+    
+    :global(.table_component th.stretch) {
+        width: auto;
+    }
+    
+    :global(.table_component th.fit) {
+        width: 1%;
+        white-space: nowrap;
+    }
+</style>

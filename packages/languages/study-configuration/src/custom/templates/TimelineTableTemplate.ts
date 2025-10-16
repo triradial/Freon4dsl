@@ -15,6 +15,7 @@ export class TimelineTableTemplate {
         var template = `
 <div class="table_component" role="region" tabindex="0">
 <table>
+  <caption>Study Timeline</caption>
   <thead>
     <tr>
       <th class="stretch">Visit Name</th>

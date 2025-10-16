@@ -8,7 +8,7 @@
     import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import ContentLoader from "./ContentLoader.svelte";
-    import 'github-markdown-css/github-markdown.css';
+    // Removed GitHub markdown CSS to use consistent UI styling
 
     pdfMake.vfs = pdfFonts as any;
     const md = new MarkdownIt({ html: true });
@@ -325,7 +325,7 @@
         {#if isLoading}
             <ContentLoader />
         {:else}
-            <div class="markdown-body">
+            <div class="study-checklist-content">
                 {@html checklistHtml}
             </div>
         {/if}
@@ -333,273 +333,144 @@
 </div>
 
 <style>
-    :global(.markdown-body) {
-        --base-size-4: 0.25rem;
-        --base-size-8: 0.5rem;
-        --base-size-16: 1rem;
-        --base-size-24: 1.5rem;
-        --base-size-40: 2.5rem;
-        --base-text-weight-normal: 400;
-        --base-text-weight-medium: 500;
-        --base-text-weight-semibold: 600;
-        --fontStack-monospace: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+    /* Consistent UI styling for study checklist content */
+    .study-checklist-content {
+        color: var(--text-primary-500);
+        font-family: var(--font-family-sans);
+        line-height: 1.6;
     }
-
-    /* Light mode (default) */
-    :global(.markdown-body) {
-        color-scheme: light;
-        --fgColor-accent: #0969da;
-        --focus-outlineColor: #0969da;
-        --fgColor-default: #1f2328;
-        --fgColor-muted: #59636e;
-        --fgColor-success: #1a7f37;
-        --fgColor-attention: #9a6700;
-        --fgColor-danger: #d1242f;
-        --fgColor-done: #8250df;
-        --bgColor-default: #ffffff;
-        --bgColor-muted: #f6f8fa;
-        --bgColor-neutral-muted: #818b981f;
-        --bgColor-attention-muted: #fff8c5;
-        --borderColor-default: #d1d9e0;
-        --borderColor-muted: #d1d9e0b3;
-        --borderColor-neutral-muted: #d1d9e0b3;
-        --borderColor-accent-emphasis: #0969da;
-        --borderColor-success-emphasis: #1a7f37;
-        --borderColor-attention-emphasis: #9a6700;
-        --borderColor-danger-emphasis: #cf222e;
-        --borderColor-done-emphasis: #8250df;
-        --color-prettylights-syntax-comment: #59636e;
-        --color-prettylights-syntax-constant: #0550ae;
-        --color-prettylights-syntax-constant-other-reference-link: #0a3069;
-        --color-prettylights-syntax-entity: #6639ba;
-        --color-prettylights-syntax-storage-modifier-import: #1f2328;
-        --color-prettylights-syntax-entity-tag: #0550ae;
-        --color-prettylights-syntax-keyword: #cf222e;
-        --color-prettylights-syntax-string: #0a3069;
-        --color-prettylights-syntax-variable: #953800;
-        --color-prettylights-syntax-brackethighlighter-unmatched: #82071e;
-        --color-prettylights-syntax-brackethighlighter-angle: #59636e;
-        --color-prettylights-syntax-invalid-illegal-text: #f6f8fa;
-        --color-prettylights-syntax-invalid-illegal-bg: #82071e;
-        --color-prettylights-syntax-carriage-return-text: #f6f8fa;
-        --color-prettylights-syntax-carriage-return-bg: #cf222e;
-        --color-prettylights-syntax-string-regexp: #116329;
-        --color-prettylights-syntax-markup-list: #3b2300;
-        --color-prettylights-syntax-markup-heading: #0550ae;
-        --color-prettylights-syntax-markup-italic: #1f2328;
-        --color-prettylights-syntax-markup-bold: #1f2328;
-        --color-prettylights-syntax-markup-deleted-text: #82071e;
-        --color-prettylights-syntax-markup-deleted-bg: #ffebe9;
-        --color-prettylights-syntax-markup-inserted-text: #116329;
-        --color-prettylights-syntax-markup-inserted-bg: #dafbe1;
-        --color-prettylights-syntax-markup-changed-text: #953800;
-        --color-prettylights-syntax-markup-changed-bg: #ffd8b5;
-        --color-prettylights-syntax-markup-ignored-text: #d1d9e0;
-        --color-prettylights-syntax-markup-ignored-bg: #0550ae;
-        --color-prettylights-syntax-meta-diff-range: #8250df;
-        --color-prettylights-syntax-sublimelinter-gutter-mark: #818b98;
+    
+    .study-checklist-content h1,
+    .study-checklist-content h2,
+    .study-checklist-content h3,
+    .study-checklist-content h4,
+    .study-checklist-content h5,
+    .study-checklist-content h6 {
+        color: var(--text-primary-500);
+        font-weight: 600;
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
     }
-
-    /* Dark mode */
-    :global(body.dark .markdown-body) {
-        color-scheme: dark;
-        --fgColor-accent: #4493f8;
-        --focus-outlineColor: #1f6feb;
-        --fgColor-default: #f0f6fc;
-        --fgColor-muted: #9198a1;
-        --fgColor-success: #3fb950;
-        --fgColor-attention: #d29922;
-        --fgColor-danger: #f85149;
-        --fgColor-done: #ab7df8;
-        --bgColor-default: #0d1117;
-        --bgColor-muted: #151b23;
-        --bgColor-neutral-muted: #656c7633;
-        --bgColor-attention-muted: #bb800926;
-        --borderColor-default: #3d444d;
-        --borderColor-muted: #3d444db3;
-        --borderColor-neutral-muted: #3d444db3;
-        --borderColor-accent-emphasis: #1f6feb;
-        --borderColor-success-emphasis: #238636;
-        --borderColor-attention-emphasis: #9e6a03;
-        --borderColor-danger-emphasis: #da3633;
-        --borderColor-done-emphasis: #8957e5;
-        --color-prettylights-syntax-comment: #9198a1;
-        --color-prettylights-syntax-constant: #79c0ff;
-        --color-prettylights-syntax-constant-other-reference-link: #a5d6ff;
-        --color-prettylights-syntax-entity: #d2a8ff;
-        --color-prettylights-syntax-storage-modifier-import: #f0f6fc;
-        --color-prettylights-syntax-entity-tag: #7ee787;
-        --color-prettylights-syntax-keyword: #ff7b72;
-        --color-prettylights-syntax-string: #a5d6ff;
-        --color-prettylights-syntax-variable: #ffa657;
-        --color-prettylights-syntax-brackethighlighter-unmatched: #f85149;
-        --color-prettylights-syntax-brackethighlighter-angle: #9198a1;
-        --color-prettylights-syntax-invalid-illegal-text: #f0f6fc;
-        --color-prettylights-syntax-invalid-illegal-bg: #8e1519;
-        --color-prettylights-syntax-carriage-return-text: #f0f6fc;
-        --color-prettylights-syntax-carriage-return-bg: #b62324;
-        --color-prettylights-syntax-string-regexp: #7ee787;
-        --color-prettylights-syntax-markup-list: #f2cc60;
-        --color-prettylights-syntax-markup-heading: #1f6feb;
-        --color-prettylights-syntax-markup-italic: #f0f6fc;
-        --color-prettylights-syntax-markup-bold: #f0f6fc;
-        --color-prettylights-syntax-markup-deleted-text: #ffdcd7;
-        --color-prettylights-syntax-markup-deleted-bg: #67060c;
-        --color-prettylights-syntax-markup-inserted-text: #aff5b4;
-        --color-prettylights-syntax-markup-inserted-bg: #033a16;
-        --color-prettylights-syntax-markup-changed-text: #ffdfb6;
-        --color-prettylights-syntax-markup-changed-bg: #5a1e02;
-        --color-prettylights-syntax-markup-ignored-text: #f0f6fc;
-        --color-prettylights-syntax-markup-ignored-bg: #1158c7;
-        --color-prettylights-syntax-meta-diff-range: #d2a8ff;
-        --color-prettylights-syntax-sublimelinter-gutter-mark: #3d444d;
+    
+    .study-checklist-content h1 {
+        font-size: 1.5rem;
+        border-bottom: 1px solid var(--white-20t);
+        padding-bottom: 0.5rem;
     }
-
-    :global(.markdown-body) {
-        -ms-text-size-adjust: 100%;
-        -webkit-text-size-adjust: 100%;
-        margin: 0;
-        color: var(--fgColor-default);
-        background-color: var(--bgColor-default);
-        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
-        font-size: 16px;
-        line-height: 1.5;
-        word-wrap: break-word;
-        box-sizing: border-box;
-        min-width: 200px;
-        max-width: none;
-        margin: 0;
-        padding: 16px;
+    
+    .study-checklist-content h2 {
+        font-size: 1.25rem;
     }
-
-    :global(.markdown-body p) {
-        margin-top: 0;
-        margin-bottom: 10px;
+    
+    .study-checklist-content h3 {
+        font-size: 1.1rem;
     }
-
-    :global(.markdown-body h1),
-    :global(.markdown-body h2),
-    :global(.markdown-body h3),
-    :global(.markdown-body h4),
-    :global(.markdown-body h5),
-    :global(.markdown-body h6) {
-        margin-top: var(--base-size-24);
-        margin-bottom: var(--base-size-16);
-        font-weight: var(--base-text-weight-semibold, 600);
-        line-height: 1.25;
+    
+    .study-checklist-content p {
+        margin-bottom: 1rem;
+        color: var(--text-primary-500);
     }
-
-    :global(.markdown-body h1) {
-        font-weight: var(--base-text-weight-semibold, 600);
-        padding-bottom: .3em;
-        font-size: 2em;
-        border-bottom: 1px solid var(--borderColor-muted);
+    
+    .study-checklist-content ul,
+    .study-checklist-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        color: var(--text-primary-500);
     }
-
-    :global(.markdown-body h2) {
-        font-weight: var(--base-text-weight-semibold, 600);
-        padding-bottom: .3em;
-        font-size: 1.5em;
-        border-bottom: 1px solid var(--borderColor-muted);
+    
+    .study-checklist-content li {
+        margin-bottom: 0.25rem;
     }
-
-    :global(.markdown-body h3) {
-        font-weight: var(--base-text-weight-semibold, 600);
-        font-size: 1.25em;
-    }
-
-    :global(.markdown-body h4) {
-        font-weight: var(--base-text-weight-semibold, 600);
-        font-size: 1em;
-    }
-
-    :global(.markdown-body table) {
-        border-spacing: 0;
-        border-collapse: collapse;
-        display: block;
-        width: 100%;
-        max-width: none;
-        overflow-x: auto;
-        overflow-y: visible;
-    }
-
-    :global(.markdown-body table th),
-    :global(.markdown-body table td) {
-        padding: 6px 13px;
-        border: 1px solid var(--borderColor-default);
-    }
-
-    :global(.markdown-body table tr) {
-        background-color: var(--bgColor-default);
-        border-top: 1px solid var(--borderColor-muted);
-    }
-
-    :global(.markdown-body table tr:nth-child(2n)) {
-        background-color: var(--bgColor-muted);
-    }
-
-    :global(.markdown-body table th) {
-        font-weight: var(--base-text-weight-semibold, 600);
-    }
-
-    :global(.markdown-body blockquote) {
-        margin: 0;
-        padding: 0 1em;
-        color: var(--fgColor-muted);
-        border-left: .25em solid var(--borderColor-default);
-    }
-
-    :global(.markdown-body code),
-    :global(.markdown-body tt) {
-        padding: .2em .4em;
-        margin: 0;
-        font-size: 85%;
-        white-space: break-spaces;
-        background-color: var(--bgColor-neutral-muted);
-        border-radius: 6px;
-        font-family: var(--fontStack-monospace);
-    }
-
-    :global(.markdown-body pre) {
-        padding: var(--base-size-16);
-        overflow: auto;
-        font-size: 85%;
-        line-height: 1.45;
-        color: var(--fgColor-default);
-        background-color: var(--bgColor-muted);
-        border-radius: 6px;
-        font-family: var(--fontStack-monospace);
-    }
-
-    :global(.markdown-body a) {
-        color: var(--fgColor-accent);
+    
+    .study-checklist-content a {
+        color: var(--primary-color);
         text-decoration: none;
     }
-
-    :global(.markdown-body a:hover) {
+    
+    .study-checklist-content a:hover {
+        color: var(--text-hover);
         text-decoration: underline;
     }
-
-    :global(.markdown-body ul),
-    :global(.markdown-body ol) {
-        margin-top: 0;
-        margin-bottom: 0;
-        padding-left: 2em;
+    
+    .study-checklist-content blockquote {
+        border-left: 4px solid var(--primary-color);
+        padding-left: 1rem;
+        margin: 1rem 0;
+        color: var(--text-primary-400);
+        font-style: italic;
     }
-
-    :global(.markdown-body hr) {
-        box-sizing: content-box;
-        overflow: hidden;
-        background: transparent;
-        border-bottom: 1px solid var(--borderColor-muted);
-        height: .25em;
+    
+    .study-checklist-content code {
+        background-color: var(--white-10t);
+        color: var(--text-primary-600);
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+        font-family: var(--font-family-mono);
+        font-size: 0.875rem;
+    }
+    
+    .study-checklist-content pre {
+        background-color: var(--white-10t);
+        color: var(--text-primary-600);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+    }
+    
+    .study-checklist-content pre code {
+        background: none;
         padding: 0;
-        margin: var(--base-size-24) 0;
-        background-color: var(--borderColor-default);
-        border: 0;
     }
-
-    :global(.limited-width-container) {
+    
+    /* Table styling using existing table_component class */
+    .study-checklist-content .table_component table {
+        border: 1px solid var(--white-30t);
+        border-collapse: collapse;
         width: 100%;
+        margin: 1rem 0;
+    }
+    
+    .study-checklist-content .table_component caption {
+        color: var(--white-70t);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-align: left;
+    }
+    
+    .study-checklist-content .table_component th {
+        border: 1px solid var(--white-40t);
+        background-color: var(--black-10t);
+        color: var(--white);
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .study-checklist-content .table_component td {
+        border: 1px solid var(--white-20t);
+        color: var(--white-90t);
+        padding: 0.75rem;
+    }
+    
+    .study-checklist-content .table_component tbody tr:nth-child(even) td {
+        background-color: var(--white-10t);
+    }
+    
+    .study-checklist-content .table_component tbody tr:nth-child(odd) td {
+        background-color: var(--white-5t);
+    }
+    
+    .study-checklist-content .table_component td.text-center {
+        text-align: center;
+    }
+    
+    .study-checklist-content .table_component th.stretch {
+        width: auto;
+    }
+    
+    .study-checklist-content .table_component th.fit {
+        width: 1%;
+        white-space: nowrap;
     }
 </style>
