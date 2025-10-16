@@ -12,8 +12,8 @@
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let value = $state<BitsDateRange>({
-        start: new CalendarDate(2024, 8, 3),
-        end: new CalendarDate(2024, 8, 4),
+        start: new CalendarDate(today("UTC").year, today("UTC").month, today("UTC").day),
+        end: new CalendarDate(today("UTC").year, today("UTC").month, today("UTC").day),
     });
     let isOpen = $state(false);
 
