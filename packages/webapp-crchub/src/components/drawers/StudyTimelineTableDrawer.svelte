@@ -77,9 +77,17 @@
         {#if isLoading || !showTable}
             <ContentLoader />
         {:else}
-            <div bind:this={container}>
+            <div bind:this={container} class="timeline-content-wrapper">
                 {@html tableHtml}
             </div>
         {/if}
     {/if}
 </div>
+
+<style>
+    .timeline-content-wrapper {
+        overflow-y: auto;
+        overflow-x: auto;
+        max-height: calc(100vh - 150px);
+    }
+</style>

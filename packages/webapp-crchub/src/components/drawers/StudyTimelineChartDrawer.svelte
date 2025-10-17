@@ -118,7 +118,7 @@
         <div style="display: {isLoading ? 'block' : 'none'}">
             <ContentLoader />   
         </div>
-        <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
+        <div class="chart-content-wrapper" style="display: {!isLoading && showChart ? 'block' : 'none'}">
             <div bind:this={container}>
                 {@html chartHtml}
             </div>
@@ -127,6 +127,12 @@
 </div>
 
 <style>
+    .chart-content-wrapper {
+        overflow-y: auto;
+        overflow-x: auto;
+        max-height: calc(100vh - 150px);
+    }
+
     /* Consistent table styling for timeline content */
     :global(.table_component table) {
         border: 1px solid var(--white-30t);

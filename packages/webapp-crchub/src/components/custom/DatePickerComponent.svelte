@@ -106,14 +106,14 @@
             {/snippet}
         </DatePicker.Input>
         <DatePicker.Content sideOffset={6} class="z-50">
-            <DatePicker.Calendar class="border-dark-10 shadow-popover rounded-[15px] border p-[22px]" style="background: var(--card-background, var(--gray-800)); opacity: 1; color: var(--green-90t);">
+            <DatePicker.Calendar class="border-dark-10 shadow-popover rounded-[15px] border p-[22px]" style="background: var(--card-background, var(--gray-800)); opacity: 1; color: var(--text-primary-500);">
                 {#snippet children({ months, weekdays })}
                     <DatePicker.Header class="flex items-center justify-between">
-                        <DatePicker.PrevButton class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]" style="color: var(--green-90t);">
+                        <DatePicker.PrevButton class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]" style="color: var(--text-primary-500);">
                             <CaretLeft class="size-6" />
                         </DatePicker.PrevButton>
-                        <DatePicker.Heading class="text-[15px] font-medium" style="color: var(--green-90t);" />
-                        <DatePicker.NextButton class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]" style="color: var(--green-90t);">
+                        <DatePicker.Heading class="text-[15px] font-medium" style="color: var(--text-primary-500);" />
+                        <DatePicker.NextButton class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]" style="color: var(--text-primary-500);">
                             <CaretRight class="size-6" />
                         </DatePicker.NextButton>
                     </DatePicker.Header>
@@ -123,7 +123,7 @@
                                 <DatePicker.GridHead>
                                     <DatePicker.GridRow class="mb-1 grid w-full grid-cols-7 gap-1">
                                         {#each weekdays as day (day)}
-                                            <DatePicker.HeadCell class="font-normal! w-10 rounded-md text-xs text-center" style="color: var(--green-90t);">
+                                            <DatePicker.HeadCell class="font-normal! w-10 rounded-md text-xs text-center" style="color: var(--text-primary-500);">
                                                 <div class="w-10 text-center">{day.slice(0, 2)}</div>
                                             </DatePicker.HeadCell>
                                         {/each}
@@ -134,7 +134,7 @@
                                         <DatePicker.GridRow class="grid w-full grid-cols-7 gap-1">
                                             {#each weekDates as date (date)}
                                                 <DatePicker.Cell {date} month={month.value} class="p-0 relative size-10 text-center text-sm">
-                                                    <DatePicker.Day class="w-10 h-10 flex items-center justify-center rounded-md text-sm hover:bg-muted focus:bg-muted aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary aria-selected:hover:text-primary-foreground aria-selected:focus:bg-primary aria-selected:focus:text-primary-foreground disabled:pointer-events-none disabled:opacity-50 data-outside-month:hidden" style="color: var(--green-90t);">
+                                                    <DatePicker.Day class="w-10 h-10 flex items-center justify-center rounded-md text-sm hover:bg-muted focus:bg-muted aria-selected:bg-primary aria-selected:text-primary-foreground aria-selected:hover:bg-primary aria-selected:hover:text-primary-foreground aria-selected:focus:bg-primary aria-selected:focus:text-primary-foreground disabled:pointer-events-none disabled:opacity-50 data-outside-month:hidden" style="color: var(--text-primary-500);">
                                                         {date.day}
                                                     </DatePicker.Day>
                                                 </DatePicker.Cell>

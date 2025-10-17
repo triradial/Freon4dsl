@@ -348,8 +348,8 @@
     .study-checklist-content h6 {
         color: var(--text-primary-500);
         font-weight: 600;
-        margin-top: 1.5rem;
-        margin-bottom: 0.5rem;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
     }
     
     .study-checklist-content h1 {
@@ -379,7 +379,7 @@
     }
     
     .study-checklist-content li {
-        margin-bottom: 0.25rem;
+        margin-bottom: 2rem;
     }
     
     .study-checklist-content a {
@@ -423,12 +423,20 @@
         padding: 0;
     }
     
+    /* Table styling - apply to all tables */
+    .study-checklist-content table {
+        border: 1px solid var(--white-30t);
+        border-collapse: collapse;
+        width: 100%;
+        margin: 2rem 0 4rem 0;
+    }
+    
     /* Table styling using existing table_component class */
     .study-checklist-content .table_component table {
         border: 1px solid var(--white-30t);
         border-collapse: collapse;
         width: 100%;
-        margin: 1rem 0;
+        margin: 2rem 0 4rem 0;
     }
     
     .study-checklist-content .table_component caption {
