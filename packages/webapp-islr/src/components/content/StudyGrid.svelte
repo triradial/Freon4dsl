@@ -22,10 +22,10 @@
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
-    let studiesData = $derived($dataStore.studies);
+    let projectsData = $derived($dataStore.studies);
     let user = null;
     let showGrid = $derived(!!user);
-    let canManageStudies = true;
+    let canManageProjects = true;
     let gridTheme = $derived($theme === "dark" ? "ag-theme-quartz-dark" : "ag-theme-quartz");
     let hasFetched = $state(false);
 
@@ -89,13 +89,13 @@
     let pendingViewChange: string | null = null;
 
     $effect(() => {
-        // keep the gridApi and studiesData in scope
+        // keep the gridApi and projectsData in scope
         void gridApi;
-        void studiesData;
-        if (gridApi && studiesData) {
+        void projectsData;
+        if (gridApi && projectsData) {
             if (updateTimeout) clearTimeout(updateTimeout);
             updateTimeout = setTimeout(() => {
-                gridApi.setGridOption("rowData", studiesData);
+                gridApi.setGridOption("rowData", projectsData);
                 gridApi.sizeColumnsToFit();
                 gridApi.autoSizeAllColumns();
                 // Hide loading overlay after data is set
@@ -104,26 +104,26 @@
         }
     });
 
-    async function fetchStudies() {
+    async function fetchProjects() {
         if (gridApi) gridApi.setGridOption("loading", true);
         await dataStore.getStudies();
         // Do not set loading to false here; let the debounced effect handle it after data is set
     }
 
     $effect(() => {
-        if (user && studiesData.length === 0 && !hasFetched) {
+        if (user && projectsData.length === 0 && !hasFetched) {
             hasFetched = true;
-            fetchStudies();
+            fetchProjects();
         }
     });
 
     function updateGridData() {
-        if (gridApi && studiesData) {
-            gridApi.setGridOption("rowData", studiesData);
+        if (gridApi && projectsData) {
+            gridApi.setGridOption("rowData", projectsData);
             setTimeout(() => {
                 gridApi.sizeColumnsToFit();
                 gridApi.autoSizeAllColumns();
-                if (studiesData.length === 0) {
+                if (projectsData.length === 0) {
                     gridApi.setGridOption("loading", false);
                 }
             }, 100);
@@ -454,11 +454,11 @@
             groupDisplayType: "groupRows",
             rowGroupPanelShow: "always",
             onGridReady: (params) => {
-                if (studiesData.length > 0) {
+                if (projectsData.length > 0) {
                     updateGridData();
                 } else {
                     // Trigger initial data load with loading overlay
-                    refreshStudies();
+                    refreshProjects();
                 }
 
                 // Apply the stored active view if it isn't default and grid is ready
@@ -501,38 +501,38 @@
             const target = event.target as HTMLElement;
             if (target.tagName === "A") {
                 event.preventDefault();
-                const studyId = target.getAttribute("data-study-id");
-                if (studyId) {
-                    onOpenClick(studyId);
+                const projectId = target.getAttribute("data-study-id");
+                if (projectId) {
+                    onOpenClick(projectId);
                 }
             }
         });
-        refreshStudies(); // Always trigger refresh when the view is opened
+        refreshProjects(); // Always trigger refresh when the view is opened
     });
 
     onDestroy(() => {
         if (userUnsubscribe) userUnsubscribe();
     });
 
-    function onOpenClick(studyId: string) {
-        navigateTo("project", studyId);
+    function onOpenClick(projectId: string) {
+        navigateTo("project", projectId);
     }
 
-    function onDeleteClick(studyId: string) {
-        console.log("Delete clicked for project:", studyId);
-        objectToDelete = studiesData.find((s) => s.id === studyId);
+    function onDeleteClick(projectId: string) {
+        console.log("Delete clicked for project:", projectId);
+        objectToDelete = projectsData.find((s) => s.id === projectId);
         if (objectToDelete) {
             deleteDialogOpen = true;
         }
     }
 
-    function onEditClick(studyId: string) {
-        editObject("project", studyId);
-        fetchStudies();
+    function onEditClick(projectId: string) {
+        editObject("project", projectId);
+        fetchProjects();
     }
 
-    function onStudyChanged() {
-        fetchStudies();
+    function onProjectChanged() {
+        fetchProjects();
     }
 
     function createNameCell(params: any) {
@@ -549,7 +549,7 @@
             level: "primary",
             onClick: onEditClick,
             isVisible: () => {
-                return canManageStudies;
+                return canManageProjects;
             },
         },
         {
@@ -558,7 +558,7 @@
             level: "primary",
             onClick: onDeleteClick,
             isVisible: () => {
-                return canManageStudies;
+                return canManageProjects;
             },
         },
         ];
@@ -599,8 +599,8 @@
         return true; // For now, always render all buttons
     }
 
-    async function refreshStudies() {
-        console.log("Refreshing studies");
+    async function refreshProjects() {
+        console.log("Refreshing projects");
         if (gridApi) gridApi.setGridOption("loading", true);
         await dataStore.getStudies();
         // updateGridData() is not needed; debounced effect will handle
@@ -627,7 +627,7 @@
             confirmUnsavedOpen = true;
         } else {
             applyView(newView);
-            refreshStudies();
+            refreshProjects();
         }
     }
 
@@ -641,7 +641,7 @@
                 // Save current view
                 handleSave();
                 applyView(pendingViewChange);
-                refreshStudies();
+                refreshProjects();
             }
         }
         confirmUnsavedOpen = false;
@@ -651,7 +651,7 @@
     function handleConfirmDiscard() {
         if (pendingViewChange) {
             applyView(pendingViewChange);
-            refreshStudies();
+            refreshProjects();
         }
         confirmUnsavedOpen = false;
         pendingViewChange = null;
@@ -667,7 +667,7 @@
         <div class="flex items-center gap-2">
             <h3 class="main-label-text mr-2">Projects</h3>
             <button type="button" class="icon-button primary inverted" onclick={() => addObject("project")}><IconPlus size="16" /></button>
-            <button type="button" class="icon-button primary inverted" onclick={refreshStudies}><IconRefresh size="16" /></button>
+            <button type="button" class="icon-button primary inverted" onclick={refreshProjects}><IconRefresh size="16" /></button>
         </div>
         
         <div class="flex items-center gap-2">
@@ -706,7 +706,7 @@
     objectType="project"
     object={objectToDelete}
     on:delete={() => {
-        onStudyChanged();
+        onProjectChanged();
         deleteDialogOpen = false;
         objectToDelete = null;
     }}

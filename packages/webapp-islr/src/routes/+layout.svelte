@@ -18,12 +18,10 @@
     import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
     import StudyTimelineTableDrawer from "../components/drawers/StudyTimelineTableDrawer.svelte";
     import StudyChecklistDrawer from "../components/drawers/StudyChecklistDrawer.svelte";
-    import PatientTimelineChartDrawer from "../components/drawers/PatientTimelineChartDrawer.svelte";
-    import StaffAvailabilityDrawer from "../components/drawers/StaffAvailabilityDrawer.svelte";
     import DSLErrorsDrawer from "../components/drawers/DSLErrorsDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
     // @ts-ignore
-    import { Heart as IconHeart, SquareChartGantt as IconSquareChartGantt, Table2 as IconTable2, TriangleAlert as IconTriangleAlert, Info as IconInfo, CheckSquare as IconCheckSquare, Calendar as IconCalendar, Users as IconUsers } from '@lucide/svelte';
+    import { Heart as IconHeart, SquareChartGantt as IconSquareChartGantt, Table2 as IconTable2, TriangleAlert as IconTriangleAlert, Info as IconInfo, CheckSquare as IconCheckSquare } from '@lucide/svelte';
     
     const LOGGER = new FreLogger("Routing");
 
@@ -43,9 +41,7 @@
             addDrawer({ key: "dslErrors", icon: IconTriangleAlert, component: DSLErrorsDrawer, title: "Errors", description: "View the errors in the project design.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "studyTimelineTable", icon: IconTable2, component: StudyTimelineTableDrawer, title: "Project Timeline Table", description: "View the timeline as a table for this project.", supportsRefresh: true, supportsPrint: false, defaultWidth: 600, });
             addDrawer({ key: "studyTimelineChart", icon: IconSquareChartGantt, component: StudyTimelineChartDrawer, title: "Project Timeline Chart", description: "View the timeline as a chart for this project.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
-            addDrawer({ key: "studyChecklist", icon: IconCheckSquare, component: StudyChecklistDrawer, title: "Project Checklist", description: "View the checklist for this project.", supportsRefresh: true, supportsPrint: true, defaultWidth: 800, });   
-            addDrawer({ key: "patientTimelineChart", icon: IconCalendar, component: PatientTimelineChartDrawer, title: "Patient Timeline", description: "View the availability of staff for this project.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
-            addDrawer({ key: "staffAvailability", icon: IconUsers, component: StaffAvailabilityDrawer, title: "Staff Availability", description: "View the availability of staff for this project.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
+            addDrawer({ key: "studyChecklist", icon: IconCheckSquare, component: StudyChecklistDrawer, title: "Project Checklist", description: "View the checklist for this project.", supportsRefresh: true, supportsPrint: true, defaultWidth: 800, });
 
             // Debug: log all drawers after registration
             LOGGER.log("All drawers after registration: " + JSON.stringify(get(drawerStore).drawers));

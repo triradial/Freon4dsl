@@ -227,12 +227,6 @@ export class ModelManager {
         try {
             LOGGER.info("ModelHandler.createModelUnits START name: StudyConfiguration");
 
-            await this.createModelUnit("Availability", "Availability");
-            await this.saveCurrentUnit();
-
-            await this.createModelUnit("PatientInfo", "PatientInfo");
-            await this.saveCurrentUnit();
-
             await this.createModelUnit("StudyConfiguration", "StudyConfiguration");
             const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
             studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));

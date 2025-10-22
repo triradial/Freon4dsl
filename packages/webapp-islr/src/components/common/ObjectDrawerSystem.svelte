@@ -2,7 +2,6 @@
     import { Popover } from '@skeletonlabs/skeleton-svelte';
     import { objectDrawerStore, closeObjectDrawer } from '../../services/stores/object-drawer-store.js';
     import StudyMutation from '../mutations/StudyMutation.svelte';
-    import PatientMutation from '../mutations/PatientMutation.svelte';
     import IconX from '@lucide/svelte/icons/x';
     import { dataStore } from '../../services/data/data-store.js';
 
@@ -37,7 +36,7 @@
         <header class="drawer-header">
             <div class="drawer-title-container">
             <h2>
-                {action === 'add' ? 'Add' : 'Edit'} {type === 'project' ? 'Project' : type === 'patient' ? 'Patient' : ''}
+                {action === 'add' ? 'Add' : 'Edit'} {type === 'project' ? 'Project' : ''}
             </h2>         
             </div>
             <button class="icon-button drawer-header-button" onclick={handleClose}><IconX size="16" /></button>
@@ -47,25 +46,11 @@
                 <StudyMutation 
                     study={data} 
                     {action} 
-                    onsave={async (study) => {
+                    onsave={async (project) => {
                         if (action === 'add') {
-                            await dataStore.addStudy(study);
+                            await dataStore.addStudy(project);
                         } else if (action === 'edit') {
-                            await dataStore.updateStudy(study);
-                        }
-                        handleClose();
-                    }} 
-                    onclose={() => { handleClose(); }} 
-                />
-            {:else if type === 'patient'}
-                <PatientMutation 
-                    patient={data} 
-                    {action} 
-                    onsave={async (patient) => {
-                        if (action === 'add') {
-                            await dataStore.addPatient(patient);
-                        } else if (action === 'edit') {
-                            await dataStore.updatePatient(patient);
+                            await dataStore.updateStudy(project);
                         }
                         handleClose();
                     }} 

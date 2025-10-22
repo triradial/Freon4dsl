@@ -6,7 +6,7 @@
   import { LABEL } from '../../constants/label-constants.js';
   import { dataStore } from '../../services/data/data-store.js';
 
-  let studyName = '';
+  let projectName = '';
   let id = $page.url.searchParams.get('id') || '';
   let didSetVisibility = false;
 
@@ -23,15 +23,15 @@
   });
 
   $effect(() => {
-    // Depend on $dataStore.studies so this effect reruns when studies are loaded
+    // Depend on $dataStore.studies so this effect reruns when projects are loaded
     void $dataStore.studies;
     (async () => {
-      let study = await dataStore.getStudy(id);
-      if (study) {
-        studyName = study.name;
+      let project = await dataStore.getStudy(id);
+      if (project) {
+        projectName = project.name;
         setBreadcrumb([
           { label: LABEL.STUDIES, href: "/projects" },
-          { label: LABEL.STUDY + ": " + studyName }
+          { label: LABEL.STUDY + ": " + projectName }
         ]);
       } else {
         setBreadcrumb([

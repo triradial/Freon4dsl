@@ -1,25 +1,18 @@
 export const ROUTE = Object.freeze({
     HOME: 'home',
     LOGIN: 'login',
-    PATIENTS: 'patients',
     STUDIES: 'projects',
-    AVAILABILITY: 'availability',
-    STUDY: 'project',
-    PATIENT: 'patient'
+    STUDY: 'project'
 });
 
 export const VALID_ROUTES = [
     ROUTE.LOGIN,
     ROUTE.HOME,
-    ROUTE.PATIENTS,
     ROUTE.STUDIES,
-    ROUTE.AVAILABILITY,
-    ROUTE.STUDY,
-    ROUTE.PATIENT
+    ROUTE.STUDY
 ] as const;
 
 export const VALID_ROUTES_WITH_ID = [
-    ROUTE.PATIENT,
     ROUTE.STUDY
 ] as const;
 

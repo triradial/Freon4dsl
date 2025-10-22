@@ -3,18 +3,6 @@ import { env } from '../../config/env.js';
 import { ModelManager } from '../dsl/model-manager.js';
 import { userStore, type User } from '../stores/users-store.js';
 
-export interface Patient {
-  id: string;
-  patientNumber: string;
-  displayName: string;
-  name: string;
-  initials: string;
-  dob: string;
-  gender: string;
-  studyId: string;
-  study: string;
-}
-
 export interface Study {
   id: string;
   name: string;
@@ -34,22 +22,15 @@ export interface Study {
 
 interface DataStoreState {
   studies: Study[];
-  patients: Patient[];
-  studyPatients: Patient[];
 }
 
 function createDataStore() {
   const { subscribe, set, update } = writable<DataStoreState>({
-    studies: [],
-    patients: [],
-    studyPatients: []
+    studies: []
   });
 
   async function initializeDatastore(): Promise<void> {
-    await Promise.all([
-      getStudies(),
-      getPatients()
-    ]);
+    await getStudies();
   }
 
   async function getStudies(): Promise<boolean> {
@@ -150,124 +131,6 @@ function createDataStore() {
     }
   }
 
-  async function getPatients(): Promise<boolean> {
-    try {
-      const currentUser = get(userStore);
-      if (!currentUser) {
-        throw new Error('User not authenticated');
-      }
-      const resp = await fetch(`${env.serverUrl}/getPatients?uid=${currentUser.userid}`);
-      if (!resp.ok) {
-        throw new Error(`HTTP error! status: ${resp.status}`);
-      }
-      const text = await resp.text();
-      const data = JSON.parse(text);
-      update(state => ({ ...state, patients: data }));
-      return true;
-    } catch (error) {
-      console.error('Error loading patients:', error);
-      return false;
-    }
-  }
-
-  async function getStudyPatients(studyId: string): Promise<boolean> {
-    try {
-      const currentUser = get(userStore);
-      if (!currentUser) {
-        throw new Error('User not authenticated');
-      }
-      const resp = await fetch(`${env.serverUrl}/getStudyPatients?id=${studyId}&uid=${currentUser.userid}`);
-      if (!resp.ok) {
-        throw new Error(`HTTP error! status: ${resp.status}`);
-      }
-      const text = await resp.text();
-      const data = JSON.parse(text);
-      update(state => ({ ...state, studyPatients: data }));
-      return true;
-    } catch (error) {
-      console.error('Error loading study patients:', error);
-      return false;
-    }
-  }
-
-  async function getPatient(patientId: string): Promise<Patient | undefined> {
-    try {
-      const currentUser = get(userStore);
-      if (!currentUser) {
-        throw new Error('User not authenticated');
-      }
-      const response = await fetch(`${env.serverUrl}/getPatient?id=${patientId}&uid=${currentUser.userid}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const text = await response.text();
-      return JSON.parse(text);
-    } catch (error) {
-      console.error('Error fetching patient:', error);
-      return undefined;
-    }
-  }
-
-  async function addPatient(newPatient: Patient): Promise<boolean> {
-    try {
-      const currentUser = get(userStore);
-      if (!currentUser) {
-        throw new Error('User not authenticated');
-      }
-      const response = await fetch(`${env.serverUrl}/addPatient?uid=${currentUser.userid}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPatient)
-      });
-      if (!response.ok) throw new Error('Failed to add patient');
-      const text = await response.text();
-      const addedPatient = JSON.parse(text);
-      update(state => ({ ...state, patients: [...state.patients, addedPatient] }));
-      update(state => ({ ...state, studyPatients: [...state.studyPatients, addedPatient] }));
-      return true;
-    } catch (error) {
-      console.error('Error adding patient:', error);
-      return false;
-    }
-  }
-
-  async function updatePatient(updatedPatient: Patient): Promise<boolean> {
-    try {
-      const currentUser = get(userStore);
-      if (!currentUser) {
-        throw new Error('User not authenticated');
-      }
-      const response = await fetch(`${env.serverUrl}/updatePatient?id=${updatedPatient.id}&uid=${currentUser.userid}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedPatient)
-      });
-      if (!response.ok) throw new Error('Failed to update patient');
-      update(state => ({ ...state, patients: state.patients.map(patient => patient.id === updatedPatient.id ? updatedPatient : patient) }));
-      update(state => ({ ...state, studyPatients: state.studyPatients.map(patient => patient.id === updatedPatient.id ? updatedPatient : patient) }));
-      return true;
-    } catch (error) {
-      console.error('Error updating patient:', error);
-      return false;
-    }
-  }
-
-  async function deletePatient(patientId: string): Promise<boolean> {
-    try {
-      const currentUser = get(userStore);
-      if (!currentUser) {
-        throw new Error('User not authenticated');
-      }
-      const response = await fetch(`${env.serverUrl}/deletePatient?id=${patientId}&uid=${currentUser.userid}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Failed to delete patient');
-      update(state => ({ ...state, patients: state.patients.filter(patient => patient.id !== patientId) }));
-      update(state => ({ ...state, studyPatients: state.studyPatients.filter(patient => patient.id !== patientId) }));
-      return true;
-    } catch (error) {
-      console.error('Error deleting patient:', error);
-      return false;
-    }
-  }
 
   async function getUserById(userId: string): Promise<User | undefined> {
     try {
@@ -311,15 +174,10 @@ function createDataStore() {
     addStudy,
     updateStudy,
     deleteStudy,
-    getPatients,
-    getStudyPatients,
-    getPatient,
-    addPatient,
-    updatePatient,
-    deletePatient,
     getUserById,
     getUserByEmail
   };
 }
 
+export const dataStore = createDataStore();
 export const dataStore = createDataStore();

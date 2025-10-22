@@ -2,21 +2,21 @@
     import { dataStore } from "../../services/data/data-store.js";
     const { studyId } = $props<{ studyId: string }>();
 
-    let study = $derived($dataStore.studies.find(s => s.id === studyId));
+    let project = $derived($dataStore.studies.find(s => s.id === studyId));
     import { getStatusColor } from "../../services/utils.js";
     // @ts-ignore
     import { Pencil as IconPencil } from '@lucide/svelte';
 
-    let statusColor = $derived(study ? getStatusColor(study.status) : "");
+    let statusColor = $derived(project ? getStatusColor(project.status) : "");
 
     function onEditClick() {
-        if (study) {
-            import("../../services/stores/object-drawer-store.js").then(m => m.editObject("project", study.id));
+        if (project) {
+            import("../../services/stores/object-drawer-store.js").then(m => m.editObject("project", project.id));
         }
     }
 </script>
 
-{#if study}
+{#if project}
 <div class="card card-area max-w-sm h-full">
     <div class="flex items-center justify-left mb-4">
         <h3 class="main-label-text mr-2">Project</h3>
@@ -25,27 +25,27 @@
     <div class="space-y-4">
         <div>
             <div class="small-label-text">Name</div>
-            <p class="standard-text">{study.name}</p>
+            <p class="standard-text">{project.name}</p>
         </div>
         <div>
             <div class="small-label-text">Title</div>
-            <p class="standard-text">{study.title || "-"}</p>
+            <p class="standard-text">{project.title || "-"}</p>
         </div>
         <div>
             <div class="small-label-text">Status</div>
-            <span class="badge {statusColor} standard-text">{study.status || "None"}</span>
+            <span class="badge {statusColor} standard-text">{project.status || "None"}</span>
         </div>
         <div>
             <div class="small-label-text">Phase</div>
-            <p class="standard-text">{study.phase || "-"}</p>
+            <p class="standard-text">{project.phase || "-"}</p>
         </div>
         <div>
             <div class="small-label-text">Therapeutic Area</div>
-            <p class="standard-text">{study.therapeuticArea || "-"}</p>
+            <p class="standard-text">{project.therapeuticArea || "-"}</p>
         </div>
         <div>
             <div class="small-label-text">Current Protocol</div>
-            <p class="standard-text">{study.currentProtocol || "-"}</p>
+            <p class="standard-text">{project.currentProtocol || "-"}</p>
         </div>
     </div>
 </div>

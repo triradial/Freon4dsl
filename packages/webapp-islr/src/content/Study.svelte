@@ -17,7 +17,7 @@
 
     let { id } = $props<{ id: string }>();
 
-    let study = $state<Study | undefined>(undefined);
+    let project = $state<Study | undefined>(undefined);
     let editorLoaded = $state(false);
     let noModelAvailable = $state(false);
     let activeTab = $state('design');
@@ -32,7 +32,7 @@
     function debouncedSave() {
         if (saveTimeout) clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
-            handleSaveStudy();
+            handleSaveProject();
         }, 1000); // 1 second debounce
     }
 
@@ -58,21 +58,21 @@
         }
     });
 
-    async function initializeStudy() {
-        // get the study data
-        study = await dataStore.getStudy(id);
-        if (!study) {
+    async function initializeProject() {
+        // get the project data
+        project = await dataStore.getStudy(id);
+        if (!project) {
             await dataStore.getStudies();
-            study = await dataStore.getStudy(id);
+            project = await dataStore.getStudy(id);
         }
-        if (!study) {
-            console.error(`Study with id ${id} not found`);
+        if (!project) {
+            console.error(`Project with id ${id} not found`);
             return;
         }
         
-        // Get the model data for the study
-        console.log("initializeStudy: openModelUnit: " + study.id);
-        const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration") as StudyConfiguration;
+        // Get the model data for the project
+        console.log("initializeProject: openModelUnit: " + project.id);
+        const result = await ModelManager.getInstance().openModelUnit(project.id, "StudyConfiguration") as StudyConfiguration;
         if (result !== undefined && result !== null) {
             unit = result;
             editorLoaded = true;
@@ -84,7 +84,7 @@
 
     onMount(async () => {
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
-        await initializeStudy();
+        await initializeProject();
 
         // Subscribe to FreChangeManager changes
         const changeCallback = (delta) => {
@@ -144,7 +144,7 @@
         setDrawerVisibility("dslErrors", false);
     });
 
-    // Show the projections that are enabled in the study configuration.
+    // Show the projections that are enabled in the project configuration.
     function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
         let names = [];
 
@@ -223,7 +223,7 @@
         }
     }
 
-    function handleSaveStudy() {
+    function handleSaveProject() {
         ModelManager.getInstance().saveCurrentUnit();
     }
 
@@ -236,10 +236,10 @@
     }
 </script>
 
-{#if study}
+{#if project}
     <div class="crc-container">
         <div class="card-container">
-            <StudyCard studyId={study.id} />
+            <StudyCard studyId={project.id} />
         </div>
         <div class="crc-content">
             <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2" contentBase="mt-0">

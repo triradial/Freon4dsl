@@ -7,14 +7,14 @@
     const { study, action, onsave, onclose } = $props<{
         study: Study;
         action: "add" | "edit";
-        onsave?: (study: Study) => void;
+        onsave?: (project: Study) => void;
         onclose?: () => void;
     }>();
 
-    let mutatedStudy = { ...study };
+    let mutatedProject = { ...study };
     let rows: number = 6;
 
-    let statusColor = $derived(getStatusColor(mutatedStudy.status));
+    let statusColor = $derived(getStatusColor(mutatedProject.status));
     
     function getErrorState(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";
@@ -42,8 +42,8 @@
     function handleSave() {
         validateAllFields();
         if (Object.values(errorState).every((error) => error === "")) {
-            console.log("[StudyMutation] calling onsave prop", mutatedStudy);
-            onsave?.(mutatedStudy);
+            console.log("[StudyMutation] calling onsave prop", mutatedProject);
+            onsave?.(mutatedProject);
         }
     }
 
@@ -60,9 +60,9 @@
     }
 
     function validateAllFields() {
-        (Object.keys(mutatedStudy) as Array<keyof typeof errors>).forEach((key) => {
+        (Object.keys(mutatedProject) as Array<keyof typeof errors>).forEach((key) => {
             if (key in errors) {
-                validateField(key, mutatedStudy[key]);
+                validateField(key, mutatedProject[key]);
             }
         });
     }
@@ -81,15 +81,15 @@
     <div class="flex flex-col gap-4">
         <div>
             <div class="small-label-text">Name{#if errors.name}<IconAsterisk size="12" color="red" />{/if}</div>        
-            <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} />
+            <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedProject.name} oninput={handleInput("name")} />
         </div>
         <div>
             <div class="small-label-text">Title</div>
-            <textarea class="textarea-field min-h-[5rem]" rows={rows} bind:value={mutatedStudy.title}></textarea>
+            <textarea class="textarea-field min-h-[5rem]" rows={rows} bind:value={mutatedProject.title}></textarea>
         </div>
         <div>
             <div class="small-label-text">Status</div>
-            <select class="select-field" bind:value={mutatedStudy.status}>
+            <select class="select-field" bind:value={mutatedProject.status}>
                 <option value="Planning">Planning</option>
                 <option value="Active">Active</option>
                 <option value="Completed">Completed</option>
@@ -99,15 +99,15 @@
         </div>
         <div>
             <div class="small-label-text">Phase</div>
-            <input class="input-field" type="text" bind:value={mutatedStudy.phase}  />
+            <input class="input-field" type="text" bind:value={mutatedProject.phase}  />
         </div>
         <div>
             <div class="small-label-text">Therapeutic Area</div>
-            <input class="input-field" type="text" bind:value={mutatedStudy.therapeuticArea}  />
+            <input class="input-field" type="text" bind:value={mutatedProject.therapeuticArea}  />
         </div>
         <div>
             <div class="small-label-text">Current Protocol</div>
-            <input class="input-field" type="text" bind:value={mutatedStudy.currentProtocol}  />
+            <input class="input-field" type="text" bind:value={mutatedProject.currentProtocol}  />
         </div>
     </div>
     <div class="flex items-center justify-center mt-8">
