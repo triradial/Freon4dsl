@@ -180,4 +180,3 @@ function createDataStore() {
 }
 
 export const dataStore = createDataStore();
-export const dataStore = createDataStore();
