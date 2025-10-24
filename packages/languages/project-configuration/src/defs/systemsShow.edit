@@ -1,0 +1,12 @@
+editor systemsShow precedence 203
+
+Step {
+    [
+        [fragment stepDetailsSystems wrap = ItemGroupComponent cssClass="type4" canDelete="true"  canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+    ]
+    fragment stepDetailsSystems [
+        ${name}
+        ${description}
+        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Systems Used"}
+    ]
+}

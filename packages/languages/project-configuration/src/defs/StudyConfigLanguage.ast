@@ -1,0 +1,167 @@
+language StudyConfigurationModel
+
+model StudyConfigurationModel {
+    configuration: StudyConfiguration;
+    availability: Availability;
+    patients: PatientInfo;
+    currentPatient: PatientHistoryUnit;
+}
+
+modelunit StudyConfiguration {
+    name: identifier = "Study Configuration";
+    showSharedTasks: boolean = false;
+    showScheduling: boolean = true;
+    showSchedulingDetails: boolean = false;
+    showChecklists: boolean = false;
+    showReferences: boolean = false;
+    showSystems: boolean = false;
+    showPeople: boolean = false;
+    showDescriptions: boolean = false;
+    showNotes: boolean = true;
+    studyStartDayNumber: number = 0;
+    periods: Period[];
+    tasks: SharedTask[];
+    systemAccesses: SystemAccess[];
+    staffing: Person[];
+    roles: StaffRole[];
+    notes: Description;
+}
+
+concept Period {
+    name: identifier;
+    description: Description;
+    events: Event[];
+}
+
+limited TypeOfEvent {
+    site = { name:"site visit"} preparation = { name:"preparation"} video = { name:"video session"} phone = { name:"phone call"} other = { name:"non-standard"}
+}
+
+concept Event {
+    name: identifier;
+    alternativeName: string; // Optional, see validator where errors about it are removed.
+    typeOfEvent:TypeOfEvent = TypeOfEvent:site;
+    showSequenced: boolean;
+    eventNumber: number;
+    tasks: EventTask[];
+    description: Description;
+    schedule: EventSchedule;
+}
+
+abstract concept AbstractTask {
+}
+
+abstract concept EventTask base AbstractTask {
+}
+
+concept Task base EventTask {
+    name: identifier;
+    description: Description;
+    numberedSteps: boolean;
+    showDetails: boolean;
+    steps: Step[];
+}
+
+concept SharedTask base AbstractTask{
+    name: identifier;
+    description: Description;
+    numberedSteps: boolean;
+    showDetails: boolean;
+    steps: Step[];
+}
+
+concept TaskReference base EventTask {
+    reference task: SharedTask;
+}
+
+concept Step {
+    name: identifier;
+    description: Description;
+    // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
+    references: Reference[];
+    people: AbstractPerson[];
+    systems: AbstractSystemAccess[];
+}
+
+interface WorkflowDecision {
+}
+
+concept WorkflowDescription implements WorkflowDecision  {
+    text: Description;
+}
+
+concept WorkflowBranch implements WorkflowDecision {
+    branch: ScheduleExpression;
+}
+
+// TODO: Customize the validator to allow these strings to be empty.
+concept Description {
+    text: string = " ";
+    rawText: string = " ";
+}
+
+abstract concept AbstractSystemAccess {
+}
+
+concept SystemAccess base AbstractSystemAccess {
+    name: identifier;
+    description: Description;
+    isShared: boolean;
+    functionName: string;
+    accessedAt: AccessedAt;
+    robotMappings?: RobotMapping;
+}
+
+concept SystemAccessReference base AbstractSystemAccess {
+    reference system: SystemAccess;
+}
+
+interface AccessedAt {
+}
+
+concept AccessedAtURL implements AccessedAt {
+    url: string;
+}
+
+concept AccessedAPhoneNumber implements AccessedAt {
+    phoneNumber: string;
+}
+
+concept StaffRole {
+    name: identifier;
+    description: Description;
+}
+abstract concept AbstractPerson {
+}
+
+concept PersonReference base AbstractPerson {
+    reference person: Person;
+}
+
+concept Person base AbstractPerson {
+    name: identifier;
+    description: Description;
+    email: string;
+    phoneNumber: string;
+    reference role: StaffRole;
+}
+
+concept Reference {
+    name: string;
+    link: string;
+    description: Description;
+}
+
+concept RobotMapping {
+    name: identifier;
+    sourcePage: string;
+    targetPage: string;
+    closeSource: boolean;
+    sourceToTargetMappings: SourceToTargetMapping[];
+}
+
+concept SourceToTargetMapping {
+    sourceField : string;
+    targetField : string;
+}
+

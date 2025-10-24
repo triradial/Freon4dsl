@@ -1,0 +1,6 @@
+editor descriptionsShow precedence 103
+
+Description {
+   [ ${text wrap=MultilineTextComponent} ]
+}
+

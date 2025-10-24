@@ -1,0 +1,26 @@
+editor sharedTasksShow precedence 102
+
+StudyConfiguration {
+    [
+    ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
+    ${tasks wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Shared Tasks"}
+    ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
+    ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
+    [fragment studyRoles2 wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"]
+    ]
+    fragment studyRoles2 [
+        ${roles}
+    ]
+}
+
+SharedTask {
+    [
+        [fragment sharedTaskDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="true" label="Task"]
+    ]
+    fragment sharedTaskDetails [
+        ${name}
+        ${description}
+        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
+    ]
+}
+
