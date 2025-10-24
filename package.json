@@ -9,7 +9,7 @@
     "packages/core",
     "packages/core-svelte",
     "packages/meta",
-    "packages/languages/study-configuration",
+    "packages/languages/project-configuration",
     "packages/server-crchub",
     "packages/webapp-crchub"
   ],

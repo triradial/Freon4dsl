@@ -1,0 +1,12 @@
+editor default
+
+StudyConfiguration {
+    [
+        ${name}
+        ${description}
+    ]
+}
+
+Description {
+    [ ${rawText} ]
+}

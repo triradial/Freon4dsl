@@ -1,0 +1,15 @@
+language StudyConfigurationModel
+
+model StudyConfigurationModel {
+    configuration: StudyConfiguration;
+}
+
+modelunit StudyConfiguration {
+    name: identifier;
+    description: Description[];
+}
+
+concept Description {
+    text: string = " ";
+    rawText: string = " ";
+}

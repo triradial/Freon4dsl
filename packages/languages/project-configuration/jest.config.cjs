@@ -85,12 +85,12 @@ module.exports = {
   // moduleNameMapper: {},
 
   // TODO: determine why the moduleNameMapper is not working for @bscotch/utility
-  moduleNameMapper: {
-    '^@bscotch/utility$': path.join(__dirname, '../../../node_modules/@bscotch/utility'),
-    "\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/../../__mocks__/fileMock.js",
-    "\\.(css|scss)$": "identity-obj-proxy",
-    "\\.svg$": "@svgr/webpack"
-  },
+  // moduleNameMapper: {
+  //   '^@bscotch/utility$': path.join(__dirname, '../../../node_modules/@bscotch/utility'),
+  //   "\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/../../__mocks__/fileMock.js",
+  //   "\\.(css|scss)$": "identity-obj-proxy",
+  //   "\\.svg$": "@svgr/webpack"
+  // },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
