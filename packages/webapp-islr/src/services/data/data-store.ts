@@ -9,10 +9,7 @@ export interface Study {
   identifiers: Array<{ type: string; identifier: string }>;
   status: string;
   title: string;
-  phase: string;
   interventions: Array<{ type: string; name: string }>;
-  therapeuticArea: string;
-  currentProtocol: string;
   protocolAmendments: Array<{
     version: string;
     date: string;

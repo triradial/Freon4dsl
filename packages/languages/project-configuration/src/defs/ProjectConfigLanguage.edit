@@ -2,7 +2,8 @@ editor default
 
 StudyConfiguration {
     [
-        ${name}
+        Name:${name}
+        Descriptions:
         ${description}
     ]
 }

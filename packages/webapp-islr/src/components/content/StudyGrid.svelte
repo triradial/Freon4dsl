@@ -167,12 +167,8 @@
     // Get grouping configuration for a view
     function getGroupingForView(viewValue) {
         switch (viewValue) {
-            case "phase":
-                return ["phase"];
             case "status":
                 return ["status"];
-            case "therapeuticArea":
-                return ["therapeuticArea"];
             default:
                 return [];
         }
@@ -330,21 +326,7 @@
                 },
             },
             {
-                field: "phase",
-                enableRowGroup: true,
-                resizable: false,
-            },
-            {
                 field: "status",
-                enableRowGroup: true,
-                filter: "agSetColumnFilter",
-                filterParams: {
-                    excelMode: "mac",
-                },
-            },
-            {
-                field: "therapeuticArea",
-                headerName: "Therapeutic Area",
                 enableRowGroup: true,
                 filter: "agSetColumnFilter",
                 filterParams: {

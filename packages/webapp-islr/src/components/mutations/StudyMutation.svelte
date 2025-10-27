@@ -97,18 +97,6 @@
                 <option value="Withdrawn">Withdrawn</option>
             </select>
         </div>
-        <div>
-            <div class="small-label-text">Phase</div>
-            <input class="input-field" type="text" bind:value={mutatedProject.phase}  />
-        </div>
-        <div>
-            <div class="small-label-text">Therapeutic Area</div>
-            <input class="input-field" type="text" bind:value={mutatedProject.therapeuticArea}  />
-        </div>
-        <div>
-            <div class="small-label-text">Current Protocol</div>
-            <input class="input-field" type="text" bind:value={mutatedProject.currentProtocol}  />
-        </div>
     </div>
     <div class="flex items-center justify-center mt-8">
         <button class="standard-button primary" onclick={handleSave} disabled={hasErrors}><IconSave size="16" />Save</button>

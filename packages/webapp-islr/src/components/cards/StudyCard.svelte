@@ -35,18 +35,6 @@
             <div class="small-label-text">Status</div>
             <span class="badge {statusColor} standard-text">{project.status || "None"}</span>
         </div>
-        <div>
-            <div class="small-label-text">Phase</div>
-            <p class="standard-text">{project.phase || "-"}</p>
-        </div>
-        <div>
-            <div class="small-label-text">Therapeutic Area</div>
-            <p class="standard-text">{project.therapeuticArea || "-"}</p>
-        </div>
-        <div>
-            <div class="small-label-text">Current Protocol</div>
-            <p class="standard-text">{project.currentProtocol || "-"}</p>
-        </div>
     </div>
 </div>
 {:else}
