@@ -16,15 +16,9 @@
       setAllDrawersVisibility(false);
       setDrawerVisibility("help", true);
       setDrawerVisibility("dslErrors", true);
-      setDrawerVisibility("studyTimelineTable", true);
-      setDrawerVisibility("studyTimelineChart", true);
-      setDrawerVisibility("studyChecklist", true);
       didSetVisibility = true;
 
       setDrawerProps("dslErrors", { studyId: id });
-      setDrawerProps("studyTimelineTable", { studyId: id });
-      setDrawerProps("studyTimelineChart", { studyId: id });
-      setDrawerProps("studyChecklist", { studyId: id });
     }
   });
 

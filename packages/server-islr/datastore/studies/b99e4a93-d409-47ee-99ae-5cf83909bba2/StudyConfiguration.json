@@ -129,7 +129,9 @@
                   "version": "2023.1",
                   "key": "-key-StudyConfiguration-systemAccesses"
                },
-               "children": []
+               "children": [
+                  "ID-36"
+               ]
             },
             {
                "containment": {
@@ -495,6 +497,16 @@
                "children": [
                   "ID-59"
                ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-EventWindow-complianceWindow"
+               },
+               "children": [
+                  "ID-44"
+               ]
             }
          ],
          "references": [],
@@ -544,6 +556,98 @@
          "references": [],
          "annotations": [],
          "parent": "ID-57"
+      },
+      {
+         "id": "ID-44",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-NoComplianceWindow"
+         },
+         "properties": [],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-57"
+      },
+      {
+         "id": "ID-36",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-SystemAccess"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-SystemAccess-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-SystemAccess-isShared"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-SystemAccess-functionName"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-SystemAccess-description"
+               },
+               "children": [
+                  "ID-37"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-50"
+      },
+      {
+         "id": "ID-37",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-36"
       },
       {
          "id": "ID-51",
