@@ -6,7 +6,7 @@ model ProjectConfigurationModel {
 
 // The single root model unit
 modelunit ProjectConfiguration {
-    name: identifier = "Project Configuration";
+    name: identifier = "ProjectConfiguration";
     description: Description[];
     events: Event[];
     tasks: Task[];

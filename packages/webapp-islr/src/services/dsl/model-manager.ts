@@ -235,9 +235,11 @@ export class ModelManager {
             this.setCurrentUnit(undefined);
             await this.createModelUnit("ProjectConfiguration", "ProjectConfiguration");
             const studyConfigUnit = this.modelStore.getUnitByName("ProjectConfiguration") as unknown as ProjectConfiguration;
+            console.log("studyConfigUnit:", studyConfigUnit);
+            this.setCurrentUnit(studyConfigUnit as unknown as FreModelUnit);
             await this.saveCurrentUnit();
 
-            this.setCurrentUnit(studyConfigUnit as unknown as FreModelUnit);
+            console.log("this.getCurrentUnit():", this.getCurrentUnit());
             setCurrentModelName(this.currentModel.name);
 
             LOGGER.info("ModelHandler.createModelUnits END name: ProjectConfiguration");
