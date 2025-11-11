@@ -10,7 +10,7 @@
 //     PatientVisitStatus,
 //     StaffLevel,
 //     StartRangeDate,
-//     StudyConfigurationModel,
+//     ProjectConfigurationModel,
 //     VisitDate,
 // } from "@freon4dsl/study-configuration";
 // import { ModelManager } from "./dsl/model-manager.js";
@@ -238,7 +238,7 @@ export function getSVGIcon(iconName: string): string {
 
 // export async function getChartWithPatientHistory(id: string) {
 //     console.log("getChartWithPatientHistory");
-//     const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
+//     const model = ModelManager.getInstance().modelStore.model as ProjectConfigurationModel;
 //     const unit = model.configuration;
 //     // createAvailability();
 

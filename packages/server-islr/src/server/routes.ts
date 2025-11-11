@@ -106,6 +106,20 @@ router.get("/getModelUnitList", async (ctx: Router.IRouterContext) => {
     }
 });
 
+router.put("/saveModel", async (ctx: Router.IRouterContext) => {
+    const model = ctx.query["model"];
+    const language = ctx.query["language"];
+    const version = ctx.query["version"];
+    console.log("Routes.saveModel: " + model + " language=" + language + " version=" + version);
+    if (!!model && typeof model === "string") {
+        await ModelHandler.saveModel(model, language as string, version as string, ctx);
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'model'" };
+    }
+});
+
 router.put("/saveModelUnit", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
     const unit = ctx.query["unit"];
@@ -135,17 +149,42 @@ router.get("/deleteModelUnit", async (ctx: Router.IRouterContext) => {
 });
 
 /* ------------------------------------------------------------ */
-// Study requests
+// Project/Study requests (Study endpoints are aliases for Project endpoints)
 /* ------------------------------------------------------------ */
-router.get("/getStudies", async (ctx: Router.IRouterContext) => {
+router.get("/getProjects", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
-    console.log("Routes.getStudies: uid:" + uid);
+    console.log("Routes.getProjects: uid:" + uid);
     if (!!uid && typeof uid === "string") {
-        await DataHandler.getStudies(uid, ctx);
+        await DataHandler.getProjects(uid, ctx);
     } else {
         ctx.status = 412; // Precondition failed
         ctx.response.type = 'application/json';
         ctx.response.body = { error: "Missing query parameter 'guid'" };
+    }
+});
+
+router.get("/getStudies", async (ctx: Router.IRouterContext) => {
+    const uid = ctx.query["uid"];
+    console.log("Routes.getStudies: uid:" + uid);
+    if (!!uid && typeof uid === "string") {
+        await DataHandler.getProjects(uid, ctx);
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'uid'" };
+    }
+});
+
+router.get("/getProject", async (ctx: Router.IRouterContext) => {
+    const id = ctx.query["id"];
+    const uid = ctx.query["uid"];
+    console.log("Routes.getProject: id=" + id + " uid=" + uid);
+    if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
+        await DataHandler.getProject(uid, id, ctx);
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'id'" };
     }
 });
 
@@ -154,11 +193,23 @@ router.get("/getStudy", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
     console.log("Routes.getStudy: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
-        await DataHandler.getStudy(uid, id, ctx);
+        await DataHandler.getProject(uid, id, ctx);
     } else {
         ctx.status = 412; // Precondition failed
         ctx.response.type = 'application/json';
-        ctx.response.body = { error: "Missing query parameter 'id'" };
+        ctx.response.body = { error: "Missing query parameter 'id' or 'uid'" };
+    }
+});
+
+router.post("/addProject", async (ctx: Router.IRouterContext) => {
+    const uid = ctx.query["uid"];
+    console.log("Routes.addProject: uid=" + uid);
+    if (!!uid && typeof uid === "string") {
+        await DataHandler.addProject(uid, ctx);
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'uid'" };
     }
 });
 
@@ -166,11 +217,24 @@ router.post("/addStudy", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
     console.log("Routes.addStudy: uid=" + uid);
     if (!!uid && typeof uid === "string") {
-        await DataHandler.addStudy(uid, ctx);
+        await DataHandler.addProject(uid, ctx);
     } else {
         ctx.status = 412; // Precondition failed
         ctx.response.type = 'application/json';
         ctx.response.body = { error: "Missing query parameter 'uid'" };
+    }
+});
+
+router.put("/updateProject", async (ctx: Router.IRouterContext) => {
+    const id = ctx.query["id"];
+    const uid = ctx.query["uid"];
+    console.log("Routes.updateProject: id=" + id + " uid=" + uid);
+    if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
+        await DataHandler.updateProject(uid, id, ctx);
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'id' or 'uid'" };
     }
 });
 
@@ -179,7 +243,20 @@ router.put("/updateStudy", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
     console.log("Routes.updateStudy: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
-        await DataHandler.updateStudy(uid, id, ctx);
+        await DataHandler.updateProject(uid, id, ctx);
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'id' or 'uid'" };
+    }
+});
+
+router.delete("/deleteProject", async (ctx: Router.IRouterContext) => {
+    const id = ctx.query["id"];
+    const uid = ctx.query["uid"];
+    console.log("Routes.deleteProject: id=" + id + " uid=" + uid);
+    if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
+        await DataHandler.deleteProject(uid, id, ctx);
     } else {
         ctx.status = 412; // Precondition failed
         ctx.response.type = 'application/json';
@@ -192,7 +269,7 @@ router.delete("/deleteStudy", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
     console.log("Routes.deleteStudy: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
-        await DataHandler.deleteStudy(uid, id, ctx);
+        await DataHandler.deleteProject(uid, id, ctx);
     } else {
         ctx.status = 412; // Precondition failed
         ctx.response.type = 'application/json';
@@ -228,12 +305,12 @@ router.get("/getPatient", async (ctx: Router.IRouterContext) => {
     }
 });
 
-router.get("/getStudyPatients", async (ctx: Router.IRouterContext) => {
+router.get("/getProjectPatients", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
-    console.log("Routes.getStudyPatients: id=" + id + " uid=" + uid);
+    console.log("Routes.getProjectPatients: id=" + id + " uid=" + uid);
     if (!!id && typeof id === "string" && !!uid && typeof uid === "string") {
-        await DataHandler.getStudyPatients(uid, id, ctx);
+        await DataHandler.getProjectPatients(uid, id, ctx);
     } else {
         ctx.status = 412; // Precondition failed
         ctx.response.type = 'application/json';

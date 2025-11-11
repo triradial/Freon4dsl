@@ -8,7 +8,7 @@ const storage = StorageFactory.getStorageHandler();
 export class ModelHandler {
 
     public static validate = false;
-    static rootpath = "studies";
+    static rootpath = "projects";
 
     private static getModelPath(model: string): string {
         return path.join(this.rootpath, model);
@@ -16,11 +16,11 @@ export class ModelHandler {
 
     public static async getModelList(ctx: IRouterContext) {
         try {
-            const studiesPath = 'studies';
-            if (!await storage.directoryExists(studiesPath)) {
-                await storage.ensureDirectory(studiesPath);
+            const projectsPath = 'projects';
+            if (!await storage.directoryExists(projectsPath)) {
+                await storage.ensureDirectory(projectsPath);
             }
-            const models = await storage.listDirectories(studiesPath);
+            const models = await storage.listDirectories(projectsPath);
             ctx.status = 200;
             ctx.response.type = 'application/json';
             ctx.response.body = models;
@@ -108,6 +108,29 @@ export class ModelHandler {
             ctx.status = 500;
             ctx.response.type = 'application/json';
             ctx.response.body = { error: "Error getting model unit" };
+        }
+    }
+
+    public static async saveModel(model: string, language: string, version: string, ctx: IRouterContext) {
+        try {
+            const modelPath = this.getModelPath(model);
+            console.log("ModelHandler.saveModel: modelPath=", modelPath, "language=", language, "version=", version);
+            
+            // Ensure directory exists
+            if (!await storage.directoryExists(modelPath)) {
+                console.log("ModelHandler.saveModel: directory does not exist, creating");
+                await storage.ensureDirectory(modelPath);
+            }
+            
+            // Set successful response
+            ctx.status = 200;
+            ctx.response.type = 'application/json';
+            ctx.response.body = { errors: [] };
+        } catch (e) {
+            console.error("ModelHandler.saveModel: error occurred:", e);
+            ctx.status = 500;
+            ctx.response.type = 'application/json';
+            ctx.response.body = { errors: ["Error saving model"] };
         }
     }
 

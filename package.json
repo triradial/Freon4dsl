@@ -10,6 +10,9 @@
     "packages/core-svelte",
     "packages/meta",
     "packages/languages/project-configuration",
+    "packages/server-islr",
+    "packages/webapp-islr",
+    "packages/languages/study-configuration",
     "packages/server-crchub",
     "packages/webapp-crchub"
   ],
@@ -33,7 +36,7 @@
     "test": "npm run test --workspaces",
     "prettier": "prettier --write --print-width 180 --tab-width 4 packages/*/src/**/*.ts packages/*/src/**/*.tsx packages/*/src/**/*.css",
     "refreshTestStudies": "node refreshTestStudies.js",
-    "dev": "npm run dev --workspaces",
+    "dev": "npm run dev --workspaces --if-present",
     "format": "npm run format --workspaces",
     "check": "npm run check --workspaces",
     "preview": "npm run preview --workspaces"

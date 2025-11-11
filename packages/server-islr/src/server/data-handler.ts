@@ -25,42 +25,42 @@ export class DataHandler {
     }
 
     // Studies
-    public static async getStudies(uid: string, ctx: IRouterContext) {
+    public static async getProjects(uid: string, ctx: IRouterContext) {
         var step = "1";
         try {
             ctx.response.type = 'application/json';
             const facilityFolder = await this.getFacilityFolder(uid);
             step = "2";
-            const studiesFile = path.join(facilityFolder, "studies.json");
+            const projectsFile = path.join(facilityFolder, "projects.json");
             step = "3";
-            if (await storage.fileExists(studiesFile)) {
-                const studiesContent = await storage.readFile(studiesFile);
+            if (await storage.fileExists(projectsFile)) {
+                const projectsContent = await storage.readFile(projectsFile);
                 step = "4";
                 ctx.status = 200;
-                ctx.response.body = JSON.parse(studiesContent);
+                ctx.response.body = JSON.parse(projectsContent);
             } else {
                 ctx.status = 200;
                 ctx.response.body = [];
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving studies", details: step };
+            ctx.response.body = { error: "Error retrieving projects", details: step };
         }
     }
 
-    public static async getStudy(uid: string, id: string, ctx: IRouterContext) {
+    public static async getProject(uid: string, id: string, ctx: IRouterContext) {
         try {
             ctx.response.type = 'application/json';
             const facilityFolder = await this.getFacilityFolder(uid);
-            const studiesFile = path.join(facilityFolder, "studies.json");
+            const projectsFile = path.join(facilityFolder, "projects.json");
 
-            if (await storage.fileExists(studiesFile)) {
-                const studiesContent = await storage.readFile(studiesFile);
-                const studies = JSON.parse(studiesContent);
-                const study = studies.find((s: any) => s.id === id);
-                if (study) {
+            if (await storage.fileExists(projectsFile)) {
+                const projectsContent = await storage.readFile(projectsFile);
+                const projects = JSON.parse(projectsContent);
+                const project = projects.find((s: any) => s.id === id);
+                if (project) {
                     ctx.status = 200;
-                    ctx.response.body = study;
+                    ctx.response.body = project;
                 } else {
                     ctx.status = 404;
                     ctx.response.body = { error: "Study not found", id };
@@ -71,47 +71,47 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving study", details: String(e) };
+            ctx.response.body = { error: "Error retrieving project", details: String(e) };
         }
     }
 
-    public static async addStudy(uid: string, ctx: IRouterContext) {
+    public static async addProject(uid: string, ctx: IRouterContext) {
         try {
             ctx.response.type = 'application/json';
             const facilityFolder = await this.getFacilityFolder(uid);
-            const studiesFile = path.join(facilityFolder, "studies.json");
+            const projectsFile = path.join(facilityFolder, "projects.json");
 
-            let studies = [];
-            if (await storage.fileExists(studiesFile)) {
-                const studiesContent = await storage.readFile(studiesFile);
-                studies = JSON.parse(studiesContent);
+            let projects = [];
+            if (await storage.fileExists(projectsFile)) {
+                const projectsContent = await storage.readFile(projectsFile);
+                projects = JSON.parse(projectsContent);
             }
             const newStudy = ctx.request.body;
-            studies.push(newStudy);
-            await storage.writeFile(studiesFile, JSON.stringify(studies, null, 2));
+            projects.push(newStudy);
+            await storage.writeFile(projectsFile, JSON.stringify(projects, null, 2));
             ctx.status = 201;
             ctx.response.body = newStudy;
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error adding study", details: String(e) };
+            ctx.response.body = { error: "Error adding project", details: String(e) };
         }
     }
 
-    public static async updateStudy(uid: string, id: string, ctx: IRouterContext) {
+    public static async updateProject(uid: string, id: string, ctx: IRouterContext) {
         try {
             ctx.response.type = 'application/json';
             const facilityFolder = await this.getFacilityFolder(uid);
-            const studiesFile = path.join(facilityFolder, "studies.json");
+            const projectsFile = path.join(facilityFolder, "projects.json");
 
-            if (await storage.fileExists(studiesFile)) {
-                const studiesContent = await storage.readFile(studiesFile);
-                let studies = JSON.parse(studiesContent);
-                const index = studies.findIndex((s: any) => s.id === id);
+            if (await storage.fileExists(projectsFile)) {
+                const projectsContent = await storage.readFile(projectsFile);
+                let projects = JSON.parse(projectsContent);
+                const index = projects.findIndex((s: any) => s.id === id);
                 if (index !== -1) {
-                    studies[index] = { ...studies[index], ...ctx.request.body as object };
-                    await storage.writeFile(studiesFile, JSON.stringify(studies, null, 2));
+                    projects[index] = { ...projects[index], ...ctx.request.body as object };
+                    await storage.writeFile(projectsFile, JSON.stringify(projects, null, 2));
                     ctx.status = 200;
-                    ctx.response.body = studies[index];
+                    ctx.response.body = projects[index];
                 } else {
                     ctx.status = 404;
                     ctx.response.body = { error: "Study not found", id };
@@ -122,22 +122,22 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error updating study", details: String(e) };
+            ctx.response.body = { error: "Error updating project", details: String(e) };
         }
     }
 
-    public static async deleteStudy(uid: string, id: string, ctx: IRouterContext) {
+    public static async deleteProject(uid: string, id: string, ctx: IRouterContext) {
         try {
             ctx.response.type = 'application/json';
             const facilityFolder = await this.getFacilityFolder(uid);
-            const studiesFile = path.join(facilityFolder, "studies.json");
+            const projectsFile = path.join(facilityFolder, "projects.json");
 
-            if (await storage.fileExists(studiesFile)) {
-                const studiesContent = await storage.readFile(studiesFile);
-                let studies = JSON.parse(studiesContent);
-                const filteredStudies = studies.filter((s: any) => s.id !== id);
-                if (filteredStudies.length < studies.length) {
-                    await storage.writeFile(studiesFile, JSON.stringify(filteredStudies, null, 2));
+            if (await storage.fileExists(projectsFile)) {
+                const projectsContent = await storage.readFile(projectsFile);
+                let projects = JSON.parse(projectsContent);
+                const filteredStudies = projects.filter((s: any) => s.id !== id);
+                if (filteredStudies.length < projects.length) {
+                    await storage.writeFile(projectsFile, JSON.stringify(filteredStudies, null, 2));
                     ctx.status = 200;
                     ctx.response.body = { message: "Study deleted successfully" };
                 } else {
@@ -150,7 +150,7 @@ export class DataHandler {
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error deleting study", details: String(e) };
+            ctx.response.body = { error: "Error deleting project", details: String(e) };
         }
     }
 
@@ -175,7 +175,7 @@ export class DataHandler {
         }
     }
 
-    public static async getStudyPatients(uid: string, id: string, ctx: IRouterContext) {
+    public static async getProjectPatients(uid: string, id: string, ctx: IRouterContext) {
         try {
             ctx.response.type = 'application/json';
             const facilityFolder = await this.getFacilityFolder(uid);
@@ -184,16 +184,16 @@ export class DataHandler {
             if (await storage.fileExists(patientsFile)) {
                 const patientsContent = await storage.readFile(patientsFile);
                 const patients = JSON.parse(patientsContent);
-                const studyPatients = patients.filter((p: any) => p.studyId === id);
+                const projectPatients = patients.filter((p: any) => p.projectId === id);
                 ctx.status = 200;
-                ctx.response.body = studyPatients;
+                ctx.response.body = projectPatients;
             } else {
                 ctx.status = 200;
                 ctx.response.body = [];
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving study patients", details: String(e) };
+            ctx.response.body = { error: "Error retrieving project patients", details: String(e) };
         }
     }
 

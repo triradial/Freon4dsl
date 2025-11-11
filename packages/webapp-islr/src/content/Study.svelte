@@ -1,7 +1,7 @@
 <script lang="ts">
     import { AST, FreChangeManager, FreEditor, FrePartDelta, FrePartListDelta, FrePrimDelta, FrePrimListDelta } from "@freon4dsl/core";
     import { FreonComponent } from "@freon4dsl/core-svelte";
-    import { type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { type ProjectConfiguration } from "@freon4dsl/project-configuration";
     import { Tabs } from "@skeletonlabs/skeleton-svelte";
     import { runInAction } from "mobx";
     import { onDestroy, onMount } from "svelte";
@@ -23,7 +23,7 @@
     let activeTab = $state('design');
 
     let dslEditor = $state<FreEditor | undefined>(undefined);
-    let unit = $state<StudyConfiguration | undefined>(undefined);
+    let unit = $state<ProjectConfiguration | undefined>(undefined);
     let mobxVersion = $state(0);
 
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -53,7 +53,7 @@
         } else {
             return footerConfig.map(cfg => ({
                 ...cfg,
-                visible: !!unit[cfg.id as keyof StudyConfiguration],
+                visible: !!unit[cfg.id as keyof ProjectConfiguration],
             }));
         }
     });
@@ -72,7 +72,7 @@
         
         // Get the model data for the project
         console.log("initializeProject: openModelUnit: " + project.id);
-        const result = await ModelManager.getInstance().openModelUnit(project.id, "StudyConfiguration") as StudyConfiguration;
+        const result = await ModelManager.getInstance().openModelUnit(project.id, "ProjectConfiguration") as ProjectConfiguration;
         if (result !== undefined && result !== null) {
             unit = result;
             editorLoaded = true;
@@ -145,16 +145,16 @@
     });
 
     // Show the projections that are enabled in the project configuration.
-    function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
+    function updateVisibleProjections(ProjectConfiguration: ProjectConfiguration) {
         let names = [];
 
-        const showScheduling = studyConfiguration.showScheduling;
-        const showChecklists = studyConfiguration.showChecklists;
-        const showSharedTasks = studyConfiguration.showSharedTasks;
-        const showPeople = studyConfiguration.showPeople;
-        const showSystems = studyConfiguration.showSystems;
-        const showReferences = studyConfiguration.showReferences;
-        const showDescriptions = studyConfiguration.showDescriptions;
+        const showScheduling = ProjectConfiguration.showScheduling;
+        const showChecklists = ProjectConfiguration.showChecklists;
+        const showSharedTasks = ProjectConfiguration.showSharedTasks;
+        const showPeople = ProjectConfiguration.showPeople;
+        const showSystems = ProjectConfiguration.showSystems;
+        const showReferences = ProjectConfiguration.showReferences;
+        const showDescriptions = ProjectConfiguration.showDescriptions;
 
         // Scheduling and checklists are both part of Event so they need combined and separate projections.
         if (showScheduling && showChecklists) {
@@ -191,7 +191,7 @@
                 names.push("referencesShow");
             }
         }
-        if (studyConfiguration.showDescriptions) {
+        if (ProjectConfiguration.showDescriptions) {
             names.push("descriptionsShow");
         }
         
@@ -217,8 +217,8 @@
 
     function handleCheckboxChange(id: string, visible: boolean) {
         if (unit && id in unit) {
-            (unit[id as keyof StudyConfiguration] as boolean) = visible;
-            updateVisibleProjections(unit as StudyConfiguration);
+            (unit[id as keyof ProjectConfiguration] as boolean) = visible;
+            updateVisibleProjections(unit as ProjectConfiguration);
             mobxVersion++;
         }
     }

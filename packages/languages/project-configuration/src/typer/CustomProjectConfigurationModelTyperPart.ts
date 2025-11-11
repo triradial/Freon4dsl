@@ -4,10 +4,10 @@
 import { type FreNode, type FreType, type FreTyper } from "@freon4dsl/core";
 
 /**
- * Class 'CustomStudyConfigurationModelTyperPart' is meant to be a convenient place to add any
+ * Class 'CustomProjectConfigurationModelTyperPart' is meant to be a convenient place to add any
  * custom code for type checking.
  */
-export class CustomStudyConfigurationModelTyperPart implements FreTyper {
+export class CustomProjectConfigurationModelTyperPart implements FreTyper {
     mainTyper!: FreTyper;
 
     isType(node: FreNode): boolean | undefined {

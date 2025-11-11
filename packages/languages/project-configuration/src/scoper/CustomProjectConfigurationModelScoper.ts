@@ -2,10 +2,10 @@
 import { type FreNode, type FreNamedNode, FreNodeReference, FreNamespaceInfo, type FreScoper, FreCompositeScoper } from "@freon4dsl/core";
 
 /**
- * Class 'CustomStudyConfigurationModelScoper' is meant to be a convenient place to add any
+ * Class 'CustomProjectConfigurationModelScoper' is meant to be a convenient place to add any
  * custom code for scoping.
  */
-export class CustomStudyConfigurationModelScoper implements FreScoper {
+export class CustomProjectConfigurationModelScoper implements FreScoper {
     mainScoper!: FreCompositeScoper;
 
     /**

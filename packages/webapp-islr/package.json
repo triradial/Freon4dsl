@@ -1,5 +1,5 @@
 {
-    "name": "@freon4dsl/webapp-crchub",
+    "name": "@freon4dsl/webapp-islr",
     "private": true,
     "version": "1.1.0-beta.3",
     "license": "MIT",
@@ -18,7 +18,7 @@
     "dependencies": {
         "@freon4dsl/core": "2.0.0-beta.4",
         "@freon4dsl/core-svelte": "2.0.0-beta.4",
-        "@freon4dsl/study-configuration": "1.1.0-beta.3",
+        "@freon4dsl/project-configuration": "1.1.0-beta.3",
         "@internationalized/date": "^3.8.2",
         "@lucide/svelte": "^0.513.0",
         "@types/node": "^24.0.0",
@@ -37,7 +37,8 @@
         "sirv-cli": "^2.0.2",
         "svelte": "^5.0.0",
         "svelte-fa": "^4.0.4",
-        "tslib": "^2.6.2"
+        "tslib": "^2.6.2",
+        "uuid": "^13.0.0"
     },
     "engines": {
         "node": ">=24.0.0"

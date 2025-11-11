@@ -1,6 +1,6 @@
 import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
-import { LanguageEnvironment } from "@freon4dsl/study-configuration";
+import { ProjectConfigurationModelEnvironment } from "@freon4dsl/project-configuration";
 import { env } from "./config/env.js";
 import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 
@@ -8,12 +8,8 @@ import AbbreviationComponent from "./components/custom/AbbreviationComponent.sve
 import DatePickerComponent from "./components/custom/DatePickerComponent.svelte";
 import DateRangePickerComponent from "./components/custom/DateRangePickerComponent.svelte";
 import DisplayNothingComponent from "./components/custom/DisplayNothingComponent.svelte";
-import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
-import ItemGroupComponent2 from "./components/custom/ItemGroupComponent2.svelte";
-import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
 import PhoneInputComponent from "./components/custom/PhoneInputComponent.svelte";
-import ReferenceComponent from "./components/custom/ReferenceComponent.svelte";
 import SingleLineItemComponent from "./components/custom/SingleLineItemComponent.svelte";
 import TabFixComponent from "./components/custom/TabFixComponent.svelte";
 import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
@@ -62,7 +58,7 @@ LOGGER.log(`Server settings configured: ${JSON.stringify({ url: serverUrl, timeo
 // Configure the editor environment
 LOGGER.log('Creating editor environment');
 const webappConfigurator = WebappConfigurator.getInstance();
-const editorEnvironment = LanguageEnvironment.getInstance();
+const editorEnvironment = ProjectConfigurationModelEnvironment.getInstance();
 LOGGER.log('Editor environment created');
 webappConfigurator.setEditorEnvironment(editorEnvironment);
 webappConfigurator.setServerCommunication(serverComm);
@@ -72,14 +68,10 @@ setCustomComponents([
     { component: DatePickerComponent, knownAs: "DatePickerComponent" },
     { component: DateRangePickerComponent, knownAs: "DateRangePickerComponent" },
     { component: TimePickerComponent, knownAs: "TimePickerComponent" },
-    { component: ListGroupComponent, knownAs: "ListGroupComponent" },
-    { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
-    { component: ItemGroupComponent2, knownAs: "ItemGroupComponent2" },
     { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
     { component: DisplayNothingComponent, knownAs: "DisplayNothingComponent" },
     { component: AbbreviationComponent, knownAs: "AbbreviationComponent" },
     { component: TabFixComponent, knownAs: "TabFixComponent" },
-    { component: ReferenceComponent, knownAs: "ReferenceComponent" },
     { component: UrlInputComponent, knownAs: "UrlInputComponent" },
     { component: PhoneInputComponent, knownAs: "PhoneInputComponent" },
     { component: SingleLineItemComponent, knownAs: "SingleLineItemComponent" },

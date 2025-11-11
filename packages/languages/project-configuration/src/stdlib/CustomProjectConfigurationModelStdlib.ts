@@ -3,7 +3,7 @@
 
 import { type FreNamedNode, type FreStdlib } from "@freon4dsl/core";
 
-export class CustomStudyConfigurationModelStdlib implements FreStdlib {
+export class CustomProjectConfigurationModelStdlib implements FreStdlib {
     // add all your extra predefined instances here
     get elements(): FreNamedNode[] {
         return [];

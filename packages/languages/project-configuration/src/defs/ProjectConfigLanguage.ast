@@ -1,15 +1,62 @@
-language StudyConfigurationModel
+language ProjectConfigurationModel
 
-model StudyConfigurationModel {
-    configuration: StudyConfiguration;
+model ProjectConfigurationModel {
+    configuration: ProjectConfiguration;
 }
 
-modelunit StudyConfiguration {
-    name: identifier;
+// The single root model unit
+modelunit ProjectConfiguration {
+    name: identifier = "Project Configuration";
     description: Description[];
+    events: Event[];
+    tasks: Task[];
+    periods: Period[];
 }
 
 concept Description {
     text: string = " ";
     rawText: string = " ";
+}
+
+concept Event {
+    name: identifier;
+    description: Description[];
+    startDate: DateConcept;
+    endDate: DateConcept;
+    tasks: TaskReference[];
+}
+
+concept Task {
+    name: identifier;
+    description: Description[];
+    duration: number;
+    priority: string;
+    assignedTo: string;
+    status: string;
+}
+
+concept TaskReference {
+    reference task: Task;
+    startDate: DateConcept;
+    endDate: DateConcept;
+}
+
+concept Period {
+    name: identifier;
+    description: Description[];
+    startDate: DateConcept;
+    endDate: DateConcept;
+    events: Event[];
+}
+
+concept DateConcept {
+    dateAsString: string;
+    day: number;
+    month: number;
+    year: number;
+}
+
+concept DateRange {
+    startDate: DateConcept;
+    endDate: DateConcept;
 }

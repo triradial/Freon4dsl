@@ -1,7 +1,7 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
 import type { FreEnvironment, FreModel, FreModelUnit, FreNode, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
-import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel } from "@freon4dsl/core";
-import { Event, Period, StudyConfiguration, Task } from "@freon4dsl/study-configuration";
+import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, isInMemoryError } from "@freon4dsl/core";
+import type { Event, Period, ProjectConfiguration, Task } from "@freon4dsl/project-configuration";
 import { runInAction } from "mobx";
 import { editorProgressShown, setCurrentModelName, setCurrentUnitName, unitNames, units, updateEditorState, updateModelState, updateUnitLists } from "./model-store.js";
 import { setUserMessage } from "./usermessage-store.js";
@@ -32,7 +32,10 @@ export class ModelManager {
     modelChanged = (store: InMemoryModel): void => {
         LOGGER.log("modelChanged");
         updateModelState(store?.model?.name || '', '');
-        updateUnitLists(store.getUnitIdentifiers(), store.getUnits());
+        updateUnitLists(
+            { ids: store.getUnitIdentifiers(), refs: store.getUnits() },
+            { ids: store.getUnitIdentifiers(), refs: store.getUnits() }
+        );
     };
 
     getCurrentUnit(): FreModelUnit | undefined {
@@ -58,7 +61,7 @@ export class ModelManager {
             LOGGER.log("ModelHandler.createModel name: " + modelName);
             this.resetGlobalVariables();
             await this.modelStore.createModel(modelName);
-            await this.createStudyConfigurationModelUnits();
+            await this.createProjectConfigurationModelUnits();
         } catch (error) {
             LOGGER.error("Error in newModel: " + error);
         }
@@ -95,7 +98,7 @@ export class ModelManager {
         LOGGER.log("ModelManager.deleteModel(" + modelName + ")");
         this.resetGlobalVariables();
         await this.saveCurrentUnit();
-        await this.modelStore.deleteModel(modelName);
+        await this.modelStore.deleteModel();
     }
     
     async createModelUnit(unitName: string, unitType: string) {
@@ -106,8 +109,9 @@ export class ModelManager {
     
     async createBasicModelUnit(unitName: string, unitType: string) {
         LOGGER.log("model-manager.createBasicModelUnit called, unitType: " + unitType + " name: " + unitName);
+        console.log("model-manager.createBasicModelUnit called, unitType: " + unitType + " name: " + unitName);
         const newUnit = await this.modelStore.createUnit(unitName, unitType);
-        if (!!newUnit) {
+        if (!isInMemoryError(newUnit)) {
             newUnit.name = unitName;
             this.showModelUnit(newUnit);
         } else {
@@ -118,7 +122,7 @@ export class ModelManager {
     async createRawModelUnit(unitName: string, unitType: string) {
         LOGGER.log("model-manager.createRawModelUnit called, unitType: " + unitType + " name: " + unitName);
         const newUnit = await this.modelStore.createUnit(unitName, unitType);
-        if (!!newUnit) {
+        if (!isInMemoryError(newUnit)) {
             newUnit.name = unitName;
         } else {
             setUserMessage(`Model unit of type '${unitType}' could not be created.`);
@@ -206,6 +210,7 @@ export class ModelManager {
     }
 
     async saveCurrentUnit() {
+        console.log("ModelHandler.saveCurrentUnit");
         const unit: FreModelUnit = this.langEnv.editor.rootElement as FreModelUnit;
         if (!!unit) {
             if (!!this.currentModel?.name && this.currentModel?.name?.length) {
@@ -223,21 +228,19 @@ export class ModelManager {
         }
     }
 
-    private async createStudyConfigurationModelUnits() {
+    private async createProjectConfigurationModelUnits() {
         try {
-            LOGGER.info("ModelHandler.createModelUnits START name: StudyConfiguration");
-
-            await this.createModelUnit("StudyConfiguration", "StudyConfiguration");
-            const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
-            studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
-            studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
-            studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
+            LOGGER.info("ModelHandler.createModelUnits START name: ProjectConfiguration");
+            console.log("ModelHandler.createModelUnits START name: ProjectConfiguration");
+            this.setCurrentUnit(undefined);
+            await this.createModelUnit("ProjectConfiguration", "ProjectConfiguration");
+            const studyConfigUnit = this.modelStore.getUnitByName("ProjectConfiguration") as unknown as ProjectConfiguration;
             await this.saveCurrentUnit();
 
-            this.setCurrentUnit(studyConfigUnit);
+            this.setCurrentUnit(studyConfigUnit as unknown as FreModelUnit);
             setCurrentModelName(this.currentModel.name);
 
-            LOGGER.info("ModelHandler.createModelUnits END name: StudyConfiguration");
+            LOGGER.info("ModelHandler.createModelUnits END name: ProjectConfiguration");
 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -282,8 +285,8 @@ export class ModelManager {
     private setUnitLists() {
         LOGGER.log("setUnitLists");
         const unitsInModel = this.currentModel.getUnits();
-        unitNames.set(unitsInModel.map((u) => ({ name: u.name, id: u.freId() })));
-        units.set(unitsInModel);
+        unitNames.set({ ids: this.modelStore.getUnitIdentifiers(), refs: unitsInModel });
+        units.set({ ids: this.modelStore.getUnitIdentifiers(), refs: unitsInModel });
     }
 
     selectElement(item: FreNode, propertyName?: string) {

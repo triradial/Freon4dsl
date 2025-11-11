@@ -13,6 +13,13 @@ export class LanguageInitializer {
         if (!langEnv) {
             return;
         }
+        
+        // Check if fileExtensions is properly initialized
+        if (!langEnv.fileExtensions) {
+            console.warn("LanguageEnvironment.fileExtensions is not initialized yet");
+            return;
+        }
+        
         // the language name
         languageName.set(langEnv.languageName);
 

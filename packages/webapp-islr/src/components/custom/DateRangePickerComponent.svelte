@@ -1,6 +1,6 @@
 <script lang="ts">
     import { AST, StringReplacerBox } from "@freon4dsl/core";
-    import { DateConcept, DateRange as StudyDateRange } from "@freon4dsl/study-configuration";
+    import { DateConcept, DateRange as StudyDateRange } from "@freon4dsl/project-configuration";
     import { CalendarDate, parseDate, today } from "@internationalized/date";
     import type { DateRange as BitsDateRange } from "bits-ui";
     import { DateRangePicker } from "bits-ui";

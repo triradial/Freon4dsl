@@ -48,7 +48,7 @@
     // "paths": {
     //   "@freon4dsl/core": ["../core/src"],
     //   "@freon4dsl/core-svelte": ["../core-svelte/src"],
-    //   "@freon4dsl/study-configuration": ["../languages/study-configuration/src"]
+    //   "@freon4dsl/project-configuration": ["../languages/project-configuration/src"]
     // },
     // "rootDirs": [],                              /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                             /* List of folders to include type definitions from. */
@@ -100,7 +100,7 @@
       "path": "../core-svelte"
     },
     {
-      "path": "../languages/study-configuration"
+      "path": "../languages/project-configuration"
     }
   ],
   "include": [

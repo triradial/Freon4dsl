@@ -111,5 +111,23 @@
     "phase": "II",
     "therapeuticArea": "Research",
     "currentProtocol": ""
+  },
+  {
+    "id": "818a37c0-34ed-4c24-a42a-5a6e2054f9e4",
+    "name": "Test3",
+    "title": "",
+    "status": "Active",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
+  },
+  {
+    "id": "cc8541a6-2f8f-42ba-a4f3-e39fdcb143b1",
+    "name": "Test4",
+    "title": "",
+    "status": "",
+    "phase": "",
+    "therapeuticArea": "",
+    "currentProtocol": ""
   }
 ]

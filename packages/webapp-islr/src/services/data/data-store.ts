@@ -81,6 +81,7 @@ function createDataStore() {
       });
       if (!response.ok) throw new Error('Failed to add study');
       const text = await response.text();
+      console.log('adding study', text);
       const addedStudy = JSON.parse(text);
       await ModelManager.getInstance().createModel(addedStudy.id);
       update(state => ({ ...state, studies: [...state.studies, addedStudy] }));
