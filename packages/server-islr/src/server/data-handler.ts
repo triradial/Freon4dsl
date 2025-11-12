@@ -86,7 +86,7 @@ export class DataHandler {
                 const projectsContent = await storage.readFile(projectsFile);
                 projects = JSON.parse(projectsContent);
             }
-            const newStudy = ctx.request.body;
+            const newStudy = ctx.request.body as any;
             projects.push(newStudy);
             await storage.writeFile(projectsFile, JSON.stringify(projects, null, 2));
             ctx.status = 201;

@@ -1,7 +1,6 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
 import type { FreEnvironment, FreModel, FreModelUnit, FreNode, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
 import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, isInMemoryError } from "@freon4dsl/core";
-import type { Event, Period, ProjectConfiguration, Task } from "@freon4dsl/project-configuration";
 import { runInAction } from "mobx";
 import { editorProgressShown, setCurrentModelName, setCurrentUnitName, unitNames, units, updateEditorState, updateModelState, updateUnitLists } from "./model-store.js";
 import { setUserMessage } from "./usermessage-store.js";
@@ -112,7 +111,9 @@ export class ModelManager {
         console.log("model-manager.createBasicModelUnit called, unitType: " + unitType + " name: " + unitName);
         const newUnit = await this.modelStore.createUnit(unitName, unitType);
         if (!isInMemoryError(newUnit)) {
-            newUnit.name = unitName;
+            // Don't set name again - createUnit already sets it, and setting it again might trigger a rename
+            // newUnit.name = unitName; // REMOVED: This was causing rename operations that deleted the unit
+            console.log("model-manager.createBasicModelUnit: unit created with name: " + newUnit.name);
             this.showModelUnit(newUnit);
         } else {
             setUserMessage(`Model unit of type '${unitType}' could not be created.`);
@@ -234,9 +235,9 @@ export class ModelManager {
             console.log("ModelHandler.createModelUnits START name: ProjectConfiguration");
             this.setCurrentUnit(undefined);
             await this.createModelUnit("ProjectConfiguration", "ProjectConfiguration");
-            const studyConfigUnit = this.modelStore.getUnitByName("ProjectConfiguration") as unknown as ProjectConfiguration;
-            console.log("studyConfigUnit:", studyConfigUnit);
-            this.setCurrentUnit(studyConfigUnit as unknown as FreModelUnit);
+            const projectConfigUnit = this.modelStore.getUnitByName("ProjectConfiguration");
+            console.log("projectConfigUnit:", projectConfigUnit);
+            this.setCurrentUnit(projectConfigUnit);
             await this.saveCurrentUnit();
 
             console.log("this.getCurrentUnit():", this.getCurrentUnit());

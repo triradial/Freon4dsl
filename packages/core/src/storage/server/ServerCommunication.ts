@@ -1,10 +1,10 @@
 import type { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreLanguage } from "../../language/index.js";
 import { FreLogger } from "../../logging/index.js";
-import { isIdentifier } from "../../util/index.js"
-import { collectUsedLanguages, FreLionwebSerializer, FreModelSerializer, type ServerResponse, type VoidServerResponse } from "../index.js"
+import { isIdentifier } from "../../util/index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
-import type { IServerCommunication, FreUnitIdentifier } from "./IServerCommunication.js";
+import { collectUsedLanguages, FreLionwebSerializer, FreModelSerializer, type ServerResponse, type VoidServerResponse } from "../index.js";
+import type { FreUnitIdentifier, IServerCommunication } from "./IServerCommunication.js";
 
 const LOGGER = new FreLogger("ServerCommunication"); // .mute();
 
