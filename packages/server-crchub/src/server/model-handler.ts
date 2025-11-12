@@ -114,6 +114,10 @@ export class ModelHandler {
     public static async saveModelUnit(model: string, unit: string, ctx: IRouterContext) {
         try {
             const modelPath = this.getModelPath(model);
+            // Ensure directory exists (creates model directory if it doesn't exist)
+            if (!await storage.directoryExists(modelPath)) {
+                await storage.ensureDirectory(modelPath);
+            }
             const filePath = path.join(modelPath, `${unit}.json`);
             await storage.writeFile(filePath, JSON.stringify(ctx.request.body, null, 3));
         } catch (e) {

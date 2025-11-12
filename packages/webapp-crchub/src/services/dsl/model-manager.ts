@@ -108,7 +108,6 @@ export class ModelManager {
         LOGGER.log("model-manager.createBasicModelUnit called, unitType: " + unitType + " name: " + unitName);
         const newUnit = await this.modelStore.createUnit(unitName, unitType);
         if (!!newUnit) {
-            newUnit.name = unitName;
             this.showModelUnit(newUnit);
         } else {
             setUserMessage(`Model unit of type '${unitType}' could not be created.`);
@@ -119,7 +118,6 @@ export class ModelManager {
         LOGGER.log("model-manager.createRawModelUnit called, unitType: " + unitType + " name: " + unitName);
         const newUnit = await this.modelStore.createUnit(unitName, unitType);
         if (!!newUnit) {
-            newUnit.name = unitName;
         } else {
             setUserMessage(`Model unit of type '${unitType}' could not be created.`);
         }
