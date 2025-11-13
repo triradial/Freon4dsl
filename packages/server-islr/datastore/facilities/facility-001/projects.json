@@ -1,14 +1,8 @@
 [
   {
-    "id": "ce819a24-4184-4ac8-9cc4-5d21606463b4",
-    "name": "ProjectConfiguration2",
-    "title": "ddd",
-    "status": "Suspended"
-  },
-  {
-    "id": "4d55ea7a-2cd9-4bfe-a759-9c9bdc11feaa",
-    "name": "ProjectConfiguration3",
-    "title": "fff",
-    "status": "Active"
+    "id": "1773f96c-78d2-45c7-ade4-b58025d4cdfb",
+    "name": "ProjectConfiguration",
+    "title": "",
+    "status": ""
   }
 ]
