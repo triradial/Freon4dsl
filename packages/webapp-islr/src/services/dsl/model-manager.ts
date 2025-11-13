@@ -2,6 +2,7 @@
 import type { FreEnvironment, FreModel, FreModelUnit, FreNode, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
 import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel, isInMemoryError } from "@freon4dsl/core";
 import { runInAction } from "mobx";
+import { Description, ReferenceCollection, ReferenceItem, StudyExtract, Topic } from "@freon4dsl/project-configuration";
 import { editorProgressShown, setCurrentModelName, setCurrentUnitName, unitNames, units, updateEditorState, updateModelState, updateUnitLists } from "./model-store.js";
 import { setUserMessage } from "./usermessage-store.js";
 import { WebappConfigurator } from "./webapp-configurator.js";
@@ -60,7 +61,7 @@ export class ModelManager {
             LOGGER.log("ModelHandler.createModel name: " + modelName);
             this.resetGlobalVariables();
             await this.modelStore.createModel(modelName);
-            await this.createProjectConfigurationModelUnits();
+            await this.createStudyExtractModelUnits();
         } catch (error) {
             LOGGER.error("Error in newModel: " + error);
         }
@@ -229,21 +230,24 @@ export class ModelManager {
         }
     }
 
-    private async createProjectConfigurationModelUnits() {
+    private async createStudyExtractModelUnits() {
         try {
-            LOGGER.info("ModelHandler.createModelUnits START name: ProjectConfiguration");
-            console.log("ModelHandler.createModelUnits START name: ProjectConfiguration");
+            LOGGER.info("ModelHandler.createModelUnits START name: StudyExtract");
+            console.log("ModelHandler.createModelUnits START name: StudyExtract");
             this.setCurrentUnit(undefined);
-            await this.createModelUnit("ProjectConfiguration", "ProjectConfiguration");
-            const projectConfigUnit = this.modelStore.getUnitByName("ProjectConfiguration");
-            console.log("projectConfigUnit:", projectConfigUnit);
-            this.setCurrentUnit(projectConfigUnit);
+            await this.createModelUnit("StudyExtract", "StudyExtract");
+            const studyExtractUnit = this.modelStore.getUnitByName("StudyExtract");
+            console.log("studyExtractUnit:", studyExtractUnit);
+            if (studyExtractUnit) {
+                this.initializeStudyExtractUnit(studyExtractUnit as StudyExtract);
+            }
+            this.setCurrentUnit(studyExtractUnit);
             await this.saveCurrentUnit();
 
             console.log("this.getCurrentUnit():", this.getCurrentUnit());
             setCurrentModelName(this.currentModel.name);
 
-            LOGGER.info("ModelHandler.createModelUnits END name: ProjectConfiguration");
+            LOGGER.info("ModelHandler.createModelUnits END name: StudyExtract");
 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -252,6 +256,59 @@ export class ModelManager {
             } else {
                 LOGGER.error("ModelHandler.createModelUnits ERROR: " + String(error));
             }
+        }
+    }
+
+    private initializeStudyExtractUnit(unit: StudyExtract) {
+        unit.references = unit.references ?? ReferenceCollection.create({});
+
+        const ensureReference = (item: ReferenceItem | undefined, label: string): ReferenceItem => {
+            if (!item) {
+                return ReferenceItem.create({ label });
+            }
+            if (!item.label) {
+                item.label = label;
+            }
+            return item;
+        };
+
+        unit.references.study = ensureReference(unit.references.study, "Study");
+        unit.references.bibliography = ensureReference(unit.references.bibliography, "Bibliography");
+        unit.references.arm = ensureReference(unit.references.arm, "Arm");
+
+        if (!unit.summary) {
+            unit.summary = Description.create({});
+        }
+
+        if (!unit.topics || unit.topics.length === 0) {
+            const createTopic = (title: string, subtopics: Topic[] = []): Topic => {
+                return Topic.create({ title, subtopics });
+            };
+
+            const groupsTopic = createTopic("Groups", [
+                createTopic("Study Design"),
+                createTopic("Patients"),
+                createTopic("Outcomes Reported"),
+                createTopic("Data Cuts"),
+                createTopic("Interventions (Protocol Specified)"),
+                createTopic("Adjuvant Treatments Permitted (SLRS Only)"),
+                createTopic("Treatment Timing"),
+                createTopic("Setting"),
+            ]);
+
+            const studyCharacteristics = createTopic("Study Characteristics", [groupsTopic]);
+
+            const additionalTopics = [
+                "Baseline",
+                "Surgical Outcomes & Adjuvant TX",
+                "Efficacy",
+                "Safety Summary",
+                "AE Details",
+                "Utilities, QOL, Pros",
+                "QA (York CRD)",
+            ].map((title) => createTopic(title));
+
+            unit.topics.push(studyCharacteristics, ...additionalTopics);
         }
     }
 

@@ -1,0 +1,52 @@
+language StudyExtractModel
+
+// Structure aligned with packages/languages/project-configuration/src/defs/StudyExtract.ini
+
+model StudyExtractModel {
+    extract: StudyExtract;
+}
+
+modelunit StudyExtract {
+    name: identifier = "Study Extract";
+    references: ReferenceCollection;
+    topics: Topic[];
+    summary: Description;
+}
+
+concept ReferenceCollection {
+    study: ReferenceItem;
+    bibliography: ReferenceItem;
+    arm: ReferenceItem;
+}
+
+concept ReferenceItem {
+    label: string;
+    identifier: string;
+    description: Description;
+    source: string;
+}
+
+concept Topic {
+    title: string;
+    overview: Description;
+    details: Description;
+    subtopics: Topic[];
+}
+
+concept Description {
+    text: string = " ";
+    rawText: string = " ";
+}
+
+concept DateConcept {
+    dateAsString: string;
+    day: number;
+    month: number;
+    year: number;
+}
+
+concept DateRange {
+    startDate: DateConcept;
+    endDate: DateConcept;
+}
+

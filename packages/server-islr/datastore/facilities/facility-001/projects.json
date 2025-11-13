@@ -1,7 +1,13 @@
 [
   {
-    "id": "1773f96c-78d2-45c7-ade4-b58025d4cdfb",
-    "name": "ProjectConfiguration",
+    "id": "c2a8ce3a-104c-47ce-8096-da24f01f4550",
+    "name": "StudyExtract1",
+    "title": "",
+    "status": ""
+  },
+  {
+    "id": "e26496ff-8fa5-4062-9701-f471bb9c7afc",
+    "name": "StudyExtract2",
     "title": "",
     "status": ""
   }

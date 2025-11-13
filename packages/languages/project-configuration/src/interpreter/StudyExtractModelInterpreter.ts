@@ -4,7 +4,7 @@
 
 import { InterpreterContext, RtObject, type IMainInterpreter } from "@freon4dsl/core";
 
-import { ProjectConfigurationModelInterpreterBase } from "./gen/ProjectConfigurationModelInterpreterBase.js";
+import { StudyExtractModelInterpreterBase } from "./gen/StudyExtractModelInterpreterBase.js";
 
 let main: IMainInterpreter;
 
@@ -12,7 +12,7 @@ let main: IMainInterpreter;
  * The class containing all interpreter functions written by the language engineer.
  * This class is initially empty, and will not be overwritten if it already exists.
  */
-export class ProjectConfigurationModelInterpreter extends ProjectConfigurationModelInterpreterBase {
+export class StudyExtractModelInterpreter extends StudyExtractModelInterpreterBase {
     constructor(m: IMainInterpreter) {
         super();
         main = m;

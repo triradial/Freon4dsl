@@ -4,7 +4,7 @@
 import { type FreNode, Box, type FreProjection, type FreTableDefinition, FreProjectionHandler } from "@freon4dsl/core";
 
 /**
- * Class CustomProjectConfigurationModelProjection provides an entry point for the language engineer to
+ * Class CustomStudyExtractModelProjection provides an entry point for the language engineer to
  * define custom build additions to the editor.
  * These are merged with the custom build additions and other definition-based editor parts
  * in a three-way manner. For each node,
@@ -12,7 +12,7 @@ import { type FreNode, Box, type FreProjection, type FreTableDefinition, FreProj
  * (2) if a creator/behavior based on one of the editor definition is present, this is used,
  * (3) if neither (1) nor (2) yields a result, the default is used.
  */
-export class CustomProjectConfigurationModelProjection implements FreProjection {
+export class CustomStudyExtractModelProjection implements FreProjection {
     name: string = "Custom";
     handler!: FreProjectionHandler; // will get a value in Environment
     nodeTypeToBoxMethod: Map<string, (node: FreNode) => Box> = new Map<string, (node: FreNode) => Box>([

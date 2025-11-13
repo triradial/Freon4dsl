@@ -1,6 +1,6 @@
 import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
-import { ProjectConfigurationModelEnvironment } from "@freon4dsl/project-configuration";
+import { StudyExtractModelEnvironment } from "@freon4dsl/project-configuration";
 import { env } from "./config/env.js";
 import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 
@@ -58,7 +58,7 @@ LOGGER.log(`Server settings configured: ${JSON.stringify({ url: serverUrl, timeo
 // Configure the editor environment
 LOGGER.log('Creating editor environment');
 const webappConfigurator = WebappConfigurator.getInstance();
-const editorEnvironment = ProjectConfigurationModelEnvironment.getInstance();
+const editorEnvironment = StudyExtractModelEnvironment.getInstance();
 LOGGER.log('Editor environment created');
 webappConfigurator.setEditorEnvironment(editorEnvironment);
 webappConfigurator.setServerCommunication(serverComm);

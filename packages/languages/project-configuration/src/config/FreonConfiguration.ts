@@ -3,12 +3,12 @@
 
 import { type FreProjection, type FreCombinedActions, type FreTyper, type FreStdlib, type FreScoper } from "@freon4dsl/core";
 
-import { CustomProjectConfigurationModelActions, CustomProjectConfigurationModelProjection } from "../editor/index.js";
-import { CustomProjectConfigurationModelScoper } from "../scoper/index.js";
-import { CustomProjectConfigurationModelTyperPart } from "../typer/CustomProjectConfigurationModelTyperPart.js";
-import { CustomProjectConfigurationModelValidator } from "../validator/index.js";
-import { CustomProjectConfigurationModelStdlib } from "../stdlib/CustomProjectConfigurationModelStdlib.js";
-import { type ProjectConfigurationModelCheckerInterface } from "../validator/gen/index.js";
+import { CustomStudyExtractModelActions, CustomStudyExtractModelProjection } from "../editor/index.js";
+import { CustomStudyExtractModelScoper } from "../scoper/index.js";
+import { CustomStudyExtractModelTyperPart } from "../typer/CustomStudyExtractModelTyperPart.js";
+import { CustomStudyExtractModelValidator } from "../validator/index.js";
+import { CustomStudyExtractModelStdlib } from "../stdlib/CustomStudyExtractModelStdlib.js";
+import { type StudyExtractModelCheckerInterface } from "../validator/gen/index.js";
 
 /**
  * Class FreonConfiguration is the place where you can add all your customisations.
@@ -17,17 +17,17 @@ import { type ProjectConfigurationModelCheckerInterface } from "../validator/gen
  */
 class FreonConfiguration {
     // add your custom editor projections here
-    customProjection: FreProjection[] = [new CustomProjectConfigurationModelProjection()];
+    customProjection: FreProjection[] = [new CustomStudyExtractModelProjection()];
     // add your custom editor actions here
-    customActions: FreCombinedActions[] = [new CustomProjectConfigurationModelActions()];
+    customActions: FreCombinedActions[] = [new CustomStudyExtractModelActions()];
     // add your custom validations here
-    customValidations: ProjectConfigurationModelCheckerInterface[] = [new CustomProjectConfigurationModelValidator()];
+    customValidations: StudyExtractModelCheckerInterface[] = [new CustomStudyExtractModelValidator()];
     // add your custom scopers here
-    customScopers: FreScoper[] = [new CustomProjectConfigurationModelScoper()];
+    customScopers: FreScoper[] = [new CustomStudyExtractModelScoper()];
     // add your custom type-providers here
-    customTypers: FreTyper[] = [new CustomProjectConfigurationModelTyperPart()];
+    customTypers: FreTyper[] = [new CustomStudyExtractModelTyperPart()];
     // add extra predefined instances here
-    customStdLibs: FreStdlib[] = [new CustomProjectConfigurationModelStdlib()];
+    customStdLibs: FreStdlib[] = [new CustomStudyExtractModelStdlib()];
 }
 
 export const freonConfiguration = new FreonConfiguration();

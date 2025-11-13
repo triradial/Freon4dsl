@@ -1,0 +1,42 @@
+editor default
+
+StudyExtract {
+    [
+        Name: ${name}
+        Summary: ${summary}
+        References: ${references}
+        Topics: ${topics}
+    ]
+}
+
+ReferenceCollection {
+    [
+        Study: ${study}
+        Bibliography: ${bibliography}
+        Arm: ${arm}
+    ]
+}
+
+ReferenceItem {
+    [
+        Label: ${label}
+        Identifier: ${identifier}
+        Source: ${source}
+        Description: ${description}
+    ]
+}
+
+Topic {
+    [
+        Title: ${title}
+        Overview: ${overview}
+        Details: ${details}
+        Subtopics: ${subtopics}
+    ]
+}
+
+Description {
+    [ ${rawText} ]
+}
+
+
