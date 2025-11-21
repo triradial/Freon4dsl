@@ -1,11 +1,12 @@
-import { defineConfig } from "vitest/config";
 import path from "path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+    root: __dirname,
     test: {
         globals: true,
         environment: "node",
-        include: ["**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+        include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
         exclude: ["**/node_modules/**", "**/dist/**"],
         onConsoleLog(log, type) {
             if (log.includes("[MobX]")) {
