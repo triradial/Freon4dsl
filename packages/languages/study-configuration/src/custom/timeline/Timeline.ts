@@ -365,6 +365,7 @@ export class Timeline extends RtObject {
             );
             const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
             this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
+            console.log("Added patient visit event: " + patientVisit.visit.name + " on day: " + dayOnTimeline);
         });
         patientHistory.patientNotAvailableDates.forEach((patientNotAvailableDate) => {
             const startDateAsDate = this.dateStringsToDate(
@@ -385,6 +386,7 @@ export class Timeline extends RtObject {
             this.addEvent(
                 new PatientUnAvailableEventInstance("Patient Not Available", this.getDayOnTimeline(startDateAsDate), this.getDayOnTimeline(endDateAsDate)),
             );
+            console.log("Added patient not available event: " + "Patient Not Available" + " on day: " + startDateAsDate + " to day: " + endDateAsDate);
         });
     }
 

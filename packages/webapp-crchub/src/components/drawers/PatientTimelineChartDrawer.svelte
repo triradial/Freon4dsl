@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { RtString } from "@freon4dsl/core";
-    import { PatientHistory, PatientInfo, Timeline, type StudyConfigurationModel } from "@freon4dsl/study-configuration";
+    import { AST, RtString } from "@freon4dsl/core";
+    import { PatientHistory, PatientInfo, Timeline, type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { createEventDispatcher } from "svelte";
     import { getTimelineAsOfADate } from "../../services/app/patient-timeline.js";
     import { dataStore } from "../../services/data/data-store.js";
@@ -48,9 +48,10 @@
         const fetchedPatient = await dataStore.getPatient(id);
 
         let found = false;
+        // Create a new PatientHistory that is completely isolated from the model to avoid editor observation
         let patientHistory: PatientHistory = PatientHistory.create({});
-        // Get the model data for all the Patients
-        patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(fetchedPatient!.studyId, "PatientInfo") as PatientInfo;
+        // Get the model data for all the Patients (without opening in editor to avoid redraw loops)
+        patientInfo = await modelManager.getModelUnitWithoutOpening(fetchedPatient!.studyId, "PatientInfo") as PatientInfo;
         if (!patientInfo || patientInfo === undefined) {
             const rtObject = getTimelineChartError() as RtString;
             return rtObject.asString();
@@ -64,21 +65,50 @@
             console.log("Checking patient history:", aPatientHistory.patient_id);
             if (!found && aPatientHistory.patient_id === fetchedPatient!.patientNumber) {
                 console.log("Found matching patient history!");
+
                 console.log("Patient visits:", aPatientHistory.patientVisits.length);
-                console.log("Not available dates:", aPatientHistory.patientNotAvailableDates.length);
-                
-                aPatientHistory.patientVisits.forEach(visit => {
-                    let updatedVisit = visit.copy(); 
-                    fillDateConcept(updatedVisit.actualVisitDate);  // Use the action wrapper
-                    patientHistory.patientVisits.push(updatedVisit);
+                aPatientHistory.patientVisits.forEach((visit, index) => {
+                    console.log(`  patientVisits[${index}]:`, {
+                        name: visit.name,
+                        visitInstanceNumber: visit.visitInstanceNumber,
+                        actualVisitDate: visit.actualVisitDate?.dateAsString,
+                        status: visit.status,
+                        visit: visit
+                    });
                 });
-                aPatientHistory.patientNotAvailableDates.forEach(dateRange => {
-                    let updatedDateRange = dateRange.copy();
-                    fillDateConcept(updatedDateRange.startDate);  // Use the action wrapper
-                    if (updatedDateRange.endDate) {
-                        fillDateConcept(updatedDateRange.endDate);  // Use the action wrapper
+                
+                console.log("Not available dates:", aPatientHistory.patientNotAvailableDates.length);               
+                aPatientHistory.patientNotAvailableDates.forEach((dateRange, index) => {
+                    console.log(`  patientNotAvailableDates[${index}]:`, {
+                        startDate: dateRange.startDate?.dateAsString,
+                        endDate: dateRange.endDate?.dateAsString,
+                        dateRange: dateRange
+                    });
+                });
+                
+                // Copy visits and date ranges, then fill date concepts
+                // All modifications must be within AST.change() to satisfy MobX strict mode
+                AST.change(() => {
+                    // Process visits - copy first, then modify date concepts
+                    for (const visit of aPatientHistory.patientVisits) {
+                        const updatedVisit = visit.copy();
+                        if (updatedVisit.actualVisitDate) {
+                            // fillDateConcept modifies MobX observables, so it must be inside AST.change()
+                            fillDateConcept(updatedVisit.actualVisitDate);
+                        }
+                        patientHistory.patientVisits.push(updatedVisit);
                     }
-                    patientHistory.patientNotAvailableDates.push(updatedDateRange);
+                    // Process date ranges - copy first, then modify date concepts
+                    for (const dateRange of aPatientHistory.patientNotAvailableDates) {
+                        const updatedDateRange = dateRange.copy();
+                        if (updatedDateRange.startDate) {
+                            fillDateConcept(updatedDateRange.startDate);
+                        }
+                        if (updatedDateRange.endDate) {
+                            fillDateConcept(updatedDateRange.endDate);
+                        }
+                        patientHistory.patientNotAvailableDates.push(updatedDateRange);
+                    }
                 });
                 found = true;
             };
@@ -95,17 +125,30 @@
             if (patientHistory.patientVisits.length > 0) {
                 referenceDateForTimeline = new Date(patientHistory.patientVisits[0].actualVisitDate.dateAsString);
             } else {
-                referenceDateForTimeline = new Date(2024, 8, 30);
+                referenceDateForTimeline = new Date(Date.now());
             }
+        } else {
+            referenceDateForTimeline = new Date(referenceDate);
         }
+        console.log("Reference date for timeline: " + referenceDateForTimeline);
 
+        // // Get the model and configuration unit
+        // const studyModelManager = ModelManager.getInstance();
+        // await studyModelManager.openModel(studyId);
+        // const model = studyModelManager.currentModel as StudyConfigurationModel;
+        // const studyConfig = model.configuration;
+        // studyConfig.studyStartDayNumber = 0;
+        
         // Get the model and configuration unit
         const studyModelManager = ModelManager.getInstance();
-        await studyModelManager.openModel(studyId);
-        const model = studyModelManager.currentModel as StudyConfigurationModel;
-        const studyConfig = model.configuration;
-        studyConfig.studyStartDayNumber = 0;
-        
+        const studyConfig = await studyModelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+        if (!studyConfig) {
+            throw new Error(`StudyConfiguration unit not found for study: ${studyId}`);
+        }
+        // AST.change(() => {
+        //     studyConfig.studyStartDayNumber = 0;
+        // });
+
         console.log("Creating timeline with patient history...");
         let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
         console.log("Timeline created, getting chart HTML...");
@@ -120,8 +163,8 @@
         error = null;
         try {
             const startTime = Date.now();
-            const referenceDate = new Date(2024, 8, 30);
-            chartHtml = await getChartWithPatientHistory(referenceDate);
+            // const referenceDate = new Date(2024, 8, 30);
+            chartHtml = await getChartWithPatientHistory(undefined);
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
             await loadChartData();
             const elapsedTime = Date.now() - startTime;

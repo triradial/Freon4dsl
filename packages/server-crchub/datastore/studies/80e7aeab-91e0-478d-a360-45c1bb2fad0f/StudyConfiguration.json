@@ -8,20 +8,100 @@
    ],
    "nodes": [
       {
-         "id": "ID-58",
+         "id": "ID-366",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-PatientInfo"
+            "key": "-key-StudyConfiguration"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientInfo-name"
+                  "key": "-key-StudyConfiguration-name"
                },
-               "value": "PatientInfo"
+               "value": "StudyConfiguration"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showSharedTasks"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showScheduling"
+               },
+               "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showSchedulingDetails"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showChecklists"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showReferences"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showSystems"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showPeople"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showDescriptions"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-showNotes"
+               },
+               "value": "true"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-studyStartDayNumber"
+               },
+               "value": "0"
             }
          ],
          "containments": [
@@ -29,10 +109,52 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientInfo-patientHistories"
+                  "key": "-key-StudyConfiguration-periods"
                },
                "children": [
-                  "ID-59"
+                  "ID-368"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-tasks"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-systemAccesses"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-staffing"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-roles"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyConfiguration-notes"
+               },
+               "children": [
+                  "ID-367"
                ]
             }
          ],
@@ -41,28 +163,20 @@
          "parent": null
       },
       {
-         "id": "ID-59",
+         "id": "ID-368",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-PatientHistory"
+            "key": "-key-Period"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientHistory-patient_id"
+                  "key": "-key-Period-name"
                },
-               "value": "12345"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-PatientHistory-id"
-               },
-               "value": ""
+               "value": "Screening"
             }
          ],
          "containments": [
@@ -70,90 +184,78 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientHistory-startOfStudyDate"
+                  "key": "-key-Period-description"
                },
                "children": [
-                  "ID-60"
+                  "ID-369"
                ]
             },
             {
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientHistory-patientVisits"
+                  "key": "-key-Period-events"
                },
                "children": [
-                  "ID-353",
-                  "ID-355"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-PatientHistory-patientNotAvailableDates"
-               },
-               "children": [
-                  "ID-357",
-                  "ID-360"
+                  "ID-370"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-58"
+         "parent": "ID-366"
       },
       {
-         "id": "ID-60",
+         "id": "ID-369",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-DateConcept"
+            "key": "-key-Description"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-dateAsString"
+                  "key": "-key-Description-text"
                },
-               "value": ""
+               "value": " "
             },
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-day"
+                  "key": "-key-Description-rawText"
                },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-year"
-               },
-               "value": "2025"
+               "value": " "
             }
          ],
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-59"
+         "parent": "ID-368"
       },
       {
-         "id": "ID-353",
+         "id": "ID-370",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-PatientVisit"
+            "key": "-key-Event"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientVisit-name"
+                  "key": "-key-Event-name"
+               },
+               "value": "Screen"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Event-alternativeName"
                },
                "value": ""
             },
@@ -161,9 +263,17 @@
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientVisit-visitInstanceNumber"
+                  "key": "-key-Event-showSequenced"
                },
-               "value": "1"
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Event-eventNumber"
+               },
+               "value": "0"
             }
          ],
          "containments": [
@@ -171,10 +281,30 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientVisit-actualVisitDate"
+                  "key": "-key-Event-tasks"
                },
                "children": [
-                  "ID-354"
+                  "ID-376"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Event-description"
+               },
+               "children": [
+                  "ID-371"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Event-schedule"
+               },
+               "children": [
+                  "ID-372"
                ]
             }
          ],
@@ -183,93 +313,50 @@
                "reference": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientVisit-visit"
+                  "key": "-key-Event-typeOfEvent"
                },
                "targets": [
                   {
-                     "resolveInfo": "Informed Consent",
-                     "reference": "ID-124"
-                  }
-               ]
-            },
-            {
-               "reference": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-PatientVisit-status"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "completed",
-                     "reference": "ID-1"
+                     "resolveInfo": "site visit",
+                     "reference": "ID-30"
                   }
                ]
             }
          ],
          "annotations": [],
-         "parent": "ID-59"
+         "parent": "ID-368"
       },
       {
-         "id": "ID-354",
+         "id": "ID-376",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-DateConcept"
+            "key": "-key-Task"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-dateAsString"
+                  "key": "-key-Task-name"
                },
-               "value": "2025-10-14"
+               "value": "Task 1"
             },
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-day"
+                  "key": "-key-Task-numberedSteps"
                },
-               "value": ""
+               "value": "false"
             },
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-year"
+                  "key": "-key-Task-showDetails"
                },
-               "value": "2025"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-353"
-      },
-      {
-         "id": "ID-355",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-PatientVisit"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-PatientVisit-name"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-PatientVisit-visitInstanceNumber"
-               },
-               "value": "1"
+               "value": "false"
             }
          ],
          "containments": [
@@ -277,88 +364,91 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientVisit-actualVisitDate"
+                  "key": "-key-Task-description"
                },
                "children": [
-                  "ID-356"
-               ]
-            }
-         ],
-         "references": [
-            {
-               "reference": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-PatientVisit-visit"
-               },
-               "targets": [
-                  {
-                     "resolveInfo": "Screen",
-                     "reference": "ID-42"
-                  }
+                  "ID-377"
                ]
             },
             {
-               "reference": {
+               "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-PatientVisit-status"
+                  "key": "-key-Task-steps"
                },
-               "targets": [
-                  {
-                     "resolveInfo": "completed",
-                     "reference": "ID-1"
-                  }
-               ]
+               "children": []
             }
          ],
+         "references": [],
          "annotations": [],
-         "parent": "ID-59"
+         "parent": "ID-370"
       },
       {
-         "id": "ID-356",
+         "id": "ID-377",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-DateConcept"
+            "key": "-key-Description"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-dateAsString"
+                  "key": "-key-Description-text"
                },
-               "value": "2025-10-08"
+               "value": " "
             },
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-day"
+                  "key": "-key-Description-rawText"
                },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-year"
-               },
-               "value": "2025"
+               "value": " "
             }
          ],
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-355"
+         "parent": "ID-376"
       },
       {
-         "id": "ID-357",
+         "id": "ID-371",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-DateRange"
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-370"
+      },
+      {
+         "id": "ID-372",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-EventSchedule"
          },
          "properties": [],
          "containments": [
@@ -366,109 +456,23 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateRange-startDate"
+                  "key": "-key-EventSchedule-eventWindow"
                },
                "children": [
-                  "ID-358"
-               ]
-            },
-            {
-               "containment": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateRange-endDate"
-               },
-               "children": [
-                  "ID-359"
+                  "ID-373"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-59"
+         "parent": "ID-370"
       },
       {
-         "id": "ID-358",
+         "id": "ID-373",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-DateConcept"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-dateAsString"
-               },
-               "value": "2025-10-06"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-day"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-year"
-               },
-               "value": "2025"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-357"
-      },
-      {
-         "id": "ID-359",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-DateConcept"
-         },
-         "properties": [
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-dateAsString"
-               },
-               "value": "2025-11-11"
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-day"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-year"
-               },
-               "value": "2025"
-            }
-         ],
-         "containments": [],
-         "references": [],
-         "annotations": [],
-         "parent": "ID-357"
-      },
-      {
-         "id": "ID-360",
-         "classifier": {
-            "language": "-key-StudyConfigurationModel",
-            "version": "2023.1",
-            "key": "-key-DateRange"
+            "key": "-key-EventWindow"
          },
          "properties": [],
          "containments": [
@@ -476,102 +480,100 @@
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateRange-startDate"
+                  "key": "-key-EventWindow-daysBefore"
                },
                "children": [
-                  "ID-361"
+                  "ID-374"
                ]
             },
             {
                "containment": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateRange-endDate"
+                  "key": "-key-EventWindow-daysAfter"
                },
                "children": [
-                  "ID-362"
+                  "ID-375"
                ]
             }
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-59"
+         "parent": "ID-372"
       },
       {
-         "id": "ID-361",
+         "id": "ID-374",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-DateConcept"
+            "key": "-key-Days"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-dateAsString"
+                  "key": "-key-Days-count"
                },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-day"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-year"
-               },
-               "value": "2025"
+               "value": "0"
             }
          ],
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-360"
+         "parent": "ID-373"
       },
       {
-         "id": "ID-362",
+         "id": "ID-375",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-DateConcept"
+            "key": "-key-Days"
          },
          "properties": [
             {
                "property": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
-                  "key": "-key-DateConcept-dateAsString"
+                  "key": "-key-Days-count"
                },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-day"
-               },
-               "value": ""
-            },
-            {
-               "property": {
-                  "language": "-key-StudyConfigurationModel",
-                  "version": "2023.1",
-                  "key": "-key-DateConcept-year"
-               },
-               "value": "2025"
+               "value": "0"
             }
          ],
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-360"
+         "parent": "ID-373"
+      },
+      {
+         "id": "ID-367",
+         "classifier": {
+            "language": "-key-StudyConfigurationModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyConfigurationModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-366"
       }
    ]
 }

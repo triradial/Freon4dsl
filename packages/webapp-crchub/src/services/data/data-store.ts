@@ -233,6 +233,7 @@ function createDataStore() {
 
   async function updatePatient(updatedPatient: Patient): Promise<boolean> {
     try {
+      console.log("[dataStore] updatePatient called with updatedPatient:", updatedPatient);
       const currentUser = get(userStore);
       if (!currentUser) {
         throw new Error('User not authenticated');

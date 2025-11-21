@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { type Study, type Patient } from "../../services/data/data-store.js";
-    import { createEventDispatcher } from "svelte";
-    // @ts-ignore
-    import { Save as IconSave, X as IconX, Asterisk as IconAsterisk } from '@lucide/svelte';
+    import { type Patient } from "../../services/data/data-store.js";
+// @ts-ignore
+    import { Asterisk as IconAsterisk, Save as IconSave, X as IconX } from '@lucide/svelte';
 
     const { patient, action, onsave, onclose } = $props<{
         patient: Patient;
@@ -35,8 +34,10 @@
     });
 
     function handleSave() {
+        console.log("[PatientMutation] handleSave called");
         validateAllFields();
         if (Object.values(errorState).every((error) => error === "")) {
+            console.log("[PatientMutation] calling onsave prop", mutatedPatient);
             onsave?.(mutatedPatient);
         }
     }

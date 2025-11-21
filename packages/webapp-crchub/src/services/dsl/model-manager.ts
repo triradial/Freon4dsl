@@ -133,6 +133,89 @@ export class ModelManager {
         return undefined;
     }
 
+    /**
+     * Get a model unit from a model without opening it in the editor UI.
+     * This method loads the model into memory but does NOT:
+     * - Set it as the current unit
+     * - Show it in the editor UI
+     * - Reset global variables
+     * - Clear caches
+     * 
+     * Note: This will replace the current model in modelStore if a different model is requested.
+     * If you need to preserve the current model, check if it's already open first.
+     * 
+     * @param modelName - The name of the model to open
+     * @param unitName - The name of the unit to retrieve
+     * @returns The requested model unit, or undefined if not found
+     */
+    async getModelUnitWithoutOpening(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
+        LOGGER.log("ModelManager.getModelUnitWithoutOpening modelName: " + modelName + " unitName: " + unitName);
+        
+        // If the model is already open, just get the unit directly
+        if (this.currentModel?.name === modelName) {
+            LOGGER.log("Model already open, getting unit directly");
+            const unit = this.modelStore.getUnitByName(unitName);
+            if (unit) {
+                LOGGER.log(`ModelManager.getModelUnitWithoutOpening: found unit "${unitName}" (type: ${unit.freLanguageConcept()}, id: ${unit.freId()})`);
+                return unit;
+            } else {
+                LOGGER.error("Unit not found in model: " + unitName);
+                return undefined;
+            }
+        }
+        
+        // Save current state to restore later
+        const previousCurrentUnit = this.currentUnit;
+        const previousRootElement = this.langEnv.editor.rootElement;
+        const previousModelName = this.currentModel?.name;
+        
+        try {
+            // Open the model in the modelStore (loads from server into memory)
+            // This will replace the current model, but we'll restore it after
+            await this.modelStore.openModel(modelName);
+            
+            // Get the unit by name
+            const unit = this.modelStore.getUnitByName(unitName);
+            if (unit) {
+                LOGGER.log(`ModelManager.getModelUnitWithoutOpening: found unit "${unitName}" (type: ${unit.freLanguageConcept()}, id: ${unit.freId()})`);
+            } else {
+                LOGGER.error(`ModelManager.getModelUnitWithoutOpening: unit "${unitName}" not found in model "${modelName}"`);
+            }
+            
+            // Restore previous model if it was different
+            if (previousModelName && previousModelName !== modelName) {
+                await this.modelStore.openModel(previousModelName);
+            }
+            
+            // Restore previous editor state
+            if (previousCurrentUnit) {
+                this.setCurrentUnit(previousCurrentUnit);
+                runInAction(() => {
+                    this.langEnv.editor.rootElement = previousRootElement;
+                });
+            }
+            
+            return unit;
+        } catch (error) {
+            LOGGER.error("Error in getModelUnitWithoutOpening: " + error);
+            // Try to restore state even on error
+            if (previousModelName) {
+                try {
+                    await this.modelStore.openModel(previousModelName);
+                    if (previousCurrentUnit) {
+                        this.setCurrentUnit(previousCurrentUnit);
+                        runInAction(() => {
+                            this.langEnv.editor.rootElement = previousRootElement;
+                        });
+                    }
+                } catch (restoreError) {
+                    LOGGER.error("Error restoring previous model state: " + restoreError);
+                }
+            }
+            return undefined;
+        }
+    }
+
     async openModelUnit(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
         LOGGER.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
         updateEditorState(true, true, false);

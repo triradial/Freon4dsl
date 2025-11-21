@@ -1,6 +1,8 @@
 import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
 import { LanguageEnvironment } from "@freon4dsl/study-configuration";
+// @ts-ignore - TimelineLogger is not exported from package index, using direct path
+import TimelineLogger from "@freon4dsl/study-configuration/src/custom/timeline/TimelineLogger.js";
 import { env } from "./config/env.js";
 import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 
@@ -24,6 +26,7 @@ const LOGGER = new FreLogger("init");
 // FreLogger.unmuteAllLogs();
 // FreLogger.unmute("init");
 // FreLogger.unmute("Routing");
+FreLogger.unmute("EditorState");  // Enable ModelManager logs
 
 /* Custom Components */
 // FreLogger.unmute("DatePickerComponent");
@@ -42,7 +45,9 @@ const LOGGER = new FreLogger("init");
 // FreLogger.unmute("LayoutComponent");
 // FreLogger.unmute("ListComponent");
 
-
+/* Timeline Logger */
+TimelineLogger.enable();  // Uncomment to enable TimelineLogger
+// TimelineLogger.disable(); // Uncomment to explicitly disable TimelineLogger
 
 LOGGER.log('--- START ---');
 
