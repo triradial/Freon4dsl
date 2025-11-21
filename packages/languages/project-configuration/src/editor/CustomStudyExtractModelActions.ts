@@ -4,7 +4,7 @@
 import { FreCustomAction, FreCreateBinaryExpressionAction, type FreCombinedActions } from "@freon4dsl/core";
 
 /**
- * Class CustomProjectConfigurationModelActions provides an entry point for the language engineer to
+ * Class CustomStudyExtractModelActions provides an entry point for the language engineer to
  * define custom build additions to the editor.
  * These custom build additions are merged with the default and definition-based editor parts
  * in a three-way manner. For each node,
@@ -12,7 +12,7 @@ import { FreCustomAction, FreCreateBinaryExpressionAction, type FreCombinedActio
  * (2) if a creator/behavior based on the editor definition is present, this is used,
  * (3) if neither (1) nor (2) yields a result, the default is used.
  */
-export class CustomProjectConfigurationModelActions implements FreCombinedActions {
+export class CustomStudyExtractModelActions implements FreCombinedActions {
     binaryExpressionActions: FreCreateBinaryExpressionAction[] = MANUAL_BINARY_EXPRESSION_ACTIONS;
     customActions: FreCustomAction[] = MANUAL_CUSTOM_ACTIONS;
 }

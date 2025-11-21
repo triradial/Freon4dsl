@@ -19,7 +19,7 @@ export function closeObjectDrawer() {
 }
 
 export async function addObject(type: 'project', parentId?: string) {
-    const object = { id: uuidv4(), name: 'ProjectConfiguration', title: '', status: '' };
+    const object = { id: uuidv4(), name: 'StudyExtract', title: '', status: '' };
     objectDrawerStore.set({ open: true, type, action: 'add', data: object });
 }
 

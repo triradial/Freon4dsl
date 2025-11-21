@@ -15,7 +15,7 @@ import {
     RtError,
 } from "@freon4dsl/core";
 
-import { ProjectConfigurationModelInterpreterInit } from "./gen/ProjectConfigurationModelInterpreterInit.js";
+import { StudyExtractModelInterpreterInit } from "./gen/StudyExtractModelInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;
@@ -38,23 +38,23 @@ const getConceptFunction: ConceptFunction = (node: Object) => {
  * Sets the functions used to access the expression tree.
  * Ensures all internal interpreter state is cleaned when creating a new instance.
  */
-export class MainProjectConfigurationModelInterpreter implements FreInterpreter {
+export class MainStudyExtractModelInterpreter implements FreInterpreter {
     private static main: IMainInterpreter | null = null;
 
     constructor() {
-        MainProjectConfigurationModelInterpreter.getMain();
+        MainStudyExtractModelInterpreter.getMain();
     }
 
     private static getMain(): IMainInterpreter {
-        return (this.main ??= MainInterpreter.instance(ProjectConfigurationModelInterpreterInit, getConceptFunction, getPropertyFunction));
+        return (this.main ??= MainInterpreter.instance(StudyExtractModelInterpreterInit, getConceptFunction, getPropertyFunction));
     }
 
     setTracing(value: boolean) {
-        MainProjectConfigurationModelInterpreter.getMain().setTracing(value);
+        MainStudyExtractModelInterpreter.getMain().setTracing(value);
     }
 
     getTrace(): InterpreterTracer {
-        return MainProjectConfigurationModelInterpreter.getMain().getTrace();
+        return MainStudyExtractModelInterpreter.getMain().getTrace();
     }
 
     evaluate(node: Object): RtObject {
@@ -62,9 +62,9 @@ export class MainProjectConfigurationModelInterpreter implements FreInterpreter 
     }
 
     evaluateWithContext(node: Object, ctx: InterpreterContext): RtObject {
-        MainProjectConfigurationModelInterpreter.getMain().reset();
+        MainStudyExtractModelInterpreter.getMain().reset();
         try {
-            return MainProjectConfigurationModelInterpreter.getMain().evaluate(node, ctx);
+            return MainStudyExtractModelInterpreter.getMain().evaluate(node, ctx);
         } catch (e: any) {
             return new RtError(e.message);
         }
