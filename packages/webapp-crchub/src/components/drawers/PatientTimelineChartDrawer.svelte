@@ -123,12 +123,18 @@
         let referenceDateForTimeline : Date | undefined;
         if (referenceDate === undefined) {
             if (patientHistory.patientVisits.length > 0) {
-                referenceDateForTimeline = new Date(patientHistory.patientVisits[0].actualVisitDate.dateAsString);
+                // Parse the date string and set to local midnight (00:00:00) to avoid timezone issues
+                // dateAsString format is "YYYY-MM-DD", parse it to ensure local time
+                const dateStr = patientHistory.patientVisits[0].actualVisitDate.dateAsString;
+                const [year, month, day] = dateStr.split('-').map(Number);
+                referenceDateForTimeline = new Date(year, month - 1, day, 0, 0, 0); // month is 0-indexed
             } else {
-                referenceDateForTimeline = new Date(Date.now());
+                const now = new Date(Date.now());
+                referenceDateForTimeline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
             }
         } else {
-            referenceDateForTimeline = new Date(referenceDate);
+            // Normalize to local midnight
+            referenceDateForTimeline = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate(), 0, 0, 0);
         }
         console.log("Reference date for timeline: " + referenceDateForTimeline);
 
@@ -153,7 +159,7 @@
         let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
         console.log("Timeline created, getting chart HTML...");
         const rtObject = (timeline as Timeline).getTimelineChartHtml() as RtString;
-        console.log("Chart HTML generated");
+        console.log("Chart HTML generated: " + rtObject.asString());
         return rtObject.asString();
     };
 
