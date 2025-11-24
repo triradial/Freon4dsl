@@ -1,6 +1,6 @@
-import { Timeline } from "../timeline/Timeline.js";
-import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
+import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
+import { Timeline } from "../timeline/Timeline.js";
 import { dedent } from "../utils/dedent.js";
 
 let uniqueCounter = 0;
@@ -56,7 +56,7 @@ export class TimelineChartTemplate {
                                 eventInstance,
                                 index,
                             ) => dedent`${eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },` : ""}
-                                { start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "scheduled-event", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/"/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
+                                { start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "scheduled-event", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/["`]/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
                                 ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },` : ""}`,
                         )
                         .filter((item) => item !== "")

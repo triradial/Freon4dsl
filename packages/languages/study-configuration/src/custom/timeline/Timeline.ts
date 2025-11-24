@@ -450,6 +450,9 @@ export class Timeline extends RtObject {
     }
 
     getOptions(timeline: Timeline): string {
+        // result differs by whether to show actual dates or week numbers for the major and minor labels.
+        // If showing a study level chart then OrganizeByStudyDay should be true and major and minor are not actual dates
+        // If showing for a specific patient or a specific start day then major and minor are actual dates
         let result = undefined;
         if (this.organizeByStudyDay) {
             result = `  var options = {

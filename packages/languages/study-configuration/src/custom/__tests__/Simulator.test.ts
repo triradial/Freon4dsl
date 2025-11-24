@@ -1,27 +1,16 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { Timeline } from "../timeline/Timeline.js";
-import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
-import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
-import { TimelineEventInstance } from "../timeline/TimelineEventInstance.js";
-import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
-import { Simulator } from "../timeline/Simulator.js";
-import { StudyConfiguration } from "../../language/gen/index.js";
-import { Period } from "../../language/gen/index.js";
-import { Event } from "../../language/gen/index.js";
-import { StudyConfigurationModel } from "../../language/gen/index.js";
-import { PatientInfo } from "../../language/gen/index.js";
-import { PatientVisit } from "../../language/gen/index.js";
-import { PatientHistory } from "../../language/gen/index.js";
-import { Availability } from "../../language/gen/index.js";
-import { PatientNotAvailable } from "../../language/gen/index.js";
-import { DateRange } from "../../language/gen/index.js";
-import * as utils from "./Utils";
+import { beforeEach, describe, expect, it } from "vitest";
+import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
+import { Availability, DateRange, PatientHistory, PatientVisit, Period, StudyConfiguration, StudyConfigurationModel } from "../../language/gen/index.js";
+import { Sim } from "../simjs/sim.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
-import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate.js";
+import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
 import { ScheduledEventState } from "../timeline/ScheduledEvent.js";
-import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { Sim } from "../simjs/sim.js";
+import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
+import { Simulator } from "../timeline/Simulator.js";
+import { Timeline } from "../timeline/Timeline.js";
+import { TimelineEventInstance, TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
+import * as utils from "./Utils.js";
 
 describe("Study Simulation", () => {
     let simulator;
@@ -458,8 +447,7 @@ describe("Study Simulation", () => {
             simulator.run();
             let timeline = simulator.timeline;
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(2, timeline, [], new Date(2024, 0, 1));
-            let patientNotAvailable = PatientNotAvailable.create({ dates: [] });
-            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: patientNotAvailable });
+            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
             timeline.addPatientEvents(patientHistory);
 
 
@@ -483,7 +471,7 @@ describe("Study Simulation", () => {
               { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -3", content: "<b>Screening</b>", id: "Screening0" },
               { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: on the start day of the study - 3 days", content: "&nbsp;", id: "Visit 11" },
               { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: as the start day of the study", content: "&nbsp;", id: "Visit 22" },
-              { start: new Date(2024, 00, 06, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V3", className: "scheduled-event", title: "V3: as the start day of the study + 2 days", content: "&nbsp;", id: "V33" },
+              { start: new Date(2024, 00, 06, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V3", className: "scheduled-event", title: "V3: on the start day of the study + 2 days", content: "&nbsp;", id: "V33" },
               
               { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 1'", content: "&nbsp;", id: "Visit 14" },
               { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 2'", content: "&nbsp;", id: "Visit 25" },
@@ -541,12 +529,10 @@ describe("Study Simulation", () => {
             simulator.run();
             let timeline = simulator.timeline;
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(3, timeline, [], new Date(2024, 0, 1));
-            let patientNotAvailable = PatientNotAvailable.create({ dates: [] });
-            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: patientNotAvailable });
+            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
             timeline.addPatientEvents(patientHistory);
 
             // WHEN the study is simulated and a timeline picture is generated
-
             utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
         });
 
@@ -1127,8 +1113,7 @@ describe("Study Simulation", () => {
                 { name: "V4-V7 Randomization", instance: 2, shift: 2, numberFound: 0, foundThisInstance: false },
             ];
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(10, timeline, shiftsFromScheduledVisit, new Date(2024,0,1));
-            let patientNotAvailable = PatientNotAvailable.create({ dates: [] });
-            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: patientNotAvailable });
+            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
             timeline.addPatientEvents(patientHistory);
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
@@ -1321,8 +1306,7 @@ describe("Study Simulation", () => {
             dateRangeList.push(dateRange);
             dateRange = utils.createPatientNotAvailableDateRange("1", "December", "2024", "7", "December", "2024", dayOffsetOfFirstEventInstance);
             dateRangeList.push(dateRange);
-            let patientNotAvailable = PatientNotAvailable.create({ dates: dateRangeList });
-            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: patientNotAvailable });
+            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: dateRangeList });
 
             timeline.addPatientEvents(patientHistory);
 
@@ -1593,11 +1577,10 @@ describe("Study Simulation", () => {
                 { name: "V4-V7 Randomization", instance: 2, shift: 2, numberFound: 0, foundThisInstance: false },
             ];
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(10, timeline, shiftsFromScheduledVisit, new Date(2024, 0, 1));
-            let patientNotAvailable = PatientNotAvailable.create({ dates: [] });
             let patientHistory = PatientHistory.create({
                 id: "MV",
                 patientVisits: completedPatientVisits,
-                patientNotAvailableDates: patientNotAvailable,
+                patientNotAvailableDates: [],
             });
             timeline.addPatientEvents(patientHistory);
 
