@@ -19,12 +19,15 @@
       setDrawerVisibility("studyTimelineTable", true);
       setDrawerVisibility("studyTimelineChart", true);
       setDrawerVisibility("studyChecklist", true);
+      setDrawerVisibility("patientTimelineChart", true);
       didSetVisibility = true;
 
       setDrawerProps("dslErrors", { studyId: id });
       setDrawerProps("studyTimelineTable", { studyId: id });
       setDrawerProps("studyTimelineChart", { studyId: id });
       setDrawerProps("studyChecklist", { studyId: id });
+      // Show all patients when viewing study (no specific patient id)
+      setDrawerProps("patientTimelineChart", { studyId: id, showAllPatients: true });
     }
   });
 

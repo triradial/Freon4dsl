@@ -1,44 +1,16 @@
-import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { DateConcept, FirstDayOfStudy, StudyConfiguration } from "../../language/gen/index.js";
-import { Period } from "../../language/gen/index.js";
-import { Event } from "../../language/gen/index.js";
-import { EventSchedule } from "../../language/gen/index.js";
-import { Day } from "../../language/gen/index.js";
-import { PlusExpression } from "../../language/gen/index.js";
-import { When } from "../../language/gen/index.js";
-import { NumberLiteralExpression } from "../../language/gen/index.js";
-import { EventReference } from "../../language/gen/index.js";
-import { RepeatCondition } from "../../language/gen/index.js";
-import { RepeatUnit } from "../../language/gen/index.js";
-import { Days } from "../../language/gen/index.js";
-import { EventWindow } from "../../language/gen/index.js";
-import { EventState } from "../../language/gen/index.js";
-import { SimpleOperators } from "../../language/gen/index.js";
-import { TimeAmount } from "../../language/gen/index.js";
-import { StudyStart } from "../../language/gen/index.js";
-import { TimeUnit } from "../../language/gen/index.js";
-import { Weekly } from "../../language/gen/index.js";
-import { PatientVisit } from "../../language/gen/index.js";
-import { PatientHistory } from "../../language/gen/index.js";
-import { PatientInfo } from "../../language/gen/index.js";
-import { VisitDate } from "../../language/gen/index.js";
-import { Month } from "../../language/gen/index.js";
-import { PatientVisitStatus } from "../../language/gen/index.js";
-import { Availability } from "../../language/gen/index.js";
-import { StaffLevel } from "../../language/gen/index.js";
-import { DateRange } from "../../language/gen/index.js";
-import { TimeAmountPart } from "../../language/gen/index.js";
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
-import { getMonthFromString, Timeline } from "../timeline/Timeline.js";
-import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
-import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
-import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
-import { ScheduledEvent, ScheduledEventState } from "../timeline/ScheduledEvent.js";
-import { ScheduledPeriod } from "../timeline/ScheduledPeriod.js";
-import * as path from "path";
 import * as fs from "fs";
+import * as path from "path";
+import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
+import { Availability, DateConcept, DateRange, Day, Days, Event, EventReference, EventSchedule, EventState, EventWindow, FirstDayOfStudy, PatientHistory, PatientInfo, PatientVisit, PatientVisitStatus, Period, RepeatCondition, SimpleOperators, StaffLevel, StudyConfiguration, StudyStart, TimeAmount, TimeAmountPart, TimeUnit, VisitDate, Weekly, When } from "../../language/gen/index.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
+import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
+import { ScheduledEventState } from "../timeline/ScheduledEvent.js";
+import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
+import { ScheduledPeriod } from "../timeline/ScheduledPeriod.js";
+import { getMonthFromString, Timeline } from "../timeline/Timeline.js";
+import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
 
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element.
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference.
@@ -181,7 +153,7 @@ export function addAPeriodWithEventBeforeStudyStart(
 
     const referenceToPlusOperator = FreNodeReference.create<SimpleOperators>("+", "SimpleOperators");
     const days2 = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
-    const fromStudyStart2 = StudyStart.create({
+    const fromStudyStart2 = FirstDayOfStudy.create({
         timeAmountPart: TimeAmountPart.create({
             operator: referenceToPlusOperator,
             timeAmount: TimeAmount.create({

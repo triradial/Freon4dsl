@@ -211,11 +211,13 @@ export class StudyChecklistDocumentTemplate {
 
                     t.steps.forEach((step, stepCounter) => {
                         // Step heading with spacing and visual indicator
-                        builder.addHeading(4, `🔢 Step ${stepCounter + 1}: ${step.name}`);
-                        builder.addParagraph(step.description.text, true);
+                        builder.addHeading(4, `Step ${stepCounter + 1}: ${step.name}`);
+                        if (step.description?.text) {
+                            builder.addParagraph(step.description.text, true);
+                        }
 
                         if (step.references.length > 0) {
-                            builder.addParagraph("**📚 REFERENCES**");
+                            builder.addParagraph("* REFERENCES**");
                             const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
                             if (referencesMarkdown) {
                                 builder.addRaw(referencesMarkdown);
@@ -223,7 +225,7 @@ export class StudyChecklistDocumentTemplate {
                         }
 
                         if (step.people.length > 0) {
-                            builder.addParagraph("**👥 PEOPLE**");
+                            builder.addParagraph("**PEOPLE**");
                             const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
                             if (peopleMarkdown) {
                                 builder.addRaw(peopleMarkdown);
@@ -280,7 +282,7 @@ export class StudyChecklistDocumentTemplate {
         
         // Add timeline section
         builder
-            .addHeading(1, "📅 Timeline", false)  // Don't add extra spacing for first heading
+            .addHeading(1, "Timeline Table", false)  // Don't add extra spacing for first heading
             .addRaw(StudyChecklistDocumentTemplate.getTimelineTablAsMarkdown(timeline))
             .addSectionBreak();
 

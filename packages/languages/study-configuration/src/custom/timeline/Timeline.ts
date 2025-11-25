@@ -304,6 +304,17 @@ export class Timeline extends RtObject {
         return uniqueEventNames;
     }
 
+    getUniquePatientIdentifiers(): string[] {
+        let sortedDays = this.days.sort((a, b) => a.day - b.day);
+        let patientIdentifiers = sortedDays.flatMap((day) => 
+            day.events
+                .filter((event) => event instanceof PatientEventInstance)
+                .map((event) => (event as PatientEventInstance).getPatientIdentifier())
+                .filter((id): id is string => id !== undefined && id !== null)
+        );
+        return [...new Set(patientIdentifiers)];
+    }
+
     getOffsetOfFirstEventInstance() {
         const lowestDayItem = this.days.reduce((minItem, currentItem) => {
             return currentItem.day < minItem.day ? currentItem : minItem;
@@ -354,7 +365,7 @@ export class Timeline extends RtObject {
     }
 
     // Add the patient visits that happened on specific dates to the timeline
-    addPatientEvents(patientHistory: PatientHistory) {
+    addPatientEvents(patientHistory: PatientHistory, patientIdentifier?: string) {
         this.setPatientHistory(patientHistory!);
 
         patientHistory.patientVisits.forEach((patientVisit) => {
@@ -364,8 +375,8 @@ export class Timeline extends RtObject {
                 patientVisit.actualVisitDate.year,
             );
             const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
-            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline));
-            console.log("Added patient visit event: " + patientVisit.visit.name + " on day: " + dayOnTimeline);
+            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline, undefined, patientIdentifier || patientHistory.patient_id));
+            console.log("Added patient visit event: " + patientVisit.visit.name + " on day: " + dayOnTimeline + (patientIdentifier ? " for patient: " + patientIdentifier : ""));
         });
         patientHistory.patientNotAvailableDates.forEach((patientNotAvailableDate) => {
             const startDateAsDate = this.dateStringsToDate(
@@ -384,9 +395,9 @@ export class Timeline extends RtObject {
                 );
             }
             this.addEvent(
-                new PatientUnAvailableEventInstance("Patient Not Available", this.getDayOnTimeline(startDateAsDate), this.getDayOnTimeline(endDateAsDate)),
+                new PatientUnAvailableEventInstance("Patient Not Available", this.getDayOnTimeline(startDateAsDate), this.getDayOnTimeline(endDateAsDate), patientIdentifier || patientHistory.patient_id),
             );
-            console.log("Added patient not available event: " + "Patient Not Available" + " on day: " + startDateAsDate + " to day: " + endDateAsDate);
+            console.log("Added patient not available event: " + "Patient Not Available" + " on day: " + startDateAsDate + " to day: " + endDateAsDate + (patientIdentifier ? " for patient: " + patientIdentifier : ""));
         });
     }
 
@@ -450,6 +461,9 @@ export class Timeline extends RtObject {
     }
 
     getOptions(timeline: Timeline): string {
+        // result differs by whether to show actual dates or week numbers for the major and minor labels.
+        // If showing a study level chart then OrganizeByStudyDay should be true and major and minor are not actual dates
+        // If showing for a specific patient or a specific start day then major and minor are actual dates
         let result = undefined;
         if (this.organizeByStudyDay) {
             result = `  var options = {

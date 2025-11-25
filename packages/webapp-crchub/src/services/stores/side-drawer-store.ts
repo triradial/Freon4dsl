@@ -1,4 +1,4 @@
-import { writable, get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 export type Drawer = {
     key: string;
@@ -34,6 +34,16 @@ export function setDrawerProps(drawerKey: string, props: Record<string, any>) {
                 ...store.drawers[drawerKey], 
                 props: { ...store.drawers[drawerKey].props, ...props }
             }
+        }
+    }));
+}
+
+export function setDrawerTitle(drawerKey: string, title: string) {
+    drawerStore.update(store => ({
+        ...store,
+        drawers: {
+            ...store.drawers,
+            [drawerKey]: { ...store.drawers[drawerKey], title }
         }
     }));
 }

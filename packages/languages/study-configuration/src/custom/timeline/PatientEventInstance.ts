@@ -4,9 +4,14 @@ import { Timeline } from "./Timeline.js";
 
 export class PatientEventInstance extends TimelineEventInstance {
     eventName: string;
+    patientIdentifier: string | undefined = undefined; // Identifier for the patient (e.g., patient number or name)
 
     getName() {
         return this.eventName;
+    }
+
+    getPatientIdentifier(): string | undefined {
+        return this.patientIdentifier;
     }
 
     getTitle() {
@@ -17,11 +22,12 @@ export class PatientEventInstance extends TimelineEventInstance {
 export class PatientVisitEventInstance extends PatientEventInstance {
     visitInstanceNumber: number = 1;
 
-    constructor(name: string, visitInstanceNumber: number, startDay: number, endDay?: number) {
+    constructor(name: string, visitInstanceNumber: number, startDay: number, endDay?: number, patientIdentifier?: string) {
         super(startDay, endDay);
         this.eventName = name;
         this.setState(TimelineInstanceState.Active);
         this.visitInstanceNumber = visitInstanceNumber;
+        this.patientIdentifier = patientIdentifier;
     }
 
     getVisitInstanceNumber() {
@@ -75,9 +81,10 @@ export class PatientVisitEventInstance extends PatientEventInstance {
 }
 
 export class PatientUnAvailableEventInstance extends PatientEventInstance {
-    constructor(name: string, startDay: number, endDay?: number) {
+    constructor(name: string, startDay: number, endDay?: number, patientIdentifier?: string) {
         super(startDay, endDay);
         this.eventName = name;
+        this.patientIdentifier = patientIdentifier;
     }
 
     getClassForDisplay(timeline: Timeline) {

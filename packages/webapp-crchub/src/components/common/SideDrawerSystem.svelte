@@ -1,14 +1,15 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { getDrawer, drawerStore, setDrawerWidth, setActiveDrawer, getDrawerWidth, type Drawer, getDrawerOrder } from "../../services/stores/side-drawer-store.js";
-    // @ts-ignore
-    import { GripVertical as IconGripVertical, RefreshCw as IconRefreshCw, X as IconX, Printer as IconPrinter } from '@lucide/svelte';
+    import { drawerStore, getDrawer, getDrawerWidth, setActiveDrawer, setDrawerWidth } from "../../services/stores/side-drawer-store.js";
+// @ts-ignore
+    import { Printer as IconPrinter, RefreshCw as IconRefreshCw, X as IconX } from '@lucide/svelte';
 
     let { isOpen = false } = $props<{ isOpen?: boolean }>();
 
     let activeDrawer = $derived($drawerStore.activeDrawer);
     let drawerWidth = $derived(activeDrawer ? getDrawerWidth(activeDrawer) : 400);
     let drawers = $derived($drawerStore.drawerOrder.map(key => $drawerStore.drawers[key]).filter(Boolean));
+    let activeDrawerTitle = $derived(activeDrawer ? ($drawerStore.drawers[activeDrawer]?.title ?? "") : "");
     let drawerContentEl = $state<HTMLElement | null>(null);
     let activeDrawerInstance = $state<any>(null);
     let activeDrawerKey: string | null = null;
@@ -134,7 +135,7 @@
             <div class="drawer-content">
                 <div class="drawer-header">
                     <div class="drawer-title-container">
-                        <h2>{getDrawer(activeDrawer)?.title ?? ""}</h2>
+                        <h2>{activeDrawerTitle}</h2>
                         {#if getDrawer(activeDrawer)?.supportsRefresh}
                             <button class="image-button drawer-header-button" onclick={refreshDrawer}><IconRefreshCw size={20} /></button>
                         {/if}

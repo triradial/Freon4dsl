@@ -2,7 +2,7 @@ import { PatientHistory, Simulator, StudyConfiguration } from "@freon4dsl/study-
 import * as Sim from "@freon4dsl/study-configuration";
 import type { Timeline } from "@freon4dsl/study-configuration";
 
-export function getTimelineAsOfADate(node: StudyConfiguration, referenceDate?: Date, patientHistory?: PatientHistory) : Timeline {
+export function getTimelineAsOfADate(node: StudyConfiguration, referenceDate?: Date, patientHistory?: PatientHistory, patientIdentifier?: string) : Timeline {
     var simulator;
     new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
     let studyConfigurationUnit = node as StudyConfiguration;
@@ -14,7 +14,7 @@ export function getTimelineAsOfADate(node: StudyConfiguration, referenceDate?: D
     }
     simulator.organizedByReferenceDate();
     if (patientHistory) {
-        simulator.timeline.addPatientEvents(patientHistory);
+        simulator.timeline.addPatientEvents(patientHistory, patientIdentifier);
     }
     simulator.run();
     let timeline = simulator.timeline;

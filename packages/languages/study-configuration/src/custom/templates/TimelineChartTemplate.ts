@@ -1,6 +1,6 @@
-import { Timeline } from "../timeline/Timeline.js";
-import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
+import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
+import { Timeline } from "../timeline/Timeline.js";
 import { dedent } from "../utils/dedent.js";
 
 let uniqueCounter = 0;
@@ -24,7 +24,13 @@ export class TimelineChartTemplate {
                 .getUniqueEventInstanceNames()
                 .map((uniqueEventName) => `{ "content": "${uniqueEventName}", "id": "${uniqueEventName}" },`)
                 .join("\n")}
-            ${timeline.anyPatientEventInstances() ? `{ "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },` : ""}
+            ${timeline.anyPatientEventInstances() ? (
+                timeline.getUniquePatientIdentifiers().length > 0
+                    ? timeline.getUniquePatientIdentifiers()
+                        .map((patientId) => `{ "content": "<b>Patient: ${patientId}</b>", "id": "Patient-${patientId}", className: 'patient' },`)
+                        .join("\n")
+                    : `{ "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },`
+            ) : ""}
             ${timeline.anyStaffAvailabilityEventInstances() ? `{ "content": "<b>Staff(${timeline.getBaselineStaff()})</b>", "id": "Staff", className: 'staff' },` : ""}
           ]);
 
@@ -56,7 +62,7 @@ export class TimelineChartTemplate {
                                 eventInstance,
                                 index,
                             ) => dedent`${eventInstance.anyDaysBefore() ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },` : ""}
-                                { start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "scheduled-event", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/"/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
+                                { start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "scheduled-event", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/["`]/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },
                                 ${eventInstance.anyDaysAfter() ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(timeline)}), group: "${eventInstance.getName()}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },` : ""}`,
                         )
                         .filter((item) => item !== "")
@@ -71,8 +77,11 @@ export class TimelineChartTemplate {
                     timelineDay
                         .getPatientEventInstances()
                         .map(
-                            (patientEventInstance, index) =>
-                                `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndDayAsDateString(timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "${patientEventInstance.getTitle()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                            (patientEventInstance, index) => {
+                                const patientId = patientEventInstance.getPatientIdentifier();
+                                const groupId = patientId ? `Patient-${patientId}` : "Patient";
+                                return `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndDayAsDateString(timeline)}), group: "${groupId}", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "${patientEventInstance.getTitle()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`;
+                            }
                         )
                         .filter((item) => item !== "")
                         .join("\n    "),

@@ -33,6 +33,8 @@ export class Simulator {
         // Setup the Scheduler
         this.scheduledStudyConfiguration = new ScheduledStudyConfiguration(studyConfiguration);
         this.timeline = new Timeline();
+        // Set the studyStartDayNumber from the study configuration
+        this.timeline.setStudyStartDayNumber(studyConfiguration.studyStartDayNumber);
         if (param2 instanceof PatientHistory) {
             this.patientHistory = param2;
             this.availability = param3 || undefined;
