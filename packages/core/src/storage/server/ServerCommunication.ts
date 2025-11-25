@@ -1,10 +1,10 @@
 import type { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreLanguage } from "../../language/index.js";
 import { FreLogger } from "../../logging/index.js";
-import { isIdentifier } from "../../util/index.js";
+import { isIdentifier } from "../../util/index.js"
+import { collectUsedLanguages, FreLionwebSerializer, FreModelSerializer, type ServerResponse, type VoidServerResponse } from "../index.js"
 import { FreErrorSeverity } from "../../validator/index.js";
-import { collectUsedLanguages, FreLionwebSerializer, FreModelSerializer, type ServerResponse, type VoidServerResponse } from "../index.js";
-import type { FreUnitIdentifier, IServerCommunication } from "./IServerCommunication.js";
+import type { IServerCommunication, FreUnitIdentifier } from "./IServerCommunication.js";
 
 const LOGGER = new FreLogger("ServerCommunication"); // .mute();
 
@@ -77,8 +77,8 @@ export class ServerCommunication implements IServerCommunication {
         }
     }
 
-    private _nodePort = 8080; // process.env.NODE_PORT || 8001;
-    private _SERVER_IP = `http://localhost`;
+    private _nodePort = 8001; // process.env.NODE_PORT || 8001;
+    private _SERVER_IP = `http://127.0.0.1`;
     private _SERVER_URL = `${this._SERVER_IP}:${this._nodePort}/`;
 
     onError(msg: string, severity: FreErrorSeverity): void {
@@ -178,7 +178,7 @@ export class ServerCommunication implements IServerCommunication {
      */
     async loadUnitList(modelName: string): Promise<ServerResponse<FreUnitIdentifier[]>> {
         LOGGER.log(`ServerCommunication.loadUnitList`);
-        let response = await this.getWithTimeout<string[]>(`getModelUnitList`, {model: modelName });
+        let response = await this.getWithTimeout<string[]>(`getUnitList`, {model: modelName });
         if (response.errors.length > 0) {
             return {
                 result: null,
