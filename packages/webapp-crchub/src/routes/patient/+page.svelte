@@ -11,6 +11,7 @@
   let id = $page.url.searchParams.get('id') || '';
   let didSetVisibility = false;
 
+  // Set up drawer visibility once when drawers are available
   $effect(() => {
     if (didSetVisibility) return;
     if ($drawerStore && $drawerStore.drawers && Object.keys($drawerStore.drawers).length > 0) {
@@ -20,14 +21,13 @@
       setDrawerVisibility("studyChecklist", true);
       setDrawerVisibility("patientTimelineChart", true);
       didSetVisibility = true;
-
-      setDrawerProps("patientTimelineChart", { id: id });
-      //setDrawerProps("studyChecklist", { studyId: studyId });
-
     }
   });
 
+  // Load patient data and set drawer props once we have all the data
   $effect(() => {
+    if (!id) return;
+    
     (async () => {
       let patient = await dataStore.getPatient(id);
       if (patient) {
@@ -41,13 +41,16 @@
             { label: LABEL.PATIENT + ": " + patientName }
           ]);
           
-          // Set the studyId prop for the patientTimelineChart drawer
-          setDrawerProps("patientTimelineChart", { id: id, studyId: patient.studyId });
+          // Set drawer props once we have all the data
+          setDrawerProps("patientTimelineChart", { id: id, studyId: patient.studyId, showAllPatients: false });
         } else {
           setBreadcrumb([
             { label: LABEL.STUDIES, href: "/studies" },
             { label: LABEL.PATIENT + ": " + patientName }
           ]);
+          
+          // Set drawer props even if study not found (we still have patient id)
+          setDrawerProps("patientTimelineChart", { id: id, showAllPatients: false });
         }
       } else {
         setBreadcrumb([

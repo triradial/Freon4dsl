@@ -1,11 +1,11 @@
 <script lang="ts">
     import { AST, RtString } from "@freon4dsl/core";
     import { PatientHistory, PatientInfo, Timeline, type StudyConfiguration } from "@freon4dsl/study-configuration";
-    import { createEventDispatcher } from "svelte";
     import { get } from "svelte/store";
     import { getTimelineAsOfADate } from "../../services/app/patient-timeline.js";
     import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
+    import { setDrawerTitle } from "../../services/stores/side-drawer-store.js";
 
     let { id, studyId, showAllPatients = false } = $props<{ id?: string; studyId: string; showAllPatients?: boolean }>();
 
@@ -16,12 +16,6 @@
     let container = $state<HTMLElement | null>(null);
     let patientInfo: PatientInfo | undefined;
 
-    const dispatch = createEventDispatcher();
-
-    function closeDrawer() {
-        dispatch("close");
-    }
-
     export function refresh() {
         if (showAllPatients || !id) {
             loadChartForAllPatients();
@@ -29,6 +23,12 @@
             loadChartForOnePatient(id);
         }
     }
+
+    // Update drawer title based on whether showing all patients or single patient
+    $effect(() => {
+        const title = (showAllPatients || !id) ? "All Patients Timeline" : "Patient Timeline";
+        setDrawerTitle("patientTimelineChart", title);
+    });
 
     $effect(() => {
         if (showAllPatients || !id) {
