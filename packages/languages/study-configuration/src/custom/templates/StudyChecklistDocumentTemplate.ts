@@ -212,7 +212,9 @@ export class StudyChecklistDocumentTemplate {
                     t.steps.forEach((step, stepCounter) => {
                         // Step heading with spacing and visual indicator
                         builder.addHeading(4, `🔢 Step ${stepCounter + 1}: ${step.name}`);
-                        builder.addParagraph(step.description.text, true);
+                        if (step.description?.text) {
+                            builder.addParagraph(step.description.text, true);
+                        }
 
                         if (step.references.length > 0) {
                             builder.addParagraph("**📚 REFERENCES**");

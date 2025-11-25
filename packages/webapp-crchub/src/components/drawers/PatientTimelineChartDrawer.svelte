@@ -2,11 +2,12 @@
     import { AST, RtString } from "@freon4dsl/core";
     import { PatientHistory, PatientInfo, Timeline, type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { createEventDispatcher } from "svelte";
+    import { get } from "svelte/store";
     import { getTimelineAsOfADate } from "../../services/app/patient-timeline.js";
     import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
 
-    let { id, studyId } = $props<{ id: string; studyId: string }>();
+    let { id, studyId, showAllPatients = false } = $props<{ id?: string; studyId: string; showAllPatients?: boolean }>();
 
     let isLoading = $state(true);
     let showChart = $state(false);
@@ -22,204 +23,298 @@
     }
 
     export function refresh() {
-        dispatch("refresh");
-        loadChart(id);
+        if (showAllPatients || !id) {
+            loadChartForAllPatients();
+        } else {
+            loadChartForOnePatient(id);
+        }
     }
 
     $effect(() => {
-        if (!id) {
-            console.error(`Patient with id ${id} not found`);
+        if (showAllPatients || !id) {
+            loadChartForAllPatients();
         } else {
-            loadChart(id);
+            loadChartForOnePatient(id);
         }
     });
 
-    const getTimelineChartError = () => {
+    async function loadChartForOnePatient(patientId: string) {
+        await loadChartWithTiming(
+            () => getChartForOnePatient(undefined),
+            `Error fetching chart data for study: ${patientId}`
+        );
+    }
+
+    async function loadChartForAllPatients() {
+        await loadChartWithTiming(
+            () => getChartForAllPatients(undefined),
+            `Error fetching chart data for all patients in study: ${studyId}`
+        );
+    }
+
+    function getTimelineChartError() {
         const html = `<div class="limited-width-container"><div class='text-red-500'>Error: PatientInfo not found</div></div>`;
         return new RtString(html);
-    };
+    }
 
-    const fillDateConcept = (dateConcept: any) => {
+    function fillDateConcept(dateConcept: any) {
         Timeline.fillDateConceptFromAsString(dateConcept);
-    };
+    }
 
-    const getChartWithPatientHistory = async (referenceDate: Date) => {
-        const modelManager = ModelManager.getInstance();
-        const fetchedPatient = await dataStore.getPatient(id);
-
-        let found = false;
-        // Create a new PatientHistory that is completely isolated from the model to avoid editor observation
-        let patientHistory: PatientHistory = PatientHistory.create({});
-        // Get the model data for all the Patients (without opening in editor to avoid redraw loops)
-        patientInfo = await modelManager.getModelUnitWithoutOpening(fetchedPatient!.studyId, "PatientInfo") as PatientInfo;
-        if (!patientInfo || patientInfo === undefined) {
-            const rtObject = getTimelineChartError() as RtString;
-            return rtObject.asString();
-        }
-        
-        console.log("PatientInfo found:", patientInfo);
-        console.log("Looking for patient with ID:", fetchedPatient!.patientNumber);
-        console.log("Available patient histories:", patientInfo!.patientHistories.length);
-        
-        patientInfo!.patientHistories.forEach(aPatientHistory => {
-            console.log("Checking patient history:", aPatientHistory.patient_id);
-            if (!found && aPatientHistory.patient_id === fetchedPatient!.patientNumber) {
-                console.log("Found matching patient history!");
-
-                console.log("Patient visits:", aPatientHistory.patientVisits.length);
-                aPatientHistory.patientVisits.forEach((visit, index) => {
-                    console.log(`  patientVisits[${index}]:`, {
-                        name: visit.name,
-                        visitInstanceNumber: visit.visitInstanceNumber,
-                        actualVisitDate: visit.actualVisitDate?.dateAsString,
-                        status: visit.status,
-                        visit: visit
-                    });
-                });
-                
-                console.log("Not available dates:", aPatientHistory.patientNotAvailableDates.length);               
-                aPatientHistory.patientNotAvailableDates.forEach((dateRange, index) => {
-                    console.log(`  patientNotAvailableDates[${index}]:`, {
-                        startDate: dateRange.startDate?.dateAsString,
-                        endDate: dateRange.endDate?.dateAsString,
-                        dateRange: dateRange
-                    });
-                });
-                
-                // Copy visits and date ranges, then fill date concepts
-                // All modifications must be within AST.change() to satisfy MobX strict mode
-                AST.change(() => {
-                    // Process visits - copy first, then modify date concepts
-                    for (const visit of aPatientHistory.patientVisits) {
-                        const updatedVisit = visit.copy();
-                        if (updatedVisit.actualVisitDate) {
-                            // fillDateConcept modifies MobX observables, so it must be inside AST.change()
-                            fillDateConcept(updatedVisit.actualVisitDate);
-                        }
-                        patientHistory.patientVisits.push(updatedVisit);
-                    }
-                    // Process date ranges - copy first, then modify date concepts
-                    for (const dateRange of aPatientHistory.patientNotAvailableDates) {
-                        const updatedDateRange = dateRange.copy();
-                        if (updatedDateRange.startDate) {
-                            fillDateConcept(updatedDateRange.startDate);
-                        }
-                        if (updatedDateRange.endDate) {
-                            fillDateConcept(updatedDateRange.endDate);
-                        }
-                        patientHistory.patientNotAvailableDates.push(updatedDateRange);
-                    }
-                });
-                found = true;
-            };
-        });
-        
-        if (!found) {
-            console.error("No matching patient history found!");
-            const rtObject = getTimelineChartError() as RtString;
-            return rtObject.asString();
-        }
-        
-        let referenceDateForTimeline : Date | undefined;
-        if (referenceDate === undefined) {
-            if (patientHistory.patientVisits.length > 0) {
-                // Parse the date string and set to local midnight (00:00:00) to avoid timezone issues
-                // dateAsString format is "YYYY-MM-DD", parse it to ensure local time
-                const dateStr = patientHistory.patientVisits[0].actualVisitDate.dateAsString;
-                const [year, month, day] = dateStr.split('-').map(Number);
-                referenceDateForTimeline = new Date(year, month - 1, day, 0, 0, 0); // month is 0-indexed
-            } else {
-                const now = new Date(Date.now());
-                referenceDateForTimeline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    /**
+     * Copies a patient history and fills all date concepts.
+     * This creates an isolated copy to avoid editor observation issues.
+     */
+    function copyPatientHistoryWithFilledDates(copyOfPatientHistory: PatientHistory): PatientHistory {
+        const copiedHistory: PatientHistory = PatientHistory.create({});
+        AST.change(() => {
+            // Process visits - copy first, then modify date concepts
+            for (const visit of copyOfPatientHistory.patientVisits) {
+                const updatedVisit = visit.copy();
+                if (updatedVisit.actualVisitDate) {
+                    fillDateConcept(updatedVisit.actualVisitDate);
+                }
+                copiedHistory.patientVisits.push(updatedVisit);
             }
-        } else {
-            // Normalize to local midnight
-            referenceDateForTimeline = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate(), 0, 0, 0);
-        }
-        console.log("Reference date for timeline: " + referenceDateForTimeline);
+            // Process date ranges - copy first, then modify date concepts
+            for (const dateRange of copyOfPatientHistory.patientNotAvailableDates) {
+                const updatedDateRange = dateRange.copy();
+                if (updatedDateRange.startDate) {
+                    fillDateConcept(updatedDateRange.startDate);
+                }
+                if (updatedDateRange.endDate) {
+                    fillDateConcept(updatedDateRange.endDate);
+                }
+                copiedHistory.patientNotAvailableDates.push(updatedDateRange);
+            }
+        });
+        return copiedHistory;
+    }
 
-        // // Get the model and configuration unit
-        // const studyModelManager = ModelManager.getInstance();
-        // await studyModelManager.openModel(studyId);
-        // const model = studyModelManager.currentModel as StudyConfigurationModel;
-        // const studyConfig = model.configuration;
-        // studyConfig.studyStartDayNumber = 0;
+    /**
+     * Determines the reference date for the timeline.
+     * If a reference date is provided, it's normalized to local midnight.
+     * Otherwise, uses the first visit date from the patient history, or today if no visits exist.
+     */
+    function determineReferenceDate(referenceDate: Date | undefined, patientHistory?: PatientHistory): Date {
+        if (referenceDate !== undefined) {
+            // Normalize to local midnight
+            return new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate(), 0, 0, 0);
+        }
         
-        // Get the model and configuration unit
-        const studyModelManager = ModelManager.getInstance();
-        const studyConfig = await studyModelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+        if (patientHistory && patientHistory.patientVisits.length > 0) {
+            // Parse the date string and set to local midnight (00:00:00) to avoid timezone issues
+            // dateAsString format is "YYYY-MM-DD", parse it to ensure local time
+            const dateStr = patientHistory.patientVisits[0].actualVisitDate.dateAsString;
+            const [year, month, day] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day, 0, 0, 0); // month is 0-indexed
+        }
+        
+        // Default to today at local midnight
+        const now = new Date(Date.now());
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    }
+
+    /**
+     * Gets PatientInfo and StudyConfiguration units for a study.
+     * Throws an error if either is not found.
+     */
+    async function getPatientAndStudyUnits(studyId: string): Promise<{ patientInfo: PatientInfo; studyConfig: StudyConfiguration }> {
+        const modelManager = ModelManager.getInstance();
+        
+        const patientInfo = await modelManager.getModelUnitWithoutOpening(studyId, "PatientInfo") as PatientInfo;
+        if (!patientInfo) {
+            throw new Error(`PatientInfo unit not found for study: ${studyId}`);
+        }
+        
+        const studyConfig = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
         if (!studyConfig) {
             throw new Error(`StudyConfiguration unit not found for study: ${studyId}`);
         }
-        // AST.change(() => {
-        //     studyConfig.studyStartDayNumber = 0;
-        // });
+        
+        return { patientInfo, studyConfig };
+    }
 
-        console.log("Creating timeline with patient history...");
-        let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
-        console.log("Timeline created, getting chart HTML...");
-        const rtObject = (timeline as Timeline).getTimelineChartHtml() as RtString;
-        console.log("Chart HTML generated: " + rtObject.asString());
-        return rtObject.asString();
+    const getChartForOnePatient = async (referenceDate: Date | undefined) => {
+        const fetchedPatient = await dataStore.getPatient(id);
+        if (!fetchedPatient) {
+            const rtObject = getTimelineChartError() as RtString;
+            return rtObject.asString();
+        }
+
+        // Get study units
+        const { patientInfo: fetchedPatientInfo, studyConfig } = await getPatientAndStudyUnits(fetchedPatient.studyId);
+        patientInfo = fetchedPatientInfo;
+        
+        // Find and copy the matching patient history
+        const copyOfPatientHistory = fetchedPatientInfo.patientHistories.find(
+            ph => ph.patient_id === fetchedPatient.patientNumber
+        );
+        
+        let patientHistory: PatientHistory | undefined;
+        if (copyOfPatientHistory) {
+            patientHistory = copyPatientHistoryWithFilledDates(copyOfPatientHistory);
+        } else {
+            console.warn("No matching patient history found so chart will just show study schedule!");
+            patientHistory = PatientHistory.create({});
+        }
+        
+        // Determine reference date
+        const referenceDateForTimeline = determineReferenceDate(referenceDate, patientHistory);
+
+        // Get patient identifier for single patient view
+        const patientIdentifier = fetchedPatient.displayName || fetchedPatient.name || fetchedPatient.patientNumber;
+        const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory, patientIdentifier);
+        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        return html;
     };
 
-    async function loadChart(id: string) {
+    const getChartForAllPatients = async (referenceDate: Date | undefined) => {
+        // Get all patients for the study
+        await dataStore.getStudyPatients(studyId);
+        const storeState = get(dataStore);
+        const allPatients = storeState.studyPatients.filter(p => p.studyId === studyId);
+        
+        if (allPatients.length === 0) {
+            return `<div class="limited-width-container"><div class='text-yellow-500'>No patients found for this study</div></div>`;
+        }
+
+        // Get study units
+        const { patientInfo: fetchedPatientInfo, studyConfig } = await getPatientAndStudyUnits(studyId);
+        patientInfo = fetchedPatientInfo;
+
+        // Determine reference date from first patient visit if available
+        // Find the first patient history with visits to use as reference
+        let firstPatientHistoryWithVisits: PatientHistory | undefined;
+        for (const patient of allPatients) {
+            const patientHistory = fetchedPatientInfo.patientHistories.find(ph => ph.patient_id === patient.patientNumber);
+            if (patientHistory && patientHistory.patientVisits.length > 0) {
+                firstPatientHistoryWithVisits = patientHistory;
+                break; // Use first patient's first visit as reference
+            }
+        }
+        
+        const referenceDateForTimeline = determineReferenceDate(referenceDate, firstPatientHistoryWithVisits);
+
+        // Create timeline with study configuration
+        const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, undefined);
+
+        // Add events for all patients
+        for (const patient of allPatients) {
+            const copyOfPatientHistory = fetchedPatientInfo.patientHistories.find(ph => ph.patient_id === patient.patientNumber);
+            if (copyOfPatientHistory) {
+                const copiedHistory = copyPatientHistoryWithFilledDates(copyOfPatientHistory);
+                
+                // Add patient events to timeline with patient identifier (use display name or patient number)
+                const patientIdentifier = patient.displayName || patient.name || patient.patientNumber;
+                timeline.addPatientEvents(copiedHistory, patientIdentifier);
+            }
+        }
+
+        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        return html;
+    };
+
+    /**
+     * Executes script tags that are embedded in the chart HTML.
+     * 
+     * Background:
+     * When HTML is inserted via innerHTML, the browser does NOT execute any <script> tags
+     * for security reasons. The timeline chart HTML contains JavaScript code that needs to
+     * run to initialize the Vis.js timeline visualization. This function manually extracts
+     * those script tags and re-executes them.
+     * 
+     * Process:
+     * 1. Waits for the vis-timeline library to be loaded (from the CDN in <svelte:head>)
+     * 2. Finds all <script> tags in the container
+     * 3. For each script, creates a new script element and copies the content
+     * 4. Replaces the old script with the new one (this triggers execution)
+     * 5. Waits for the next animation frame to ensure scripts have executed
+     * 
+     * Why replace instead of just creating new scripts?
+     * - Scripts that are inserted via innerHTML are not executed
+     * - Replacing them with newly created script elements causes the browser to execute them
+     * 
+     * @returns Promise that resolves when all scripts have been executed
+     */
+    function executeEmbeddedChartScripts() {
+        return new Promise<void>((resolve) => {
+            if (container) {
+                /**
+                 * Polls for the vis-timeline library to be available before executing scripts.
+                 * The library is loaded asynchronously from a CDN, so we need to wait for it.
+                 */
+                const waitForVis = () => {
+                    // Check if vis-timeline library is loaded
+                    if (typeof (window as any).vis !== 'undefined') {
+                        // Find all script tags in the container (these were inserted via innerHTML)
+                        const scripts = container!.querySelectorAll("script");
+                        
+                        // For each script tag, create a new one and replace the old one
+                        // This is necessary because scripts inserted via innerHTML are not executed
+                        scripts.forEach((oldScript) => {
+                            const newScript = document.createElement("script");
+                            newScript.textContent = oldScript.textContent;
+                            // Replacing the old script with a new one triggers execution
+                            oldScript.replaceWith(newScript);
+                        });
+                        
+                        // Wait for the next animation frame to ensure:
+                        // 1. The DOM has been updated with the new script elements
+                        // 2. The scripts have had time to execute
+                        // 3. Any timeline initialization code has completed
+                        requestAnimationFrame(() => {
+                            resolve();
+                        });
+                    } else {
+                        // vis library not loaded yet, check again in 50ms
+                        setTimeout(waitForVis, 50);
+                    }
+                };
+                
+                // Start polling for the vis library
+                waitForVis();
+            } else {
+                // No container available, resolve immediately
+                resolve();
+            }
+        });
+    }
+
+    /**
+     * Common loading pattern for both single patient and all patients views.
+     * Ensures minimum display time and handles errors consistently.
+     */
+    async function loadChartWithTiming(chartFunction: () => Promise<string>, errorContext: string) {
         isLoading = true;
         showChart = false;
         error = null;
         try {
             const startTime = Date.now();
-            // const referenceDate = new Date(2024, 8, 30);
-            chartHtml = await getChartWithPatientHistory(undefined);
+            chartHtml = await chartFunction();
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
-            await loadChartData();
+            await renderChart();
             const elapsedTime = Date.now() - startTime;
             if (elapsedTime < 5000) {
                 await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
             }
             showChart = true;
         } catch (err: unknown) {
-            console.error(`Error fetching chart data for study: ${id}`, err);
+            console.error(errorContext, err);
             error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
         } finally {
             isLoading = false;
         }
     }
 
-    function executeScripts() {
-        return new Promise<void>((resolve) => {
-            if (container) {
-                // Wait for vis library to be available
-                const waitForVis = () => {
-                    if (typeof (window as any).vis !== 'undefined') {
-                        const scripts = container!.querySelectorAll("script");
-                        scripts.forEach((oldScript) => {
-                            const newScript = document.createElement("script");
-                            newScript.textContent = oldScript.textContent;
-                            oldScript.replaceWith(newScript);
-                        });
-                        
-                        // Wait for next frame to ensure scripts execute
-                        requestAnimationFrame(() => {
-                            resolve();
-                        });
-                    } else {
-                        // Check again in a short while
-                        setTimeout(waitForVis, 50);
-                    }
-                };
-                
-                waitForVis();
-            } else {
-                resolve();
-            }
-        });
-    }
-
-    async function loadChartData() {
+    /**
+     * Renders the chart HTML into the DOM container and executes embedded scripts.
+     * The chartHtml is already generated at this point - this function just displays it.
+     */
+    async function renderChart() {
         if (container) {
             container.innerHTML = chartHtml;
-            await executeScripts(); // Wait for scripts to actually execute
+            await executeEmbeddedChartScripts(); // Wait for scripts to actually execute
         }
     }
 </script>

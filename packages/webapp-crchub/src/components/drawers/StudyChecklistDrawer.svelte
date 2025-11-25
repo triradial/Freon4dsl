@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
+    import { StudyConfiguration } from "@freon4dsl/study-configuration";
     import MarkdownIt from "markdown-it";
     import pdfMake from "pdfmake/build/pdfmake.js";
     import pdfFonts from "pdfmake/build/vfs_fonts.js";
@@ -35,14 +35,13 @@
     async function openPdf() {
         try {
             const modelManager = ModelManager.getInstance();
-            await modelManager.openModel(studyId);
-            const model = modelManager.currentModel as StudyConfigurationModel;
+            const unit = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
             
-            if (!model) {
-                error = "Model not loaded, cannot generate PDF.";
+            if (!unit) {
+                error = "Configuration unit not loaded, cannot generate PDF.";
                 return;
             }
-        const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
+        const markdown = getChecklistAsMarkdown(unit, showHeadingNumbers);
         const tokens = md.parse(markdown, {});
 
         const content: any[] = [];
@@ -229,15 +228,14 @@
         error = null;
         try {          
             const modelManager = ModelManager.getInstance();
-            await modelManager.openModel(studyId);
-            const model = modelManager.currentModel as StudyConfigurationModel;
-            if (!model) {
-                error = "Model not loaded.";
+            const unit = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+            if (!unit) {
+                error = "Configuration unit not loaded.";
                 isLoading = false;
                 return;
             }
-            const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
-
+            const markdown = getChecklistAsMarkdown(unit, showHeadingNumbers);
+ 
             // Use markdown-it to parse for headings, which is more reliable than a custom marked renderer
             const tokens = md.parse(markdown, {});
             const toc: { level: number; text: string; id: string }[] = [];

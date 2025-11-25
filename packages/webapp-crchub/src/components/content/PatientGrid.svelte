@@ -1,15 +1,16 @@
 <script lang="ts">
-    import { dataStore } from "../../services/data/data-store.js";
-    import { onMount } from "svelte";
+    import type { GridApi, GridOptions } from "ag-grid-community";
     import { createGrid } from "ag-grid-community";
-    import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
+    import { onMount } from "svelte";
+    import { dataStore } from "../../services/data/data-store.js";
     import { navigateTo } from "../../services/routing/route-action.js";
-    import { theme } from "../../services/stores/theme-store.js";
-    import GridHeader from "../common/GridHeader.svelte";
-    import { getSVGIcon } from "../../services/utils.js";
     import { editObject } from "../../services/stores/object-drawer-store.js";
+    import { theme } from "../../services/stores/theme-store.js";
+    import { getSVGIcon } from "../../services/utils.js";
     import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
+// @ts-ignore
+    import { Plus as IconPlus, RefreshCcw as IconRefresh } from '@lucide/svelte';
 
     const { studyId } = $props<{ studyId: string }>();
 
@@ -211,13 +212,22 @@
         updateGridData();
         loading = false;
     }
+
 </script>
 
 <svelte:head>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<GridHeader title="Patients" objectType="patient" parentId={studyId} onrefresh={refreshPatients} />
+<div class="card grid-header w-full">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <h3 class="main-label-text mr-2">Patients</h3>
+            <button type="button" class="icon-button primary inverted" onclick={() => import("../../services/stores/object-drawer-store.js").then(m => m.addObject("patient", studyId))}><IconPlus size="16" /></button>
+            <button type="button" class="icon-button primary inverted" onclick={refreshPatients}><IconRefresh size="16" /></button>
+        </div>
+    </div>
+</div>
 <div id="patientGrid" class="{gridTheme} ag-grid"></div>
 <DeleteObjectDialog
     open={deleteDialogOpen}

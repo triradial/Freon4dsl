@@ -1,10 +1,9 @@
 <script lang="ts">
+    import { RtString } from "@freon4dsl/core";
+    import { StudyConfiguration } from "@freon4dsl/study-configuration";
     import { createEventDispatcher } from "svelte";
+    import { getTimelineTable } from "../../services/app/study-timeline.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { type FreEnvironment, RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
-    import { getChecklistAsMarkdown, getTimelineTable } from "../../services/app/study-timeline.js";
-    import { marked } from "marked";
     import ContentLoader from "./ContentLoader.svelte";
     
     let { studyId } = $props<{ studyId: string }>();
@@ -42,11 +41,9 @@
         try {
             const startTime = Date.now();
 
-            // Get the model and configuration unit
+            // Get the configuration unit without opening the model (to preserve current model if viewing patient)
             const modelManager = ModelManager.getInstance();
-            await modelManager.openModel(id);
-            const model = modelManager.currentModel as StudyConfigurationModel;
-            const unit = model.configuration;
+            const unit = await modelManager.getModelUnitWithoutOpening(id, "StudyConfiguration") as StudyConfiguration;
             if (!unit) {
                 throw new Error("Configuration unit is not available in the model.");
             }

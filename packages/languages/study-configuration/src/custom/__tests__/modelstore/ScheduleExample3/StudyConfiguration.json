@@ -284,7 +284,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -449,7 +449,7 @@
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-StudyStart"
+            "key": "-key-FirstDayOfStudy"
          },
          "properties": [],
          "containments": [
@@ -702,7 +702,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -867,7 +867,7 @@
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-StudyStart"
+            "key": "-key-FirstDayOfStudy"
          },
          "properties": [],
          "containments": [
@@ -1118,7 +1118,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -1196,7 +1196,7 @@
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-StudyStart"
+            "key": "-key-FirstDayOfStudy"
          },
          "properties": [],
          "containments": [
@@ -1447,7 +1447,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -1525,7 +1525,7 @@
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
-            "key": "-key-StudyStart"
+            "key": "-key-FirstDayOfStudy"
          },
          "properties": [],
          "containments": [
@@ -1863,7 +1863,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -2107,7 +2107,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -2402,7 +2402,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -2781,7 +2781,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -3160,7 +3160,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -3539,7 +3539,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -3918,7 +3918,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -4297,7 +4297,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -4676,7 +4676,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -5055,7 +5055,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -5434,7 +5434,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -5813,7 +5813,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -6192,7 +6192,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -6571,7 +6571,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]
@@ -6950,7 +6950,7 @@
                },
                "targets": [
                   {
-                     "resolveInfo": "Site Visit",
+                     "resolveInfo": "site visit",
                      "reference": "ID-27"
                   }
                ]

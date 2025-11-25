@@ -589,19 +589,22 @@
                "value": "908-399-7199"
             }
          ],
-         "containments": [
+         "containments": [],
+         "references": [
             {
-               "containment": {
+               "reference": {
                   "language": "-key-StudyConfigurationModel",
                   "version": "2023.1",
                   "key": "-key-Person-role"
                },
-               "children": [
-                  "ID-131"
+               "targets": [
+                  {
+                     "resolveInfo": "-",
+                     "reference": "ID-131"
+                  }
                ]
             }
          ],
-         "references": [],
          "annotations": [],
          "parent": "ID-124"
       },

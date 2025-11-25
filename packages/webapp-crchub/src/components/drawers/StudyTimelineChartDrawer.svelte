@@ -1,6 +1,6 @@
 <script lang="ts">
     import { RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
+    import { StudyConfiguration } from "@freon4dsl/study-configuration";
     import { createEventDispatcher } from "svelte";
     import { getTimelineChart } from "../../services/app/study-timeline.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
@@ -40,11 +40,9 @@
         try {
             const startTime = Date.now();
 
-            // Get the model and configuration unit
+            // Get the configuration unit without opening the model (to preserve current model if viewing patient)
             const modelManager = ModelManager.getInstance();
-            await modelManager.openModel(id);
-            const model = modelManager.currentModel as StudyConfigurationModel;
-            const unit = model.configuration;
+            const unit = await modelManager.getModelUnitWithoutOpening(id, "StudyConfiguration") as StudyConfiguration;
             if (!unit) {
                 throw new Error("Configuration unit is not available in the model.");
             }

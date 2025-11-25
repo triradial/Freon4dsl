@@ -24,7 +24,13 @@ export class TimelineChartTemplate {
                 .getUniqueEventInstanceNames()
                 .map((uniqueEventName) => `{ "content": "${uniqueEventName}", "id": "${uniqueEventName}" },`)
                 .join("\n")}
-            ${timeline.anyPatientEventInstances() ? `{ "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },` : ""}
+            ${timeline.anyPatientEventInstances() ? (
+                timeline.getUniquePatientIdentifiers().length > 0
+                    ? timeline.getUniquePatientIdentifiers()
+                        .map((patientId) => `{ "content": "<b>Patient: ${patientId}</b>", "id": "Patient-${patientId}", className: 'patient' },`)
+                        .join("\n")
+                    : `{ "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },`
+            ) : ""}
             ${timeline.anyStaffAvailabilityEventInstances() ? `{ "content": "<b>Staff(${timeline.getBaselineStaff()})</b>", "id": "Staff", className: 'staff' },` : ""}
           ]);
 
@@ -71,8 +77,11 @@ export class TimelineChartTemplate {
                     timelineDay
                         .getPatientEventInstances()
                         .map(
-                            (patientEventInstance, index) =>
-                                `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndDayAsDateString(timeline)}), group: "Patient", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "${patientEventInstance.getTitle()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`,
+                            (patientEventInstance, index) => {
+                                const patientId = patientEventInstance.getPatientIdentifier();
+                                const groupId = patientId ? `Patient-${patientId}` : "Patient";
+                                return `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndDayAsDateString(timeline)}), group: "${groupId}", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "${patientEventInstance.getTitle()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`;
+                            }
                         )
                         .filter((item) => item !== "")
                         .join("\n    "),
