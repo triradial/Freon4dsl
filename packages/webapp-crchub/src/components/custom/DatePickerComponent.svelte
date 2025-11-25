@@ -72,20 +72,6 @@
     }
 </script>
 
-<style>
-    /* Ensure date text and separators render white inside the input */
-    :global(.dsl-input-text) {
-        color: var(--white) !important;
-    }
-    :global(.datepicker-input .text-muted-foreground) {
-        color: var(--white) !important;
-    }
-    /* Optional: make the calendar icon match */
-    :global(.datepicker-input) button {
-        color: var(--white);
-    }
-</style>
-
 <div class="ml-1">
 <DatePicker.Root bind:open={isOpen} value={value} onValueChange={onValueChange} weekdayFormat="short" fixedWeeks={false}>
     <div class="flex w-full max-w-[232px] flex-col">

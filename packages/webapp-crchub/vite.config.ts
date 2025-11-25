@@ -3,6 +3,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [sveltekit()],
+  server: {
+    port: 5175
+  },
   resolve: {
     conditions: ['svelte', 'import', 'module', 'browser', 'default'],
     mainFields: ['svelte', 'browser', 'module', 'main']
