@@ -67,17 +67,17 @@
     let savedViews: any[] = loadSavedViews();
 
     // Mutable list so we can push saved views
-    let viewOptions: SelectOption[] = [
+    let viewOptions = $state<SelectOption[]>([
         ...predefinedViews,
         ...savedViews.map(v => ({ id: v.id, label: v.label }))
-    ];
+    ]);
 
     // The currently selected option object for the dropdown
-    let selectedViewOption = $state<SelectOption>(viewOptions[0]);
+    let selectedViewOption = $state<SelectOption>(predefinedViews[0]);
     let showMenu = $state(false);
     let menuAnchor: HTMLElement | null = null;
     let hasUnsavedChanges = $state(false);
-    let menuRef: HTMLDivElement | null = null;
+    let menuRef = $state<HTMLDivElement | null>(null);
 
     // Retrieve previously active view from sessionStorage (applied after grid ready)
     let initialActiveView: string | null = sessionStorage.getItem(ACTIVE_VIEW_KEY);
@@ -718,8 +718,8 @@
 
 <SaveViewDialog
     open={saveDialogOpen}
-    on:save={handleSaveView}
-    on:cancel={handleCancelSaveView}
+    onsave={handleSaveView}
+    oncancel={handleCancelSaveView}
 />
 
 <ConfirmUnsavedDialog

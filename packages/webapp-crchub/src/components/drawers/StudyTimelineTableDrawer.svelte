@@ -4,7 +4,6 @@
     import { type FreEnvironment, RtString } from "@freon4dsl/core";
     import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { getChecklistAsMarkdown, getTimelineTable } from "../../services/app/study-timeline.js";
-    import { marked } from "marked";
     import ContentLoader from "./ContentLoader.svelte";
     
     let { studyId } = $props<{ studyId: string }>();

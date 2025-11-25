@@ -340,7 +340,7 @@
         line-height: 1.6;
     }
     
-    .study-checklist-content h1,
+    /* .study-checklist-content h1,
     .study-checklist-content h2,
     .study-checklist-content h3,
     .study-checklist-content h4,
@@ -423,7 +423,6 @@
         padding: 0;
     }
     
-    /* Table styling - apply to all tables */
     .study-checklist-content table {
         border: 1px solid var(--white-30t);
         border-collapse: collapse;
@@ -431,7 +430,6 @@
         margin: 2rem 0 4rem 0;
     }
     
-    /* Table styling using existing table_component class */
     .study-checklist-content .table_component table {
         border: 1px solid var(--white-30t);
         border-collapse: collapse;
@@ -480,5 +478,5 @@
     .study-checklist-content .table_component th.fit {
         width: 1%;
         white-space: nowrap;
-    }
+    } */
 </style>

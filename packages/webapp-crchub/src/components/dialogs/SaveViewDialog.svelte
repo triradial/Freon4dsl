@@ -1,24 +1,26 @@
 <script lang="ts">
     import { Modal } from '@skeletonlabs/skeleton-svelte';
-    import { createEventDispatcher } from 'svelte';
 
-    const { open = false } = $props<{ open?: boolean }>();
-
-    let viewName = '';
-
-    const dispatch = createEventDispatcher<{
-        save: string;
-        cancel: void;
+    const { 
+        open = false,
+        onsave,
+        oncancel
+    } = $props<{ 
+        open?: boolean;
+        onsave?: (viewName: string) => void;
+        oncancel?: () => void;
     }>();
+
+    let viewName = $state('');
 
     function handleSave() {
         if (viewName.trim().length === 0) return;
-        dispatch('save', viewName.trim());
+        onsave?.(viewName.trim());
         viewName = '';
     }
 
     function handleCancel() {
-        dispatch('cancel');
+        oncancel?.();
         viewName = '';
     }
 </script>
