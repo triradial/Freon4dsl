@@ -24,6 +24,11 @@ export default defineConfig({
                 if (warning.code === 'CIRCULAR_DEPENDENCY') {
                     return;
                 }
+                // Suppress sourcemap warnings for external packages
+                if (warning.code === 'SOURCEMAP_BROKEN' || 
+                    (warning.message && warning.message.includes('points to missing source files'))) {
+                    return;
+                }
                 warn(warning);
             }
         }
