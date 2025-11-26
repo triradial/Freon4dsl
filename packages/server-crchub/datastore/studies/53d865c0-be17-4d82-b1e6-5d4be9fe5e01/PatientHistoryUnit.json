@@ -8,7 +8,7 @@
    ],
    "nodes": [
       {
-         "id": "ID-59",
+         "id": "ID-37",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -32,7 +32,7 @@
                   "key": "-key-PatientHistoryUnit-patientHistory"
                },
                "children": [
-                  "ID-60"
+                  "ID-38"
                ]
             }
          ],
@@ -41,7 +41,7 @@
          "parent": null
       },
       {
-         "id": "ID-60",
+         "id": "ID-38",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -73,7 +73,7 @@
                   "key": "-key-PatientHistory-startOfStudyDate"
                },
                "children": [
-                  "ID-62"
+                  "ID-39"
                ]
             },
             {
@@ -95,10 +95,10 @@
          ],
          "references": [],
          "annotations": [],
-         "parent": "ID-59"
+         "parent": "ID-37"
       },
       {
-         "id": "ID-62",
+         "id": "ID-39",
          "classifier": {
             "language": "-key-StudyConfigurationModel",
             "version": "2023.1",
@@ -133,7 +133,7 @@
          "containments": [],
          "references": [],
          "annotations": [],
-         "parent": "ID-60"
+         "parent": "ID-38"
       }
    ]
 }
