@@ -1,7 +1,7 @@
 <script lang="ts">
     import { MULTILINETEXT_LOGGER } from './ComponentLoggers.js';
     import { componentId } from '../index.js';
-    import { notNullOrUndefined, MultiLineTextBox } from '@freon4dsl/core';
+    import { notNullOrUndefined, type MultiLineTextBox } from '@freon4dsl/core';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
     // Probably needed to code/encode HTML inside <TextArea>
@@ -69,13 +69,16 @@
     refresh();
 </script>
 
+<span>
 <textarea
     class="{box.cssClass} multilinetext-box multiline-text-component"
     {id}
     onfocusout={onFocusOut}
     onkeydown={onKeyDown}
     spellcheck="false"
+    tabindex="0"
     bind:this={textArea}
     {placeholder}
     bind:value={text}
 ></textarea>
+</span>

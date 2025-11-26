@@ -157,12 +157,10 @@
         LOGGER.log(`setFocus for ${box?.id} ${isEditing} && ${inputElement}`);
         if (isEditing && notNullOrUndefined(inputElement)) {
             inputElement.focus();
-            requestAnimationFrame(() => {
-                inputElement.select(); // selects all the text in the <input> element.
-            });
+            inputElement.select(); // selects all the text in the <input> element.
         } else {
             // set the local variables, then the inputElement will be shown
-            await startEditing('editor', true); // selectAll = true when called from setFocus
+            await startEditing('editor');
         }
     }
 
@@ -207,7 +205,7 @@
      * When the switch is made from <span> to <input> this function is called.
      * It stores the caret position(s) to be used to set the selection of the <input>.
      */
-    async function startEditing(from: string, selectAll: boolean = false) {
+    async function startEditing(from: string) {
         LOGGER.log(`startEditing for ${box?.id}`);
         // If called from the editor, there is no need to change the selection
         // because the editor already has the corresponding box as selected box.
@@ -227,13 +225,7 @@
         } else {
             // Get the caret position(s) from the editor, to be used to set
             // the same selection in the <input> element later on.
-            if (selectAll) {
-                // When called from setFocus, we want to select all text
-                myHelper.from = 0;
-                myHelper.to = text.length;
-            } else {
-                calculateCaret(editor.selectedCaretPosition);
-            }
+            calculateCaret(editor.selectedCaretPosition);
         }
         // set the local variables
         isEditing = true;

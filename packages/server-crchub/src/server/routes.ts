@@ -106,6 +106,18 @@ router.get("/getModelUnitList", async (ctx: Router.IRouterContext) => {
     }
 });
 
+router.get("/getUnitList", async (ctx: Router.IRouterContext) => {
+    const model = ctx.query["model"];
+    console.log("Routes.getUnitList: model=" + model);
+    if (!!model && typeof model === "string") {
+        await ModelHandler.getModelUnitList(model, ctx);
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'model'" };
+    }
+});
+
 router.put("/saveModelUnit", async (ctx: Router.IRouterContext) => {
     const model = ctx.query["model"];
     const unit = ctx.query["unit"];

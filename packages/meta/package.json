@@ -4,10 +4,10 @@
     "access": "public"
   },
   "name": "@freon4dsl/meta",
-  "version": "2.0.0-beta.4",
+  "version": "2.0.0",
   "license": "MIT",
   "main": "dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "type": "module",
   "repository": {
     "type": "git",
@@ -39,26 +39,11 @@
     "build-dev": "npm run build",
     "build-release": "npm run build",
     "release-beta": "npm publish --tag beta",
-    "publish-local": "npm publish --verbose --registry http://localhost:4873 --tag local",
-    "lint": "tslint -c ./tslint.json './src/**/*.ts*'",
+    "publish-local": "npm publish --verbose --registry http://localhost:4873/ --tag local",
     "unpublish-local": "npm unpublish --force --registry http://localhost:4873",
     "republish-local": "npm run unpublish-local && npm run publish-local",
     "test": "vitest run",
     "circular": "madge --circular src/* > DEPENDENCIES.md"
-  },
-  "files": [
-    "dist",
-    "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
-  ],
-  "sideEffects": [
-    "**/*.css"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
   },
   "devDependencies": {
     "vitest": "3.2.4",
@@ -67,7 +52,6 @@
     "vitest-tsconfig-paths": "^3.4.1"
   },
   "dependencies": {
-    "@freon4dsl/core": "2.0.0-beta.4",
     "@rushstack/ts-command-line": "^4.22.0",
     "@prettier/sync": "^0.5.2",
     "kotlin": "^1.5.21",

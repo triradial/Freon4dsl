@@ -1,6 +1,6 @@
 {
   "name": "@freon4dsl/project-configuration",
-  "version": "1.1.0-beta.3",
+  "version": "2.0.0",
   "license": "MIT",
   "main": "dist/index.custom.js",
   "module": "dist/index.custom.js",
@@ -20,7 +20,7 @@
     "clean-custom": "rm */*/Custom*.ts"
   },
   "dependencies": {
-    "@freon4dsl/core": "2.0.0-beta.4",
+    "@freon4dsl/core": "2.0.0",
     "@types/node": "^24.0.0",
     "kotlin": "^1.5.21",
     "lodash": "^4.17.21",

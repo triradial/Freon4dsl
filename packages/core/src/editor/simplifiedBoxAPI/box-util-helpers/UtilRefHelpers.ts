@@ -50,7 +50,7 @@ export class UtilRefHelpers {
         result = BoxFactory.reference(
             node,
             roleName,
-            `<${propertyName}>`,
+            `+ ${propertyName}`,
             () => {
                 return scoper
                     .getVisibleNodes(node, propType)
@@ -241,7 +241,7 @@ export class UtilRefHelpers {
             BoxFactory.action(
                 element,
                 RoleProvider.property(element.freLanguageConcept(), propertyName, "new-list-item"),
-                `${propertyName}`,
+                `+${propertyName}`,
                 {
                     propertyName: `${propertyName}`,
                     // conceptName: FreLanguage.getInstance().classifierProperty(element.freLanguageConcept(), propertyName).type
