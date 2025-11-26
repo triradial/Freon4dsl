@@ -1,0 +1,1347 @@
+{
+   "serializationFormatVersion": "2023.1",
+   "languages": [
+      {
+         "key": "-key-StudyExtractModel",
+         "version": "2023.1"
+      }
+   ],
+   "nodes": [
+      {
+         "id": "ID-37",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-StudyExtract"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyExtract-name"
+               },
+               "value": "StudyExtract"
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyExtract-references"
+               },
+               "children": [
+                  "ID-38"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyExtract-topics"
+               },
+               "children": [
+                  "ID-61"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyExtract-description"
+               },
+               "children": [
+                  "ID-53"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": null
+      },
+      {
+         "id": "ID-38",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-References"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-References-study"
+               },
+               "children": [
+                  "ID-39"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-References-bibliography"
+               },
+               "children": [
+                  "ID-45"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-References-arm"
+               },
+               "children": [
+                  "ID-47"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-37"
+      },
+      {
+         "id": "ID-39",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-StudyTable"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyTable-column1"
+               },
+               "children": [
+                  "ID-40"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyTable-column2"
+               },
+               "children": [
+                  "ID-42"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyTable-rows"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-StudyTable-description"
+               },
+               "children": [
+                  "ID-44"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-38"
+      },
+      {
+         "id": "ID-40",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": [
+                  "ID-55",
+                  "ID-66"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-41"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-39"
+      },
+      {
+         "id": "ID-55",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": [
+                  "ID-57"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-56"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-40"
+      },
+      {
+         "id": "ID-57",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-58"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-55"
+      },
+      {
+         "id": "ID-58",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-57"
+      },
+      {
+         "id": "ID-56",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-55"
+      },
+      {
+         "id": "ID-66",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-67"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-40"
+      },
+      {
+         "id": "ID-67",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-66"
+      },
+      {
+         "id": "ID-41",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-40"
+      },
+      {
+         "id": "ID-42",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-43"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-39"
+      },
+      {
+         "id": "ID-43",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-42"
+      },
+      {
+         "id": "ID-44",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-39"
+      },
+      {
+         "id": "ID-45",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-BibliographyTable"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-BibliographyTable-rootColumns"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-BibliographyTable-rows"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-BibliographyTable-description"
+               },
+               "children": [
+                  "ID-46"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-38"
+      },
+      {
+         "id": "ID-46",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-45"
+      },
+      {
+         "id": "ID-47",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-ArmTable"
+         },
+         "properties": [],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-ArmTable-column1"
+               },
+               "children": [
+                  "ID-48"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-ArmTable-column2"
+               },
+               "children": [
+                  "ID-50"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-ArmTable-rows"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-ArmTable-description"
+               },
+               "children": [
+                  "ID-52"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-38"
+      },
+      {
+         "id": "ID-48",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": [
+                  "ID-59"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-49"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-47"
+      },
+      {
+         "id": "ID-59",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-60"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-48"
+      },
+      {
+         "id": "ID-60",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-59"
+      },
+      {
+         "id": "ID-49",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-48"
+      },
+      {
+         "id": "ID-50",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": [
+                  "ID-64"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-51"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-47"
+      },
+      {
+         "id": "ID-64",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Column"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-name"
+               },
+               "value": ""
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-span"
+               },
+               "value": "1"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-isGroupHeader"
+               },
+               "value": "false"
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-dataType"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-subcolumns"
+               },
+               "children": []
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Column-description"
+               },
+               "children": [
+                  "ID-65"
+               ]
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-50"
+      },
+      {
+         "id": "ID-65",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-64"
+      },
+      {
+         "id": "ID-51",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-50"
+      },
+      {
+         "id": "ID-52",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-47"
+      },
+      {
+         "id": "ID-61",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Topic"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Topic-name"
+               },
+               "value": ""
+            }
+         ],
+         "containments": [
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Topic-overview"
+               },
+               "children": [
+                  "ID-62"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Topic-details"
+               },
+               "children": [
+                  "ID-63"
+               ]
+            },
+            {
+               "containment": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Topic-tables"
+               },
+               "children": []
+            }
+         ],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-37"
+      },
+      {
+         "id": "ID-62",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-61"
+      },
+      {
+         "id": "ID-63",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-61"
+      },
+      {
+         "id": "ID-53",
+         "classifier": {
+            "language": "-key-StudyExtractModel",
+            "version": "2023.1",
+            "key": "-key-Description"
+         },
+         "properties": [
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-text"
+               },
+               "value": " "
+            },
+            {
+               "property": {
+                  "language": "-key-StudyExtractModel",
+                  "version": "2023.1",
+                  "key": "-key-Description-rawText"
+               },
+               "value": " "
+            }
+         ],
+         "containments": [],
+         "references": [],
+         "annotations": [],
+         "parent": "ID-37"
+      }
+   ]
+}

@@ -10,6 +10,7 @@
     let drawerWidth = $derived(activeDrawer ? getDrawerWidth(activeDrawer) : 400);
     let drawers = $derived($drawerStore.drawerOrder.map(key => $drawerStore.drawers[key]).filter(Boolean));
     let activeDrawerTitle = $derived(activeDrawer ? ($drawerStore.drawers[activeDrawer]?.title ?? "") : "");
+    let activeDrawerProps = $derived(activeDrawer ? ($drawerStore.drawers[activeDrawer]?.props ?? {}) : {});
     let drawerContentEl = $state<HTMLElement | null>(null);
     let activeDrawerInstance = $state<any>(null);
     let activeDrawerKey: string | null = null;
@@ -147,7 +148,7 @@
                 </div>
                 {#if DrawerComponent}
                     <div bind:this={drawerContentEl} style="height: 100%">
-                        <DrawerComponent {...getDrawer(activeDrawer)?.props} bind:this={activeDrawerInstance} />
+                        <DrawerComponent {...activeDrawerProps} bind:this={activeDrawerInstance} />
                     </div>
                 {/if}
             </div>

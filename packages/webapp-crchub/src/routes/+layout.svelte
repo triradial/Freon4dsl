@@ -10,11 +10,13 @@
     import DSLErrorsDrawer from "../components/drawers/DSLErrorsDrawer.svelte";
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
+    import PatientStudyTimelineChartDrawer from "../components/drawers/PatientStudyTimelineChartDrawer.svelte";
     import PatientTimelineChartDrawer from "../components/drawers/PatientTimelineChartDrawer.svelte";
     import StaffAvailabilityDrawer from "../components/drawers/StaffAvailabilityDrawer.svelte";
     import StudyChecklistDrawer from "../components/drawers/StudyChecklistDrawer.svelte";
     import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
     import StudyTimelineTableDrawer from "../components/drawers/StudyTimelineTableDrawer.svelte";
+    import VisitChecklistDrawer from "../components/drawers/VisitChecklistDrawer.svelte";
     import "../init.ts";
     import { dataStore } from "../services/data/data-store.js";
     import { isAuthenticated } from "../services/security/auth.js";
@@ -42,6 +44,8 @@
             addDrawer({ key: "dslErrors", icon: IconTriangleAlert, component: DSLErrorsDrawer, title: "Errors", description: "View the errors in the study design.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "studyTimelineTable", icon: IconTable2, component: StudyTimelineTableDrawer, title: "Study Timeline Table", description: "View the timeline as a table for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 600, });
             addDrawer({ key: "studyTimelineChart", icon: IconSquareChartGantt, component: StudyTimelineChartDrawer, title: "Study Timeline Chart", description: "View the timeline as a chart for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
+            addDrawer({ key: "patientStudyTimelineChart", icon: IconSquareChartGantt, component: PatientStudyTimelineChartDrawer, title: "Study Timeline Chart - Date Selected", description: "View the study timeline chart for the selected date for this patient.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
+            addDrawer({ key: "visitChecklist", icon: IconCheckSquare, component: VisitChecklistDrawer, title: "Visit Checklist", description: "View the checklist for visits scheduled for the selected date.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "studyChecklist", icon: IconCheckSquare, component: StudyChecklistDrawer, title: "Study Checklist", description: "View the checklist for this study.", supportsRefresh: true, supportsPrint: true, defaultWidth: 800, });   
             addDrawer({ key: "patientTimelineChart", icon: IconCalendar, component: PatientTimelineChartDrawer, title: "Patient Timeline", description: "View patient timelines and visit schedules for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "staffAvailability", icon: IconUsers, component: StaffAvailabilityDrawer, title: "Staff Availability", description: "View the availability of staff for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
