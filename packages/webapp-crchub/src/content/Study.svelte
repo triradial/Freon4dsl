@@ -12,7 +12,7 @@
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
-    import { getActiveDrawer, setActiveDrawer, setDrawerVisibility } from "../services/stores/side-drawer-store.js";
+    import { getActiveDrawer, setActiveDrawer, setAllDrawersVisibility, setDrawerProps, setDrawerVisibility } from "../services/stores/side-drawer-store.js";
 // @ts-ignore
     import { PencilRuler as IconPencilRuler, Redo as IconRedo, Undo as IconUndo, User as IconUser } from '@lucide/svelte';
 
@@ -22,6 +22,33 @@
     let editorLoaded = $state(false);
     let noModelAvailable = $state(false);
     let activeTab = $state('patients');
+
+    // Update drawer visibility based on active tab
+    $effect(() => {
+        if (!id) return;
+        
+        if (activeTab === 'patients') {
+            // Patients tab: show help and patient timeline chart
+            setAllDrawersVisibility(false);
+            setDrawerVisibility("help", true);
+            setDrawerVisibility("patientTimelineChart", true);
+            // Show all patients when on patients tab
+            setDrawerProps("patientTimelineChart", { studyId: id, showAllPatients: true });
+        } else if (activeTab === 'design') {
+            // Study Design tab: show all study-related drawers (no patient timeline chart)
+            setAllDrawersVisibility(false);
+            setDrawerVisibility("help", true);
+            setDrawerVisibility("dslErrors", true);
+            setDrawerVisibility("studyTimelineTable", true);
+            setDrawerVisibility("studyTimelineChart", true);
+            setDrawerVisibility("studyChecklist", true);
+            // Set drawer props for study design tab
+            setDrawerProps("dslErrors", { studyId: id });
+            setDrawerProps("studyTimelineTable", { studyId: id });
+            setDrawerProps("studyTimelineChart", { studyId: id });
+            setDrawerProps("studyChecklist", { studyId: id });
+        }
+    });
 
     let dslEditor = $state<FreEditor | undefined>(undefined);
     let unit = $state<StudyConfiguration | undefined>(undefined);
