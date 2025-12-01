@@ -183,7 +183,7 @@ export class StudyChecklistDocumentTemplate {
                 complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
 
                 // Event heading with spacing and visual indicator
-                builder.addHeading(2, `📋 ${event.name}`);
+                builder.addHeading(2, `${event.name}`);
                 
                 if (event.description?.text) {
                     builder.addParagraph(event.description.text, true);
@@ -203,7 +203,7 @@ export class StudyChecklistDocumentTemplate {
                     const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
                     
                     // Task heading with spacing and visual indicator
-                    builder.addHeading(3, `✅ Task: ${t.name}`);
+                    builder.addHeading(3, `Task: ${t.name}`);
                     
                     if (t.description?.text) {
                         builder.addParagraph(t.description.text, true);
