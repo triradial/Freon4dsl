@@ -59,7 +59,7 @@ PatientVisit {
       [fragment visitDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Visit"]
   ] trigger = "Patient Visit"
   fragment visitDetails [
-    ${visit} On ${actualVisitDate}
+    ${visit} Status: ${status}On ${actualVisitDate} 
   ]
 }
 

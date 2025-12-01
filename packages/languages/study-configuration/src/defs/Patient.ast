@@ -25,7 +25,7 @@ concept PatientHistory {
 }
 
 limited PatientVisitStatus {
-  completed; missed; canceled;
+  planned; completed; missed; canceled;
 }
 
 concept PatientVisit {
@@ -33,7 +33,7 @@ concept PatientVisit {
   reference visit: Event;
   visitInstanceNumber: number = 1;
   actualVisitDate: DateConcept;
-  status: PatientVisitStatus = PatientVisitStatus:completed;
+  status: PatientVisitStatus = PatientVisitStatus:planned;
 }
 
 concept PatientNotAvailable {
