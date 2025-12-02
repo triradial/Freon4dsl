@@ -1,6 +1,7 @@
-import { TimelineInstanceState } from "./TimelineEventInstance.js";
-import { TimelineEventInstance } from "./TimelineEventInstance.js";
+import { FreNodeReference } from "@freon4dsl/core";
+import { PatientVisitStatus } from "../../language/gen/index.js";
 import { Timeline } from "./Timeline.js";
+import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
 
 export class PatientEventInstance extends TimelineEventInstance {
     eventName: string;
@@ -21,36 +22,60 @@ export class PatientEventInstance extends TimelineEventInstance {
 
 export class PatientVisitEventInstance extends PatientEventInstance {
     visitInstanceNumber: number = 1;
+    patientVisitStatus: FreNodeReference<PatientVisitStatus> | undefined = undefined;
 
-    constructor(name: string, visitInstanceNumber: number, startDay: number, endDay?: number, patientIdentifier?: string) {
+    constructor(name: string, visitInstanceNumber: number, startDay: number, endDay?: number, patientIdentifier?: string, patientVisitStatus?: FreNodeReference<PatientVisitStatus>) {
         super(startDay, endDay);
         this.eventName = name;
         this.setState(TimelineInstanceState.Active);
         this.visitInstanceNumber = visitInstanceNumber;
         this.patientIdentifier = patientIdentifier;
+        this.patientVisitStatus = patientVisitStatus;
     }
 
     getVisitInstanceNumber() {
         return this.visitInstanceNumber;
     }
 
+    getPatientVisitStatus(): FreNodeReference<PatientVisitStatus> | undefined {
+        return this.patientVisitStatus;
+    }
+
     getClassForDisplay(timeline: Timeline) {
         const scheduledEventInstance = timeline.getScheduledEventInstance(this.eventName, this.visitInstanceNumber);
-        let classForDisplay = "on-scheduled-date";
+        
+        // If no scheduled event found, mark as visit-not-found
         if (scheduledEventInstance === undefined) {
-            classForDisplay = "visit-not-found";
-        } else {
-            if (
-                this.startDay - timeline.getOffsetOfFirstEventInstance() <
-                    scheduledEventInstance.getStartDay() - scheduledEventInstance.getStartDayOfWindow() ||
-                this.startDay - timeline.getOffsetOfFirstEventInstance() > scheduledEventInstance.getStartDay() + scheduledEventInstance.getEndDayOfWindow()
-            ) {
-                classForDisplay = "out-of-window";
-            } else if (scheduledEventInstance.startDay !== this.startDay - timeline.getOffsetOfFirstEventInstance()) {
-                classForDisplay = "in-window";
-            }
+            return "visit-not-found";
         }
-        return classForDisplay;
+
+        // Status-based classes take precedence over timing-based classes
+        const status = this.patientVisitStatus?.referred;
+        if (status === PatientVisitStatus.planned) {
+            return "planned-visit";
+        }
+        if (status === PatientVisitStatus.missed) {
+            return "missed-visit";
+        }
+        if (status === PatientVisitStatus.canceled) {
+            return "canceled-visit";
+        }
+
+        // Check timing relative to scheduled window
+        const offsetStartDay = this.startDay - timeline.getOffsetOfFirstEventInstance();
+        const scheduledStartDay = scheduledEventInstance.getStartDay();
+        const windowStart = scheduledStartDay - scheduledEventInstance.getStartDayOfWindow();
+        const windowEnd = scheduledStartDay + scheduledEventInstance.getEndDayOfWindow();
+
+        if (offsetStartDay < windowStart || offsetStartDay > windowEnd) {
+            return "out-of-window";
+        }
+        if (offsetStartDay !== scheduledStartDay) {
+            return "in-window";
+        }
+
+        // Visit occurred exactly on the scheduled date (status is completed or undefined)
+        return "on-scheduled-date";
     }
 
     getTitle() {

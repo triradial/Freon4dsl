@@ -658,6 +658,21 @@ appnav a:visited {
   background-image: repeating-linear-gradient(45deg, black, black 5px, white 2px, white 7px);
 }
 
+.vis-item.planned-visit,
+.key-item .planned-visit {
+  background-image: repeating-linear-gradient(45deg, rgb(76, 175, 80), rgb(76, 175, 80) 5px, white 2px, white 7px);
+}
+
+.vis-item.missed-visit,
+.key-item .missed-visit {
+  background-image: repeating-linear-gradient(45deg, rgb(244, 67, 54), rgb(244, 67, 54) 5px, white 2px, white 7px);
+}
+
+.vis-item.canceled-visit,
+.key-item .canceled-visit {
+  background-image: repeating-linear-gradient(45deg, rgb(158, 158, 158), rgb(158, 158, 158) 5px, white 2px, white 7px);
+}
+
 .timeline-instructions li {
   color: var(--white-50t) !important;
 }

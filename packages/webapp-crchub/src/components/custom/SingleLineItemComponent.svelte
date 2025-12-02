@@ -86,8 +86,8 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div id="{id}" class="single-line-item {cssClass}" style="display: flex; align-items: center; gap: 8px;">
-    <span class="single-line-item-label" tabindex="-1">{label()}:</span>
+<div id="{id}" class="single-line-item {cssClass}">
+    <span class="single-line-item-label" tabindex="-1">{label()}</span>
     {#each children as child}
         <RenderComponent box={child} editor={editor} />
     {/each}

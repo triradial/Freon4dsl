@@ -148,7 +148,7 @@ main {
   width: 0;
 }
 
-.text-dropdown-component .text-component-input-wrapper:has(.text-component-input:placeholder-shown)::before {
+.text-dropdown-component .text-component-input-wrapper:has(.text-component-input:placeholder-shown):not(:has(.text-component-input[placeholder^="+"]))::before {
   content: "+";
   position: absolute;
   left: 0.3rem;
@@ -205,8 +205,8 @@ main {
 }
 
 .text-component-action-placeholder::before {
-  content: "+";
-  margin-right:0.125rem;
+  content: "";
+  margin-right:0;
 }
 /* #endregion */
 
@@ -411,6 +411,16 @@ main {
   align-items: center !important;
   text-decoration-line: none;
   white-space: nowrap;
+}
+
+.single-line-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.single-line-item .circle-button {
+  margin-left: 0.5rem;
 }
 
 .item-group:empty:before {

@@ -8,7 +8,7 @@ Event {
         ${name}
         This is a ${typeOfEvent} that is also referred to as ${alternativeName}
         ${description}
-        ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="false" selectable="false" label="Schedule"}
+        ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="true" selectable="false" label="Schedule"}
     ]
 }
 

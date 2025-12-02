@@ -375,7 +375,7 @@ export class Timeline extends RtObject {
                 patientVisit.actualVisitDate.year,
             );
             const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
-            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline, undefined, patientIdentifier || patientHistory.patient_id));
+            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline, undefined, patientIdentifier || patientHistory.patient_id, patientVisit.status));
             console.log("Added patient visit event: " + patientVisit.visit.name + " on day: " + dayOnTimeline + (patientIdentifier ? " for patient: " + patientIdentifier : ""));
         });
         patientHistory.patientNotAvailableDates.forEach((patientNotAvailableDate) => {

@@ -69,6 +69,10 @@
   background-color: inherit;
 }
 
+.single-line-item-label {
+  color: var(--gray-400);
+}
+
 /* #endregion */
 
 /* #region Text Component */
@@ -485,6 +489,39 @@
 .datepicker-separator {
   color: var(--text-primary-500);
   background-color: transparent;
+}
+
+.dsl-date-text,
+.dsl-input-text {
+  color: var(--green-90t) !important;
+}
+
+/* Highlight date segments when the datepicker input is focused */
+.datepicker-input:focus .dsl-date-text,
+.datepicker-input:focus .dsl-input-text,
+.datepicker-input:focus-within .dsl-date-text,
+.datepicker-input:focus-within .dsl-input-text {
+  background-color: var(--green-30t) !important;
+}
+
+/* Highlight individual segments when they receive focus */
+.dsl-date-text:focus,
+.dsl-input-text:focus {
+  background-color: var(--green-30t) !important;
+  outline: 1px solid var(--green-90t) !important;
+  outline-offset: 1px !important;
+}
+
+/* Highlight calendar icon trigger when focused */
+.datepicker-input button:focus,
+.datepicker-input button:focus-visible,
+button[data-bits-popover-trigger]:focus,
+button[data-bits-popover-trigger]:focus-visible,
+.datepicker-input ~ button:focus,
+.datepicker-input ~ button:focus-visible {
+  background-color: var(--green-30t) !important;
+  outline: 1px solid var(--green-90t) !important;
+  outline-offset: 2px !important;
 }
 /* #endregion */
 

@@ -61,7 +61,16 @@
     }
 
     function setFocus() {
-        isOpen = true;
+        // Don't automatically open calendar when focus is set
+        // Allow direct editing of the date fields
+    }
+
+    function handleTriggerKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            isOpen = true;
+        }
     }
     const refresh = (why?: string): void => {
         getValue();
@@ -148,7 +157,7 @@
           <div aria-hidden="true" class="datepicker-separator">–</div>
         {/if}
       {/each}
-      <DateRangePicker.Trigger class="text-foreground/60 hover:bg-muted active:bg-dark-10 inline-flex size-8 items-center justify-center rounded-[5px] transition-all">
+      <DateRangePicker.Trigger class="text-foreground/60 hover:bg-muted active:bg-dark-10 inline-flex size-8 items-center justify-center rounded-[5px] transition-all" onkeydown={handleTriggerKeyDown}>
         <CalendarBlank class="size-6" />
       </DateRangePicker.Trigger>
     </div>

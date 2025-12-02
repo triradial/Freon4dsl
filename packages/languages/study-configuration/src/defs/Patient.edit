@@ -28,7 +28,7 @@ StaffLevel {
 
 DateRange {
   [
-    [fragment dateRangeDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Dates"]
+    [fragment dateRangeDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="From"]
   ] trigger = "Dates"
   fragment dateRangeDetails [
     ${startDate} thru:${endDate}
@@ -59,7 +59,7 @@ PatientVisit {
       [fragment visitDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Visit"]
   ] trigger = "Patient Visit"
   fragment visitDetails [
-    ${visit} Status: ${status}On ${actualVisitDate} 
+    ${visit}was ${status}on ${actualVisitDate} 
   ]
 }
 

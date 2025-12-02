@@ -129,12 +129,15 @@ export class TimelineChartTemplate {
     }
 
     static getTimelineAsHTMLBlock(timelineDataAsScript: string, hasPatientKey: boolean = false, hasStaffKey: boolean = false): string {
-        let patientKey = hasPatientKey ? dedent`
+        let patientKey = hasPatientKey
+          ? dedent`
             <div class="key-item"><div class="square on-scheduled-date"></div><span>Date patient visit occurred on the scheduled date</span></div>
             <div class="key-item"><div class="square in-window"></div><span>Date patient visit occurred in the scheduled window</span></div>
             <div class="key-item"><div class="square out-of-window"></div><span>Date patient visit occurred outside the scheduled window</span></div>
+            <div class="key-item"><div class="square planned-visit"></div><span>Planned patient visit</span></div>
             <div class="key-item"><div class="square not-available"></div><span>Date(s) the patient is unavailable</span></div>
-        ` : "";
+        `
+          : "";
         let staffKey = hasStaffKey ? dedent`
             <div class="key-item"><div class="square staff"></div><span>Staff(#) - '(#)' is the total amount of staff available for the study. The number in the box is the staff on that date. The full staff is available on any date without a box with a number</span></div>
         ` : "";
