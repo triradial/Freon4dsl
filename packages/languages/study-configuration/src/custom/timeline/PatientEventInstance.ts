@@ -50,16 +50,33 @@ export class PatientVisitEventInstance extends PatientEventInstance {
         }
 
         // Status-based classes take precedence over timing-based classes
-        const status = this.patientVisitStatus?.referred;
-        if (status === PatientVisitStatus.planned) {
-            return "planned-visit";
-        }
-        if (status === PatientVisitStatus.missed) {
+        // Compare by name - try both the reference name and the referred object's name
+        const statusName = this.patientVisitStatus?.name || this.patientVisitStatus?.referred?.name;
+        
+        // Debug: log statusName for verification
+        console.log("PatientVisitEventInstance.getClassForDisplay:", {
+            eventName: this.eventName,
+            visitInstanceNumber: this.visitInstanceNumber,
+            hasStatusReference: !!this.patientVisitStatus,
+            referenceName: this.patientVisitStatus?.name,
+            referredName: this.patientVisitStatus?.referred?.name,
+            statusName: statusName,
+            referredObject: this.patientVisitStatus?.referred
+        });
+        
+        // Check for explicit status values first
+        if (statusName === "missed") {
             return "missed-visit";
         }
-        if (status === PatientVisitStatus.canceled) {
+        if (statusName === "canceled") {
             return "canceled-visit";
         }
+        if (statusName === "planned") {
+            return "planned-visit";
+        }
+        
+        // If status is undefined or completed, fall through to timing-based checks
+        // (completed visits use timing-based classes, undefined uses default behavior)
 
         // Check timing relative to scheduled window
         const offsetStartDay = this.startDay - timeline.getOffsetOfFirstEventInstance();

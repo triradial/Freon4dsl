@@ -345,15 +345,15 @@ export function loadModelUnit(modelFolderName: string, modelUnitName: string, al
     if (alternateStudyFolderPath) {
         studyFolderPath = alternateStudyFolderPath;
     }
-    console.log("__dirname:" + __dirname);
+    // console.log("__dirname:" + __dirname);
     let studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
     const serializer = new FreLionwebSerializer();
     let metaModel = JSON.parse(fs.readFileSync(`${studyFolderPath}/${modelUnitName}.json`).toString());
     const ts = serializer.toTypeScriptInstance(metaModel);
     let modelUnit: StudyConfiguration = ts as StudyConfiguration;
-    if (modelUnit instanceof StudyConfiguration) {
-        logPeriodsAndEvents("loadModel", modelUnit);
-    }
+    // if (modelUnit instanceof StudyConfiguration) {
+    //     logPeriodsAndEvents("loadModel", modelUnit);
+    // }
     const validator = studyConfigurationModelEnvironment.validator;
     const errors = validator.validate(modelUnit);
     return modelUnit;

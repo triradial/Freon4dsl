@@ -135,6 +135,8 @@ export class TimelineChartTemplate {
             <div class="key-item"><div class="square in-window"></div><span>Date patient visit occurred in the scheduled window</span></div>
             <div class="key-item"><div class="square out-of-window"></div><span>Date patient visit occurred outside the scheduled window</span></div>
             <div class="key-item"><div class="square planned-visit"></div><span>Planned patient visit</span></div>
+            <div class="key-item"><div class="square missed-visit"></div><span>Missed patient visit</span></div>
+            <div class="key-item"><div class="square canceled-visit"></div><span>Canceled patient visit</span></div>
             <div class="key-item"><div class="square not-available"></div><span>Date(s) the patient is unavailable</span></div>
         `
           : "";

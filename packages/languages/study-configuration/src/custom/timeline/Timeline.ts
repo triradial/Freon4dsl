@@ -76,9 +76,14 @@ export class Timeline extends RtObject {
 
     getEndOfTimeline(): string {
         const referenceDate = this.getReferenceDate();
-        const year = referenceDate.getFullYear();
-        const month = referenceDate.getMonth();
-        const day = referenceDate.getDate() + this.getMaxDayOnTimeline() + 1;
+        // Create a new date to avoid mutating the reference date
+        const endDate = new Date(referenceDate);
+        // Add the max day on timeline (plus 1 to include that day)
+        endDate.setDate(endDate.getDate() + this.getMaxDayOnTimeline() + 1);
+        
+        const year = endDate.getFullYear();
+        const month = endDate.getMonth();
+        const day = endDate.getDate();
 
         return `new Date(${year}, ${month}, ${day})`;
     }

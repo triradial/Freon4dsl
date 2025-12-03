@@ -1,0 +1,50 @@
+Periods:
+  Period: `Screening`
+
+  Events:
+    Event: `Screen`
+    This is a `site visit` that is also referred to as ""
+
+    Schedule:
+      First scheduled "" as the start day of the study
+      with a window of 0 day(s) before and 0 day(s) after
+      and no compliance window
+      and then repeats
+      limited to
+    Tasks:
+      Task: `Task 1`
+
+      Description: " "
+      Steps:
+
+    Event: `Visit 1`
+    This is a `site visit` that is also referred to as ""
+
+    Description: " "
+    Schedule:
+      First scheduled when `Screen` `completed` `+` 3 `weeks`
+      with a window of 0 day(s) before and 0 day(s) after
+      and no compliance window
+      and then repeats
+      limited to
+    Tasks:
+
+    Event: `Visit 2`
+    This is a `site visit` that is also referred to as ""
+
+    Description: " "
+    Schedule:
+      First scheduled when `Visit 1` `completed` `+` 3 `months`
+      with a window of 0 day(s) before and 0 day(s) after
+
+      and then repeats
+      limited to
+    Tasks:
+
+Tasks:
+
+System Accesses:
+
+Staffing:
+
+Roles:
