@@ -1,4 +1,4 @@
-language StudyConfigurationModel
+  language StudyConfigurationModel
 
 modelunit Availability { //TODO: rename StaffAvailability
   name: identifier = "Availability";

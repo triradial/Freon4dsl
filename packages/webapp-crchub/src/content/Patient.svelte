@@ -136,6 +136,7 @@
     onDestroy(() => {
         setDrawerVisibility("studyChecklist", false);
         setDrawerVisibility("patientTimelineChart", false);
+        setDrawerVisibility("visitChecklist", false);
         if (unsubscribeChangeManager) unsubscribeChangeManager();
     });
 

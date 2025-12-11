@@ -889,9 +889,16 @@ appbar header {
 }
 
 .drawer-buttons {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   padding: 0.075rem;
+  z-index: 851;
+  background-color: var(--drawer-background, #ffffff);
+  pointer-events: auto;
 }
 
 .drawer-button {
@@ -910,6 +917,7 @@ appbar header {
   align-items: stretch;
   overflow: hidden;
   box-sizing: border-box;
+  margin-right: 2.75rem; /* Space for the buttons */
 }
 
 .drawer-content {
