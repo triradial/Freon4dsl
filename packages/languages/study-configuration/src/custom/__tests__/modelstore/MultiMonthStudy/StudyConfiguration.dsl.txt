@@ -1,10 +1,12 @@
 Periods:
   Period: `Screening`
 
+  Description: " "
   Events:
     Event: `Screen`
     This is a `site visit` that is also referred to as ""
 
+    Description: " "
     Schedule:
       First scheduled "" as the start day of the study
       with a window of 0 day(s) before and 0 day(s) after

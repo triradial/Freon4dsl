@@ -1,10 +1,9 @@
 <script lang="ts">
-    import { StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { getChecklistAsMarkdown, StudyConfiguration } from "@freon4dsl/study-configuration";
     import MarkdownIt from "markdown-it";
     import pdfMake from "pdfmake/build/pdfmake.js";
     import pdfFonts from "pdfmake/build/vfs_fonts.js";
     import { createEventDispatcher, onMount } from "svelte";
-    import { getChecklistAsMarkdown } from "../../services/app/study-timeline.js";
     import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import ContentLoader from "./ContentLoader.svelte";

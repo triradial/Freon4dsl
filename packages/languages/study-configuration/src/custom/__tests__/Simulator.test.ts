@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { beforeEach, describe, expect, it } from "vitest";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { Availability, DateRange, PatientHistory, PatientVisit, Period, StudyConfiguration, StudyConfigurationModel } from "../../language/gen/index.js";
+import { Availability, DateRange, PatientHistory, PatientInfo, PatientVisit, Period, StudyConfiguration, StudyConfigurationModel } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 import { Sim } from "../simjs/sim.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
@@ -893,6 +893,13 @@ describe("Study Simulation", () => {
             studyFolderPath
           ) as StudyConfiguration;
           studyConfigurationModel.addUnit(studyConfigurationUnit);
+
+          const patientInfoUnit = utils.loadModelUnit(
+            studyName,
+            "PatientInfo",
+            studyFolderPath
+          ) as PatientInfo;
+          studyConfigurationModel.addUnit(patientInfoUnit);
 
           // WHEN the study is written to DSL text format
           const writer = new StudyConfigurationModelModelUnitWriter();
