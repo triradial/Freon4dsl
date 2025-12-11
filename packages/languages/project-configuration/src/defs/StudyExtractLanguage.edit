@@ -128,7 +128,7 @@ ArmRow {
         [fragment armRowDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Arm Row"]
     ]
     fragment armRowDetails [
-        ${name}
+         {name}
     ]
 }
 

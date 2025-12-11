@@ -9,5 +9,5 @@ export { TimelineTableTemplate } from "./custom/templates/TimelineTableTemplate.
 export { WebformTemplate } from "./custom/templates/WebFormTemplate.js";
 export { Simulator } from "./custom/timeline/Simulator.js";
 export { Timeline } from "./custom/timeline/Timeline.js";
-export { copyPatientHistoryWithFilledDates, determineReferenceDate, findAndCopyPatientHistory, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getChecklistAsMarkdown, getTimelineAsOfADate, getTimelineChart, getTimelineTable } from "./custom/timeline/TimelineUtils.js";
+export { copyPatientHistoryWithFilledDates, determineReferenceDate, findAndCopyPatientHistory, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getChecklistAsMarkdown, getTimelineAsOfADate, getTimelineChart, getTimelineTable, getVisitChecklistAsMarkdown, studyTimelineChart } from "./custom/timeline/TimelineUtils.js";
 // export { SharedTask } from "./language/gen/Task.js";

@@ -177,3 +177,41 @@ export function getChecklistAsMarkdown(studyConfigurationUnit: StudyConfiguratio
     return studyChecklistAsMarkdown;
 }
 
+/**
+ * Generates a timeline chart HTML for a study configuration as of a specific reference date.
+ */
+export function studyTimelineChart(
+    node: StudyConfiguration,
+    referenceDate: Date,
+    hasPatientKey: boolean = false,
+    hasStaffKey: boolean = false
+): RtString {
+    const timeline = getTimelineAsOfADate(node, referenceDate);
+    const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+    const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
+    const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, hasPatientKey, hasStaffKey);
+    const html = `<div class="limited-width-container">${chartHTML}</div>`;
+    return new RtString(html);
+}
+
+/**
+ * Generates a visit checklist as markdown for a specific date in a study configuration.
+ * @param studyConfigurationUnit The study configuration
+ * @param targetDate The date to get visits for
+ * @param referenceDate Optional reference date for timeline generation (defaults to targetDate)
+ * @returns Markdown string with the visit checklist for that date
+ */
+export function getVisitChecklistAsMarkdown(
+    studyConfigurationUnit: StudyConfiguration,
+    targetDate: Date,
+    referenceDate?: Date
+): string {
+    // Get timeline for the reference date (or use the target date as reference if not provided)
+    const refDate = referenceDate || targetDate;
+    const timeline = getTimelineAsOfADate(studyConfigurationUnit, refDate);
+    
+    // Get the visit checklist for the target date
+    const markdown = StudyChecklistDocumentTemplate.getVisitForDateAsMarkdown(timeline, targetDate, studyConfigurationUnit);
+    return markdown;
+}
+

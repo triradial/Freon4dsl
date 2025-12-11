@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { StudyConfiguration, getVisitChecklistAsMarkdown } from "@freon4dsl/study-configuration";
     import MarkdownIt from "markdown-it";
     import { createEventDispatcher } from "svelte";
-    import { getVisitChecklistAsMarkdown } from "../../services/app/study-timeline.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { setDrawerTitle } from "../../services/stores/side-drawer-store.js";
     import ContentLoader from "./ContentLoader.svelte";
