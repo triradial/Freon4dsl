@@ -1,10 +1,8 @@
 <script lang="ts">
+    import { ExternalStringBox, RtString } from "@freon4dsl/core";
+    import { getTimelineChart, type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { onMount } from "svelte";
-    import { ExternalStringBox } from "@freon4dsl/core";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
-    import { getTimelineChart } from "../../services/app/patient-timeline.js";
 
     export let box: ExternalStringBox;
 

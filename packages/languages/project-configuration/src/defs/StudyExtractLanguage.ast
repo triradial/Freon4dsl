@@ -7,30 +7,73 @@ model StudyExtractModel {
 }
 
 modelunit StudyExtract {
-    name: identifier = "Study Extract";
-    references: ReferenceCollection;
+    references: References;
     topics: Topic[];
-    summary: Description;
-}
-
-concept ReferenceCollection {
-    study: ReferenceItem;
-    bibliography: ReferenceItem;
-    arm: ReferenceItem;
-}
-
-concept ReferenceItem {
-    label: string;
-    identifier: string;
     description: Description;
-    source: string;
+}
+
+concept References {
+    name: string;
+    study: Study;
+    bibliography: BibliographyTable;
+    arm: Arm;
+}
+
+concept Study {
+    columns: Column[];
+    description: Description;
+}
+
+concept BibliographyTable {
+    rootColumns: Column[];
+    rows: BibliographyRow[];
+    description: Description;
+}
+
+concept Arm {
+    table: Table;
+    description: Description;
 }
 
 concept Topic {
-    title: string;
+    name: string;
     overview: Description;
     details: Description;
-    subtopics: Topic[];
+    tables: Table[];
+}
+
+concept Table {
+    name: string;
+    rootColumns: Column[];
+    description: Description;
+}
+
+concept Column {
+    name: string;
+    subcolumns: Column[];
+    description: Description;
+    dataType: string;
+}
+
+concept StudyRow {
+    cellValues: CellValue[];
+}
+
+concept BibliographyRow {
+    cellValues: CellValue[];
+}
+
+concept ArmRow {
+    cellValues: CellValue[];
+}
+
+concept TableRow {
+    cellValues: CellValue[];
+}
+
+concept CellValue {
+    columnPath: string;
+    value: string;
 }
 
 concept Description {

@@ -76,9 +76,14 @@ export class Timeline extends RtObject {
 
     getEndOfTimeline(): string {
         const referenceDate = this.getReferenceDate();
-        const year = referenceDate.getFullYear();
-        const month = referenceDate.getMonth();
-        const day = referenceDate.getDate() + this.getMaxDayOnTimeline() + 1;
+        // Create a new date to avoid mutating the reference date
+        const endDate = new Date(referenceDate);
+        // Add the max day on timeline (plus 1 to include that day)
+        endDate.setDate(endDate.getDate() + this.getMaxDayOnTimeline() + 1);
+        
+        const year = endDate.getFullYear();
+        const month = endDate.getMonth();
+        const day = endDate.getDate();
 
         return `new Date(${year}, ${month}, ${day})`;
     }
@@ -375,7 +380,7 @@ export class Timeline extends RtObject {
                 patientVisit.actualVisitDate.year,
             );
             const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
-            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline, undefined, patientIdentifier || patientHistory.patient_id));
+            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline, undefined, patientIdentifier || patientHistory.patient_id, patientVisit.status));
             console.log("Added patient visit event: " + patientVisit.visit.name + " on day: " + dayOnTimeline + (patientIdentifier ? " for patient: " + patientIdentifier : ""));
         });
         patientHistory.patientNotAvailableDates.forEach((patientNotAvailableDate) => {
@@ -578,7 +583,13 @@ export class Timeline extends RtObject {
     
     // The DateConcept is updated inline hence no return value.
     public static fillDateConceptFromAsString(dateConcept: DateConcept) {
-        TimelineLogger.log("fillDateConceptFromAsString: " + dateConcept.dateAsString);
+        console.log("fillDateConceptFromAsString other fields: " + dateConcept.day + " " + dateConcept.month + " " + dateConcept.year);
+        TimelineLogger.log(
+          "fillDateConceptFromAsString: " + dateConcept.dateAsString
+        );
+        console.log(
+          "fillDateConceptFromAsString: " + dateConcept.dateAsString
+        );
         // Add "T00:00:00" to ensure the date is interpreted at midnight local time
         const actualDate = new Date(dateConcept.dateAsString + "T00:00:00");
         TimelineLogger.log("actualDate: " + actualDate);

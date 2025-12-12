@@ -1,4 +1,5 @@
 import { Timeline } from "../../custom/timeline/Timeline.js";
+import { ScheduledEventInstance } from "../../custom/timeline/ScheduledEventInstance.js";
 import { NoComplianceWindow, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
@@ -156,6 +157,102 @@ export class StudyChecklistDocumentTemplate {
     }
 
     /**
+     * Helper method to render a step as markdown
+     * @param builder The markdown builder
+     * @param step The step to render
+     * @param stepCounter The step index (0-based)
+     */
+    private static renderStepAsMarkdown(builder: MarkdownBuilder, step: any, stepCounter: number): void {
+        // Step heading with spacing and visual indicator
+        builder.addHeading(4, `Step ${stepCounter + 1}: ${step.name}`);
+        if (step.description?.text) {
+            builder.addParagraph(step.description.text, true);
+        }
+
+        if (step.references.length > 0) {
+            builder.addParagraph("**REFERENCES**");
+            const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
+            if (referencesMarkdown) {
+                builder.addRaw(referencesMarkdown);
+            }
+        }
+
+        if (step.people.length > 0) {
+            builder.addParagraph("**PEOPLE**");
+            const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
+            if (peopleMarkdown) {
+                builder.addRaw(peopleMarkdown);
+            }
+        }
+    }
+
+    /**
+     * Helper method to render a task as markdown
+     * @param builder The markdown builder
+     * @param task The task to render (can be Task or TaskReference)
+     * @param taskCounter The task index (0-based)
+     * @param taskPrefix Optional prefix for the task heading (e.g., emoji)
+     */
+    private static renderTaskAsMarkdown(builder: MarkdownBuilder, task: Task | TaskReference, taskCounter: number, taskPrefix: string = ""): void {
+        const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
+        
+        // Task heading with spacing and visual indicator
+        builder.addHeading(3, `${taskPrefix}Task: ${t.name}`);
+        
+        if (t.description?.text) {
+            builder.addParagraph(t.description.text, true);
+        }
+
+        t.steps.forEach((step, stepCounter) => {
+            StudyChecklistDocumentTemplate.renderStepAsMarkdown(builder, step, stepCounter);
+        });
+    }
+
+    /**
+     * Helper method to render an event as markdown
+     * @param builder The markdown builder
+     * @param writer The model writer
+     * @param event The event to render
+     * @param eventCounter The event index (0-based)
+     * @param headingPrefix Optional prefix for the event heading (e.g., emoji)
+     * @param taskPrefix Optional prefix for task headings (e.g., emoji)
+     */
+    private static renderEventAsMarkdown(builder: MarkdownBuilder, writer: StudyConfigurationModelModelUnitWriter, event: any, eventCounter: number, headingPrefix: string = "", taskPrefix: string = ""): void {
+        const timeOfDay = event.schedule.eventTimeOfDay
+            ? "limited to " + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
+            : "";
+        const eventRepeat = event.schedule.eventRepeat
+            ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
+            : "";
+        let complianceWindow = " with no extra compliance window";
+        if (!event.schedule.eventWindow.complianceWindow) {
+            event.schedule.eventWindow.complianceWindow = new NoComplianceWindow();
+        }
+        complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
+
+        // Event heading with spacing and visual indicator
+        builder.addHeading(2, `${headingPrefix}${event.name}`);
+        
+        if (event.description?.text) {
+            builder.addParagraph(event.description.text, true);
+        }
+
+        const schedulingInfo = [
+            `This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}`,
+            `with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}`
+        ];
+        
+        if (eventRepeat) schedulingInfo.push(eventRepeat);
+        if (timeOfDay) schedulingInfo.push(timeOfDay);
+        
+        builder.addParagraph(schedulingInfo.join(' '), true);
+
+        event.tasks.forEach((task, taskCounter) => {
+            StudyChecklistDocumentTemplate.renderTaskAsMarkdown(builder, task, taskCounter, taskPrefix);
+        });
+    }
+
+    /**
      * Build a markdown string of the form
      *
      * @param studyConfiguration
@@ -170,69 +267,7 @@ export class StudyChecklistDocumentTemplate {
             builder.addHeading(1, period.name);
 
             period.events.forEach((event, eventCounter) => {
-                const timeOfDay = event.schedule.eventTimeOfDay
-                    ? "limited to " + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
-                    : "";
-                const eventRepeat = event.schedule.eventRepeat
-                    ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
-                    : "";
-                let complianceWindow = " with no extra compliance window";
-                if (!event.schedule.eventWindow.complianceWindow) {
-                    event.schedule.eventWindow.complianceWindow = new NoComplianceWindow();
-                }
-                complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
-
-                // Event heading with spacing and visual indicator
-                builder.addHeading(2, `📋 ${event.name}`);
-                
-                if (event.description?.text) {
-                    builder.addParagraph(event.description.text, true);
-                }
-
-                const schedulingInfo = [
-                    `This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}`,
-                    `with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}`
-                ];
-                
-                if (eventRepeat) schedulingInfo.push(eventRepeat);
-                if (timeOfDay) schedulingInfo.push(timeOfDay);
-                
-                builder.addParagraph(schedulingInfo.join(' '), true);
-
-                event.tasks.forEach((task, taskCounter) => {
-                    const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
-                    
-                    // Task heading with spacing and visual indicator
-                    builder.addHeading(3, `✅ Task: ${t.name}`);
-                    
-                    if (t.description?.text) {
-                        builder.addParagraph(t.description.text, true);
-                    }
-
-                    t.steps.forEach((step, stepCounter) => {
-                        // Step heading with spacing and visual indicator
-                        builder.addHeading(4, `Step ${stepCounter + 1}: ${step.name}`);
-                        if (step.description?.text) {
-                            builder.addParagraph(step.description.text, true);
-                        }
-
-                        if (step.references.length > 0) {
-                            builder.addParagraph("* REFERENCES**");
-                            const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
-                            if (referencesMarkdown) {
-                                builder.addRaw(referencesMarkdown);
-                            }
-                        }
-
-                        if (step.people.length > 0) {
-                            builder.addParagraph("**PEOPLE**");
-                            const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
-                            if (peopleMarkdown) {
-                                builder.addRaw(peopleMarkdown);
-                            }
-                        }
-                    });
-                });
+                StudyChecklistDocumentTemplate.renderEventAsMarkdown(builder, writer, event, eventCounter);
             });
 
             // Add visual separator between periods (except after the last one)
@@ -275,6 +310,75 @@ export class StudyChecklistDocumentTemplate {
             }
             return line;
         }).join('\n');
+    }
+
+    /**
+     * Get visits/events for a specific date as markdown.
+     * This creates a checklist for just the events scheduled for that date.
+     * Uses the main template rendering logic to eliminate duplication.
+     * 
+     * @param timeline The timeline to search
+     * @param targetDate The date to get visits for
+     * @param studyConfiguration The study configuration (needed for event details)
+     * @returns Markdown string with the visit checklist for that date
+     */
+    static getVisitForDateAsMarkdown(timeline: Timeline, targetDate: Date, studyConfiguration: StudyConfiguration): string {
+        const builder = new MarkdownBuilder();
+        const writer = new StudyConfigurationModelModelUnitWriter();
+        
+        // Normalize target date to midnight for comparison
+        const normalizedTargetDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0);
+        
+        // Find the day number that corresponds to this date
+        // We need to search through all days in the timeline to find the one matching the target date
+        let targetDay: number | undefined = undefined;
+        
+        // Search through all days in the timeline to find the one matching the target date
+        for (const timelineDay of timeline.getDays()) {
+            const eventInstances = timelineDay.getEventInstances();
+            if (eventInstances.length > 0) {
+                const dayDate = eventInstances[0].getStartDayAsDate(timeline);
+                if (dayDate) {
+                    const normalizedDayDate = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 0, 0, 0);
+                    if (normalizedDayDate.getTime() === normalizedTargetDate.getTime()) {
+                        targetDay = timelineDay.day;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (targetDay === undefined) {
+            builder.addHeading(1, `No visits scheduled for ${normalizedTargetDate.toLocaleDateString()}`);
+            return builder.build();
+        }
+        
+        // Get all event instances for this day
+        const eventInstances = timeline.getScheduledEventInstancessForDay(targetDay);
+        
+        if (eventInstances.length === 0) {
+            builder.addHeading(1, `No visits scheduled for ${normalizedTargetDate.toLocaleDateString()}`);
+            return builder.build();
+        }
+        
+        // Add date heading
+        builder.addHeading(1, `Checklist for ${normalizedTargetDate.toLocaleDateString()}`);
+        builder.addEmptyLine();
+        
+        // Format each event instance using the main template rendering logic
+        eventInstances.forEach((eventInstance, index) => {
+            const event = eventInstance.getScheduledEvent().configuredEvent;
+            
+            // Use the main template method to render the event (with emoji prefixes for visit checklist)
+            StudyChecklistDocumentTemplate.renderEventAsMarkdown(builder, writer, event, index, "📋 ", "✅ ");
+            
+            // Add separator between events (except after the last one)
+            if (index < eventInstances.length - 1) {
+                builder.addSectionBreak();
+            }
+        });
+        
+        return builder.build();
     }
 
     static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline, showHeadingNumbers: boolean = false): string {

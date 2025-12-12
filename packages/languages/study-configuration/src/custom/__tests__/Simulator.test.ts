@@ -1,7 +1,8 @@
+import * as fs from "fs";
 import * as path from "path";
 import { beforeEach, describe, expect, it } from "vitest";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { Availability, DateRange, PatientHistory, PatientVisit, Period, StudyConfiguration, StudyConfigurationModel } from "../../language/gen/index.js";
+import { Availability, DateRange, PatientHistory, PatientInfo, PatientVisit, Period, StudyConfiguration, StudyConfigurationModel } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 import { Sim } from "../simjs/sim.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
@@ -875,24 +876,49 @@ describe("Study Simulation", () => {
             testStudyInFile("ScheduleExample3", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
         });
 
-        it("writes ScheduleExample3 to DSL text format", () => {
-            // GIVEN a study configuration loaded from ScheduleExample3
-            const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "ScheduleExample3");
-            const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample3", "StudyConfiguration", studyFolderPath) as StudyConfiguration;
-            studyConfigurationModel.addUnit(studyConfigurationUnit);
+        it("writes StudyConfiguration to DSL text format", () => {
+          // GIVEN a study configuration
+          // const studyName = "ScheduleExample3";
+          const studyName = "MultiMonthStudy";
+          const studyFolderPath: string = path.resolve(
+            __dirname,
+            "..",
+            "__tests__",
+            "modelstore",
+            studyName
+          );
+          const studyConfigurationUnit = utils.loadModelUnit(
+            studyName,
+            "StudyConfiguration",
+            studyFolderPath
+          ) as StudyConfiguration;
+          studyConfigurationModel.addUnit(studyConfigurationUnit);
 
-            // WHEN the study is written to DSL text format
-            const writer = new StudyConfigurationModelModelUnitWriter();
-            const dslText = writer.writeToString(studyConfigurationUnit);
+          const patientInfoUnit = utils.loadModelUnit(
+            studyName,
+            "PatientInfo",
+            studyFolderPath
+          ) as PatientInfo;
+          studyConfigurationModel.addUnit(patientInfoUnit);
 
-            // THEN save the DSL text to a file for inspection
-            const fs = require("fs");
-            const outputPath = path.resolve(__dirname, "..", "__tests__", "modelstore", "ScheduleExample3", "StudyConfiguration.dsl.txt");
-            fs.writeFileSync(outputPath, dslText, "utf-8");
+          // WHEN the study is written to DSL text format
+          const writer = new StudyConfigurationModelModelUnitWriter();
+          const dslText = writer.writeToString(studyConfigurationUnit);
 
-            // Verify the text is not empty
-            expect(dslText).toBeTruthy();
-            expect(dslText.length).toBeGreaterThan(0);
+          // THEN Verify the DSL text is not empty
+          expect(dslText).toBeTruthy();
+          expect(dslText.length).toBeGreaterThan(0);
+
+          // Save the DSL text to a file for inspection
+          const outputPath = path.resolve(
+            __dirname,
+            "..",
+            "__tests__",
+            "modelstore",
+            studyName,
+            "StudyConfiguration.dsl.txt"
+          );
+          fs.writeFileSync(outputPath, dslText, "utf-8");
         });
 
         it("generate a chart for the example study 3 loaded from DSL text", () => {
@@ -982,7 +1008,6 @@ describe("Study Simulation", () => {
               { start: new Date(2012, 04, 06, 00, 00, 00), end: new Date(2012, 04, 07, 23, 59, 59), group: "Follow up (5)", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Follow up (5)46" },
               ])`;
             // GIVEN a study configuration loaded from the DSL text file written by the previous test
-            const fs = require("fs");
             const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "ScheduleExample3");
             const dslTextPath = path.resolve(studyFolderPath, "StudyConfiguration.dsl.txt");
             
@@ -1966,20 +1991,20 @@ describe("Study Simulation", () => {
 
         it("generates a CHART for a three visit timeline for a visit that repeats twice", () => {
             const expectedTimelineDataAsScript = `  var groups = new vis.DataSet([
-    { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-    { "content": "Visit 1", "id": "Visit 1" },
-  ]);
+                    { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+                    { "content": "Visit 1", "id": "Visit 1" },
+                ]);
 
-var items = new vis.DataSet([
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
-    { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
-    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
-    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },{ start: new Date(2024, 00, 07, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 14" },
-    { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 15" },
-    { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 16" },{ start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 17" },
-    { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 18" },
-    { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 19" },
-  ])`;
+                var items = new vis.DataSet([
+                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
+                    { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
+                    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
+                    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },{ start: new Date(2024, 00, 07, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 14" },
+                    { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 15" },
+                    { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 16" },{ start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 17" },
+                    { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 18" },
+                    { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 19" },
+                ])`;
             // GIVEN
             let listOfEventsToAdd: utils.EventsToAdd[] = [{ eventName: "Visit 1", daysToAdd: 0, repeat: 2, period: "Screening" }];
             studyConfigurationUnit = utils.addRepeatingEvents(studyConfigurationUnit, "Screening", listOfEventsToAdd);
@@ -1992,6 +2017,91 @@ var items = new vis.DataSet([
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, "", true);
         });
+
+        it("generates a CHART for a multi-month timeline", () => {
+          const expectedTimelineDataAsScript = `        var groups = new vis.DataSet([
+            { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+            { "content": "Screen", "id": "Screen" },
+            { "content": "Visit 1", "id": "Visit 1" },
+            { "content": "Visit 2", "id": "Visit 2" },
+          ]);
+
+            var items = new vis.DataSet([
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 03, 21, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },          
+                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Screen", className: "scheduled-event", title: "Screen:  as the start day of the study", content: "&nbsp;", id: "Screen1" },
+                { start: new Date(2024, 00, 22, 00, 00, 00), end: new Date(2024, 00, 22, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: when Screen completed + 3 weeks", content: "&nbsp;", id: "Visit 12" },
+                { start: new Date(2024, 03, 21, 00, 00, 00), end: new Date(2024, 03, 21, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: when Visit 1 completed + 3 months", content: "&nbsp;", id: "Visit 23" },
+            ])`;
+          // GIVEN
+            const dslText = `
+Periods:
+  Period: \`Screening\`
+
+  Events:
+    Event: \`Screen\`
+    This is a \`site visit\` 
+
+    Schedule:
+      First scheduled "" as the start day of the study
+      with a window of 0 day(s) before and 0 day(s) after
+      and no compliance window and then repeats limited to
+    Tasks:
+      Task: \`Task 1\`
+
+        Steps:
+
+    Event: \`Visit 1\`
+    This is a \`site visit\` 
+
+    Schedule:
+      First scheduled when \`Screen\` \`completed\` \`+\` 3 \`weeks\`
+      with a window of 0 day(s) before and 0 day(s) after
+      and no compliance window and then repeats limited to
+    Tasks:
+
+    Event: \`Visit 2\`
+    This is a \`site visit\` 
+
+    Schedule:
+      First scheduled when \`Visit 1\` \`completed\` \`+\` 3 \`months\`
+      with a window of 0 day(s) before and 0 day(s) after
+      and no compliance window and then repeats limited to
+    Tasks:
+
+Tasks:
+
+System Accesses:
+
+Staffing:
+
+Roles:          `;
+          // Create a new model for this test to avoid conflicts with the unit created in beforeEach
+          const testModel = studyConfigurationModelEnvironment.newModel(
+            "TestStudyModelForDSL"
+          ) as StudyConfigurationModel;
+
+          // Parse the DSL text into a StudyConfiguration model unit
+          const studyConfigurationUnit =
+            studyConfigurationModelEnvironment.reader.readFromString(
+              dslText,
+              "StudyConfiguration",
+              testModel,
+              "StudyConfiguration.dsl.txt"
+            ) as StudyConfiguration;
+
+          // WHEN the study is simulated and a timeline is generated
+          let simulator = new Simulator(studyConfigurationUnit);
+          simulator.run();
+          let timeline = simulator.timeline;
+
+          utils.checkTimelineChart(
+            timeline,
+            expectedTimelineDataAsScript,
+            "",
+            true
+          );
+        });
+
     });
 
     describe("Generation of Timeline Table from Timeline", () => {

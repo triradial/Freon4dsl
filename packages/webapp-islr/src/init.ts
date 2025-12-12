@@ -4,6 +4,8 @@ import { StudyExtractModelEnvironment } from "@freon4dsl/project-configuration";
 import { env } from "./config/env.js";
 import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 
+import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
+import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
 import AbbreviationComponent from "./components/custom/AbbreviationComponent.svelte";
 import DatePickerComponent from "./components/custom/DatePickerComponent.svelte";
 import DateRangePickerComponent from "./components/custom/DateRangePickerComponent.svelte";
@@ -75,6 +77,8 @@ setCustomComponents([
     { component: UrlInputComponent, knownAs: "UrlInputComponent" },
     { component: PhoneInputComponent, knownAs: "PhoneInputComponent" },
     { component: SingleLineItemComponent, knownAs: "SingleLineItemComponent" },
+    { component: ListGroupComponent, knownAs: "ListGroupComponent" },
+    { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
 ])
 
 LOGGER.log('--- END ---');

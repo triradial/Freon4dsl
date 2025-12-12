@@ -29,7 +29,7 @@ Period {
 Event {
     [ 
         Event:${name}
-        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
+        This is a ${typeOfEvent} [? that is also referred to as ${alternativeName} ]
         ${description}
         Schedule:
           ${schedule}
@@ -164,5 +164,5 @@ SourceToTargetMapping {
 }
 
 Description {
-    [ Description:${rawText} ]
+    [ [? Description:${rawText} ] ]
 }

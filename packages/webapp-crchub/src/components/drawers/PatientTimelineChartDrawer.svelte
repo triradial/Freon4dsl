@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { AST, RtString } from "@freon4dsl/core";
-    import { PatientHistory, PatientInfo, Timeline, type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { RtString } from "@freon4dsl/core";
+    import { PatientHistory, PatientInfo, copyPatientHistoryWithFilledDates, determineReferenceDate, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getTimelineAsOfADate, type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { get } from "svelte/store";
-    import { getTimelineAsOfADate } from "../../services/app/patient-timeline.js";
     import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { setDrawerTitle } from "../../services/stores/side-drawer-store.js";
@@ -14,7 +13,6 @@
     let chartHtml = $state<string>("");
     let error = $state<string | null>(null);
     let container = $state<HTMLElement | null>(null);
-    let patientInfo: PatientInfo | undefined;
 
     export function refresh() {
         if (showAllPatients || !id) {
@@ -57,63 +55,7 @@
         return new RtString(html);
     }
 
-    function fillDateConcept(dateConcept: any) {
-        Timeline.fillDateConceptFromAsString(dateConcept);
-    }
 
-    /**
-     * Copies a patient history and fills all date concepts.
-     * This creates an isolated copy to avoid editor observation issues.
-     */
-    function copyPatientHistoryWithFilledDates(copyOfPatientHistory: PatientHistory): PatientHistory {
-        const copiedHistory: PatientHistory = PatientHistory.create({});
-        AST.change(() => {
-            // Process visits - copy first, then modify date concepts
-            for (const visit of copyOfPatientHistory.patientVisits) {
-                const updatedVisit = visit.copy();
-                if (updatedVisit.actualVisitDate) {
-                    fillDateConcept(updatedVisit.actualVisitDate);
-                }
-                copiedHistory.patientVisits.push(updatedVisit);
-            }
-            // Process date ranges - copy first, then modify date concepts
-            for (const dateRange of copyOfPatientHistory.patientNotAvailableDates) {
-                const updatedDateRange = dateRange.copy();
-                if (updatedDateRange.startDate) {
-                    fillDateConcept(updatedDateRange.startDate);
-                }
-                if (updatedDateRange.endDate) {
-                    fillDateConcept(updatedDateRange.endDate);
-                }
-                copiedHistory.patientNotAvailableDates.push(updatedDateRange);
-            }
-        });
-        return copiedHistory;
-    }
-
-    /**
-     * Determines the reference date for the timeline.
-     * If a reference date is provided, it's normalized to local midnight.
-     * Otherwise, uses the first visit date from the patient history, or today if no visits exist.
-     */
-    function determineReferenceDate(referenceDate: Date | undefined, patientHistory?: PatientHistory): Date {
-        if (referenceDate !== undefined) {
-            // Normalize to local midnight
-            return new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate(), 0, 0, 0);
-        }
-        
-        if (patientHistory && patientHistory.patientVisits.length > 0) {
-            // Parse the date string and set to local midnight (00:00:00) to avoid timezone issues
-            // dateAsString format is "YYYY-MM-DD", parse it to ensure local time
-            const dateStr = patientHistory.patientVisits[0].actualVisitDate.dateAsString;
-            const [year, month, day] = dateStr.split('-').map(Number);
-            return new Date(year, month - 1, day, 0, 0, 0); // month is 0-indexed
-        }
-        
-        // Default to today at local midnight
-        const now = new Date(Date.now());
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-    }
 
     /**
      * Gets PatientInfo and StudyConfiguration units for a study.
@@ -143,21 +85,16 @@
         }
 
         // Get study units
-        const { patientInfo: fetchedPatientInfo, studyConfig } = await getPatientAndStudyUnits(fetchedPatient.studyId);
-        patientInfo = fetchedPatientInfo;
+        const { patientInfo, studyConfig } = await getPatientAndStudyUnits(fetchedPatient.studyId);
         
         // Find and copy the matching patient history
-        const copyOfPatientHistory = fetchedPatientInfo.patientHistories.find(
-            ph => ph.patient_id === fetchedPatient.patientNumber
-        );
-        
-        let patientHistory: PatientHistory | undefined;
-        if (copyOfPatientHistory) {
-            patientHistory = copyPatientHistoryWithFilledDates(copyOfPatientHistory);
-        } else {
+        const originalHistory = findPatientHistoryByPatientNumber(patientInfo.patientHistories, fetchedPatient.patientNumber);
+        if (!originalHistory) {
             console.warn("No matching patient history found so chart will just show study schedule!");
-            patientHistory = PatientHistory.create({});
         }
+        const patientHistory = originalHistory 
+            ? copyPatientHistoryWithFilledDates(originalHistory)
+            : PatientHistory.create({});
         
         // Determine reference date
         const referenceDateForTimeline = determineReferenceDate(referenceDate, patientHistory);
@@ -180,19 +117,11 @@
         }
 
         // Get study units
-        const { patientInfo: fetchedPatientInfo, studyConfig } = await getPatientAndStudyUnits(studyId);
-        patientInfo = fetchedPatientInfo;
+        const { patientInfo, studyConfig } = await getPatientAndStudyUnits(studyId);
 
         // Determine reference date from first patient visit if available
         // Find the first patient history with visits to use as reference
-        let firstPatientHistoryWithVisits: PatientHistory | undefined;
-        for (const patient of allPatients) {
-            const patientHistory = fetchedPatientInfo.patientHistories.find(ph => ph.patient_id === patient.patientNumber);
-            if (patientHistory && patientHistory.patientVisits.length > 0) {
-                firstPatientHistoryWithVisits = patientHistory;
-                break; // Use first patient's first visit as reference
-            }
-        }
+        const firstPatientHistoryWithVisits = findFirstPatientHistoryWithVisits(patientInfo.patientHistories, allPatients);
         
         const referenceDateForTimeline = determineReferenceDate(referenceDate, firstPatientHistoryWithVisits);
 
@@ -201,12 +130,11 @@
 
         // Add events for all patients
         for (const patient of allPatients) {
-            const copyOfPatientHistory = fetchedPatientInfo.patientHistories.find(ph => ph.patient_id === patient.patientNumber);
-            if (copyOfPatientHistory) {
-                const copiedHistory = copyPatientHistoryWithFilledDates(copyOfPatientHistory);
-                
-                // Add patient events to timeline with patient identifier (use patient number)
-                const patientIdentifier = patient.patientNumber || patient.id;
+            const originalHistory = findPatientHistoryByPatientNumber(patientInfo.patientHistories, patient.patientNumber);
+            if (originalHistory) {
+                const copiedHistory = copyPatientHistoryWithFilledDates(originalHistory);
+                // Add patient events to timeline with patient identifier (use display name or patient number)
+                const patientIdentifier = patient.displayName || patient.name || patient.patientNumber;
                 timeline.addPatientEvents(copiedHistory, patientIdentifier);
             }
         }

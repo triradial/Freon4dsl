@@ -1,42 +1,178 @@
 editor default
 
+global {
+    external {
+        ListGroupComponent,
+        ItemGroupComponent,
+        ItemGroupComponent2,
+        SingleLineItemComponent,
+        DatePickerComponent,
+        DateRangePickerComponent,
+        TimePickerComponent,
+        MultilineTextComponent,
+        AbbreviationComponent,
+        DisplayNothingComponent,
+        TabFixComponent,
+        ReferenceComponent,
+        UrlInputComponent,
+        PhoneInputComponent
+    }
+}
+
 StudyExtract {
     [
-        Name: ${name}
-        Summary: ${summary}
-        References: ${references}
-        Topics: ${topics}
+        ${description}
+        ${references wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="References"}
+        ${topics wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Topics"}
     ]
 }
 
-ReferenceCollection {
+References {
     [
+        [fragment referencesDetails wrap = ItemGroupComponent cssClass="type1" canDelete="false" canExpand="true" isExpanded="true" selectable="false" label="References"]
+    ]
+    fragment referencesDetails [
+        ${name}
         Study: ${study}
         Bibliography: ${bibliography}
         Arm: ${arm}
     ]
 }
 
-ReferenceItem {
+Study {
     [
-        Label: ${label}
-        Identifier: ${identifier}
-        Source: ${source}
+        [fragment studyDetails wrap = ItemGroupComponent cssClass="type2" canDelete="false" canExpand="true" isExpanded="true" selectable="false" label="Study"]
+    ]
+    fragment studyDetails [
+        Columns: ${columns wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Columns"}
+        Description: ${description}
+    ]
+}
+
+BibliographyTable {
+    [
+        [fragment bibliographyTableDetails wrap = ItemGroupComponent cssClass="type2" canDelete="false" canExpand="true" isExpanded="true" selectable="false" label="Bibliography Table"]
+    ]
+    fragment bibliographyTableDetails [
+        Root Columns: ${rootColumns wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Root Columns"}
+        Rows: ${rows wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Rows"}
+        Description: ${description}
+    ]
+}
+
+Arm {
+    [
+        [fragment armDetails wrap = ItemGroupComponent cssClass="type2" canDelete="false" canExpand="true" isExpanded="true" selectable="false" label="Arm"]
+    ]
+    fragment armDetails [
+        Table: ${table}
         Description: ${description}
     ]
 }
 
 Topic {
     [
-        Title: ${title}
+        [fragment topicDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="true" selectable="false" label="Topic"]
+    ]
+    fragment topicDetails [
+        ${name}
         Overview: ${overview}
         Details: ${details}
-        Subtopics: ${subtopics}
+        Tables: ${tables wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Tables"}
+    ]
+}
+
+Table {
+    [
+        [fragment tableDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="true" selectable="false" label="Table"]
+    ]
+    fragment tableDetails [
+        ${name}
+        Root Columns: ${rootColumns wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Root Columns"}
+        Description: ${description}
+    ]
+}
+
+Column {
+    [
+        [fragment columnDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Column"]
+    ]
+    fragment columnDetails [
+        ${name}
+        Subcolumns: ${subcolumns wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Subcolumns"}
+        Description: ${description}
+        Data Type: ${dataType}
+    ]
+}
+
+StudyRow {
+    [
+        [fragment studyRowDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Study Row"]
+    ]
+    fragment studyRowDetails [
+        Cell Values: ${cellValues wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Cell Values"}
+    ]
+}
+
+BibliographyRow {
+    [
+        [fragment bibliographyRowDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Bibliography Row"]
+    ]
+    fragment bibliographyRowDetails [
+        Cell Values: ${cellValues wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Cell Values"}
+    ]
+}
+
+ArmRow {
+    [
+        [fragment armRowDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Arm Row"]
+    ]
+    fragment armRowDetails [
+         {name}
+    ]
+}
+
+TableRow {
+    [
+        [fragment tableRowDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Table Row"]
+    ]
+    fragment tableRowDetails [
+        Cell Values: ${cellValues wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Cell Values"}
+    ]
+}
+
+CellValue {
+    [
+        [fragment cellValueDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Cell Value"]
+    ]
+    fragment cellValueDetails [
+        Column Path: ${columnPath}
+        Value: ${value}
     ]
 }
 
 Description {
-    [ ${rawText} ]
+    [ ${rawText wrap=AbbreviationComponent} ]
 }
 
+DateConcept {
+    [
+        [fragment dateConceptDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Date"]
+    ]
+    fragment dateConceptDetails [
+        Date: ${dateAsString}
+        Day: ${day}
+        Month: ${month}
+        Year: ${year}
+    ]
+}
 
+DateRange {
+    [
+        [fragment dateRangeDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Date Range"]
+    ]
+    fragment dateRangeDetails [
+        Start Date: ${startDate}
+        End Date: ${endDate}
+    ]
+}

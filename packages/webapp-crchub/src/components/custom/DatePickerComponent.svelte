@@ -39,13 +39,22 @@
     }
 
     function setFocus() {
-        isOpen = true;
+        // Don't automatically open calendar when focus is set
+        // Allow direct editing of the date fields
         setTimeout(() => {
             const el: any = triggerElement;
             if (el && typeof el.focus === "function") {
                 el.focus();
             }
         }, 0);
+    }
+
+    function handleTriggerKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            isOpen = true;
+        }
     }
     const refresh = (why?: string): void => {
         getValue();
@@ -86,7 +95,7 @@
                         {/if}
                     </div>
                 {/each}
-                <DatePicker.Trigger bind:ref={triggerElement} class="text-foreground/60 hover:bg-muted active:bg-dark-10 ml-auto inline-flex size-8 items-center justify-center rounded-[5px] transition-all">
+                <DatePicker.Trigger bind:ref={triggerElement} class="text-foreground/60 hover:bg-muted active:bg-dark-10 ml-auto inline-flex size-8 items-center justify-center rounded-[5px] transition-all" onkeydown={handleTriggerKeyDown}>
                     <CalendarBlank class="size-6" />
                 </DatePicker.Trigger>
             {/snippet}

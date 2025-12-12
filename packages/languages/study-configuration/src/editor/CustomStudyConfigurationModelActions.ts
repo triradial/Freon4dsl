@@ -13,11 +13,13 @@ import {
 
 // import { addListElement } from '@freon4dsl/core';
 
+import { FreNodeReference } from "@freon4dsl/core";
 import {
     DateRange,
     PatientHistory,
     PatientInfo,
-    PatientVisit
+    PatientVisit,
+    PatientVisitStatus
 } from "../language/gen/index.js";
 
 
@@ -261,7 +263,10 @@ export const MANUAL_CUSTOM_ACTIONS: FreCustomAction[] = [
         trigger: "add",
         action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
             const patientHistory: PatientHistory = box.node as PatientHistory
-            const patientVisit: PatientVisit = PatientVisit.create({})
+            const plannedStatus = FreNodeReference.create<PatientVisitStatus>(PatientVisitStatus.planned, "planned");
+            const patientVisit: PatientVisit = PatientVisit.create({
+                status: plannedStatus
+            })
             patientHistory.patientVisits.push(patientVisit)
             return null
         },

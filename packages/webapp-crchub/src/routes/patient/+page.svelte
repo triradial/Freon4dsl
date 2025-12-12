@@ -20,6 +20,14 @@
       setDrawerVisibility("studyTimelineTable", true);
       setDrawerVisibility("studyChecklist", true);
       setDrawerVisibility("patientTimelineChart", true);
+      setDrawerVisibility("visitChecklist", true);
+      
+      // Set initial props for visitChecklist with today's date (will be updated when patient data loads)
+      if (id) {
+        const today = new Date();
+        setDrawerProps("visitChecklist", { patientId: id, studyId: "", selectedDate: today });
+      }
+      
       didSetVisibility = true;
     }
   });
@@ -43,6 +51,9 @@
           
           // Set drawer props once we have all the data
           setDrawerProps("patientTimelineChart", { id: id, studyId: patient.studyId, showAllPatients: false });
+          // Set visitChecklist drawer props with today's date as default
+          const today = new Date();
+          setDrawerProps("visitChecklist", { patientId: id, studyId: patient.studyId, selectedDate: today });
         } else {
           setBreadcrumb([
             { label: LABEL.STUDIES, href: "/studies" },
@@ -51,6 +62,9 @@
           
           // Set drawer props even if study not found (we still have patient id)
           setDrawerProps("patientTimelineChart", { id: id, showAllPatients: false });
+          // Set visitChecklist drawer props with today's date as default (even without studyId)
+          const today = new Date();
+          setDrawerProps("visitChecklist", { patientId: id, studyId: patient.studyId || "", selectedDate: today });
         }
       } else {
         setBreadcrumb([

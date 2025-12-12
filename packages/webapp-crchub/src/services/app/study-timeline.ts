@@ -1,6 +1,7 @@
 import { RtString } from "@freon4dsl/core";
 import * as Sim from "@freon4dsl/study-configuration";
 import { Simulator, StudyChecklistDocumentTemplate, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/study-configuration";
+import { getTimelineAsOfADate } from "./patient-timeline.js";
 
 
 export function getTimelineTable(node: StudyConfiguration) {
@@ -38,4 +39,25 @@ export function getChecklistAsMarkdown(studyConfigurationUnit: StudyConfiguratio
     let timeline = getTimeline(studyConfigurationUnit);
     const studyChecklistAsMarkdown = StudyChecklistDocumentTemplate.getStudyChecklistAsMarkdown(studyConfigurationUnit, timeline, showHeadingNumbers);
     return studyChecklistAsMarkdown;
+}
+
+export function studyTimelineChart(node: StudyConfiguration, referenceDate: Date, hasPatientKey: boolean = false, hasStaffKey: boolean = false) {
+    let timeline = getTimelineAsOfADate(node, referenceDate);
+
+    const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
+    const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
+    const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, hasPatientKey, hasStaffKey);
+    const html = `<div class="limited-width-container">${chartHTML}</div>`;
+
+    return new RtString(html);
+}
+
+export function getVisitChecklistAsMarkdown(studyConfigurationUnit: StudyConfiguration, targetDate: Date, referenceDate?: Date): string {
+    // Get timeline for the reference date (or use the target date as reference if not provided)
+    const refDate = referenceDate || targetDate;
+    let timeline = getTimelineAsOfADate(studyConfigurationUnit, refDate);
+    
+    // Get the visit checklist for the target date
+    const markdown = StudyChecklistDocumentTemplate.getVisitForDateAsMarkdown(timeline, targetDate, studyConfigurationUnit);
+    return markdown;
 }

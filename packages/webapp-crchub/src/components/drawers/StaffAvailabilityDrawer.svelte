@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { type StudyConfigurationModel } from "@freon4dsl/study-configuration";
+    import { getChecklistAsMarkdown, type StudyConfigurationModel } from "@freon4dsl/study-configuration";
     import { createEventDispatcher } from "svelte";
-    import { getChecklistAsMarkdown } from "../../services/app/study-timeline.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
 // PDFMake and Markdown-it imports
     import MarkdownIt from "markdown-it";
