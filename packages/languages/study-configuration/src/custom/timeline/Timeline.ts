@@ -583,7 +583,13 @@ export class Timeline extends RtObject {
     
     // The DateConcept is updated inline hence no return value.
     public static fillDateConceptFromAsString(dateConcept: DateConcept) {
-        TimelineLogger.log("fillDateConceptFromAsString: " + dateConcept.dateAsString);
+        console.log("fillDateConceptFromAsString other fields: " + dateConcept.day + " " + dateConcept.month + " " + dateConcept.year);
+        TimelineLogger.log(
+          "fillDateConceptFromAsString: " + dateConcept.dateAsString
+        );
+        console.log(
+          "fillDateConceptFromAsString: " + dateConcept.dateAsString
+        );
         // Add "T00:00:00" to ensure the date is interpreted at midnight local time
         const actualDate = new Date(dateConcept.dateAsString + "T00:00:00");
         TimelineLogger.log("actualDate: " + actualDate);

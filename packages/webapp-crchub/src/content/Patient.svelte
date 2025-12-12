@@ -29,7 +29,7 @@
     function debouncedSave() {
         if (saveTimeout) clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
-            handleSaveStudy();
+            handleSavePatient();
         }, 1000); // 1 second debounce
     }
 
@@ -88,6 +88,13 @@
                 return;
             }
             
+            // Only save if the change is from the unit we're editing, not from patientInfo
+            // This prevents infinite loops: when we modify patientInfo during save (lines 155-173),
+            // those changes have delta.unit === patientInfo, so they're ignored here
+            if (!unit || delta.unit !== unit) {
+                return;
+            }
+            
             if (delta instanceof FrePrimDelta) {
                 if (delta.oldValue != delta.newValue) {
                     debouncedSave();
@@ -140,7 +147,7 @@
         if (unsubscribeChangeManager) unsubscribeChangeManager();
     });
 
-    async function handleSaveStudy() {
+    async function handleSavePatient() {
         if (isSaving) {
             return;
         }

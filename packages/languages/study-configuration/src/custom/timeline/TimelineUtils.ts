@@ -11,11 +11,11 @@ import { Timeline } from "./Timeline.js";
  * Copies a patient history and fills all date concepts.
  * This creates an isolated copy to avoid editor observation issues.
  */
-export function copyPatientHistoryWithFilledDates(copyOfPatientHistory: PatientHistory): PatientHistory {
+export function copyPatientHistoryWithFilledDates(patientHistory: PatientHistory): PatientHistory {
     const copiedHistory: PatientHistory = PatientHistory.create({});
     AST.change(() => {
         // Process visits - copy first, then modify date concepts
-        for (const visit of copyOfPatientHistory.patientVisits) {
+        for (const visit of patientHistory.patientVisits) {
             const updatedVisit = visit.copy();
             if (updatedVisit.actualVisitDate) {
                 Timeline.fillDateConceptFromAsString(updatedVisit.actualVisitDate);
@@ -23,7 +23,7 @@ export function copyPatientHistoryWithFilledDates(copyOfPatientHistory: PatientH
             copiedHistory.patientVisits.push(updatedVisit);
         }
         // Process date ranges - copy first, then modify date concepts
-        for (const dateRange of copyOfPatientHistory.patientNotAvailableDates) {
+        for (const dateRange of patientHistory.patientNotAvailableDates) {
             const updatedDateRange = dateRange.copy();
             if (updatedDateRange.startDate) {
                 Timeline.fillDateConceptFromAsString(updatedDateRange.startDate);
