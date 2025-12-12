@@ -1,7 +1,6 @@
 <script lang="ts">
     import { RtString } from "@freon4dsl/core";
-    import { StudyConfiguration } from "@freon4dsl/study-configuration";
-    import { studyTimelineChart } from "../../services/app/study-timeline.js";
+    import { StudyConfiguration, studyTimelineChart } from "@freon4dsl/study-configuration";
     import { createEventDispatcher } from "svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { setDrawerTitle } from "../../services/stores/side-drawer-store.js";
