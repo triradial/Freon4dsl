@@ -11,7 +11,6 @@
     // Props
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
-    let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
 
     let isEditing = $state(false);
 
@@ -47,10 +46,23 @@
         // if (hiddenInput) {
         //     hiddenInput.focus();
         // }
-        box.parent?.setFocus();
+        console.log("TabFixComponent.setFocus - box.parent:", box.parent);
+        console.log("TabFixComponent.setFocus - firstEditableChild:", box.parent?.firstEditableChild);
+        
+        // Use firstEditableChild to find the first editable element, even if the concept already has a selection
+        // This handles the case where a concept has a selection but no other editable fields
+        const editableChild = box.parent?.firstEditableChild;
+        if (editableChild) {
+            editableChild.setFocus();
+        } else if (box.parent) {
+            // Fallback to parent if no editable child found
+            box.parent.setFocus();
+        }
     }
 
     const refresh = (why?: string): void => {
+        console.log("refreshing parent of parent of tab fix component", box.parent?.parent);
+        box.parent?.parent?.refreshComponent();
     };
 
     onMount(() => {
@@ -61,7 +73,9 @@
 
     // Replaces afterUpdate()
     $effect(() => {
-        box.parent?.setFocus();
+        console.log("TabFixComponent $effect - box.parent:", box.parent);
+        console.log("TabFixComponent $effect - firstEditableChild:", box.parent?.firstEditableChild);
+        // Don't automatically set focus in $effect - let the editor's selection mechanism handle it
         box.parent?.refreshComponent();
     });
 

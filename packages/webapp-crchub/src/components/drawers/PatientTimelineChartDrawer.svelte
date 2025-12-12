@@ -124,6 +124,7 @@
         const firstPatientHistoryWithVisits = findFirstPatientHistoryWithVisits(patientInfo.patientHistories, allPatients);
         
         const referenceDateForTimeline = determineReferenceDate(referenceDate, firstPatientHistoryWithVisits);
+        console.log("referenceDateForTimeline", referenceDateForTimeline);
 
         // Create timeline with study configuration
         const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, undefined);
