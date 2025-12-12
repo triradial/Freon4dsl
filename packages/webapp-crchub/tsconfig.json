@@ -113,7 +113,7 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue"
-  ],
+, "../languages/study-configuration/src/custom/__tests__/study-timeline.test.ts"  ],
   "exclude": [
     "node_modules",
     "static/*",

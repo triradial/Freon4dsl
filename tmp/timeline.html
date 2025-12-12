@@ -49,6 +49,7 @@
 // create visualization
 var container = document.getElementById('visualization');
     var options = {
+    var options = {
       showCurrentTime: false,
       format: {
           minorLabels: {
@@ -58,7 +59,10 @@ var container = document.getElementById('visualization');
               hour:       '',
               weekday:    '',
               day:        'DDD',
+              day:        'DDD',
               week:       '',
+              month:      '',
+              year:       ''
               month:      '',
               year:       ''
           },
@@ -71,8 +75,17 @@ var container = document.getElementById('visualization');
               day:        'w',
               week:       '',
               month:      '',
+              millisecond:'',
+              second:     '',
+              minute:     '',
+              hour:       '',
+              weekday:    '',
+              day:        'w',
+              week:       '',
+              month:      '',
               year:       ''
           }
+
 
       },
       timeAxis: {scale: 'day', step: 1},

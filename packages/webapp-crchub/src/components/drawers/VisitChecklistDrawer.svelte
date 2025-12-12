@@ -12,6 +12,8 @@
     let isLoading = $state(true);
     let checklistHtml = $state<string>("");
     let error = $state<string | null>(null);
+    let patientInfo = $state<PatientInfo | null>(null);
+    let determinedVisitDate = $state<Date | null>(null);
     
     // Convert selectedDate to Date if it's a string (from serialization)
     let normalizedSelectedDate = $derived(() => {
@@ -22,6 +24,15 @@
             return isNaN(date.getTime()) ? undefined : date;
         }
         return undefined;
+    });
+    
+    // Determine the visit date to use: selectedDate if provided, otherwise find from patient visits
+    let visitDateToUse = $derived(() => {
+        const selected = normalizedSelectedDate();
+        if (selected) {
+            return selected;
+        }
+        return determinedVisitDate;
     });
 
     const dispatch = createEventDispatcher();
@@ -35,9 +46,9 @@
         loadVisitChecklist();
     }
 
-    // Update drawer title with the selected date
+    // Update drawer title with the visit date
     $effect(() => {
-        const date = normalizedSelectedDate();
+        const date = visitDateToUse();
         if (date) {
             const dateStr = date.toLocaleDateString();
             setDrawerTitle("visitChecklist", `Visit Checklist - ${dateStr}`);
@@ -47,8 +58,7 @@
     });
 
     $effect(() => {
-        const date = normalizedSelectedDate();
-        console.log("[VisitChecklistDrawer] $effect patientId:", patientId, "studyId:", studyId, "selectedDate:", selectedDate, "normalizedDate:", date);
+        console.log("[VisitChecklistDrawer] $effect patientId:", patientId, "studyId:", studyId, "selectedDate:", selectedDate);
         
         // Don't try to load if we don't have the required props yet
         if (!studyId || studyId === "") {
@@ -60,19 +70,60 @@
             }
             return;
         }
-        if (!date) {
-            error = "Please select a date to view the visit checklist.";
-            isLoading = false;
-            return;
-        }
-        loadVisitChecklist();
+        
+        // Load PatientInfo and determine visit date
+        loadPatientInfoAndDetermineVisitDate();
     });
-
-    async function loadVisitChecklist() {
+    
+    async function loadPatientInfoAndDetermineVisitDate() {
         isLoading = true;
         error = null;
+        determinedVisitDate = null;
+        
         try {
-            const date = normalizedSelectedDate();
+            if (!studyId) {
+                error = "Study ID is required.";
+                isLoading = false;
+                return;
+            }
+            
+            const modelManager = ModelManager.getInstance();
+            
+            // Load PatientInfo if we have a patientId
+            if (patientId) {
+                patientInfo = await modelManager.getModelUnitWithoutOpening(studyId, "PatientInfo") as PatientInfo | null;
+                
+                // Find the appropriate visit date from patient visits
+                const foundDate = findAppropriateVisitDate(patientInfo, patientId);
+                if (foundDate) {
+                    determinedVisitDate = foundDate;
+                }
+            }
+            
+            // Check if we have a date to use (either selectedDate or determined from visits)
+            const dateToUse = visitDateToUse();
+            if (!dateToUse) {
+                if (patientId) {
+                    error = "No visit found for this patient. Please select a date or ensure the patient has visits scheduled.";
+                } else {
+                    error = "Please select a date to view the visit checklist.";
+                }
+                isLoading = false;
+                return;
+            }
+            
+            // Load the checklist with the determined date
+            await loadVisitChecklist();
+        } catch (err: unknown) {
+            console.error(`Error loading patient info for study: ${studyId}`, err);
+            error = err instanceof Error ? err.message : "An error occurred";
+            isLoading = false;
+        }
+    }
+
+    async function loadVisitChecklist() {
+        try {
+            const date = visitDateToUse();
             if (!date) {
                 error = "Invalid date selected.";
                 isLoading = false;
