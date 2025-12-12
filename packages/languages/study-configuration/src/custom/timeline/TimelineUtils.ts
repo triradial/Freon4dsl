@@ -22,7 +22,19 @@ export function copyPatientHistoryWithFilledDates(patientHistory: PatientHistory
             }
             copiedHistory.patientVisits.push(updatedVisit);
         }
-        // Process date ranges - copy first, then modify date concepts
+        
+        // Find the earliest visit date from the COPIED visits (after dates are filled)
+        let earliestVisitDate: string | undefined;
+        for (const visit of copiedHistory.patientVisits) {
+            if (visit.actualVisitDate?.dateAsString) {
+                if (!earliestVisitDate || 
+                    visit.actualVisitDate.dateAsString < earliestVisitDate) {
+                    earliestVisitDate = visit.actualVisitDate.dateAsString;
+                }
+            }
+        }
+        
+        // Process date ranges - only include those that start on or after the first visit date
         for (const dateRange of patientHistory.patientNotAvailableDates) {
             const updatedDateRange = dateRange.copy();
             if (updatedDateRange.startDate) {
@@ -31,6 +43,15 @@ export function copyPatientHistoryWithFilledDates(patientHistory: PatientHistory
             if (updatedDateRange.endDate) {
                 Timeline.fillDateConceptFromAsString(updatedDateRange.endDate);
             }
+            
+            // Skip date ranges that start before the first visit date
+            // Only filter if we have both an earliest visit date and a start date
+            if (earliestVisitDate && updatedDateRange.startDate?.dateAsString) {
+                if (updatedDateRange.startDate.dateAsString < earliestVisitDate) {
+                    continue; // Skip this date range - it's entirely before the first visit
+                }
+            }
+            
             copiedHistory.patientNotAvailableDates.push(updatedDateRange);
         }
     });
@@ -49,11 +70,24 @@ export function determineReferenceDate(referenceDate: Date | undefined, patientH
     }
     
     if (patientHistory && patientHistory.patientVisits.length > 0) {
-        // Parse the date string and set to local midnight (00:00:00) to avoid timezone issues
-        // dateAsString format is "YYYY-MM-DD", parse it to ensure local time
-        const dateStr = patientHistory.patientVisits[0].actualVisitDate.dateAsString;
-        const [year, month, day] = dateStr.split('-').map(Number);
-        return new Date(year, month - 1, day, 0, 0, 0); // month is 0-indexed
+        // Find the earliest visit date
+        // dateAsString format is "YYYY-MM-DD", which can be compared lexicographically
+        let earliestVisit: typeof patientHistory.patientVisits[0] | undefined;
+        for (const visit of patientHistory.patientVisits) {
+            if (visit.actualVisitDate?.dateAsString) {
+                if (!earliestVisit || 
+                    visit.actualVisitDate.dateAsString < earliestVisit.actualVisitDate.dateAsString) {
+                    earliestVisit = visit;
+                }
+            }
+        }
+        
+        if (earliestVisit && earliestVisit.actualVisitDate) {
+            // Parse the date string and set to local midnight (00:00:00) to avoid timezone issues
+            const dateStr = earliestVisit.actualVisitDate.dateAsString;
+            const [year, month, day] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day, 0, 0, 0); // month is 0-indexed
+        }
     }
     
     // Default to today at local midnight
@@ -107,7 +141,7 @@ export function findFirstPatientHistoryWithVisits(
  */
 export function getTimelineAsOfADate(
     node: StudyConfiguration,
-    referenceDate?: Date,
+    referenceDate: Date,
     patientHistory?: PatientHistory,
     patientIdentifier?: string
 ): Timeline {
@@ -115,21 +149,13 @@ export function getTimelineAsOfADate(
     const studyConfigurationUnit = node as StudyConfiguration;
     const simulator = new Simulator(studyConfigurationUnit);
     
-    if (referenceDate) {
-        simulator.setReferenceDate(referenceDate);
-    } else {
-        simulator.setReferenceDate(new Date(2024, 8, 30));
-    }
-    
+    simulator.setReferenceDate(referenceDate);
     simulator.organizedByReferenceDate();
-    
     if (patientHistory) {
         simulator.timeline.addPatientEvents(patientHistory, patientIdentifier);
     }
-    
     simulator.run();
     const timeline = simulator.timeline;
-    
     return timeline;
 }
 

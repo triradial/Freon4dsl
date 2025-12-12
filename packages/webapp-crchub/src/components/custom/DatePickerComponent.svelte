@@ -33,7 +33,12 @@
             value = parseDate(startStr);
         } else {
             // keep already-initialized valid default (today)
-            value = parseDate(formatToday());
+            const todayStr = formatToday();
+            value = parseDate(todayStr);
+            // Save today's date back to the box if it was empty or invalid
+            AST.change(() => {
+                box.setPropertyValue(todayStr);
+            });
         }
         return value;
     }
