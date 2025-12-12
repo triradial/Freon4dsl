@@ -9,7 +9,7 @@
 // @ts-ignore
     import { Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
 
-    let modelname = "11119f8b-1c2d-4e5f-9e8b-6a7b8c9d0e1f";
+    let { studyId } = $props<{ studyId: string }>();
 
     let dslEditor = $state<FreEditor | undefined>(undefined);
     let unit = $state<Availability | undefined>(undefined);
@@ -29,16 +29,18 @@
     }
 
     async function initializeAvailability() {
-        // Get the model data for the availability
-        console.log("📅 Availability.svelte: Opening availability model:", modelname);
-        const result = await ModelManager.getInstance().openModelUnit(modelname, "Availability") as Availability;
+        // Get the model data for the availability using the study ID
+        // Note: Availability is facility-level, but accessed via study ID
+        // The backend uses the study ID to find the organization through: study -> site -> organization
+        console.log("📅 Availability.svelte: Opening availability model for study:", studyId);
+        const result = await ModelManager.getInstance().openModelUnit(studyId, "Availability") as Availability;
         if (result !== undefined && result !== null) {
             unit = result;
             editorLoaded = true;
             console.log("✅ Availability.svelte: Availability model loaded successfully");
         } else {
             noModelAvailable = true;
-            console.error("❌ Availability.svelte: Failed to load availability model");
+            console.error("❌ Availability.svelte: Failed to load availability model for study:", studyId);
         }
     }
 

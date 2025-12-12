@@ -32,16 +32,14 @@
   --surface-ground: #DCD5E7;
   --surface-card: hwb(263 29% 49%);
 
-  --navbar-background: #000000;
-  --navbar-text: #92A7CE;
-  --navbar-text-hover: var(--text-hover);
-
+  /* #region Breadcrumb */
   --breadcrumb-background: #22272e;
-  --breadcrumb-link: #fcfcfc;
-  --breadcrumb-link-hover: var(--text-hover);
-  --breadcrumb-border: #4a5568;
-  --breadcrumb-text: #a8a8a8;
+  --breadcrumb-link: #92A7CE;
+  --breadcrumb-link-hover: #798caf;
+  --breadcrumb-text: #ffffff;
+  /* #endregion */
 
+  /* #region Drawer */
   --drawer-background: #22272e;
   --drawer-handle: #161e2e;
   --drawer-button: var(--text-primary-500);
@@ -51,23 +49,154 @@
   --drawer-error-text: #b37393;
   --drawer-content-area: #2c3e50;
   --arrow-background: #2c3e50;
+  /* #endregion */
 
+  /* #region Toolbar */
   --toolbar-button: var(--text-primary-500);
   --toolbar-button-background: none;  
   --toolbar-button-hover: var(--white);
   --toolbar-button-hover-background: var(--white-10t);
   --toolbar-button-active: var(--white); 
   --toolbar-button-active-background: var(--white-20t);
+  /* #endregion */
+
+  /* #region Name Link */
+  --name-link-text: #92A7CE;
+  --grid-button-color: #92A7CE;
+  /* #endregion */
+
+  /* #region Labels */
+  --main-label-text: #ffffff;
+  /* #endregion */
+
+  /* #region Inputs */
+
+  /* #endregion */
+
+  // #region Controls
+  --checkbox-bg: #3b82f6;
+  // #endregion
+
+  /* #region Buttons */
+  --primary-button-text: #ffffff;
+  --primary-button-background: var(--primary-600);
+  --primary-button-border: var(--primary-600);
+
+  --secondary-button-text: #ffffff;
+  --secondary-button-background: var(--secondary-600);
+  --secondary-button-border: var(--secondary-600);
+
+  --gray-button-text: #ffffff;
+  --gray-button-background: var(--gray-600);
+  --gray-button-border: var(--gray-600);
+
+  --red-button-text: #ffffff;
+  --red-button-background: var(--red-600);
+  --red-button-border: var(--red-600);
+
+  --green-button-text: #ffffff;
+  --green-button-background: var(--green-600);
+  --green-button-border: var(--green-600);
+
+  --primary-inverted-button-text: var(--primary-400);
+  --primary-inverted-button-background: transparent;
+  --primary-inverted-button-border: var(--primary-400);
+
+  --secondary-inverted-button-text: var(--secondary-400);
+  --secondary-inverted-button-background: transparent;
+  --secondary-inverted-button-border: var(--secondary-400);
+
+  --gray-inverted-button-text: var(--gray-400);
+  --gray-inverted-button-background: transparent;
+  --gray-inverted-button-border: var(--gray-400);
+
+  --red-inverted-button-text: var(--red-400);
+  --red-inverted-button-background: transparent;
+  --red-inverted-button-border: var(--red-400);
+
+  --green-inverted-button-text: var(--green-400);
+  --green-inverted-button-background: transparent;
+  --green-inverted-button-border: var(--green-400);
+  /* #endregion */
+
+/* #region Labels */
+  --main-label-text: #ffffff;
+/* #endregion */
+
+/* #region Calendar */
+  --calendar-day-bg: #22272e;
+  --calendar-day-border: #454d59;
+  --calendar-day-text: #ffffff;
+  --calendar-day-name-text: #ffffff;
+  --calendar-day-unavailable-bg: #6031317a;
+  --calendar-day-unavailable-border: #6b2a2a;
+  --calendar-day-unavailable-hover-bg: #7d2a2a;
+  --calendar-day-hover-bg: #2d333b;
+  --calendar-month-title: #ffffff;
+  
+  --header-text: #ffffff;
+  
+  // Availability status colors for dark theme (darker variants for better contrast)
+  --calendar-available-bg: #3c58468c;
+  --calendar-available-border: #2d5a3d;
+  --calendar-available-text: #8BDBAA;
+  --calendar-unavailable-bg: #6031317a;
+  --calendar-unavailable-border: #6b2a2a;
+  --calendar-unavailable-text: #F8A8A8;
+
+  --calendar-nav-button-text: #ffffff;
+  --calendar-weekends-checkbox-text: #ffffff;
+  --calendar-legend-text: #ffffff;
+  --calendar-person-name-text: #ffffff;
+
+  --availability-model-panel-text: #ffffff;
+  
+  --calendar-weekend-unavailable-bg: #5a5a5a65; // surface-200 gray
+  --calendar-weekend-unavailable-border: #747a82; // surface-300 gray
+  
+  // Tooltip colors for dark theme
+  --tooltip-background: #2d333b;
+  --tooltip-text: #ffffff;
+  --tooltip-border: #454d59;
+/* #endregion */
+
+/* #region Day View */
+  --dayview-container-bg: #2e3744;
+  --dayview-date-header-bg-today: #64B5F6;
+  --dayview-date-header-bg-weekend: #a2a6ac;
+  --dayview-date-header-bg-past: #5b6066;
+  --dayview-date-header-bg-future: #2e3744;
+  --dayview-date-header-text: #ffffff;
+  --dayview-nav-button-color: #d1d3d5;
+  --dayview-nav-button-hover: #64B5F6;
+  --dayview-section-bg: #454d59;
+  --dayview-section-text: #ffffff;
+  --dayview-staff-in-header: #8BDBAA;
+  --dayview-staff-out-header: #F8A8A8;
+  --dayview-week-view-bg: #454d59;
+  --dayview-week-nav-button-color: #d1d3d5;
+  --dayview-week-nav-button-hover: #64B5F6;
+  --dayview-day-today-bg: #64B5F6;
+  --dayview-day-today-text: #ffffff;
+  --dayview-day-weekend-bg: #272f39;
+  --dayview-day-weekend-text: #ffffff;
+  --dayview-day-past-bg: #747a82;
+  --dayview-day-past-text: #d1d3d5;
+  --dayview-day-future-bg: #2e3744;
+  --dayview-day-future-text: #ffffff;
+  --dayview-day-before-after-bg: #9d4a7861;
+  --dayview-day-before-after-text: #ffffff;
+  --dayview-day-selected-border: #64B5F6;
+  --dayview-day-selected-shadow: rgba(100, 181, 246, 0.3);
+  --dayview-day-hover-shadow: rgba(0, 0, 0, 0.1);
+  --dayview_today-checkmark-bg: #767fce;
+/* #endregion */
 
   --content-background: #22272e;
+  --not-applicable-message-text: #ffffff;
 
   --card-background: var(--bg-gray-800);
   --card-border-color: #454d59;
-
-  --logo-text1: #ffffff;
-  --logo-text2: #8f82a3;
-  --logo-text-p1: #CECECE;
-  --logo-text-p2: #92A7CE;
 
   --popup-border: #5e526d;
   --popup-background: #eeeeee;
@@ -155,18 +284,6 @@
   --timeline-header-text: #000000;
   --timeline-card: #e0e0e0;
 
-  --red: #dbbdbd;
-  --green: #bddbbd;
-  --blue: #bdbddb;
-  --yellow: #dbdbbd;
-  --orange: #dbd1bd;
-  --purple: #dbbddb;
-  --cyan: #bddbdb;
-  --pink: #dbbdc2;
-  --indigo: #cebddb;
-  --teal: #bddbdb;
-  --bluegray: #607d8b;
-
   --text-primary-50: #ebedf3;
   --text-primary-100: #d7dae5;
   --text-primary-200: #c3c7d7;
@@ -186,92 +303,8 @@
   --error-indicator: #c7706a;
 }
 
-body {
-  color: #333;
-  background-color: #f3f3f3;
-}
-
-a {
-  color: rgb(0, 80, 160);
-}
-
-a:visited {
-  color: rgb(0, 80, 160);
-}
-
 input:disabled {
   color: #ccc;
-}
-
-// button {
-//   color: #333;
-//   background-color: #f4f4f4;
-// }
-
-// button:disabled {
-//   color: #999;
-// }
-
-// button:not(:disabled):active {
-//   background-color: #ddd;
-// }
-
-// button:focus {
-//   border-color: #666;
-// }
-
-.login-container a {
-  color: #9bcbff;
-}
-
-.login-container Label,
-.login-container p {
-  color: #ffffff;
-}
-
-#login button {
-  color: white;
-  background-color: transparent;
-  background-image: none
-}
-
-#login button:hover {
-  color: white;
-  background-color: var(--primary-900); 
-  background-image: none
-}
-
-.toast-warning-container div {
-  background-color: transparent;
-  color: var(--red);
-}
-
-.crc-logo-p1 {
-  color: var(--logo-text-p1);
-}
-
-.crc-logo-p2 {
-  color: var(--logo-text-p2);
-}
-
-aside,
-aside div {
-  background-color: var(--navbar-background) !important;
-}
-
-appbar a,
-appnav a {
-  color: var(--navbar-text);
-}
-
-appbar a:hover,
-appnav a:hover {
-  color: var(--navbar-text-hover);
-}
-
-appbar a:visited,
-appnav a:visited {
-  color: var(--navbar-text);
 }
 
 /* #region Dialog */
@@ -341,25 +374,6 @@ appnav a:visited {
 }
 .navbar-component .avatar-menu div {
   color: var(--gray-200);
-}
-/* #endregion */
-
-/* #region Breadcrumb */
-.breadcrumb {
-  background-color: var(--breadcrumb-background) !important;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-}
-
-.breadcrumb li {
-  color: var(--breadcrumb-text) !important;
-}
-
-.breadcrumb a {
-  color: var(--breadcrumb-link) !important;
-}
-
-.breadcrumb a:hover {
-  color: var(--breadcrumb-link-hover) !important;
 }
 /* #endregion */
 
@@ -460,6 +474,12 @@ appnav a:visited {
   background-color: var(--primary-600);
 }
 
+.quick-input-field {
+  background-color: var(--input-background);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
+}
+
 .ag-theme-quartz-dark .ag-row-group.ag-row-level-0 {
   background-color: #474747;
 }
@@ -475,7 +495,6 @@ appnav a:visited {
 .ag-theme-quartz .ag-row-group.ag-row-level-1 {
   background-color: #d1dcf1;
 }
-
 /* #endregion */
 
 /* #region Card */
@@ -562,7 +581,6 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Drawer Table */
-
 .table_component table {
   border: 1px solid var(--white-30t) !important;
 }
@@ -731,111 +749,13 @@ border-bottom: 1px solid var(--white-5t) !important;
 }
 
 .mutation-area {
-}
-/* #endregion */
-
-/* #region Buttons */
-.standard-button.primary:not(:disabled),
-.icon-button.primary:not(:disabled) {
-  color: var(--white) !important;
-  background-color: var(--primary-600) !important;
-  border-color: var(--primary-600) !important;
-  transition: color 0.3s ease !important;
-}
-
-.standard-button.primary:hover:not(:disabled),
-.icon-button.primary:hover:not(:disabled) {
-  color: var(--white) !important;
-  background-color: var(--primary-600) !important;
-  border-color: var(--white) !important;
-}
-
-.standard-button.primary:active:not(:disabled),
-.icon-button.primary:active:not(:disabled) {
-  color: var(--white) !important;
-  background-color: var(--primary-800) !important;
-  border-color: var(--white) !important;
-}
-
-.standard-button.primary.inverted:not(:disabled),
-.icon-button.primary.inverted:not(:disabled) {
-  color: var(--primary-600) !important;
-  background-color: transparent !important;
-  border-color: var(--primary-600) !important;
-  transition: color 0.3s ease !important;
-}
-
-.standard-button.primary.inverted:hover:not(:disabled),
-.icon-button.primary.inverted:hover:not(:disabled) {
-  color: var(--white) !important;
-  background-color: var(--primary-600) !important;
-  border-color: var(--primary-600) !important;
-}
-
-.standard-button.primary.inverted:active:not(:disabled),
-.icon-button.primary.inverted:active:not(:disabled) {
-  color: var(--white) !important;
-  background-color: var(--primary-800) !important;
-  border-color: var(--primary-800) !important;
-}
-
-.standard-button:disabled,
-.icon-button:disabled {
-  color: var(--gray-700) !important;
-  background-color: transparent !important;
-  border-color: var(--gray-600) !important;
-  cursor: not-allowed !important;
-}
-
-.standard-button.secondary:not(:disabled),
-.icon-button.secondary:not(:disabled) {
-  color: var(--gray-400) !important;
-  background-color: transparent !important;
-  border-color: var(--gray-400) !important;
-  transition: color 0.3s ease !important;
-}
-
-.standard-button.secondary:hover:not(:disabled),
-.icon-button.secondary:hover:not(:disabled) {
-  color: var(--white) !important;
-  background-color: var(--gray-600) !important;
-  border-color: var(--gray-600) !important;
-}
-
-.standard-button.secondary:active:not(:disabled),
-.icon-button.secondary:active:not(:disabled) {
-  color: var(--white) !important;
-  background-color: var(--gray-800) !important;
-}
-
-.standard-button.tertiary,
-.icon-button.tertiary {
-  color: var(--gray-400) !important;
-  background-color: transparent !important;
-  border-color: var(--gray-400) !important;
-  transition: color 0.3s ease !important;
-}
-
-.standard-button.tertiary:hover,
-.icon-button.tertiary:hover {
-  color: var(--white) !important;
-  background-color: var(--gray-400) !important;
-}
-
-.standard-button.tertiary:active,
-.icon-button.tertiary:active {
-  color: var(--white) !important;
-  background-color: var(--gray-600) !important;
+  /* Mutation area styles */
 }
 /* #endregion */
 
 /* #region Labels */
 .small-label-text {
   color: var(--primary-300);
-}
-
-.main-label-text {
-  color: var(--text-primary-500) !important;
 }
 /* #endregion */
 
@@ -854,6 +774,11 @@ border-bottom: 1px solid var(--white-5t) !important;
   color: var(--error-color);
 }
 
+/* Ensure option elements inside select with error class don't inherit error styling */
+select.input-field.error option {
+  background-color: var(--input-background) !important;
+  color: var(--input-text) !important;
+}
 /* #endregion */
 
 /* #region Badge */

@@ -29,7 +29,7 @@
     }}
     zIndex="50"
     contentBackground="object-drawer"
-    contentBase="fixed inset-y-0 left-0 w-full max-w-md shadow-xl transition-transform duration-200 transform-gpu translate-x-0"
+    contentBase="fixed inset-y-0 left-0 w-full max-w-md shadow-xl object-drawer-slide"
     triggerBase=""
 >
     {#snippet content()}

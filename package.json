@@ -39,7 +39,8 @@
     "dev": "npm run dev --workspaces --if-present",
     "format": "npm run format --workspaces",
     "check": "npm run check --workspaces",
-    "preview": "npm run preview --workspaces"
+    "preview": "npm run preview --workspaces",
+    "repair-model-sync": "tsx scripts/repair-model-sync.ts"
   },
   "devDependencies": {
     "@prettier/sync": "^0.5.2",

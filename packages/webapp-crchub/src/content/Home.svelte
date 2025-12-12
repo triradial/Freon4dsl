@@ -1,12 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import StudyGrid from '../components/content/StudyGrid.svelte';
-
-    
-    onMount(async () => {
-    });
+    import DayView from '../components/content/home/DayView.svelte';
 </script>
 
-<div class="crc-grid">
-  Home
-</div>
+<DayView />

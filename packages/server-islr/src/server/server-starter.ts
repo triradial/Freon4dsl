@@ -34,14 +34,43 @@ app.use(cors({
     origin: (ctx) => {
         const allowedOrigins = env.corsOrigins;
         const origin = ctx.request.header.origin;
-        if (allowedOrigins.includes(origin)) {
-            return origin;
+        
+        // Log for debugging in local environment
+        if (currentEnv === 'local') {
+            console.log('CORS check:', { 
+                origin, 
+                allowedOrigins, 
+                isInList: origin ? allowedOrigins.includes(origin) : false 
+            });
         }
-        return allowedOrigins[0];
+        
+        // If no origin header (shouldn't happen in browser requests, but handle gracefully)
+        if (!origin) {
+            // For local dev, allow requests without origin
+            if (currentEnv === 'local') {
+                return allowedOrigins[0];
+            }
+            return false;
+        }
+        
+        // Normalize origin for comparison (remove trailing slashes if any)
+        const normalizedOrigin = origin.trim();
+        
+        // Check if origin is in allowed list (exact match)
+        if (allowedOrigins.includes(normalizedOrigin)) {
+            return normalizedOrigin;
+        }
+        
+        // Origin not allowed - deny the request
+        if (currentEnv === 'local') {
+            console.warn(`CORS blocked: Origin "${normalizedOrigin}" not in allowed list`);
+        }
+        return false;
     },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
+    credentials: true,
+    maxAge: 86400 // Cache preflight for 24 hours
 }));
 
 // Add body parser middleware
@@ -62,8 +91,11 @@ app.use(async (ctx, next) => {
         };
 
         // Ensure CORS headers are set even in error responses
-        ctx.set('Access-Control-Allow-Origin', ctx.request.header.origin || env.corsOrigins[0]);
-        ctx.set('Access-Control-Allow-Credentials', 'true');
+        const origin = ctx.request.header.origin;
+        if (origin && env.corsOrigins.includes(origin)) {
+            ctx.set('Access-Control-Allow-Origin', origin);
+            ctx.set('Access-Control-Allow-Credentials', 'true');
+        }
     }
 });
 

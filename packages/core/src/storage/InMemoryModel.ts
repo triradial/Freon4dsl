@@ -100,22 +100,40 @@ export class InMemoryModel {
      * * @param name
      */
     async openModel(name: string): Promise<FreModel | InMemoryError> {
+        console.log(`[InMemoryModel] openModel: name=${name}`)
         LOGGER.log("openModel(" + name + ")")
         AST.change(() => {
             this.model = this.languageEnvironment.newModel(name)
         })
+        
+        console.log(`[InMemoryModel] Loading unit list for model: ${name}`)
         const response = await this.server.loadUnitList(name)
         if  (response.errors.length > 0) {
+            console.error(`[InMemoryModel] ❌ Error loading unit list:`, response.errors[0])
             this.onInMemoryError(response.errors[0])
             return new InMemoryError(response.errors[0])
         }
+        
+        console.log(`[InMemoryModel] Unit list loaded, found ${response.result.length} units:`, response.result.map(u => u.name))
+        
         for (const unitId of response.result) {
+            console.log(`[InMemoryModel] Loading model unit: ${unitId.name}`)
             LOGGER.log("openModel: load model-unit: " + unitId.name)
             const unit = await this.server.loadModelUnit(this.model.name, unitId)
-            AST.change(() => {
-                this.model.addUnit(unit.result as FreModelUnit)
-            })
+            
+            if (unit.errors.length > 0) {
+                console.error(`[InMemoryModel] ❌ Error loading unit ${unitId.name}:`, unit.errors)
+            } else if (unit.result) {
+                console.log(`[InMemoryModel] ✅ Unit ${unitId.name} loaded successfully, adding to model`)
+                AST.change(() => {
+                    this.model.addUnit(unit.result as FreModelUnit)
+                })
+            } else {
+                console.warn(`[InMemoryModel] ⚠️ Unit ${unitId.name} loaded but result is null/undefined`)
+            }
         }
+        
+        console.log(`[InMemoryModel] openModel complete for ${name}, model has ${this.model.getUnits().length} units`)
         FreUndoManager.getInstance().cleanAllStacks()
         return this.model
     }

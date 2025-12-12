@@ -38,6 +38,7 @@
     function toggleDrawer(drawerKey: string) {
         if (isOpen && activeDrawer === drawerKey) {
             isOpen = false;
+            setActiveDrawer(null);
         } else {
             isOpen = true;
             setActiveDrawer(drawerKey);
@@ -48,6 +49,7 @@
 
     function closeDrawer() {
         isOpen = false;
+        setActiveDrawer(null);
         dispatch("drawerToggle", { isOpen, activeDrawer: "" });
     }
     
@@ -126,7 +128,7 @@
         {#each drawers as drawer}
             {#if drawer.isVisible}
                 {@const Icon = drawer.icon}
-                <button id={drawer.key} class="icon-button toolbar-button" onclick={() => toggleDrawer(drawer.key)} title={drawer.description}><Icon size={20} /></button>
+                <button id={drawer.key} class="icon-button toolbar-button" onclick={() => toggleDrawer(drawer.key)} title={drawer.description}><Icon size={24} /></button>
             {/if}
         {/each}
     </div>

@@ -5,26 +5,46 @@
     let study = $derived($dataStore.studies.find(s => s.id === studyId));
     import { getStatusColor } from "../../services/utils.js";
     // @ts-ignore
-    import { Pencil as IconPencil } from '@lucide/svelte';
+    import { Pencil as IconPencil, Trash2 as IconTrash } from '@lucide/svelte';
+    import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
     let statusColor = $derived(study ? getStatusColor(study.status) : "");
+    let deleteDialogOpen = $state(false);
 
     function onEditClick() {
         if (study) {
-            import("../../services/stores/object-drawer-store.js").then(m => m.editObject("study", study.id));
+            import("../../services/stores/object-drawer-store.js").then(m => m.editObject("study", study));
         }
+    }
+
+    function onDeleteClick() {
+        if (study) {
+            deleteDialogOpen = true;
+        }
+    }
+
+    function onStudyChanged() {
+        // Refresh studies data after delete
+        dataStore.getStudies();
     }
 </script>
 
 {#if study}
 <div class="card card-area max-w-sm h-full">
-    <div class="flex items-center justify-left mb-4">
+    <div class="flex items-center mb-4">
         <h3 class="main-label-text mr-2">Study</h3>
-        <button type="button" class="icon-button primary inverted" onclick={onEditClick}><IconPencil /></button>
+        <div class="flex items-center gap-2">
+            <button type="button" class="grid-button general-button" onclick={onEditClick} title="Edit Study" aria-label="Edit Study">
+                <IconPencil size={16} />
+            </button>
+            <button type="button" class="grid-button delete-button" onclick={onDeleteClick} title="Delete Study" aria-label="Delete Study">
+                <IconTrash size={16} />
+            </button>
+        </div>
     </div>
     <div class="space-y-4">
         <div>
-            <div class="small-label-text">Name</div>
+            <div class="small-label-text">STUDY</div>
             <p class="standard-text">{study.name}</p>
         </div>
         <div>
@@ -49,6 +69,19 @@
         </div>
     </div>
 </div>
+
+<DeleteObjectDialog
+    open={deleteDialogOpen}
+    objectType="study"
+    object={study}
+    on:delete={() => {
+        onStudyChanged();
+        deleteDialogOpen = false;
+    }}
+    on:cancel={() => {
+        deleteDialogOpen = false;
+    }}
+/>
 {:else}
 <div>Study not found.</div>
 {/if}

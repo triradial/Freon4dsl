@@ -163,7 +163,7 @@
         const referenceDateForTimeline = determineReferenceDate(referenceDate, patientHistory);
 
         // Get patient identifier for single patient view
-        const patientIdentifier = fetchedPatient.displayName || fetchedPatient.name || fetchedPatient.patientNumber;
+        const patientIdentifier = fetchedPatient.patientNumber || fetchedPatient.id;
         const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory, patientIdentifier);
         const html = (timeline.getTimelineChartHtml() as RtString).asString();
         return html;
@@ -205,8 +205,8 @@
             if (copyOfPatientHistory) {
                 const copiedHistory = copyPatientHistoryWithFilledDates(copyOfPatientHistory);
                 
-                // Add patient events to timeline with patient identifier (use display name or patient number)
-                const patientIdentifier = patient.displayName || patient.name || patient.patientNumber;
+                // Add patient events to timeline with patient identifier (use patient number)
+                const patientIdentifier = patient.patientNumber || patient.id;
                 timeline.addPatientEvents(copiedHistory, patientIdentifier);
             }
         }

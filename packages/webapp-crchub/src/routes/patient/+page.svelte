@@ -6,7 +6,7 @@
   import { setBreadcrumb } from '../../services/stores/breadcrumb-store.js';
   import { drawerStore, setAllDrawersVisibility, setDrawerProps, setDrawerVisibility } from '../../services/stores/side-drawer-store.js';
 
-  let patientName = '';
+  let patientIdentifier = '';
   let studyName = '';
   let id = $page.url.searchParams.get('id') || '';
   let didSetVisibility = false;
@@ -31,14 +31,14 @@
     (async () => {
       let patient = await dataStore.getPatient(id);
       if (patient) {
-        patientName = patient.name;
+        patientIdentifier = patient.patientNumber || patient.id;
         let study = await dataStore.getStudy(patient.studyId);
         if (study) {
           studyName = study.name;
           setBreadcrumb([
             { label: LABEL.STUDIES, href: "/studies" },
             { label: LABEL.STUDY + ": " + studyName, href: "/study?id=" + study.id },
-            { label: LABEL.PATIENT + ": " + patientName }
+            { label: LABEL.PATIENT + ": " + patientIdentifier }
           ]);
           
           // Set drawer props once we have all the data
@@ -46,7 +46,7 @@
         } else {
           setBreadcrumb([
             { label: LABEL.STUDIES, href: "/studies" },
-            { label: LABEL.PATIENT + ": " + patientName }
+            { label: LABEL.PATIENT + ": " + patientIdentifier }
           ]);
           
           // Set drawer props even if study not found (we still have patient id)
