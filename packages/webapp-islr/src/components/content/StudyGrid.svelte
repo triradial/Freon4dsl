@@ -87,6 +87,9 @@
     
     let confirmUnsavedOpen = $state(false);
     let pendingViewChange: string | null = null;
+    
+    // Quick filter state
+    let filterValue = $state("");
 
     $effect(() => {
         // keep the gridApi and projectsData in scope
@@ -588,6 +591,21 @@
         // updateGridData() is not needed; debounced effect will handle
     }
 
+    function onGlobalFilter(event: Event) {
+        const target = event.target as HTMLInputElement;
+        filterValue = target.value;
+        if (gridApi) {
+            gridApi.setGridOption("quickFilterText", filterValue);
+        }
+    }
+
+    function clearSearch() {
+        filterValue = "";
+        if (gridApi) {
+            gridApi.setGridOption("quickFilterText", "");
+        }
+    }
+
     function stateEquals(a: any[], b: any[]): boolean {
         if (!a || !b || a.length !== b.length) return false;
         const mapB = new Map(b.map(col => [col.colId, col]));
@@ -644,43 +662,49 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 </svelte:head>
 
-<div class="card grid-header w-full">
-    <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <h3 class="main-label-text mr-2">Projects</h3>
-            <button type="button" class="icon-button primary inverted" onclick={() => addObject("project")}><IconPlus size="16" /></button>
-            <button type="button" class="icon-button primary inverted" onclick={refreshProjects}><IconRefresh size="16" /></button>
-        </div>
-        
-        <div class="flex items-center gap-2">
-            <div class="view-controls" style="position: relative; display: inline-block;">
-                <select 
-                    id="view-select" 
-                    bind:value={selectedView} 
-                    onchange={onViewSelect}
-                    class="view-select"
-                >
-                    {#each viewOptions as option}
-                        <option value={option.id}>{option.label}</option>
-                    {/each}
-                </select>
-                <button type="button" class="icon-button save-view-button" onclick={openMenu} disabled={selectedView === 'default' && !hasUnsavedChanges} title="View options">
-                    <IconEllipsisVertical size={18} />
-                </button>
-                {#if showMenu}
-                    <div bind:this={menuRef} class="menu-popup-dropdown">
-                        {#if selectedView !== 'default'}
-                            <button class="menu-item" onclick={handleSave}>Save</button>
-                            <button class="menu-item" onclick={handleSaveAs}>Save As</button>
-                            <button class="menu-item" onclick={handleDelete}>Delete</button>
-                        {:else if hasUnsavedChanges}
-                            <button class="menu-item" onclick={handleSaveAs}>Save As</button>
-                        {/if}
-                    </div>
-                {/if}
-            </div>
-        </div>
+<div class="grid-toolbar">
+  <div class="left-side">
+    <button type="button" class="standard-button primary inverted" onclick={() => addObject("project")} aria-label="Add Project">
+      <IconPlus size="16" />Add Project
+    </button>
+    <div class="search-container">
+        <input type="text" placeholder="Quick filter..." class="quick-input-field" value={filterValue} oninput={onGlobalFilter} />
+        {#if filterValue}
+            <button type="button" class="clear-search-button" onclick={clearSearch}>×</button>
+        {/if}
     </div>
+    <button type="button" class="grid-button general-button" onclick={refreshProjects} title="Refresh" aria-label="Refresh">
+        <IconRefresh size={16} />
+    </button>
+  </div>
+  <div class="right-side">
+    <div class="view-controls" style="position: relative; display: inline-block;">
+      <select 
+          id="view-select" 
+          bind:value={selectedView} 
+          onchange={onViewSelect}
+          class="view-select"
+      >
+          {#each viewOptions as option}
+              <option value={option.id}>{option.label}</option>
+          {/each}
+      </select>
+      <button type="button" class="icon-button save-view-button" onclick={openMenu} disabled={selectedView === 'default' && !hasUnsavedChanges} title="View options">
+        <IconEllipsisVertical size={18} />
+      </button>
+    </div>
+    {#if showMenu}
+      <div bind:this={menuRef} class="menu-popup-dropdown">
+        {#if selectedView !== 'default'}
+          <button class="menu-item" onclick={handleSave}>Save</button>
+          <button class="menu-item" onclick={handleSaveAs}>Save As</button>
+          <button class="menu-item" onclick={handleDelete}>Delete</button>
+        {:else if hasUnsavedChanges}
+          <button class="menu-item" onclick={handleSaveAs}>Save As</button>
+        {/if}
+      </div>
+    {/if}
+  </div>
 </div>
 <div id="studyGrid" class="{gridTheme} ag-grid"></div>
 <DeleteObjectDialog

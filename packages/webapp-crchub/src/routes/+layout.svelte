@@ -2,6 +2,7 @@
     import { FreLogger } from "@freon4dsl/core";
     import { onMount } from "svelte";
     import { get } from 'svelte/store';
+    import { page } from '$app/stores';
     import Breadcrumb from '../components/common/Breadcrumb.svelte';
     import LoginPart from '../components/common/LoginPart.svelte';
     import NavBar from '../components/common/NavBar.svelte';
@@ -21,8 +22,10 @@
     import { dataStore } from "../services/data/data-store.js";
     import { isAuthenticated } from "../services/security/auth.js";
     import { addDrawer, drawerStore } from '../services/stores/side-drawer-store.js';
+    import { objectDrawerStore } from '../services/stores/object-drawer-store.js';
     import { theme } from "../services/stores/theme-store.js";
     import { userStore } from "../services/stores/users-store.js";
+    import { adminModeStore } from "../services/stores/admin-mode-store.js";
 // @ts-ignore
     import { Calendar as IconCalendar, CheckSquare as IconCheckSquare, ClipboardCheck as IconClipboardCheck, Heart as IconHeart, Info as IconInfo, SquareChartGantt as IconSquareChartGantt, Table2 as IconTable2, TriangleAlert as IconTriangleAlert, Users as IconUsers } from '@lucide/svelte';
     
@@ -30,12 +33,35 @@
 
     let auth = $derived($isAuthenticated);
     let { children } = $props();
+    
+    // Hide breadcrumb on home page
+    let showBreadcrumb = $derived($page.url.pathname !== '/home');
+    
+    // Track if any drawer is open for overlay
+    let isObjectDrawerOpen = $derived($objectDrawerStore.open);
+    let isSideDrawerOpen = $derived($drawerStore.activeDrawer !== null);
+    let isAnyDrawerOpen = $derived(isObjectDrawerOpen || isSideDrawerOpen);
+    
+    $effect(() => {
+        if (isAnyDrawerOpen) {
+            console.log('Drawer overlay should be visible', { isObjectDrawerOpen, isSideDrawerOpen });
+        }
+    });
 
     onMount(() => {
         auth = sessionStorage.getItem("auth") === "true";
         isAuthenticated.set(auth);
         if (auth) {
             userStore.initializeFromStorage();
+            // Only initialize admin mode if user is actually a global admin
+            // This prevents admin mode from persisting when a non-admin logs in
+            const user = get(userStore);
+            if (user?.isGlobalAdmin) {
+                adminModeStore.initializeFromStorage();
+            } else {
+                // Disable admin mode if user is not a global admin
+                adminModeStore.disable();
+            }
             dataStore.initializeDatastore();
 
             // Register global drawers
@@ -70,12 +96,17 @@
             <NavBar />
         </appbar>
         <div id="content-container">
-            <Breadcrumb />
+            {#if showBreadcrumb}
+                <Breadcrumb />
+            {/if}
             {@render children()}
             <ObjectDrawerSystem />
             <SideDrawerSystem />
         </div>
     </div>
+    {#if isAnyDrawerOpen}
+        <div class="drawer-overlay"></div>
+    {/if}
 {:else}
     <div class="login-page">
         <div class="login-container">

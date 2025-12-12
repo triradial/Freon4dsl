@@ -7,7 +7,7 @@
     import { onDestroy, onMount } from "svelte";
     import StudyCard from "../components/cards/StudyCard.svelte";
     import DSLFooter from "../components/common/DSLFooter.svelte";
-    import PatientGrid from "../components/content/PatientGrid.svelte";
+    import PatientGrid from "../components/content/patient/PatientGrid.svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { ModelManager } from "../services/dsl/model-manager.js";
@@ -99,15 +99,29 @@
         }
         
         // Get the model data for the study
-        console.log("initializeStudy: openModelUnit: " + study.id);
+        console.log(`[Study.svelte] initializeStudy: Starting to load model for study ${study.id} (${study.name})`);
+        console.log(`[Study.svelte] Calling ModelManager.openModelUnit(${study.id}, "StudyConfiguration")`);
+        
         const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration") as StudyConfiguration;
+        
+        console.log(`[Study.svelte] ModelManager.openModelUnit returned:`, {
+            resultType: typeof result,
+            isUndefined: result === undefined,
+            isNull: result === null,
+            hasValue: result !== undefined && result !== null
+        });
+        
         if (result !== undefined && result !== null) {
             unit = result;
             editorLoaded = true;
+            console.log(`[Study.svelte] ✅ Model loaded successfully for study ${study.id}`);
+            updateVisibleProjections(unit);
         } else {
             noModelAvailable = true;
+            console.warn(`[Study.svelte] ⚠️ Study ${study.id} (${study.name}) has no StudyConfiguration model available`);
+            console.warn(`[Study.svelte] Result was ${result === undefined ? 'undefined' : 'null'}`);
+            // Don't call updateVisibleProjections with undefined - just leave projections as default
         }
-        updateVisibleProjections(unit);
     }
 
     onMount(async () => {
@@ -275,10 +289,10 @@
             <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2" contentBase="mt-0">
                 {#snippet list()}
                     <Tabs.Control stateActive="tab-active" value="patients">
-                        <div class="tab-item"><IconUser size="16" />Patients</div>
+                        <div class="tab-item">Patients</div>
                     </Tabs.Control>
                     <Tabs.Control stateActive="tab-active" value="design">
-                        <div class="tab-item"><IconPencilRuler size="16" />Study Design</div> 
+                        <div class="tab-item">Study Design</div> 
                     </Tabs.Control>
                 {/snippet}
 

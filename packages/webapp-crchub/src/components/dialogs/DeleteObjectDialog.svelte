@@ -7,8 +7,8 @@
 
     const { open = false, objectType, object } = $props<{ 
         open?: boolean; 
-        objectType: "study" | "patient"; 
-        object: { id: string; [key: string]: any } 
+        objectType: "study" | "patient" | "person"; 
+        object: { id: string; person_id?: string; [key: string]: any } 
     }>();
 
     const dispatch = createEventDispatcher<{
@@ -16,20 +16,47 @@
         cancel: void;
     }>();
 
+    let isDeleting = $state(false);
+    let errorMessage = $state<string | null>(null);
+
     function getTitle() {
         return "Delete " + toProperCase(objectType);
     }
 
-    function handleDelete() {
+    async function handleDelete() {
+        if (isDeleting) return;
+        
+        isDeleting = true;
+        errorMessage = null;
+        
+        try {
+            let success = false;
         if (objectType === "study") {
-            dataStore.deleteStudy(object.id);
+                success = await dataStore.deleteStudy(object.id);
         } else if (objectType === "patient") {
-            dataStore.deletePatient(object.id);
+                success = await dataStore.deletePatient(object.id);
+        } else if (objectType === "person") {
+                const personId = object.person_id || object.id;
+                success = await dataStore.deletePerson(personId);
         }
-        dispatch("delete");
+            
+            if (success) {
+                dispatch("delete");
+            } else {
+                errorMessage = `Failed to delete ${objectType}. Please try again.`;
+            }
+        } catch (error) {
+            console.error(`Error deleting ${objectType}:`, error);
+            // Use the error message if available, otherwise use a generic message
+            const errorMsg = error instanceof Error ? error.message : `An error occurred while deleting the ${objectType}`;
+            errorMessage = errorMsg || `An error occurred while deleting the ${objectType}. Please try again.`;
+        } finally {
+            isDeleting = false;
+        }
     }
 
     function handleCancel() {
+        errorMessage = null;
         dispatch("cancel");
     }
 
@@ -37,6 +64,19 @@
         return str.replace(/\w\S*/g, function (txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
+    }
+
+    function getObjectName() {
+        if (!object) return '';
+        
+        if (objectType === "study") {
+            return object.name || object.id;
+        } else if (objectType === "patient") {
+            return object.patientNumber || object.initials || object.id;
+        } else if (objectType === "person") {
+            return object.name || object.email || object.id;
+        }
+        return object.id;
     }
 </script>
 
@@ -58,12 +98,20 @@
         </header>
         <div>
             <p class="text-sm text-gray-500">
-                Are you sure you want to delete this {objectType}?
+                Are you sure you want to delete the '{getObjectName()}' {objectType}?
             </p>
+            {#if errorMessage}
+                <p class="dialog-error-message mt-2">{errorMessage}</p>
+            {/if}
         </div>
         <footer class="flex justify-end gap-2 mt-4">
-            <button type="button" class="standard-button primary" onclick={handleDelete}><IconCircleCheck size="16" />Yes, I'm sure</button>
-            <button type="button" class="standard-button secondary" onclick={handleCancel}><IconCircleX size="16" />No, cancel</button>
+            <button type="button" class="standard-button red inverted" onclick={handleDelete} disabled={isDeleting || !!errorMessage}>
+                <IconCircleCheck size="16" />
+                {isDeleting ? "Deleting..." : "Yes, I'm sure"}
+            </button>
+            <button type="button" class="standard-button green inverted" onclick={handleCancel} disabled={isDeleting}>
+                <IconCircleX size="16" />No, cancel
+            </button>
         </footer>
     {/snippet}
 </Modal>

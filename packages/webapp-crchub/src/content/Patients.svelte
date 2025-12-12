@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import PatientGrid from '../components/content/PatientGrid.svelte';
+    import PatientGrid from '../components/content/patient/PatientGrid.svelte';
 
     onMount(async () => {
     });

@@ -217,17 +217,36 @@ export class ModelManager {
     }
 
     async openModelUnit(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
+        console.log(`[ModelManager] openModelUnit: modelName=${modelName}, unitName=${unitName}`);
         LOGGER.log("ModelHandler.openModelUnit modelName: " + modelName + " unitName: " + unitName);
         updateEditorState(true, true, false);
         this.resetGlobalVariables();
         // await this.saveCurrentUnit();
-        await this.modelStore.openModel(modelName);
+        
+        console.log(`[ModelManager] Calling modelStore.openModel(${modelName})`);
+        const openModelResult = await this.modelStore.openModel(modelName);
+        console.log(`[ModelManager] modelStore.openModel returned:`, {
+            resultType: typeof openModelResult,
+            isError: openModelResult?.constructor?.name === 'InMemoryError',
+            modelUnitsCount: openModelResult?.constructor?.name === 'InMemoryError' ? 0 : (openModelResult as any)?.units?.length || 0
+        });
+        
+        console.log(`[ModelManager] Getting unit by name: ${unitName}`);
         const unit = this.modelStore.getUnitByName(unitName);
+        console.log(`[ModelManager] getUnitByName returned:`, {
+            found: !!unit,
+            unitType: unit ? typeof unit : 'not found',
+            unitName: unit ? (unit as any).name : 'N/A'
+        });
+        
         if (unit) {
+            console.log(`[ModelManager] ✅ Unit found, setting up editor for ${unitName}`);
             this.setCurrentUnit(unit);
             BoxFactory.clearCaches();
             this.langEnv.projectionHandler.clear();
             this.showModelUnit(unit);
+        } else {
+            console.warn(`[ModelManager] ⚠️ Unit NOT found for ${unitName} in model ${modelName}`);
         }
         return unit;
     }

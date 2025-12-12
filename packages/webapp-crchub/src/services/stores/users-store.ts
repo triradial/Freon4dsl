@@ -2,10 +2,12 @@ import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 
 export interface User {
-    userid: string;  // From AWS Cognito
+    oid: string;     // Azure Entra Object ID
     email: string;   // Provided during login
-    name: string;    // From AWS Cognito
+    name: string;    // From Azure Entra
     facility: string;
+    role: string;
+    isGlobalAdmin: boolean;
 }
 
 function createUserStore() {

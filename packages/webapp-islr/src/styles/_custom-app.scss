@@ -1389,9 +1389,24 @@ appbar header {
   padding:0;
 }
 
+
 .object-drawer-area {
   top: 5.5rem;
   width: 300px
+}
+
+.object-drawer-slide {
+  transform: translateX(-100%);
+  animation: slideInFromLeft 0.3s ease-out forwards;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .mutation-area {

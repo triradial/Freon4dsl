@@ -100,7 +100,7 @@
         const referenceDateForTimeline = determineReferenceDate(referenceDate, patientHistory);
 
         // Get patient identifier for single patient view
-        const patientIdentifier = fetchedPatient.displayName || fetchedPatient.name || fetchedPatient.patientNumber;
+        const patientIdentifier = fetchedPatient.patientNumber || fetchedPatient.id;
         const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory, patientIdentifier);
         const html = (timeline.getTimelineChartHtml() as RtString).asString();
         return html;

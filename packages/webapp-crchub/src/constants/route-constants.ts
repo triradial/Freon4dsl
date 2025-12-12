@@ -4,6 +4,9 @@ export const ROUTE = Object.freeze({
     PATIENTS: 'patients',
     STUDIES: 'studies',
     AVAILABILITY: 'availability',
+    FACILITY: 'facility',
+    ORGANIZATIONS: 'organizations',
+    PEOPLE: 'people',
     STUDY: 'study',
     PATIENT: 'patient'
 });
@@ -14,6 +17,9 @@ export const VALID_ROUTES = [
     ROUTE.PATIENTS,
     ROUTE.STUDIES,
     ROUTE.AVAILABILITY,
+    ROUTE.FACILITY,
+    ROUTE.ORGANIZATIONS,
+    ROUTE.PEOPLE,
     ROUTE.STUDY,
     ROUTE.PATIENT
 ] as const;
