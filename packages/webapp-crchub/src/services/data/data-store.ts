@@ -95,6 +95,7 @@ function createDataStore() {
     ]);
   }
 
+  // Studies
   async function getStudies(adminMode: boolean = false): Promise<boolean> {
     try {
       const uid = getCurrentUserOid();
@@ -260,6 +261,7 @@ function createDataStore() {
     }
   }
 
+  // Patients
   async function getPatients(): Promise<boolean> {
     try {
       const uid = getCurrentUserOid();
@@ -984,6 +986,7 @@ function createDataStore() {
     }
   }
 
+  // Person
   async function getPersonRoles(): Promise<boolean> {
     try {
       const resp = await fetch(`${env.serverUrl}/getPersonRoles`);

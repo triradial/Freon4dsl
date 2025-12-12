@@ -29,11 +29,11 @@
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
     let modelPanelRefreshTrigger = $state(0);
 
-    function handlePersonSelected(personId: string | null, personName: string | null) {
+    let handlePersonSelected = $state((personId: string | null, personName: string | null) => {
         selectedPersonId = personId;
         selectedPersonName = personName;
         console.log('[Facility] Person selected:', personId, personName);
-    }
+    });
 
     async function loadFacilityData() {
         console.log('[Facility] loadFacilityData called, setting isLoading=true');

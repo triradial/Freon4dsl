@@ -188,7 +188,7 @@
         line-height: 1.6;
     }
     
-    .visit-checklist-content h1,
+    /* .visit-checklist-content h1,
     .visit-checklist-content h2,
     .visit-checklist-content h3,
     .visit-checklist-content h4 {
@@ -235,6 +235,6 @@
     .visit-checklist-content a {
         color: var(--primary-color);
         text-decoration: none;
-    }
+    } */
 </style>
 

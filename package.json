@@ -9,12 +9,12 @@
     "packages/core",
     "packages/core-svelte",
     "packages/meta",
-    "packages/languages/project-configuration",
-    "packages/server-islr",
-    "packages/webapp-islr",
     "packages/languages/study-configuration",
     "packages/server-crchub",
-    "packages/webapp-crchub"
+    "packages/webapp-crchub",
+    "packages/languages/project-configuration",
+    "packages/server-islr",
+    "packages/webapp-islr"
   ],
   "scripts": {
     "rebuild": "npm run clean && npm install && npm run build",

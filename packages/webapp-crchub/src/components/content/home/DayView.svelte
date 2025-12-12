@@ -10,6 +10,7 @@
     import type { StaffAvailability } from "../../../services/data/availability-service.js";
     import { convertToModel } from "../../../services/data/availability-interpreter.js";
     import { env } from "../../../config/env.js";
+    import { navigateTo } from "../../../services/routing/route-action.js";
     // @ts-ignore
     import { ChevronLeft as IconChevronLeft, ChevronRight as IconChevronRight, Check as IconCheck, ArrowRightFromLine as IconArrowRightFromLine, ArrowLeftFromLine as IconArrowLeftFromLine } from '@lucide/svelte';
 
@@ -17,6 +18,7 @@
     let today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    let studiesGridApi: GridApi;
     let patientsGridApi: GridApi;
     let staffInGridApi: GridApi;
     let staffOutGridApi: GridApi;
@@ -33,6 +35,13 @@
         personId: string;
     }
 
+    interface StudyRow {
+        studyName: string;
+        studyId: string;
+        patientCount: number;
+    }
+
+    let studiesData = $state<StudyRow[]>([]);
     let patientsData = $state<PatientVisitRow[]>([]);
     let staffInData = $state<StaffRow[]>([]);
     let staffOutData = $state<StaffRow[]>([]);
@@ -55,6 +64,13 @@
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
 
     // Reactive updates for grids
+    $effect(() => {
+        if (studiesGridApi && studiesData && !isSelectedDateBeforeOrgStart()) {
+            console.log('[DayView] Updating studies grid with', studiesData.length, 'rows');
+            studiesGridApi.setGridOption("rowData", studiesData);
+        }
+    });
+
     $effect(() => {
         if (patientsGridApi && patientsData && !isSelectedDateBeforeOrgStart()) {
             console.log('[DayView] Updating patients grid with', patientsData.length, 'rows');
@@ -400,6 +416,19 @@
 
         patientsData = patientVisits;
 
+        // Load studies data
+        const studiesRows: StudyRow[] = [];
+        for (const study of studies) {
+            // Count patients for this study
+            const studyPatients = allPatients.filter(p => p.studyId === study.id);
+            studiesRows.push({
+                studyName: study.name || study.id,
+                studyId: study.id,
+                patientCount: studyPatients.length
+            });
+        }
+        studiesData = studiesRows;
+
         // Load organization dates FIRST (independent of studies)
         // Facility dates are needed for date filtering even if there are no studies
         // Check if we haven't loaded organization dates yet (both are null)
@@ -493,6 +522,10 @@
         staffOutData = staffOut;
         
         // Manually update grids after data loads (in case reactive effects haven't fired yet)
+        if (studiesGridApi) {
+            console.log('[DayView] Manually updating studies grid with', studiesData.length, 'rows');
+            studiesGridApi.setGridOption("rowData", studiesData);
+        }
         if (staffInGridApi) {
             console.log('[DayView] Manually updating staff in grid with', staffIn.length, 'rows');
             staffInGridApi.setGridOption("rowData", staffIn);
@@ -644,6 +677,64 @@
         updateWeekDays();
         
         // Initialize grids first (they'll be empty initially)
+        // Initialize studies grid
+        const studiesGridElement = document.querySelector("#studiesGrid") as HTMLElement;
+        if (studiesGridElement) {
+            function createStudyNameCellRenderer(params: any) {
+                const container = document.createElement('div');
+                container.style.display = 'flex';
+                container.style.alignItems = 'center';
+                container.style.width = '100%';
+                
+                const button = document.createElement('button');
+                button.textContent = params.data?.studyName || '';
+                button.style.background = 'none';
+                button.style.border = 'none';
+                button.style.cursor = 'pointer';
+                button.style.padding = '0';
+                button.style.textAlign = 'left';
+                button.style.color = 'var(--color-link, var(--color-text))';
+                button.style.textDecoration = 'underline';
+                button.style.font = 'inherit';
+                button.title = 'Open study';
+                button.onclick = (e) => {
+                    e.stopPropagation();
+                    if (params.data?.studyId) {
+                        navigateTo("study", params.data.studyId);
+                    }
+                };
+                container.appendChild(button);
+                
+                return container;
+            }
+            
+            const studiesGridOptions: GridOptions = {
+                columnDefs: [
+                    { 
+                        field: "studyName", 
+                        headerName: "Study Name", 
+                        flex: 1, 
+                        minWidth: 150,
+                        cellRenderer: createStudyNameCellRenderer
+                    },
+                    { field: "patientCount", headerName: "Patient Number", flex: 1, minWidth: 100 }
+                ],
+                rowData: studiesData,
+                defaultColDef: {
+                    sortable: false,
+                    filter: false,
+                    resizable: false,
+                    menuTabs: [],
+                    suppressHeaderMenuButton: true
+                },
+                pagination: false,
+                suppressRowClickSelection: true,
+                domLayout: 'normal',
+                overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No studies</span>'
+            };
+            studiesGridApi = createGrid(studiesGridElement, studiesGridOptions);
+        }
+
         // Initialize patients grid
         const patientsGridElement = document.querySelector("#patientsGrid") as HTMLElement;
         if (patientsGridElement) {
@@ -832,8 +923,16 @@
         </div>
     </div>
 
-    <!-- Main Content: Patients and Staff -->
+    <!-- Main Content: Studies, Patients and Staff -->
     <div class="main-content">
+        <div class="studies-section">
+            <h3>Studies</h3>
+            {#if isSelectedDateBeforeOrgStart()}
+                <div class="not-applicable-message">Not Applicable</div>
+            {/if}
+            <div id="studiesGrid" class="{gridTheme} ag-grid" style:display={isSelectedDateBeforeOrgStart() ? 'none' : 'block'}></div>
+        </div>
+
         <div class="patients-section">
             <h3>Patients</h3>
             {#if isSelectedDateBeforeOrgStart()}

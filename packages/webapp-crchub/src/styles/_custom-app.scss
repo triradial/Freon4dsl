@@ -3195,11 +3195,12 @@
   .main-content {
       flex: 1;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 1rem;
       min-height: 0;
   }
 
+  .studies-section,
   .patients-section,
   .staff-section {
       display: flex;
@@ -3211,6 +3212,7 @@
       box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
   }
 
+  .studies-section h3,
   .patients-section h3,
   .staff-section h3 {
       margin: 0;
@@ -3277,6 +3279,7 @@
       min-height: 8rem;
   }
 
+  #studiesGrid,
   #patientsGrid {
       width: 100%;
       height: 100%;
