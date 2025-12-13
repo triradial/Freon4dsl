@@ -7,12 +7,14 @@
     import { LABEL } from "../../constants/label-constants.js";
     import { userStore, type User } from "../../services/stores/users-store.js";
     import { adminModeStore } from "../../services/stores/admin-mode-store.js";
+    import { staffAvailabilityStore } from "../../services/stores/staff-availability-store.js";
     // @ts-ignore
     import { Sun as IconSun, Moon as IconMoon } from '@lucide/svelte';
     import version from '../../../static/version.txt?raw';
 
     let user = $derived($userStore);
     let adminMode = $derived($adminModeStore);
+    let showStaffAvailability = $derived($staffAvailabilityStore);
     
     $effect(() => {
         console.log('[NavBar] User updated:', user);
@@ -60,6 +62,10 @@
 
     function toggleAdminMode() {
         adminModeStore.toggle();
+    }
+
+    function toggleShowStaffAvailability() {
+        staffAvailabilityStore.toggle();
     }
 </script>
 
@@ -145,6 +151,18 @@
                         {/if}
                     </div>
                 </header>
+                <hr class="my-2" />
+                <div class="user-menu mb-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            checked={showStaffAvailability} 
+                            onchange={toggleShowStaffAvailability}
+                            class="w-4 h-4 cursor-pointer"
+                        />
+                        <span class="user-text">Show Staff Availability</span>
+                    </label>
+                </div>
                 <hr class="my-2" />
                 <div class="user-menu mb-4">
                     <button class="px-2 py-1" onclick={signOut} tabindex="0">Sign out</button>

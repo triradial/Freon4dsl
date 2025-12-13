@@ -26,6 +26,7 @@
     import { theme } from "../services/stores/theme-store.js";
     import { userStore } from "../services/stores/users-store.js";
     import { adminModeStore } from "../services/stores/admin-mode-store.js";
+    import { staffAvailabilityStore } from "../services/stores/staff-availability-store.js";
 // @ts-ignore
     import { Calendar as IconCalendar, CheckSquare as IconCheckSquare, ClipboardCheck as IconClipboardCheck, Heart as IconHeart, Info as IconInfo, SquareChartGantt as IconSquareChartGantt, Table2 as IconTable2, TriangleAlert as IconTriangleAlert, Users as IconUsers } from '@lucide/svelte';
     
@@ -62,6 +63,7 @@
                 // Disable admin mode if user is not a global admin
                 adminModeStore.disable();
             }
+            staffAvailabilityStore.initializeFromStorage();
             dataStore.initializeDatastore();
 
             // Register global drawers

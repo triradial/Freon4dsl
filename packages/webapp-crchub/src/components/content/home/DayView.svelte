@@ -4,6 +4,7 @@
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
     import { theme } from "../../../services/stores/theme-store.js";
+    import { staffAvailabilityStore } from "../../../services/stores/staff-availability-store.js";
     import { dataStore } from "../../../services/data/data-store.js";
     import { ModelManager } from "../../../services/dsl/model-manager.js";
     import type { PatientInfo, PatientHistory, PatientVisit } from "@freon4dsl/study-configuration";
@@ -62,6 +63,7 @@
     let totalStaff = $state(0);
     let staffAvailabilityData = $state<Map<string, StaffAvailability>>(new Map());
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
+    let showStaffAvailability = $derived($staffAvailabilityStore);
 
     // Reactive updates for grids
     $effect(() => {
@@ -364,6 +366,134 @@
         selectedDate = new Date(date);
         updateWeekDays();
         loadDayData();
+    }
+
+    function initializeStaffGrids() {
+        // Initialize staff in grid
+        const staffInGridElement = document.querySelector("#staffInGrid") as HTMLElement;
+        if (staffInGridElement && !staffInGridElement.querySelector('.ag-root')) {
+            function createStaffInNameCellRenderer(params: any) {
+                const container = document.createElement('div');
+                container.style.display = 'flex';
+                container.style.alignItems = 'center';
+                container.style.gap = '0.5rem';
+                container.style.width = '100%';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = params.data?.name || '';
+                nameSpan.style.flex = '1';
+                nameSpan.style.color = 'var(--dayview-staff-in-header)';
+                container.appendChild(nameSpan);
+                
+                const button = document.createElement('button');
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"></path><path d="M18 6l6 6-6 6"></path></svg>`;
+                button.style.background = 'none';
+                button.style.border = 'none';
+                button.style.cursor = 'pointer';
+                button.style.padding = '0.25rem';
+                button.style.display = 'flex';
+                button.style.alignItems = 'center';
+                button.style.color = 'var(--color-text)';
+                button.title = 'Mark as unavailable';
+                button.onclick = async (e) => {
+                    e.stopPropagation();
+                    if (params.data?.personId) {
+                        await togglePersonUnavailable(params.data.personId);
+                    }
+                };
+                container.appendChild(button);
+                
+                return container;
+            }
+            
+            const staffInGridOptions: GridOptions = {
+                columnDefs: [
+                    { 
+                        field: "name", 
+                        headerName: "Name", 
+                        flex: 1, 
+                        minWidth: 150,
+                        cellRenderer: createStaffInNameCellRenderer
+                    }
+                ],
+                rowData: staffInData,
+                defaultColDef: {
+                    sortable: false,
+                    filter: false,
+                    resizable: false,
+                    menuTabs: [],
+                    suppressHeaderMenuButton: true
+                },
+                pagination: false,
+                suppressRowClickSelection: true,
+                domLayout: 'normal',
+                overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No staff in</span>'
+            };
+            staffInGridApi = createGrid(staffInGridElement, staffInGridOptions);
+        }
+
+        // Initialize staff out grid
+        const staffOutGridElement = document.querySelector("#staffOutGrid") as HTMLElement;
+        if (staffOutGridElement && !staffOutGridElement.querySelector('.ag-root')) {
+            function createStaffOutNameCellRenderer(params: any) {
+                const container = document.createElement('div');
+                container.style.display = 'flex';
+                container.style.alignItems = 'center';
+                container.style.gap = '0.5rem';
+                container.style.width = '100%';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = params.data?.name || '';
+                nameSpan.style.flex = '1';
+                nameSpan.style.color = 'var(--dayview-staff-out-header)';
+                container.appendChild(nameSpan);
+                
+                const button = document.createElement('button');
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12H3"></path><path d="M6 18l-6-6 6-6"></path></svg>`;
+                button.style.background = 'none';
+                button.style.border = 'none';
+                button.style.cursor = 'pointer';
+                button.style.padding = '0.25rem';
+                button.style.display = 'flex';
+                button.style.alignItems = 'center';
+                button.style.color = 'var(--color-text)';
+                button.title = 'Mark as available';
+                button.onclick = async (e) => {
+                    e.stopPropagation();
+                    if (params.data?.personId) {
+                        await togglePersonAvailable(params.data.personId);
+                    }
+                };
+                container.appendChild(button);
+                
+                return container;
+            }
+            
+            const staffOutGridOptions: GridOptions = {
+                columnDefs: [
+                    { 
+                        field: "name", 
+                        headerName: "Name", 
+                        flex: 1, 
+                        minWidth: 150,
+                        cellRenderer: createStaffOutNameCellRenderer
+                    }
+                ],
+                rowData: staffOutData,
+                defaultColDef: {
+                    sortable: false,
+                    filter: false,
+                    resizable: false,
+                    menuTabs: [],
+                    suppressHeaderMenuButton: true
+                },
+                pagination: false,
+                suppressRowClickSelection: true,
+                domLayout: 'normal',
+                overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No staff out</span>'
+            };
+            staffOutGridApi = createGrid(staffOutGridElement, staffOutGridOptions);
+        }
     }
 
     async function loadDayData() {
@@ -673,6 +803,16 @@
         }
     });
 
+    // Initialize staff grids when showStaffAvailability becomes true
+    $effect(() => {
+        if (showStaffAvailability) {
+            // Use setTimeout to ensure DOM is updated
+            setTimeout(() => {
+                initializeStaffGrids();
+            }, 0);
+        }
+    });
+
     onMount(async () => {
         updateWeekDays();
         
@@ -760,130 +900,9 @@
             patientsGridApi = createGrid(patientsGridElement, patientsGridOptions);
         }
 
-        // Initialize staff in grid
-        const staffInGridElement = document.querySelector("#staffInGrid") as HTMLElement;
-        if (staffInGridElement) {
-            function createStaffInNameCellRenderer(params: any) {
-                const container = document.createElement('div');
-                container.style.display = 'flex';
-                container.style.alignItems = 'center';
-                container.style.gap = '0.5rem';
-                container.style.width = '100%';
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = params.data?.name || '';
-                nameSpan.style.flex = '1';
-                nameSpan.style.color = 'var(--dayview-staff-in-header)';
-                container.appendChild(nameSpan);
-                
-                const button = document.createElement('button');
-                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"></path><path d="M18 6l6 6-6 6"></path></svg>`;
-                button.style.background = 'none';
-                button.style.border = 'none';
-                button.style.cursor = 'pointer';
-                button.style.padding = '0.25rem';
-                button.style.display = 'flex';
-                button.style.alignItems = 'center';
-                button.style.color = 'var(--color-text)';
-                button.title = 'Mark as unavailable';
-                button.onclick = async (e) => {
-                    e.stopPropagation();
-                    if (params.data?.personId) {
-                        await togglePersonUnavailable(params.data.personId);
-                    }
-                };
-                container.appendChild(button);
-                
-                return container;
-            }
-            
-            const staffInGridOptions: GridOptions = {
-                columnDefs: [
-                    { 
-                        field: "name", 
-                        headerName: "Name", 
-                        flex: 1, 
-                        minWidth: 150,
-                        cellRenderer: createStaffInNameCellRenderer
-                    }
-                ],
-                rowData: staffInData,
-                defaultColDef: {
-                    sortable: false,
-                    filter: false,
-                    resizable: false,
-                    menuTabs: [],
-                    suppressHeaderMenuButton: true
-                },
-                pagination: false,
-                suppressRowClickSelection: true,
-                domLayout: 'normal',
-                overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No staff in</span>'
-            };
-            staffInGridApi = createGrid(staffInGridElement, staffInGridOptions);
-        }
-
-        // Initialize staff out grid
-        const staffOutGridElement = document.querySelector("#staffOutGrid") as HTMLElement;
-        if (staffOutGridElement) {
-            function createStaffOutNameCellRenderer(params: any) {
-                const container = document.createElement('div');
-                container.style.display = 'flex';
-                container.style.alignItems = 'center';
-                container.style.gap = '0.5rem';
-                container.style.width = '100%';
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = params.data?.name || '';
-                nameSpan.style.flex = '1';
-                nameSpan.style.color = 'var(--dayview-staff-out-header)';
-                container.appendChild(nameSpan);
-                
-                const button = document.createElement('button');
-                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12H3"></path><path d="M6 18l-6-6 6-6"></path></svg>`;
-                button.style.background = 'none';
-                button.style.border = 'none';
-                button.style.cursor = 'pointer';
-                button.style.padding = '0.25rem';
-                button.style.display = 'flex';
-                button.style.alignItems = 'center';
-                button.style.color = 'var(--color-text)';
-                button.title = 'Mark as available';
-                button.onclick = async (e) => {
-                    e.stopPropagation();
-                    if (params.data?.personId) {
-                        await togglePersonAvailable(params.data.personId);
-                    }
-                };
-                container.appendChild(button);
-                
-                return container;
-            }
-            
-            const staffOutGridOptions: GridOptions = {
-                columnDefs: [
-                    { 
-                        field: "name", 
-                        headerName: "Name", 
-                        flex: 1, 
-                        minWidth: 150,
-                        cellRenderer: createStaffOutNameCellRenderer
-                    }
-                ],
-                rowData: staffOutData,
-                defaultColDef: {
-                    sortable: false,
-                    filter: false,
-                    resizable: false,
-                    menuTabs: [],
-                    suppressHeaderMenuButton: true
-                },
-                pagination: false,
-                suppressRowClickSelection: true,
-                domLayout: 'normal',
-                overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No staff out</span>'
-            };
-            staffOutGridApi = createGrid(staffOutGridElement, staffOutGridOptions);
+        // Initialize staff grids if staff availability is enabled
+        if (showStaffAvailability) {
+            initializeStaffGrids();
         }
         
         // Load organization dates first (needed for date filtering)
@@ -924,7 +943,7 @@
     </div>
 
     <!-- Main Content: Studies, Patients and Staff -->
-    <div class="main-content">
+    <div class="main-content" style:grid-template-columns={showStaffAvailability ? '1fr 1fr 1fr' : '1fr 1fr'}>
         <div class="studies-section">
             <h3>Studies</h3>
             {#if isSelectedDateBeforeOrgStart()}
@@ -941,25 +960,27 @@
             <div id="patientsGrid" class="{gridTheme} ag-grid" style:display={isSelectedDateBeforeOrgStart() ? 'none' : 'block'}></div>
         </div>
 
-        <div class="staff-section">
-            <h3>Staff</h3>
-            <div class="staff-sections-container">
-                <div class="staff-in-section">
-                    <h4 class="staff-in-header">Available</h4>
-                    {#if isSelectedDateBeforeOrgStart()}
-                        <div class="not-applicable-message">Not Applicable</div>
-                    {/if}
-                    <div id="staffInGrid" class="{gridTheme} ag-grid" style:display={isSelectedDateBeforeOrgStart() ? 'none' : 'block'}></div>
-                </div>
-                <div class="staff-out-section">
-                    <h4 class="staff-out-header">Unavailable</h4>
-                    {#if isSelectedDateBeforeOrgStart()}
-                        <div class="not-applicable-message">Not Applicable</div>
-                    {/if}
-                    <div id="staffOutGrid" class="{gridTheme} ag-grid" style:display={isSelectedDateBeforeOrgStart() ? 'none' : 'block'}></div>
+        {#if showStaffAvailability}
+            <div class="staff-section">
+                <h3>Staff</h3>
+                <div class="staff-sections-container">
+                    <div class="staff-in-section">
+                        <h4 class="staff-in-header">Available</h4>
+                        {#if isSelectedDateBeforeOrgStart()}
+                            <div class="not-applicable-message">Not Applicable</div>
+                        {/if}
+                        <div id="staffInGrid" class="{gridTheme} ag-grid" style:display={isSelectedDateBeforeOrgStart() ? 'none' : 'block'}></div>
+                    </div>
+                    <div class="staff-out-section">
+                        <h4 class="staff-out-header">Unavailable</h4>
+                        {#if isSelectedDateBeforeOrgStart()}
+                            <div class="not-applicable-message">Not Applicable</div>
+                        {/if}
+                        <div id="staffOutGrid" class="{gridTheme} ag-grid" style:display={isSelectedDateBeforeOrgStart() ? 'none' : 'block'}></div>
+                    </div>
                 </div>
             </div>
-        </div>
+        {/if}
     </div>
 
     <!-- Bottom Section: Week View -->
@@ -999,14 +1020,16 @@
                         {:else}
                             <div class="day-content-center">
                                 <div class="day-visit-count">{dayData.visitCount} patient visit{dayData.visitCount !== 1 ? 's' : ''}</div>
-                                {#if dayData.staffOut > 0}
-                                    <div class="day-staff-out staff-out-warning">
-                                        {dayData.staffOut} staff unavailable
-                                    </div>
-                                {:else}
-                                    <div class="day-staff-out staff-out-ok">
-                                        all staff available
-                                    </div>
+                                {#if showStaffAvailability}
+                                    {#if dayData.staffOut > 0}
+                                        <div class="day-staff-out staff-out-warning">
+                                            {dayData.staffOut} staff unavailable
+                                        </div>
+                                    {:else}
+                                        <div class="day-staff-out staff-out-ok">
+                                            all staff available
+                                        </div>
+                                    {/if}
                                 {/if}
                             </div>
                         {/if}

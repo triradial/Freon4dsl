@@ -9,7 +9,7 @@
     import { dataStore, type Patient } from "../services/data/data-store.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { ModelManager } from "../services/dsl/model-manager.js";
-    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
+    import { WebappConfigurator } from "../services/webapp-configurator.js";
     import { setDrawerVisibility } from "../services/stores/side-drawer-store.js";
 // @ts-ignore
     import { CalendarDays as IconCalendarDays, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
