@@ -19,7 +19,10 @@
 // import type { TimelineEventInstance } from "@freon4dsl/study-configuration";
 // import type { ScheduledEventInstance } from "@freon4dsl/study-configuration";
 
-export function getStatusColor(status: string): string {
+export function getStatusColor(status: string | null | undefined): string {
+    if (!status) {
+        return "default";
+    }
     switch (status.toLowerCase()) {
         case "active":
             return "blue";
