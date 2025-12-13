@@ -3,7 +3,7 @@
     import type { DateRange } from "../../../services/data/availability-service.js";
     import { calculateDailyAvailability } from "../../../services/data/availability-service.js";
     // @ts-ignore
-    import { ChevronLeft as IconChevronLeft, ChevronRight as IconChevronRight } from '@lucide/svelte';
+    import { ChevronUp as IconChevronUp, ChevronDown as IconChevronDown } from '@lucide/svelte';
     
     // Format date as YYYY-MM-DD without timezone issues
     function formatDateString(date: Date): string {
@@ -16,29 +16,54 @@
     let { 
         selectedPersonId = $bindable(),
         selectedPersonName = $bindable(),
-        totalStaff,
-        unavailableDates,
+        totalStaff = 0,
+        unavailableDates = [],
         onDatesChanged,
         allStaffAvailability,
         staffNames,
         organizationStartDate,
-        organizationEndDate
+        organizationEndDate,
+        entityType = "staff",
+        monthsToShow = 2
     } = $props<{
-        selectedPersonId: string | null;
-        selectedPersonName: string | null;
-        totalStaff: number;
-        unavailableDates: DateRange[];
-        onDatesChanged: (personId: string, dates: DateRange[]) => void;
-        allStaffAvailability?: Map<string, DateRange[]>; // For showing counts when no person selected
-        staffNames?: Map<string, string>; // Map of personId to personName for tooltips
+        selectedPersonId?: string | null;
+        selectedPersonName?: string | null;
+        totalStaff?: number;
+        unavailableDates?: DateRange[];
+        onDatesChanged?: (personId: string, dates: DateRange[]) => void;
+        allStaffAvailability?: Map<string, DateRange[]>; // For showing counts when no person selected (staff only)
+        staffNames?: Map<string, string>; // Map of personId to personName for tooltips (staff only)
         organizationStartDate?: string | null; // Organization start date (YYYY-MM-DD)
         organizationEndDate?: string | null; // Organization end date (YYYY-MM-DD)
+        entityType?: "staff" | "patient"; // Type of entity: staff (supports aggregation) or patient (individual only)
+        monthsToShow?: number; // Number of months to display (default 3)
     }>();
 
     let weekendsUnavailable = $state(false);
 
-    let currentMonth = $state(new Date());
+    let startMonth = $state(new Date());
     let isSelecting = $state(false);
+    
+    // Dynamically determine months to show based on screen height
+    let effectiveMonthsToShow = $state(monthsToShow);
+    
+    // Update months to show based on viewport height
+    $effect(() => {
+        function updateMonthsToShow() {
+            if (window.innerHeight >= 900) {
+                effectiveMonthsToShow = 3;
+            } else {
+                effectiveMonthsToShow = 2;
+            }
+        }
+        
+        updateMonthsToShow();
+        window.addEventListener('resize', updateMonthsToShow);
+        
+        return () => {
+            window.removeEventListener('resize', updateMonthsToShow);
+        };
+    });
     let selectionStart: Date | null = null;
     let selectionEnd: Date | null = null;
     
@@ -49,19 +74,19 @@
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"];
-    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
 
     function previousMonth() {
-        currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
+        startMonth = new Date(startMonth.getFullYear(), startMonth.getMonth() - 1, 1);
     }
 
     function nextMonth() {
-        currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+        startMonth = new Date(startMonth.getFullYear(), startMonth.getMonth() + 1, 1);
     }
 
-    function getMonthDays(): Date[] {
-        const year = currentMonth.getFullYear();
-        const month = currentMonth.getMonth();
+    function getMonthDays(monthDate: Date): Date[] {
+        const year = monthDate.getFullYear();
+        const month = monthDate.getMonth();
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
         
@@ -82,6 +107,16 @@
         }
         
         return days;
+    }
+
+    // Get all visible months
+    function getVisibleMonths(): Date[] {
+        const months: Date[] = [];
+        for (let i = 0; i < effectiveMonthsToShow; i++) {
+            const monthDate = new Date(startMonth.getFullYear(), startMonth.getMonth() + i, 1);
+            months.push(monthDate);
+        }
+        return months;
     }
 
     function isDateUnavailable(date: Date): boolean {
@@ -112,13 +147,16 @@
                 JSON.stringify(filtered) !== JSON.stringify(unavailableDates)) {
                 // Dates changed, need to update
                 console.log('[AvailabilityCalendar] Filtering weekends from unavailable dates');
-                onDatesChanged(selectedPersonId, filtered);
+                if (onDatesChanged && selectedPersonId) {
+                    onDatesChanged(selectedPersonId, filtered);
+                }
             }
         }
     });
 
-    function isDateInCurrentMonth(date: Date): boolean {
-        return date.getMonth() === currentMonth.getMonth();
+    function isDateInMonth(date: Date, monthDate: Date): boolean {
+        return date.getMonth() === monthDate.getMonth() && 
+               date.getFullYear() === monthDate.getFullYear();
     }
 
     function isToday(date: Date): boolean {
@@ -148,10 +186,10 @@
         const start = selectionStart < (selectionEnd || selectionStart) ? selectionStart : (selectionEnd || selectionStart);
         const end = selectionStart < (selectionEnd || selectionStart) ? (selectionEnd || selectionStart) : selectionStart;
         
-        // If no person selected, toggle availability for all staff
-        if (!selectedPersonId) {
+        // If no person selected and in staff mode, toggle availability for all staff
+        if (!selectedPersonId && entityType === "staff") {
             toggleAllStaffAvailability(start, end);
-        } else {
+        } else if (selectedPersonId || entityType === "patient") {
             // Individual person toggle
             const newRange: DateRange = {
                 startDate: formatDateString(start),
@@ -200,7 +238,9 @@
                 return { startDate, endDate };
             }).filter(range => range.startDate <= range.endDate);
             
-            onDatesChanged(selectedPersonId, newUnavailableDates);
+            if (onDatesChanged) {
+                onDatesChanged(selectedPersonId, newUnavailableDates);
+            }
         }
         
         isSelecting = false;
@@ -213,6 +253,11 @@
         
         const dateStr = formatDateString(startDate);
         const unavailableCount = getUnavailableCountForDate(startDate);
+        
+        // Only allow bulk toggle in staff mode
+        if (entityType !== "staff" || !allStaffAvailability || allStaffAvailability.size === 0) {
+            return;
+        }
         
         // Determine action: if all or some are unavailable, make all available; if all available, make all unavailable
         const shouldMakeUnavailable = unavailableCount === 0;
@@ -264,7 +309,9 @@
             }).filter(range => range.startDate <= range.endDate);
             
             // Call onDatesChanged for each person
-            onDatesChanged(personId, newUnavailableDates);
+            if (onDatesChanged) {
+                onDatesChanged(personId, newUnavailableDates);
+            }
         }
     }
 
@@ -462,8 +509,8 @@
     }
 
     function getAvailabilityStatusClass(date: Date): string {
-        // Only apply availability status classes when showing counts (no person selected)
-        if (selectedPersonId || !allStaffAvailability || allStaffAvailability.size === 0) {
+        // Only apply availability status classes when showing counts (staff mode, no person selected)
+        if (selectedPersonId || entityType !== "staff" || !allStaffAvailability || allStaffAvailability.size === 0) {
             return "";
         }
         
@@ -490,10 +537,10 @@
         }
     }
 
-    function getDayClasses(date: Date): string {
+    function getDayClasses(date: Date, monthDate: Date): string {
         let classes = "calendar-day";
         
-        if (!isDateInCurrentMonth(date)) {
+        if (!isDateInMonth(date, monthDate)) {
             classes += " other-month";
         }
         
@@ -502,21 +549,24 @@
         }
         
         // If weekends are marked unavailable, make them gray and disabled
-        if (weekendsUnavailable && isWeekend(date) && isDateInCurrentMonth(date)) {
-            classes += " unavailable weekend-unavailable";
-        } else if (selectedPersonId) {
-            // Individual calendar: add available/unavailable classes
+        // Note: isDateInMonth check will be done in template
+        if (weekendsUnavailable && isWeekend(date)) {
+            classes += " weekend-unavailable";
+        }
+        
+        // Individual calendar: add available/unavailable classes (for selected person or patient)
+        if (selectedPersonId || entityType === "patient") {
             const dateStr = formatDateString(date);
             if (!isDateInOrgRange(dateStr)) {
                 // Outside org range - don't show as available or unavailable
                 classes += " disabled outside-org-range";
             } else if (isDateUnavailable(date)) {
                 classes += " unavailable";
-            } else if (isDateInCurrentMonth(date)) {
+            } else {
                 classes += " available";
             }
-        } else if (!selectedPersonId) {
-            // Add availability status class when showing counts
+        } else if (!selectedPersonId && entityType === "staff") {
+            // Add availability status class when showing counts (staff mode, no selection)
             classes += getAvailabilityStatusClass(date);
         }
         
@@ -554,105 +604,135 @@
             return false;
         }
         // Can't click if weekends unavailable and it's a weekend
-        if (weekendsUnavailable && isWeekend(date) && isDateInCurrentMonth(date)) {
+        if (weekendsUnavailable && isWeekend(date)) {
             return false;
         }
         // Can click if person selected OR if showing all staff (for bulk toggle)
         return true;
     }
 
-    let monthDays = $derived(getMonthDays());
+    let visibleMonths = $derived(getVisibleMonths());
+    
+    // Helper to determine if we should show day numbers (for counts view)
+    function shouldShowDayNumber(): boolean {
+        // Show day numbers only in staff mode when no person is selected (showing counts)
+        return !selectedPersonId && entityType === "staff";
+    }
+    
+    // Helper to determine if we should show day number in top left (for person view)
+    function shouldShowDayNumberInPersonView(): boolean {
+        // Show day number in top left when person is selected or in patient mode
+        return (selectedPersonId !== null && selectedPersonId !== undefined) || entityType === "patient";
+    }
+    
+    // Helper to determine if we should show unavailable count
+    function shouldShowUnavailableCount(): boolean {
+        // Show counts only in staff mode when no person is selected
+        return !selectedPersonId && entityType === "staff";
+    }
 </script>
 
 <div class="availability-calendar">
     <h3 class="calendar-title">Availability Calendar</h3>
     
     <div class="calendar-toolbar">
-        {#if selectedPersonName}
-            <div class="selected-person-name">{selectedPersonName}</div>
-        {/if}
         <div class="nav-buttons">
             <button type="button" class="nav-button" onclick={previousMonth}>
-                <IconChevronLeft size={18} />
+                <IconChevronUp size={24} />
             </button>
-            <h3 class="month-title">
-                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-            </h3>
             <button type="button" class="nav-button" onclick={nextMonth}>
-                <IconChevronRight size={18} />
+                <IconChevronDown size={24} />
             </button>
         </div>
+        <label class="weekends-checkbox-header">
+            <input type="checkbox" bind:checked={weekendsUnavailable} />
+            <span>Weekends Unavailable</span>
+        </label>
     </div>
 
-    <div class="calendar-grid">
-        <div class="day-names">
-            {#each dayNames as dayName}
-                <div class="day-name">{dayName}</div>
-            {/each}
-        </div>
-        
-        <div 
-            class="days-grid"
-            role="grid"
-            tabindex="0"
-            onmouseup={onDateMouseUp}
-            onmouseleave={() => { if (isSelecting) onDateMouseUp(); }}
-        >
-            {#each monthDays as date (date.getTime())}
-                {#if isDateInCurrentMonth(date)}
-                    {@const dayClasses = getDayClasses(date)}
-                    {@const unavailableCount = !selectedPersonId ? getUnavailableCountForDate(date) : 0}
-                    {@const showUnavailableCount = !selectedPersonId && unavailableCount > 0}
-                    {@const unavailableNames = !selectedPersonId ? getUnavailablePersonNamesForDate(date) : []}
-                    <div 
-                        class={dayClasses}
-                        role="gridcell"
-                        tabindex="0"
-                        onmousedown={() => onDateMouseDown(date)}
-                        onmouseenter={(e) => {
-                            onDateMouseEnter(date);
-                            if (unavailableNames.length > 0) {
-                                // Clear any existing timeout
-                                if (tooltipTimeout) {
-                                    clearTimeout(tooltipTimeout);
-                                }
-                                // Set position immediately but delay showing
-                                tooltipPosition = { x: e.clientX, y: e.clientY };
-                                tooltipDate = date;
-                                tooltipTimeout = setTimeout(() => {
-                                    tooltipVisible = true;
-                                }, 500); // 500ms delay
-                            }
-                        }}
-                        onmousemove={(e) => {
-                            if (unavailableNames.length > 0 && !tooltipVisible) {
-                                // Only update position if tooltip isn't visible yet
-                                tooltipPosition = { x: e.clientX, y: e.clientY };
-                            }
-                        }}
-                        onmouseleave={() => {
-                            if (tooltipTimeout) {
-                                clearTimeout(tooltipTimeout);
-                                tooltipTimeout = null;
-                            }
-                            tooltipVisible = false;
-                            tooltipDate = null;
-                        }}
-                    >
-                        <span class="day-number">{date.getDate()}</span>
-                        {#if showUnavailableCount}
-                            <span class="unavailable-count-centered">{unavailableCount}</span>
-                        {/if}
+    <div class="calendar-months">
+        {#each visibleMonths as monthDate (monthDate.getTime())}
+            {@const monthDays = getMonthDays(monthDate)}
+            <div class="month-section">
+                <h4 class="month-header">
+                    {monthNames[monthDate.getMonth()]} {monthDate.getFullYear()}
+                </h4>
+                <div class="calendar-grid">
+                    <div class="day-names">
+                        {#each dayNames as dayName}
+                            <div class="day-name">{dayName}</div>
+                        {/each}
                     </div>
-                {:else}
-                    <div class="calendar-day-empty"></div>
-                {/if}
-            {/each}
-        </div>
+                    
+                    <div 
+                        class="days-grid"
+                        role="grid"
+                        tabindex="0"
+                        onmouseup={onDateMouseUp}
+                        onmouseleave={() => { if (isSelecting) onDateMouseUp(); }}
+                    >
+                        {#each monthDays as date (date.getTime())}
+                            {#if isDateInMonth(date, monthDate)}
+                                {@const dayClasses = getDayClasses(date, monthDate)}
+                                {@const unavailableCount = shouldShowUnavailableCount() ? getUnavailableCountForDate(date) : 0}
+                                {@const showUnavailableCount = shouldShowUnavailableCount() && unavailableCount > 0}
+                                {@const unavailableNames = shouldShowUnavailableCount() ? getUnavailablePersonNamesForDate(date) : []}
+                                <div 
+                                    class={dayClasses}
+                                    role="gridcell"
+                                    tabindex="0"
+                                    onmousedown={() => onDateMouseDown(date)}
+                                    onmouseenter={(e) => {
+                                        onDateMouseEnter(date);
+                                        if (unavailableNames.length > 0) {
+                                            // Clear any existing timeout
+                                            if (tooltipTimeout) {
+                                                clearTimeout(tooltipTimeout);
+                                            }
+                                            // Set position immediately but delay showing
+                                            tooltipPosition = { x: e.clientX, y: e.clientY };
+                                            tooltipDate = date;
+                                            tooltipTimeout = setTimeout(() => {
+                                                tooltipVisible = true;
+                                            }, 500); // 500ms delay
+                                        }
+                                    }}
+                                    onmousemove={(e) => {
+                                        if (unavailableNames.length > 0 && !tooltipVisible) {
+                                            // Only update position if tooltip isn't visible yet
+                                            tooltipPosition = { x: e.clientX, y: e.clientY };
+                                        }
+                                    }}
+                                    onmouseleave={() => {
+                                        if (tooltipTimeout) {
+                                            clearTimeout(tooltipTimeout);
+                                            tooltipTimeout = null;
+                                        }
+                                        tooltipVisible = false;
+                                        tooltipDate = null;
+                                    }}
+                                >
+                                    {#if shouldShowDayNumberInPersonView()}
+                                        <span class="day-number">{date.getDate()}</span>
+                                    {:else if shouldShowDayNumber()}
+                                        <span class="day-number">{date.getDate()}</span>
+                                    {/if}
+                                    {#if showUnavailableCount}
+                                        <span class="unavailable-count-centered">{unavailableCount}</span>
+                                    {/if}
+                                </div>
+                            {:else}
+                                <div class="calendar-day-empty"></div>
+                            {/if}
+                        {/each}
+                    </div>
+                </div>
+            </div>
+        {/each}
     </div>
     
     {#if tooltipVisible && tooltipDate}
-        {@const unavailableNames = !selectedPersonId ? getUnavailablePersonNamesForDate(tooltipDate) : []}
+        {@const unavailableNames = shouldShowUnavailableCount() ? getUnavailablePersonNamesForDate(tooltipDate) : []}
         {#if unavailableNames.length > 0}
             <div 
                 class="day-tooltip"
@@ -671,10 +751,6 @@
     {/if}
     
     <div class="calendar-footer">
-        <label class="weekends-checkbox">
-            <input type="checkbox" bind:checked={weekendsUnavailable} />
-            <span>Weekends Unavailable</span>
-        </label>
         <div class="calendar-legend">
             <div class="legend-item">
                 <span class="legend-color available"></span>

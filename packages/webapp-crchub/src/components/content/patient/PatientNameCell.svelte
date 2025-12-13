@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { navigateTo } from '../../../services/routing/route-action.js';
 	import { Pencil, Trash2 } from '@lucide/svelte';
 
 	interface Props {
 		params: any; // AG Grid cell renderer params
+		studyId?: string; // Study ID from grid context
 		onEdit?: (patientData: any) => void;
 		onDelete?: (patientData: any) => void;
 	}
 
-	let { params, onEdit, onDelete }: Props = $props();
+	let { params, studyId: gridStudyId, onEdit, onDelete }: Props = $props();
 
 	let patientData = $derived(params.data);
 	let showActions = $state(false);
@@ -17,7 +19,12 @@
 	function handleLinkClick(event: MouseEvent) {
 		event.preventDefault();
 		if (browser && patientData?.id) {
-			navigateTo("patient", patientData.id);
+			// Use studyId from grid context (the study being viewed), fallback to patient data
+			const studyId = gridStudyId || patientData?.studyId;
+			const url = studyId 
+				? `/patient?id=${patientData.id}&studyId=${studyId}`
+				: `/patient?id=${patientData.id}`;
+			goto(url);
 		}
 	}
 

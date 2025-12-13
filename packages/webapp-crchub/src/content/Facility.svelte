@@ -357,7 +357,6 @@
     {:else}
         <div class="facility-content" data-testid="facility-content">
             <div class="people-section" data-testid="people-section">
-                <h3>Staff Members</h3>
                 <FacilityPeopleGrid 
                     {studyId} 
                     bind:onPersonSelected={handlePersonSelected}
@@ -375,6 +374,7 @@
                     staffNames={staffNamesMap}
                     organizationStartDate={organizationStartDate}
                     organizationEndDate={organizationEndDate}
+                    entityType="staff"
                 />
             </div>
 

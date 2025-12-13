@@ -6,6 +6,7 @@
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
+    import { goto } from '$app/navigation';
     import { navigateTo } from "../../../services/routing/route-action.js";
     import { theme } from "../../../services/stores/theme-store.js";
     import DeleteObjectDialog from "../../dialogs/DeleteObjectDialog.svelte";
@@ -503,7 +504,11 @@
     });
 
     function onOpenClick(patientId: string) {
-        navigateTo("patient", patientId);
+        // Pass studyId context when navigating to patient
+        const url = studyId 
+            ? `/patient?id=${patientId}&studyId=${studyId}`
+            : `/patient?id=${patientId}`;
+        goto(url);
     }
 
     function onDeleteClick(patientData: any) {
@@ -535,6 +540,7 @@
             target: tempContainer,
             props: {
                 params: params,
+                studyId: studyId, // Pass studyId from grid context
                 onEdit: onEditClick,
                 onDelete: onDeleteClick
             }

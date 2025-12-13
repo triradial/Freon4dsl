@@ -12,6 +12,7 @@
     import { convertToModel } from "../../../services/data/availability-interpreter.js";
     import { env } from "../../../config/env.js";
     import { navigateTo } from "../../../services/routing/route-action.js";
+    import { dayViewCache } from "../../../services/stores/day-view-cache.js";
     // @ts-ignore
     import { ChevronLeft as IconChevronLeft, ChevronRight as IconChevronRight, Check as IconCheck, ArrowRightFromLine as IconArrowRightFromLine, ArrowLeftFromLine as IconArrowLeftFromLine } from '@lucide/svelte';
 
@@ -61,9 +62,39 @@
     let organizationEndDate = $state<string | null>(null);
     let studyId = $state<string | null>(null);
     let totalStaff = $state(0);
-    let staffAvailabilityData = $state<Map<string, StaffAvailability>>(new Map());
-    let saveTimeout: ReturnType<typeof setTimeout> | null = null;
     let showStaffAvailability = $derived($staffAvailabilityStore);
+    let isMounted = $state(false); // Track if component has mounted
+    
+    // Use persistent cache (survives component destruction)
+    // These are reactive wrappers that sync with the persistent cache
+    let personUnavailableDates = $state<Map<string, string[]>>(dayViewCache.getAllPersonUnavailableDates());
+    let orgPersonsMap = $state<Map<string, any>>(dayViewCache.getAllPersons());
+    let patientVisitsCache = $state<Map<string, PatientVisitRow[]>>(new Map());
+    
+    // Sync local state with persistent cache
+    function syncFromCache() {
+        personUnavailableDates = dayViewCache.getAllPersonUnavailableDates();
+        orgPersonsMap = dayViewCache.getAllPersons();
+        organizationId = dayViewCache.getOrganizationId();
+        organizationStartDate = dayViewCache.getOrganizationStartDate();
+        organizationEndDate = dayViewCache.getOrganizationEndDate();
+        studyId = dayViewCache.getStudyId();
+        totalStaff = dayViewCache.getTotalStaff();
+        
+        // Restore patient visits cache (we'll restore visits as needed)
+        patientVisitsCache = new Map<string, PatientVisitRow[]>();
+    }
+    
+    // Sync to persistent cache
+    function syncToCache() {
+        dayViewCache.setAllPersonUnavailableDates(personUnavailableDates);
+        dayViewCache.setAllPersons(orgPersonsMap);
+        dayViewCache.setOrganizationId(organizationId);
+        dayViewCache.setOrganizationStartDate(organizationStartDate);
+        dayViewCache.setOrganizationEndDate(organizationEndDate);
+        dayViewCache.setStudyId(studyId);
+        dayViewCache.setTotalStaff(totalStaff);
+    }
 
     // Reactive updates for grids
     $effect(() => {
@@ -129,40 +160,42 @@
             return;
         }
         
-        const staffAvail = staffAvailabilityData.get(personId);
-        if (!staffAvail) {
-            console.error(`[DayView] No availability data found for person: ${personId}`);
-            return;
-        }
+        // Get current unavailable dates array
+        const currentDates = personUnavailableDates.get(personId) || [];
+        const isUnavailable = currentDates.includes(dateStr);
         
-        // Check if person is already unavailable for this date
-        const isUnavailable = staffAvail.unavailableDates.some(range => 
-            range.startDate <= dateStr && range.endDate >= dateStr
-        );
-        
-        let newUnavailableDates: { startDate: string; endDate: string }[];
+        let newUnavailableDates: string[];
         if (isUnavailable) {
             // Remove this date from unavailable dates
-            newUnavailableDates = staffAvail.unavailableDates.filter(range => 
-                !(range.startDate <= dateStr && range.endDate >= dateStr)
-            );
+            newUnavailableDates = currentDates.filter(d => d !== dateStr);
         } else {
             // Add this date to unavailable dates
-            newUnavailableDates = [...staffAvail.unavailableDates, { startDate: dateStr, endDate: dateStr }];
+            newUnavailableDates = [...currentDates, dateStr].sort();
         }
         
-        // Update staffAvailabilityData
-        staffAvailabilityData.set(personId, {
-            ...staffAvail,
-            unavailableDates: newUnavailableDates
-        });
-        staffAvailabilityData = new Map(staffAvailabilityData);
+        // Update the map (both local and persistent)
+        personUnavailableDates.set(personId, newUnavailableDates);
+        personUnavailableDates = new Map(personUnavailableDates);
+        dayViewCache.setPersonUnavailableDates(personId, newUnavailableDates);
         
         // Save person unavailability and availability model
         await savePersonAndAvailabilityModel(personId);
         
-        // Reload day data to refresh grids
-        await loadDayData();
+        // Recompute staff data for current date (instant - no reload needed)
+        const staffData = computeStaffDataForDate(dateStr);
+        staffInData = staffData.staffIn;
+        staffOutData = staffData.staffOut;
+        
+        // Update week data
+        updateWeekData();
+        
+        // Update grids
+        if (staffInGridApi) {
+            staffInGridApi.setGridOption("rowData", staffInData);
+        }
+        if (staffOutGridApi) {
+            staffOutGridApi.setGridOption("rowData", staffOutData);
+        }
     }
 
     async function togglePersonAvailable(personId: string) {
@@ -177,36 +210,20 @@
         }
         
         try {
-            // Step 1: Save individual person unavailability
-            const staffAvail = staffAvailabilityData.get(personId);
-            if (!staffAvail) {
-                console.error(`[DayView] No availability data found for person: ${personId}`);
-                return;
-            }
-            
-            // Convert DateRange[] to string[] (YYYY-MM-DD format)
-            const unavailableDatesSet = new Set<string>();
-            for (const range of staffAvail.unavailableDates) {
-                const startParts = range.startDate.split('-');
-                const endParts = range.endDate.split('-');
-                const startDate = new Date(parseInt(startParts[0]), parseInt(startParts[1]) - 1, parseInt(startParts[2]));
-                const endDate = new Date(parseInt(endParts[0]), parseInt(endParts[1]) - 1, parseInt(endParts[2]));
-                
-                const currentDate = new Date(startDate);
-                while (currentDate <= endDate) {
-                    const year = currentDate.getFullYear();
-                    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-                    const day = String(currentDate.getDate()).padStart(2, '0');
-                    unavailableDatesSet.add(`${year}-${month}-${day}`);
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-            }
-            
-            const unavailableDates = Array.from(unavailableDatesSet).sort();
+            // Step 1: Save individual person unavailability (already in simple array format)
+            const unavailableDates = personUnavailableDates.get(personId) || [];
             await dataStore.setPersonUnavailableDates(personId, organizationId, unavailableDates);
             
             // Step 2: Calculate and save the Availability model (aggregated staff levels)
-            const staffAvailArray: StaffAvailability[] = Array.from(staffAvailabilityData.values());
+            // Convert simple arrays back to StaffAvailability format for the model
+            const staffAvailArray: StaffAvailability[] = Array.from(orgPersonsMap.entries()).map(([personId, person]) => ({
+                personId,
+                personName: person.name,
+                unavailableDates: (personUnavailableDates.get(personId) || []).map(dateStr => ({
+                    startDate: dateStr,
+                    endDate: dateStr
+                }))
+            }));
             const model = convertToModel(totalStaff, staffAvailArray);
             
             const response = await fetch(`${env.serverUrl}/saveModelUnit`, {
@@ -330,11 +347,64 @@
         weekDays = days;
     }
 
+    function saveSelectedDate() {
+        try {
+            const dateStr = formatDateString(selectedDate);
+            localStorage.setItem('dayview-selected-date', dateStr);
+        } catch (error) {
+            console.error('[DayView] Error saving selected date:', error);
+        }
+    }
+
+    function loadSelectedDate(): Date | null {
+        try {
+            const dateStr = localStorage.getItem('dayview-selected-date');
+            if (dateStr) {
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    const year = parseInt(parts[0], 10);
+                    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+                    const day = parseInt(parts[2], 10);
+                    const date = new Date(year, month, day);
+                    if (!isNaN(date.getTime())) {
+                        return date;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('[DayView] Error loading selected date:', error);
+        }
+        return null;
+    }
+
+    // Update UI immediately (staff computed from arrays, visits from cache)
+    function updateUIFromCache(dateStr: string) {
+        // Update patient visits from cache
+        const cachedVisits = patientVisitsCache.get(dateStr);
+        if (cachedVisits) {
+            patientsData = cachedVisits;
+        }
+        
+        // Compute staff data instantly from arrays
+        const staffData = computeStaffDataForDate(dateStr);
+        staffInData = staffData.staffIn;
+        staffOutData = staffData.staffOut;
+        
+        // Update week data
+        if (weekDays.length > 0) {
+            updateWeekData();
+        }
+    }
+
     function previousDay() {
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() - 1);
         selectedDate = newDate;
+        saveSelectedDate();
         updateWeekDays();
+        
+        const dateStr = formatDateString(selectedDate);
+        updateUIFromCache(dateStr);
         loadDayData();
     }
 
@@ -342,7 +412,11 @@
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() + 1);
         selectedDate = newDate;
+        saveSelectedDate();
         updateWeekDays();
+        
+        const dateStr = formatDateString(selectedDate);
+        updateUIFromCache(dateStr);
         loadDayData();
     }
 
@@ -350,7 +424,11 @@
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() - 7);
         selectedDate = newDate;
+        saveSelectedDate();
         updateWeekDays();
+        
+        const dateStr = formatDateString(selectedDate);
+        updateUIFromCache(dateStr);
         loadDayData();
     }
 
@@ -358,13 +436,21 @@
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() + 7);
         selectedDate = newDate;
+        saveSelectedDate();
         updateWeekDays();
+        
+        const dateStr = formatDateString(selectedDate);
+        updateUIFromCache(dateStr);
         loadDayData();
     }
 
     function selectDay(date: Date) {
         selectedDate = new Date(date);
+        saveSelectedDate();
         updateWeekDays();
+        
+        const dateStr = formatDateString(selectedDate);
+        updateUIFromCache(dateStr);
         loadDayData();
     }
 
@@ -496,23 +582,14 @@
         }
     }
 
-    async function loadDayData() {
-        const dateStr = formatDateString(selectedDate);
-        console.log('[DayView] Loading data for date:', dateStr);
-
-        // Load patients and their visits
-        await dataStore.getPatients();
-        await dataStore.getStudies();
-        const allPatients = $dataStore.patients;
-        
-        // Get all studies to map patient to study
-        const studies = $dataStore.studies || [];
-        console.log('[DayView] Loaded', studies.length, 'studies');
-        const studyMap = new Map<string, string>();
-        for (const study of studies) {
-            studyMap.set(study.id, study.name || study.id);
+    
+    // Load patient visits for a specific date
+    async function loadPatientVisitsForDate(dateStr: string, allPatients: any[], studyMap: Map<string, string>): Promise<PatientVisitRow[]> {
+        // Check cache first
+        if (patientVisitsCache.has(dateStr)) {
+            return patientVisitsCache.get(dateStr)!;
         }
-
+        
         const patientVisits: PatientVisitRow[] = [];
         
         // For each patient, get their PatientInfo model to find visits
@@ -543,8 +620,75 @@
                 console.error(`[DayView] Error loading patient info for ${patient.id}:`, error);
             }
         }
+        
+        // Cache the result (both local and persistent)
+        patientVisitsCache.set(dateStr, patientVisits);
+        patientVisitsCache = new Map(patientVisitsCache); // Trigger reactivity
+        dayViewCache.setPatientVisits(dateStr, patientVisits); // Persistent cache
+        return patientVisits;
+    }
+    
+    // Compute staff data for a specific date (fast - just checks arrays)
+    function computeStaffDataForDate(dateStr: string): { staffIn: StaffRow[]; staffOut: StaffRow[] } {
+        const staffIn: StaffRow[] = [];
+        const staffOut: StaffRow[] = [];
+        
+        // Only show staff as available/unavailable if date is within org range
+        const isDateInRange = isDateInOrgRange(dateStr);
+        
+        if (!isDateInRange || orgPersonsMap.size === 0) {
+            return { staffIn, staffOut };
+        }
+        
+        // Simply check if date is in each person's unavailable dates array
+        for (const [personId, person] of orgPersonsMap.entries()) {
+            const unavailableDates = personUnavailableDates.get(personId) || [];
+            const isUnavailable = unavailableDates.includes(dateStr);
+            
+            if (isUnavailable) {
+                staffOut.push({ name: person.name, personId: person.id });
+            } else {
+                staffIn.push({ name: person.name, personId: person.id });
+            }
+        }
+        
+        return { staffIn, staffOut };
+    }
+    
 
-        patientsData = patientVisits;
+    async function loadDayData() {
+        const dateStr = formatDateString(selectedDate);
+        console.log('[DayView] Loading data for date:', dateStr);
+
+        // Load patients and their visits
+        await dataStore.getPatients();
+        await dataStore.getStudies();
+        const allPatients = $dataStore.patients;
+        
+        // Get all studies to map patient to study
+        const studies = $dataStore.studies || [];
+        console.log('[DayView] Loaded', studies.length, 'studies');
+        const studyMap = new Map<string, string>();
+        for (const study of studies) {
+            studyMap.set(study.id, study.name || study.id);
+        }
+
+        // Try to get from persistent cache first
+        const cachedVisits = dayViewCache.getPatientVisits(dateStr) || patientVisitsCache.get(dateStr);
+        if (cachedVisits) {
+            patientsData = cachedVisits;
+            // Also update local cache
+            patientVisitsCache.set(dateStr, cachedVisits);
+            patientVisitsCache = new Map(patientVisitsCache);
+        } else {
+            // Load for this date and cache it
+            const patientVisits = await loadPatientVisitsForDate(dateStr, allPatients, studyMap);
+            patientsData = patientVisits;
+            // Cache it (both local and persistent)
+            patientVisitsCache.set(dateStr, patientVisits);
+            patientVisitsCache = new Map(patientVisitsCache);
+            dayViewCache.setPatientVisits(dateStr, patientVisits);
+        }
 
         // Load studies data
         const studiesRows: StudyRow[] = [];
@@ -595,79 +739,47 @@
         
         totalStaff = orgPersons.length;
         
-        // Load all staff availability data (for saving availability model)
-        const newStaffAvailabilityData = new Map<string, StaffAvailability>();
-        for (const person of orgPersons) {
-            const unavailableDatesStrings = await dataStore.getPersonUnavailableDates(person.id, site.orgId);
-            const unavailableDates = unavailableDatesStrings.map(dateStr => ({
-                startDate: dateStr,
-                endDate: dateStr
-            }));
-            newStaffAvailabilityData.set(person.id, {
-                personId: person.id,
-                personName: person.name,
-                unavailableDates
-            });
-        }
-        staffAvailabilityData = newStaffAvailabilityData;
-
-        // Load staff for selected date
-        const staffIn: StaffRow[] = [];
-        const staffOut: StaffRow[] = [];
-
-        // Only show staff as available/unavailable if date is within org range
-        const isDateInRange = isDateInOrgRange(dateStr);
-
-        for (const person of orgPersons) {
-            try {
-                // If date is outside org range, don't show staff as available
-                if (!isDateInRange) {
-                    // Don't add to either list - they're not available outside the org date range
-                    continue;
-                }
-                
-                // Use the same method as Facility.svelte
-                const unavailableDatesStrings = await dataStore.getPersonUnavailableDates(person.id, site.orgId);
-                const isUnavailable = unavailableDatesStrings.includes(dateStr);
-                
-                if (isUnavailable) {
-                    staffOut.push({ name: person.name, personId: person.id });
-                } else {
-                    staffIn.push({ name: person.name, personId: person.id });
-                }
-            } catch (error) {
-                console.error(`[DayView] Error loading availability for ${person.name}:`, error);
-                // Only add to "In" if date is in range
-                if (isDateInRange) {
-                    staffIn.push({ name: person.name, personId: person.id });
-                }
-            }
-        }
-
-        console.log('[DayView] Loaded staff for date', dateStr, ':', staffIn.length, 'in,', staffOut.length, 'out');
-        console.log('[DayView] Staff in:', staffIn);
-        console.log('[DayView] Staff out:', staffOut);
+        // Load all person unavailable dates as simple arrays (load once, use everywhere)
+        const newPersonUnavailableDates = new Map<string, string[]>();
+        const newOrgPersonsMap = new Map<string, any>();
         
-        staffInData = staffIn;
-        staffOutData = staffOut;
+        for (const person of orgPersons) {
+            // Store person object for quick lookup
+            newOrgPersonsMap.set(person.id, person);
+            
+            // Load unavailable dates as simple string array
+            const unavailableDates = await dataStore.getPersonUnavailableDates(person.id, site.orgId);
+            newPersonUnavailableDates.set(person.id, unavailableDates);
+        }
         
-        // Manually update grids after data loads (in case reactive effects haven't fired yet)
+        personUnavailableDates = newPersonUnavailableDates;
+        orgPersonsMap = newOrgPersonsMap;
+        
+        // Sync to persistent cache
+        syncToCache();
+
+        // Compute staff for selected date (fast - just checks arrays)
+        const staffData = computeStaffDataForDate(dateStr);
+        staffInData = staffData.staffIn;
+        staffOutData = staffData.staffOut;
+
+        console.log('[DayView] Loaded staff for date', dateStr, ':', staffInData.length, 'in,', staffOutData.length, 'out');
+        
+        // Manually update grids after data loads
         if (studiesGridApi) {
-            console.log('[DayView] Manually updating studies grid with', studiesData.length, 'rows');
             studiesGridApi.setGridOption("rowData", studiesData);
         }
         if (staffInGridApi) {
-            console.log('[DayView] Manually updating staff in grid with', staffIn.length, 'rows');
-            staffInGridApi.setGridOption("rowData", staffIn);
+            staffInGridApi.setGridOption("rowData", staffInData);
         }
         if (staffOutGridApi) {
-            console.log('[DayView] Manually updating staff out grid with', staffOut.length, 'rows');
-            staffOutGridApi.setGridOption("rowData", staffOut);
+            staffOutGridApi.setGridOption("rowData", staffOutData);
         }
         
         // Load staff counts for all days in the week
-        await loadWeekStaffData(orgPersons, site.orgId);
+        await loadWeekStaffData();
     }
+    
     
     // Load organization dates independently (needed for date filtering even without studies)
     async function loadOrganizationDates() {
@@ -706,100 +818,84 @@
                 }
             }
             organizationEndDate = parsedEndDate;
+            
+            // Sync to persistent cache
+            dayViewCache.setOrganizationStartDate(organizationStartDate);
+            dayViewCache.setOrganizationEndDate(organizationEndDate);
         } else {
             organizationStartDate = null;
             organizationEndDate = null;
+            dayViewCache.setOrganizationStartDate(null);
+            dayViewCache.setOrganizationEndDate(null);
         }
     }
 
-    async function loadWeekStaffData(orgPersons: any[], orgId: string) {
+    // Update week data (fast - computes from simple arrays)
+    function updateWeekData() {
         const newWeekStaffData = new Map<string, DayStaffData>();
         
-        // Load availability for all persons
-        const personAvailabilityMap = new Map<string, string[]>();
-        for (const person of orgPersons) {
-            try {
-                const unavailableDates = await dataStore.getPersonUnavailableDates(person.id, orgId);
-                personAvailabilityMap.set(person.id, unavailableDates);
-            } catch (error) {
-                console.error(`[DayView] Error loading availability for ${person.name}:`, error);
-                personAvailabilityMap.set(person.id, []);
-            }
-        }
-        
-        // Load all patients and studies for visit counts
-        await dataStore.getPatients();
-        const allPatients = $dataStore.patients;
-        const studies = $dataStore.studies || [];
-        
-        // Calculate counts for each day in the week
         for (const day of weekDays) {
             const dateStr = formatDateString(day);
-            let staffIn = 0;
-            let staffOut = 0;
-            let visitCount = 0;
             
-            // Check if date is within organization date range
-            const isDateInRange = isDateInOrgRange(dateStr);
+            // Compute staff data (fast - just checks arrays)
+            const staffData = computeStaffDataForDate(dateStr);
             
-            // Count staff (only if date is within org range)
-            if (isDateInRange) {
-                for (const person of orgPersons) {
-                    const unavailableDates = personAvailabilityMap.get(person.id) || [];
-                    if (unavailableDates.includes(dateStr)) {
-                        staffOut++;
-                    } else {
-                        staffIn++;
-                    }
-                }
-            }
-            // If date is outside org range, staffIn and staffOut remain 0
-            
-            // Count patient visits for this day
-            for (const patient of allPatients) {
-                if (!patient.studyId) continue;
-                
-                try {
-                    const patientInfo = await ModelManager.getInstance().getModelUnitWithoutOpening(patient.studyId, "PatientInfo") as PatientInfo;
-                    if (!patientInfo) continue;
-
-                    const patientHistory = patientInfo.patientHistories.find(
-                        ph => ph.patient_id === patient.patientNumber || ph.patient_id === patient.id
-                    );
-
-                    if (patientHistory) {
-                        for (const visit of patientHistory.patientVisits) {
-                            if (visit.actualVisitDate?.dateAsString === dateStr) {
-                                visitCount++;
-                            }
-                        }
-                    }
-                } catch (error) {
-                    // Silently continue if patient info can't be loaded
-                }
-            }
+            // Get visit count from persistent cache if available, otherwise 0
+            const cachedVisits = dayViewCache.getPatientVisits(dateStr) || patientVisitsCache.get(dateStr);
+            const visitCount = cachedVisits ? cachedVisits.length : 0;
             
             newWeekStaffData.set(dateStr, {
                 dateStr,
-                staffIn,
-                staffOut,
+                staffIn: staffData.staffIn.length,
+                staffOut: staffData.staffOut.length,
                 visitCount
             });
         }
         
         weekStaffData = newWeekStaffData;
     }
+    
+    async function loadWeekStaffData() {
+        // Load patient visits for all days in the week (if not cached)
+        await dataStore.getPatients();
+        await dataStore.getStudies();
+        const allPatients = $dataStore.patients;
+        const studies = $dataStore.studies || [];
+        const studyMap = new Map<string, string>();
+        for (const study of studies) {
+            studyMap.set(study.id, study.name || study.id);
+        }
+        
+        // Load visits for dates not in cache (check both local and persistent)
+        for (const day of weekDays) {
+            const dateStr = formatDateString(day);
+            const cached = dayViewCache.getPatientVisits(dateStr) || patientVisitsCache.get(dateStr);
+            if (!cached) {
+                const visits = await loadPatientVisitsForDate(dateStr, allPatients, studyMap);
+                // Cache is already set in loadPatientVisitsForDate
+            } else {
+                // Restore to local cache
+                patientVisitsCache.set(dateStr, cached);
+            }
+        }
+        patientVisitsCache = new Map(patientVisitsCache); // Trigger reactivity
+        
+        // Update week data (staff is computed instantly from arrays)
+        updateWeekData();
+    }
 
-    // Reload week staff data when weekDays or organizationId changes
+    // Update week data when weekDays changes (staff is computed instantly)
     $effect(() => {
-        if (weekDays.length > 0 && organizationId) {
-            dataStore.getPersons().then(() => {
-                const allPersons = $dataStore.persons;
-                const orgPersons = allPersons.filter(person => 
-                    person.organizations?.some((org: any) => org.org_id === organizationId)
-                );
-                loadWeekStaffData(orgPersons, organizationId);
-            });
+        if (weekDays.length > 0 && orgPersonsMap.size > 0) {
+            updateWeekData();
+        }
+    });
+
+    // Save selected date whenever it changes (for persistence)
+    $effect(() => {
+        // Only save if we've mounted (to avoid saving on initial load before saved date is restored)
+        if (isMounted && selectedDate) {
+            saveSelectedDate();
         }
     });
 
@@ -814,38 +910,52 @@
     });
 
     onMount(async () => {
+        // Restore from persistent cache first (instant)
+        syncFromCache();
+        
+        // Load saved date from localStorage, or use today
+        const savedDate = loadSelectedDate();
+        if (savedDate) {
+            selectedDate = savedDate;
+        }
+        
         updateWeekDays();
         
         // Initialize grids first (they'll be empty initially)
-        // Initialize studies grid
+        // Check if grids already exist (e.g., when navigating back to this page)
         const studiesGridElement = document.querySelector("#studiesGrid") as HTMLElement;
-        if (studiesGridElement) {
+        if (studiesGridElement && !studiesGridElement.querySelector('.ag-root')) {
             function createStudyNameCellRenderer(params: any) {
                 const container = document.createElement('div');
-                container.style.display = 'flex';
-                container.style.alignItems = 'center';
+                container.className = 'study-name-cell-container';
                 container.style.width = '100%';
+                container.style.height = '100%';
+                
+                const content = document.createElement('div');
+                content.className = 'study-name-content';
                 
                 const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'name-link';
                 button.textContent = params.data?.studyName || '';
-                button.style.background = 'none';
-                button.style.border = 'none';
-                button.style.cursor = 'pointer';
-                button.style.padding = '0';
-                button.style.textAlign = 'left';
-                button.style.color = 'var(--color-link, var(--color-text))';
-                button.style.textDecoration = 'underline';
-                button.style.font = 'inherit';
                 button.title = 'Open study';
+                button.setAttribute('data-study-id', params.data?.studyId || '');
                 button.onclick = (e) => {
                     e.stopPropagation();
                     if (params.data?.studyId) {
                         navigateTo("study", params.data.studyId);
                     }
                 };
-                container.appendChild(button);
+                
+                content.appendChild(button);
+                container.appendChild(content);
                 
                 return container;
+            }
+            
+            function createPatientCountCellRenderer(params: any) {
+                const count = params.value;
+                return count && count > 0 ? count : '';
             }
             
             const studiesGridOptions: GridOptions = {
@@ -857,7 +967,13 @@
                         minWidth: 150,
                         cellRenderer: createStudyNameCellRenderer
                     },
-                    { field: "patientCount", headerName: "Patient Number", flex: 1, minWidth: 100 }
+                    { 
+                        field: "patientCount", 
+                        headerName: "Patient Number", 
+                        flex: 1, 
+                        minWidth: 100,
+                        cellRenderer: createPatientCountCellRenderer
+                    }
                 ],
                 rowData: studiesData,
                 defaultColDef: {
@@ -877,7 +993,7 @@
 
         // Initialize patients grid
         const patientsGridElement = document.querySelector("#patientsGrid") as HTMLElement;
-        if (patientsGridElement) {
+        if (patientsGridElement && !patientsGridElement.querySelector('.ag-root')) {
             const patientsGridOptions: GridOptions = {
                 columnDefs: [
                     { field: "patientId", headerName: "Patient ID", flex: 1, minWidth: 100 },
@@ -905,11 +1021,76 @@
             initializeStaffGrids();
         }
         
-        // Load organization dates first (needed for date filtering)
-        await loadOrganizationDates();
+        // Mark as mounted early so reactive effects can work
+        isMounted = true;
         
-        // Now load the data (reactive effects will update the grids)
-        await loadDayData();
+        // Use cached data immediately if available (non-blocking)
+        const dateStr = formatDateString(selectedDate);
+        
+        // Restore patient visits from persistent cache
+        const cachedVisits = dayViewCache.getPatientVisits(dateStr);
+        if (cachedVisits) {
+            patientsData = cachedVisits;
+            patientVisitsCache.set(dateStr, cachedVisits);
+            patientVisitsCache = new Map(patientVisitsCache);
+        }
+        
+        // Use cached staff data if available (instant computation from arrays)
+        if (orgPersonsMap.size > 0) {
+            const staffData = computeStaffDataForDate(dateStr);
+            staffInData = staffData.staffIn;
+            staffOutData = staffData.staffOut;
+        }
+        
+        // Load studies data immediately if we have studies in dataStore
+        if ($dataStore.studies.length > 0) {
+            const allPatients = $dataStore.patients;
+            const studies = $dataStore.studies || [];
+            const studiesRows: StudyRow[] = [];
+            for (const study of studies) {
+                const studyPatients = allPatients.filter(p => p.studyId === study.id);
+                studiesRows.push({
+                    studyName: study.name || study.id,
+                    studyId: study.id,
+                    patientCount: studyPatients.length
+                });
+            }
+            studiesData = studiesRows;
+        }
+        
+        // Update week data if we have cached data
+        if (weekDays.length > 0 && orgPersonsMap.size > 0) {
+            updateWeekData();
+        }
+        
+        // Update grids immediately with cached data (instant render)
+        if (studiesGridApi) {
+            studiesGridApi.setGridOption("rowData", studiesData);
+        }
+        if (patientsGridApi) {
+            patientsGridApi.setGridOption("rowData", patientsData);
+        }
+        if (staffInGridApi) {
+            staffInGridApi.setGridOption("rowData", staffInData);
+        }
+        if (staffOutGridApi) {
+            staffOutGridApi.setGridOption("rowData", staffOutData);
+        }
+        
+        // Load organization dates and data in background (don't block render)
+        // Only load if we don't have cached data
+        const needsDataLoad = !dayViewCache.hasOrganizationData();
+        
+        if (needsDataLoad) {
+            // Load in background
+            (async () => {
+                await loadOrganizationDates();
+                await loadDayData();
+            })();
+        } else {
+            // Data already cached - just refresh current date (non-blocking)
+            loadDayData();
+        }
     });
 </script>
 
