@@ -140,9 +140,12 @@
   --calendar-available-bg: #3c58468c;
   --calendar-available-border: #2d5a3d;
   --calendar-available-text: #8BDBAA;
-  --calendar-unavailable-bg: #6031317a;
+  --calendar-unavailable-bg: #8a46467a;
   --calendar-unavailable-border: #6b2a2a;
   --calendar-unavailable-text: #F8A8A8;
+  --calendar-all-unavailable-bg: #a04b4b9a; // Lighter, more reddish shade for when all staff are unavailable
+  --calendar-all-unavailable-border: #8b3a3a;
+  --calendar-all-unavailable-text: #FFB8B8;
 
   --calendar-nav-button-text: #ffffff;
   --calendar-weekends-checkbox-text: #ffffff;

@@ -304,7 +304,23 @@ function createDataStore() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const text = await response.text();
-      return JSON.parse(text);
+      const patient = JSON.parse(text);
+      // Add patient to store so PatientCard can find it
+      if (patient) {
+        update(state => {
+          const existingIndex = state.patients.findIndex(p => p.id === patient.id);
+          if (existingIndex >= 0) {
+            // Update existing patient
+            const updatedPatients = [...state.patients];
+            updatedPatients[existingIndex] = patient;
+            return { ...state, patients: updatedPatients };
+          } else {
+            // Add new patient
+            return { ...state, patients: [...state.patients, patient] };
+          }
+        });
+      }
+      return patient;
     } catch (error) {
       console.error('Error fetching patient:', error);
       return undefined;

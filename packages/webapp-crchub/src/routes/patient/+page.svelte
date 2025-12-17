@@ -9,6 +9,7 @@
   let patientIdentifier = '';
   let studyName = '';
   let id = $page.url.searchParams.get('id') || '';
+  let studyIdFromUrl = $page.url.searchParams.get('studyId') || '';
   let didSetVisibility = false;
 
   // Set up drawer visibility once when drawers are available
@@ -40,7 +41,9 @@
       let patient = await dataStore.getPatient(id);
       if (patient) {
         patientIdentifier = patient.patientNumber || patient.id;
-        let study = await dataStore.getStudy(patient.studyId);
+        // Use studyId from URL if available (preserves context from study page), otherwise use patient.studyId
+        const effectiveStudyId = studyIdFromUrl || patient.studyId;
+        let study = await dataStore.getStudy(effectiveStudyId);
         if (study) {
           studyName = study.name;
           setBreadcrumb([
@@ -50,10 +53,10 @@
           ]);
           
           // Set drawer props once we have all the data
-          setDrawerProps("patientTimelineChart", { id: id, studyId: patient.studyId, showAllPatients: false });
+          setDrawerProps("patientTimelineChart", { id: id, studyId: effectiveStudyId, showAllPatients: false });
           // Set visitChecklist drawer props with today's date as default
           const today = new Date();
-          setDrawerProps("visitChecklist", { patientId: id, studyId: patient.studyId, selectedDate: today });
+          setDrawerProps("visitChecklist", { patientId: id, studyId: effectiveStudyId, selectedDate: today });
         } else {
           setBreadcrumb([
             { label: LABEL.STUDIES, href: "/studies" },
@@ -64,7 +67,7 @@
           setDrawerProps("patientTimelineChart", { id: id, showAllPatients: false });
           // Set visitChecklist drawer props with today's date as default (even without studyId)
           const today = new Date();
-          setDrawerProps("visitChecklist", { patientId: id, studyId: patient.studyId || "", selectedDate: today });
+          setDrawerProps("visitChecklist", { patientId: id, studyId: effectiveStudyId || "", selectedDate: today });
         }
       } else {
         setBreadcrumb([

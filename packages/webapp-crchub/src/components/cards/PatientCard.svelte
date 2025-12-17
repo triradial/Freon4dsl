@@ -10,6 +10,30 @@
 
     let statusColor = $derived(patient ? getStatusColor(patient.gender) : ""); // Example: use gender for color, adjust as needed
     let deleteDialogOpen = $state(false);
+    let studyName = $state<string>("");
+    
+    import { page } from '$app/stores';
+
+    // Fetch study name from studyId to ensure consistency with breadcrumb
+    // Use studyId from URL if available (preserves context from study page), otherwise use patient.studyId
+    $effect(() => {
+        const studyIdFromUrl = $page.url.searchParams.get('studyId') || '';
+        const effectiveStudyId = studyIdFromUrl || patient?.studyId;
+        
+        if (effectiveStudyId) {
+            (async () => {
+                const study = await dataStore.getStudy(effectiveStudyId);
+                if (study) {
+                    studyName = study.name;
+                } else {
+                    // Fallback to patient.study if study not found via studyId
+                    studyName = patient?.study || "None";
+                }
+            })();
+        } else {
+            studyName = patient?.study || "None";
+        }
+    });
 
     function onEditClick() {
         if (patient) {
@@ -65,7 +89,7 @@
         </div>
         <div>
             <div class="small-label-text">Study</div>
-            <p class="standard-text">{patient.study || "None"}</p>
+            <p class="standard-text">{studyName || "None"}</p>
         </div>
     </div>
 </div>

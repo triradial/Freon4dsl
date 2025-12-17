@@ -172,8 +172,9 @@
                     field: "name",
                     headerName: "Name",
                     flex: 1,
-                    minWidth: 200,
+                    minWidth: 150,
                     suppressSizeToFit: false,
+                    suppressMenu: true,
                     cellRenderer: createNameCellRenderer
                 }
             ],
@@ -245,13 +246,15 @@
 </svelte:head>
 
 <div class="facility-people-section">
+    <div class="section-header">
+        <h3 class="section-title">Staff Members</h3>
+        <button type="button" class="grid-button green-button refresh-button-header" onclick={refreshPeople} title="Refresh" aria-label="Refresh">
+            <IconRefresh size={16} />
+        </button>
+    </div>
     <div class="grid-toolbar">
         <button type="button" class="standard-button primary inverted" onclick={addStaffMember} aria-label="Add Staff">
             <IconPlus size="16" />Add Staff
-        </button>
-        <div style="flex: 1;"></div>
-        <button type="button" class="grid-button green-button" onclick={refreshPeople} title="Refresh" aria-label="Refresh">
-            <IconRefresh size={16} />
         </button>
     </div>
 
@@ -265,9 +268,27 @@
         flex-direction: column;
     }
 
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 0 12px 0;
+    }
+
+    .section-title {
+        margin: 0;
+        font-size: var(--large-font-size);
+        color: var(--header-text);
+    }
+
+    .refresh-button-header {
+        margin-left: auto;
+    }
+
     .facility-people-grid {
         width: 100%;
-        height: 400px;
+        flex: 1;
+        min-height: 0;
     }
 
     .grid-toolbar {

@@ -10,6 +10,11 @@
     --xlarge-font-size: 1rem;
     /* #endregion */
 
+    /* #region Calendar */
+    --calendar-cell-width: 42px;
+    --calendar-cell-height: 35px;
+    /* #endregion */
+
     /* #region Login*/
     --login-background: #000000;
     --login-text: #92A7CE;
@@ -2571,7 +2576,7 @@
 
     .facility-content {
         display: grid;
-        grid-template-columns: 400px 500px;
+        grid-template-columns: 250px 1fr;
         grid-template-rows: 1fr;
         gap: 16px;
         flex: 1;
@@ -2588,33 +2593,35 @@
     .model-section {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        padding: 16px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        gap: 2rem;
+        padding: 0;
         min-height: 0;
         overflow-y: auto;
         overflow-x: visible;
         background-color: var(--color-surface-100);
-        border-radius: 8px;
         position: relative;
         visibility: visible;
         opacity: 1;
     }
 
     .people-section {
-        min-width: 400px;
-        max-width: 400px;
+        min-width: 250px;
+        max-width: 250px;
         height: 100%;
         min-height: 600px;
         overflow-y: auto;
     }
 
+    .people-section h3 {
+        display: block; /* Show h3 in Facility.svelte if it exists */
+    }
+
     .calendar-section {
-        height: calc(100vh - 180px);
-        max-height: calc(100vh - 180px);
+        height: calc(100vh - 8rem);
+        max-height: calc(100vh - 8rem);
         flex: 0 0 auto;
         width: 100%;
-        max-width: 500px; 
+        max-width: 340px; 
     }
 
     .model-section {
@@ -2663,32 +2670,64 @@
         align-items: center;
     }
 
-    // @media (max-width: 1800px) {
-    //     .facility-content {
-    //         grid-template-columns: 1fr;
-    //         grid-template-rows: auto auto auto;
-    //     }
-        
-    //     .people-section {
-    //         min-width: unset;
-    //         max-width: 100%;
-    //     }
-        
-    //     .calendar-section {
-    //         min-width: unset;
-    //         max-width: 100%;
-    //     }
-    // }
-
   .facility-people-grid {
     height: calc(100vh - 10rem);
+    flex: 1;
+    min-height: 0;
+  }
+
+  // Hide header menu icon in facility people grid
+  .facility-people-grid .ag-header-cell-menu-button {
+    display: none !important;
+  }
+
+  // Radio-button styled checkboxes for single selection
+  .ag-theme-quartz .ag-checkbox-input-wrapper,
+  .ag-theme-quartz-dark .ag-checkbox-input-wrapper {
+    input[type="checkbox"] {
+      border-radius: 50% !important;
+      width: 18px !important;
+      height: 18px !important;
+      appearance: none !important;
+      border: 2px solid var(--color-surface-400) !important;
+      background-color: var(--color-surface-100) !important;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+
+      &:checked {
+        border-color: var(--color-primary-500) !important;
+        background-color: var(--color-primary-500) !important;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: white;
+        }
+      }
+
+      &:hover {
+        border-color: var(--color-primary-400) !important;
+      }
+
+      &:focus {
+        outline: 2px solid var(--color-primary-300);
+        outline-offset: 2px;
+      }
+    }
   }
 
   .availability-calendar {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 12px;
+    gap: 0.25rem;
+    padding: 0 0.25rem;
     border-radius: 8px;
     height: 100%;
     max-height: 100%;
@@ -2714,16 +2753,14 @@
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    padding: 1rem 0 !important;
+
     gap: 2rem !important;
     position: relative !important;
-    height: 2rem !important;
   }
 
   .calendar-toolbar .nav-buttons {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
   }
 
   .toolbar-left {
@@ -2819,13 +2856,45 @@
     padding: 4px;
     color: var(--calendar-day-name-text);
     font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    grid-auto-rows: minmax(45px, auto);
+    gap: 2px;
+    grid-auto-rows: var(--calendar-cell-height);
+  }
+
+  .days-grid .calendar-day {
+    max-width: var(--calendar-cell-width);
+    width: var(--calendar-cell-width);
+    height: var(--calendar-cell-height);
+    max-height: var(--calendar-cell-height);
+  }
+
+  .calendar-months {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .month-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .month-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--calendar-month-title);
+    padding: 0 4px;
   }
 
   .calendar-day {
@@ -2840,15 +2909,22 @@
     background-color: var(--calendar-day-bg);
     color: var(--calendar-day-text);
     transition: all 0.15s;
-    min-height: 45px;
-    padding: 4px;
+    height: var(--calendar-cell-height);
+    max-height: var(--calendar-cell-height);
+    width: var(--calendar-cell-width);
+    max-width: var(--calendar-cell-width);
+    padding: 2px;
     position: relative;
+    overflow: hidden;
   }
 
   .calendar-day-empty {
     // Empty placeholder for days outside current month
     visibility: hidden;
-    min-height: 45px;
+    height: var(--calendar-cell-height);
+    max-height: var(--calendar-cell-height);
+    width: var(--calendar-cell-width);
+    max-width: var(--calendar-cell-width);
   }
 
   .calendar-day.today {
@@ -2890,23 +2966,26 @@
   }
 
   .day-number {
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: bold;
+    font-style: italic;
     position: absolute;
-    top: 4px;
-    left: 4px;
+    top: 2px;
+    left: 2px;
     color: var(--calendar-day-text);
   }
 
   .unavailable-count-centered {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: calc(50% + 4px);
+    left: calc(50% + 4px);
     transform: translate(-50%, -50%);
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: bold;
     text-align: center;
     line-height: 1;
     z-index: 1;
+    color: var(--calendar-unavailable-text);
   }
 
   .day-tooltip {
@@ -2958,9 +3037,9 @@
   }
 
   .calendar-day.all-unavailable {
-    background-color: var(--calendar-unavailable-bg);
-    border-color: var(--calendar-unavailable-border);
-    color: var(--calendar-unavailable-text);
+    background-color: var(--calendar-all-unavailable-bg);
+    border-color: var(--calendar-all-unavailable-border);
+    color: var(--calendar-all-unavailable-text);
   }
 
   .calendar-day.partial-availability {
@@ -2977,7 +3056,7 @@
 
   .calendar-day.all-unavailable:hover {
     // background-color: var(--red-300);
-    transform: scale(1.02);
+    transform: scale(0.9);
   }
 
   .calendar-day.partial-availability:hover {
@@ -2997,13 +3076,30 @@
     transform: scale(1.02);
   }
 
+  .weekends-checkbox-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--calendar-weekends-checkbox-text);
+    margin-left: auto;
+  }
+
+  .weekends-checkbox-header input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+  }
+
   .calendar-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 12px 0 0 0;
     gap: 16px;
-    margin-top: 8px;
+    margin-top: auto;
+    flex-shrink: 0;
   }
 
   .calendar-legend {
@@ -3254,7 +3350,7 @@
   .staff-in-header,
   .staff-out-header {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 500;
     text-transform: uppercase;
   }
