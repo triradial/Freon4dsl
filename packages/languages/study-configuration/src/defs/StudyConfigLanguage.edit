@@ -13,6 +13,7 @@ global {
         AbbreviationComponent,
         DisplayNothingComponent,
         TabFixComponent,
+        TabFixComponent2,
         ReferenceComponent,
         UrlInputComponent,
         PhoneInputComponent
@@ -37,7 +38,7 @@ Period {
     fragment periodDetails [
         ${name}
         ${description}
-        ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Events"}
+        ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Events"}
     ]   
 }
 
