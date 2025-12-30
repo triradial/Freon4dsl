@@ -71,6 +71,9 @@
     let orgPersonsMap = $state<Map<string, any>>(dayViewCache.getAllPersons());
     let patientVisitsCache = $state<Map<string, PatientVisitRow[]>>(new Map());
     
+    // Cache PatientInfo models by studyId to avoid reloading the same model multiple times
+    let patientInfoCache = new Map<string, PatientInfo>();
+    
     // Sync local state with persistent cache
     function syncFromCache() {
         personUnavailableDates = dayViewCache.getAllPersonUnavailableDates();
@@ -380,9 +383,16 @@
     // Update UI immediately (staff computed from arrays, visits from cache)
     function updateUIFromCache(dateStr: string) {
         // Update patient visits from cache
-        const cachedVisits = patientVisitsCache.get(dateStr);
+        const cachedVisits = patientVisitsCache.get(dateStr) || dayViewCache.getPatientVisits(dateStr);
         if (cachedVisits) {
             patientsData = cachedVisits;
+        } else {
+            // Clear data if no cache (will be loaded by loadDayData)
+            patientsData = [];
+        }
+        // Manually update grid if initialized
+        if (patientsGridApi && !isSelectedDateBeforeOrgStart()) {
+            patientsGridApi.setGridOption("rowData", patientsData);
         }
         
         // Compute staff data instantly from arrays
@@ -592,32 +602,54 @@
         
         const patientVisits: PatientVisitRow[] = [];
         
-        // For each patient, get their PatientInfo model to find visits
+        // Group patients by studyId to avoid loading the same PatientInfo model multiple times
+        const patientsByStudy = new Map<string, any[]>();
         for (const patient of allPatients) {
             if (!patient.studyId) continue;
-            
+            if (!patientsByStudy.has(patient.studyId)) {
+                patientsByStudy.set(patient.studyId, []);
+            }
+            patientsByStudy.get(patient.studyId)!.push(patient);
+        }
+        
+        // Load PatientInfo models once per study and process all patients for that study
+        for (const [studyId, patients] of patientsByStudy.entries()) {
             try {
-                const patientInfo = await ModelManager.getInstance().getModelUnitWithoutOpening(patient.studyId, "PatientInfo") as PatientInfo;
+                // Check cache first
+                let patientInfo = patientInfoCache.get(studyId);
+                
+                if (!patientInfo) {
+                    // Load PatientInfo model only if not cached
+                    patientInfo = await ModelManager.getInstance().getModelUnitWithoutOpening(studyId, "PatientInfo") as PatientInfo;
+                    if (patientInfo) {
+                        // Cache it for future use
+                        patientInfoCache.set(studyId, patientInfo);
+                    }
+                }
+                
                 if (!patientInfo) continue;
 
-                const patientHistory = patientInfo.patientHistories.find(
-                    ph => ph.patient_id === patient.patientNumber || ph.patient_id === patient.id
-                );
+                // Process all patients for this study
+                for (const patient of patients) {
+                    const patientHistory = patientInfo.patientHistories.find(
+                        ph => ph.patient_id === patient.patientNumber || ph.patient_id === patient.id
+                    );
 
-                if (patientHistory) {
-                    for (const visit of patientHistory.patientVisits) {
-                        if (visit.actualVisitDate?.dateAsString === dateStr) {
-                            const studyName = studyMap.get(patient.studyId) || patient.studyId;
-                            patientVisits.push({
-                                patientId: patient.patientNumber || patient.id,
-                                studyName: studyName,
-                                visitNumber: visit.name || `Visit ${visit.visitInstanceNumber || ''}`
-                            });
+                    if (patientHistory) {
+                        for (const visit of patientHistory.patientVisits) {
+                            if (visit.actualVisitDate?.dateAsString === dateStr) {
+                                const studyName = studyMap.get(studyId) || studyId;
+                                patientVisits.push({
+                                    patientId: patient.patientNumber || patient.id,
+                                    studyName: studyName,
+                                    visitNumber: visit.name || `Visit ${visit.visitInstanceNumber || ''}`
+                                });
+                            }
                         }
                     }
                 }
             } catch (error) {
-                console.error(`[DayView] Error loading patient info for ${patient.id}:`, error);
+                console.error(`[DayView] Error loading patient info for study ${studyId}:`, error);
             }
         }
         
@@ -766,13 +798,16 @@
         console.log('[DayView] Loaded staff for date', dateStr, ':', staffInData.length, 'in,', staffOutData.length, 'out');
         
         // Manually update grids after data loads
-        if (studiesGridApi) {
+        if (studiesGridApi && !isSelectedDateBeforeOrgStart()) {
             studiesGridApi.setGridOption("rowData", studiesData);
         }
-        if (staffInGridApi) {
+        if (patientsGridApi && !isSelectedDateBeforeOrgStart()) {
+            patientsGridApi.setGridOption("rowData", patientsData);
+        }
+        if (staffInGridApi && !isSelectedDateBeforeOrgStart()) {
             staffInGridApi.setGridOption("rowData", staffInData);
         }
-        if (staffOutGridApi) {
+        if (staffOutGridApi && !isSelectedDateBeforeOrgStart()) {
             staffOutGridApi.setGridOption("rowData", staffOutData);
         }
         
@@ -865,6 +900,27 @@
         for (const study of studies) {
             studyMap.set(study.id, study.name || study.id);
         }
+        
+        // Preload all PatientInfo models for unique studies (only load once per study)
+        const uniqueStudyIds = new Set<string>();
+        for (const patient of allPatients) {
+            if (patient.studyId && !patientInfoCache.has(patient.studyId)) {
+                uniqueStudyIds.add(patient.studyId);
+            }
+        }
+        
+        // Load all PatientInfo models in parallel
+        const loadPromises = Array.from(uniqueStudyIds).map(async (studyId) => {
+            try {
+                const patientInfo = await ModelManager.getInstance().getModelUnitWithoutOpening(studyId, "PatientInfo") as PatientInfo;
+                if (patientInfo) {
+                    patientInfoCache.set(studyId, patientInfo);
+                }
+            } catch (error) {
+                console.error(`[DayView] Error preloading PatientInfo for study ${studyId}:`, error);
+            }
+        });
+        await Promise.all(loadPromises);
         
         // Load visits for dates not in cache (check both local and persistent)
         for (const day of weekDays) {
@@ -1200,7 +1256,7 @@
                             <!-- Show only date for dates before org start -->
                         {:else}
                             <div class="day-content-center">
-                                <div class="day-visit-count">{dayData.visitCount} patient visit{dayData.visitCount !== 1 ? 's' : ''}</div>
+                                <div class="day-visit-count {dayData.visitCount >= 1 ? 'has-visits' : ''}">{dayData.visitCount} patient visit{dayData.visitCount !== 1 ? 's' : ''}</div>
                                 {#if showStaffAvailability}
                                     {#if dayData.staffOut > 0}
                                         <div class="day-staff-out staff-out-warning">

@@ -3526,6 +3526,10 @@
       text-align: center;
   }
 
+  .day-visit-count.has-visits {
+      color: var(--dayview-patients-count);
+  }
+
   .day-staff-out {
       font-size: var(--large-font-size);
       font-weight: 600;
