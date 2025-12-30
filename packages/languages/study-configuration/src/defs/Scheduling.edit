@@ -20,7 +20,7 @@ When {
 }  
 
 StudyStart {
-    [${dummyText wrap=TabFixComponent selectable="false"} as the start day of the study] 
+    [as the start day of the study] 
     trigger = "study start: Declares this event to be the start of the study"
 } 
 
@@ -109,12 +109,15 @@ EndingBy {
 
 
 NoComplianceWindow {
-    [and no compliance window] trigger = "no compliance window"
+    [
+    and no compliance window
+    ] 
+    trigger = "no compliance window"
 }
 
 ComplianceWindowOf {
     [
-        and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+    and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
     ] trigger = "time before/after to be compliant"
 }
 
@@ -128,6 +131,19 @@ EventWindow {
 //RepeatExpression {
 //    [${eventRepeat}]
 //}
+
+// EventSchedule {
+//     [
+//         First scheduled [fragment eventStarts wrap = TabFixComponent2 cssClass="type1" canAdd="false" canExpand="false" isExpanded="true" selectable="true" label="X"]
+//         ${eventWindow} 
+//         and then repeats ${eventRepeat} 
+//         limited to ${eventTimeOfDay} 
+//     ] 
+//     trigger = "event schedule"
+//     fragment eventStarts [
+//         ${eventStart}
+//     ]   
+// } 
 
 EventSchedule {
     [
