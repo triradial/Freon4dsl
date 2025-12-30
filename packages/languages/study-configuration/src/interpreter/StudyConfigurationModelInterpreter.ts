@@ -99,9 +99,9 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         const eventState = node.eventState; //TODO: need to check for the correct state.
 
         let owningEvent = ownerOfType(node, "Event") as language.Event;
-        if (referencedEvent == undefined || referencedEvent == null) {
-            console.log("evalEventReference: owningEvent: " + "owningEvent.name");
-        }
+        // if (referencedEvent == undefined || referencedEvent == null) {
+        //     console.log("evalEventReference: owningEvent: " + "owningEvent.name");
+        // }
         // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
         // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
         // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
