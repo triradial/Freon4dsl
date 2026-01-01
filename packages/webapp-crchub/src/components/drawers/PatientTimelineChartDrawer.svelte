@@ -55,8 +55,6 @@
         return new RtString(html);
     }
 
-
-
     /**
      * Gets PatientInfo and StudyConfiguration units for a study.
      * Throws an error if either is not found.
@@ -246,6 +244,7 @@
             await executeEmbeddedChartScripts(); // Wait for scripts to actually execute
         }
     }
+
 </script>
 
 <svelte:head>

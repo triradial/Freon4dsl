@@ -1,0 +1,64 @@
+editor parser
+
+Availability {
+  [
+    STAFFING
+      Number of CRCs Normally Available: ${baselineStaff}
+      Staffing Level Changes:
+        ${staffLevels}
+
+  ]
+}
+
+PatientNotAvailable {
+  [
+  ${dates}
+  ]
+}
+
+StaffLevel {
+  [   
+    ${staffAvailable} on: ${dateOrRange}
+  ]
+}
+
+DateRange {
+  [
+    ${startDate} thru:${endDate}
+  ]
+}
+
+DateConcept {
+  [${dateAsString}]
+}
+
+
+PatientInfo {
+  [
+    Patient Info Name: ${name}
+    Patient Histories:
+      ${patientHistories}
+  ]
+}
+
+PatientHistory {
+  [
+   Patient ID: ${patient_id} 
+   Visits: 
+    ${patientVisits} 
+   Not Available Dates:
+    ${patientNotAvailableDates}
+  ]
+}
+
+PatientVisit {
+  [
+    Visit: ${visit} was ${status} on ${actualVisitDate} 
+  ]
+}
+
+PatientHistoryUnit {
+  [
+    ${patientHistory}
+  ]
+}

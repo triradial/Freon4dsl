@@ -13,6 +13,7 @@ import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 import { Simulator } from "../timeline/Simulator.js";
 import { Timeline } from "../timeline/Timeline.js";
 import { TimelineEventInstance, TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
+import { getTimelineAsOfADate } from "../timeline/TimelineUtils.js";
 import * as utils from "./Utils.js";
 
 describe("Study Simulation", () => {
@@ -31,7 +32,7 @@ describe("Study Simulation", () => {
         resetTimelineScriptTemplate();
     });
 
-    describe("Simulation of Trial Events to Generate the Timeline in the same period", () => {
+    describe("Simulate Trial Events to Generate the Timeline in the same period", () => {
         it("generates a one visit timeline for a visit on day 0", () => {
             // GIVEN a study configuration with one period and one event
             let eventSchedule = utils.createEventScheduleStartingOnADay("Visit 1", 0);
@@ -109,7 +110,7 @@ describe("Study Simulation", () => {
             expect(timeline).toEqual(expectedTimeline);
         });
 
-        it("generates a two visit timeline for a visit 7 days after the study start day in the same period", () => {
+        it("generates STARTING ON DAY 0 a two visit timeline for a visit 7 days after the study start day in the same period", () => {
             // GIVEN a study configuration with one period and two events
             studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "StudyStart", 0, "Visit 2", 7);
 
@@ -149,7 +150,7 @@ describe("Study Simulation", () => {
             expect(timeline).toEqual(expectedTimeline);
         });
 
-        it("[Start Day of 1] generates a two visit timeline for a visit 7 days after the study start day", () => {
+        it("generates STARTING ON DAY 1 a two visit timeline for a visit 7 days after the study start day", () => {
             // GIVEN a study configuration with one period and two events
             studyConfigurationUnit.studyStartDayNumber = 1;
             studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "StudyStart", 0, "Visit 2", 7);
@@ -308,7 +309,7 @@ describe("Study Simulation", () => {
         });
     });
 
-    describe("Generation of Timeline Chart from Timeline", () => {
+    describe("Generate Study Timeline Chart", () => {
         it("generate a chart for a two visit and one period timeline for a visit 7 days after the end of the first visit", () => {
             // HTML is split into two parts: the data and the visualization, so tests don't need to check both. The visualization is so simple that it doesn't need to be tested in multiple other tests.
             let expectedTimelineDataAsScript = ` var groups = new vis.DataSet([
@@ -376,166 +377,6 @@ describe("Study Simulation", () => {
             simulator.run();
             let timeline = simulator.timeline;
 
-            utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
-        });
-
-        it("generate a chart for a two visits, one 7 days after with the patient completing them on the scheduled day", () => {
-            // HTML is split into two parts: the data and the visualization, so tests don't need to check both. The visualization is so simple that it doesn't need to be tested in multiple other tests.
-            let expectedTimelineDataAsScript = ` var groups = new vis.DataSet([
-              { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-              { "content": "Visit 1", "id": "Visit 1" },
-              { "content": "Visit 2", "id": "Visit 2" },
-              { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },              
-              ]);
-              
-              var items = new vis.DataSet([
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
-              { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
-              { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
-              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: on the start day of the study + 7 days", content: "&nbsp;", id: "Visit 24" },
-              
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 1'", content: "&nbsp;", id: "Visit 15" },
-              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 2'", content: "&nbsp;", id: "Visit 26" },
-          ])
-        `;
-
-            let expectedTimelineVisualizationHTML = ` // create visualization
-              var container = document.getElementById('visualization');
-                  var options = {
-                                showCurrentTime: false,
-                                format: {
-                                    minorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'DDD',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    },
-                                    majorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'w',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    }
-                
-                                },
-                                timeAxis: {scale: 'day', step: 1},
-                                showMajorLabels: true,
-                                orientation: 'both',
-                                start: new Date(2024, 0, 1),
-                                end: new Date(2024, 0, 9),
-                                min: new Date(2024, 0, 1),
-                                max: new Date(2024, 0, 9),
-                                zoomFriction:30,
-                                margin: {
-                                    item: {
-                                        horizontal: 0,
-                                    },
-                                },
-                            };
-        `;
-            // GIVEN a study configuration with one period and two events
-            studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "Visit 1", 0, "Visit 2", 7);
-            let simulator = new Simulator(studyConfigurationUnit);
-            simulator.run();
-            let timeline = simulator.timeline;
-            let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(2, timeline, [], new Date(2024, 0, 1));
-            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
-            timeline.addPatientEvents(patientHistory);
-
-
-            // WHEN the study is simulated and a timeline picture is generated
-
-            utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
-        });
-
-        it("generate a chart for a three visits, one 3 days before, one 2 days after with the patient completing it on the scheduled day", () => {
-            // HTML is split into two parts: the data and the visualization, so tests don't need to check both. The visualization is so simple that it doesn't need to be tested in multiple other tests.
-            let expectedTimelineDataAsScript = ` var groups = new vis.DataSet([
-              { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-              { "content": "Visit 1", "id": "Visit 1" },
-              { "content": "Visit 2", "id": "Visit 2" },
-              { "content": "V3", "id": "V3" },
-              { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },
-              
-              ]);
-              
-              var items = new vis.DataSet([
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -3", content: "<b>Screening</b>", id: "Screening0" },
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: on the start day of the study - 3 days", content: "&nbsp;", id: "Visit 11" },
-              { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: as the start day of the study", content: "&nbsp;", id: "Visit 22" },
-              { start: new Date(2024, 00, 06, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V3", className: "scheduled-event", title: "V3: on the start day of the study + 2 days", content: "&nbsp;", id: "V33" },
-              
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 1'", content: "&nbsp;", id: "Visit 14" },
-              { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 2'", content: "&nbsp;", id: "Visit 25" },
-              { start: new Date(2024, 00, 06, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V3'", content: "&nbsp;", id: "V36" },
-            ])
-            `;
-
-            let expectedTimelineVisualizationHTML = ` // create visualization
-              var container = document.getElementById('visualization');
-                  var options = {
-                                showCurrentTime: false,
-                                format: {
-                                    minorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'DDD',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    },
-                                    majorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'w',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    }
-                
-                                },
-                                timeAxis: {scale: 'day', step: 1},
-                                showMajorLabels: true,
-                                orientation: 'both',
-                                start: new Date(2024, 0, 1),
-                                end: new Date(2024, 0, 7),
-                                min: new Date(2024, 0, 1),
-                                max: new Date(2024, 0, 7),
-                                zoomFriction:30,
-                                margin: {
-                                    item: {
-                                        horizontal: 0,
-                                    },
-                                },
-                            };
-        `;
-            // GIVEN a study configuration with one period and two events
-            studyConfigurationUnit = utils.addAPeriodWithEventBeforeStudyStart(studyConfigurationUnit, "Screening", "Visit 2", "Visit 1", 3);
-            let simulator = new Simulator(studyConfigurationUnit);
-            simulator.run();
-            let timeline = simulator.timeline;
-            let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(3, timeline, [], new Date(2024, 0, 1));
-            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
-            timeline.addPatientEvents(patientHistory);
-
-            // WHEN the study is simulated and a timeline picture is generated
             utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
         });
 
@@ -876,51 +717,6 @@ describe("Study Simulation", () => {
             testStudyInFile("ScheduleExample3", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
         });
 
-        it("writes StudyConfiguration to DSL text format", () => {
-          // GIVEN a study configuration
-          // const studyName = "ScheduleExample3";
-          const studyName = "MultiMonthStudy";
-          const studyFolderPath: string = path.resolve(
-            __dirname,
-            "..",
-            "__tests__",
-            "modelstore",
-            studyName
-          );
-          const studyConfigurationUnit = utils.loadModelUnit(
-            studyName,
-            "StudyConfiguration",
-            studyFolderPath
-          ) as StudyConfiguration;
-          studyConfigurationModel.addUnit(studyConfigurationUnit);
-
-          const patientInfoUnit = utils.loadModelUnit(
-            studyName,
-            "PatientInfo",
-            studyFolderPath
-          ) as PatientInfo;
-          studyConfigurationModel.addUnit(patientInfoUnit);
-
-          // WHEN the study is written to DSL text format
-          const writer = new StudyConfigurationModelModelUnitWriter();
-          const dslText = writer.writeToString(studyConfigurationUnit);
-
-          // THEN Verify the DSL text is not empty
-          expect(dslText).toBeTruthy();
-          expect(dslText.length).toBeGreaterThan(0);
-
-          // Save the DSL text to a file for inspection
-          const outputPath = path.resolve(
-            __dirname,
-            "..",
-            "__tests__",
-            "modelstore",
-            studyName,
-            "StudyConfiguration.dsl.txt"
-          );
-          fs.writeFileSync(outputPath, dslText, "utf-8");
-        });
-
         it("generate a chart for the example study 3 loaded from DSL text", () => {
             // NOTE: This test is skipped because the writer format (editor projection) doesn't match the parser format.
             // The writer outputs backticks around identifiers with spaces (e.g., `ICF (1A)`), and the parser grammar
@@ -1046,6 +842,169 @@ describe("Study Simulation", () => {
             expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
 
+    });
+
+    describe("Generate Patient Timeline Chart", () => {
+        it("generate a chart for a two visits, one 7 days after with the patient completing them on the scheduled day", () => {
+            // HTML is split into two parts: the data and the visualization, so tests don't need to check both. The visualization is so simple that it doesn't need to be tested in multiple other tests.
+            let expectedTimelineDataAsScript = ` var groups = new vis.DataSet([
+              { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+              { "content": "Visit 1", "id": "Visit 1" },
+              { "content": "Visit 2", "id": "Visit 2" },
+              { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },              
+              ]);
+              
+              var items = new vis.DataSet([
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
+              { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
+              { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
+              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: on the start day of the study + 7 days", content: "&nbsp;", id: "Visit 24" },
+              
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 1'", content: "&nbsp;", id: "Visit 15" },
+              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 2'", content: "&nbsp;", id: "Visit 26" },
+          ])
+        `;
+
+            let expectedTimelineVisualizationHTML = ` // create visualization
+              var container = document.getElementById('visualization');
+                  var options = {
+                                showCurrentTime: false,
+                                format: {
+                                    minorLabels: {
+                                        millisecond:'',
+                                        second:     '',
+                                        minute:     '',
+                                        hour:       '',
+                                        weekday:    '',
+                                        day:        'DDD',
+                                        week:       '',
+                                        month:      '',
+                                        year:       ''
+                                    },
+                                    majorLabels: {
+                                        millisecond:'',
+                                        second:     '',
+                                        minute:     '',
+                                        hour:       '',
+                                        weekday:    '',
+                                        day:        'w',
+                                        week:       '',
+                                        month:      '',
+                                        year:       ''
+                                    }
+                
+                                },
+                                timeAxis: {scale: 'day', step: 1},
+                                showMajorLabels: true,
+                                orientation: 'both',
+                                start: new Date(2024, 0, 1),
+                                end: new Date(2024, 0, 9),
+                                min: new Date(2024, 0, 1),
+                                max: new Date(2024, 0, 9),
+                                zoomFriction:30,
+                                margin: {
+                                    item: {
+                                        horizontal: 0,
+                                    },
+                                },
+                            };
+        `;
+            // GIVEN a study configuration with one period and two events
+            studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "Visit 1", 0, "Visit 2", 7);
+            let simulator = new Simulator(studyConfigurationUnit);
+            simulator.run();
+            let timeline = simulator.timeline;
+            let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(2, timeline, [], new Date(2024, 0, 1));
+            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
+            timeline.addPatientEvents(patientHistory);
+
+
+            // WHEN the study is simulated and a timeline picture is generated
+
+            utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
+        });
+
+        it("generate a chart for a three visits, one 3 days before, one 2 days after with the patient completing it on the scheduled day", () => {
+            // HTML is split into two parts: the data and the visualization, so tests don't need to check both. The visualization is so simple that it doesn't need to be tested in multiple other tests.
+            let expectedTimelineDataAsScript = ` var groups = new vis.DataSet([
+              { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+              { "content": "Visit 1", "id": "Visit 1" },
+              { "content": "Visit 2", "id": "Visit 2" },
+              { "content": "V3", "id": "V3" },
+              { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },
+              
+              ]);
+              
+              var items = new vis.DataSet([
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -3", content: "<b>Screening</b>", id: "Screening0" },
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: on the start day of the study - 3 days", content: "&nbsp;", id: "Visit 11" },
+              { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: as the start day of the study", content: "&nbsp;", id: "Visit 22" },
+              { start: new Date(2024, 00, 06, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V3", className: "scheduled-event", title: "V3: on the start day of the study + 2 days", content: "&nbsp;", id: "V33" },
+              
+              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 1'", content: "&nbsp;", id: "Visit 14" },
+              { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 2'", content: "&nbsp;", id: "Visit 25" },
+              { start: new Date(2024, 00, 06, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V3'", content: "&nbsp;", id: "V36" },
+            ])
+            `;
+
+            let expectedTimelineVisualizationHTML = ` // create visualization
+              var container = document.getElementById('visualization');
+                  var options = {
+                                showCurrentTime: false,
+                                format: {
+                                    minorLabels: {
+                                        millisecond:'',
+                                        second:     '',
+                                        minute:     '',
+                                        hour:       '',
+                                        weekday:    '',
+                                        day:        'DDD',
+                                        week:       '',
+                                        month:      '',
+                                        year:       ''
+                                    },
+                                    majorLabels: {
+                                        millisecond:'',
+                                        second:     '',
+                                        minute:     '',
+                                        hour:       '',
+                                        weekday:    '',
+                                        day:        'w',
+                                        week:       '',
+                                        month:      '',
+                                        year:       ''
+                                    }
+                
+                                },
+                                timeAxis: {scale: 'day', step: 1},
+                                showMajorLabels: true,
+                                orientation: 'both',
+                                start: new Date(2024, 0, 1),
+                                end: new Date(2024, 0, 7),
+                                min: new Date(2024, 0, 1),
+                                max: new Date(2024, 0, 7),
+                                zoomFriction:30,
+                                margin: {
+                                    item: {
+                                        horizontal: 0,
+                                    },
+                                },
+                            };
+        `;
+            // GIVEN a study configuration with one period and two events
+            studyConfigurationUnit = utils.addAPeriodWithEventBeforeStudyStart(studyConfigurationUnit, "Screening", "Visit 2", "Visit 1", 3);
+            let simulator = new Simulator(studyConfigurationUnit);
+            simulator.run();
+            let timeline = simulator.timeline;
+            let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(3, timeline, [], new Date(2024, 0, 1));
+            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
+            timeline.addPatientEvents(patientHistory);
+
+            // WHEN the study is simulated and a timeline picture is generated
+            utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
+        });
+
         it("generates a chart for a visit on day 1 that patient completed", () => {
             const expectedTimelineDataAsScript = `  var groups = new vis.DataSet([
                 { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
@@ -1121,173 +1080,195 @@ describe("Study Simulation", () => {
 
         it("generate a chart for the example study ScheduleExample2 with the first 10 visits completed", () => {
             let expectedTimelineDataAsScript = `var groups = new vis.DataSet([
-              { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-              { "content": "V1 Randomization", "id": "V1 Randomization" },
-              { "content": "V1 Run In", "id": "V1 Run In" },
-              { "content": "V2 Randomization", "id": "V2 Randomization" },
-              { "content": "V2 Run In", "id": "V2 Run In" },
-              { "content": "V3 Randomization", "id": "V3 Randomization" },
-              { "content": "V3 Run In", "id": "V3 Run In" },
-              { "content": "V4-V7 Randomization", "id": "V4-V7 Randomization" },
-              { "content": "V4-V7 Run In", "id": "V4-V7 Run In" },
-              { "content": "V8-V13 Randomization", "id": "V8-V13 Randomization" },
-              { "content": "V8-V13 Run In", "id": "V8-V13 Run In" },
-              { "content": "V14-V18 Randomization", "id": "V14-V18 Randomization" },
-              { "content": "V14-V18 Run In", "id": "V14-V18 Run In" },
-              { "content": "V19 Randomization", "id": "V19 Randomization" },
-              { "content": "V19 Run In", "id": "V19 Run In" },
-              { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },
-              
-              ]);
-              
-              var items = new vis.DataSet([
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 28, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -28", content: "<b>Screening</b>", id: "Screening0" },
-              { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 10, 14, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
-              { start: new Date(2023, 11, 24, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V1 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 Randomization2" },
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: on the start day of the study - 4 weeks", content: "&nbsp;", id: "V1 Randomization3" },
-              { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 Run In4" },
-              { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "V1 Run In", className: "scheduled-event", title: "V1 Run In: when V1 Randomization completed + 3 days", content: "&nbsp;", id: "V1 Run In5" },
-              { start: new Date(2024, 00, 05, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1 Run In6" },
-              { start: new Date(2024, 00, 13, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "V2 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2 Randomization7" },
-              { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: on the start day of the study - 2 weeks", content: "&nbsp;", id: "V2 Randomization8" },
-              { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V2 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2 Randomization9" },
-              { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2 Run In10" },
-              { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "V2 Run In", className: "scheduled-event", title: "V2 Run In: when V2 Randomization completed + 3 days", content: "&nbsp;", id: "V2 Run In11" },
-              { start: new Date(2024, 00, 19, 00, 00, 00), end: new Date(2024, 00, 20, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2 Run In12" },
-              { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: as the start day of the study", content: "&nbsp;", id: "V3 Randomization13" },
-              { start: new Date(2024, 00, 30, 00, 00, 00), end: new Date(2024, 00, 31, 23, 59, 59), group: "V3 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V3 Run In14" },
-              { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "V3 Run In", className: "scheduled-event", title: "V3 Run In: when V3 Randomization completed + 3 days", content: "&nbsp;", id: "V3 Run In15" },
-              { start: new Date(2024, 01, 02, 00, 00, 00), end: new Date(2024, 01, 03, 23, 59, 59), group: "V3 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V3 Run In16" },
-              { start: new Date(2024, 01, 03, 00, 00, 00), end: new Date(2024, 01, 04, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization17" },
-              { start: new Date(2024, 01, 05, 00, 00, 00), end: new Date(2024, 01, 05, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization18" },
-              { start: new Date(2024, 01, 06, 00, 00, 00), end: new Date(2024, 01, 07, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization19" },
-              { start: new Date(2024, 01, 06, 00, 00, 00), end: new Date(2024, 01, 07, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Run In20" },
-              { start: new Date(2024, 01, 08, 00, 00, 00), end: new Date(2024, 01, 08, 23, 59, 59), group: "V4-V7 Run In", className: "scheduled-event", title: "V4-V7 Run In: when V4-V7 Randomization each completed + 3 days", content: "&nbsp;", id: "V4-V7 Run In21" },
-              { start: new Date(2024, 01, 09, 00, 00, 00), end: new Date(2024, 01, 10, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Run In22" },
-              { start: new Date(2024, 01, 10, 00, 00, 00), end: new Date(2024, 01, 11, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization23" },
-              { start: new Date(2024, 01, 12, 00, 00, 00), end: new Date(2024, 01, 12, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization24" },
-              { start: new Date(2024, 01, 13, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization25" },
-              { start: new Date(2024, 01, 13, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Run In26" },
-              { start: new Date(2024, 01, 15, 00, 00, 00), end: new Date(2024, 01, 15, 23, 59, 59), group: "V4-V7 Run In", className: "scheduled-event", title: "V4-V7 Run In: when V4-V7 Randomization each completed + 3 days", content: "&nbsp;", id: "V4-V7 Run In27" },
-              { start: new Date(2024, 01, 16, 00, 00, 00), end: new Date(2024, 01, 17, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Run In28" },
-              { start: new Date(2024, 01, 17, 00, 00, 00), end: new Date(2024, 01, 18, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization29" },
-              { start: new Date(2024, 01, 19, 00, 00, 00), end: new Date(2024, 01, 19, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization30" },
-              { start: new Date(2024, 01, 20, 00, 00, 00), end: new Date(2024, 01, 21, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization31" },
-              { start: new Date(2024, 01, 20, 00, 00, 00), end: new Date(2024, 01, 21, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Run In32" },
-              { start: new Date(2024, 01, 22, 00, 00, 00), end: new Date(2024, 01, 22, 23, 59, 59), group: "V4-V7 Run In", className: "scheduled-event", title: "V4-V7 Run In: when V4-V7 Randomization each completed + 3 days", content: "&nbsp;", id: "V4-V7 Run In33" },
-              { start: new Date(2024, 01, 23, 00, 00, 00), end: new Date(2024, 01, 24, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Run In34" },
-              { start: new Date(2024, 01, 24, 00, 00, 00), end: new Date(2024, 01, 25, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization35" },
-              { start: new Date(2024, 01, 26, 00, 00, 00), end: new Date(2024, 01, 26, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization36" },
-              { start: new Date(2024, 01, 27, 00, 00, 00), end: new Date(2024, 01, 28, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization37" },
-              { start: new Date(2024, 01, 27, 00, 00, 00), end: new Date(2024, 01, 28, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Run In38" },
-              { start: new Date(2024, 01, 29, 00, 00, 00), end: new Date(2024, 01, 29, 23, 59, 59), group: "V4-V7 Run In", className: "scheduled-event", title: "V4-V7 Run In: when V4-V7 Randomization each completed + 3 days", content: "&nbsp;", id: "V4-V7 Run In39" },
-              { start: new Date(2024, 02, 01, 00, 00, 00), end: new Date(2024, 02, 02, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Run In40" },
-              { start: new Date(2024, 02, 09, 00, 00, 00), end: new Date(2024, 02, 10, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization41" },
-              { start: new Date(2024, 02, 11, 00, 00, 00), end: new Date(2024, 02, 11, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization42" },
-              { start: new Date(2024, 02, 12, 00, 00, 00), end: new Date(2024, 02, 13, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization43" },
-              { start: new Date(2024, 02, 12, 00, 00, 00), end: new Date(2024, 02, 13, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In44" },
-              { start: new Date(2024, 02, 14, 00, 00, 00), end: new Date(2024, 02, 14, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In45" },
-              { start: new Date(2024, 02, 15, 00, 00, 00), end: new Date(2024, 02, 16, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In46" },
-              { start: new Date(2024, 02, 23, 00, 00, 00), end: new Date(2024, 02, 24, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization47" },
-              { start: new Date(2024, 02, 25, 00, 00, 00), end: new Date(2024, 02, 25, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization48" },
-              { start: new Date(2024, 02, 26, 00, 00, 00), end: new Date(2024, 02, 27, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization49" },
-              { start: new Date(2024, 02, 26, 00, 00, 00), end: new Date(2024, 02, 27, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In50" },
-              { start: new Date(2024, 02, 28, 00, 00, 00), end: new Date(2024, 02, 28, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In51" },
-              { start: new Date(2024, 02, 29, 00, 00, 00), end: new Date(2024, 02, 30, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In52" },
-              { start: new Date(2024, 03, 06, 00, 00, 00), end: new Date(2024, 03, 07, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization53" },
-              { start: new Date(2024, 03, 08, 00, 00, 00), end: new Date(2024, 03, 08, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization54" },
-              { start: new Date(2024, 03, 09, 00, 00, 00), end: new Date(2024, 03, 10, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization55" },
-              { start: new Date(2024, 03, 09, 00, 00, 00), end: new Date(2024, 03, 10, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In56" },
-              { start: new Date(2024, 03, 11, 00, 00, 00), end: new Date(2024, 03, 11, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In57" },
-              { start: new Date(2024, 03, 12, 00, 00, 00), end: new Date(2024, 03, 13, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In58" },
-              { start: new Date(2024, 03, 20, 00, 00, 00), end: new Date(2024, 03, 21, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization59" },
-              { start: new Date(2024, 03, 22, 00, 00, 00), end: new Date(2024, 03, 22, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization60" },
-              { start: new Date(2024, 03, 23, 00, 00, 00), end: new Date(2024, 03, 24, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization61" },
-              { start: new Date(2024, 03, 23, 00, 00, 00), end: new Date(2024, 03, 24, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In62" },
-              { start: new Date(2024, 03, 25, 00, 00, 00), end: new Date(2024, 03, 25, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In63" },
-              { start: new Date(2024, 03, 26, 00, 00, 00), end: new Date(2024, 03, 27, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In64" },
-              { start: new Date(2024, 04, 04, 00, 00, 00), end: new Date(2024, 04, 05, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization65" },
-              { start: new Date(2024, 04, 06, 00, 00, 00), end: new Date(2024, 04, 06, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization66" },
-              { start: new Date(2024, 04, 07, 00, 00, 00), end: new Date(2024, 04, 08, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization67" },
-              { start: new Date(2024, 04, 07, 00, 00, 00), end: new Date(2024, 04, 08, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In68" },
-              { start: new Date(2024, 04, 09, 00, 00, 00), end: new Date(2024, 04, 09, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In69" },
-              { start: new Date(2024, 04, 10, 00, 00, 00), end: new Date(2024, 04, 11, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In70" },
-              { start: new Date(2024, 04, 18, 00, 00, 00), end: new Date(2024, 04, 19, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization71" },
-              { start: new Date(2024, 04, 20, 00, 00, 00), end: new Date(2024, 04, 20, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization72" },
-              { start: new Date(2024, 04, 21, 00, 00, 00), end: new Date(2024, 04, 22, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization73" },
-              { start: new Date(2024, 04, 21, 00, 00, 00), end: new Date(2024, 04, 22, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In74" },
-              { start: new Date(2024, 04, 23, 00, 00, 00), end: new Date(2024, 04, 23, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In75" },
-              { start: new Date(2024, 04, 24, 00, 00, 00), end: new Date(2024, 04, 25, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In76" },
-              { start: new Date(2024, 05, 15, 00, 00, 00), end: new Date(2024, 05, 16, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization77" },
-              { start: new Date(2024, 05, 17, 00, 00, 00), end: new Date(2024, 05, 17, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization78" },
-              { start: new Date(2024, 05, 18, 00, 00, 00), end: new Date(2024, 05, 19, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization79" },
-              { start: new Date(2024, 05, 18, 00, 00, 00), end: new Date(2024, 05, 19, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In80" },
-              { start: new Date(2024, 05, 20, 00, 00, 00), end: new Date(2024, 05, 20, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In81" },
-              { start: new Date(2024, 05, 21, 00, 00, 00), end: new Date(2024, 05, 22, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In82" },
-              { start: new Date(2024, 06, 13, 00, 00, 00), end: new Date(2024, 06, 14, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization83" },
-              { start: new Date(2024, 06, 15, 00, 00, 00), end: new Date(2024, 06, 15, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization84" },
-              { start: new Date(2024, 06, 16, 00, 00, 00), end: new Date(2024, 06, 17, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization85" },
-              { start: new Date(2024, 06, 16, 00, 00, 00), end: new Date(2024, 06, 17, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In86" },
-              { start: new Date(2024, 06, 18, 00, 00, 00), end: new Date(2024, 06, 18, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In87" },
-              { start: new Date(2024, 06, 19, 00, 00, 00), end: new Date(2024, 06, 20, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In88" },
-              { start: new Date(2024, 07, 10, 00, 00, 00), end: new Date(2024, 07, 11, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization89" },
-              { start: new Date(2024, 07, 12, 00, 00, 00), end: new Date(2024, 07, 12, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization90" },
-              { start: new Date(2024, 07, 13, 00, 00, 00), end: new Date(2024, 07, 14, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization91" },
-              { start: new Date(2024, 07, 13, 00, 00, 00), end: new Date(2024, 07, 14, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In92" },
-              { start: new Date(2024, 07, 15, 00, 00, 00), end: new Date(2024, 07, 15, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In93" },
-              { start: new Date(2024, 07, 16, 00, 00, 00), end: new Date(2024, 07, 17, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In94" },
-              { start: new Date(2024, 08, 07, 00, 00, 00), end: new Date(2024, 08, 08, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization95" },
-              { start: new Date(2024, 08, 09, 00, 00, 00), end: new Date(2024, 08, 09, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization96" },
-              { start: new Date(2024, 08, 10, 00, 00, 00), end: new Date(2024, 08, 11, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization97" },
-              { start: new Date(2024, 08, 10, 00, 00, 00), end: new Date(2024, 08, 11, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In98" },
-              { start: new Date(2024, 08, 12, 00, 00, 00), end: new Date(2024, 08, 12, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In99" },
-              { start: new Date(2024, 08, 13, 00, 00, 00), end: new Date(2024, 08, 14, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In100" },
-              { start: new Date(2024, 09, 05, 00, 00, 00), end: new Date(2024, 09, 06, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization101" },
-              { start: new Date(2024, 09, 07, 00, 00, 00), end: new Date(2024, 09, 07, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization102" },
-              { start: new Date(2024, 09, 08, 00, 00, 00), end: new Date(2024, 09, 09, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization103" },
-              { start: new Date(2024, 09, 08, 00, 00, 00), end: new Date(2024, 09, 09, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In104" },
-              { start: new Date(2024, 09, 10, 00, 00, 00), end: new Date(2024, 09, 10, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In105" },
-              { start: new Date(2024, 09, 11, 00, 00, 00), end: new Date(2024, 09, 12, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In106" },
-              { start: new Date(2024, 10, 02, 00, 00, 00), end: new Date(2024, 10, 03, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization107" },
-              { start: new Date(2024, 10, 04, 00, 00, 00), end: new Date(2024, 10, 04, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization108" },
-              { start: new Date(2024, 10, 05, 00, 00, 00), end: new Date(2024, 10, 06, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization109" },
-              { start: new Date(2024, 10, 09, 00, 00, 00), end: new Date(2024, 10, 10, 23, 59, 59), group: "V19 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V19 Randomization110" },
-              { start: new Date(2024, 10, 11, 00, 00, 00), end: new Date(2024, 10, 11, 23, 59, 59), group: "V19 Randomization", className: "scheduled-event", title: "V19 Randomization: when V14-V18 Randomization completed + 1 weeks", content: "&nbsp;", id: "V19 Randomization111" },
-              { start: new Date(2024, 10, 12, 00, 00, 00), end: new Date(2024, 10, 13, 23, 59, 59), group: "V19 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19 Randomization112" },
-              { start: new Date(2024, 10, 12, 00, 00, 00), end: new Date(2024, 10, 13, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V19 Run In113" },
-              { start: new Date(2024, 10, 14, 00, 00, 00), end: new Date(2024, 10, 14, 23, 59, 59), group: "V19 Run In", className: "scheduled-event", title: "V19 Run In: when V19 Randomization completed + 3 days", content: "&nbsp;", id: "V19 Run In114" },
-              { start: new Date(2024, 10, 15, 00, 00, 00), end: new Date(2024, 10, 16, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19 Run In115" },
-              
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V1 Randomization'", content: "&nbsp;", id: "V1 Randomization116" },
-              { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V1 Run In'", content: "&nbsp;", id: "V1 Run In117" },
-              { start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Patient", className: "in-window", title: "Patient visit:V2 Randomization'", content: "&nbsp;", id: "V2 Randomization118" },
-              { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V2 Run In'", content: "&nbsp;", id: "V2 Run In119" },
-              { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V3 Randomization'", content: "&nbsp;", id: "V3 Randomization120" },
-              { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V3 Run In'", content: "&nbsp;", id: "V3 Run In121" },
-              { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient", className: "out-of-window", title: "Patient visit:V4-V7 Randomization'", content: "&nbsp;", id: "V4-V7 Randomization122" },
-              { start: new Date(2024, 01, 08, 00, 00, 00), end: new Date(2024, 01, 08, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V4-V7 Run In'", content: "&nbsp;", id: "V4-V7 Run In123" },
-              { start: new Date(2024, 01, 14, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "Patient", className: "in-window", title: "Patient visit:V4-V7 Randomization' #2", content: "&nbsp;", id: "V4-V7 Randomization124" },
-              { start: new Date(2024, 01, 15, 00, 00, 00), end: new Date(2024, 01, 15, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V4-V7 Run In' #2", content: "&nbsp;", id: "V4-V7 Run In125" },
-            ])`;
+            { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+            { "content": "V1 Randomization", "id": "V1 Randomization" },
+            { "content": "V1 Run In", "id": "V1 Run In" },
+            { "content": "V2 Randomization", "id": "V2 Randomization" },
+            { "content": "V2 Run In", "id": "V2 Run In" },
+            { "content": "V3 Randomization", "id": "V3 Randomization" },
+            { "content": "V3 Run In", "id": "V3 Run In" },
+            { "content": "V4-V7 Randomization", "id": "V4-V7 Randomization" },
+            { "content": "V4-V7 Run In", "id": "V4-V7 Run In" },
+            { "content": "V8-V13 Randomization", "id": "V8-V13 Randomization" },
+            { "content": "V8-V13 Run In", "id": "V8-V13 Run In" },
+            { "content": "V14-V18 Randomization", "id": "V14-V18 Randomization" },
+            { "content": "V14-V18 Run In", "id": "V14-V18 Run In" },
+            { "content": "V19 Randomization", "id": "V19 Randomization" },
+            { "content": "V19 Run In", "id": "V19 Run In" },
+            { "content": "<b>Patient: MV</b>", "id": "Patient-MV", className: 'patient' },
+            
+          ]);
+
+        var items = new vis.DataSet([
+            { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 28, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -28", content: "<b>Screening</b>", id: "Screening0" },
+            { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 10, 14, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
+            { start: new Date(2023, 11, 24, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V1 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 Randomization2" },
+            { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: on the start day of the study - 4 weeks", content: "&nbsp;", id: "V1 Randomization3" },
+            
+            { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 Run In4" },
+            { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "V1 Run In", className: "scheduled-event", title: "V1 Run In: when V1 Randomization completed + 3 days", content: "&nbsp;", id: "V1 Run In5" },
+            { start: new Date(2024, 00, 05, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1 Run In6" },
+            { start: new Date(2024, 00, 13, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "V2 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2 Randomization7" },
+            { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "V2 Randomization", className: "scheduled-event", title: "V2 Randomization: on the start day of the study - 2 weeks", content: "&nbsp;", id: "V2 Randomization8" },
+            { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V2 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2 Randomization9" },
+            { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2 Run In10" },
+            { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "V2 Run In", className: "scheduled-event", title: "V2 Run In: when V2 Randomization completed + 3 days", content: "&nbsp;", id: "V2 Run In11" },
+            { start: new Date(2024, 00, 19, 00, 00, 00), end: new Date(2024, 00, 20, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2 Run In12" },
+            { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization:  as the start day of the study", content: "&nbsp;", id: "V3 Randomization13" },
+            { start: new Date(2024, 00, 30, 00, 00, 00), end: new Date(2024, 00, 31, 23, 59, 59), group: "V3 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V3 Run In14" },
+            { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "V3 Run In", className: "scheduled-event", title: "V3 Run In: when V3 Randomization completed + 3 days", content: "&nbsp;", id: "V3 Run In15" },
+            { start: new Date(2024, 01, 02, 00, 00, 00), end: new Date(2024, 01, 03, 23, 59, 59), group: "V3 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V3 Run In16" },
+            { start: new Date(2024, 01, 03, 00, 00, 00), end: new Date(2024, 01, 04, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization17" },
+            { start: new Date(2024, 01, 05, 00, 00, 00), end: new Date(2024, 01, 05, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization18" },
+            { start: new Date(2024, 01, 06, 00, 00, 00), end: new Date(2024, 01, 07, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization19" },
+            { start: new Date(2024, 01, 06, 00, 00, 00), end: new Date(2024, 01, 07, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Run In20" },
+            { start: new Date(2024, 01, 08, 00, 00, 00), end: new Date(2024, 01, 08, 23, 59, 59), group: "V4-V7 Run In", className: "scheduled-event", title: "V4-V7 Run In: when V4-V7 Randomization each completed + 3 days", content: "&nbsp;", id: "V4-V7 Run In21" },
+            { start: new Date(2024, 01, 09, 00, 00, 00), end: new Date(2024, 01, 10, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Run In22" },
+            { start: new Date(2024, 01, 10, 00, 00, 00), end: new Date(2024, 01, 11, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization23" },
+            { start: new Date(2024, 01, 12, 00, 00, 00), end: new Date(2024, 01, 12, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization24" },
+            { start: new Date(2024, 01, 13, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization25" },
+            { start: new Date(2024, 01, 13, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Run In26" },
+            { start: new Date(2024, 01, 15, 00, 00, 00), end: new Date(2024, 01, 15, 23, 59, 59), group: "V4-V7 Run In", className: "scheduled-event", title: "V4-V7 Run In: when V4-V7 Randomization each completed + 3 days", content: "&nbsp;", id: "V4-V7 Run In27" },
+            { start: new Date(2024, 01, 16, 00, 00, 00), end: new Date(2024, 01, 17, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Run In28" },
+            { start: new Date(2024, 01, 17, 00, 00, 00), end: new Date(2024, 01, 18, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization29" },
+            { start: new Date(2024, 01, 19, 00, 00, 00), end: new Date(2024, 01, 19, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization30" },
+            { start: new Date(2024, 01, 20, 00, 00, 00), end: new Date(2024, 01, 21, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization31" },
+            { start: new Date(2024, 01, 20, 00, 00, 00), end: new Date(2024, 01, 21, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Run In32" },
+            { start: new Date(2024, 01, 22, 00, 00, 00), end: new Date(2024, 01, 22, 23, 59, 59), group: "V4-V7 Run In", className: "scheduled-event", title: "V4-V7 Run In: when V4-V7 Randomization each completed + 3 days", content: "&nbsp;", id: "V4-V7 Run In33" },
+            { start: new Date(2024, 01, 23, 00, 00, 00), end: new Date(2024, 01, 24, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Run In34" },
+            { start: new Date(2024, 01, 24, 00, 00, 00), end: new Date(2024, 01, 25, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Randomization35" },
+            { start: new Date(2024, 01, 26, 00, 00, 00), end: new Date(2024, 01, 26, 23, 59, 59), group: "V4-V7 Randomization", className: "scheduled-event", title: "V4-V7 Randomization: when V3 Randomization completed + 1 weeks", content: "&nbsp;", id: "V4-V7 Randomization36" },
+            { start: new Date(2024, 01, 27, 00, 00, 00), end: new Date(2024, 01, 28, 23, 59, 59), group: "V4-V7 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Randomization37" },
+            { start: new Date(2024, 01, 27, 00, 00, 00), end: new Date(2024, 01, 28, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V4-V7 Run In38" },
+            { start: new Date(2024, 01, 29, 00, 00, 00), end: new Date(2024, 01, 29, 23, 59, 59), group: "V4-V7 Run In", className: "scheduled-event", title: "V4-V7 Run In: when V4-V7 Randomization each completed + 3 days", content: "&nbsp;", id: "V4-V7 Run In39" },
+            { start: new Date(2024, 02, 01, 00, 00, 00), end: new Date(2024, 02, 02, 23, 59, 59), group: "V4-V7 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V4-V7 Run In40" },
+            { start: new Date(2024, 02, 09, 00, 00, 00), end: new Date(2024, 02, 10, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization41" },
+            { start: new Date(2024, 02, 11, 00, 00, 00), end: new Date(2024, 02, 11, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization42" },
+            { start: new Date(2024, 02, 12, 00, 00, 00), end: new Date(2024, 02, 13, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization43" },
+            { start: new Date(2024, 02, 12, 00, 00, 00), end: new Date(2024, 02, 13, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In44" },
+            { start: new Date(2024, 02, 14, 00, 00, 00), end: new Date(2024, 02, 14, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In45" },
+            { start: new Date(2024, 02, 15, 00, 00, 00), end: new Date(2024, 02, 16, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In46" },
+            { start: new Date(2024, 02, 23, 00, 00, 00), end: new Date(2024, 02, 24, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization47" },
+            { start: new Date(2024, 02, 25, 00, 00, 00), end: new Date(2024, 02, 25, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization48" },
+            { start: new Date(2024, 02, 26, 00, 00, 00), end: new Date(2024, 02, 27, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization49" },
+            { start: new Date(2024, 02, 26, 00, 00, 00), end: new Date(2024, 02, 27, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In50" },
+            { start: new Date(2024, 02, 28, 00, 00, 00), end: new Date(2024, 02, 28, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In51" },
+            { start: new Date(2024, 02, 29, 00, 00, 00), end: new Date(2024, 02, 30, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In52" },
+            { start: new Date(2024, 03, 06, 00, 00, 00), end: new Date(2024, 03, 07, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization53" },
+            { start: new Date(2024, 03, 08, 00, 00, 00), end: new Date(2024, 03, 08, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization54" },
+            { start: new Date(2024, 03, 09, 00, 00, 00), end: new Date(2024, 03, 10, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization55" },
+            { start: new Date(2024, 03, 09, 00, 00, 00), end: new Date(2024, 03, 10, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In56" },
+            { start: new Date(2024, 03, 11, 00, 00, 00), end: new Date(2024, 03, 11, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In57" },
+            { start: new Date(2024, 03, 12, 00, 00, 00), end: new Date(2024, 03, 13, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In58" },
+            { start: new Date(2024, 03, 20, 00, 00, 00), end: new Date(2024, 03, 21, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization59" },
+            { start: new Date(2024, 03, 22, 00, 00, 00), end: new Date(2024, 03, 22, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization60" },
+            { start: new Date(2024, 03, 23, 00, 00, 00), end: new Date(2024, 03, 24, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization61" },
+            { start: new Date(2024, 03, 23, 00, 00, 00), end: new Date(2024, 03, 24, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In62" },
+            { start: new Date(2024, 03, 25, 00, 00, 00), end: new Date(2024, 03, 25, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In63" },
+            { start: new Date(2024, 03, 26, 00, 00, 00), end: new Date(2024, 03, 27, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In64" },
+            { start: new Date(2024, 04, 04, 00, 00, 00), end: new Date(2024, 04, 05, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization65" },
+            { start: new Date(2024, 04, 06, 00, 00, 00), end: new Date(2024, 04, 06, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization66" },
+            { start: new Date(2024, 04, 07, 00, 00, 00), end: new Date(2024, 04, 08, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization67" },
+            { start: new Date(2024, 04, 07, 00, 00, 00), end: new Date(2024, 04, 08, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In68" },
+            { start: new Date(2024, 04, 09, 00, 00, 00), end: new Date(2024, 04, 09, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In69" },
+            { start: new Date(2024, 04, 10, 00, 00, 00), end: new Date(2024, 04, 11, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In70" },
+            { start: new Date(2024, 04, 18, 00, 00, 00), end: new Date(2024, 04, 19, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Randomization71" },
+            { start: new Date(2024, 04, 20, 00, 00, 00), end: new Date(2024, 04, 20, 23, 59, 59), group: "V8-V13 Randomization", className: "scheduled-event", title: "V8-V13 Randomization: when V4-V7 Randomization completed + 2 weeks", content: "&nbsp;", id: "V8-V13 Randomization72" },
+            { start: new Date(2024, 04, 21, 00, 00, 00), end: new Date(2024, 04, 22, 23, 59, 59), group: "V8-V13 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Randomization73" },
+            { start: new Date(2024, 04, 21, 00, 00, 00), end: new Date(2024, 04, 22, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V8-V13 Run In74" },
+            { start: new Date(2024, 04, 23, 00, 00, 00), end: new Date(2024, 04, 23, 23, 59, 59), group: "V8-V13 Run In", className: "scheduled-event", title: "V8-V13 Run In: when V8-V13 Randomization each completed + 3 days", content: "&nbsp;", id: "V8-V13 Run In75" },
+            { start: new Date(2024, 04, 24, 00, 00, 00), end: new Date(2024, 04, 25, 23, 59, 59), group: "V8-V13 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V8-V13 Run In76" },
+            { start: new Date(2024, 05, 15, 00, 00, 00), end: new Date(2024, 05, 16, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization77" },
+            { start: new Date(2024, 05, 17, 00, 00, 00), end: new Date(2024, 05, 17, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization78" },
+            { start: new Date(2024, 05, 18, 00, 00, 00), end: new Date(2024, 05, 19, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization79" },
+            { start: new Date(2024, 05, 18, 00, 00, 00), end: new Date(2024, 05, 19, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In80" },
+            { start: new Date(2024, 05, 20, 00, 00, 00), end: new Date(2024, 05, 20, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In81" },
+            { start: new Date(2024, 05, 21, 00, 00, 00), end: new Date(2024, 05, 22, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In82" },
+            { start: new Date(2024, 06, 13, 00, 00, 00), end: new Date(2024, 06, 14, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization83" },
+            { start: new Date(2024, 06, 15, 00, 00, 00), end: new Date(2024, 06, 15, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization84" },
+            { start: new Date(2024, 06, 16, 00, 00, 00), end: new Date(2024, 06, 17, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization85" },
+            { start: new Date(2024, 06, 16, 00, 00, 00), end: new Date(2024, 06, 17, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In86" },
+            { start: new Date(2024, 06, 18, 00, 00, 00), end: new Date(2024, 06, 18, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In87" },
+            { start: new Date(2024, 06, 19, 00, 00, 00), end: new Date(2024, 06, 20, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In88" },
+            { start: new Date(2024, 07, 10, 00, 00, 00), end: new Date(2024, 07, 11, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization89" },
+            { start: new Date(2024, 07, 12, 00, 00, 00), end: new Date(2024, 07, 12, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization90" },
+            { start: new Date(2024, 07, 13, 00, 00, 00), end: new Date(2024, 07, 14, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization91" },
+            { start: new Date(2024, 07, 13, 00, 00, 00), end: new Date(2024, 07, 14, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In92" },
+            { start: new Date(2024, 07, 15, 00, 00, 00), end: new Date(2024, 07, 15, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In93" },
+            { start: new Date(2024, 07, 16, 00, 00, 00), end: new Date(2024, 07, 17, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In94" },
+            { start: new Date(2024, 08, 07, 00, 00, 00), end: new Date(2024, 08, 08, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization95" },
+            { start: new Date(2024, 08, 09, 00, 00, 00), end: new Date(2024, 08, 09, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization96" },
+            { start: new Date(2024, 08, 10, 00, 00, 00), end: new Date(2024, 08, 11, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization97" },
+            { start: new Date(2024, 08, 10, 00, 00, 00), end: new Date(2024, 08, 11, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In98" },
+            { start: new Date(2024, 08, 12, 00, 00, 00), end: new Date(2024, 08, 12, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In99" },
+            { start: new Date(2024, 08, 13, 00, 00, 00), end: new Date(2024, 08, 14, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In100" },
+            { start: new Date(2024, 09, 05, 00, 00, 00), end: new Date(2024, 09, 06, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization101" },
+            { start: new Date(2024, 09, 07, 00, 00, 00), end: new Date(2024, 09, 07, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization102" },
+            { start: new Date(2024, 09, 08, 00, 00, 00), end: new Date(2024, 09, 09, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization103" },
+            { start: new Date(2024, 09, 08, 00, 00, 00), end: new Date(2024, 09, 09, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Run In104" },
+            { start: new Date(2024, 09, 10, 00, 00, 00), end: new Date(2024, 09, 10, 23, 59, 59), group: "V14-V18 Run In", className: "scheduled-event", title: "V14-V18 Run In: when V14-V18 Randomization each completed + 3 days", content: "&nbsp;", id: "V14-V18 Run In105" },
+            { start: new Date(2024, 09, 11, 00, 00, 00), end: new Date(2024, 09, 12, 23, 59, 59), group: "V14-V18 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Run In106" },
+            { start: new Date(2024, 10, 02, 00, 00, 00), end: new Date(2024, 10, 03, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V14-V18 Randomization107" },
+            { start: new Date(2024, 10, 04, 00, 00, 00), end: new Date(2024, 10, 04, 23, 59, 59), group: "V14-V18 Randomization", className: "scheduled-event", title: "V14-V18 Randomization: when V8-V13 Randomization completed + 4 weeks", content: "&nbsp;", id: "V14-V18 Randomization108" },
+            { start: new Date(2024, 10, 05, 00, 00, 00), end: new Date(2024, 10, 06, 23, 59, 59), group: "V14-V18 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V14-V18 Randomization109" },
+            { start: new Date(2024, 10, 09, 00, 00, 00), end: new Date(2024, 10, 10, 23, 59, 59), group: "V19 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V19 Randomization110" },
+            { start: new Date(2024, 10, 11, 00, 00, 00), end: new Date(2024, 10, 11, 23, 59, 59), group: "V19 Randomization", className: "scheduled-event", title: "V19 Randomization: when V14-V18 Randomization completed + 1 weeks", content: "&nbsp;", id: "V19 Randomization111" },
+            { start: new Date(2024, 10, 12, 00, 00, 00), end: new Date(2024, 10, 13, 23, 59, 59), group: "V19 Randomization", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19 Randomization112" },
+            { start: new Date(2024, 10, 12, 00, 00, 00), end: new Date(2024, 10, 13, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V19 Run In113" },
+            { start: new Date(2024, 10, 14, 00, 00, 00), end: new Date(2024, 10, 14, 23, 59, 59), group: "V19 Run In", className: "scheduled-event", title: "V19 Run In: when V19 Randomization completed + 3 days", content: "&nbsp;", id: "V19 Run In114" },
+            { start: new Date(2024, 10, 15, 00, 00, 00), end: new Date(2024, 10, 16, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19 Run In115" },
+
+            { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V1 Randomization'", content: "&nbsp;", id: "V1 Randomization116" },
+            { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V1 Run In'", content: "&nbsp;", id: "V1 Run In117" },
+            { start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Patient-MV", className: "in-window", title: "Patient visit:V2 Randomization'", content: "&nbsp;", id: "V2 Randomization118" },
+            { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V2 Run In'", content: "&nbsp;", id: "V2 Run In119" },
+            { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V3 Randomization'", content: "&nbsp;", id: "V3 Randomization120" },
+            { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V3 Run In'", content: "&nbsp;", id: "V3 Run In121" },
+            { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient-MV", className: "out-of-window", title: "Patient visit:V4-V7 Randomization'", content: "&nbsp;", id: "V4-V7 Randomization122" },
+            { start: new Date(2024, 01, 08, 00, 00, 00), end: new Date(2024, 01, 08, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V4-V7 Run In'", content: "&nbsp;", id: "V4-V7 Run In123" },
+            { start: new Date(2024, 01, 14, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "Patient-MV", className: "in-window", title: "Patient visit:V4-V7 Randomization' #2", content: "&nbsp;", id: "V4-V7 Randomization124" },
+            { start: new Date(2024, 01, 15, 00, 00, 00), end: new Date(2024, 01, 15, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V4-V7 Run In' #2", content: "&nbsp;", id: "V4-V7 Run In125" },
+          ])`;
             // GIVEN a study configuration loaded from a file but patientInfo and availability are not loaded
             const studyConfigurationUnit = utils.loadModelUnit("ScheduleExample2", "StudyConfiguration") as StudyConfiguration;
             studyConfigurationModel.addUnit(studyConfigurationUnit);
 
             // WHEN the study is simulated and a timeline picture is generated
-            let simulator = new Simulator(studyConfigurationUnit);
-            simulator.run();
-            let timeline = simulator.timeline;
-
-            // Adding after simulation because the timeline is used to find the visits to complete.
+            const referenceDate = new Date(2024, 0, 1);
+            const patientIdentifier = "MV";
+            
+            // First, get the timeline without patient history to create patient visits
             // This is different than what will be done in production where the visits are added at actual dates.
+            let timelineWithoutPatient = getTimelineAsOfADate(studyConfigurationUnit, referenceDate);
+            
             let shiftsFromScheduledVisit: utils.ShiftsFromScheduledVisit[] = [
-                { name: "V2 Randomization", instance: 1, shift: -1, numberFound: 0, foundThisInstance: false },
-                { name: "V4-V7 Randomization", instance: 1, shift: -4, numberFound: 0, foundThisInstance: false },
-                { name: "V4-V7 Randomization", instance: 2, shift: 2, numberFound: 0, foundThisInstance: false },
+              {
+                name: "V2 Randomization",
+                instance: 1,
+                shift: -1,
+                numberFound: 0,
+                foundThisInstance: false,
+              },
+              {
+                name: "V4-V7 Randomization",
+                instance: 1,
+                shift: -4,
+                numberFound: 0,
+                foundThisInstance: false,
+              },
+              {
+                name: "V4-V7 Randomization",
+                instance: 2,
+                shift: 2,
+                numberFound: 0,
+                foundThisInstance: false,
+              },
             ];
-            let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(10, timeline, shiftsFromScheduledVisit, new Date(2024,0,1));
-            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
-            timeline.addPatientEvents(patientHistory);
+            let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(10, timelineWithoutPatient, shiftsFromScheduledVisit, referenceDate);
+            let patientHistory = PatientHistory.create({ id: patientIdentifier, patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
+            
+            // Now get the timeline with patient history using the reference date and patient identifier
+            let timeline = getTimelineAsOfADate(studyConfigurationUnit, referenceDate, patientHistory, patientIdentifier);
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
@@ -1768,211 +1749,72 @@ describe("Study Simulation", () => {
             expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
 
-        it.skip("generate a chart from the text version of the study", () => {
+        it("generate a chart from the text version of the study", () => {
             // Test is skipped because this is only possible when parsing works. Kept for example of how to read text version from file.
 
             // GIVEN a study configuration loaded from a string
-            const configAsText = `StudyConfiguration StudyConfiguration {
-    showActivityDetails true
-    showSystems false
-    showScheduling true
-    showPeriods true
-    studyStartDayNumber 0
-    periods
-        Period: Screening
-        Description: " "
-        EVENTS
-            Event: V1
-            Type: site
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  - 28
-                with a window of: at most 0 day(s) before
-                                  0 day(s) before
-                                  16 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+            const configAsText = `
+            Periods:
+                Period: \`Screening\`
 
-            Event: V2
-            Type: site
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  - 16
-                with a window of: at most 0 day(s) before
-                                  0 day(s) before
-                                  14 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                Description: " "
+                Events:
+                    Event: \`Screen\`
+                    This is a \`site visit\` that is also referred to as ""
 
-            Event: V3
-            Type: site
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  - 15
-                with a window of: at most 0 day(s) before
-                                  0 day(s) before
-                                  14 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                    Description: " "
+                    Schedule:
+                    First scheduled "" as the start day of the study
+                    with a window of 0 day(s) before and 0 day(s) after
+                    and no compliance window
+                    and then repeats
+                    limited to
+                    Tasks:
+                    Task: \`Task 1\`
 
-        Period: Baseline
-        Description: " "
-        EVENTS
-            Event: V4
-            Type: site
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study 
-                with a window of: at most 0 day(s) before
-                                  0 day(s) before
-                                  0 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                    Description: " "
+                    Steps:
 
-            Event: V5
-            Type: site
-            Description: " "
-            Schedule:
-                First scheduled: when V4 completed + 4 weeks
-                with a window of: at most 0 day(s) before
-                                  0 day(s) before
-                                  0 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                    Event: \`Visit 1\`
+                    This is a \`site visit\` that is also referred to as ""
 
-            Event: V6
-            Type: phone
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  + "8" weeks
-                with a window of: at most 0 day(s) before
-                                  0 day(s) before
-                                  0 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                    Description: " "
+                    Schedule:
+                    First scheduled when \`Screen\` \`completed\` \`+\` 3 \`weeks\`
+                    with a window of 0 day(s) before and 0 day(s) after
+                    and no compliance window
+                    and then repeats
+                    limited to
+                    Tasks:
 
-            Event: V7, V10, V12
-            Type: site
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  + "12" weeks
-                with a window of: at most 0 day(s) before
-                                  5 day(s) before
-                                  5 day(s) after
-                                  at most 0 day(s) after
-                and then repeats: frequency: Every: "12" weeks
-                                  max 2 times
-                                  until
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                    Event: \`Visit 2\`
+                    This is a \`site visit\` that is also referred to as ""
 
-            Event: V8
-            Type: phone
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  + "16" weeks
-                with a window of: at most 0 day(s) before
-                                  5 day(s) before
-                                  5 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                    Description: " "
+                    Schedule:
+                    First scheduled when \`Visit 1\` \`completed\` \`+\` 3 \`months\`
+                    with a window of 0 day(s) before and 0 day(s) after
 
-            Event: V9
-            Type: phone
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  + "20" weeks
-                with a window of: at most 0 day(s) before
-                                  5 day(s) before
-                                  5 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                    and then repeats
+                    limited to
+                    Tasks:
 
-            Event: V11
-            Type: phone
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  + "28" weeks
-                with a window of: at most 0 day(s) before
-                                  5 day(s) before
-                                  5 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                Tasks:
 
-            Event: V13
-            Type: phone
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  + "44" weeks
-                with a window of: at most 0 day(s) before
-                                  5 day(s) before
-                                  5 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                System Accesses:
 
-            Event: V14
-            Type: site
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  + "52" weeks
-                with a window of: at most 0 day(s) before
-                                  5 day(s) before
-                                  5 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
+                Staffing:
 
-            Event: FU
-            Type: phone
-            Description: " "
-            Schedule:
-                First scheduled: as the start day of the study  + "54" weeks
-                with a window of: at most 0 day(s) before
-                                  0 day(s) before
-                                  0 day(s) after
-                                  at most 0 day(s) after
-                and then repeats:
-                limited to this time of day: 0 : 0 - 0 : 0
-            Checklist:
-
-    tasks
-        Task 1
-        "<p>ssss</p>"
-    systemAccesses
-
-    staffing Roles:
-
-             Assignments:
-
-}`;
+                Roles:`;
+            // Create a new model for this test to avoid conflicts with the unit created in beforeEach
+            const testModel = studyConfigurationModelEnvironment.newModel("TestStudyModelForText") as StudyConfigurationModel;
+            
             const studyConfigurationUnit = studyConfigurationModelEnvironment.reader.readFromString(
                 configAsText,
                 "StudyConfiguration",
-                studyConfigurationModel,
+                testModel,
+                "StudyConfiguration.dsl.txt"
             ) as StudyConfiguration;
-            studyConfigurationModel.addUnit(studyConfigurationUnit);
-
             // WHEN the study is simulated and a timeline picture is generated
             let simulator = new Simulator(studyConfigurationUnit);
             simulator.run();
@@ -1987,6 +1829,51 @@ describe("Study Simulation", () => {
             // const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, '');
             // Then the generated timeline picture has two events on the expected event days
             // expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
+        });
+
+        it("writes StudyConfiguration to DSL text format", () => {
+          // GIVEN a study configuration
+          // const studyName = "ScheduleExample3";
+          const studyName = "MultiMonthStudy";
+          const studyFolderPath: string = path.resolve(
+            __dirname,
+            "..",
+            "__tests__",
+            "modelstore",
+            studyName
+          );
+          const studyConfigurationUnit = utils.loadModelUnit(
+            studyName,
+            "StudyConfiguration",
+            studyFolderPath
+          ) as StudyConfiguration;
+          studyConfigurationModel.addUnit(studyConfigurationUnit);
+
+          const patientInfoUnit = utils.loadModelUnit(
+            studyName,
+            "PatientInfo",
+            studyFolderPath
+          ) as PatientInfo;
+          studyConfigurationModel.addUnit(patientInfoUnit);
+
+          // WHEN the study is written to DSL text format
+          const writer = new StudyConfigurationModelModelUnitWriter();
+          const dslText = writer.writeToString(studyConfigurationUnit);
+
+          // THEN Verify the DSL text is not empty
+          expect(dslText).toBeTruthy();
+          expect(dslText.length).toBeGreaterThan(0);
+
+          // Save the DSL text to a file for inspection
+          const outputPath = path.resolve(
+            __dirname,
+            "..",
+            "__tests__",
+            "modelstore",
+            studyName,
+            "StudyConfiguration.dsl.txt"
+          );
+          fs.writeFileSync(outputPath, dslText, "utf-8");
         });
 
         it("generates a CHART for a three visit timeline for a visit that repeats twice", () => {

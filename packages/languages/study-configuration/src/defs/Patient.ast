@@ -7,7 +7,7 @@ modelunit Availability { //TODO: rename StaffAvailability
 }
 
 modelunit PatientInfo {  // TODO: Change to Patients 
-  name: identifier = "Patients";
+  name: identifier;
   patientHistories: PatientHistory[];
 }
 
