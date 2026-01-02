@@ -132,28 +132,28 @@ EventWindow {
 //    [${eventRepeat}]
 //}
 
+EventSchedule {
+    [
+        First scheduled [fragment eventStarts wrap = TabFixComponent2 cssClass="type1" canAdd="false" canExpand="false" isExpanded="true" selectable="true" label="X"]
+        ${eventWindow} 
+        [? and then repeats ${eventRepeat} ]
+        [? limited to ${eventTimeOfDay} ]
+    ] 
+    trigger = "event schedule"
+    fragment eventStarts [
+        ${eventStart}
+    ]   
+} 
+
 // EventSchedule {
 //     [
-//         First scheduled [fragment eventStarts wrap = TabFixComponent2 cssClass="type1" canAdd="false" canExpand="false" isExpanded="true" selectable="true" label="X"]
+//         First scheduled ${eventStart} 
 //         ${eventWindow} 
 //         and then repeats ${eventRepeat} 
 //         limited to ${eventTimeOfDay} 
 //     ] 
 //     trigger = "event schedule"
-//     fragment eventStarts [
-//         ${eventStart}
-//     ]   
 // } 
-
-EventSchedule {
-    [
-        First scheduled ${eventStart} 
-        ${eventWindow} 
-        and then repeats ${eventRepeat} 
-        limited to ${eventTimeOfDay} 
-    ] 
-    trigger = "event schedule"
-} 
 
 EventReference {
     [${event}${eventState} ]

@@ -75,7 +75,7 @@ RepeatEvery {
 
 RepeatCondition {
     [
-    ${repeatUnit} up to ${maxRepeats} times until ${until}
+    [? ${repeatUnit} up to ${maxRepeats} times until ${until} ]
     ] 
 } 
 
@@ -133,8 +133,8 @@ EventSchedule {
     [
         First scheduled ${eventStart} 
         ${eventWindow} 
-        and then repeats ${eventRepeat} 
-        limited to ${eventTimeOfDay} 
+        [? and then repeats ${eventRepeat} ]
+        [? limited to ${eventTimeOfDay} ]
     ] 
     
 } 

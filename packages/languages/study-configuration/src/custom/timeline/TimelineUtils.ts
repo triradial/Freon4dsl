@@ -83,10 +83,10 @@ export function determineReferenceDate(referenceDate: Date | undefined, patientH
         }
         
         if (earliestVisit && earliestVisit.actualVisitDate) {
-            // Parse the date string and set to local midnight (00:00:00) to avoid timezone issues
+        // Parse the date string and set to local midnight (00:00:00) to avoid timezone issues
             const dateStr = earliestVisit.actualVisitDate.dateAsString;
-            const [year, month, day] = dateStr.split('-').map(Number);
-            return new Date(year, month - 1, day, 0, 0, 0); // month is 0-indexed
+        const [year, month, day] = dateStr.split('-').map(Number);
+        return new Date(year, month - 1, day, 0, 0, 0); // month is 0-indexed
         }
     }
     
@@ -149,7 +149,7 @@ export function getTimelineAsOfADate(
     const studyConfigurationUnit = node as StudyConfiguration;
     const simulator = new Simulator(studyConfigurationUnit);
     
-    simulator.setReferenceDate(referenceDate);
+        simulator.setReferenceDate(referenceDate);
     simulator.organizedByReferenceDate();
     if (patientHistory) {
         simulator.timeline.addPatientEvents(patientHistory, patientIdentifier);

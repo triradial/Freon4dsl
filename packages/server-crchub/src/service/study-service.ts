@@ -1,6 +1,5 @@
-import { getDbPool } from './db-connection.js';
-import { IRouterContext } from 'koa-router';
 import { consoleLogInfo } from '../server/logging.js';
+import { getDbPool } from './db-connection.js';
 
 export interface Study {
     id: string;
@@ -385,7 +384,7 @@ export async function createStudyWithSite(oid: string, studyData: Omit<Study, 'i
         // 2b. Get the user's first active role for this organization (for site_persons reference)
         console.log(`${moduleName} [createStudyWithSite] Step 2b: Getting user's role for organization`);
         const roleResult = await client.query(
-            `SELECT opr.org_person_roles_id
+            `SELECT opr.org_person_role_id
              FROM org_person_roles opr
              WHERE opr.org_person_id = $1
              AND (opr.end_date IS NULL OR opr.end_date >= CURRENT_DATE)
@@ -394,8 +393,8 @@ export async function createStudyWithSite(oid: string, studyData: Omit<Study, 'i
             [orgPersonId]
         );
         
-        const orgPersonRolesId = roleResult.rows[0]?.org_person_roles_id || null;
-        console.log(`${moduleName} [createStudyWithSite] Found org_person_roles_id=${orgPersonRolesId || 'null (no active role)'}`);
+        const orgPersonRolesId = roleResult.rows[0]?.org_person_role_id || null;
+        console.log(`${moduleName} [createStudyWithSite] Found org_person_role_id=${orgPersonRolesId || 'null (no active role)'}`);
         
         // 3. Create the study
         console.log(`${moduleName} [createStudyWithSite] Step 3: Creating study: ${cleanStudyData.name}`);
@@ -445,13 +444,13 @@ export async function createStudyWithSite(oid: string, studyData: Omit<Study, 'i
         console.log(`${moduleName} [createStudyWithSite] Site created with site_id=${siteId}`);
         
         // 6. Add the user to site_persons (assigning creator to the study/site)
-        console.log(`${moduleName} [createStudyWithSite] Step 6: Adding user to site_persons - site_id=${siteId}, person_id=${personId}, org_person_roles_id=${orgPersonRolesId || 'null'}`);
+        console.log(`${moduleName} [createStudyWithSite] Step 6: Adding user to site_persons - site_id=${siteId}, person_id=${personId}, org_person_role_id=${orgPersonRolesId || 'null'}`);
         
-        // Try to insert with org_person_roles_id if available, otherwise just person_id
+        // Try to insert with org_person_role_id if available, otherwise just person_id
         if (orgPersonRolesId) {
             try {
                 await client.query(
-                    `INSERT INTO site_persons (site_id, person_id, org_person_roles_id)
+                    `INSERT INTO site_persons (site_id, person_id, org_person_role_id)
                      VALUES ($1, $2, $3)
                      ON CONFLICT DO NOTHING`,
                     [siteId, personId, orgPersonRolesId]
