@@ -16,7 +16,9 @@ global {
         TabFixComponent2,
         ReferenceComponent,
         UrlInputComponent,
-        PhoneInputComponent
+        PhoneInputComponent,
+        CustomNumericComponent,
+        CustomSelectComponent
     }
 }
 
@@ -48,7 +50,7 @@ Event {
     ]
     fragment noEventDetails [
        ${name}
-       This is a ${typeOfEvent} that is also referred to as ${alternativeName}
+       This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
        ${description}
     ]
 }

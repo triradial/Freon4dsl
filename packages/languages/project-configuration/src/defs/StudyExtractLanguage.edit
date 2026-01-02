@@ -15,7 +15,8 @@ global {
         TabFixComponent,
         ReferenceComponent,
         UrlInputComponent,
-        PhoneInputComponent
+        PhoneInputComponent,
+        NumericComponent
     }
 }
 

@@ -10,13 +10,13 @@ TimeAmountPart {
 } 
 
 Day {
-    [ day ${startDay} ]
-    trigger = "day:         A day of the study"
+    [ day ${startDay replace=CustomNumericComponent min="0" max="999"} ]
+    trigger = "day: A day of the study"
 }
 
 When {
     [ when ${startWhen} ${timeAmountPart}]
-    trigger = "when:        Depends on when another event occurs"
+    trigger = "when: Depends on when another event occurs"
 }  
 
 StudyStart {
@@ -26,17 +26,17 @@ StudyStart {
 
 FirstDayOfStudy {
     [ on the start day of the study ${timeAmountPart} ]
-    trigger = "start day:   Depends on the first day of the study +/- some amount of time"
+    trigger = "start day: Depends on the first day of the study +/- some amount of time"
 }
 
 Baseline {
     [ on the baseline/start day of the study ${timeAmountPart} ]
-    trigger = "baseline:    An alternate name for a reference to the first day of the study"
+    trigger = "baseline: An alternate name for a reference to the first day of the study"
 }
 
 Previous {
     [ when the previous event ${eventState} ${timeAmountPart} ]
-    trigger = "previous:    Depends on the previous event"
+    trigger = "previous: Depends on the previous event"
 }
 Unscheduled {
     [ on any day (an unscheduled event) ]
@@ -45,7 +45,7 @@ Unscheduled {
 
 AnyDay {
     [ on any day (an unscheduled event) ]
-    trigger = "any day:     An alternative name for an unscheduled event"
+    trigger = "any day: An alternative name for an unscheduled event"
 } 
 
 Daily {
@@ -75,13 +75,13 @@ RepeatEvery {
 
 RepeatCondition {
     [
-    ${repeatUnit} up to ${maxRepeats} times until ${until}
+    ${repeatUnit} up to ${maxRepeats replace=CustomNumericComponent min="1" max="999"} times until ${until}
     ] trigger = "until: Repeat until a condition occurs"
 } 
 
 RepeatCount {
     [
-        ${repeatCount} time(s)  
+        ${repeatCount replace=CustomNumericComponent min="1" max="999"} time(s)  
     ] 
     trigger = "count: Repeat a specific number of times"
 } 
@@ -117,13 +117,13 @@ NoComplianceWindow {
 
 ComplianceWindowOf {
     [
-    and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+    and a compliance window of ${maxDaysBefore replace=CustomNumericComponent min="0" max="30"} additional day(s) before and ${maxDaysAfter replace=CustomNumericComponent min="0" max="30"} day(s) after
     ] trigger = "time before/after to be compliant"
 }
 
 EventWindow {
     [
-        with a window of ${daysBefore} day(s) before and ${daysAfter}day(s) after
+        with a window of ${daysBefore replace=CustomNumericComponent min="0" max="30"} day(s) before and ${daysAfter replace=CustomNumericComponent min="0" max="30"} day(s) after
         ${complianceWindow} 
     ] trigger = "event window"
 }
@@ -161,5 +161,5 @@ EventReference {
     }
 
 Days {
-    [${count}]
+    [${count replace=CustomNumericComponent}]
 }
