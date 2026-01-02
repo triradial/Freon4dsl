@@ -75,7 +75,7 @@ RepeatEvery {
 
 RepeatCondition {
     [
-    [? ${repeatUnit} up to ${maxRepeats} times until ${until} ]
+    ${repeatUnit} up to ${maxRepeats} times until ${until}
     ] 
 } 
 
