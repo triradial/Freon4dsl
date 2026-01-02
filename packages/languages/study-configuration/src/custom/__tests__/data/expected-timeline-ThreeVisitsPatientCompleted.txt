@@ -1,0 +1,19 @@
+var groups = new vis.DataSet([
+  { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+  { "content": "Visit 1", "id": "Visit 1" },
+  { "content": "Visit 2", "id": "Visit 2" },
+  { "content": "V3", "id": "V3" },
+  { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },
+  
+  ]);
+  
+  var items = new vis.DataSet([
+  { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -3", content: "<b>Screening</b>", id: "Screening0" },
+  { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: on the start day of the study - 3 days", content: "&nbsp;", id: "Visit 11" },
+  { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Visit 2", className: "scheduled-event", title: "Visit 2: as the start day of the study", content: "&nbsp;", id: "Visit 22" },
+  { start: new Date(2024, 00, 06, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V3", className: "scheduled-event", title: "V3: on the start day of the study + 2 days", content: "&nbsp;", id: "V33" },
+  
+  { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 1'", content: "&nbsp;", id: "Visit 14" },
+  { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:Visit 2'", content: "&nbsp;", id: "Visit 25" },
+  { start: new Date(2024, 00, 06, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V3'", content: "&nbsp;", id: "V36" },
+])

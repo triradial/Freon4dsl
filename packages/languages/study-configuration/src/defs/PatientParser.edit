@@ -35,7 +35,6 @@ DateConcept {
 
 PatientInfo {
   [
-    Patient Info Name: ${name}
     Patient Histories:
       ${patientHistories}
   ]
@@ -44,10 +43,10 @@ PatientInfo {
 PatientHistory {
   [
    Patient ID: ${patient_id} 
-   Visits: 
-    ${patientVisits} 
-   Not Available Dates:
-    ${patientNotAvailableDates}
+    Visits: 
+      ${patientVisits} 
+    Not Available Dates:
+      ${patientNotAvailableDates}
   ]
 }
 

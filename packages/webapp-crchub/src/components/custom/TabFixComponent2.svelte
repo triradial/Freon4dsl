@@ -4,7 +4,7 @@
     import { onMount } from "svelte";
 // ts-ignore
     import { ChevronRight as IconChevronRight } from '@lucide/svelte';
-
+    
     const { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
 
     // Props
@@ -96,13 +96,13 @@
         box.refreshComponent = refresh;
     })
 
- </script>
+</script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div id="{id}" class="item-group {cssClass}" tabindex="0" onfocus={() => handleContainerFocus()}>
     {#if !hasEditableChild()}
         <button class="btn-icon p-0 ml-1 mr-1 toggle-button" tabindex="-1">
-            <IconChevronRight size={16} />
+                <IconChevronRight size={16} />
         </button>
     {/if}
     <div class="tabfix-child-wrapper" style={childWrapperStyle()}>

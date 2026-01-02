@@ -71,7 +71,7 @@ Roles:
 
 Patient Info Name: `PatientInfo`
 Patient Histories:
-Patient ID: "5"
-Visits:
-Visit: `Review with Patient` was `planned` on "2026-01-01"
-Not Available Dates:
+  Patient ID: "5"
+   Visits:
+     Visit: `Review with Patient` was `planned` on "2026-01-01"
+   Not Available Dates:

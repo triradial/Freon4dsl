@@ -12,13 +12,8 @@
  * 2. Retrieves StudyConfiguration and PatientInfo JSON from the database
  * 3. Converts JSON to model units using FreLionwebSerializer
  * 4. Uses StudyConfigurationModelModelUnitWriter to convert to DSL text
- * 5. Writes both StudyConfiguration and PatientInfo to files in the tmp/ directory:
- *    - {studyName}.dsl.txt: Combined DSL text format (may have incomplete PatientInfo)
- *    - StudyConfiguration-{studyName}.json: JSON format with all references preserved
- *    - PatientInfo-{studyName}.json: JSON format with all references preserved
- * 
- * Note: The JSON files preserve all cross-unit references (e.g., PatientVisit -> Event references),
- * while the DSL text format may have incomplete PatientInfo due to unresolved references.
+ * 5. Writes StudyConfiguration and PatientInfo to a combined DSL text file in the tmp/ directory:
+ *    - {studyName}.dsl.txt: Combined DSL text format with resolved references
  */
 
 import { FreLionwebSerializer, FreLogger } from '@freon4dsl/core';
@@ -55,25 +50,25 @@ async function findStudyByName(studyName: string): Promise<string | null> {
     return result.rows[0].id;
 }
 
+function isLionWebFormat(jsonData: any): boolean {
+    // LionWeb format has serializationFormatVersion, languages, and nodes
+    return jsonData && 
+           typeof jsonData === 'object' && 
+           'serializationFormatVersion' in jsonData &&
+           'languages' in jsonData &&
+           'nodes' in jsonData &&
+           Array.isArray(jsonData.nodes);
+}
+
 async function convertJsonToModelUnit(jsonData: any, unitType: string): Promise<any> {
+    // Check if the JSON is in LionWeb format
+    if (!isLionWebFormat(jsonData)) {
+        throw new Error(`JSON data is not in LionWeb format. Expected serializationFormatVersion, languages, and nodes properties.`);
+    }
+    
     const serializer = new FreLionwebSerializer();
     const modelUnit = serializer.toTypeScriptInstance(jsonData);
     return modelUnit;
-}
-
-function convertModelUnitToJson(unit: any): any {
-    const serializer = new FreLionwebSerializer();
-    const nodes = serializer.convertToJSON(unit);
-    return {
-        serializationFormatVersion: "2023.1",
-        languages: [
-            {
-                key: "-key-StudyConfigurationModel",
-                version: "2023.1"
-            }
-        ],
-        nodes: nodes
-    };
 }
 
 async function exportStudyToFiles(studyName: string) {
@@ -128,11 +123,17 @@ async function exportStudyToFiles(studyName: string) {
         
         // Get PatientInfo JSON from database
         console.log('\n📥 Retrieving PatientInfo from database...');
-        const patientInfoJson = await getPatientInfo(studyId);
+        let patientInfoJson = await getPatientInfo(studyId);
         if (!patientInfoJson) {
             console.warn(`⚠️  PatientInfo not found for study: "${studyName}"`);
         } else {
-            console.log('✅ PatientInfo retrieved');
+            // Check if PatientInfo is in valid LionWeb format
+            if (!isLionWebFormat(patientInfoJson)) {
+                console.warn(`⚠️  PatientInfo for study "${studyName}" is not in LionWeb format. Skipping PatientInfo export.`);
+                console.warn(`   (This may be an empty or invalid PatientInfo entry. Format: ${JSON.stringify(patientInfoJson).substring(0, 100)}...)`);
+            } else {
+                console.log('✅ PatientInfo retrieved');
+            }
         }
         
         // Create a model first (required for reference resolution)
@@ -151,19 +152,34 @@ async function exportStudyToFiles(studyName: string) {
         // Now convert PatientInfo JSON to model unit (StudyConfiguration is already in model)
         // This allows the serializer to resolve cross-unit references during conversion
         let patientInfoUnit = null;
-        if (patientInfoJson) {
-            patientInfoUnit = await convertJsonToModelUnit(patientInfoJson, 'PatientInfo');
-            console.log('✅ PatientInfo converted (with references resolved)');
+        if (patientInfoJson && isLionWebFormat(patientInfoJson)) {
+            try {
+                patientInfoUnit = await convertJsonToModelUnit(patientInfoJson, 'PatientInfo');
+                console.log('✅ PatientInfo converted (with references resolved)');
+            } catch (error) {
+                console.warn(`⚠️  Failed to convert PatientInfo: ${error instanceof Error ? error.message : String(error)}`);
+                console.warn(`   Skipping PatientInfo export for study: "${studyName}"`);
+                patientInfoJson = null; // Set to null so it's not processed further
+            }
+        }
+        
+        // Filter PatientInfo to only include PatientHistories for existing patients
+        // This matches what the UI shows (it filters by matching patient_id to patient records)
+        if (patientInfoUnit) {
+            const patientHistories = (patientInfoUnit as any).patientHistories;
+            const originalCount = patientHistories?.length || 0;
             
-            // Filter PatientInfo to only include PatientHistories for existing patients
-            // This matches what the UI shows (it filters by matching patient_id to patient records)
-            if (patientInfoUnit && existingPatientNumbers.size > 0) {
-                console.log('\n🔍 Filtering PatientInfo to only include existing patients...');
-                const patientHistories = (patientInfoUnit as any).patientHistories;
-                const originalCount = patientHistories?.length || 0;
-                
-                if (patientHistories && originalCount > 0) {
-                    // Use MobX runInAction to properly modify observable arrays
+            if (patientHistories && originalCount > 0) {
+                // If there are no existing patients, remove all PatientHistories
+                if (existingPatientNumbers.size === 0 && existingPatientIds.size === 0) {
+                    console.log('\n🔍 All patients deleted - removing all PatientHistories...');
+                    runInAction(() => {
+                        patientHistories.splice(0, patientHistories.length);
+                    });
+                    console.log(`✅ Removed all ${originalCount} PatientHistory entries (all patients deleted)`);
+                } else {
+                    // Filter to only include existing patients
+                    console.log('\n🔍 Filtering PatientInfo to only include existing patients...');
                     runInAction(() => {
                         // Remove PatientHistories for deleted patients (iterate backwards to safely remove items)
                         for (let i = patientHistories.length - 1; i >= 0; i--) {
@@ -189,9 +205,18 @@ async function exportStudyToFiles(studyName: string) {
                     }
                 }
             }
-            
-            model.addUnit(patientInfoUnit);
-            console.log('✅ PatientInfo added to model');
+        }
+        
+        // Only add PatientInfo to model if it has PatientHistories
+        if (patientInfoUnit) {
+            const patientHistories = (patientInfoUnit as any).patientHistories;
+            if (patientHistories && patientHistories.length > 0) {
+                model.addUnit(patientInfoUnit);
+                console.log('✅ PatientInfo added to model');
+            } else {
+                console.log('ℹ️  PatientInfo is empty (no PatientHistories) - skipping export');
+                patientInfoUnit = null; // Don't export empty PatientInfo
+            }
         }
         
         // Force resolution of all references by accessing them
@@ -241,18 +266,6 @@ async function exportStudyToFiles(studyName: string) {
             }
         }
         
-        // Also serialize back to JSON format (preserves all references)
-        // This matches how the webapp saves data using FreLionwebSerializer.convertToJSON()
-        console.log('\n📦 Serializing to JSON format (with references preserved)...');
-        const studyConfigJsonSerialized = convertModelUnitToJson(studyConfigUnit);
-        console.log(`✅ StudyConfiguration JSON serialized`);
-        
-        let patientInfoJsonSerialized = null;
-        if (patientInfoUnit) {
-            patientInfoJsonSerialized = convertModelUnitToJson(patientInfoUnit);
-            console.log(`✅ PatientInfo JSON serialized (with references preserved)`);
-        }
-        
         // Create output directory
         const outputDir = path.resolve(process.cwd(), 'tmp');
         if (!fs.existsSync(outputDir)) {
@@ -272,17 +285,6 @@ async function exportStudyToFiles(studyName: string) {
         }
         fs.writeFileSync(dslPath, combinedText, 'utf-8');
         console.log(`✅ Written DSL text: ${dslPath}`);
-        
-        // Write JSON files (with references preserved)
-        const studyConfigJsonPath = path.resolve(outputDir, `StudyConfiguration-${studyName}.json`);
-        fs.writeFileSync(studyConfigJsonPath, JSON.stringify(studyConfigJsonSerialized, null, 2), 'utf-8');
-        console.log(`✅ Written JSON: ${studyConfigJsonPath}`);
-        
-        if (patientInfoJsonSerialized) {
-            const patientInfoJsonPath = path.resolve(outputDir, `PatientInfo-${studyName}.json`);
-            fs.writeFileSync(patientInfoJsonPath, JSON.stringify(patientInfoJsonSerialized, null, 2), 'utf-8');
-            console.log(`✅ Written JSON: ${patientInfoJsonPath} (with references preserved)`);
-        }
         
         console.log('\n✨ Export complete!');
         console.log(`\nFiles saved to: ${outputDir}/`);

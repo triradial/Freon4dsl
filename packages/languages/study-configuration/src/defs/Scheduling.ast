@@ -42,6 +42,28 @@ concept Unscheduled implements EventStart {
 concept AnyDay base Unscheduled {
 }
 
+limited TimeUnit {
+   hours; days; weeks; months;  
+}
+
+limited PhaseState {
+    completed; started; skipped;
+}
+
+limited EventState {
+    completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
+}
+
+
+//TODO: rename to something other than 'Expression' or determine if it should be an expression.
+interface RepeatExpression {}
+
+concept RepeatCondition implements RepeatExpression {
+    repeatUnit: RepeatUnit;
+    maxRepeats: number = 0;
+    until?: ScheduleExpression;
+}
+
 //TODO: determine why RepeatUnit isn't better as a limited
 
 //limited RepeatUnit implements RepeatExpression {
@@ -63,27 +85,10 @@ concept RepeatEvery implements RepeatUnit {
     repeatEvery: Time;
 }
 
-limited TimeUnit {
-   hours; days; weeks; months;  
+concept RepeatCount implements RepeatExpression {
+    repeatCount: number;
 }
 
-limited PhaseState {
-    completed; started; skipped;
-}
-
-limited EventState {
-    completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
-}
-
-
-//TODO: rename to something other than 'Expression' or determine if it should be an expression.
-interface RepeatExpression {}
-
-concept RepeatCondition implements RepeatExpression {
-    repeatUnit: RepeatUnit;
-    maxRepeats: number;
-    until?: ScheduleExpression;
-}
 
 concept TimeAmount   {
     value: number;
@@ -92,10 +97,6 @@ concept TimeAmount   {
 
 limited SimpleOperators {
     plus = { name:"+" } minus = { name: "-" }
-}
-
-concept RepeatCount implements RepeatExpression {
-    repeatCount: number;
 }
 
 concept Days {
