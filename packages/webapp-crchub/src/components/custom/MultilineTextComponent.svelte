@@ -18,7 +18,7 @@
     let rawTextPropertyName = box && box.findParam("rawTextPropertyName") || "rawText";
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
-    let placeholder = $state(box ? box.findParam("placeholder") || "<enter>" : "<enter>");
+    let placeholder = $state(box ? box.findParam("placeholder") || "<description>" : "<description>");
 
     let isEditing = $state(false);
     let spanRef = $state<HTMLSpanElement | null>(null);
@@ -26,8 +26,6 @@
     
     let currentTheme = $theme;
     let isProgrammaticUpdate = false;
-    // let editorElement: TinyMCEEditor;
-    // let ed: TinyEditor;
 
     let conf = {
         plugins: "lists searchreplace",

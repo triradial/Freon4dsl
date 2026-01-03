@@ -1,4 +1,18 @@
 /* #region GENERAL */
+:root {
+  color-scheme: dark;
+
+  /* #region Custom Select Component */
+  --custom-select-bg: #5b6788;
+  --custom-select-text: #ffffff;
+  --custom-select-border: #333333;
+
+  --custom-select-selected-bg: #32cd3263;
+  --custom-select-selected-text: #ffffff;
+  /* #endregion */
+}s
+
+
 .mdc-drawer {
   background-color: #212121 !important;
 }
@@ -127,6 +141,39 @@
 
 .text-dropdown-component .text-component-input-wrapper::before {
   color: #adadad;
+}
+
+/* Skeleton Combobox styling to match text-dropdown-component */
+.text-dropdown-component [data-scope="combobox"][data-part="input"] {
+  color: var(--blue-90t) !important;
+  background-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="input"]::placeholder {
+  color: #adadad !important;
+  opacity: 1 !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="input"]:focus {
+  --tw-ring-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="content"] {
+  background-color: #3f3f3f !important;
+  color: white !important;
+  border: var(--blue-50t) 1px solid !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="item"] {
+  color: white !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="item"]:hover {
+  background-color: var(--white-20t) !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="item"][data-highlighted] {
+  background-color: var(--white-10t) !important;
 }
 
 /* #endregion */

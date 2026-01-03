@@ -6,7 +6,7 @@ Event {
     ]
     fragment checklistEventDetails [
         ${name}
-        This is a ${typeOfEvent} that is also referred to as ${alternativeName}
+        This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event type"} that is also referred to as ${alternativeName}
         ${description}
         ${tasks wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
     ]
