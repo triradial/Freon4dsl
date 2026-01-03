@@ -75,7 +75,7 @@ RepeatEvery {
 
 RepeatCondition {
     [
-    [? ${repeatUnit} up to ${maxRepeats} times until ${until} ]
+    ${repeatUnit}  [? up to ${maxRepeats} times] [? until ${until} ] 
     ] trigger = "until: Repeat until a condition occurs"
 } 
 
@@ -128,21 +128,14 @@ EventWindow {
     ] trigger = "event window"
 }
 
-//RepeatExpression {
-//    [${eventRepeat}]
-//}
-
 EventSchedule {
     [
-        First scheduled [fragment eventStarts wrap = TabFixComponent2 cssClass="type1" canAdd="false" canExpand="false" isExpanded="true" selectable="true" label="X"]
-        ${eventWindow} 
-        [? and then repeats ${eventRepeat} ]
-        [? limited to ${eventTimeOfDay} ]
+        First scheduled ${eventStart} 
+        [? ${eventWindow} ] 
+        [? and then repeats ${eventRepeat}]
+        [? limited to ${eventTimeOfDay}]
     ] 
     trigger = "event schedule"
-    fragment eventStarts [
-        ${eventStart}
-    ]   
 } 
 
 // EventSchedule {

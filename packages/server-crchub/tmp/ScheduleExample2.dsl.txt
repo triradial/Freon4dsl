@@ -12,9 +12,7 @@ Periods:
     Description: " "
     Schedule:
       First scheduled on the start day of the study `-` 4 `weeks`
-      with a window of 8 day(s) before and 0 day(s) after
-      and no compliance window
-and then repeats up to 0 times until
+with a window of 8 day(s) before and 0 day(s) after
     Tasks:
       Task: `Get Informed Consent`
 
@@ -61,10 +59,6 @@ and then repeats up to 0 times until
       First scheduled when `V1 Randomization` `completed` `+` 2 `days`
       with a window of 2 day(s) before and 2 day(s) after
       and no compliance window
-    Tasks:
-      Task: ``
-
-      Steps:
 
     Event: `V2 Randomization`
     This is a `site visit` that is also referred to as "Rando Week - 2 "
@@ -72,12 +66,6 @@ and then repeats up to 0 times until
     Description: " "
     Schedule:
       First scheduled on the start day of the study `-` 2 `weeks`
-      with a window of 0 day(s) before and 0 day(s) after
-      and no compliance window
-    Tasks:
-      Task: ``
-
-      Steps:
 
     Event: `V2 Run In`
     This is a `site visit` that is also referred to as "Run In Week - 2"
@@ -85,12 +73,8 @@ and then repeats up to 0 times until
     Description: " "
     Schedule:
       First scheduled when `V2 Randomization` `completed` `+` 2 `days`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-    Tasks:
-      Task: ``
-
-      Steps:
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
 
   Period: `Treatment`
 
@@ -102,12 +86,8 @@ and then repeats up to 0 times until
     Description: " "
     Schedule:
       First scheduled "" as the start day of the study
-      with a window of 0 day(s) before and 0 day(s) after
-      and no compliance window
-    Tasks:
-      Task: ``
-
-      Steps:
+with a window of 0 day(s) before and 0 day(s) after
+and no compliance window
 
     Event: `V4-V7 Randomization`
     This is a `site visit` that is also referred to as "<No Alternative Name>"
@@ -115,85 +95,70 @@ and then repeats up to 0 times until
     Description: " "
     Schedule:
       First scheduled when `V3 Randomization` `completed` `+` 1 `weeks`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-and then repeats weekly up to 3 times until
-    Tasks:
-
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats weekly up to 3 times
     Event: `V4-V7 Run In`
     This is a `site visit` that is also referred to as "<No Alternative Name>"
 
     Description: " "
     Schedule:
       First scheduled when `V4-V7 Randomization` `each completed` `+` 2 `days`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-and then repeats weekly up to 3 times until
-    Tasks:
-
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats weekly up to 3 times
     Event: `V8-V13 Randomization`
     This is a `site visit` that is also referred to as "<No Alternative Name>"
 
     Description: " "
     Schedule:
       First scheduled when `V4-V7 Randomization` `completed` `+` 2 `weeks`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-and then repeats every: "2" `weeks` up to 5 times until
-    Tasks:
-
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats every: "2" `weeks` up to 5 times
     Event: `V8-V13 Run In`
     This is a `site visit` that is also referred to as "<No Alternative Name>"
 
     Description: " "
     Schedule:
       First scheduled when `V8-V13 Randomization` `each completed` `+` 2 `days`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-and then repeats weekly up to 5 times until
-    Tasks:
-
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats weekly up to 5 times
     Event: `V14-V18 Randomization`
     This is a `site visit` that is also referred to as "<No Alternative Name>"
 
     Description: " "
     Schedule:
       First scheduled when `V8-V13 Randomization` `completed` `+` 4 `weeks`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-and then repeats every: "4" `weeks` up to 5 times until
-    Tasks:
-
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats every: "4" `weeks` up to 5 times
     Event: `V14-V18 Run In`
     This is a `site visit` that is also referred to as "<No Alternative Name>"
 
     Description: " "
     Schedule:
       First scheduled when `V14-V18 Randomization` `each completed` `+` 2 `days`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-and then repeats weekly up to 4 times until
-    Tasks:
-
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats weekly up to 4 times
     Event: `V19 Randomization`
     This is a `site visit` that is also referred to as "<No Alternative Name>"
 
     Description: " "
     Schedule:
       First scheduled when `V14-V18 Randomization` `completed` `+` 1 `weeks`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-    Tasks:
-
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
     Event: `V19 Run In`
     This is a `site visit` that is also referred to as "<No Alternative Name>"
 
     Description: " "
     Schedule:
       First scheduled when `V19 Randomization` `completed`
-      with a window of 2 day(s) before and 2 day(s) after
-      and no compliance window
-    Tasks:
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
 
   Period: `Name`
 

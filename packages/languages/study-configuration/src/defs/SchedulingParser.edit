@@ -15,7 +15,7 @@ Day {
 }
 
 When {
-    [ when ${startWhen} ${timeAmountPart}]
+    [ when ${startWhen} [? ${timeAmountPart}]]
     
 }  
 
@@ -75,7 +75,7 @@ RepeatEvery {
 
 RepeatCondition {
     [
-    [? ${repeatUnit} up to ${maxRepeats} times until ${until} ]
+    ${repeatUnit}  [? up to ${maxRepeats} times] [? until ${until} ] 
     ] 
 } 
 
@@ -132,7 +132,7 @@ EventWindow {
 EventSchedule {
     [
         First scheduled ${eventStart} 
-        ${eventWindow} 
+        [? ${eventWindow} ]
         [? and then repeats ${eventRepeat} ]
         [? limited to ${eventTimeOfDay} ]
     ] 
