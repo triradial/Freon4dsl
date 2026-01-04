@@ -246,8 +246,11 @@
                 const lang = FreLanguage.getInstance();
                 const interfaceInfo = lang.interface(propType);
                 let implementingConceptNames: string[] = [];
-                if (interfaceInfo && propType === "RepeatExpression") {
-                    implementingConceptNames = ["RepeatCondition", "RepeatCount"];
+                
+                if (interfaceInfo) {
+                    // Get all concepts that implement this interface
+                    implementingConceptNames = lang.subConcepts(propType);
+                    console.log(`🔵 CustomSelectComponent: Interface ${propType} has implementing concepts`, implementingConceptNames);
                 }
                 
                 selectBox = BoxFactory.select(
@@ -258,38 +261,171 @@
                         let visibleNodes: any[] = [];
                         
                         if (implementingConceptNames.length > 0) {
+                            // Interface: get nodes for each implementing concept
                             for (const conceptName of implementingConceptNames) {
                                 const nodes = scoper.getVisibleNodes(node, conceptName);
                                 visibleNodes = visibleNodes.concat(nodes);
                             }
+                            
+                            // For interfaces, also add the implementing concepts themselves as options
+                            // This handles cases where concepts don't have names and aren't in the scoper
+                            // (like Daily, Weekly, Monthly, Forever for RepeatUnit)
+                            for (const conceptName of implementingConceptNames) {
+                                const concept = lang.concept(conceptName);
+                                if (concept && !concept.isAbstract) {
+                                    // Use the trigger as the display name (e.g., "daily" instead of "Daily")
+                                    const triggerLabel = concept.trigger || conceptName;
+                                    
+                                    // Check if we already have a node with this trigger label
+                                    const existing = visibleNodes.find(n => {
+                                        const nName = n.name || n.freLanguageConcept?.();
+                                        return nName === triggerLabel || nName === conceptName;
+                                    });
+                                    
+                                    if (!existing) {
+                                        // Add the concept with trigger as the name/label (will create instance on selection)
+                                        visibleNodes.push({
+                                            name: triggerLabel, // Use trigger for display (e.g., "daily")
+                                            freLanguageConcept: () => conceptName, // Keep concept name for type checking
+                                            _isConceptOption: true, // Flag to indicate this is a concept name option
+                                            _conceptName: conceptName // Store the concept name for later use when creating instance
+                                        });
+                                    }
+                                }
+                            }
                         } else {
+                            // Regular concept: get nodes directly
                             visibleNodes = scoper.getVisibleNodes(node, propType);
                         }
                         
                         return visibleNodes
-                            .filter((node) => !!node.name && node.name !== "")
-                            .map((node) => ({
-                                id: node.name,
-                                label: node.name
-                            }));
+                            .filter((node) => {
+                                const name = node.name || node.freLanguageConcept?.();
+                                return !!name && name !== "";
+                            })
+                            .map((node) => {
+                                let name = node.name || '';
+                                
+                                // If node doesn't have a name but has a concept type, use the trigger
+                                if (!name && node.freLanguageConcept) {
+                                    const conceptName = node.freLanguageConcept();
+                                    // For interface implementing concepts, use trigger as the label
+                                    if (implementingConceptNames.length > 0 && implementingConceptNames.includes(conceptName)) {
+                                        const concept = lang.concept(conceptName);
+                                        name = concept?.trigger || conceptName;
+                                    } else {
+                                        name = conceptName;
+                                    }
+                                }
+                                
+                                // Fallback to concept name if still no name
+                                if (!name && node.freLanguageConcept) {
+                                    name = node.freLanguageConcept();
+                                }
+                                
+                                return {
+                                    id: name,
+                                    label: name,
+                                    node: node // Keep reference to the node for later use
+                                };
+                            });
                     },
                     () => {
-                        if (currentValue && currentValue.name) {
-                            return { id: currentValue.name, label: currentValue.name };
+                        // Read current value from node each time (not captured)
+                        const property = node[propertyName];
+                        if (!property) {
+                            return null;
                         }
-                        if (isRefReplacerBox(box) && currentValueRaw) {
-                            const ref = currentValueRaw as FreNodeReference<any>;
+                        
+                        const value = isRefReplacerBox(box) 
+                            ? (property as FreNodeReference<any>)?.referred
+                            : property;
+                        
+                        if (value) {
+                            // Check if value has a name property
+                            if (value.name) {
+                                return { id: value.name, label: value.name };
+                            }
+                            
+                            // Check if value has freLanguageConcept (it's a node)
+                            if (value.freLanguageConcept) {
+                                const conceptName = value.freLanguageConcept();
+                                // For interface implementing concepts, use the trigger as the label
+                                if (implementingConceptNames.length > 0 && implementingConceptNames.includes(conceptName)) {
+                                    const concept = lang.concept(conceptName);
+                                    const triggerLabel = concept?.trigger || conceptName;
+                                    return { id: triggerLabel, label: triggerLabel };
+                                }
+                                return { id: conceptName, label: conceptName };
+                            }
+                        }
+                        
+                        // For RefReplacerBox, also check the reference itself
+                        if (isRefReplacerBox(box) && property) {
+                            const ref = property as FreNodeReference<any>;
                             const refName = ref.name || ref.referred?.name;
+                            const refConceptName = ref.referred?.freLanguageConcept?.();
+                            
                             if (refName) {
                                 return { id: refName, label: refName };
                             }
+                            // If we have a concept name but no name, use the trigger
+                            if (refConceptName && implementingConceptNames.length > 0 && implementingConceptNames.includes(refConceptName)) {
+                                const concept = lang.concept(refConceptName);
+                                const triggerLabel = concept?.trigger || refConceptName;
+                                return { id: triggerLabel, label: triggerLabel };
+                            }
                         }
+                        
                         return null;
                     },
                     (editor: FreEditor, option: SelectOption): BehaviorExecutionResult => {
                         if (option) {
-                            const visibleNodes = scoper.getVisibleNodes(node, propType);
-                            const selectedNode = visibleNodes.find((n) => n.name === option.label);
+                            // For interfaces, we need to find the node across all implementing concepts
+                            let selectedNode: any = null;
+                            
+                            if (implementingConceptNames.length > 0) {
+                                // First, try to find an existing node in the scoper
+                                // Match by both name and trigger label
+                                for (const conceptName of implementingConceptNames) {
+                                    const nodes = scoper.getVisibleNodes(node, conceptName);
+                                    selectedNode = nodes.find((n) => {
+                                        const nName = n.name || n.freLanguageConcept?.();
+                                        return nName === option.label;
+                                    });
+                                    if (selectedNode) break;
+                                }
+                                
+                                // If not found in scoper, check if option.label matches a trigger and create a new instance
+                                if (!selectedNode) {
+                                    // Find the concept whose trigger matches the option label
+                                    const conceptName = implementingConceptNames.find(cn => {
+                                        const concept = lang.concept(cn);
+                                        return concept && concept.trigger === option.label;
+                                    });
+                                    
+                                    if (conceptName) {
+                                        const concept = lang.concept(conceptName);
+                                        if (concept && !concept.isAbstract) {
+                                            try {
+                                                // Create a new instance of the concept
+                                                selectedNode = concept.constructor();
+                                                console.log(`🔵 CustomSelectComponent: Created new instance of ${conceptName} (trigger: ${concept.trigger})`, selectedNode);
+                                            } catch (e) {
+                                                console.error(`CustomSelectComponent: Failed to create instance of ${conceptName}`, e);
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                // Regular concept: search in scoper
+                                const nodes = scoper.getVisibleNodes(node, propType);
+                                selectedNode = nodes.find((n) => {
+                                    const nName = n.name || n.freLanguageConcept?.();
+                                    return nName === option.label;
+                                });
+                            }
+                            
                             if (selectedNode) {
                                 AST.changeNamed(`CustomSelectComponent: Set ${propertyName} to ${option.label}`, () => {
                                     if (isRefReplacerBox(box)) {
@@ -299,6 +435,8 @@
                                         box.setPropertyValue(selectedNode);
                                     }
                                 });
+                            } else {
+                                console.error(`CustomSelectComponent: Could not find or create node for ${option.label}`);
                             }
                         } else {
                             AST.changeNamed(`CustomSelectComponent: Set ${propertyName} to null`, () => {
@@ -320,14 +458,14 @@
     // Track if dropdown is open
     let dropdownOpen = $state(false);
     
-    // Calculate matches based on text input (case-insensitive)
+    // Calculate matches based on text input (case-insensitive, from start)
     let matchingItems = $derived.by(() => {
         if (!text.trim()) {
             return listboxData; // Show all if no text
         }
         const searchText = text.toLowerCase();
         return listboxData.filter(item => 
-            item.label.toLowerCase().includes(searchText)
+            item.label.toLowerCase().startsWith(searchText)
         );
     });
     
@@ -365,7 +503,7 @@
         if (selectedOption && text.trim()) {
             const searchText = text.toLowerCase();
             const selectedItem = listboxData.find(item => item.value === selectedOption.id);
-            if (selectedItem && !selectedItem.label.toLowerCase().includes(searchText)) {
+            if (selectedItem && !selectedItem.label.toLowerCase().startsWith(searchText)) {
                 // Current selection doesn't match filter, clear it
                 if (selectBox) {
                     if (isSelectBox(box)) {
@@ -403,7 +541,7 @@
         if (selectedOption && text.trim() && selectBox && listboxData.length > 0) {
             const searchText = text.toLowerCase();
             const selectedItem = listboxData.find(item => item.value === selectedOption.id);
-            if (selectedItem && !selectedItem.label.toLowerCase().includes(searchText)) {
+            if (selectedItem && !selectedItem.label.toLowerCase().startsWith(searchText)) {
                 // Current selection doesn't match filter, clear it
                 if (isSelectBox(box)) {
                     selectBox.executeOption(editor, null);
@@ -872,7 +1010,7 @@
                       role="listbox">
                         <ul style="list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto;">
                             {#each listboxData as item, index (item.value + '-' + index)}
-                                {@const isMatch = text.trim() === '' || item.label.toLowerCase().includes(text.toLowerCase())}
+                                {@const isMatch = text.trim() === '' || item.label.toLowerCase().startsWith(text.toLowerCase())}
                                 {@const isHighlighted = isMatch && text.trim().length > 0}
                                 {@const isSelected = selectedOption && item.value === selectedOption.id && isMatch && !isHighlighted}
                                 {@const matchClass = isHighlighted ? (hasSingleMatch ? 'matched' : hasMultipleMatches ? 'matched-multiple' : '') : ''}

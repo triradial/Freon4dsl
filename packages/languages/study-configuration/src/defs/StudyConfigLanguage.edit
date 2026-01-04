@@ -18,7 +18,8 @@ global {
         UrlInputComponent,
         PhoneInputComponent,
         CustomNumericComponent,
-        CustomSelectComponent
+        CustomSelectComponent,
+        CustomActionsComponent
     }
 }
 

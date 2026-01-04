@@ -23,6 +23,7 @@ import TimePickerComponent from "./components/custom/TimePickerComponent.svelte"
 import UrlInputComponent from "./components/custom/UrlInputComponent.svelte";
 import CustomNumericComponent from "./components/custom/freon/CustomNumericComponent.svelte";
 import CustomSelectComponent from "./components/custom/freon/CustomSelectComponent.svelte";
+import CustomActionsComponent from "./components/custom/freon/CustomActionsComponent.svelte";
 
 const LOGGER = new FreLogger("init");
 
@@ -94,6 +95,7 @@ setCustomComponents([
     { component: TabFixComponent2, knownAs: "TabFixComponent2" },
     { component: CustomNumericComponent, knownAs: "CustomNumericComponent" },
     { component: CustomSelectComponent, knownAs: "CustomSelectComponent" },
+    { component: CustomActionsComponent, knownAs: "CustomActionsComponent" },
 ])
 
 LOGGER.log('--- END ---');
