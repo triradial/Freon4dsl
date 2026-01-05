@@ -1,11 +1,11 @@
 editor default
 
 TimeAmount {
-    [${value}${unit}]
+    [${value replace=CustomNumericComponent placeholder="#"}${unit replace=CustomSelectComponent placeholder="unit"} ]
 }
 
 TimeAmountPart {
-    [${operator}${timeAmount}]
+    [${operator}${timeAmount} ]
     trigger = "plus or minus day/week/month/..."
 } 
 
@@ -140,16 +140,29 @@ EventSchedule {
 
 // EventSchedule {
 //     [
-//         First scheduled ${eventStart} 
+//         First scheduled [fragment eventStarts wrap = TabFixComponent2 cssClass="type1" canAdd="false" canExpand="false" isExpanded="true" selectable="true" label="X"]
 //         ${eventWindow} 
-//         and then repeats ${eventRepeat} 
-//         limited to ${eventTimeOfDay} 
+//         [? and then repeats ${eventRepeat} ]
+//         [? limited to ${eventTimeOfDay} ]
 //     ] 
 //     trigger = "event schedule"
+//     fragment eventStarts [
+//         ${eventStart}
+//     ]     replace=CustomActionsComponent placeholder="repeat expression"
 // } 
 
+EventSchedule {
+    [
+        First scheduled ${eventStart} 
+        ${eventWindow} 
+        and then repeats ${eventRepeat replace=CustomActionsComponent placeholder="repeat expression"} 
+        limited to ${eventTimeOfDay replace=CustomActionsComponent placeholder="time"} 
+    ] 
+    trigger = "event schedule"
+} 
+
 EventReference {
-    [${event}${eventState} ]
+    [${event}${eventState replace=CustomSelectComponent placeholder="event state"} ]
     referenceShortcut = ${event}
     }
 
