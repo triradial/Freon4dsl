@@ -2,8 +2,6 @@
     import { 
         ActionBox,
         isActionBox,
-        ActionReplacerBox,
-        isActionReplacerBox,
         type SelectOption, 
         type FreEditor,
         BoxFactory,
@@ -22,9 +20,8 @@
 
     let { editor, box, isEditing = $bindable(false) }: FreComponentProps<any> & { isEditing?: boolean } = $props();
     
-    // Get the actual ActionBox (or ActionReplacerBox which wraps an ActionBox)
+    // Get the actual ActionBox (created from PartReplacerBox when no value exists)
     let actionBox = $state<ActionBox | null>(null);
-    let actionReplacerBox = $state<ActionReplacerBox | null>(null);
     
     // Track if we're handling a PartReplacerBox (content box with a value)
     let isPartReplacer = $derived(isPartReplacerBox(box));
@@ -111,17 +108,11 @@
     // Extract placeholder from box params if available
     let placeholderText = $derived(isExternalBox(box) ? (box.findParam("placeholder") || undefined) : undefined);
     
-    // Initialize actionBox (or get it from ActionReplacerBox, or create from PartReplacerBox)
+    // Initialize actionBox (create from PartReplacerBox when no value exists)
     $effect(() => {
-        if (isActionReplacerBox(box)) {
-            // ActionReplacerBox wraps an ActionBox - get the wrapped ActionBox
-            actionReplacerBox = box;
-            // ActionReplacerBox delegates to its internal ActionBox, so we can use it directly
-            // The getOptions and executeOption methods are already delegated
-            actionBox = null; // We'll use actionReplacerBox directly
-        } else if (isActionBox(box)) {
+        if (isActionBox(box)) {
+            // Direct ActionBox - use it directly
             actionBox = box;
-            actionReplacerBox = null;
         } else if (isPartReplacerBox(box)) {
             // PartReplacerBox: Check if it has a value first
             const propertyName = box.propertyName;
@@ -144,7 +135,6 @@
             if (currentValue !== null && currentValue !== undefined) {
                 // Has value - don't create ActionBox, let the view mode show the value
                 actionBox = null;
-                actionReplacerBox = null;
                 return; // Exit early - the value will be shown in view mode
             }
             
@@ -212,8 +202,6 @@
                         
                         return options;
                     };
-                    
-                    actionReplacerBox = null;
                 } else {
                     // Regular concept - create ActionBox normally
                     actionBox = BoxFactory.action(
@@ -225,40 +213,33 @@
                             propertyName: propertyName
                         }
                     );
-                    actionReplacerBox = null;
                 }
             } else {
                 console.error(`CustomActionsComponent: Could not get property type for ${propertyName}`);
                 actionBox = null;
-                actionReplacerBox = null;
             }
         } else {
-            // This component should only be used for ActionBox/ActionReplacerBox/PartReplacerBox
-            console.warn("CustomActionsComponent: Expected ActionBox, ActionReplacerBox, or PartReplacerBox but got", box?.kind || typeof box);
+            // This component should only be used for ActionBox or PartReplacerBox
+            console.warn("CustomActionsComponent: Expected ActionBox or PartReplacerBox but got", box?.kind || typeof box);
             actionBox = null;
-            actionReplacerBox = null;
         }
     });
     
-    // Get all options from the ActionBox or ActionReplacerBox
+    // Get all options from the ActionBox
     let allOptions = $derived(
-        actionReplacerBox 
-            ? actionReplacerBox.getOptions(editor) 
-            : (actionBox ? actionBox.getOptions(editor) : [])
+        actionBox ? actionBox.getOptions(editor) : []
     );
     
     // Debug logging
     $effect(() => {
-        const currentBox = actionReplacerBox || actionBox;
-        if (currentBox) {
-            const opts = currentBox.getOptions(editor);
+        if (actionBox) {
+            const opts = actionBox.getOptions(editor);
             console.log('🔵 CustomActionsComponent: allOptions', { 
                 count: opts.length, 
                 options: opts.map(o => ({ id: o.id, label: o.label })),
-                propertyName: currentBox.propertyName,
-                conceptName: currentBox.conceptName,
-                boxKind: box?.kind,
-                isActionReplacerBox: !!actionReplacerBox
+                propertyName: actionBox.propertyName,
+                conceptName: actionBox.conceptName,
+                boxKind: box?.kind
             });
         }
     });
@@ -339,23 +320,20 @@
     
     // Handle selection from listbox item
     function selectItem(item: typeof listboxData[0]) {
-        const currentBox = actionReplacerBox || actionBox;
         console.log('🔵 CustomActionsComponent: selectItem called', { 
             item: item?.label, 
-            hasBox: !!currentBox, 
+            hasBox: !!actionBox, 
             itemOption: !!item?.option,
             boxKind: box?.kind,
-            actionBox: !!actionBox,
-            actionReplacerBox: !!actionReplacerBox,
             isPartReplacerBox: isPartReplacerBox(box)
         });
         if (item && item.option) {
             // Use the ActionBox to execute the option - it has the correct node and property info
             // The action (FreCreatePartAction) will set box.node[propertyName] = newElement
-            if (currentBox) {
+            if (actionBox) {
                 // Use executeOption which will call the action's execute method
                 // This will create the part and set it on the property
-                const result = currentBox.executeOption(editor, item.option);
+                const result = actionBox.executeOption(editor, item.option);
                 console.log('🔵 CustomActionsComponent: executeOption result', result);
                 
                 // After executing, the property should now have a value
@@ -447,8 +425,7 @@
     
     // Handle typing full name - check if it matches exactly, or if there's only one match from start
     function checkExactMatch() {
-        const currentBox = actionReplacerBox || actionBox;
-        if (!currentBox) return;
+        if (!actionBox) return;
         
         // If text is empty, just exit
         if (!text.trim()) {
@@ -733,7 +710,7 @@
     });
 </script>
 
-{#if actionBox || actionReplacerBox || (isPartReplacerBox(box) && (hasDirectValue || (hasValue && currentPropertyValue)))}
+{#if actionBox || (isPartReplacerBox(box) && (hasDirectValue || (hasValue && currentPropertyValue)))}
     {@const checkDirectValue = isPartReplacerBox(box) && box.propertyName ? (box.node[box.propertyName] && typeof box.node[box.propertyName] === 'object' && 'freLanguageConcept' in box.node[box.propertyName] ? box.node[box.propertyName] : null) : null}
     {@const hasDirectValueInTemplate = checkDirectValue !== null && checkDirectValue !== undefined}
     {@const shouldShowValue = hasDirectValueInTemplate || hasDirectValue || (hasValue && currentPropertyValue)}
@@ -851,13 +828,13 @@
                     bind:this={widthSpan}
                     style="visibility: hidden; position: absolute; white-space: pre; font-family: var(--font-family-sans); font-size: var(--standard-font-size); padding: 0.15rem 0.25rem 0 0.3rem;"
                 >
-                    {text || placeholderText || (actionReplacerBox || actionBox)?.placeholder || "item"}
+                    {text || placeholderText || actionBox?.placeholder || "item"}
                 </span>
                 <input
                     bind:this={inputElement}
                     type="text"
                     bind:value={text}
-                    placeholder={placeholderText || (actionReplacerBox || actionBox)?.placeholder || "item"}
+                    placeholder={placeholderText || actionBox?.placeholder || "item"}
                     oninput={onInputChange}
                     onkeydown={onKeyDown}
                     onfocusout={onFocusOut}
@@ -938,7 +915,7 @@
                 onkeydown={onSpanKeyDown}
                 onfocusin={onSpanFocusIn}
             >
-                {placeholderText || (actionReplacerBox || actionBox)?.placeholder || "item"}
+                {placeholderText || actionBox?.placeholder || "item"}
             </span>
         {/if}
     </span>
