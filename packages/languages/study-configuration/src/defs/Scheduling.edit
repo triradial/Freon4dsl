@@ -128,15 +128,15 @@ EventWindow {
     ] trigger = "event window"
 }
 
-EventSchedule {
-    [
-        First scheduled ${eventStart} 
-        [? ${eventWindow} ] 
-        [? and then repeats ${eventRepeat}]
-        [? limited to ${eventTimeOfDay}]
-    ] 
-    trigger = "event schedule"
-} 
+// EventSchedule {
+//     [
+//         First scheduled ${eventStart} 
+//         [? ${eventWindow} ] 
+//         [? and then repeats ${eventRepeat}]
+//         [? limited to ${eventTimeOfDay}]
+//     ] 
+//     trigger = "event schedule"
+// } 
 
 // EventSchedule {
 //     [
