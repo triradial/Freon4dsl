@@ -75,7 +75,7 @@ RepeatEvery {
 
 RepeatCondition {
     [
-    ${repeatUnit replace=CustomSelectComponent placeholder="repeat unit"} up to ${maxRepeats replace=CustomNumericComponent min="1" max="999"} times until ${until}
+    ${repeatUnit} up to [? ${maxRepeats replace=CustomNumericComponent min="1" max="999"} times] [? until ${until}]
     ] trigger = "until: Repeat until a condition occurs"
 } 
 
@@ -128,9 +128,15 @@ EventWindow {
     ] trigger = "event window"
 }
 
-//RepeatExpression {
-//    [${eventRepeat}]
-//}
+EventSchedule {
+    [
+        First scheduled ${eventStart} 
+        [? ${eventWindow} ] 
+        [? and then repeats ${eventRepeat}]
+        [? limited to ${eventTimeOfDay}]
+    ] 
+    trigger = "event schedule"
+} 
 
 // EventSchedule {
 //     [

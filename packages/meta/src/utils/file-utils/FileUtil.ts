@@ -1,9 +1,9 @@
-import * as fs from "fs";
 import synchronizedPrettier from "@prettier/sync";
+import * as fs from "fs";
+import * as path from "path";
 import { MetaLogger } from "../no-dependencies/MetaLogger.js";
 
 const LOGGER = new MetaLogger("FileUtil").mute();
-import * as path from "path";
 
 export class GenerationStatus {
     numberOfErrors: number = 0;
@@ -135,7 +135,7 @@ export class FileUtil {
         const folder = "./" + dir;
         if (FileUtil.exists(folder)) {
             if (fs.readdirSync(folder).length === 0) {
-                fs.rmSync(folder);
+                fs.rmSync(folder, { recursive: true });
             } else {
                 LOGGER.info("Folder has content: [" + folder + "]");
             }

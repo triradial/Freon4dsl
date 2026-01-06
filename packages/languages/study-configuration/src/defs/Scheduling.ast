@@ -144,8 +144,8 @@ concept BetweenTimes implements EventTimeOfDay {
 }
 
 concept EventSchedule {
-    eventStart?: EventStart;
-    eventWindow: EventWindow;
+    eventStart: EventStart;
+    eventWindow?: EventWindow;
     eventRepeat?: RepeatExpression;
     eventTimeOfDay?: EventTimeOfDay;
 }

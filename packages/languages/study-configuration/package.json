@@ -15,7 +15,7 @@
     "nogen": "tsc && vite build",
     "install-local": "npm install --registry http://localhost:4873",
     "generate": "bash ../../../scripts/freon-samples-dev.sh -v all -d src/defs -o src/",
-    "clean-gen": "bash ../../../scripts/freon-samples-dev.sh clean-it -d src/defs -o src/",
+    "clean-gen": "bash ../../../scripts/freon-samples-dev.sh clean-it -d src/defs -o src",
     "clean-config": "rm */config/FreonConfiguration.ts",
     "clean-custom": "rm */*/Custom*.ts"
   },
