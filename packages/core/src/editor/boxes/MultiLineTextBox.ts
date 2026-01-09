@@ -1,4 +1,4 @@
-import { FreNode } from "../../ast/index.js";
+import type { FreNode } from "../../ast/index.js";
 import { AST } from "../../change-manager/index.js";
 import { FreUtils } from "../../util/index.js";
 import { Box } from "./Box.js";
@@ -8,7 +8,7 @@ const LOGGER: FreLogger = new FreLogger("MultiLineTextBox").mute();
 
 export class MultiLineTextBox extends Box {
     kind: string = "MultiLineTextBox";
-    placeHolder: string = "<enter>";
+    placeHolder: string = "type text";
     $getText: () => string;
     $setText: (newValue: string) => void;
 

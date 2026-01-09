@@ -32,29 +32,161 @@
   --surface-ground: #DCD5E7;
   --surface-card: #604a83;
 
-  --navbar-background: #000000;
-  --navbar-text: #92A7CE;
-  --navbar-text-hover: var(--text-hover);
+  /* #region Breadcrumb */
+  --breadcrumb-background: #b8cae5;
+  --breadcrumb-link: #2a3852;
+  --breadcrumb-link-hover: #1d283c;
+  --breadcrumb-text: #000000;
+  /* #endregion */
 
-  --breadcrumb-background: #cfd6e0;
-  --breadcrumb-text: #353535;
-  --breadcrumb-text-hover: var(--text-hover);
-  --breadcrumb-border: #4a5568;
-
-  --drawer-background: #cfd6e0;
+  /* #region Drawer */
+  --drawer-background: #b8cae5;
   --drawer-handle: #b6b6b6;
   --drawer-button: var(--text-primary-900);
   --drawer-content-background: #d5dee7;
   --drawer-header-background: #a9b7c5;
   --drawer-header-text: var(--text-primary-900);
   --drawer-content-area: #e2e2e2;
+  --drawer-error-text: #af5080;
+  --arrow-background: #d5dee7;
+  /* #endregion */
 
+  /* #region Toolbar */
   --toolbar-button: var(--text-primary-500);
   --toolbar-button-background: none;  
   --toolbar-button-hover: var(--black);
   --toolbar-button-hover-background: var(--black-10t);
   --toolbar-button-active: var(--black); 
   --toolbar-button-active-background: var(--black-20t);
+  /* #endregion */
+
+  /* #region Name Link */
+  --name-link-text: #4C5C96;
+  --grid-button-color: #4C5C96;
+  /* #endregion */
+
+  /* #region Labels */
+  --main-label-text: #000000;
+  /* #endregion */
+
+  /* #region Inputs */
+
+  /* #endregion */
+  
+  // #region Controls
+  --checkbox-bg: #3b82f6;
+  // #endregion
+
+  /* #region Buttons */
+  --primary-button-text: #ffffff;
+  --primary-button-background: var(--primary-600);
+  --primary-button-border: var(--primary-600);
+
+  --secondary-button-text: #ffffff;
+  --secondary-button-background: var(--secondary-600);
+  --secondary-button-border: var(--secondary-600);
+
+  --gray-button-text: #ffffff;
+  --gray-button-background: var(--gray-600);
+  --gray-button-border: var(--gray-600);
+
+  --red-button-text: #ffffff;
+  --red-button-background: var(--red-600);
+  --red-button-border: var(--red-600);
+
+  --green-button-text: #ffffff;
+  --green-button-background: var(--green-600);
+  --green-button-border: var(--green-600);
+
+  --primary-inverted-button-text: var(--primary-400);
+  --primary-inverted-button-background: transparent;
+  --primary-inverted-button-border: var(--primary-400);
+
+  --secondary-inverted-button-text: var(--secondary-400);
+  --secondary-inverted-button-background: transparent;
+  --secondary-inverted-button-border: var(--secondary-400);
+
+  --gray-inverted-button-text: var(--gray-400);
+  --gray-inverted-button-background: transparent;
+  --gray-inverted-button-border: var(--gray-400);
+
+  --red-inverted-button-text: var(--red-400);
+  --red-inverted-button-background: transparent;
+  --red-inverted-button-border: var(--red-400);
+
+  --green-inverted-button-text: var(--green-400);
+  --green-inverted-button-background: transparent;
+  --green-inverted-button-border: var(--green-400);
+  /* #endregion */
+
+  /* #region Calendar */
+  --calendar-day-bg: #ffffff;
+  --calendar-day-border: #d1d5db;
+  --calendar-day-text: #000000;
+  --calendar-day-unavailable-bg: #fee2e2;
+  --calendar-day-unavailable-border: #fca5a5;
+  --calendar-day-unavailable-hover-bg: #fecaca;
+  --calendar-day-hover-bg: #f3f4f6;
+  --calendar-month-title: #3a3a3a;
+
+  --header-text: #000000;
+  
+  // Availability status colors for dark theme (darker variants for better contrast)
+  --calendar-available-bg: #3c58468c;
+  --calendar-available-border: #2d5a3d;
+  --calendar-available-text: #2e4b39;
+  --calendar-unavailable-bg: #6031317a;
+  --calendar-unavailable-border: #6b2a2a;
+  --calendar-unavailable-text: #563333;
+  --calendar-all-unavailable-bg: #a162627a; // Lighter, more reddish shade for when all staff are unavailable
+  --calendar-all-unavailable-border: #ef4444;
+  --calendar-all-unavailable-text: #991b1b;
+
+  --calendar-nav-button-text: #000000;
+  --calendar-weekends-checkbox-text: #000000;
+  --calendar-legend-text: #000000;
+  --calendar-person-name-text: #000000;
+
+  --availability-model-panel-text: #000000;
+
+  --calendar-weekend-unavailable-bg: #5d646d; 
+  --calendar-weekend-unavailable-border: #747a82; 
+/* #endregion */
+
+/* #region Day View */
+  --dayview-container-bg: #f9fafb;
+  --dayview-date-header-bg-today: #3b82f6;
+  --dayview-date-header-bg-weekend: #d1d5db;
+  --dayview-date-header-bg-past: #e5e7eb;
+  --dayview-date-header-bg-future: #f9fafb;
+  --dayview-date-header-text: #111827;
+  --dayview-nav-button-color: #6b7280;
+  --dayview-nav-button-hover: #3b82f6;
+  --dayview-section-bg: #ffffff;
+  --dayview-section-text: #000000;
+  --dayview-staff-in-header: #059669;
+  --dayview-staff-out-header: #dc2626;
+  --dayview-week-view-bg: #ffffff;
+  --dayview-week-nav-button-color: #6b7280;
+  --dayview-week-nav-button-hover: #3b82f6;
+  --dayview-day-today-bg: #3b82f6;
+  --dayview-day-today-text: #ffffff;
+  --dayview-day-weekend-bg: #d1d5db;
+  --dayview-day-weekend-text: #111827;
+  --dayview-day-past-bg: #e5e7eb;
+  --dayview-day-past-text: #6b7280;
+  --dayview-day-future-bg: #f9fafb;
+  --dayview-day-future-text: #111827;
+  --dayview-day-before-start-bg: #fce7f3;
+  --dayview-day-before-start-text: #be185d;
+  --dayview-day-selected-border: #3b82f6;
+  --dayview-day-selected-shadow: rgba(59, 130, 246, 0.3);
+  --dayview-day-hover-shadow: rgba(0, 0, 0, 0.1);
+  --dayview-patients-count: #3b82f6;
+/* #endregion */
+
+
+  /* #endregion */
 
   --content-background: #cfd6e0;
 
@@ -139,18 +271,6 @@
   --timeline-header-text: #000000;
   --timeline-card: #e0e0e0;
 
-  --red: #dbbdbd;
-  --green: #bddbbd;
-  --blue: #bdbddb;
-  --yellow: #dbdbbd;
-  --orange: #dbd1bd;
-  --purple: #dbbddb;
-  --cyan: #bddbdb;
-  --pink: #dbbdc2;
-  --indigo: #cebddb;
-  --teal: #bddbdb;
-  --bluegray: #607d8b;
-
   --text-primary-50: #02091f;
   --text-primary-100: #0e1632;
   --text-primary-200: #1a2345;
@@ -166,94 +286,11 @@
 
   --error-background: #fae4e7;
   --error-color: #ae2b22;
-}
-
-body {
-  color: #333;
-  background-color: #f3f3f3;
-}
-
-a {
-  color: rgb(0, 80, 160);
-}
-
-a:visited {
-  color: rgb(0, 80, 160);
+  --error-indicator: #c75047;
 }
 
 input:disabled {
   color: #ccc;
-}
-
-button {
-  color: #333;
-  background-color: #f4f4f4;
-}
-
-button:disabled {
-  color: #999;
-}
-
-button:not(:disabled):active {
-  background-color: #ddd;
-}
-
-button:focus {
-  border-color: #666;
-}
-
-.login-container a {
-  color: #9bcbff;
-}
-
-.login-container Label,
-.login-container p {
-  color: #ffffff;
-}
-
-#login button {
-  color: white;
-  background-color: transparent;
-  background-image: none
-}
-
-#login button:hover {
-  color: white;
-  background-color: var(--primary-900);  //var(--navbar-background);
-  background-image: none
-}
-
-.toast-warning-container div {
-  background-color: transparent;
-  color: var(--red);
-}
-
-.crc-logo-p1 {
-  color: var(--logo-text-p1);
-}
-
-.crc-logo-p2 {
-  color: var(--logo-text-p2);
-}
-
-aside,
-aside div {
-  background-color: var(--navbar-background) !important;
-}
-
-appbar a,
-appnav a {
-  color: var(--navbar-text);
-}
-
-appbar a:hover,
-appnav a:hover {
-  color: var(--navbar-text-hover);
-}
-
-appbar a:visited,
-appnav a:visited {
-  color: var(--navbar-text);
 }
 
 /* #region Dialog */
@@ -291,7 +328,7 @@ appnav a:visited {
 /* #region Navbar */
 .navbar-component {
   background-color: var(--navbar-background) !important;
-  background-image: url('/assets/images/navbar_background.svg');
+  background-image: url('/images/navbar_background.svg');
   background-repeat: no-repeat;
   background-position: left;
 }
@@ -318,30 +355,17 @@ appnav a:visited {
 }
 /* #endregion */
 
-/* #region Breadcrumb */
-.crc-breadcrumb {
-  background-color: var(--breadcrumb-background) !important;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.5);
-}
-
-.crc-breadcrumb a {
-  color: var(--breadcrumb-text) !important;
-}
-
-.crc-breadcrumb a:hover {
-  color: var(--breadcrumb-text-hover) !important;
-}
-
-/* #endregion */
-
 /* #region AppNav */
 #appnav-component a:hover {
   color: var(--navbar-background) !important;
 }
-
 /* #endregion */
 
 /* #region Editor */
+.crc-editor {
+  background-color: white;
+}
+
 .footer-container {
   background-color: var(--drawer-header-background);
   border-top: 1px solid var(--drawer-handle);
@@ -355,37 +379,48 @@ appnav a:visited {
   color: var(--white);
 }
 
+.editor-footer-label {
+  color: var(--gray-900);
+}
+
 .editor-footer-text {
   color: var(--drawer-header-text);
+}
+
+.editor-display-options-popover {
+  background-color: var(--drawer-content-background);
+}
+
+.editor-display-options label {
+  color: var(--black-90t);
+}
+
+.editor-message {
+  color: var(--black-90t);
 }
 /* #endregion */
 
 /* #region Toolbar */
-
 .toolbar-button{
-  background: none;
-  color: var(--drawer-button);
+  background: var(--toolbar-button-background) !important;
+  color: var(--toolbar-button) !important;
 }
 
 .toolbar-button:hover {
-  background: none; 
-  color: var(--drawer-button-hover);
-}
+  background: var(--toolbar-button-hover-background) !important;
+  color: var(--toolbar-button-hover) !important;
+} 
 
 .toolbar-button:active {
-  background: none; 
-  color: var(--drawer-button-active);
-}
-
+  background: var(--toolbar-button-active-background) !important;
+  color: var(--toolbar-button-active) !important;
+} 
 /* #endregion */
+
 /* #region Grid */
-.crc-grid-header {
+.grid-header {
   background-color: var(--card-background);
   box-shadow: none;
-}
-
-.crc-grid-header h3 {
-  color: var(--text-primary-500);
 }
 
 .crc-grid {
@@ -394,7 +429,7 @@ appnav a:visited {
 
 .crc-grid a,
 .crc-grid a:visited {
-  color: rgb(0, 100, 201);
+  color: var(--primary-600);
 }
 
 .crc-grid a:hover {
@@ -436,67 +471,83 @@ appnav a:visited {
   background-color: var(--content-background);
 }
 
-.crc-card h3 {
-  color: var(--text-primary-900);
-}
-
-.crc-card h4 {
-  color: var(--gray-700);
-}
-
-.crc-card p {
+.standard-text {
   color: var(--black);
 }
 
 /* #endregion */
 
 /* #region Tab */
-.crc-tab {
-  background-color: var(--content-background);
-}
-
-.crc-tab .tab-item {
-  color: var(-black);
+.tab-item {
+  color: var(--black);
   background-color: transparent;
+  border-bottom: 2px solid transparent !important;
 }
 
-.crc-tab .tab-item:hover {
-  background-color: var(--black-10t);
+.tab-item:hover {
+  background-color: var(--black-10t) !important;
 }
 
-.crc-tab .tab-item:active {
-  background-color: var(--black-20t);
+.tab-active {
+  color: var(--primary-600) !important;
+  border-bottom: 2px solid var(--primary-600) !important;
 }
+
 /* #endregion */
 
 /* #region Drawer */
 .drawer-system {
   box-shadow: -20px 0 20px -20px rgba(0, 0, 0, 0.5);
 }
+
 .drawer-buttons {
   background-color: var(--drawer-background);
 }
+
 .drawer-button {
   background: none;
   color: var(--drawer-button);
 }
+
 .drawer-header {
   background-color: var(--drawer-header-background);
   color: var(--drawer-header-text);
 }
+
 .drawer-header-button {
   background: none;
   color: var(--drawer-header-text);
 }
+
+.drawer-header-button:hover {
+  background: var(--black-5t) !important;
+  color: var(--black) !important;
+}
+
+.drawer-header-button:active {
+  background: var(--black-10t) !important;
+  color: var(--black) !important;
+}
+
 .resize-handle {
+  width: 8px;
   background-color: var(--drawer-handle);
+  transition: background-color 0.2s, box-shadow 0.2s;
+  box-shadow: 1px 0 4px rgba(0,0,0,0.08);
 }
-.grip-icon {
-  color: #2e2e2e;
+
+.resize-handle.bright {
+  background-color: #1C64F2 !important;
+  box-shadow: 0 0 12px #1C64F2, 1px 0 4px rgba(0,0,0,0.08);
 }
+
 .drawer-content,
 .drawer-content-area {
   background-color: var(--drawer-content-area);
+}
+
+.drawer-error {
+  color: var(--drawer-error-text) !important;
 }
 /* #endregion */
 
@@ -596,6 +647,21 @@ appnav a:visited {
   background-image: repeating-linear-gradient(45deg, black, black 5px, white 2px, white 7px);
 }
 
+.vis-item.planned-visit,
+.key-item .planned-visit {
+  background-image: repeating-linear-gradient(45deg, rgb(76, 175, 80), rgb(76, 175, 80) 5px, white 2px, white 7px);
+}
+
+.vis-item.missed-visit,
+.key-item .missed-visit {
+  background-image: repeating-linear-gradient(45deg, rgb(244, 67, 54), rgb(244, 67, 54) 5px, white 2px, white 7px);
+}
+
+.vis-item.canceled-visit,
+.key-item .canceled-visit {
+  background-image: repeating-linear-gradient(45deg, rgb(158, 158, 158), rgb(158, 158, 158) 5px, white 2px, white 7px);
+}
+
 .timeline-instructions li {
   color: var(--black-50t) !important;
 }
@@ -627,6 +693,18 @@ appnav a:visited {
 /* #endregion */
 
 /* #region Error Drawer */
+.error-drawer {
+  color: var(--black) !important;
+}
+
+.error-drawer-head {
+  color: var(--black) !important;
+}
+
+.error-drawer-cell {
+  color: var(--black) !important;
+} 
+
 .error-drawer-button{
   background: var(--toolbar-button-background) !important;
   color: var(--toolbar-button) !important;
@@ -641,4 +719,101 @@ appnav a:visited {
   background: var(--toolbar-button-active-background) !important;
   color: var(--toolbar-button-active) !important;
 } 
+/* #endregion */
+
+/* #region Object Drawer */
+.object-drawer {
+  background-color: var(--mutation-background) !important;
+}
+
+.object-drawer-area {
+  background-color: var(--content-background) !important;
+}
+
+.object-drawer-error-indicator {
+  color: var(--error-indicator) !important;
+}
+/* #endregion */
+
+/* #region Labels */
+.small-label-text {
+  color: var(--primary-700);
+}
+
+.main-label-text {
+  color: var(--text-primary-600) !important;
+}
+/* #endregion */
+
+/* #region Inputs */
+.input-field:not(.error),
+.textarea-field:not(.error),
+.select-field:not(.error) {
+  background-color: var(--input-background);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
+}
+
+.input-field.error {
+  border-color: var(--error-color);
+  background-color: var(--error-background);
+  color: var(--error-color);
+}
+
+/* Ensure option elements inside select with error class don't inherit error styling */
+select.input-field.error option {
+  background-color: var(--input-background) !important;
+  color: var(--input-text) !important;
+}
+
+/* #endregion */
+
+/* #region Badge */
+
+.badge.default {
+  background-color: #454d59;
+  color: var(--white);
+}
+
+.badge.green {
+  background-color: #177967;
+  color: var(--white);
+}
+
+.badge.blue {
+  background-color: #4484af;
+  color: var(--white);
+}
+
+.badge.red {
+  background-color: #da5353;
+  color: var(--white);
+}
+
+.badge.yellow {
+  background-color: #cbdb3b;
+  color: var(--white);
+}
+
+.badge.indigo {
+  background-color: #9726e2;
+  color: var(--white);
+}
+
+.badge.pink {
+  background-color: #eb308d;
+  color: var(--white);
+}
+
+.badge.cyan {
+  background-color: #1ce4e4;
+  color: var(--white);
+}
+
+/* #endregion */
+
+/* #region Placeholders */  
+.placeholder, .placeholder-circle {
+  background-color: var(--black-20t);
+}
 /* #endregion */

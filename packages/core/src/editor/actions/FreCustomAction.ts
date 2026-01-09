@@ -1,12 +1,10 @@
 import { AST } from "../../change-manager/index.js";
 import { FreUtils } from "../../util/index.js";
-import { Box } from "../boxes/index.js";
+import type { Box } from "../boxes/index.js";
 import { FreEditor } from "../FreEditor.js";
+import type { CustomAction, FreTriggerUse, FrePostAction } from "../index.js";
 import {
     FreAction,
-    CustomAction,
-    FreTriggerUse,
-    FrePostAction,
     triggerTypeToString,
     ACTION_LOGGER
 } from "./internal.js";
@@ -37,7 +35,7 @@ export class FreCustomAction extends FreAction {
         ACTION_LOGGER.log("FreCustomCommand: action [" + this.action + "]");
         const self = this;
         let selected
-        AST.change(() => {
+        AST.change( () => {
             selected = self.action(box, triggerTypeToString(trigger), editor);
         })
         if (!!selected) {
@@ -54,10 +52,10 @@ export class FreCustomAction extends FreAction {
                 };
             }
         }
-        return function (): void {
+        return function(): void {
             // TODO "REFERENCE" is a quickfix to get the selection correct
             if (self.boxRoleToSelect === "REFERENCE") {
-                const index = (box.node[box.propertyName] as Array<any>).length - 1
+                const index = (box.node[box.propertyName] as Array<any>).length -1
                 // const empty = editor.findBoxForNode(box.node, box.propertyName)
                 editor.selectElement(box.node, box.propertyName, index)
                 editor.selectNextLeaf()

@@ -1,0 +1,12 @@
+var groups = new vis.DataSet([
+    { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+    { "content": "Visit 1", "id": "Visit 1" },
+    { "content": "<b>Patient: MV</b>", "id": "Patient-MV", className: 'patient' },
+]);
+
+var items = new vis.DataSet([
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 11" },
+    { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 12" },
+    { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:Visit 1'", content: "&nbsp;", id: "Visit 13" },
+])

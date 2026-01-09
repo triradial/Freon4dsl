@@ -3,16 +3,15 @@ import { EditorDefaults } from "../../editordef/metalanguage/EditorDefaults.js";
 import {
     FreMetaBinaryExpressionConcept,
     FreMetaClassifier,
-    FreMetaExpressionConcept,
-} from "../../languagedef/metalanguage/index.js";
-import { GenerationUtil } from "../../utils/index.js";
+    FreMetaExpressionConcept, LangUtil
+} from '../../languagedef/metalanguage/index.js';
 
 export class ParserGenUtil {
     // find all expression bases for all binaries
     static findAllExpressionBases(list: FreMetaBinaryExpressionConcept[]): FreMetaExpressionConcept[] {
         const bases: FreMetaExpressionConcept[] = [];
         list.forEach((impl) => {
-            const expBase = GenerationUtil.findExpressionBase(impl as FreMetaBinaryExpressionConcept);
+            const expBase = LangUtil.findExpressionBase(impl as FreMetaBinaryExpressionConcept);
             if (bases.indexOf(expBase) === -1) {
                 // add if not present
                 bases.push(expBase);
@@ -28,13 +27,45 @@ export class ParserGenUtil {
      * @param editUnit the edit definition to serach for the projection groups
      */
     static findParsableProjectionGroup(editUnit: FreEditUnit) {
-        let projectionGroup: FreEditProjectionGroup | undefined = editUnit.projectiongroups.find(
-            (g) => g.name === EditorDefaults.parserGroupName,
+        const parserProjectionGroup: FreEditProjectionGroup | undefined = editUnit.projectiongroups.find(
+            (g) => g.name === EditorDefaults.parserGroupName
         );
-        if (!projectionGroup) {
-            projectionGroup = editUnit.getDefaultProjectiongroup();
+        const defaultProjectionGroup = editUnit.getDefaultProjectiongroup();
+        return ParserGenUtil.joinProjectionGroups(parserProjectionGroup, defaultProjectionGroup);
+    }
+
+    /**
+     * Join the parser projection with the default projection for generating a (un)parser
+     * @param parserProjection
+     * @param defaultProjection
+     * @private
+     */
+    private static joinProjectionGroups(parserProjection: FreEditProjectionGroup | undefined, defaultProjection: FreEditProjectionGroup | undefined): FreEditProjectionGroup | undefined {
+        if (parserProjection === undefined) {
+            return defaultProjection;
         }
-        return projectionGroup;
+        if (defaultProjection === undefined) {
+            return undefined;
+        }
+        const projection = new FreEditProjectionGroup();
+        projection.name = defaultProjection.name
+        projection.globalProjections = defaultProjection.globalProjections;
+        projection.extras = defaultProjection.extras;
+        projection.owningDefinition = (!!parserProjection.owningDefinition ? parserProjection.owningDefinition : defaultProjection.owningDefinition);
+        projection.aglParseLocation = (!!parserProjection.aglParseLocation ? parserProjection.aglParseLocation : defaultProjection.aglParseLocation);
+        projection.location = (!!parserProjection.location ? parserProjection.location : defaultProjection.location);
+
+        parserProjection.projections.forEach(p => {
+            projection.projections.push(p)  
+        } )
+        defaultProjection.projections.forEach(defaultProj => {
+            const found = parserProjection.projections.find(existingProj =>
+                existingProj.classifier?.referred === defaultProj.classifier?.referred);
+            if (found === undefined) {
+               projection.projections.push(defaultProj);
+            }
+        });
+        return projection;
     }
 
     static findNonTableProjection(
@@ -88,8 +119,9 @@ export class ParserGenUtil {
         return `/**
              * Method to transform branches that match the following rule:
              * ${rule}
-             * @param branch
-             * @private
+             * @param nodeInfo
+             * @param children
+             * @param sentence
              */`;
     }
 
@@ -114,9 +146,10 @@ export class ParserGenUtil {
     }
 }
 
-export const internalTransformNode = "transformSharedPackedParseTreeNode";
-export const internalTransformList = "transformSharedPackedParseTreeList";
-export const internalTransformRefList = "transformSharedPackedParseTreeRefList";
-export const internalTransformLeaf = "transformSharedPackedParseTreeLeaf";
-export const internalTransformBranch = "transformSharedPackedParseTreeBranch";
-export const internalTransformFreNodeRef = "freNodeRef";
+// export const internalTransformNode = "transformSharedPackedParseTreeNode";
+export const internalTransformPrimValue = "transformPrimValue";
+export const internalTransformPartList = "transformPartList";
+export const internalTransformPrimList = "transformPrimList";
+export const internalTransformRefList = "transformRefList";
+export const internalTransformLimitedList = "transformLimitedList";
+export const internalTransformTempRef = "makeFreNodeRef";

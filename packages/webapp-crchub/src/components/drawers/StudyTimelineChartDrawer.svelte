@@ -1,17 +1,16 @@
 <script lang="ts">
+    import { RtString } from "@freon4dsl/core";
+    import { getTimelineChart, StudyConfiguration } from "@freon4dsl/study-configuration";
     import { createEventDispatcher } from "svelte";
-    import { ListPlaceholder } from "flowbite-svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { AST, RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineChart } from "../../services/app/study-timeline.js";
+    import ContentLoader from "./ContentLoader.svelte";
 
-    export let studyId: string;
-    let isLoading = true;
-    let showChart = false;
-    let chartHtml: string = "";
-    let error: string | null = null;
-    let container: HTMLElement | null = null;
+    let { studyId } = $props<{ studyId: string }>();
+    let isLoading = $state(true);
+    let showChart = $state(false);
+    let chartHtml = $state<string>("");
+    let error = $state<string | null>(null);
+    let container = $state<HTMLElement | null>(null);
 
     const dispatch = createEventDispatcher();
 
@@ -21,23 +20,34 @@
 
     export function refresh() {
         dispatch("refresh");
-        loadChart(studyId);
+        buildChart(studyId);
     }
 
-    $: {
+    $effect(() => {
+        console.log("[StudyTimelineChartDrawer] $effect studyId:", studyId);
         if (studyId) {
             console.log("studyId", studyId);
-            loadChart(studyId);
+            buildChart(studyId);
         }
-    }
+    });
 
-    async function loadChart(id: string) {
+    async function buildChart(id: string) {
+        console.log("build StudyTimelineChart: ", id);
         isLoading = true;
         showChart = false;
         error = null;
         try {
             const startTime = Date.now();
-            chartHtml = getChart(id);
+
+            // Get the configuration unit without opening the model (to preserve current model if viewing patient)
+            const modelManager = ModelManager.getInstance();
+            const unit = await modelManager.getModelUnitWithoutOpening(id, "StudyConfiguration") as StudyConfiguration;
+            if (!unit) {
+                throw new Error("Configuration unit is not available in the model.");
+            }
+            // Get the timeline chart
+            const rtObject = getTimelineChart(unit, false, true) as RtString;
+            chartHtml = rtObject.asString();
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
             await loadChartData();
             const elapsedTime = Date.now() - startTime;
@@ -45,19 +55,13 @@
                 await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
             }
             showChart = true;
+            
         } catch (err: unknown) {
             console.error(`Error fetching chart data for study: ${id}`, err);
             error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
         } finally {
             isLoading = false;
         }
-    }
-
-    function getChart(id: string) {
-        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-        const unit = model.configuration;
-        const rtObject = getTimelineChart(unit) as RtString;
-        return rtObject.asString();
     }
 
     async function loadChartData() {
@@ -104,13 +108,76 @@
 </svelte:head>
 
 <div class="drawer-content-area p-2">
-    <div style="display: {isLoading ? 'block' : 'none'}" class="text-center py-8">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p class="mt-2 text-gray-600">Preparing Study Timeline...</p>
-    </div>
-    <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
-        <div bind:this={container}>
-            {@html chartHtml}
+
+    {#if error}
+        <div class="drawer-error p-4">{error}</div>
+    {:else}
+        <div style="display: {isLoading ? 'block' : 'none'}">
+            <ContentLoader />   
         </div>
-    </div>
+        <div class="chart-content-wrapper" style="display: {!isLoading && showChart ? 'block' : 'none'}">
+            <div bind:this={container}>
+                {@html chartHtml}
+            </div>
+        </div>
+    {/if}
 </div>
+
+<style>
+    .chart-content-wrapper {
+        overflow-y: auto;
+        overflow-x: auto;
+        max-height: calc(100vh - 150px);
+    }
+
+    /* Consistent table styling for timeline content */
+    :global(.table_component table) {
+        border: 1px solid var(--white-30t);
+        border-collapse: collapse;
+        width: 100%;
+        margin: 1rem 0;
+    }
+    
+    :global(.table_component caption) {
+        color: var(--white-70t);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-align: left;
+    }
+    
+    :global(.table_component th) {
+        border: 1px solid var(--white-40t);
+        background-color: var(--black-10t);
+        color: var(--white);
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    :global(.table_component td) {
+        border: 1px solid var(--white-20t);
+        color: var(--white-90t);
+        padding: 0.75rem;
+    }
+    
+    :global(.table_component tbody tr:nth-child(even) td) {
+        background-color: var(--white-10t);
+    }
+    
+    :global(.table_component tbody tr:nth-child(odd) td) {
+        background-color: var(--white-5t);
+    }
+    
+    :global(.table_component td.text-center) {
+        text-align: center;
+    }
+    
+    :global(.table_component th.stretch) {
+        width: auto;
+    }
+    
+    :global(.table_component th.fit) {
+        width: 1%;
+        white-space: nowrap;
+    }
+</style>

@@ -1,46 +1,55 @@
 <script lang="ts">
+    import { AST, FreChangeManager, FreEditor, FrePartDelta, FrePartListDelta, FrePrimDelta, FrePrimListDelta } from "@freon4dsl/core";
+    import { FreonComponent } from "@freon4dsl/core-svelte";
+    import { PatientHistory, PatientHistoryUnit, PatientInfo } from "@freon4dsl/study-configuration";
+    import { Tabs } from '@skeletonlabs/skeleton-svelte';
+    import { runInAction } from "mobx";
     import { onDestroy, onMount } from "svelte";
     import PatientCard from "../components/cards/PatientCard.svelte";
-    import { Tabs, TabItem, ListPlaceholder } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faListCheck } from "@fortawesome/free-solid-svg-icons";
     import { dataStore, type Patient } from "../services/data/data-store.js";
-    import { ModelManager } from "../services/dsl/model-manager.js";
-    import { AST } from "@freon4dsl/core";
-    import { PatientInfo, PatientHistory, PatientHistoryUnit } from "@freon4dsl/samples-study-configuration";
-    import { FreonComponent } from "@freon4dsl/core-svelte";
-    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
-    import { FreEditor } from "@freon4dsl/core";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
-    import { Toolbar, ToolbarButton } from "flowbite-svelte";
-    import { faSave, faUndo, faRedo } from "@fortawesome/free-solid-svg-icons";
-    import { setDrawerProps, setDrawerVisibility } from "services/stores/side-drawer-store.js";
+    import { ModelManager } from "../services/dsl/model-manager.js";
+    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
+    import { setDrawerVisibility } from "../services/stores/side-drawer-store.js";
+// @ts-ignore
+    import { CalendarDays as IconCalendarDays, Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
 
-    export let id: string;
-    let patient: Patient | undefined;
-    let editorLoaded = false;
-    let dslEditor: FreEditor;
+    let { id } = $props<{ id: string }>();
+
+    let patient = $state<Patient | undefined>(undefined);
+    let isLoading = $state(true);
+    let activeTab = $state('schedule');
+    let dslEditor = $state<FreEditor | undefined>(undefined);
     let unit: PatientHistoryUnit | undefined;
     let patientInfo: PatientInfo | undefined;
+    let saveTimeout: ReturnType<typeof setTimeout> | null = null;
+    let unsubscribeChangeManager: (() => void) | undefined;
+    let isSaving = $state(false);
 
-    function clearPatientHistory(patientHistory: PatientHistory) {
-        patientHistory.patientVisits.splice(0);
-        patientHistory.patientNotAvailableDates.dates.splice(0);
+    function debouncedSave() {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            handleSavePatient();
+        }, 1000); // 1 second debounce
     }
 
     onMount(async () => {
-        patient = await dataStore.getPatient(id);
-        if (!patient) {
-            console.error(`Patient with id ${id} not found`);
-            return;
+        // Load the patient data
+        const fetchedPatient = await dataStore.getPatient(id);
+        if (fetchedPatient) {
+            patient = fetchedPatient;
+        } else {
+            // Patient not found
         }
+
+        // Load the patient history for editing
         AST.change(async () => {  
             dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
             const modelManager = ModelManager.getInstance();
 
             // Create the PatientHistoryUnit to use just for editing of one patient at a time
-            await modelManager.createNewUnit("PatientHistoryUnit", "PatientHistoryUnit");
-            var patientHistoryUnit =  modelManager.modelStore.getUnitByName("PatientHistoryUnit") as PatientHistoryUnit;
+            await modelManager.createBasicModelUnit("PatientHistoryUnit", "PatientHistoryUnit");
+            var patientHistoryUnit =  modelManager.getModelUnit("PatientHistoryUnit") as PatientHistoryUnit;
             clearPatientHistory(patientHistoryUnit.patientHistory);
             //TODO: Talk to Graham about changing patientNumber to patient_id or something else that can be initials, etc. 
             patientHistoryUnit.patientHistory.patient_id = patient!.patientNumber;
@@ -48,19 +57,21 @@
             patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(patient!.studyId, "PatientInfo") as PatientInfo;
             if (patientInfo === null || patientInfo === undefined) {
                 //This is the first time any patients for the study are being edited, so we need to create the PatientInfo
-                await modelManager.modelStore.createUnit("PatientInfo", "PatientInfo");
+                await modelManager.createRawModelUnit("PatientInfo", "PatientInfo");
             } else {
                 // The PatientInfo already exists, we need to setup the patientHistory for editing
-                var found = false;
-                patientInfo.patientHistories.forEach(aPatientHistory => {
-                    if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
-                        aPatientHistory.patientVisits.forEach(visit => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
-                        aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
-                        patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
-                        patientHistoryUnit.patientHistory.id = aPatientHistory.id;
-                        patientHistoryUnit.patientHistory.patient_id = aPatientHistory.patient_id;
-                        found = true;
-                    };
+                runInAction(() => {
+                    var found = false;
+                    patientInfo.patientHistories.forEach(aPatientHistory => {
+                        if (!found && aPatientHistory.patient_id === patient!.patientNumber) {
+                            aPatientHistory.patientVisits.forEach(visit => patientHistoryUnit.patientHistory.patientVisits.push(visit.copy()));
+                            aPatientHistory.patientNotAvailableDates.forEach(dateRange => patientHistoryUnit.patientHistory.patientNotAvailableDates.push(dateRange.copy()));
+                            patientHistoryUnit.patientHistory.startOfStudyDate = aPatientHistory.startOfStudyDate?.copy();
+                            patientHistoryUnit.patientHistory.id = aPatientHistory.id;
+                            patientHistoryUnit.patientHistory.patient_id = aPatientHistory.patient_id;
+                            found = true;
+                            };
+                    });
                 });
             }
             // Display the patientHistory for editing
@@ -69,47 +80,111 @@
             unit = patientHistoryUnit;
         });
 
+        // Subscribe to FreChangeManager changes AFTER model setup is complete
+        // Add a small delay to ensure model setup is fully complete
         setTimeout(() => {
-            editorLoaded = true;
-        }, 300);
+            const changeCallback = (delta) => {
+            if (isSaving) {
+                return;
+            }
+            
+            // Only save if the change is from the unit we're editing, not from patientInfo
+            // This prevents infinite loops: when we modify patientInfo during save (lines 155-173),
+            // those changes have delta.unit === patientInfo, so they're ignored here
+            if (!unit || delta.unit !== unit) {
+                return;
+            }
+            
+            if (delta instanceof FrePrimDelta) {
+                if (delta.oldValue != delta.newValue) {
+                    debouncedSave();
+                }
+            } else if (delta instanceof FrePrimListDelta) {
+                debouncedSave();
+            } else if (delta instanceof FrePartListDelta) {
+                debouncedSave();
+            } else if (delta instanceof FrePartDelta) {
+                debouncedSave();
+            }
+        };
+            FreChangeManager.getInstance().subscribeToPrimitive(changeCallback);
+            FreChangeManager.getInstance().subscribeToPart(changeCallback);
+            FreChangeManager.getInstance().subscribeToListElement(changeCallback);
+            FreChangeManager.getInstance().subscribeToList(changeCallback);
+            unsubscribeChangeManager = () => {
+                const manager = FreChangeManager.getInstance();
+                // Remove from primitive callbacks
+                const primArr = manager.changePrimCallbacks;
+                const primIdx = primArr.indexOf(changeCallback);
+                if (primIdx !== -1) primArr.splice(primIdx, 1);
 
-        if (!patient) {
-            console.error(`Patient with id ${id} not found`);
-        }
-        setDrawerProps("studyChecklist", { studyId: patient!.studyId });
-        setDrawerVisibility("studyChecklist", true);
-        setDrawerProps("patientTimelineChart", { id: id });
-        setDrawerVisibility("patientTimelineChart", true);
-        setDrawerProps("staffAvailability", { studyId: id });
-        setDrawerVisibility("staffAvailability", true);
+                // Remove from part callbacks
+                const partArr = manager.changePartCallbacks;
+                const partIdx = partArr.indexOf(changeCallback);
+                if (partIdx !== -1) partArr.splice(partIdx, 1);
+
+                // Remove from list element callbacks
+                const listElemArr = manager.changeListElemCallbacks;
+                const listElemIdx = listElemArr.indexOf(changeCallback);
+                if (listElemIdx !== -1) listElemArr.splice(listElemIdx, 1);
+
+                // Remove from list callbacks
+                const listArr = manager.changeListCallbacks;
+                const listIdx = listArr.indexOf(changeCallback);
+                if (listIdx !== -1) listArr.splice(listIdx, 1);
+            };
+        }, 100); // 100ms delay to ensure model setup is complete
+
+        setTimeout(() => {
+            isLoading = false;
+        }, 300);
     });
 
     onDestroy(() => {
         setDrawerVisibility("studyChecklist", false);
         setDrawerVisibility("patientTimelineChart", false);
+        setDrawerVisibility("visitChecklist", false);
+        if (unsubscribeChangeManager) unsubscribeChangeManager();
     });
 
-    async function handleSaveStudy() {
-        const modelManager = ModelManager.getInstance();
-        var patientNumber = patient!.patientNumber;
-        const patientInfo = await modelManager.modelStore.getUnitByName("PatientInfo") as PatientInfo;
+    async function handleSavePatient() {
+        if (isSaving) {
+            return;
+        }
         
-        var found = false;
-        // If the patientHistory for this patient was previously entered we need to replace it with the current value
-        patientInfo.patientHistories.forEach(aPatientHistory => {
-            if (aPatientHistory.patient_id === patientNumber) {
-                found = true;
-                aPatientHistory.patientVisits.splice(0);
-                unit?.patientHistory.patientVisits.forEach(visit => {
-                    aPatientHistory.patientVisits.push(visit.copy());
+        isSaving = true;
+        
+        try {
+            const modelManager = ModelManager.getInstance();
+            var patientNumber = patient!.patientNumber;
+            const patientInfo = await modelManager.getModelUnit("PatientInfo") as PatientInfo;
+            
+            runInAction(() => {
+                var found = false;
+                // If the patientHistory for this patient was previously entered we need to replace it with the current value
+                patientInfo.patientHistories.forEach(aPatientHistory => {
+                    if (aPatientHistory.patient_id === patientNumber) {
+                        found = true;
+                        aPatientHistory.patientVisits.splice(0);
+                        unit?.patientHistory.patientVisits.forEach(visit => {
+                            aPatientHistory.patientVisits.push(visit.copy());
+                        });
+                        aPatientHistory.patientNotAvailableDates.splice(0);
+                        unit!.patientHistory.patientNotAvailableDates.forEach(dateRange => aPatientHistory.patientNotAvailableDates.push(dateRange.copy()));
+                    }
                 });
-                aPatientHistory.patientNotAvailableDates.dates.splice(0);
-                unit!.patientHistory.patientNotAvailableDates.dates.forEach(dateRange => aPatientHistory.patientNotAvailableDates.dates.push(dateRange.copy()));
-            }
-        });
-        // If the patientHistory for this patient was not previously entered we need to add it to the list of all patientHistories in the PatientInfo
-        if (!found) {
-            patientInfo.patientHistories.push(unit?.patientHistory.copy() as PatientHistory);
+                // If the patientHistory for this patient was not previously entered we need to add it to the list of all patientHistories in the PatientInfo
+                if (!found) {
+                    patientInfo.patientHistories.push(unit?.patientHistory.copy() as PatientHistory);
+                }
+            });
+            
+            // Saving all the patientHistories stored in the PatientInfo even though we are only editing one patient at a time
+            await modelManager.saveModelUnit(patientInfo);
+        } catch (error) {
+            // Error during save
+        } finally {
+            isSaving = false;
         }
         // Saving all the patientHistories stored in the PatientInfo even though we are only editing one patient at a time
         await modelManager.modelStore.saveUnit(patientInfo);
@@ -119,48 +194,56 @@
 
     function handleUndoAction() {
         EditorRequestsHandler.getInstance().undo();
-        console.log("Undo action");
     }
 
     function handleRedoAction() {
         EditorRequestsHandler.getInstance().redo();
-        console.log("Redo action");
     }
 
+    function clearPatientHistory(patientHistory: PatientHistory) {
+        runInAction(() => {
+            patientHistory.patientVisits.splice(0);
+            patientHistory.patientNotAvailableDates.splice(0);
+        });
+    }
 </script>
 
 {#if patient}
     <div class="crc-container">
-        <div class="crc-card">
-            <PatientCard {patient} />
+        <div class="card-container">
+            <PatientCard patientId={patient.id} />
         </div>
 
         <div class="crc-content">
-            <Tabs tabStyle="pill" class="crc-tab">
-                <TabItem open title="Patient Info">
-                    <div slot="title" class="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faListCheck} class="w-4 h-4" />Patient Info
-                    </div>
-                    {#if editorLoaded}
-                        <Toolbar class="toolbar">
-                            <ToolbarButton class="toolbar-button" on:click={handleSaveStudy}><FontAwesomeIcon icon={faSave} /></ToolbarButton>
-                            <ToolbarButton class="toolbar-button" on:click={handleUndoAction}><FontAwesomeIcon icon={faUndo} /></ToolbarButton>
-                            <ToolbarButton class="toolbar-button" on:click={handleRedoAction}><FontAwesomeIcon icon={faRedo} /></ToolbarButton>
-                        </Toolbar>
-                        <div class="crc-editor crc-content-width">
-                            <FreonComponent editor={dslEditor} />
-                        </div>
-                    {:else}
-                        <div class="h-full crc-content-width">
-                            <ListPlaceholder
-                                divClass="p-4 space-y-4 mr-1 rounded border border-gray-200 divide-y divide-gray-200 shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
-                            />
-                        </div>
-                    {/if}
-                </TabItem>
+            <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2" contentBase="mt-0">
+                {#snippet list()}
+                    <Tabs.Control stateActive="tab-active" value="patient-info">
+                        <div class="tab-item"><IconCalendarDays size="16" />Completed Visits and Availability</div>
+                    </Tabs.Control>
+                {/snippet}
+
+                {#snippet content()}
+                    <Tabs.Panel value="schedule">
+                        {#if !isLoading}
+                            <div class="flex gap-2 mb-2">
+                                <button type="button" class="icon-button primary inverted" onclick={handleUndoAction}><IconUndo /></button>
+                                <button type="button" class="icon-button primary inverted" onclick={handleRedoAction}><IconRedo /></button>
+                            </div>
+                            <div class="crc-editor crc-content-width">
+                                <FreonComponent editor={dslEditor} />
+                            </div>
+                        {:else}
+                            <div class="h-full crc-content-width">
+                                <div class="placeholder animate-pulse"></div>
+                            </div>
+                        {/if}
+                    </Tabs.Panel>
+                {/snippet}
             </Tabs>
         </div>
     </div>
 {:else}
-    <p>Loading patient...</p>
+    <div class="h-full crc-content-width">
+        <div class="placeholder animate-pulse"></div>
+    </div>
 {/if}

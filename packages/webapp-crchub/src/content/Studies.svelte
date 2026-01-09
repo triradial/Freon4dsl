@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import StudyGrid from '../components/content/StudyGrid.svelte';
+    import StudyGrid from '../components/content/study/StudyGrid.svelte';
 
     onMount(async () => {
     });

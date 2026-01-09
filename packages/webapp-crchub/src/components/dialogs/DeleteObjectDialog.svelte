@@ -1,31 +1,62 @@
 <script lang="ts">
-    import { Modal, Button } from "flowbite-svelte";
+    import { Modal } from '@skeletonlabs/skeleton-svelte';
     import { createEventDispatcher } from "svelte";
     import { dataStore } from "../../services/data/data-store.js";
+    // @ts-ignore
+    import { CircleCheck as IconCircleCheck, CircleX as IconCircleX } from '@lucide/svelte';
 
-    export let open = false;
-    export let objectType: "study" | "patient";
-    export let object: any;
+    const { open = false, objectType, object } = $props<{ 
+        open?: boolean; 
+        objectType: "study" | "patient" | "person"; 
+        object: { id: string; person_id?: string; [key: string]: any } 
+    }>();
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher<{
+        delete: void;
+        cancel: void;
+    }>();
 
-    $: title = "Delete " + toProperCase(objectType);
-    $: if (open) {
-        console.log("Dialog opened for", objectType, object);
+    let isDeleting = $state(false);
+    let errorMessage = $state<string | null>(null);
+
+    function getTitle() {
+        return "Delete " + toProperCase(objectType);
     }
 
-    function handleDelete() {
+    async function handleDelete() {
+        if (isDeleting) return;
+        
+        isDeleting = true;
+        errorMessage = null;
+        
+        try {
+            let success = false;
         if (objectType === "study") {
-            dataStore.deleteStudy(object.id);
+                success = await dataStore.deleteStudy(object.id);
         } else if (objectType === "patient") {
-            dataStore.deletePatient(object.id);
+                success = await dataStore.deletePatient(object.id);
+        } else if (objectType === "person") {
+                const personId = object.person_id || object.id;
+                success = await dataStore.deletePerson(personId);
         }
-        dispatch("delete");
-        open = false;
+            
+            if (success) {
+                dispatch("delete");
+            } else {
+                errorMessage = `Failed to delete ${objectType}. Please try again.`;
+            }
+        } catch (error) {
+            console.error(`Error deleting ${objectType}:`, error);
+            // Use the error message if available, otherwise use a generic message
+            const errorMsg = error instanceof Error ? error.message : `An error occurred while deleting the ${objectType}`;
+            errorMessage = errorMsg || `An error occurred while deleting the ${objectType}. Please try again.`;
+        } finally {
+            isDeleting = false;
+        }
     }
 
     function handleCancel() {
-        open = false;
+        errorMessage = null;
         dispatch("cancel");
     }
 
@@ -34,25 +65,53 @@
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
     }
+
+    function getObjectName() {
+        if (!object) return '';
+        
+        if (objectType === "study") {
+            return object.name || object.id;
+        } else if (objectType === "patient") {
+            return object.patientNumber || object.initials || object.id;
+        } else if (objectType === "person") {
+            return object.name || object.email || object.id;
+        }
+        return object.id;
+    }
 </script>
 
 <Modal
-    {title}
-    bind:open
-    class="dialog"
-    backdropClass="dialog-backdrop fixed inset-0 bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
-    dialogClass="dialog-content fixed top-0 start-0 end-0 h-modal md:inset-0 md:h-full p-2 flex"
-    size="xs"
-    autofocus
-    placement="center"
+    open={open}
+    onOpenChange={(e) => { if (!e.open) handleCancel(); }}
+    contentBase="delete-dialog shadow-xl"
+    positionerJustify="justify-center"
+    positionerAlign="items-center"
+    positionerPadding=""
+    transitionsPositionerIn={{ y: 0, duration: 200 }}
+    transitionsPositionerOut={{ y: 0, duration: 200 }}
+    modal={true}
+    closeOnInteractOutside={false}
 >
-    <div class="text-left">
-        <div class="mb-2 text-xs font-normal text-gray-500 dark:text-gray-400">
-            Are you sure you want to delete this {objectType}?
+    {#snippet content()}
+        <header class="flex justify-between items-center mb-2">
+            <h3>{getTitle()}</h3>
+        </header>
+        <div>
+            <p class="text-sm text-gray-500">
+                Are you sure you want to delete the '{getObjectName()}' {objectType}?
+            </p>
+            {#if errorMessage}
+                <p class="dialog-error-message mt-2">{errorMessage}</p>
+            {/if}
         </div>
-    </div>
-    <svelte:fragment slot="footer">
-        <Button class="primary-button" on:click={handleDelete}>Yes, I'm sure</Button>
-        <Button class="secondary-button" on:click={handleCancel}>No, cancel</Button>
-    </svelte:fragment>
+        <footer class="flex justify-end gap-2 mt-4">
+            <button type="button" class="standard-button red inverted" onclick={handleDelete} disabled={isDeleting || !!errorMessage}>
+                <IconCircleCheck size="16" />
+                {isDeleting ? "Deleting..." : "Yes, I'm sure"}
+            </button>
+            <button type="button" class="standard-button green inverted" onclick={handleCancel} disabled={isDeleting}>
+                <IconCircleX size="16" />No, cancel
+            </button>
+        </footer>
+    {/snippet}
 </Modal>

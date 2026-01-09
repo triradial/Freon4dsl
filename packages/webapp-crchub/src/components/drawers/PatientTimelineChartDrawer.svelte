@@ -1,186 +1,270 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-    import { ListPlaceholder } from "flowbite-svelte";
+    import { RtString } from "@freon4dsl/core";
+    import { PatientHistory, PatientInfo, copyPatientHistoryWithFilledDates, determineReferenceDate, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getTimelineAsOfADate, type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { get } from "svelte/store";
+    import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { AST, RtString } from "@freon4dsl/core";
-    import { PatientHistory, PatientHistoryUnit, PatientInfo, type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getTimelineChart } from "../../services/app/study-timeline.js";
-    import { getTimelineAsOfADate } from "services/app/patient-timeline.js";
-    import { fillDateConceptFromAsString, Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-    import { dataStore, type Patient } from "../../services/data/data-store.js";
+    import { setDrawerTitle } from "../../services/stores/side-drawer-store.js";
 
-    export let id: string;
-    let isLoading = true;
-    let showChart = false;
-    let chartHtml: string = "";
-    let error: string | null = null;
-    let container: HTMLElement | null = null;
-    let patientInfo: PatientInfo | undefined;
+    let { id, studyId, showAllPatients = false } = $props<{ id?: string; studyId: string; showAllPatients?: boolean }>();
 
-    const dispatch = createEventDispatcher();
-
-    function closeDrawer() {
-        dispatch("close");
-    }
+    let isLoading = $state(true);
+    let showChart = $state(false);
+    let chartHtml = $state<string>("");
+    let error = $state<string | null>(null);
+    let container = $state<HTMLElement | null>(null);
 
     export function refresh() {
-        dispatch("refresh");
-        loadChart(id);
-    }
-
-    $: {
-        if (!id) {
-            console.error(`Patient with id ${id} not found`);
+        if (showAllPatients || !id) {
+            loadChartForAllPatients();
         } else {
-            loadChart(id);
+            loadChartForOnePatient(id);
         }
-
     }
 
-    const getTimelineChartError = () => {
+    // Update drawer title based on whether showing all patients or single patient
+    $effect(() => {
+        const title = (showAllPatients || !id) ? "All Patients Timeline" : "Patient Timeline";
+        setDrawerTitle("patientTimelineChart", title);
+    });
+
+    $effect(() => {
+        if (showAllPatients || !id) {
+            loadChartForAllPatients();
+        } else {
+            loadChartForOnePatient(id);
+        }
+    });
+
+    async function loadChartForOnePatient(patientId: string) {
+        await loadChartWithTiming(
+            () => getChartForOnePatient(undefined),
+            `Error fetching chart data for study: ${patientId}`
+        );
+    }
+
+    async function loadChartForAllPatients() {
+        await loadChartWithTiming(
+            () => getChartForAllPatients(undefined),
+            `Error fetching chart data for all patients in study: ${studyId}`
+        );
+    }
+
+    function getTimelineChartError() {
         const html = `<div class="limited-width-container"><div class='text-red-500'>Error: PatientInfo not found</div></div>`;
         return new RtString(html);
-    };
+    }
 
-    const fillDateConcept = (dateConcept: any) => {
-        fillDateConceptFromAsString(dateConcept);
-    };
-
-    const getChartWithPatientHistory = async (referenceDate: Date) => {
+    /**
+     * Gets PatientInfo and StudyConfiguration units for a study.
+     * Throws an error if either is not found.
+     */
+    async function getPatientAndStudyUnits(studyId: string): Promise<{ patientInfo: PatientInfo; studyConfig: StudyConfiguration }> {
         const modelManager = ModelManager.getInstance();
-        const fetchedPatient = await dataStore.getPatient(id);
+        
+        const patientInfo = await modelManager.getModelUnitWithoutOpening(studyId, "PatientInfo") as PatientInfo;
+        if (!patientInfo) {
+            throw new Error(`PatientInfo unit not found for study: ${studyId}`);
+        }
+        
+        const studyConfig = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+        if (!studyConfig) {
+            throw new Error(`StudyConfiguration unit not found for study: ${studyId}`);
+        }
+        
+        return { patientInfo, studyConfig };
+    }
 
-        let found = false;
-        let patientHistory: PatientHistory = PatientHistory.create({});
-        // Get the model data for all the Patients
-        patientInfo = await modelManager.openModelUnitWithoutSavingCurrentUnit(fetchedPatient!.studyId, "PatientInfo") as PatientInfo;
-        if (!patientInfo || patientInfo === undefined) {
+    const getChartForOnePatient = async (referenceDate: Date | undefined) => {
+        const fetchedPatient = await dataStore.getPatient(id);
+        if (!fetchedPatient) {
             const rtObject = getTimelineChartError() as RtString;
             return rtObject.asString();
         }
-              
-        patientInfo!.patientHistories.forEach(aPatientHistory => {
-            if (!found && aPatientHistory.patient_id === fetchedPatient!.patientNumber) {               
-                aPatientHistory.patientVisits.forEach(visit => {
-                    let updatedVisit = visit.copy(); 
-                    fillDateConcept(updatedVisit.actualVisitDate);  // Use the action wrapper
-                    patientHistory.patientVisits.push(updatedVisit);
-                });
-                aPatientHistory.patientNotAvailableDates.dates.forEach(dateRange => {
-                    let updatedDateRange = dateRange.copy();
-                    fillDateConcept(updatedDateRange.startDate);  // Use the action wrapper
-                    if (updatedDateRange.endDate) {
-                        fillDateConcept(updatedDateRange.endDate);  // Use the action wrapper
-                    }
-                    patientHistory.patientNotAvailableDates.dates.push(updatedDateRange);
-                });
-                found = true;
-            };
-        });
+
+        // Get study units
+        const { patientInfo, studyConfig } = await getPatientAndStudyUnits(fetchedPatient.studyId);
         
-        if (!found) {
-            console.error("No matching patient history found!");
-            const rtObject = getTimelineChartError() as RtString;
-            return rtObject.asString();
+        // Find and copy the matching patient history
+        const originalHistory = findPatientHistoryByPatientNumber(patientInfo.patientHistories, fetchedPatient.patientNumber);
+        if (!originalHistory) {
+            console.warn("No matching patient history found so chart will just show study schedule!");
         }
+        const patientHistory = originalHistory 
+            ? copyPatientHistoryWithFilledDates(originalHistory)
+            : PatientHistory.create({});
         
-        let referenceDateForTimeline : Date | undefined;
-        if (referenceDate === undefined) {
-            if (patientHistory.patientVisits.length > 0) {
-                referenceDateForTimeline = new Date(patientHistory.patientVisits[0].actualVisitDate.dateAsString);
-            } else {
-                referenceDateForTimeline = new Date(2024, 8, 30);
+        // Determine reference date
+        const referenceDateForTimeline = determineReferenceDate(referenceDate, patientHistory);
+
+        // Get patient identifier for single patient view
+        const patientIdentifier = fetchedPatient.patientNumber || fetchedPatient.id;
+        const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory, patientIdentifier);
+        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        return html;
+    };
+
+    const getChartForAllPatients = async (referenceDate: Date | undefined) => {
+        // Get all patients for the study
+        await dataStore.getStudyPatients(studyId);
+        const storeState = get(dataStore);
+        const allPatients = storeState.studyPatients.filter(p => p.studyId === studyId);
+        
+        if (allPatients.length === 0) {
+            return `<div class="limited-width-container"><div class='text-yellow-500'>No patients found for this study</div></div>`;
+        }
+
+        // Get study units
+        const { patientInfo, studyConfig } = await getPatientAndStudyUnits(studyId);
+
+        // Determine reference date from first patient visit if available
+        // Find the first patient history with visits to use as reference
+        const firstPatientHistoryWithVisits = findFirstPatientHistoryWithVisits(patientInfo.patientHistories, allPatients);
+        
+        const referenceDateForTimeline = determineReferenceDate(referenceDate, firstPatientHistoryWithVisits);
+        console.log("referenceDateForTimeline", referenceDateForTimeline);
+
+        // Create timeline with study configuration
+        const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, undefined);
+
+        // Add events for all patients
+        for (const patient of allPatients) {
+            const originalHistory = findPatientHistoryByPatientNumber(patientInfo.patientHistories, patient.patientNumber);
+            if (originalHistory) {
+                const copiedHistory = copyPatientHistoryWithFilledDates(originalHistory);
+                // Add patient events to timeline with patient identifier (use display name or patient number)
+                const patientIdentifier = patient.displayName || patient.name || patient.patientNumber;
+                timeline.addPatientEvents(copiedHistory, patientIdentifier);
             }
         }
 
-        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-        const studyConfig = model.configuration;
-        studyConfig.studyStartDayNumber = 0;
-        
-        let timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory);
-        const rtObject = (timeline as Timeline).getTimelineChartHtml() as RtString;
-        return rtObject.asString();
+        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        return html;
     };
 
-    async function loadChart(id: string) {
+    /**
+     * Executes script tags that are embedded in the chart HTML.
+     * 
+     * Background:
+     * When HTML is inserted via innerHTML, the browser does NOT execute any <script> tags
+     * for security reasons. The timeline chart HTML contains JavaScript code that needs to
+     * run to initialize the Vis.js timeline visualization. This function manually extracts
+     * those script tags and re-executes them.
+     * 
+     * Process:
+     * 1. Waits for the vis-timeline library to be loaded (from the CDN in <svelte:head>)
+     * 2. Finds all <script> tags in the container
+     * 3. For each script, creates a new script element and copies the content
+     * 4. Replaces the old script with the new one (this triggers execution)
+     * 5. Waits for the next animation frame to ensure scripts have executed
+     * 
+     * Why replace instead of just creating new scripts?
+     * - Scripts that are inserted via innerHTML are not executed
+     * - Replacing them with newly created script elements causes the browser to execute them
+     * 
+     * @returns Promise that resolves when all scripts have been executed
+     */
+    function executeEmbeddedChartScripts() {
+        return new Promise<void>((resolve) => {
+            if (container) {
+                /**
+                 * Polls for the vis-timeline library to be available before executing scripts.
+                 * The library is loaded asynchronously from a CDN, so we need to wait for it.
+                 */
+                const waitForVis = () => {
+                    // Check if vis-timeline library is loaded
+                    if (typeof (window as any).vis !== 'undefined') {
+                        // Find all script tags in the container (these were inserted via innerHTML)
+                        const scripts = container!.querySelectorAll("script");
+                        
+                        // For each script tag, create a new one and replace the old one
+                        // This is necessary because scripts inserted via innerHTML are not executed
+                        scripts.forEach((oldScript) => {
+                            const newScript = document.createElement("script");
+                            newScript.textContent = oldScript.textContent;
+                            // Replacing the old script with a new one triggers execution
+                            oldScript.replaceWith(newScript);
+                        });
+                        
+                        // Wait for the next animation frame to ensure:
+                        // 1. The DOM has been updated with the new script elements
+                        // 2. The scripts have had time to execute
+                        // 3. Any timeline initialization code has completed
+                        requestAnimationFrame(() => {
+                            resolve();
+                        });
+                    } else {
+                        // vis library not loaded yet, check again in 50ms
+                        setTimeout(waitForVis, 50);
+                    }
+                };
+                
+                // Start polling for the vis library
+                waitForVis();
+            } else {
+                // No container available, resolve immediately
+                resolve();
+            }
+        });
+    }
+
+    /**
+     * Common loading pattern for both single patient and all patients views.
+     * Ensures minimum display time and handles errors consistently.
+     */
+    async function loadChartWithTiming(chartFunction: () => Promise<string>, errorContext: string) {
         isLoading = true;
         showChart = false;
         error = null;
         try {
             const startTime = Date.now();
-            const referenceDate = new Date(2024, 8, 30);
-            chartHtml = await getChartWithPatientHistory(referenceDate);
+            chartHtml = await chartFunction();
             await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
-            await loadChartData();
+            await renderChart();
             const elapsedTime = Date.now() - startTime;
             if (elapsedTime < 5000) {
                 await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
             }
             showChart = true;
         } catch (err: unknown) {
-            console.error(`Error fetching chart data for study: ${id}`, err);
+            console.error(errorContext, err);
             error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
         } finally {
             isLoading = false;
         }
     }
 
-    function executeScripts() {
-        return new Promise<void>((resolve) => {
-            if (container) {
-                // Wait for vis library to be available
-                const waitForVis = () => {
-                    if (typeof (window as any).vis !== 'undefined') {
-                        const scripts = container!.querySelectorAll("script");
-                        scripts.forEach((oldScript) => {
-                            const newScript = document.createElement("script");
-                            newScript.textContent = oldScript.textContent;
-                            oldScript.replaceWith(newScript);
-                        });
-                        
-                        // Wait for next frame to ensure scripts execute
-                        requestAnimationFrame(() => {
-                            resolve();
-                        });
-                    } else {
-                        // Check again in a short while
-                        setTimeout(waitForVis, 50);
-                    }
-                };
-                
-                waitForVis();
-            } else {
-                resolve();
-            }
-        });
-    }
-
-    async function loadChartData() {
+    /**
+     * Renders the chart HTML into the DOM container and executes embedded scripts.
+     * The chartHtml is already generated at this point - this function just displays it.
+     */
+    async function renderChart() {
         if (container) {
             container.innerHTML = chartHtml;
-            await executeScripts(); // Wait for scripts to actually execute
+            await executeEmbeddedChartScripts(); // Wait for scripts to actually execute
         }
     }
+
 </script>
 
 <svelte:head>
     <script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
     <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
 </svelte:head>
-
-<div class="drawer-content-area p-2">
-    <div style="display: {isLoading ? 'block' : 'none'}" class="text-center py-8">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p class="mt-2 text-gray-600">Preparing Patient Timeline...</p>
-    </div>
     
-    <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
-        <div bind:this={container}>
-            {@html chartHtml}
+{#if error}
+    <div class="drawer-error p-4">{error}</div>
+{:else}
+    <div class="drawer-content-area p-2">
+        <div style="display: {isLoading ? 'block' : 'none'}" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-2 text-gray-600">Preparing Patient Timeline...</p>
+        </div>
+        
+        <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
+            <div bind:this={container}>
+                {@html chartHtml}
+            </div>
         </div>
     </div>
-    
-    {#if error}
-        <div class="text-red-500 p-4">{error}</div>
-    {/if}
-</div>
+{/if}

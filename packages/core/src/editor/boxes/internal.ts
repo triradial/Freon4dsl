@@ -42,12 +42,3 @@ export * from "./externalBoxes/index.js";
 // the following files contain export that do not depend on any other file
 export * from "./SelectOption.js";
 export * from "./ChoiceTextHelper.js";
-
-/** START - M+G */
-export * from "./CharAllowed.js";
-export * from "./MultiLineTextBox2.js";
-export * from "./ListGroupBox.js";
-export * from "./ItemGroupBox.js";
-export * from "./ItemGroupBox2.js";
-export * from "./IconBox.js";
-/**END - M+G */

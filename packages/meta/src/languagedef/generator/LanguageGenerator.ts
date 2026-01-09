@@ -1,18 +1,19 @@
 import * as fs from "fs";
-import { MetaLogger, LOG2USER, COMMAND_LINE_FOLDER } from "../../utils/index.js";
+import { LOG2USER } from "../../utils/basic-dependencies/index.js";
+import { MetaLogger } from "../../utils/no-dependencies/index.js";
 import {
+    COMMAND_LINE_FOLDER, COMMAND_LINE_GEN_FOLDER,
     CONFIGURATION_FOLDER,
     CONFIGURATION_GEN_FOLDER,
-    GenerationStatus,
-    FileUtil,
     LANGUAGE_FOLDER,
     LANGUAGE_GEN_FOLDER,
     LANGUAGE_UTILS_FOLDER,
     LANGUAGE_UTILS_GEN_FOLDER,
     Names,
     STDLIB_FOLDER,
-    STDLIB_GEN_FOLDER,
-} from "../../utils/index.js";
+    STDLIB_GEN_FOLDER
+} from '../../utils/on-lang/index.js';
+import { FileUtil, GenerationStatus } from '../../utils/file-utils/index.js';
 import { FreMetaLanguage } from "../metalanguage/index.js";
 import {
     // AllConceptsTemplate,
@@ -29,6 +30,7 @@ import {
 import { CommandLineTemplate } from "./templates/CommandLineTemplate.js";
 import { ConfigurationTemplate } from "./templates/ConfigurationTemplate.js";
 import { ModelTemplate } from "./templates/ModelTemplate.js";
+import { RootIndexTemplate } from "./templates/RootIndexTemplate.js";
 import { UnitTemplate } from "./templates/UnitTemplate.js";
 import { ListUtilTemplate } from "./templates/ListUtilTemplate.js";
 
@@ -44,6 +46,7 @@ export class LanguageGenerator {
     private utilsFolder: string = "";
     private stdlibFolder: string = "";
     private commandlineFolder: string = "";
+    private commandlineGenFolder: string = "";
 
     generate(language: FreMetaLanguage): void {
         LOGGER.log(
@@ -61,6 +64,7 @@ export class LanguageGenerator {
         const languageIndexTemplate = new IndexTemplate();
         // const allConceptsTemplate = new AllConceptsTemplate();
         const environmentTemplate = new EnvironmentTemplate();
+        const rootIndexTemplate = new RootIndexTemplate()
         const stdlibTemplate = new StdlibTemplate();
         const walkerTemplate = new WalkerTemplate();
         const workerTemplate = new WorkerInterfaceTemplate();
@@ -76,11 +80,13 @@ export class LanguageGenerator {
         FileUtil.createDirIfNotExisting(this.utilsGenFolder);
         FileUtil.createDirIfNotExisting(this.stdlibGenFolder);
         FileUtil.createDirIfNotExisting(this.commandlineFolder);
+        FileUtil.createDirIfNotExisting(this.commandlineGenFolder);
         // do not delete files in configurationFolder, because these may contain user edits
         FileUtil.deleteFilesInDir(this.languageGenFolder, generationStatus);
         FileUtil.deleteFilesInDir(this.configurationGenFolder, generationStatus);
         FileUtil.deleteFilesInDir(this.utilsGenFolder, generationStatus);
         FileUtil.deleteFilesInDir(this.stdlibGenFolder, generationStatus);
+        FileUtil.deleteFilesInDir(this.commandlineGenFolder, generationStatus);
 
         // set relative path to get the imports right
         let relativePath = "../";
@@ -165,9 +171,9 @@ export class LanguageGenerator {
         // set relative path to an extra level to get the imports right
         relativePath = "../../";
 
-        // LOGGER.log(`Generating FreNodeReference: ${this.languageGenFolder}/${Names.FreElementReference}.ts`);
-        // const referenceFile = FileUtil.pretty(freReferenceTemplate.generateFreReference(language, relativePath), "FreElementReference", generationStatus);
-        // fs.writeFileSync(`${this.languageGenFolder}/${Names.FreElementReference}.ts`, referenceFile);
+        // LOGGER.log(`Generating FreNodeReference: ${this.languageGenFolder}/${Names.FreNodeReference}.ts`);
+        // const referenceFile = FileUtil.pretty(freReferenceTemplate.generateFreReference(language, relativePath), "FreNodeReference", generationStatus);
+        // fs.writeFileSync(`${this.languageGenFolder}/${Names.FreNodeReference}.ts`, referenceFile);
 
         LOGGER.log(
             `Generating language structure information: ${this.languageGenFolder}/${Names.language(language)}.ts`,
@@ -257,14 +263,14 @@ export class LanguageGenerator {
             FileUtil.generateManualFile(`${this.stdlibFolder}/index.ts`, indexFile, "Stdlib Index Class");
         }
 
-        LOGGER.log(`Generating command line: ${this.commandlineFolder}/FreonCommandLine.ts`);
+        LOGGER.log(`Generating command line: ${this.commandlineGenFolder}/FreonCommandLine.ts`);
         const commandLineFile = FileUtil.pretty(
             commandLineTemplate.generateCommandLine(),
             "CommandLine Class",
             generationStatus,
         );
         FileUtil.generateManualFile(
-            `${this.commandlineFolder}/FreonCommandLine.ts`,
+            `${this.commandlineGenFolder}/FreonCommandLine.ts`,
             commandLineFile,
             "CommandLine Class",
         );
@@ -281,18 +287,26 @@ export class LanguageGenerator {
             "CommandLineRunner Class",
         );
 
-        LOGGER.log(`Generating dummy action: ${this.commandlineFolder}/DummyAction.ts`);
+        LOGGER.log(`Generating dummy action: ${this.commandlineGenFolder}/DummyAction.ts`);
         const emptyActionFile = FileUtil.pretty(
             commandLineTemplate.generateEmptyAction(),
             "DummyAction Class",
             generationStatus,
         );
-        FileUtil.generateManualFile(`${this.commandlineFolder}/DummyAction.ts`, emptyActionFile, "DummyAction Class");
+        FileUtil.generateManualFile(`${this.commandlineGenFolder}/DummyAction.ts`, emptyActionFile, "DummyAction Class");
+
+        LOGGER.log(`Generating root index: ./index.ts`);
+        const rootIndexFile = FileUtil.pretty(
+            rootIndexTemplate.generateRootIndex(language),
+            "Root Index",
+            generationStatus,
+        );
+        fs.writeFileSync(`${this.outputfolder}/index.ts`, rootIndexFile);
 
         if (generationStatus.numberOfErrors > 0) {
             LOGGER.info(`Generated language '${language.name}' with ${generationStatus.numberOfErrors} errors.`);
         } else {
-            LOGGER.info(`Succesfully generated language '${language.name}'`);
+            LOGGER.info(`Successfully generated language '${language.name}'`);
         }
     }
 
@@ -306,6 +320,7 @@ export class LanguageGenerator {
         this.configurationFolder = this.outputfolder + "/" + CONFIGURATION_FOLDER;
         this.stdlibFolder = this.outputfolder + "/" + STDLIB_FOLDER;
         this.commandlineFolder = this.outputfolder + "/" + COMMAND_LINE_FOLDER;
+        this.commandlineGenFolder = this.outputfolder + "/" + COMMAND_LINE_GEN_FOLDER;
     }
 
     clean(force: boolean) {

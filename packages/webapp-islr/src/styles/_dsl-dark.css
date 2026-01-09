@@ -1,0 +1,673 @@
+/* #region GENERAL */
+.mdc-drawer {
+  background-color: #212121 !important;
+}
+
+.mdc-drawer span {
+  color: white !important;
+}
+
+.mdc-drawer__title {
+  color: rgb(126, 151, 188) !important;
+}
+
+.demo-list {
+  border-left: 4px solid rgb(50, 97, 156) !important;
+}
+
+.mdc-deprecated-list-item--activated {
+  background-color: var(--neon-red) !important;
+}
+
+.mdc-menu-surface {
+  background-color: #808080 !important;
+}
+
+/* #endregion */
+
+:focus {
+  outline: none;
+}
+
+.status-bar {
+  --freon-colors-bg-status: #003f69;
+  --freon-colors-text-status: white;
+  --freon-text-style-status: italic;
+}
+
+.main-frame {
+  /* SplitPane divider */
+  --freon-colors-slider: var(--white);
+  /* The color of the slider between the error/search pane and the editor */
+}
+
+.text-box-action {
+  --freon-text-component-color: rgb(194, 194, 194);
+}
+
+.text-box-select {
+  --freon-text-component-color: rgb(96, 196, 96);
+}
+
+.text-box-text {
+  --freon-text-component-color: rgb(133, 186, 255);
+}
+
+.app-green-font {
+  color: #00fcfc !important;
+}
+
+/* #region FREON COMPONENTS */
+
+/* #region Label Component */
+.label-component:empty:before {
+  background-color: inherit;
+}
+
+.label-component {
+  color: var(--gray-400);
+  background-color: inherit;
+}
+
+/* #endregion */
+
+/* #region Text Component */
+.text-component-input {
+  color: var(--green-90t);
+  background-color: var(--green-30t);
+}
+
+.text-component-text {
+  color: var(--green-90t);
+  background-color: inherit;
+}
+
+.text-component-text:hover {
+  color: var(--green-90t);
+  background-color: var(--green-30t);
+}
+
+.text-component-input::placeholder {
+  color: #adadad;
+  opacity: 1;
+}
+
+.text-component-input:focus {
+  --tw-ring-color: var(--green-90t) !important;
+}
+
+.text-dropdown-component .text-component-input {
+  color: var(--blue-90t);
+  background-color: var(--blue-40t);
+}
+
+.text-dropdown-component .text-component-text {
+  color: var(--blue-90t);
+  background-color: inherit;
+}
+
+.text-dropdown-component .text-component-text:hover {
+  color: var(--blue-90t) !important;
+  background-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component .text-component-input::placeholder,
+.text-component-placeholder {
+  color: #adadad !important;
+  opacity: 1 !important;
+}
+
+.text-dropdown-component .text-component-input:focus {
+  --tw-ring-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component .text-component-input-wrapper::before {
+  color: #adadad;
+}
+
+/* Skeleton Combobox styling to match text-dropdown-component */
+.text-dropdown-component [data-scope="combobox"][data-part="input"] {
+  color: var(--blue-90t) !important;
+  background-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="input"]::placeholder {
+  color: #adadad !important;
+  opacity: 1 !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="input"]:focus {
+  --tw-ring-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="content"] {
+  background-color: #3f3f3f !important;
+  color: white !important;
+  border: var(--blue-50t) 1px solid !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="item"] {
+  color: white !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="item"]:hover {
+  background-color: var(--white-20t) !important;
+}
+
+.text-dropdown-component [data-scope="combobox"][data-part="item"][data-highlighted] {
+  background-color: var(--white-10t) !important;
+}
+
+/* #endregion */
+
+/* #region Switch Component */
+.switch-component button {
+  background: var(--gray-800);
+}
+
+.switch-component button::before {
+  /* defines the knob */
+  background-color: var(--gray-400);
+}
+
+.switch-component button[aria-checked='true'] {
+  background-color: var(--primary-900t);
+}
+
+.switch-component button:focus {
+  box-shadow: 0 0 0 1px #206C2D;
+  ;
+}
+
+.switch-component button:hover {
+  box-shadow: 0 0 5px 2px #4C5C96;
+}
+
+/* #endregion */
+
+/* #region List Group Component */
+.list-group.type1 {
+  background-color: var(--primary-900t);
+  border-bottom: 1px solid #000;
+}
+
+.list-group.type2 {
+  background-color: var(--white-20t);
+  border-bottom: 1px solid #000;
+}
+
+.list-group.type3 {
+  border-bottom: 1px solid var(--white-30t);
+}
+
+.list-group.type4 {
+  border-bottom: 1px solid #bbbbbb;
+  ;
+}
+
+.list-group.type5 {
+  border-bottom: 1px solid #1191b9;
+  ;
+}
+
+.list-group.type1 .list-group-label {
+  color: var(--white);
+}
+
+.list-group.type2 .list-group-label {
+  color: var(--gray-200);
+}
+
+.list-group.type3 .list-group-label {
+  color: var(--gray-200);
+}
+
+.list-group.type4 .list-group-label {
+  color: #bbbbbb !important;
+}
+
+.list-group.type4 .toggle-button {
+  color: #bbbbbb !important;
+}
+
+.list-group.type5 .list-group-label {
+  color: #1191b9 !important;
+}
+
+.list-group.type5 .toggle-button {
+  color: #1191b9 !important;
+}
+
+.list-group .toggle-button {
+  border: 1px solid transparent;
+  color: var(--gray-200);
+  background-color: transparent;
+}
+
+.list-group .toggle-button:hover {
+  background-color: var(--primary-600);
+}
+
+.list-group .toggle-button:active {
+  background-color: var(--primary-600);
+}
+
+.list-group .toggle-button:focus {
+  background-color: var(--primary-600);
+}
+
+.drag-handle svg {
+  color: var(--green-90t);
+}
+
+.action-button {
+  color: var(--white) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--white) !important;
+}
+
+.action-button:hover {
+  color: var(--white) !important;
+  background-color: var(--primary-600) !important;
+  border: 1px solid var(--primary-600) !important;
+}
+
+.action-button:active,
+.action-button:focus {
+  color: var(--white) !important;
+  background-color: var(--primary-400) !important;
+  border: 1px solid var(--primary-400) !important;
+}
+
+/* #endregion */
+
+/* #region Item Group Component */
+.item-group {
+  background-color: inherit;
+}
+
+.item-group .required {
+  background-color: var(--error-background);
+  color: var(--pink-900);
+}
+
+.item-group.type1 {
+  background-color: inherit;
+}
+
+.item-group.type2 {
+  background-color: inherit;
+}
+
+.item-group.type1 .item-group-label {
+  color: var(--white);
+}
+
+.item-group.type2 .item-group-label,
+.item-group.type3 .item-group-label,
+.item-group.type4 .item-group-label {
+  color: var(--gray-200);
+}
+
+.item-group .toggle-button {
+  border: 1px solid transparent;
+  color: var(--gray-200);
+  background-color: transparent;
+}
+
+.item-group .toggle-button:hover {
+  background-color: var(--primary-600);
+}
+
+.item-group .toggle-button:active {
+  background-color: var(--primary-600);
+}
+
+.item-group .toggle-button:focus {
+  background-color: var(--primary-600);
+}
+
+.drag-button {
+  color: var(--gray-200);
+  background-color: transparent;
+}
+
+/* #endregion */
+
+/* #region Layout Component */
+.layout-component {
+  background: transparent;
+}
+
+/* #endregion */
+
+/* #region MultlineText Component */
+.multiline2-component .view-mode {
+  color: var(--gray-200) !important;
+  background: inherit !important;
+}
+
+.multiline2-component .view-mode:hover {
+  color: var(--green-90t) !important;
+  background-color: var(--green-30t) !important;
+}
+
+.multiline2-component .edit-mode {
+  outline: 1px solid transparent !important;
+  outline-offset: 1px !important;
+  --tw-ring-inset: var(--tw-empty,
+      /*!*/
+      /*!*/
+    );
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: #32cd3275;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
+  border-color: #ffffff00;
+  margin: 4px 4px 4px 4px !important;
+}
+
+.tinymce-wrapper>div {
+  color: var(--gray-200);
+}
+
+.multiline2-component-placeholder {
+  color: var(--green-90t);
+}
+
+/* #endregion */
+
+/* #region Date Component */
+.date-component-input {
+  color: var(--primary-200);
+  background-color: var(--gray-900);
+}
+
+.date-component-text {
+  color: var(--primary-200);
+  background-color: inherit;
+}
+
+.date-component-placeholder {
+  color: var(--gray-600);
+  background-color: inherit;
+}
+
+/* #endregion */
+
+/* #region Time Component */
+.time-component-input {
+  color: var(--primary-200);
+  background-color: var(--gray-900);
+}
+
+.time-component-text {
+  color: var(--primary-200);
+  background-color: inherit;
+}
+
+.time-component-placeholder {
+  color: var(--gray-600);
+  background-color: inherit;
+}
+
+/* #endregion */
+
+/* #region Dropdown Component */
+.dropdown-component {
+  background-color: #3f3f3f;
+  color: white;
+  border: var(--blue-50t) 1px solid;
+}
+
+.dropdown-component-item:hover {
+  background-color: var(--white-20t);
+}
+
+.dropdown-component-selected {
+  background-color: var(--white-10t);
+}
+
+.reference-arrow {
+  fill: var(--white) !important;
+}
+
+.reference-button {
+  background-color: transparent !important;
+}
+
+.reference-button:hover {
+  background-color: var(--white-30t) !important;
+}
+
+.reference-button:active {
+  background-color: var(--white-40t) !important;
+}
+
+/* #endregion */
+
+/* #region Context Menu */
+.contextmenu {
+  background-color: #1F2A37;
+  border-color: #131a22;
+  box-shadow: 1.5px 1.5px 8px grey;
+}
+
+.contextmenu-button {
+  background: none;
+  border: none;
+  color: white !important;
+}
+
+.contextmenu-button:hover {
+  background-color: #374151;
+  color: white
+}
+
+.contextmenu-hr {
+  width: 100%;
+  margin: 0;
+  color: unset !important;
+  border-top: solid 1px #C6CCE2;
+}
+
+.contextmenu-shortcut {
+  color: #A0AACF !important;
+}
+
+/* #endregion */
+
+/* #region Button */
+/* Copied from https://svelte.dev/repl/hello-world?version=4.2.18 */
+/* Ripple effect */
+/* Button style */
+.button-component {}
+
+.button-component-ripple {
+  background-position: center;
+  transition: background 0.8s;
+}
+
+.button-component-ripple:hover {}
+
+.button-component-ripple:active {}
+
+.button-component-empty {}
+
+/* #endregion */
+
+/* #region Datepicker */
+.datepicker-input .date-picker-segment {
+  color: var(--green-90t);
+  background-color: var(--green-30t);
+  border: 1px solid var(--green-90t);
+}
+/* .datepicker-input::-ms-input-placeholder {
+  color: var(--green-90t);
+} */
+.datepicker-input::placeholder {
+  color: var(--green-90t);
+}
+.datepicker-display {
+  color: var(--green-90t);
+  background-color: transparent
+}
+
+.datepicker-separator {
+  color: var(--text-primary-500);
+  background-color: transparent;
+}
+/* #endregion */
+
+/* #region DateRangePicker */
+/* Force all calendar popup elements to be opaque with dark background */
+[data-bits-floating-content-wrapper],
+[data-bits-floating-content-wrapper] *,
+[data-bits-floating-content-wrapper] > div,
+[data-bits-floating-content-wrapper] > div > div,
+[data-bits-floating-content-wrapper] > div > div > div,
+.bg-background-alt,
+[data-range-calendar-root],
+[data-range-calendar-root] *,
+[data-range-calendar-grid],
+[data-range-calendar-grid] *,
+[data-range-calendar-grid-body],
+[data-range-calendar-grid-body] *,
+[data-range-calendar-cell],
+[data-range-calendar-cell] *,
+[data-range-calendar-day],
+[data-range-calendar-day] * {
+  background: #22272e !important;
+  opacity: 1 !important;
+}
+
+/* Override all opacity classes except for outside-month days */
+[data-bits-floating-content-wrapper] .disabled\:opacity-50:not([data-outside-month]),
+[data-bits-floating-content-wrapper] [disabled]:not([data-outside-month]),
+[data-bits-floating-content-wrapper] .opacity-50:not([data-outside-month]),
+[data-range-calendar-root] .disabled\:opacity-50:not([data-outside-month]),
+[data-range-calendar-root] [disabled]:not([data-outside-month]),
+[data-range-calendar-root] .opacity-50:not([data-outside-month]) {
+  opacity: 1 !important;
+}
+
+/* Ensure outside-month days are properly dimmed */
+[data-bits-floating-content-wrapper] [data-outside-month],
+[data-bits-floating-content-wrapper] [data-outside-month] *,
+[data-range-calendar-root] [data-outside-month],
+[data-range-calendar-root] [data-outside-month] *,
+[data-range-calendar-day][data-outside-month],
+[data-range-calendar-day][data-outside-month] * {
+  opacity: 0.5 !important;
+  color: var(--text-primary-300) !important;
+}
+
+/* Additional aggressive targeting */
+div[data-bits-floating-content-wrapper],
+div[data-bits-floating-content-wrapper] div,
+div[data-bits-floating-content-wrapper] span,
+div[data-bits-floating-content-wrapper] button,
+div[data-bits-floating-content-wrapper] td,
+div[data-bits-floating-content-wrapper] th,
+div[data-range-calendar-root],
+div[data-range-calendar-root] div,
+div[data-range-calendar-root] span,
+div[data-range-calendar-root] button,
+div[data-range-calendar-root] td,
+div[data-range-calendar-root] th {
+  background: #22272e !important;
+  opacity: 1 !important;
+}
+
+/* Range selection highlighting - more specific selectors */
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selection-start],
+[data-range-calendar-root] [data-range-calendar-day][data-selection-start],
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-start],
+[data-range-calendar-root] [data-range-calendar-day][data-range-start] {
+  background: var(--green-90t) !important;
+  color: #ffffff !important;
+  border-radius: 9px !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selection-end],
+[data-range-calendar-root] [data-range-calendar-day][data-selection-end],
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-end],
+[data-range-calendar-root] [data-range-calendar-day][data-range-end] {
+  background: var(--green-90t) !important;
+  color: #ffffff !important;
+  border-radius: 9px !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-middle],
+[data-range-calendar-root] [data-range-calendar-day][data-range-middle] {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selected]:not([data-selection-start]):not([data-selection-end]),
+[data-range-calendar-root] [data-range-calendar-day][data-selected]:not([data-selection-start]):not([data-selection-end]) {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
+
+/* Additional targeting for any selected dates */
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selected],
+[data-range-calendar-root] [data-range-calendar-day][data-selected] {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
+/* #endregion */
+
+/* #region Timepicker */
+.timepicker-input {
+  background-color: var(--green-30t);
+  color: var(--green-90t);
+  border: 1px solid var(--green-90t);
+}
+/* .timepicker-input::-ms-input-placeholder {
+  color: var(--green-90t);
+} */
+.timepicker-input::placeholder {
+  color: var(--green-90t);
+}
+.timepicker-display {
+  color: var(--green-90t);
+  background-color: transparent
+}
+/* #endregion */
+
+/* #region Render Component */
+.render-component-selected {
+  background-color: #c9daff40 !important;
+}
+
+/* #endregion */
+
+/* #region Drag Handle */
+.drag-handle-icon {
+  fill: var(--white);
+}
+/* #endregion */
+
+/* #region Abbreviation Components */
+.abbreviation-text {
+  color: var(--gray-200) !important;
+}
+/* #endregion */
+
+/* #region TabFixComponent highlighting - CSS-only approach */
+/* Highlight only the narrow input field with red background */
+.narrow-input:focus {
+  background-color: red !important;
+  border: 1px solid red !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+/* #endregion */ 

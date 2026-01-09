@@ -1,87 +1,177 @@
 <script lang="ts">
-    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Avatar, Dropdown, DropdownItem, DropdownHeader, DropdownDivider, Button } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+    import { AppBar, Popover, Switch } from '@skeletonlabs/skeleton-svelte';
     import { isAuthenticated } from "../../services/security/auth.js";
-    import { navigateTo } from "../../services/routing/route-action.js";
+    import { goto } from '$app/navigation';
     import { theme } from "../../services/stores/theme-store.js";
     import { ROUTE } from "../../constants/route-constants.js";
     import { LABEL } from "../../constants/label-constants.js";
     import { userStore, type User } from "../../services/stores/users-store.js";
+    import { adminModeStore } from "../../services/stores/admin-mode-store.js";
+    import { staffAvailabilityStore } from "../../services/stores/staff-availability-store.js";
+    // @ts-ignore
+    import { Sun as IconSun, Moon as IconMoon } from '@lucide/svelte';
+    import version from '../../../static/version.txt?raw';
 
-    let user: User | null;
-    userStore.subscribe((value) => {
-        user = value;
+    let user = $derived($userStore);
+    let adminMode = $derived($adminModeStore);
+    let showStaffAvailability = $derived($staffAvailabilityStore);
+    
+    $effect(() => {
+        console.log('[NavBar] User updated:', user);
+        console.log('[NavBar] isGlobalAdmin:', user?.isGlobalAdmin);
     });
 
-    let nonActiveClass = "md:hover:bg-transparent border-none";
-
-    function loadContent(event: Event, routeName: string) {
-        console.log("sidenav->component:", routeName);
-        event.preventDefault();
-        navigateTo(routeName);
+    function navTo(route: string) {
+        let path = '/';
+        if (route && route.toLowerCase() !== 'home') {
+            path = '/' + route.toLowerCase();
+        }
+        goto(path, { invalidateAll: true });
     }
 
-    function signOut() {
-        isAuthenticated.set(false);
-        sessionStorage.setItem("auth", "false");
-        userStore.clearUser();
+    async function signOut() {
+        // Import and call the auth signOut function to properly clear all state
+        const { signOut: authSignOut } = await import('../../services/security/auth.js');
+        await authSignOut();
+        popoverOpen = false;
     }
 
-    let isDark = true;
+    let isDark = $derived($theme === "dark");
 
-    function themeToggle() {
-        theme.update((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
-    }
-
-    $: isDark = $theme === "dark";
-    $: icon = isDark ? faSun : faMoon;
-
-    $: userInitials = user
+    let userInitials = $derived(user
         ? user.name
               .split(" ")
               .map((n) => n[0])
               .join("")
-              .toUpperCase()
-        : "";
+        : "");
+
+    let popoverOpen = $state(false);
+    let managePopoverOpen = $state(false);
+    
+    function popoverClose() {
+        popoverOpen = false;
+    }
+    
+    function managePopoverClose() {
+        managePopoverOpen = false;
+    }
+
+    function themeToggle() {
+        $theme = $theme === "dark" ? "light" : "dark";
+    }
+
+    function toggleAdminMode() {
+        adminModeStore.toggle();
+    }
+
+    function toggleShowStaffAvailability() {
+        staffAvailabilityStore.toggle();
+    }
 </script>
 
-<Navbar class="navbar-component">
-    <NavBrand href="/">
-        <img src="/assets/images/logo_grey.svg" class="me-1 h-6 sm:h-8" alt="CRCHub Logo" />
-        <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-            <span class="crc-logo-p1">CRC</span><span class="crc-logo-p2">Hub</span>
-        </span>
-    </NavBrand>
-    <NavUl
-        ulClass="!bg-transparent flex flex-row items-center space-x-4"
-        divClass="md:block md:w-auto shocking !w-auto"
-        class="navbar-commands border-none"
-        hidden={false}
-    >
-        <NavLi href="#" on:click={(event) => loadContent(event, ROUTE.HOME)}>{LABEL.HOME}</NavLi>
-        <NavLi href="#" on:click={(event) => loadContent(event, ROUTE.STUDIES)}>{LABEL.STUDIES}</NavLi>
-        <NavLi href="#" on:click={(event) => loadContent(event, ROUTE.AVAILABILITY)}>{LABEL.AVAILABILITY}</NavLi>
-    </NavUl>
-    <div class="grow" />
-    <div class="flex items-center gap-2 mr-2">
-        <Button pill={true} outline={true} class="navbar-button" size="md" on:click={themeToggle}>
-            {#key icon}
-                <FontAwesomeIcon {icon} />
-            {/key}
-        </Button>
-    </div>
-    <div class="flex items-center md:order-2">
-        <Avatar id="avatar" border size="sm" class="cursor-pointer">{userInitials}</Avatar>
-    </div>
-    <Dropdown class="avatar-menu" placement="bottom" triggeredBy="#avatar">
-        <DropdownHeader>
-            <span class="block text-sm">{user ? user.name : "Unknown"}</span>
-            <span class="block truncate text-sm font-medium">{user ? user.email : "Unknown"}</span>
-        </DropdownHeader>
-        <DropdownItem>Profile</DropdownItem>
-        <DropdownItem>Settings</DropdownItem>
-        <DropdownDivider />
-        <DropdownItem on:click={signOut}>Sign out</DropdownItem>
-    </Dropdown>
-</Navbar>
+<AppBar trailSpaceX="gap-1">
+    {#snippet lead()}
+        <div id="navbar-logo" class="flex items-center">
+            <img src="/images/logo_grey.svg" class="me-1 h-6 sm:h-8" alt="CRCHub Logo" />
+            <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+                <span class="crc-logo-p1">CRC</span><span class="crc-logo-p2">Hub</span>
+            </span>
+        </div>  
+        <div class="navbar-commands">
+            <button type="button" onclick={() => navTo(ROUTE.HOME)}>{LABEL.HOME}</button>
+            <button type="button" onclick={() => navTo(ROUTE.STUDIES)}>{LABEL.STUDIES}</button>
+            <button type="button" onclick={() => navTo(ROUTE.FACILITY)}>{LABEL.FACILITY}</button>
+            {#if adminMode}
+                <Popover zIndex="900"
+                    open={managePopoverOpen}
+                    onOpenChange={(e) => (managePopoverOpen = e.open)}
+                    positioning={{ placement: 'bottom-start' }}
+                    triggerBase="p-0"
+                    contentBase="popover-content card p-2 min-w-[160px]"
+                >
+                    {#snippet trigger()}
+                        <button type="button">{LABEL.MANAGE} ▼</button>
+                    {/snippet}
+                    {#snippet content()}
+                        <div class="manage-menu" style="display: flex; flex-direction: column; gap: 0;">
+                            <button type="button" class="manage-menu-item" style="text-align: left; padding: 8px 16px; background: none; border: none; color: var(--navbar-text); cursor: pointer; width: 100%;" onclick={() => { navTo(ROUTE.ORGANIZATIONS); managePopoverClose(); }}>
+                                {LABEL.ORGANIZATIONS}
+                            </button>
+                            <button type="button" class="manage-menu-item" style="text-align: left; padding: 8px 16px; background: none; border: none; color: var(--navbar-text); cursor: pointer; width: 100%;" onclick={() => { navTo(ROUTE.PEOPLE); managePopoverClose(); }}>
+                                {LABEL.PEOPLE}
+                            </button>
+                        </div>
+                    {/snippet}
+                </Popover>
+            {/if}
+        </div>
+    {/snippet}
+
+    {#snippet trail()}
+        <div class="flex items-center">
+            <button class="icon-button btn-toggle-theme" onclick={themeToggle} aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>{#if isDark}<IconSun size={20} />{:else}<IconMoon size={20}    />{/if}</button>
+        </div>
+        <Popover zIndex="900"
+            open={popoverOpen}
+            onOpenChange={(e) => (popoverOpen = e.open)}
+            positioning={{ placement: 'bottom' }}
+            triggerBase="p-0 popover-trigger shadow-none"
+            contentBase="user-popover popover-content card p-4"
+        >
+            {#snippet trigger()}
+                <div class="user-avatar-container">
+                    <div class="icon-button btn-user">{userInitials}</div>
+                    {#if adminMode}
+                        <div class="admin-indicator"></div>
+                    {/if}
+                </div>
+            {/snippet}
+            {#snippet content()}
+                <header class="flex justify-between items-center mb-2">
+                    <div class="w-full">
+                        <div class="flex items-center justify-between gap-4 mb-3">
+                            <span class="block user-name">{user ? user.name : "Unknown"}</span>
+                            {#if user?.isGlobalAdmin}
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <span class="user-text">Admin Mode</span>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={adminMode} 
+                                        onchange={toggleAdminMode}
+                                        class="admin-mode w-4 h-4 cursor-pointer"
+                                    />
+                                </label>
+                            {/if}
+                        </div>
+                        <span class="block user-text">{user ? user.email : "Unknown"}</span>
+                        {#if user?.facility}
+                            <span class="block user-text">{user.facility}</span>
+                        {:else}
+                            <span class="block user-text facility-not-assigned">Facility Not Assigned</span>
+                        {/if}
+                    </div>
+                </header>
+                <hr class="my-2" />
+                <div class="user-menu mb-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            checked={showStaffAvailability} 
+                            onchange={toggleShowStaffAvailability}
+                            class="w-4 h-4 cursor-pointer"
+                        />
+                        <span class="user-text">Show Staff Availability</span>
+                    </label>
+                </div>
+                <hr class="my-2" />
+                <div class="user-menu mb-4">
+                    <button class="px-2 py-1" onclick={signOut} tabindex="0">Sign out</button>
+                </div>
+                <hr class="my-2" /> 
+                <span class="block version-text mt-4">Copyright © 2025 Triradial. All rights reserved.</span>
+                <span class="block version-text">CRCHub Version {version.trim()}</span>
+
+            {/snippet}
+        </Popover>
+    {/snippet}
+</AppBar>

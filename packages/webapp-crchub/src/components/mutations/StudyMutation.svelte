@@ -1,40 +1,107 @@
 <script lang="ts">
-    import { Card, Button, Input, Select, Textarea, Helper } from "flowbite-svelte";
-    // import type { ColorVariant } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
     import { getStatusColor } from "../../services/utils.js";
     import { type Study } from "../../services/data/data-store.js";
-    import { createEventDispatcher } from "svelte";
+    // @ts-ignore
+    import { Save as IconSave, X as IconX, Asterisk as IconAsterisk } from '@lucide/svelte';
 
-    export let study: Study;
-    export let action: "add" | "edit";
-    let mutatedStudy = { ...study };
+    const { study, action, onsave, onclose } = $props<{
+        study: Study;
+        action: "add" | "edit";
+        onsave?: (study: Study) => void;
+        onclose?: () => void;
+    }>();
+
+    let mutatedStudy = $state({ ...study });
+    let siteNumber = $state('');
+    let siteId = $state<string | undefined>(undefined);
     let rows: number = 6;
-    const dispatch = createEventDispatcher();
 
-    $: statusColor = getStatusColor(mutatedStudy.status);
-    $: getInputClass = (field: keyof typeof errors) => {
+    let statusColor = $derived(getStatusColor(mutatedStudy.status));
+    
+    function getErrorState(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";
-    };
-    $: if (action === "edit" && study) {
-        validateAllFields();
     }
-    let errors = {
-        name: "",
-    };
-    $: errorState = { ...errors };
-    $: hasErrors = Object.values(errorState).some((error) => error !== "");
 
-    function saveChanges() {
-        validateAllFields();
-        if (Object.values(errorState).every((error) => error === "")) {
-            dispatch("save", mutatedStudy);
+    // Update mutatedStudy when study prop changes
+    $effect(() => {
+        Object.assign(mutatedStudy, study);
+    });
+
+    // Track initialization
+    let initialized = false;
+
+    // Initialize on mount
+    $effect(() => {
+        if (!initialized) {
+            initialized = true;
+            console.log("[StudyMutation] Component initialized - action:", action, "study:", study);
+            
+            // If editing, fetch site info first before validating
+            if (action === "edit" && study && study.id) {
+                console.log("[StudyMutation] Edit mode - fetching site info before validation");
+                fetchSiteInfo().then(() => {
+                    console.log("[StudyMutation] Site info loaded, now running validation");
+                    validateAllFields();
+                    console.log("[StudyMutation] Validation complete - errors:", errors);
+                });
+            } else {
+                // For add mode, set default status to Planning and run validation immediately
+                console.log("[StudyMutation] Add mode - setting default status to Planning");
+                if (!mutatedStudy.status) {
+                    mutatedStudy.status = "Planning";
+                }
+                validateAllFields();
+                console.log("[StudyMutation] Validation complete - errors:", errors);
+            }
+        }
+    });
+
+    async function fetchSiteInfo() {
+        if (!study.id) return;
+        console.log("[StudyMutation] fetchSiteInfo: Fetching site for study ID:", study.id);
+        const { dataStore } = await import("../../services/data/data-store.js");
+        const site = await dataStore.getUserStudySite(study.id);
+        console.log("[StudyMutation] fetchSiteInfo: Site received:", site);
+        if (site) {
+            siteNumber = site.siteNumber || '';
+            siteId = site.id;
+            console.log("[StudyMutation] fetchSiteInfo: Set siteNumber to:", siteNumber, "siteId:", siteId);
+            // Re-validate after loading site info
+            validateField("siteNumber", siteNumber);
+        } else {
+            console.log("[StudyMutation] fetchSiteInfo: No site found for study");
         }
     }
 
-    function cancelEdit() {
-        dispatch("close");
+    const errors = $state({
+        name: "",
+        siteNumber: "",
+    });
+    const errorState = $state({ ...errors });
+    let hasErrors = $derived(Object.values(errorState).some((error) => error !== ""));
+
+    async function handleSave() {
+        validateAllFields();
+        if (Object.values(errorState).every((error) => error === "")) {
+            console.log("[StudyMutation] calling onsave prop", mutatedStudy);
+            if (action === "add") {
+                // For add action, include the site number
+                onsave?.({ ...mutatedStudy, siteNumber } as any);
+            } else {
+                // For edit action, save the study and update the site number
+                onsave?.(mutatedStudy);
+                // Update the site number if it changed
+                if (siteId) {
+                    const { dataStore } = await import("../../services/data/data-store.js");
+                    await dataStore.updateSiteNumber(siteId, siteNumber);
+                }
+            }
+        }
+    }
+
+    function handleClose() {
+        console.log("[StudyMutation] calling onclose prop");
+        onclose?.();
     }
 
     function handleInput(field: keyof typeof errors) {
@@ -45,72 +112,71 @@
     }
 
     function validateAllFields() {
-        (Object.keys(mutatedStudy) as Array<keyof typeof errors>).forEach((key) => {
-            if (key in errors) {
-                validateField(key, mutatedStudy[key]);
-            }
-        });
+        console.log("[StudyMutation] validateAllFields called - mutatedStudy.name:", mutatedStudy.name, "siteNumber:", siteNumber);
+        // Validate study name
+        validateField("name", mutatedStudy.name);
+        // Validate site number
+        validateField("siteNumber", siteNumber);
     }
 
-    function validateField(field: keyof typeof errors, value: string) {
-        if (field === "name" && !value.trim()) {
+    function validateField(field: keyof typeof errors, value: string | undefined) {
+        const strValue = value || '';
+        console.log(`[StudyMutation] Validating ${field}: value="${strValue}"`);
+        if (field === "name" && !strValue.trim()) {
             errors[field] = "Study name is required";
+            console.log(`[StudyMutation] ${field} validation failed - required`);
+        } else if (field === "siteNumber" && !strValue.trim()) {
+            errors[field] = "Site number is required";
+            console.log(`[StudyMutation] ${field} validation failed - required`);
         } else {
             errors[field] = "";
+            console.log(`[StudyMutation] ${field} validation passed`);
         }
-        errorState = { ...errors }; // Update reactive error state
+        errorState[field] = errors[field];
+        console.log(`[StudyMutation] After validation - errors.${field}="${errors[field]}", errorState.${field}="${errorState[field]}"`);
     }
 </script>
 
-<Card class="crc-mutation-area max-w-sm">
-    <div class="space-y-2">
+<div class="mutation-area max-w-sm">
+    <div class="flex flex-col gap-4">
         <div>
-            <h4 class="card-label-text">Name</h4>
-            <Input type="text" bind:value={mutatedStudy.name} on:input={handleInput("name")} class="crc-field {getInputClass('name')}" />
+            <div class="small-label-text">Study Name{#if errors.name}<IconAsterisk size="12" color="red" />{/if}</div>        
+            <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} />
         </div>
         <div>
-            <h4 class="card-label-text">Title</h4>
-            <Textarea class="crc-field min-h-[5rem]" {rows} bind:value={mutatedStudy.title} />
+            <div class="small-label-text">Title</div>
+            <textarea class="textarea-field min-h-[5rem]" rows={rows} bind:value={mutatedStudy.title}></textarea>
         </div>
         <div>
-            <h4 class="card-label-text">Status</h4>
-            <Select class="crc-field" bind:value={mutatedStudy.status}>
+            <div class="small-label-text">Status</div>
+            <select class="select-field" bind:value={mutatedStudy.status}>
                 <option value="Planning">Planning</option>
                 <option value="Active">Active</option>
                 <option value="Completed">Completed</option>
                 <option value="Suspended">Suspended</option>
                 <option value="Withdrawn">Withdrawn</option>
-            </Select>
+            </select>
         </div>
         <div>
-            <h4 class="card-label-text">Phase</h4>
-            <Input type="text" bind:value={mutatedStudy.phase} class="crc-field" />
+            <div class="small-label-text">Phase</div>
+            <input class="input-field" type="text" bind:value={mutatedStudy.phase}  />
         </div>
         <div>
-            <h4 class="card-label-text">Therapeutic Area</h4>
-            <Input type="text" bind:value={mutatedStudy.therapeuticArea} class="crc-field" />
+            <div class="small-label-text">Therapeutic Area</div>
+            <input class="input-field" type="text" bind:value={mutatedStudy.therapeuticArea}  />
         </div>
         <div>
-            <h4 class="card-label-text text-gray-700">Current Protocol</h4>
-            <Input type="text" bind:value={mutatedStudy.currentProtocol} class="crc-field" />
+            <div class="small-label-text">Current Protocol</div>
+            <input class="input-field" type="text" bind:value={mutatedStudy.currentProtocol}  />
+        </div>
+        <hr class="separator-divider" />
+        <div>
+            <div class="small-label-text">Site Number{#if errors.siteNumber}<IconAsterisk size="12" color="red" />{/if}</div>
+            <input class="input-field {getErrorState('siteNumber')}" type="text" bind:value={siteNumber} oninput={handleInput("siteNumber")} />
         </div>
     </div>
-    <div class="flex items-center justify-center mt-4">
-        <Button size="xs" color="primary" class="mr-2" on:click={saveChanges} disabled={hasErrors}>
-            <FontAwesomeIcon icon={faSave} class="mr-2" />
-            Save
-        </Button>
-        <Button size="xs" color="light" on:click={cancelEdit}>
-            <FontAwesomeIcon icon={faTimes} class="mr-2" />
-            Cancel
-        </Button>
+    <div class="flex items-center justify-right mt-8">
+        <button class="standard-button primary inverted" onclick={handleSave} disabled={hasErrors}><IconSave size="16" />Save</button>
+        <button class="standard-button gray inverted" onclick={handleClose}><IconX size="16" />Cancel</button>
     </div>
-</Card>
-
-<style>
-    :global(.card) {
-        border-radius: 0;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-    }
-</style>
+</div>

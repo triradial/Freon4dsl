@@ -9,9 +9,12 @@ import { jsonAsString } from "../../util/index.js";
 import * as Keys from "./Keys.js";
 import { MetaKey } from "./Keys.js";
 import { FreLogger } from "../../logging/index.js";
-import { ListElementInfo, MenuItem, FreCreatePartAction, FreEditor } from "../index.js";
-import { FreLanguage, FreLanguageClassifier, PropertyKind } from "../../language/index.js";
-import { FreNode } from "../../ast/index.js";
+import { FreCreatePartAction, type FreEditor, MenuItem } from "../index.js";
+import type { ListElementInfo } from "../index.js";
+import { FreLanguage } from "../../language/index.js";
+import type { DragAndDropType, FreLanguageClassifier, PropertyKind } from "../../language/index.js";
+import type { FreNamedNode, FreNode, FreNodeReference } from "../../ast/index.js";
+import { isFreNodeReference } from "../../ast/index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
 
 const LOGGER = new FreLogger("ListUtil");
@@ -54,13 +57,14 @@ export function createKeyboardShortcutForList2(
  */
 export function moveListElement(
     parentElement: FreNode,
-    movedElement: FreNode,
+    movedElement: FreNode | FreNodeReference<FreNamedNode>,
     targetPropertyName: string,
     targetIndex: number
 ) {
+    // console.log(`moveListElement: ${targetPropertyName}, ${parentElement.freId()}`)
     // get info about the property that needs to be changed
     const { property, isList } = getPropertyInfo(parentElement, targetPropertyName);
-    // console.log('List before: [' + property.map(x => x.freId()).join(', ') + ']');
+    // console.log('List before: [' + property.map(x => x["name"]).join(', ') + ']');
     const oldIndex: number = movedElement.freOwnerDescriptor().propertyIndex;
     // tslint:disable-next-line:max-line-length
     // console.log(`moveListElement=> element: ${parentElement.freLanguageConcept()}, property: ${targetPropertyName}, oldIndex: ${oldIndex}, targetIndex: ${targetIndex}`);
@@ -72,16 +76,22 @@ export function moveListElement(
         AST.change(() => {
             const tmpProp = property[oldIndex];
             property.splice(oldIndex, 1);
-            /* START GM - This doesn't seem to work
             // Make sure the item is added at the correct index
-            // if (targetIndex > 0) {
-            //     targetIndex -= 1;
-            // }
-            END GM */
+            if (targetIndex > 0) {
+                targetIndex -= 1;
+            }
             property.splice(targetIndex, 0, tmpProp);
         });
     }
-    // console.log('List after: [' + property.map(x => x.freId()).join(', ') + ']');
+    // console.log('List after: [' + property.map(x => x["name"]).join(', ') + ']');
+}
+
+function printTypeName(dropped: DragAndDropType): string {
+    if (dropped.isRef) {
+        return 'Reference to ' + dropped.type;
+    } else {
+        return dropped.type;
+    }
 }
 
 /**
@@ -96,29 +106,35 @@ export function moveListElement(
 export function dropListElement(
     editor: FreEditor,
     dropped: ListElementInfo,
-    targetMetaType: string,
+    targetMetaType: DragAndDropType,
     targetElem: FreNode,
     targetPropertyName: string,
     targetIndex: number,
 ) {
-    if (!FreLanguage.getInstance().metaConformsToType(dropped.element, targetMetaType)) {
-        // check if item may be dropped here
-        editor.setUserMessage(
-            "Drop is not allowed here, because the types do not match (" +
-            dropped.element.freLanguageConcept() +
-            " does not conform to " +
-            targetMetaType +
-            ").",
-            FreErrorSeverity.Error,
-        );
-        return;
-    }
-    // console.log(`dropListElement=> element: ${dropped.element.freLanguageConcept()}, property: ${dropped.propertyName},
-    // oldIndex: ${dropped.propertyIndex}, targetElem: ${targetElem},
-    // targetPropertyName ${targetPropertyName}, targetIndex: ${targetIndex}`);
-    const { property, isList } = getPropertyInfo(targetElem, targetPropertyName);
-    // console.log('List before: [' + property.map(x => x.freId()).join(', ') + ']');
     if (!!dropped.element) {
+        // First, check whether the types allow a drop
+        if (!FreLanguage.getInstance().dragMetaConformsToType(dropped.elementType, targetMetaType)) {
+            // check if item may be dropped here
+            editor.setUserMessage(
+                "Drop is not allowed here, because the types do not match (" +
+                printTypeName(dropped.elementType) +
+                " does not conform to " +
+                printTypeName(targetMetaType) +
+                ").",
+                FreErrorSeverity.Error,
+            );
+            return;
+        }
+
+        // The dropped element may have a completely different projection within the context of
+        // the node in which it is dropped. Therefore, we clean the used projection for the dropped element.
+        if (!isFreNodeReference(dropped.element)) {
+            editor.projection.getBoxProvider(dropped.element).clearUsedProjection();
+        }
+
+        // Types ok, now perform the actual transfer from one list on another.
+        const {property, isList} = getPropertyInfo(targetElem, targetPropertyName);
+        // console.log('List before: [' + property.map(x => x["name"]).join(', ') + ']');
         // Add the found element to 'targetElem[targetPropertyName]' at position 'targetIndex'.
         // Note that we need not explicitly remove the item from its old position, the mobx decorators do that.
         // Note that because of the placeholder that is shown as last element of a list, the targetIndex may be equal to the property.length.
@@ -127,19 +143,7 @@ export function dropListElement(
                 property.splice(targetIndex, 0, dropped.element);
             })
         }
-    }
-    // console.log('List after: [' + property.map(x => x.freId()).join(', ') + ']');
-}
-
-export function smartDuplicate(originalElement: FreNode, duplicatedElement: FreNode) {
-    const methodName = 'smartUpdate';
-    const args = [originalElement];
-    // Call methodName if it exists on the element
-    if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === 'function') {
-        console.log(`Calling ${methodName} on the instance.`);
-        return (duplicatedElement as any)[methodName](...args);
-    } else {
-        console.log(`Method ${methodName} does not exist on the instance.`);
+        // console.log('List after: [' + property.map(x => x["name"]).join(', ') + ']');
     }
 }
 
@@ -168,7 +172,7 @@ export function getContextMenuOptions(
         "No options available",
         "",
         // @ts-ignore
-        (element: FreNode, index: number, editor: FreEditor) => { },
+        (element: FreNode, index: number, editor: FreEditor) => {},
     );
     if (clsOtIntf === undefined || clsOtIntf === null) {
         console.error("Unexpected: Cannot find class or interface for [" + conceptName + "]");
@@ -210,30 +214,30 @@ export function getContextMenuOptions(
         // @ts-ignore
         addBefore = new MenuItem(
             `Add before ${contextMsg}`,
-            "Ctrl+A",
+            '', //"Ctrl+A",
             // @ts-ignore
-            (element: FreNode, index: number, editor: FreEditor) => { },
+            (element: FreNode, index: number, editor: FreEditor) => {},
             submenuItemsBefore,
         );
         // @ts-ignore
         addAfter = new MenuItem(
             `Add after ${contextMsg}`,
-            "Ctrl+I",
+          '', //"Ctrl+I",
             // @ts-ignore
-            (element: FreNode, index: number, editor: FreEditor) => { },
+            (element: FreNode, index: number, editor: FreEditor) => {},
             submenuItemsAfter,
         );
     } else {
         addBefore = new MenuItem(
             `Add before ${contextMsg}`,
-            "Ctrl+A",
+          '', //"Ctrl+A",
             // @ts-ignore
             (element: FreNode, index: number, editor: FreEditor) =>
                 addListElement(editor, listParent, propertyName, index, conceptName, true),
         );
         addAfter = new MenuItem(
             `Add after ${contextMsg}`,
-            "Ctrl+I",
+          '', //"Ctrl+I",
             // @ts-ignore
             (element: FreNode, index: number, editor: FreEditor) =>
                 addListElement(editor, listParent, propertyName, index, conceptName, false),
@@ -253,16 +257,7 @@ export function getContextMenuOptions(
         (element: FreNode, index: number, editor: FreEditor) =>
             pasteListElement(listParent, propertyName, index, editor, false),
     );
-    const smartDup = new MenuItem(
-        "Duplicate",
-        "Ctrl+D",
-        // @ts-ignore
-        (element: FreNode, index: number, editor: FreEditor) => {
-            copyListElement(element, editor);
-            smartDuplicate(element, editor.copiedElement);
-            pasteListElement(listParent, propertyName, index, editor, false);
-        }
-    );
+
     // now create the whole item list
     if (optionsType === MenuOptionsType.placeholder) {
         // add lesser items for a placeholder
@@ -303,7 +298,6 @@ export function getContextMenuOptions(
             ),
             pasteBefore,
             pasteAfter,
-            smartDup,
         ];
     }
     return items;
@@ -336,7 +330,7 @@ function addListElement(
     // targetPropertyName ${propertyName}, index: ${index}`);
 
     // make the change, if the property is a list and the type of the new element conforms to the type of elements in the list
-    const newElement: FreNode = FreLanguage.getInstance().classifier(typeOfAdded)?.creator({});
+    const newElement: FreNode = FreLanguage.getInstance().concept(typeOfAdded)?.creator({});
     if (newElement === undefined || newElement === null) {
         console.error("New element undefined"); // TODO Find out why this happens sometimes
         return;
@@ -393,7 +387,8 @@ function deleteListElement(listParent: FreNode, propertyName: string, index: num
  * @param editor
  */
 function cutListElement(listParent: FreNode, propertyName: string, element: FreNode, editor: FreEditor) {
-    deleteListElement(listParent, propertyName, 0, element);
+    const index = element.freOwnerDescriptor().propertyIndex
+    deleteListElement(listParent, propertyName, index, element);
     editor.copiedElement = element;
 }
 
@@ -441,10 +436,10 @@ function pasteListElement(
     if (!FreLanguage.getInstance().metaConformsToType(editor.copiedElement, type)) {
         editor.setUserMessage(
             "Types do not conform (" +
-            editor.copiedElement.freLanguageConcept() +
-            " does not conform to " +
-            type +
-            ").",
+                editor.copiedElement.freLanguageConcept() +
+                " does not conform to " +
+                type +
+                ").",
             FreErrorSeverity.Error,
         );
         return;
@@ -482,7 +477,7 @@ export type PropertyInfo = {
  * @param propertyName
  */
 function getPropertyInfo(element: FreNode, propertyName: string): PropertyInfo {
-    // console.log(`element: ${element.freId()}, element type: ${element.freLanguageConcept()}, propertyName: ${propertyName}`)
+    LOGGER.log(`element: ${element.freId()}, element type: ${element.freLanguageConcept()}, propertyName: ${propertyName}`)
     const property = element[propertyName];
     const propInfo = FreLanguage.getInstance().classifierProperty(element.freLanguageConcept(), propertyName);
     const isList: boolean = propInfo.isList;

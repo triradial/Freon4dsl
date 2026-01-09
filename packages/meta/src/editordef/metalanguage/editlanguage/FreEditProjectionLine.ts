@@ -1,4 +1,4 @@
-import { FreMetaDefinitionElement } from "../../../utils/index.js";
+import { FreMetaDefinitionElement } from "../../../utils/no-dependencies/index.js";
 import {
     FreEditParsedNewline,
     FreEditParsedProjectionIndent,
@@ -15,7 +15,7 @@ export class FreEditProjectionLine extends FreMetaDefinitionElement {
 
     isEmpty(): boolean {
         return (
-            this.items.every((i) => i instanceof FreEditParsedNewline || i instanceof FreEditParsedProjectionIndent) || (this.items as FreEditProjectionItem[]).length === 0
+          this.items.length === 0 || this.items.every((i) => i instanceof FreEditParsedNewline || i instanceof FreEditParsedProjectionIndent)
         );
     }
 

@@ -1,0 +1,15 @@
+editor schedulingAndChecklistsShow precedence 100
+
+Event {
+    [ 
+        [fragment schedulingAndChecklistsEventDetails wrap=ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
+    ]
+    fragment schedulingAndChecklistsEventDetails [
+        ${name}
+        This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event type"} that is also referred to as ${alternativeName}
+        ${description}
+        ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="false" selectable="false" label="Schedule"}
+        ${tasks wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Checklist"}
+    ]
+}
+

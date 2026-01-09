@@ -1,26 +1,24 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount } from "svelte";
-    import { ListPlaceholder } from "flowbite-svelte";
-    import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { getChecklistAsMarkdown } from "../../services/app/study-timeline.js";
-
-    // PDFMake and Markdown-it imports
+    import { getChecklistAsMarkdown, StudyConfiguration } from "@freon4dsl/study-configuration";
+    import MarkdownIt from "markdown-it";
     import pdfMake from "pdfmake/build/pdfmake.js";
     import pdfFonts from "pdfmake/build/vfs_fonts.js";
-    import type { TDocumentDefinitions } from "pdfmake/interfaces.js";
-    import MarkdownIt from "markdown-it";
-    import { dataStore } from "services/data/data-store.js";
+    import { createEventDispatcher, onMount } from "svelte";
+    import { dataStore } from "../../services/data/data-store.js";
+    import { ModelManager } from "../../services/dsl/model-manager.js";
+    import ContentLoader from "./ContentLoader.svelte";
+    // Removed GitHub markdown CSS to use consistent UI styling
 
     pdfMake.vfs = pdfFonts as any;
-    const md = new MarkdownIt();
+    const md = new MarkdownIt({ html: true });
 
-    export let studyId: string;
-    let studyName: string = "";
-    let isLoading = true;
-    let checklistHtml: string = "";
-    let error: string | null = null;
-    let showHeadingNumbers: boolean = true;
+    let { studyId } = $props<{ studyId: string }>();
+
+    let studyName = $state<string>("");
+    let isLoading = $state(true);
+    let checklistHtml = $state<string>("");
+    let error = $state<string | null>(null);
+    let showHeadingNumbers = $state(true);
 
     const dispatch = createEventDispatcher();
 
@@ -33,15 +31,16 @@
         dispatch("close");
     }
 
-    function openPdf() {
-
-        const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-
-        if (!model) {
-            error = "Model not loaded, cannot generate PDF.";
-            return;
-        }
-        const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
+    async function openPdf() {
+        try {
+            const modelManager = ModelManager.getInstance();
+            const unit = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+            
+            if (!unit) {
+                error = "Configuration unit not loaded, cannot generate PDF.";
+                return;
+            }
+        const markdown = getChecklistAsMarkdown(unit, showHeadingNumbers);
         const tokens = md.parse(markdown, {});
 
         const content: any[] = [];
@@ -145,7 +144,7 @@
             ...content
         ];
 
-        const docDefinition: TDocumentDefinitions = {
+        const docDefinition: any = {
             content: finalContent,
             info: {
                 title: `${studyName} - ${new Date().toLocaleDateString()}`,
@@ -153,8 +152,6 @@
                 subject: "Study Checklist"
             },
             header: function(currentPage: number, pageCount: number) {
-                const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-                // const studyName = model.name || "Study Checklist";
                 return {
                     text: `${studyName} - ${new Date().toLocaleDateString()}`,
                     alignment: 'center',
@@ -204,6 +201,10 @@
             
             URL.revokeObjectURL(url);
         });
+        } catch (err: unknown) {
+            console.error('Error generating PDF:', err);
+            error = err instanceof Error ? err.message : "An error occurred while generating PDF";
+        }
     }
 
     export function refresh() {
@@ -215,24 +216,25 @@
         openPdf();
     }
 
-    $: {
+    $effect(() => {
         if (studyId) {
             loadChecklistAsMarkdown();
         }
-    }
+    });
 
     async function loadChecklistAsMarkdown() {
         isLoading = true;
         error = null;
-        try {
-            const model = ModelManager.getInstance().modelStore.model as StudyConfigurationModel;
-            if (!model) {
-                error = "Model not loaded.";
+        try {          
+            const modelManager = ModelManager.getInstance();
+            const unit = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+            if (!unit) {
+                error = "Configuration unit not loaded.";
                 isLoading = false;
                 return;
             }
-            const markdown = getChecklistAsMarkdown(model.configuration, showHeadingNumbers);
-
+            const markdown = getChecklistAsMarkdown(unit, showHeadingNumbers);
+ 
             // Use markdown-it to parse for headings, which is more reliable than a custom marked renderer
             const tokens = md.parse(markdown, {});
             const toc: { level: number; text: string; id: string }[] = [];
@@ -259,10 +261,23 @@
             
             // Use markdown-it for rendering
             let bodyHtml = md.render(markdown);
+            console.log("Markdown: " + markdown);
+            
+            // Debug: Log the rendered HTML to check if markdown is being converted properly
+            console.log("🔍 [Markdown Debug] Rendered HTML:", bodyHtml.substring(0, 500) + "...");
+            
+            // Wrap the content in the limited-width container
+            bodyHtml = `<div class="limited-width-container">${bodyHtml}</div>`;
             
             // Manually add IDs to headings in the rendered HTML using DOM manipulation
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = bodyHtml;
+            
+            // Add proper CSS classes to tables
+            const tables = tempDiv.querySelectorAll('table');
+            tables.forEach(table => {
+                table.classList.add('table_component');
+            });
             
             toc.forEach(item => {
                 const headings = tempDiv.querySelectorAll(`h${item.level}`);
@@ -278,16 +293,18 @@
             // Generate TOC HTML from the captured headings
             let tocHtml = '<h2>Table of Contents</h2><ul class="toc-list">';
             toc.forEach(item => {
-                tocHtml += `<li style="margin-left: ${(item.level - 1) * 20}px;"><a href="#${item.id}" style="color: #cfcfcf;">${item.text}</a></li>`;
+                tocHtml += `<li style="margin-left: ${(item.level - 1) * 20}px;"><a href="#${item.id}">${item.text}</a></li>`;
             });
-            tocHtml += "</ul><hr/>";
+            tocHtml += "</ul>";
 
             // Replace the <!--TOC--> marker with the generated TOC, or prepend if no marker found
-            if (bodyHtml.includes('<!--TOC-->')) {
-                checklistHtml = bodyHtml.replace('<!--TOC-->', tocHtml);
-            } else {
-                checklistHtml = tocHtml + bodyHtml;
-            }
+      //      if (bodyHtml.includes('<!--TOC-->')) {
+         //       checklistHtml = bodyHtml.replace('<!--TOC-->', tocHtml);
+       //     } else {
+       //         checklistHtml = tocHtml + bodyHtml;
+     //       }
+
+            checklistHtml = bodyHtml;
 
         } catch (err: unknown) {
             console.error(`Error fetching data for study: ${studyId}`, err);
@@ -299,35 +316,164 @@
 </script>
 
 <div class="drawer-content-area p-2">
-    <!-- <div class="flex items-center mb-4">
-        <input id="heading-checkbox" type="checkbox" bind:checked={showHeadingNumbers} on:change={loadChecklistAsMarkdown} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-        <label for="heading-checkbox" class="ml-2 text-sm font-medium text-gray-900">Show Heading Numbers</label>
-    </div> -->
-
-    {#if isLoading}
-        <ListPlaceholder divClass="mb-4" />
-    {:else if error}
-        <div class="text-red-500 p-4">{error}</div>
+    {#if error}
+        <div class="drawer-error p-4">{error}</div>
     {:else}
-        <div class="markdown-body">
-            {@html checklistHtml}
-        </div>
+        {#if isLoading}
+            <ContentLoader />
+        {:else}
+            <div class="study-checklist-content">
+                {@html checklistHtml}
+            </div>
+        {/if}
     {/if}
 </div>
 
 <style>
-    div.drawer-content-area div.markdown-body .markdown-body {
-        box-sizing: border-box;
-        min-width: 200px;
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 45px;
-        min-height: 100% !important;
+    /* Consistent UI styling for study checklist content */
+    .study-checklist-content {
+        color: var(--text-primary-500);
+        font-family: var(--font-family-sans);
+        line-height: 1.6;
     }
-
-    @media (max-width: 767px) {
-        .markdown-body {
-            padding: 15px;
-        }
+    
+    /* .study-checklist-content h1,
+    .study-checklist-content h2,
+    .study-checklist-content h3,
+    .study-checklist-content h4,
+    .study-checklist-content h5,
+    .study-checklist-content h6 {
+        color: var(--text-primary-500);
+        font-weight: 600;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
     }
+    
+    .study-checklist-content h1 {
+        font-size: 1.5rem;
+        border-bottom: 1px solid var(--white-20t);
+        padding-bottom: 0.5rem;
+    }
+    
+    .study-checklist-content h2 {
+        font-size: 1.25rem;
+    }
+    
+    .study-checklist-content h3 {
+        font-size: 1.1rem;
+    }
+    
+    .study-checklist-content p {
+        margin-bottom: 1rem;
+        color: var(--text-primary-500);
+    }
+    
+    .study-checklist-content ul,
+    .study-checklist-content ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        color: var(--text-primary-500);
+    }
+    
+    .study-checklist-content li {
+        margin-bottom: 2rem;
+    }
+    
+    .study-checklist-content a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .study-checklist-content a:hover {
+        color: var(--text-hover);
+        text-decoration: underline;
+    }
+    
+    .study-checklist-content blockquote {
+        border-left: 4px solid var(--primary-color);
+        padding-left: 1rem;
+        margin: 1rem 0;
+        color: var(--text-primary-400);
+        font-style: italic;
+    }
+    
+    .study-checklist-content code {
+        background-color: var(--white-10t);
+        color: var(--text-primary-600);
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+        font-family: var(--font-family-mono);
+        font-size: 0.875rem;
+    }
+    
+    .study-checklist-content pre {
+        background-color: var(--white-10t);
+        color: var(--text-primary-600);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+    }
+    
+    .study-checklist-content pre code {
+        background: none;
+        padding: 0;
+    }
+    
+    .study-checklist-content table {
+        border: 1px solid var(--white-30t);
+        border-collapse: collapse;
+        width: 100%;
+        margin: 2rem 0 4rem 0;
+    }
+    
+    .study-checklist-content .table_component table {
+        border: 1px solid var(--white-30t);
+        border-collapse: collapse;
+        width: 100%;
+        margin: 2rem 0 4rem 0;
+    }
+    
+    .study-checklist-content .table_component caption {
+        color: var(--white-70t);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-align: left;
+    }
+    
+    .study-checklist-content .table_component th {
+        border: 1px solid var(--white-40t);
+        background-color: var(--black-10t);
+        color: var(--white);
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .study-checklist-content .table_component td {
+        border: 1px solid var(--white-20t);
+        color: var(--white-90t);
+        padding: 0.75rem;
+    }
+    
+    .study-checklist-content .table_component tbody tr:nth-child(even) td {
+        background-color: var(--white-10t);
+    }
+    
+    .study-checklist-content .table_component tbody tr:nth-child(odd) td {
+        background-color: var(--white-5t);
+    }
+    
+    .study-checklist-content .table_component td.text-center {
+        text-align: center;
+    }
+    
+    .study-checklist-content .table_component th.stretch {
+        width: auto;
+    }
+    
+    .study-checklist-content .table_component th.fit {
+        width: 1%;
+        white-space: nowrap;
+    } */
 </style>

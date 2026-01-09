@@ -1,15 +1,15 @@
 import { AST } from "../../change-manager/index.js";
 import {
     Box,
-    HorizontalLayoutBox,
+    type HorizontalLayoutBox,
     isHorizontalBox,
-    SelectOption,
+    type SelectOption,
     FreEditor,
     triggerTypeToString,
     BoxFactory,
-    FreProjectionHandler,
+    type FreProjectionHandler,
 } from "../index.js";
-import { FreBinaryExpression, FreExpressionNode } from "../../ast/index.js";
+import type { FreBinaryExpression, FreExpressionNode } from "../../ast/index.js";
 import { FreLanguage } from "../../language/index.js";
 import {
     FRE_BINARY_EXPRESSION_LEFT,
@@ -38,7 +38,7 @@ export function createDefaultExpressionBox(exp: FreExpressionNode, children: Box
         if (children.length === 1 && isHorizontalBox(children[0])) {
             result = children[0] as HorizontalLayoutBox;
         } else {
-            result = BoxFactory.horizontalLayout(exp, EXPRESSION, "", children, {cssClass: "align-top"});
+            result = BoxFactory.horizontalLayout(exp, EXPRESSION, "", children);
         }
         if (isLeftMost) {
             result.insertChild(BoxFactory.action(exp, LEFT_MOST, NBSP));
@@ -52,7 +52,7 @@ export function createDefaultExpressionBox(exp: FreExpressionNode, children: Box
         if (children.length === 1) {
             return children[0];
         } else {
-            return BoxFactory.horizontalLayout(exp, EXPRESSION, "", children, {cssClass: "align-top"});
+            return BoxFactory.horizontalLayout(exp, EXPRESSION, "", children);
         }
     }
 }
@@ -73,7 +73,7 @@ export function createDefaultBinaryBox(
     boxProviderCache: FreProjectionHandler,
 ): HorizontalLayoutBox {
     // TODO move this method to BoxUtils
-    const result = BoxFactory.horizontalLayout(exp, BINARY_EXPRESSION,"");
+    const result = BoxFactory.horizontalLayout(exp, BINARY_EXPRESSION, "");
     // const projection = editor.projection;
     // const projectionToUse = !!projection.rootProjection ? projection.rootProjection : projection;
 
@@ -126,6 +126,7 @@ export function createOperatorBox(editor: FreEditor, exp: FreBinaryExpression, s
                         id: e.trigger as string,
                         label: e.trigger as string,
                         description: "empty description for operator",
+                        // TODO icon and hideInList do not adhere to the SelectOption interface. What is happening here?
                         icon: null,
                         hideInList: false,
                     }));

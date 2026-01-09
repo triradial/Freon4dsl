@@ -1,0 +1,192 @@
+editor default
+
+global {
+    external {
+        ListGroupComponent,
+        ItemGroupComponent,
+        ItemGroupComponent2,
+        SingleLineItemComponent,
+        DatePickerComponent,
+        DateRangePickerComponent,
+        TimePickerComponent,
+        MultilineTextComponent,
+        AbbreviationComponent,
+        DisplayNothingComponent,
+        TabFixComponent,
+        TabFixComponent2,
+        ReferenceComponent,
+        UrlInputComponent,
+        PhoneInputComponent,
+        CustomNumericComponent,
+        CustomSelectComponent,
+        CustomActionsComponent
+    }
+}
+
+StudyConfiguration {
+    [
+    ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
+    ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
+    ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
+    ${roles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"}
+    ]
+}
+
+//boolean [YES | NO] // are the strings used to display a boolean value
+
+Period {
+    [ 
+        [fragment periodDetails wrap = ItemGroupComponent cssClass="type1" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="true" selectable="false" label="Period"]
+    ]
+    fragment periodDetails [
+        ${name}
+        ${description}
+        ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Events"}
+    ]   
+}
+
+Event {
+    [ 
+        [fragment noEventDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
+    ]
+    fragment noEventDetails [
+       ${name}
+       This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
+       ${description}
+    ]
+}
+
+Task {
+    [
+        [fragment taskDetails wrap = ItemGroupComponent cssClass="type3" canShare="true" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
+    ]
+    fragment taskDetails [
+        ${name}
+        ${description}
+        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
+    ]
+}
+
+TaskReference {
+    [
+        [fragment taskReferenceDetails wrap =  ReferenceComponent cssClass="type3" canDelete="true" canExpand="false" isExpanded="false" selectable="true" label="Task"]
+    ]
+    fragment taskReferenceDetails [
+        ${task}
+    ]
+}
+
+Step {
+    [
+        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true"  canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+    ]
+    fragment stepDetails [
+        ${name}
+        ${description}
+    ]
+}
+
+SystemAccess {
+    [
+        [fragment systemAccessDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="System Access"]
+    ] trigger = "System Access"
+    fragment systemAccessDetails [
+        ${name}
+        ${description}
+        ${accessedAt}
+        ${robotMappings wrap=ListGroupComponent cssClass="type3" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Robot Mappings"}
+    ]
+}
+
+
+SystemAccessReference {
+    [
+        [fragment systemAccessReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="System"]
+    ] trigger = "Shared System Access"
+    fragment systemAccessReferenceDetails [
+        ${system}
+    ]
+}
+
+AccessedAtURL {
+    [
+        URL: ${url wrap=UrlInputComponent}
+    ]
+}
+
+AccessedAPhoneNumber {
+    [
+        Phone Number: ${phoneNumber wrap=PhoneInputComponent}
+    ]
+}
+
+Person {
+    [
+        [fragment personDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Person"]
+    ] trigger = "Person"
+    fragment personDetails [
+        ${name}
+        Email: ${email}
+        Phone: ${phoneNumber wrap=PhoneInputComponent}
+        Role: ${role}
+        Notes:${description}
+    ]
+}
+
+PersonReference {
+    [
+        [fragment personReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="Person"]
+    ] trigger = "Staff"
+    fragment personReferenceDetails [
+        ${person}
+    ]
+}
+
+
+Reference {
+    [
+        [fragment referenceDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Reference"]
+    ]
+    fragment referenceDetails [
+    ${name} 
+    Document is at: ${link wrap=UrlInputComponent}
+    ${description}
+    ]
+}
+
+StaffRole {
+    [
+        ${name} 
+        ${description}
+    ]
+}
+
+WorkflowDescription {
+    [
+    Description: ${text}
+    ]
+    trigger = "description"
+}
+
+WorkflowBranch {
+    [ Branch: ${branch}  ]
+}
+
+RobotMapping {
+    [
+        From this Page: ${sourcePage wrap=UrlInputComponent}
+        To this Page    :   ${targetPage wrap=UrlInputComponent}        
+        ${sourceToTargetMappings wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Map These fields"}
+    ]
+
+}
+
+SourceToTargetMapping {
+    [
+        Source Field: ${sourceField}  Target Field: ${targetField}
+    ] trigger = "Source to Target"
+}
+
+Description {
+    [ ${rawText wrap=AbbreviationComponent} ]
+}

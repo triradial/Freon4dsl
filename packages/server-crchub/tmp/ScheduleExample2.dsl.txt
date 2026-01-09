@@ -1,0 +1,219 @@
+// StudyConfiguration for: ScheduleExample2
+// ============================================
+
+Periods:
+  Period: `Screening`
+
+  Description: " "
+  Events:
+    Event: `V1 Randomization`
+    This is a `site visit` that is also referred to as "Rando Week - 4"
+
+    Description: " "
+    Schedule:
+      First scheduled on the start day of the study `-` 4 `weeks`
+with a window of 8 day(s) before and 0 day(s) after
+and no compliance window
+and then repeats up to 0 times
+    Tasks:
+      Task: `Get Informed Consent`
+
+      Steps:
+        Step: `Review ICF`
+
+        Description: " "
+        People:
+
+        Systems Used:
+            System Name: `ICF-Doc-Repo`
+
+            Description: " "
+
+            Description: " "
+            Accessed At: URL: ""
+            Robot Mappings:
+
+        References:
+
+        Step: `Get Signature`
+
+        Description: " "
+        People:
+
+        Systems Used:
+
+        References:
+
+        Step: `Upload Signed Form`
+
+        Description: " "
+        People:
+
+        Systems Used:
+
+        References:
+
+    Event: `V1 Run In`
+    This is a `site visit` that is also referred to as "Run In Week - 4 "
+
+    Description: " "
+    Schedule:
+      First scheduled when `V1 Randomization` `completed` `+` 2 `days`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+    Tasks:
+      Task: ``
+
+      Steps:
+
+    Event: `V2 Randomization`
+    This is a `site visit` that is also referred to as "Rando Week - 2 "
+
+    Description: " "
+    Schedule:
+      First scheduled on the start day of the study `-` 2 `weeks`
+with a window of 0 day(s) before and 0 day(s) after
+and no compliance window
+    Tasks:
+      Task: ``
+
+      Steps:
+
+    Event: `V2 Run In`
+    This is a `site visit` that is also referred to as "Run In Week - 2"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V2 Randomization` `completed` `+` 2 `days`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+    Tasks:
+      Task: ``
+
+      Steps:
+
+  Period: `Treatment`
+
+  Description: " "
+  Events:
+    Event: `V3 Randomization`
+    This is a `site visit` that is also referred to as "Study Start"
+
+    Description: " "
+    Schedule:
+      First scheduled "" as the start day of the study
+with a window of 0 day(s) before and 0 day(s) after
+and no compliance window
+    Tasks:
+      Task: ``
+
+      Steps:
+
+    Event: `V4-V7 Randomization`
+    This is a `site visit` that is also referred to as "<No Alternative Name>"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V3 Randomization` `completed` `+` 1 `weeks`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats weekly up to 3 times
+    Tasks:
+
+    Event: `V4-V7 Run In`
+    This is a `site visit` that is also referred to as "<No Alternative Name>"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V4-V7 Randomization` `each completed` `+` 2 `days`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats weekly up to 3 times
+    Tasks:
+
+    Event: `V8-V13 Randomization`
+    This is a `site visit` that is also referred to as "<No Alternative Name>"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V4-V7 Randomization` `completed` `+` 2 `weeks`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats every: "2" `weeks` up to 5 times
+    Tasks:
+
+    Event: `V8-V13 Run In`
+    This is a `site visit` that is also referred to as "<No Alternative Name>"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V8-V13 Randomization` `each completed` `+` 2 `days`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats weekly up to 5 times
+    Tasks:
+
+    Event: `V14-V18 Randomization`
+    This is a `site visit` that is also referred to as "<No Alternative Name>"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V8-V13 Randomization` `completed` `+` 4 `weeks`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats every: "4" `weeks` up to 5 times
+    Tasks:
+
+    Event: `V14-V18 Run In`
+    This is a `site visit` that is also referred to as "<No Alternative Name>"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V14-V18 Randomization` `each completed` `+` 2 `days`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+and then repeats weekly up to 4 times
+    Tasks:
+
+    Event: `V19 Randomization`
+    This is a `site visit` that is also referred to as "<No Alternative Name>"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V14-V18 Randomization` `completed` `+` 1 `weeks`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+    Tasks:
+
+    Event: `V19 Run In`
+    This is a `site visit` that is also referred to as "<No Alternative Name>"
+
+    Description: " "
+    Schedule:
+      First scheduled when `V19 Randomization` `completed`
+with a window of 2 day(s) before and 2 day(s) after
+and no compliance window
+    Tasks:
+
+  Period: `Name`
+
+  Events:
+
+Tasks:
+
+System Accesses:
+
+Staffing:
+
+Roles:
+
+// PatientInfo for: ScheduleExample2
+// ============================================
+
+Patient Histories:
+  Patient ID: "1"
+   Visits:
+     Visit: `V1 Randomization` was `completed` on "2026-01-08"
+     Visit: `V1 Run In` was `planned` on "2026-01-15"
+     Visit: `V19 Run In` was `planned` on "2026-11-10"
+   Not Available Dates:

@@ -1,8 +1,8 @@
-import { FreNamedNode, FreNode } from "../../ast/index.js";
+import type { FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreLogger } from "../../logging/index.js";
-import { FreLionwebSerializer } from "../index.js";
+import { FreLionwebSerializer, type ParameterType } from "../index.js";
 import { FreErrorSeverity } from "../../validator/index.js";
-import { IServerCommunication, ModelUnitIdentifier } from "./IServerCommunication.js";
+import type { IServerCommunication, FreUnitIdentifier, ServerResponse, VoidServerResponse } from "./IServerCommunication.js";
 import { ServerCommunication } from "./ServerCommunication.js";
 // import * as process from "process";
 
@@ -17,7 +17,6 @@ const projectName = "mps-meetup-2023";
 const modelPath = `/lionweb/bulk?modelRef=${modelName}&project=${projectName}`;
 
 export class LionWebCommunicationWithMPS extends ServerCommunication implements IServerCommunication {
-    // static converterLionWeb = new Freon2LionWebConverter();
     static instanceLionWeb: LionWebCommunicationWithMPS;
 
     static getInstance(): LionWebCommunicationWithMPS {
@@ -32,34 +31,19 @@ export class LionWebCommunicationWithMPS extends ServerCommunication implements 
         console.error(`ServerCommunication ${severity}: ${msg}`);
     }
 
-    async loadModelList(): Promise<string[]> {
-        return [modelName];
+    async loadModelList(): Promise<ServerResponse<string[]>> {
+        return { result: [modelName], errors: [] };
     }
 
-    // @ts-ignore
-    async loadUnitList(modelName: string): Promise<ModelUnitIdentifier[]> {
-        return [];
+    async loadUnitList(_modelName: string): Promise<ServerResponse<FreUnitIdentifier[]>> {
+        return { result: [], errors: [] };
     }
 
-    // @ts-ignore
-    // todo reimplement with use of callback or change signature
-    async generateIds(quantity: number, callback: (strings: string[]) => void): Promise<string[]> {
+    async generateIds(quantity: number, callback: (strings: string[]) => void): Promise<ServerResponse<string[]>> {
         LOGGER.log(`generateIds ${quantity}`);
         let result = ["10000", "10010", "10020", "10030", "10040"];
-        // callback(result)
-        return result;
-        // const ids = await this.postWithTimeoutLionWeb(`lionweb-json/default/generate-ids`, null,`?quantity=${quantity}`);
-        // if (!!ids) {
-        //      try {
-        //          return ids["freeIds"];
-        //         // callback(ids["freeIds"]);
-        //     } catch (e) {
-        //         LOGGER.error( "generateIds, " + e.message);
-        //         setUserMessage(e.message);
-        //         console.log(e.stack);
-        //     }
-        // }
-        // return [];
+        callback(result);
+        return { result, errors: [] };
     }
 
     /**
@@ -69,33 +53,29 @@ export class LionWebCommunicationWithMPS extends ServerCommunication implements 
      * @param unitName
      * @param loadCallback
      */
-    // @ts-ignore
-    // parameter present to adhere to interface
-    async loadModelUnit(modelName: string, unitName: string, loadCallback: (piUnit: FreNamedNode) => void) {
-        LOGGER.log(`ServerCommunication.loadModelUnit ${unitName}`);
-        if (!!unitName && unitName.length > 0) {
-            const res = await this.fetchWithTimeout<Object>(modelPath, ``);
+    async loadModelUnit(_modelName: string, unit: FreUnitIdentifier): Promise<ServerResponse<FreNode>> {
+        LOGGER.log(`ServerCommunication.loadModelUnit ${unit.name}`);
+        if (!!unit.name && unit.name.length > 0) {
+            const res = await this.getWithTimeout<Object>(modelPath, {});
             if (!!res) {
                 try {
                     const serializer = new FreLionwebSerializer();
                     const unit = serializer.toTypeScriptInstance(res);
                     //TODO: Hardcoded to avoid empty default property for units
                     unit["name"] = "PropertyRoot";
-                    return unit;
-                    // loadCallback(unit as FreNamedNode);
+                    return { result: unit, errors: [] };
                 } catch (e) {
                     LOGGER.error("loadModelUnit, " + e.message);
                     this.onError("loadModelUnit: " + e.message, FreErrorSeverity.Error);
                     console.log(e.stack);
+                    return { result: null, errors: [e.message] };
                 }
             }
         }
-        return null;
+        return { result: null, errors: [] };
     }
 
-    // @ts-ignore
-    // parameter present to adhere to interface
-    async putModelUnit(modelName: string, unitIdentifier: ModelUnitIdentifier, unit: FreNode) {
+    async saveModelUnit(_modelName: string, unitIdentifier: FreUnitIdentifier, unit: FreNode): Promise<VoidServerResponse> {
         console.log("unit", unit);
         if (!!unitIdentifier.name && unitIdentifier.name.length > 0 && !!unit) {
             try {
@@ -109,24 +89,49 @@ export class LionWebCommunicationWithMPS extends ServerCommunication implements 
                     nodes: lionWebNodes,
                 };
                 await this.postWithTimeoutLionWeb(modelPath, output, "");
+                return { errors: [] };
             } catch (e) {
-                LOGGER.error("loadModelUnit, " + e.message);
-                this.onError("loadModelUnit: " + e.message, FreErrorSeverity.Error);
+                LOGGER.error("saveModelUnit, " + e.message);
+                this.onError("saveModelUnit: " + e.message, FreErrorSeverity.Error);
                 console.log(e.stack);
+                return { errors: [e.message] };
             }
         }
+        return { errors: [] };
     }
 
-    // renameModelUnit(modelName: string, oldName: string, newName: string, piUnit: FreNamedNode) {
-    // }
+    async deleteModelUnit(_modelName: string, _unit: FreUnitIdentifier): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
 
-    override async fetchWithTimeout<T>(path: string, params?: string): Promise<T> {
-        // params = ServerCommunication.findParams(params);
-        console.log(`LIONWEB FETCHG: ${SERVER_URL}${path}${params}`);
+    async deleteModel(_modelName: string): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
+
+    async renameModelUnit(_modelName: string, _oldName: string, _newName: string, _unit: FreNamedNode): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
+
+    async createModel(_modelName: string): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
+
+    async createModelUnit(_modelName: string, _unit: FreNamedNode): Promise<VoidServerResponse> {
+        // Implementation would go here
+        return { errors: [] };
+    }
+
+    override async getWithTimeout<T>(path: string, params: ParameterType): Promise<T> {
+        const parameters = ServerCommunication.findParams(params);
+        LOGGER.log(`LIONWEB FETCHG: ${SERVER_URL}${path}${parameters}`);
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 2000);
-            const promise = await fetch(`${SERVER_URL}${path}${params}`, {
+            const promise = await fetch(`${SERVER_URL}${path}${parameters}`, {
                 signal: controller.signal,
                 method: "get",
                 headers: {
@@ -142,7 +147,6 @@ export class LionWebCommunicationWithMPS extends ServerCommunication implements 
     }
 
     private async postWithTimeoutLionWeb(path: string, data: Object, params?: string): Promise<any> {
-        // params = ServerCommunication.findParams(params);
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 2000);

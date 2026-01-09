@@ -17,7 +17,9 @@ import {
     FreMetaPrimitiveProperty,
     FreMetaProperty,
 } from "../../../../languagedef/metalanguage/index.js";
-import { ListUtil, LOG2USER, Names } from "../../../../utils/index.js";
+import { LOG2USER } from '../../../../utils/basic-dependencies/index.js';
+import { Names } from '../../../../utils/on-lang/index.js';
+import { NamesForEditor } from '../../../../utils/on-lang-and-editor/index.js';
 import { ParserGenUtil } from "../../../../parsergen/parserTemplates/ParserGenUtil.js";
 import {
     PrimitivePropertyBoxesHelper,
@@ -79,10 +81,10 @@ export class ItemBoxHelper {
     ): string {
         let result: string = "";
         if (item instanceof FreEditProjectionText) {
-            ListUtil.addIfNotPresent(this._myTemplate.coreImports, "BoxUtil");
+            this._myTemplate.imports.core.add("BoxUtil");
             result += ` BoxUtil.labelBox(${elementVarName}, "${ParserGenUtil.escapeRelevantChars(item.text.trim())}", "top-${topIndex}-line-${lineIndex}-item-${itemIndex}") `;
         } else if (item instanceof FreEditButtonDef) {
-            ListUtil.addIfNotPresent(this._myTemplate.coreImports, "BoxUtil");
+            this._myTemplate.imports.core.add("BoxUtil");
             result += ` BoxUtil.buttonBox(${elementVarName}, "${ParserGenUtil.escapeRelevantChars(item.text.trim())}", "${ParserGenUtil.escapeRelevantChars(item.boxRole.trim())}") `;
         } else if (item instanceof FreOptionalPropertyProjection) {
             result += this.generateOptionalProjection(item, elementVarName, mainBoxLabel, language);
@@ -120,7 +122,7 @@ export class ItemBoxHelper {
             let result: string = this._myTemplate.generateLines(optional.lines, elementVarName, myLabel, language, 2);
 
             // surround with optional box, and add "BoxFactory" to imports
-            ListUtil.addIfNotPresent(this._myTemplate.coreImports, "BoxFactory");
+            this._myTemplate.imports.core.add("BoxFactory");
             if (optionalLiteral === "") {
                 return result;
             }
@@ -180,13 +182,20 @@ export class ItemBoxHelper {
     ): string {
         let result: string = "";
         if (property.type instanceof FreMetaLimitedConcept) {
-            result += this._myLimitedHelper.generateLimited(
-                property,
-                elementVarName,
-                language,
-                item.listInfo,
-                item.displayType,
-            );
+            // Check if external component should replace the limited concept box
+            if (!!item.externalInfo && !!item.externalInfo.replaceBy && item.externalInfo.replaceBy.length > 0) {
+                // Use external component to replace the limited concept box
+                result += this._myExternalHelper.replaceSingleByExternal(item, property, elementVarName);
+            } else {
+                // Use standard limited concept box
+                result += this._myLimitedHelper.generateLimited(
+                    property,
+                    elementVarName,
+                    language,
+                    item.listInfo,
+                    item.displayType,
+                );
+            }
         } else if (property.isList) {
             let innerResult: string = "";
             if (!!item.listInfo && item.listInfo.isTable) {
@@ -196,8 +205,7 @@ export class ItemBoxHelper {
                     language,
                     item.listInfo,
                     property,
-                    elementVarName,
-                    false
+                    elementVarName
                 );
             } else if (!!item.listInfo) {
                 // if there is information on how to project the property as a list, make it a list
@@ -205,8 +213,7 @@ export class ItemBoxHelper {
                     language,
                     item.listInfo,
                     property,
-                    elementVarName,
-                    false
+                    elementVarName
                 );
             }
             if (!!item.externalInfo) {
@@ -273,13 +280,19 @@ export class ItemBoxHelper {
             }
         } else {
             // single element
-            ListUtil.addIfNotPresent(this._myTemplate.coreImports, "BoxUtil");
-            let innerResult: string = `BoxUtil.getBoxOrAction(${elementVarName}, "${property.name}", "${property.type.name}", this.mainHandler) `;
-            if (!!item.externalInfo) {
-                // there is information on how to project the property as an external component, wrap the result in an ExternalBox
-                result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
+            // Check if external component should replace the limited concept box
+            if (property.type instanceof FreMetaLimitedConcept && !!item.externalInfo && !!item.externalInfo.replaceBy && item.externalInfo.replaceBy.length > 0) {
+                // Use external component to replace the limited concept box directly
+                result += this._myExternalHelper.replaceSingleByExternal(item, property, elementVarName);
             } else {
-                result += innerResult;
+                this._myTemplate.imports.core.add("BoxUtil");
+                let innerResult: string = `BoxUtil.getBoxOrAction(${elementVarName}, "${property.name}", "${property.type.name}", this.mainHandler) `;
+                if (!!item.externalInfo) {
+                    // there is information on how to project the property as an external component, wrap the result in an ExternalBox
+                    result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
+                } else {
+                    result += innerResult;
+                }
             }
         }
         return result;
@@ -321,14 +334,20 @@ export class ItemBoxHelper {
                 language,
                 topIndex,
             );
-            ListUtil.addIfNotPresent(this._myTemplate.coreImports, "FragmentBox");
+            this._myTemplate.imports.core.add("FragmentBox");
 
             this._myTemplate.fragmentMethods.push(
-                `private ${Names.fragment(fragmentDefinition)}(): FragmentBox {
-                    return new FragmentBox(${elementVarName}, "${myRole}", ${fragmentDefinitionStr});
+                `private ${NamesForEditor.fragment(fragmentDefinition)}(): FragmentBox {
+                    return new FragmentBox(${elementVarName}, "${myRole}", ${fragmentDefinitionStr}, {cssClass: "${myRole}"});
                 }`
             );
-            return `this.${Names.fragment(fragmentDefinition)}()`;
+            const resultBox = `this.${NamesForEditor.fragment(fragmentDefinition)}()`;
+
+            if (!!item.wrapperInfo) {
+                return this._myExternalHelper.wrapFragmentByExternal(item, elementVarName, resultBox)
+            } else {
+                return resultBox;
+            }
         } else {
             return "";
         }

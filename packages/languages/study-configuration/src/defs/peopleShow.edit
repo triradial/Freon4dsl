@@ -1,0 +1,12 @@
+editor peopleShow precedence 201
+
+Step {
+    [
+        [fragment stepDetailsWithPeople wrap = ItemGroupComponent cssClass="type4" canDelete="true"  canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+    ]
+    fragment stepDetailsWithPeople [
+        ${name}
+        ${description}
+        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
+    ]
+}

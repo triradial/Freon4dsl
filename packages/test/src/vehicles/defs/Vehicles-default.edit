@@ -1,5 +1,0 @@
-editor default
-
-global {
-    boolean [GOOD | WRONG] // are the strings used to display a boolean value
-}

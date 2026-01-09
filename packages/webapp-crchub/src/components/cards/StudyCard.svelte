@@ -1,60 +1,87 @@
 <script lang="ts">
-    import { Card, Badge, Button } from "flowbite-svelte";
-    import { type Study } from "../../services/data/data-store.js";
-    import { editObject } from "../../services/stores/object-drawer-store.js";
-    // import type { ColorVariant } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faPencil } from "@fortawesome/free-solid-svg-icons";
+    import { dataStore } from "../../services/data/data-store.js";
+    const { studyId } = $props<{ studyId: string }>();
+
+    let study = $derived($dataStore.studies.find(s => s.id === studyId));
     import { getStatusColor } from "../../services/utils.js";
+    // @ts-ignore
+    import { Pencil as IconPencil, Trash2 as IconTrash } from '@lucide/svelte';
+    import DeleteObjectDialog from "../dialogs/DeleteObjectDialog.svelte";
 
-    export let study: Study;
-
-    let statusColor = getStatusColor(study.status);
+    let statusColor = $derived(study ? getStatusColor(study.status) : "");
+    let deleteDialogOpen = $state(false);
 
     function onEditClick() {
-        editObject("study", study.id);
+        if (study) {
+            import("../../services/stores/object-drawer-store.js").then(m => m.editObject("study", study));
+        }
+    }
+
+    function onDeleteClick() {
+        if (study) {
+            deleteDialogOpen = true;
+        }
+    }
+
+    function onStudyChanged() {
+        // Refresh studies data after delete
+        dataStore.getStudies();
     }
 </script>
 
-<Card class="crc-card-area max-w-sm h-full">
-    <div class="flex items-center justify-left mb-4">
-        <h3 class="text-base font-bold">Study</h3>
-        <Button pill={true} outline={true} class="grid-header-button" size="sm" on:click={onEditClick}>
-            <FontAwesomeIcon icon={faPencil} />
-        </Button>
-    </div>
-    <div class="space-y-2">
-        <div>
-            <h4 class="card-label-text">Name</h4>
-            <p class="text-sm">{study.name}</p>
-        </div>
-        <div>
-            <h4 class="card-label-text">Title</h4>
-            <p class="text-xs">{study.title}</p>
-        </div>
-        <div>
-            <h4 class="card-label-text">Status</h4>
-            <Badge color={statusColor} class="text-xs">{study.status}</Badge>
-        </div>
-        <div>
-            <h4 class="card-label-text">Phase</h4>
-            <p class="text-sm">{study.phase}</p>
-        </div>
-        <div>
-            <h4 class="card-label-text">Therapeutic Area</h4>
-            <p class="text-sm">{study.therapeuticArea}</p>
-        </div>
-        <div>
-            <h4 class="card-label-text text-gray-700">Current Protocol</h4>
-            <p class="text-sm">{study.currentProtocol}</p>
+{#if study}
+<div class="card card-area max-w-sm h-full">
+    <div class="flex items-center mb-4">
+        <h3 class="main-label-text mr-2">Study</h3>
+        <div class="flex items-center gap-2">
+            <button type="button" class="grid-button general-button" onclick={onEditClick} title="Edit Study" aria-label="Edit Study">
+                <IconPencil size={16} />
+            </button>
+            <button type="button" class="grid-button delete-button" onclick={onDeleteClick} title="Delete Study" aria-label="Delete Study">
+                <IconTrash size={16} />
+            </button>
         </div>
     </div>
-</Card>
+    <div class="space-y-4">
+        <div>
+            <div class="small-label-text">STUDY</div>
+            <p class="standard-text">{study.name}</p>
+        </div>
+        <div>
+            <div class="small-label-text">Title</div>
+            <p class="standard-text">{study.title || "-"}</p>
+        </div>
+        <div>
+            <div class="small-label-text">Status</div>
+            <span class="badge {statusColor} standard-text">{study.status || "None"}</span>
+        </div>
+        <div>
+            <div class="small-label-text">Phase</div>
+            <p class="standard-text">{study.phase || "-"}</p>
+        </div>
+        <div>
+            <div class="small-label-text">Therapeutic Area</div>
+            <p class="standard-text">{study.therapeuticArea || "-"}</p>
+        </div>
+        <div>
+            <div class="small-label-text">Current Protocol</div>
+            <p class="standard-text">{study.currentProtocol || "-"}</p>
+        </div>
+    </div>
+</div>
 
-<style>
-    :global(.card) {
-        border-radius: 0;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-    }
-</style>
+<DeleteObjectDialog
+    open={deleteDialogOpen}
+    objectType="study"
+    object={study}
+    on:delete={() => {
+        onStudyChanged();
+        deleteDialogOpen = false;
+    }}
+    on:cancel={() => {
+        deleteDialogOpen = false;
+    }}
+/>
+{:else}
+<div>Study not found.</div>
+{/if}

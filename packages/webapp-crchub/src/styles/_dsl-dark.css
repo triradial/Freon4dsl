@@ -1,4 +1,18 @@
 /* #region GENERAL */
+:root {
+  color-scheme: dark;
+
+  /* #region Custom Select Component */
+  --custom-select-bg: #5b6788;
+  --custom-select-text: #ffffff;
+  --custom-select-border: #333333;
+
+  --custom-select-selected-bg: #32cd3263;
+  --custom-select-selected-text: #ffffff;
+  /* #endregion */
+}s
+
+
 .mdc-drawer {
   background-color: #212121 !important;
 }
@@ -69,38 +83,67 @@
   background-color: inherit;
 }
 
+.single-line-item-label {
+  color: var(--gray-400);
+}
+
 /* #endregion */
 
 /* #region Text Component */
-.text-dropdown-component .text-component-input,
 .text-component-input {
-  color: var(--green-70t);
-  background-color: var(--green-10t);
+  color: var(--green-90t);
+  background-color: var(--green-30t);
 }
 
-.text-dropdown-component .text-component-text,
 .text-component-text {
-  color: var(--green-60t);
+  color: var(--green-90t);
   background-color: inherit;
 }
 
-.text-dropdown-component .text-component-text:hover,
 .text-component-text:hover {
-  color: var(--green-60t);
-  background-color: var(--green-10t);
+  color: var(--green-90t);
+  background-color: var(--green-30t);
 }
 
-.text-dropdown-component .text-component-placeholder,
+.text-component-input::placeholder,
 .text-component-placeholder {
-  color: var(--green-60t);
-  background-color: transparent;
+  color: var(--green-90t);
+  opacity: 1;
 }
 
-.text-component-action-placeholder {
-  color: var(--green-60t);
-  background-color: transparent;
+.text-component-input:focus {
+  --tw-ring-color: var(--green-90t) !important;
+}
+/* #endregion */
+
+/* #region Text Dropdown Component */ 
+.text-dropdown-component .text-component-input {
+  color: var(--blue-90t);
+  background-color: var(--blue-40t);
 }
 
+.text-dropdown-component .text-component-text {
+  color: var(--blue-90t);
+  background-color: inherit;
+}
+
+.text-dropdown-component .text-component-text:hover {
+  color: var(--blue-90t) !important;
+  background-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component .text-component-input::placeholder {
+  color: var(--blue-90t) !important;
+  opacity: 1 !important;
+}
+
+.text-dropdown-component .text-component-input:focus {
+  --tw-ring-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component .text-component-input-wrapper::before {
+  color: #adadad;
+}
 /* #endregion */
 
 /* #region Switch Component */
@@ -131,17 +174,24 @@
 /* #region List Group Component */
 .list-group.type1 {
   background-color: var(--primary-900t);
+  border-bottom: 1px solid #000;
 }
 
 .list-group.type2 {
-  background-color: var(--white-5t);
+  background-color: var(--white-20t);
+  border-bottom: 1px solid #000;
 }
 
 .list-group.type3 {
-  border-bottom: 1px solid var(--white-20t);
+  border-bottom: 1px solid var(--white-30t);
 }
 
 .list-group.type4 {
+  border-bottom: 1px solid #bbbbbb;
+  ;
+}
+
+.list-group.type5 {
   border-bottom: 1px solid #1191b9;
   ;
 }
@@ -159,25 +209,60 @@
 }
 
 .list-group.type4 .list-group-label {
-  color: #1191b9;
+  color: #bbbbbb !important;
 }
 
 .list-group.type4 .toggle-button {
-  color: #1191b9;
+  color: #bbbbbb !important;
+}
+
+.list-group.type5 .list-group-label {
+  color: #1191b9 !important;
+}
+
+.list-group.type5 .toggle-button {
+  color: #1191b9 !important;
 }
 
 .list-group .toggle-button {
-  border: none;
+  border: 1px solid transparent;
   color: var(--gray-200);
   background-color: transparent;
 }
 
 .list-group .toggle-button:hover {
-  background-color: var(--white-10t);
+  background-color: var(--primary-600);
 }
 
 .list-group .toggle-button:active {
-  background-color: var(--white-20t);
+  background-color: var(--primary-600);
+}
+
+.list-group .toggle-button:focus {
+  background-color: var(--primary-600);
+}
+
+.drag-handle svg {
+  color: var(--green-90t);
+}
+
+.action-button {
+  color: var(--white) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--white) !important;
+}
+
+.action-button:hover {
+  color: var(--white) !important;
+  background-color: var(--primary-600) !important;
+  border: 1px solid var(--primary-600) !important;
+}
+
+.action-button:active,
+.action-button:focus {
+  color: var(--white) !important;
+  background-color: var(--primary-400) !important;
+  border: 1px solid var(--primary-400) !important;
 }
 
 /* #endregion */
@@ -211,17 +296,21 @@
 }
 
 .item-group .toggle-button {
-  border: none;
+  border: 1px solid transparent;
   color: var(--gray-200);
   background-color: transparent;
 }
 
 .item-group .toggle-button:hover {
-  background-color: var(--white-10t);
+  background-color: var(--primary-600);
 }
 
 .item-group .toggle-button:active {
-  background-color: var(--white-20t);
+  background-color: var(--primary-600);
+}
+
+.item-group .toggle-button:focus {
+  background-color: var(--primary-600);
 }
 
 .drag-button {
@@ -239,12 +328,17 @@
 /* #endregion */
 
 /* #region MultlineText Component */
-.multiline2-text {
+.multiline2-component .view-mode {
   color: var(--gray-200) !important;
   background: inherit !important;
 }
 
-.multiline2-editor {
+.multiline2-component .view-mode:hover {
+  color: var(--green-90t) !important;
+  background-color: var(--green-30t) !important;
+}
+
+.multiline2-component .edit-mode {
   outline: 1px solid transparent !important;
   outline-offset: 1px !important;
   --tw-ring-inset: var(--tw-empty,
@@ -263,6 +357,10 @@
 
 .tinymce-wrapper>div {
   color: var(--gray-200);
+}
+
+.multiline2-component-placeholder {
+  color: var(--green-90t);
 }
 
 /* #endregion */
@@ -307,7 +405,7 @@
 .dropdown-component {
   background-color: #3f3f3f;
   color: white;
-  border: var(--green-50t) 1px solid;
+  border: var(--blue-50t) 1px solid;
 }
 
 .dropdown-component-item:hover {
@@ -318,17 +416,20 @@
   background-color: var(--white-10t);
 }
 
+.reference-arrow {
+  fill: var(--white) !important;
+}
+
 .reference-button {
   background-color: transparent !important;
-  color: var(--gray-400) !important;
 }
 
 .reference-button:hover {
-  background-color: var(--white-10t) !important;
+  background-color: var(--white-30t) !important;
 }
 
 .reference-button:active {
-  background-color: var(--white-20t) !important;
+  background-color: var(--white-40t) !important;
 }
 
 /* #endregion */
@@ -384,49 +485,208 @@
 /* #endregion */
 
 /* #region Datepicker */
+.datepicker-input .date-picker-segment {
+  color: var(--green-90t);
+  background-color: var(--green-30t);
+  border: 1px solid var(--green-90t);
+}
+/* .datepicker-input::-ms-input-placeholder {
+  color: var(--green-90t);
+} */
+.datepicker-input::placeholder {
+  color: var(--green-90t);
+}
+.datepicker-display {
+  color: var(--green-90t);
+  background-color: transparent
+}
 
-.datepicker-input {
-  color: var(--green-50t);
+.datepicker-separator {
+  color: var(--text-primary-500);
   background-color: transparent;
-  border: transparent;
-  color-scheme: dark;
 }
 
-.datepicker-input:hover {
-  color: var(--green-50t);
-  background-color: var(--green-10t);
+.dsl-date-text,
+.dsl-input-text {
+  color: var(--green-90t) !important;
 }
 
-.datepicker-input:focus {
-  color: var(--green-60t);
-  background-color: var(--green-10t);
-  border: green;
+/* Highlight date segments when the datepicker input is focused */
+.datepicker-input:focus .dsl-date-text,
+.datepicker-input:focus .dsl-input-text,
+.datepicker-input:focus-within .dsl-date-text,
+.datepicker-input:focus-within .dsl-input-text {
+  background-color: var(--green-30t) !important;
 }
 
+/* Highlight individual segments when they receive focus */
+.dsl-date-text:focus,
+.dsl-input-text:focus {
+  background-color: var(--green-30t) !important;
+  outline: 1px solid var(--green-90t) !important;
+  outline-offset: 1px !important;
+}
+
+/* Highlight calendar icon trigger when focused */
+.datepicker-input button:focus,
+.datepicker-input button:focus-visible,
+button[data-bits-popover-trigger]:focus,
+button[data-bits-popover-trigger]:focus-visible,
+.datepicker-input ~ button:focus,
+.datepicker-input ~ button:focus-visible {
+  background-color: var(--green-30t) !important;
+  outline: 1px solid var(--green-90t) !important;
+  outline-offset: 2px !important;
+}
+/* #endregion */
+
+/* #region DateRangePicker */
+/* Force all calendar popup elements to be opaque with dark background */
+[data-bits-floating-content-wrapper],
+[data-bits-floating-content-wrapper] *,
+[data-bits-floating-content-wrapper] > div,
+[data-bits-floating-content-wrapper] > div > div,
+[data-bits-floating-content-wrapper] > div > div > div,
+.bg-background-alt,
+[data-range-calendar-root],
+[data-range-calendar-root] *,
+[data-range-calendar-grid],
+[data-range-calendar-grid] *,
+[data-range-calendar-grid-body],
+[data-range-calendar-grid-body] *,
+[data-range-calendar-cell],
+[data-range-calendar-cell] *,
+[data-range-calendar-day],
+[data-range-calendar-day] * {
+  background: #22272e !important;
+  opacity: 1 !important;
+}
+
+/* Override all opacity classes except for outside-month days */
+[data-bits-floating-content-wrapper] .disabled\:opacity-50:not([data-outside-month]),
+[data-bits-floating-content-wrapper] [disabled]:not([data-outside-month]),
+[data-bits-floating-content-wrapper] .opacity-50:not([data-outside-month]),
+[data-range-calendar-root] .disabled\:opacity-50:not([data-outside-month]),
+[data-range-calendar-root] [disabled]:not([data-outside-month]),
+[data-range-calendar-root] .opacity-50:not([data-outside-month]) {
+  opacity: 1 !important;
+}
+
+/* Ensure outside-month days are properly dimmed */
+[data-bits-floating-content-wrapper] [data-outside-month],
+[data-bits-floating-content-wrapper] [data-outside-month] *,
+[data-range-calendar-root] [data-outside-month],
+[data-range-calendar-root] [data-outside-month] *,
+[data-range-calendar-day][data-outside-month],
+[data-range-calendar-day][data-outside-month] * {
+  opacity: 0.5 !important;
+  color: var(--text-primary-300) !important;
+}
+
+/* Additional aggressive targeting */
+div[data-bits-floating-content-wrapper],
+div[data-bits-floating-content-wrapper] div,
+div[data-bits-floating-content-wrapper] span,
+div[data-bits-floating-content-wrapper] button,
+div[data-bits-floating-content-wrapper] td,
+div[data-bits-floating-content-wrapper] th,
+div[data-range-calendar-root],
+div[data-range-calendar-root] div,
+div[data-range-calendar-root] span,
+div[data-range-calendar-root] button,
+div[data-range-calendar-root] td,
+div[data-range-calendar-root] th {
+  background: #22272e !important;
+  opacity: 1 !important;
+}
+
+/* Range selection highlighting - more specific selectors */
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selection-start],
+[data-range-calendar-root] [data-range-calendar-day][data-selection-start],
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-start],
+[data-range-calendar-root] [data-range-calendar-day][data-range-start] {
+  background: var(--green-90t) !important;
+  color: #ffffff !important;
+  border-radius: 9px !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selection-end],
+[data-range-calendar-root] [data-range-calendar-day][data-selection-end],
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-end],
+[data-range-calendar-root] [data-range-calendar-day][data-range-end] {
+  background: var(--green-90t) !important;
+  color: #ffffff !important;
+  border-radius: 9px !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-range-middle],
+[data-range-calendar-root] [data-range-calendar-day][data-range-middle] {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
+
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selected]:not([data-selection-start]):not([data-selection-end]),
+[data-range-calendar-root] [data-range-calendar-day][data-selected]:not([data-selection-start]):not([data-selection-end]) {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
+
+/* Additional targeting for any selected dates */
+[data-bits-floating-content-wrapper] [data-range-calendar-day][data-selected],
+[data-range-calendar-root] [data-range-calendar-day][data-selected] {
+  background: var(--green-30t) !important;
+  color: var(--green-90t) !important;
+}
 /* #endregion */
 
 /* #region Timepicker */
-
 .timepicker-input {
-  color: var(--green-50t);
-  background-color: transparent;
-  border: transparent;
-  color-scheme: dark;
+  background-color: var(--green-30t);
+  color: var(--green-90t);
+  border: 1px solid var(--green-90t);
 }
-
-.timepicker-input:hover {
-  color: var(--green-50t);
-  background-color: var(--green-10t);
+/* .timepicker-input::-ms-input-placeholder {
+  color: var(--green-90t);
+} */
+.timepicker-input::placeholder {
+  color: var(--green-90t);
 }
+.timepicker-display {
+  color: var(--green-90t);
+  background-color: transparent
+}
+/* #endregion */
 
-.timepicker-input:focus {
-  color: var(--green-60t);
-  background-color: var(--green-10t);
-  border: green;
+/* #region Render Component */
+.render-component-selected {
+  background-color: #c9daff40 !important;
 }
 
 /* #endregion */
 
-.render-component-selected {
-  background-color: var(--white-5t);
+/* #region Drag Handle */
+.drag-handle-icon {
+  fill: var(--white);
 }
+/* #endregion */
+
+/* #region Abbreviation Components */
+.abbreviation-text {
+  color: var(--gray-200) !important;
+}
+/* #endregion */
+
+/* #region TabFixComponent highlighting - CSS-only approach */
+/* Highlight only the narrow input field with red background */
+.narrow-input:focus {
+  background-color: red !important;
+  border: 1px solid red !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+/* #endregion */ 

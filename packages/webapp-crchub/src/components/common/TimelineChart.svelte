@@ -1,11 +1,8 @@
 <script lang="ts">
-    import { onMount, afterUpdate } from "svelte";
-    import { ExternalStringBox } from "@freon4dsl/core";
+    import { ExternalStringBox, RtString } from "@freon4dsl/core";
+    import { getTimelineChart, type StudyConfigurationModel } from "@freon4dsl/study-configuration";
+    import { onMount } from "svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { RtString } from "@freon4dsl/core";
-    import { type StudyConfigurationModel } from "@freon4dsl/samples-study-configuration";
-    import { Timeline } from "@freon4dsl/samples-study-configuration/dist/custom/timeline/Timeline.js";
-    import { getTimelineAsOfADate } from "../../services/app/patient-timeline.js";
 
     export let box: ExternalStringBox;
 
@@ -17,7 +14,7 @@
         loadChartData();
     });
 
-    afterUpdate(() => {
+    $effect(() => {
         if (container && !isChartInitialized) {
             executeScripts();
             isChartInitialized = true;

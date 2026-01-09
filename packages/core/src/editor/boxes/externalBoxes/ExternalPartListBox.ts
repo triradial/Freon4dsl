@@ -1,5 +1,5 @@
 import { Box } from "../Box.js";
-import { FreNode } from "../../../ast/index.js";
+import type { FreNode } from "../../../ast/index.js";
 import { FreUtils } from "../../../util/index.js";
 import { AbstractExternalPropertyBox } from "./AbstractExternalPropertyBox.js";
 
@@ -34,6 +34,23 @@ export class ExternalPartListBox extends AbstractExternalPropertyBox {
             child.parent = this;
         }
     }
+
+    replaceChildren(children: Box[]): ExternalPartListBox {
+        this._children.forEach((ch) => { if(ch.parent === this) ch.parent = null });
+        // this._children.forEach((ch) => ch.parent = null);
+        this._children.splice(0, this._children.length);
+        if (!!children) {
+            children.forEach((child) => {
+                if (!!child) {
+                    this._children.push(child);
+                    child.parent = this;
+                }
+            });
+        }
+        this.isDirty();
+        return this;
+    }
+
 
     get children(): ReadonlyArray<Box> {
         return this._children as ReadonlyArray<Box>;

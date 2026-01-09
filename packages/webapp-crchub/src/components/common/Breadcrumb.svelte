@@ -1,25 +1,26 @@
 <script lang="ts">
-    import { Breadcrumb, BreadcrumbItem } from "flowbite-svelte";
-    import CustomBreadcrumbItem from "./CustomBreadcrumbItem.svelte";
     import { LABEL } from "../../constants/label-constants.js";
-    import { navigateTo } from "../../services/routing/route-action.js";
+    import { goto } from '$app/navigation';
+    import { breadcrumbStore } from "../../services/stores/breadcrumb-store.js";
+    // @ts-ignore
+    import { Home as IconHome, ChevronRight as IconChevronRight } from '@lucide/svelte';
 
-    export let items: Array<{ label: string; href?: string }> = [];
+    let items = $derived($breadcrumbStore);
 
-    function handleClick(event: CustomEvent<{ event: MouseEvent; href: string }>) {
-        const { href } = event.detail;
-        const routeName = href.replace("/", "");
-        navigateTo(routeName);
+    function handleClick(event: MouseEvent, href: string) {
+        event.preventDefault();
+        goto(href, { invalidateAll: true });
     }
 </script>
 
-<Breadcrumb navClass="crc-breadcrumb" aria-label="Default breadcrumb example">
-    <CustomBreadcrumbItem href="/" home on:click={(event) => handleClick(event)}>{LABEL.HOME}</CustomBreadcrumbItem>
-    {#each items as { label, href } (href)}
+<ol class="breadcrumb" aria-label="breadcrumb">
+    <li><a class="opacity-90 hover:underline" href="/"><IconHome size={16} />{LABEL.HOME}</a></li>
+    {#each items as { label, href }, i (href ?? label ?? i)}
+        <li class="opacity-50" aria-hidden="true"><IconChevronRight size={16} /></li>
         {#if href}
-            <CustomBreadcrumbItem {href} on:click={(event) => handleClick(event)}>{label}</CustomBreadcrumbItem>
+            <li><a class="opacity-60 hover:underline" href={href} onclick={(event) => handleClick(event, href)}>{label}</a></li>
         {:else}
-            <BreadcrumbItem>{label}</BreadcrumbItem>
+            <li>{label}</li>
         {/if}
     {/each}
-</Breadcrumb>
+</ol>

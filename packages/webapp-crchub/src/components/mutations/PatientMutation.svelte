@@ -1,41 +1,49 @@
 <script lang="ts">
-    import { Card, Button, Input, Select, Helper } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
-    import { type Study, type Patient } from "../../services/data/data-store.js";
-    import { createEventDispatcher } from "svelte";
+    import { type Patient } from "../../services/data/data-store.js";
+// @ts-ignore
+    import { Asterisk as IconAsterisk, Save as IconSave, X as IconX } from '@lucide/svelte';
 
-    export let study: Study;
-    export let patient: Patient;
-    export let action: "add" | "edit";
+    const { patient, action, onsave, onclose } = $props<{
+        patient: Patient;
+        action: "add" | "edit";
+        onsave?: (patient: Patient) => void;
+        onclose?: () => void;
+    }>();
+
     let mutatedPatient = { ...patient };
-    const dispatch = createEventDispatcher();
 
-    $: getInputClass = (field: keyof typeof errors) => {
+    function getErrorState(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";
-    };
-    $: if (action === "edit" && patient) {
-        validateAllFields();
     }
-    $: if (action === "add" && patient) {
-        mutatedPatient.studyId = study.id;
-        mutatedPatient.study = study.name;
-    }
-    let errors = {
-        patientNumber: "",
-    };
-    $: errorState = { ...errors };
-    $: hasErrors = Object.values(errorState).some((error) => error !== "");
 
-    function saveChanges() {
+    $effect(() => {
+        if (action === "edit" && patient) {
+            validateAllFields();
+        }
+    });
+
+    const errors = $state({
+        patientNumber: "",
+        initials: ""
+    });
+    const errorState = $state({ ...errors });
+    let hasErrors = $derived(Object.values(errorState).some((error) => error !== ""));
+
+    $effect(() => {
+        validateAllFields();
+    });
+
+    function handleSave() {
+        console.log("[PatientMutation] handleSave called");
         validateAllFields();
         if (Object.values(errorState).every((error) => error === "")) {
-            dispatch("save", mutatedPatient);
+            console.log("[PatientMutation] calling onsave prop", mutatedPatient);
+            onsave?.(mutatedPatient);
         }
     }
 
-    function cancelEdit() {
-        dispatch("close");
+    function handleClose() {
+        onclose?.();
     }
 
     function handleInput(field: keyof typeof errors) {
@@ -56,57 +64,40 @@
     function validateField(field: keyof typeof errors, value: string) {
         if (field === "patientNumber" && !value.trim()) {
             errors[field] = "Patient number is required";
+        } else if (field === "initials" && !value.trim()) {
+            errors[field] = "Initials are required";
         } else {
             errors[field] = "";
         }
-        errorState = { ...errors };
+        errorState[field] = errors[field];
     }
 </script>
 
-<Card class="crc-mutation-area max-w-sm">
-    <div class="space-y-2">
+<div class="mutation-area max-w-sm">
+    <div class="flex flex-col gap-4">
         <div>
-            <h4 class="card-label-text">Patient Number</h4>
-            <Input
-                type="text"
-                bind:value={mutatedPatient.patientNumber}
-                on:input={handleInput("patientNumber")}
-                class="crc-field {getInputClass('patientNumber')}"
-            />
+            <div class="small-label-text">Patient Number{#if errors.patientNumber}<IconAsterisk size="12" class="object-drawer-error-indicator" />{/if}</div>
+            <input class="input-field {getErrorState('patientNumber')}" type="text" bind:value={mutatedPatient.patientNumber} oninput={handleInput("patientNumber")} />
         </div>
         <div>
-            <h4 class="card-label-text">Initials</h4>
-            <Input type="text" bind:value={mutatedPatient.initials} class="crc-field" />
+            <div class="small-label-text">Initials{#if errors.initials}<IconAsterisk size="12" class="object-drawer-error-indicator" />{/if}</div>
+            <input class="input-field {getErrorState('initials')}" type="text" bind:value={mutatedPatient.initials} oninput={handleInput("initials")} />
         </div>
         <div>
-            <h4 class="card-label-text">YOB</h4>
-            <Input type="number" bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} class="crc-field" />
+            <div class="small-label-text">Year of Birth</div>
+            <input class="input-field" type="number" bind:value={mutatedPatient.dob} min="1924" max={new Date().getFullYear()} />
         </div>
         <div>
-            <h4 class="card-label-text">Gender</h4>
-            <Select bind:value={mutatedPatient.gender} class="crc-field">
+            <div class="small-label-text">Gender</div>
+            <select class="select-field" bind:value={mutatedPatient.gender}>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
-            </Select>
+            </select>
         </div>
     </div>
-    <div class="flex items-center justify-center mt-4">
-        <Button size="xs" color="primary" class="mr-2" on:click={saveChanges} disabled={hasErrors}>
-            <FontAwesomeIcon icon={faSave} class="mr-2" />
-            Save
-        </Button>
-        <Button size="xs" color="light" on:click={cancelEdit}>
-            <FontAwesomeIcon icon={faTimes} class="mr-2" />
-            Cancel
-        </Button>
+    <div class="flex items-center justify-right mt-8">
+        <button class="standard-button primary inverted" onclick={handleSave} disabled={hasErrors}><IconSave size="16" />Save</button>
+        <button class="standard-button gray inverted" onclick={handleClose}><IconX size="16" />Cancel</button>
     </div>
-</Card>
-
-<style>
-    :global(.card) {
-        border-radius: 0;
-        box-shadow: none;
-        border: 1px solid #e5e7eb;
-    }
-</style>
+</div>

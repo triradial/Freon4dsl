@@ -1,28 +1,45 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { Button, Tooltip } from "flowbite-svelte";
-    import { FontAwesomeIcon } from "@fortawesome/svelte-fontawesome";
-    import { faTimes, faGripLinesVertical, faRotateRight, faPrint } from "@fortawesome/free-solid-svg-icons";
-    import { getDrawer, drawerStore, setDrawerWidth, setActiveDrawer, getDrawerWidth, type Drawer } from "../../services/stores/side-drawer-store.js";
+    import { drawerStore, getDrawer, getDrawerWidth, setActiveDrawer, setDrawerWidth } from "../../services/stores/side-drawer-store.js";
+// @ts-ignore
+    import { Printer as IconPrinter, RefreshCw as IconRefreshCw, X as IconX } from '@lucide/svelte';
 
-    export let isOpen = false;
+    let { isOpen = false } = $props<{ isOpen?: boolean }>();
 
-    $: activeDrawer = $drawerStore.activeDrawer;
-    $: drawerWidth = activeDrawer ? getDrawerWidth(activeDrawer) : 400;
-    $: drawers = Object.values($drawerStore.drawers) as Drawer[];
-    $: if (activeDrawer !== activeDrawerKey) {
-        activeDrawerKey = activeDrawer;
-        activeDrawerInstance = null;
-    }
-
-    let activeDrawerInstance: any;
+    let activeDrawer = $derived($drawerStore.activeDrawer);
+    let drawerWidth = $derived(activeDrawer ? getDrawerWidth(activeDrawer) : 400);
+    let drawers = $derived($drawerStore.drawerOrder.map(key => $drawerStore.drawers[key]).filter(Boolean));
+    let activeDrawerTitle = $derived(activeDrawer ? ($drawerStore.drawers[activeDrawer]?.title ?? "") : "");
+    let activeDrawerProps = $derived(activeDrawer ? ($drawerStore.drawers[activeDrawer]?.props ?? {}) : {});
+    let drawerContentEl = $state<HTMLElement | null>(null);
+    let activeDrawerInstance = $state<any>(null);
     let activeDrawerKey: string | null = null;
+    let resizing = false;
+    let startX: number;
+    let startWidth: number;
+
+    let DrawerComponent = $state(null);
+    $effect(() => {
+        DrawerComponent = getDrawer(activeDrawer)?.component ?? null;
+    });
+
+    let isHandleBright = $state(false);
+    let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
+    let dragging = false;
+
+    $effect(() => {
+        if (activeDrawer !== activeDrawerKey) {
+            activeDrawerKey = activeDrawer;
+            activeDrawerInstance = null;
+        }
+    });
 
     const dispatch = createEventDispatcher();
 
     function toggleDrawer(drawerKey: string) {
         if (isOpen && activeDrawer === drawerKey) {
             isOpen = false;
+            setActiveDrawer(null);
         } else {
             isOpen = true;
             setActiveDrawer(drawerKey);
@@ -33,7 +50,14 @@
 
     function closeDrawer() {
         isOpen = false;
+        setActiveDrawer(null);
         dispatch("drawerToggle", { isOpen, activeDrawer: "" });
+    }
+    
+    function printContent() {
+        if (activeDrawerInstance && typeof activeDrawerInstance.print === "function") {
+            activeDrawerInstance.print();
+        }
     }
 
     function refreshDrawer() {
@@ -42,21 +66,21 @@
         }
     }
 
-    function printDrawer() {
-        if (activeDrawerInstance && typeof activeDrawerInstance.print === "function") {
-            activeDrawerInstance.print();
+    function getDynamicMinWidth() {
+        const HARDCODED_MIN = 400;
+        if (drawerContentEl) {
+            const contentMin = drawerContentEl.scrollWidth;
+            return Math.max(HARDCODED_MIN, contentMin);
         }
+        return HARDCODED_MIN;
     }
-
-    let resizing = false;
-    let startX: number;
-    let startWidth: number;
 
     function handleResize(event: MouseEvent) {
         if (!resizing) return;
 
         const dx = startX - event.clientX;
-        const newWidth = Math.max(400, Math.min(1400, startWidth + dx));
+        const dynamicMinWidth = getDynamicMinWidth();
+        const newWidth = Math.max(dynamicMinWidth, Math.min(1400, startWidth + dx));
         drawerWidth = newWidth;
         if (activeDrawer) {
             setDrawerWidth(activeDrawer, drawerWidth);
@@ -66,8 +90,11 @@
 
     function startResize(event: MouseEvent) {
         resizing = true;
+        dragging = true;
         startX = event.clientX;
         startWidth = drawerWidth;
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        isHandleBright = true;
 
         window.addEventListener("mousemove", handleResize);
         window.addEventListener("mouseup", stopResize);
@@ -76,8 +103,24 @@
 
     function stopResize() {
         resizing = false;
+        dragging = false;
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        isHandleBright = false;
         window.removeEventListener("mousemove", handleResize);
         window.removeEventListener("mouseup", stopResize);
+    }
+
+    function handleResizeHandleMouseEnter() {
+        hoverTimeout = setTimeout(() => {
+            isHandleBright = true;
+        }, 300);
+    }
+
+    function handleResizeHandleMouseLeave() {
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        if (!dragging) {
+            isHandleBright = false;
+        }
     }
 </script>
 
@@ -85,41 +128,41 @@
     <div class="drawer-buttons">
         {#each drawers as drawer}
             {#if drawer.isVisible}
-                <Button id={drawer.key} class="toolbar-button" on:click={() => toggleDrawer(drawer.key)}>
-                    <FontAwesomeIcon icon={drawer.icon} />
-                </Button>
-                <!-- <Tooltip class="tooltip-popover" triggeredBy="#{drawer.key}" placement="left">{drawer.description}</Tooltip> -->
+                {@const Icon = drawer.icon}
+                <button id={drawer.key} class="icon-button toolbar-button" onclick={() => toggleDrawer(drawer.key)} title={drawer.description}><Icon size={24} /></button>
             {/if}
         {/each}
     </div>
     {#if isOpen && activeDrawer}
         <div class="drawer-content-wrapper" style="width: {drawerWidth}px">
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <div class="resize-handle" on:mousedown={startResize}>
-                <FontAwesomeIcon icon={faGripLinesVertical} class="grip-icon" />
-            </div>
             <div class="drawer-content">
                 <div class="drawer-header">
                     <div class="drawer-title-container">
-                        <h2>{getDrawer(activeDrawer)?.title ?? ""}</h2>
+                        <h2>{activeDrawerTitle}</h2>
                         {#if getDrawer(activeDrawer)?.supportsRefresh}
-                            <Button class="drawer-header-button" on:click={refreshDrawer}>
-                                <FontAwesomeIcon icon={faRotateRight} />
-                            </Button>
+                            <button class="image-button drawer-header-button" onclick={refreshDrawer}><IconRefreshCw size={20} /></button>
                         {/if}
-                         {#if getDrawer(activeDrawer)?.supportsPrint}
-                            <Button class="drawer-header-button" on:click={printDrawer}>
-                                <FontAwesomeIcon icon={faPrint} />
-                            </Button>
+                        {#if getDrawer(activeDrawer)?.supportsPrint}
+                            <button class="image-button drawer-header-button" onclick={printContent}><IconPrinter size={20} /></button>
                         {/if}
-                   </div>
-                    <Button class="drawer-header-button" on:click={closeDrawer}>
-                        <FontAwesomeIcon icon={faTimes} />
-                    </Button>
+                    </div>
+                    <button class="image-button drawer-header-button" onclick={closeDrawer}><IconX size={16} /></button>
                 </div>
-                {#key activeDrawer}
-                    <svelte:component this={getDrawer(activeDrawer)?.component} {...getDrawer(activeDrawer)?.props} bind:this={activeDrawerInstance} />
-                {/key}
+                {#if DrawerComponent}
+                    <div bind:this={drawerContentEl} style="height: 100%">
+                        <DrawerComponent {...activeDrawerProps} bind:this={activeDrawerInstance} />
+                    </div>
+                {/if}
+            </div>
+            <!-- svelte-ignore a11y_no_static_element_interactions -->
+            <div
+                class="resize-handle"
+                class:bright={isHandleBright}
+                aria-hidden="true"
+                tabindex="-1"
+                onmousedown={startResize}
+                onmouseenter={handleResizeHandleMouseEnter}
+                onmouseleave={handleResizeHandleMouseLeave}>
             </div>
         </div>
     {/if}

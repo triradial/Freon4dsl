@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { ListUtil, MetaLogger } from "../../utils/index.js";
+import { ListUtil, MetaLogger } from "../../utils/no-dependencies/index.js";
 import {
     FreMetaClassifier,
     FreMetaConcept,
@@ -9,17 +9,19 @@ import {
 import {
     EDITOR_FOLDER,
     EDITOR_GEN_FOLDER,
+    Names
+} from "../../utils/on-lang/index.js";
+import {
     GenerationStatus,
     FileUtil,
-    isNullOrUndefined,
-    Names,
-    STYLES_FOLDER,
-} from "../../utils/index.js";
+    isNullOrUndefined
+} from "../../utils/file-utils/index.js";
 import { FreEditUnit } from "../metalanguage/index.js";
 import { ActionsTemplate, EditorIndexTemplate, BoxProviderTemplate } from "./templates/index.js";
 import { CustomActionsTemplate, CustomProjectionTemplate, DefaultActionsTemplate } from "./templates/index.js";
 import { EditorDefTemplate } from "./templates/index.js";
-import { LOG2USER } from "../../utils/index.js";
+import { LOG2USER } from "../../utils/basic-dependencies/index.js";
+import { NamesForEditor } from '../../utils/on-lang-and-editor/index.js';
 
 const LOGGER = new MetaLogger("EditorGenerator").mute();
 
@@ -27,7 +29,6 @@ export class EditorGenerator {
     public outputfolder: string = ".";
     protected editorGenFolder: string = "";
     protected editorFolder: string = "";
-    protected stylesFolder: string = "";
     language?: FreMetaLanguage;
 
     generate(editDef: FreEditUnit): void {
@@ -55,7 +56,6 @@ export class EditorGenerator {
 
         // Prepare folders
         FileUtil.createDirIfNotExisting(this.editorFolder); // will not be overwritten
-        FileUtil.createDirIfNotExisting(this.stylesFolder); // will not be overwritten
         FileUtil.createDirIfNotExisting(this.editorGenFolder);
         FileUtil.deleteFilesInDir(this.editorGenFolder, generationStatus);
 
@@ -72,7 +72,7 @@ export class EditorGenerator {
                     "Box provider " + concept.name,
                     generationStatus,
                 );
-                fs.writeFileSync(`${this.editorGenFolder}/${Names.boxProvider(concept)}.ts`, projectionfile);
+                fs.writeFileSync(`${this.editorGenFolder}/${NamesForEditor.boxProvider(concept)}.ts`, projectionfile);
             }
         });
 
@@ -82,7 +82,7 @@ export class EditorGenerator {
                 "Box provider " + concept.name,
                 generationStatus,
             );
-            fs.writeFileSync(`${this.editorGenFolder}/${Names.boxProvider(concept)}.ts`, projectionfile);
+            fs.writeFileSync(`${this.editorGenFolder}/${NamesForEditor.boxProvider(concept)}.ts`, projectionfile);
         });
 
         const allExtraClassifiers: FreMetaClassifier[] = []; // remember these in order to add them to the index file
@@ -99,7 +99,7 @@ export class EditorGenerator {
                         "Box provider " + cls.name,
                         generationStatus,
                     );
-                    fs.writeFileSync(`${this.editorGenFolder}/${Names.boxProvider(cls)}.ts`, projectionfile);
+                    fs.writeFileSync(`${this.editorGenFolder}/${NamesForEditor.boxProvider(cls)}.ts`, projectionfile);
                 }
             });
             extraClassifiers = newExtraClassifiers;
@@ -175,13 +175,12 @@ export class EditorGenerator {
         if (generationStatus.numberOfErrors > 0) {
             LOGGER.error(`Generated editor with ${generationStatus.numberOfErrors} errors.`);
         } else {
-            LOGGER.info(`Succesfully generated editor`);
+            LOGGER.info(`Successfully generated editor`);
         }
     }
 
     private getFolderNames() {
         this.editorFolder = this.outputfolder + "/" + EDITOR_FOLDER;
-        this.stylesFolder = this.outputfolder + "/" + STYLES_FOLDER;
         this.editorGenFolder = this.outputfolder + "/" + EDITOR_GEN_FOLDER;
     }
 
@@ -189,9 +188,7 @@ export class EditorGenerator {
         this.getFolderNames();
         FileUtil.deleteDirAndContent(this.editorGenFolder);
         if (force) {
-            FileUtil.deleteFile(`${this.stylesFolder}/styles.ts`);
             FileUtil.deleteFile(`${this.editorFolder}/index.ts`);
-            FileUtil.deleteDirIfEmpty(this.stylesFolder);
             if (this.language === null || this.language === undefined) {
                 LOG2USER.error("Cannot remove all files because language is not set.");
             } else {
@@ -207,9 +204,7 @@ export class EditorGenerator {
                         "\n\t" +
                         `${this.editorFolder}/${Names.customProjection(this.language)}.ts` +
                         "\n\t" +
-                        `${this.editorFolder}/index.ts` +
-                        "\n\t" +
-                        `${this.stylesFolder}/styles.ts`,
+                        `${this.editorFolder}/index.ts`
                 );
             }
         }

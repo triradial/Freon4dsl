@@ -1,6 +1,9 @@
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import cors from "koa2-cors";
+import { consoleLogInfo, consoleLogError } from "./logging.js";
+
+const moduleName = '[server-def]';
 
 export const app = new Koa();
 
@@ -10,9 +13,9 @@ app.use(async (ctx, next) => {
     try {
         await next();
         const ms = Date.now() - start;
-        console.log(`${ctx.method} ${ctx.url} - ${ctx.status} - ${ms}ms`);
+        consoleLogInfo(moduleName, `${ctx.method} ${ctx.url} - ${ctx.status} - ${ms}ms`);
     } catch (err) {
-        console.error('Request error:', err);
+        consoleLogError(moduleName, `Request error: ${String(err)}`);
         throw err;
     }
 });

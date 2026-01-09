@@ -54,7 +54,7 @@ export class FreLogger {
 
     constructor(cat: string) {
         this.category = cat;
-        this.mute();
+        this.mute()
     }
 
     info(msg: LogMessage) {
@@ -106,7 +106,7 @@ export class FreLogger {
             console.log(color, message, FreLogger.FG_BLACK, "");
             // this.colorMyText();
         } else {
-            if (!FreLogger.filter.some((filt) => message.includes(filt))) {
+            if (!FreLogger.filter.some(filt => message.includes(filt))) {
                 console.log(color, message, FreLogger.FG_BLACK, "");
             }
         }

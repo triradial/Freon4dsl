@@ -1,0 +1,168 @@
+editor parser
+
+StudyConfiguration {
+    [
+    Periods:
+      ${periods}
+    Tasks:
+      ${tasks}
+    System Accesses:
+      ${systemAccesses}
+    Staffing:
+      ${staffing}
+    Roles:
+      ${roles}
+    ]
+}
+
+//boolean [YES | NO] // are the strings used to display a boolean value
+
+Period {
+    [ 
+        Period:${name}
+        ${description}
+        Events:
+          ${events}
+    ]   
+}
+
+Event {
+    [ 
+        Event:${name}
+        This is a ${typeOfEvent} [? that is also referred to as ${alternativeName} ]
+        ${description}
+        Schedule:
+          ${schedule}
+        Tasks:
+          ${tasks}
+    ]
+}
+
+SharedTask {
+    [
+        Shared Task:${name}
+        ${description}
+        Steps:
+          ${steps}
+    ]
+}
+
+Task {
+    [
+        Task:${name}
+        ${description}
+        Steps:
+          ${steps}
+    ]
+}
+
+TaskReference {
+    [
+        TaskReference:${task}
+    ]
+}
+
+Step {
+    [
+        Step:${name}
+        ${description}
+        People:
+            ${people}
+        Systems Used:
+            ${systems}
+        References:
+            ${references}
+    ]
+}
+
+SystemAccess {
+    [
+        System Name:${name}
+        ${description}
+        ${description}
+        Accessed At:${accessedAt}
+        Robot Mappings:
+            ${robotMappings}
+    ]
+}
+
+
+SystemAccessReference {
+    [
+        SystemAccessReference:${system}
+    ]
+}
+
+AccessedAtURL {
+    [
+        URL: ${url}
+    ]
+}
+
+AccessedAPhoneNumber {
+    [
+        Phone Number: ${phoneNumber}
+    ]
+}
+
+Person {
+    [
+        Name:${name}
+        Email: ${email}
+        Phone: ${phoneNumber}
+        Role: ${role}
+        Notes:${description}
+    ]
+}
+
+PersonReference {
+    [
+        PersonReference:${person}
+    ]
+}
+
+
+Reference {
+    [
+    Reference:${name} 
+    Document is at: ${link}
+    ${description}
+    ]
+}
+
+StaffRole {
+    [
+        Role:${name} 
+        ${description}
+    ]
+}
+
+WorkflowDescription {
+    [
+    Description: ${text}
+    ]
+    
+}
+
+WorkflowBranch {
+    [ Branch: ${branch}  ]
+}
+
+RobotMapping {
+    [
+        From this Page: ${sourcePage}
+        To this Page    :   ${targetPage}        
+        ${sourceToTargetMappings}
+    ]
+
+}
+
+SourceToTargetMapping {
+    [
+        Source Field: ${sourceField}  Target Field: ${targetField}
+    ] 
+}
+
+Description {
+    [ [? Description:${rawText} ] ]
+}

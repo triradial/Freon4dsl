@@ -1,7 +1,5 @@
-import { LangUtil, ParseLocation } from "../../utils/index.js";
-import { MetaElementReference } from "./internal.js";
-// This import cannot be shortened. Importing "../../utils" results in circular dependencies
-import { FreMetaDefinitionElement } from "../../utils/FreMetaDefinitionElement.js";
+import { ParseLocation, FreMetaDefinitionElement } from "../../utils/no-dependencies/index.js";
+import { MetaElementReference } from './internal.js';
 
 // Some properties of the classes defined here are marked @ts-ignore to avoid the error:
 // TS2564: ... has no initializer and is not definitely assigned in the constructor.
@@ -142,13 +140,13 @@ export abstract class FreMetaClassifier extends FreMetaLangElement {
 
     parts(): FreMetaConceptProperty[] {
         return this.properties.filter(
-            (p) => p instanceof FreMetaConceptProperty && p.isPart,
+          (p) => p instanceof FreMetaConceptProperty && p.isPart,
         ) as FreMetaConceptProperty[];
     }
 
     references(): FreMetaConceptProperty[] {
         return this.properties.filter(
-            (p) => p instanceof FreMetaConceptProperty && !p.isPart,
+          (p) => p instanceof FreMetaConceptProperty && !p.isPart,
         ) as FreMetaConceptProperty[];
     }
 
@@ -184,7 +182,7 @@ export abstract class FreMetaClassifier extends FreMetaLangElement {
                 !prop.isOptional &&
                 !prop.hasLimitedType
             ) {
-                const subs = LangUtil.subConceptsIncludingSelf(prop.type);
+                const subs = FreMetaClassifier.subConceptsIncludingSelf(prop.type);
                 if (subs.length === 1 && !subs[0].isAbstract && !(subs[0].name === "FreType")) {
                     return [{ part: prop, concept: subs[0] }];
                 } else {
@@ -198,10 +196,83 @@ export abstract class FreMetaClassifier extends FreMetaLangElement {
     nameProperty(): FreMetaPrimitiveProperty | undefined {
         return this.allPrimProperties().find((p) => p.name === "name" && p.type === FreMetaPrimitiveType.identifier);
     }
+
+    /**
+     * Returns all concepts of which 'self' is a super class, or 'self' is an implemented interface, recursive.
+     * Param 'self' IS included in the result.
+     * @param self
+     */
+    public static subConceptsIncludingSelf(self: FreMetaClassifier): FreMetaConcept[] {
+        if (self === undefined) {
+            return [];
+        }
+        const result = FreMetaClassifier.subConcepts(self);
+        if (self instanceof FreMetaConcept) {
+            result.push(self);
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns all concepts of which 'self' is a super class, or 'self' is an implemented interface, recursive.
+     * Param 'self' is NOT included in the result.
+     * @param self
+     */
+    public static subConcepts(self: FreMetaClassifier): FreMetaConcept[] {
+        const result: FreMetaConcept[] = [];
+        if (self.language === undefined) {
+            return [];
+        }
+        for (const cls of self.language.concepts) {
+            if (FreMetaClassifier.superClassifiers(cls).includes(self)) {
+                result.push(cls);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns all concepts that 'self' inherits from, and all interfaces that 'self'
+     * implements of inherits from, recursive.
+     * @param self
+     */
+    public static superClassifiers(self: FreMetaClassifier): FreMetaClassifier[] {
+        const result: FreMetaClassifier[] = [];
+        FreMetaClassifier.superClassifiersRecursive(self, result);
+        return result;
+    }
+
+    private static superClassifiersRecursive(self: FreMetaClassifier, result: FreMetaClassifier[]) {
+        if (self instanceof FreMetaConcept) {
+            if (!!self.base) {
+                result.push(self.base.referred);
+                FreMetaClassifier.superClassifiersRecursive(self.base.referred, result);
+            }
+            for (const i of self.interfaces) {
+                result.push(i.referred);
+                FreMetaClassifier.superClassifiersRecursive(i.referred, result);
+            }
+        }
+        if (self instanceof FreMetaUnitDescription) {
+            for (const i of self.interfaces) {
+                result.push(i.referred);
+                FreMetaClassifier.superClassifiersRecursive(i.referred, result);
+            }
+        }
+        if (self instanceof FreMetaInterface) {
+            for (const i of self.base) {
+                result.push(i.referred);
+                FreMetaClassifier.superClassifiersRecursive(i.referred, result);
+            }
+        }
+    }
+
 }
 
 export class FreMetaModelDescription extends FreMetaClassifier {
     isPublic: boolean = true;
+    version: string = "1"
 
     unitTypes(): FreMetaUnitDescription[] {
         let result: FreMetaUnitDescription[] = [];
@@ -252,6 +323,62 @@ export class FreMetaUnitDescription extends FreMetaClassifier {
     allPrimProperties(): FreMetaPrimitiveProperty[] {
         return this.implementedPrimProperties();
     }
+
+    allReferences(): FreMetaConceptProperty[] {
+        return this.implementedReferences();
+    }
+
+    allParts(): FreMetaConceptProperty[] {
+        return this.implementedParts();
+    }
+
+    implementedParts(): FreMetaConceptProperty[] {
+        let result: FreMetaConceptProperty[] = this.parts();
+        for (const intf of this.interfaces) {
+            for (const intfProp of intf.referred.allParts()) {
+                let allreadyIncluded = false;
+                // if the prop from the interface is present in this concept, do not include
+                allreadyIncluded = this.parts().some((p) => p.name === intfProp.name);
+                // if the prop from the interface is present in another implemented interface, do not include
+                if (!allreadyIncluded) {
+                    allreadyIncluded = result.some((p) => p.name === intfProp.name);
+                }
+                if (!allreadyIncluded) {
+                    result = result.concat(intfProp);
+                }
+            }
+        }
+        return result;
+    }
+
+    implementedReferences(): FreMetaConceptProperty[] {
+        let result: FreMetaConceptProperty[] = this.references();
+        for (const intf of this.interfaces) {
+            for (const intfProp of intf.referred.allReferences()) {
+                let allreadyIncluded = false;
+                // if the prop from the interface is present in this concept, do not include
+                allreadyIncluded = this.references().some((p) => p.name === intfProp.name);
+                // if the prop from the interface is present in another implemented interface, do not include
+                if (!allreadyIncluded) {
+                    allreadyIncluded = result.some((p) => p.name === intfProp.name);
+                }
+                if (!allreadyIncluded) {
+                    result = result.concat(intfProp);
+                }
+            }
+        }
+        return result;
+    }
+
+    implementedProperties(): FreMetaProperty[] {
+        let result: FreMetaProperty[] = [];
+        result = result
+            .concat(this.implementedPrimProperties())
+            .concat(this.implementedParts())
+            .concat(this.implementedReferences());
+        return result;
+    }
+
 }
 
 export class FreMetaInterface extends FreMetaClassifier {
@@ -325,7 +452,7 @@ export class FreMetaConcept extends FreMetaClassifier {
     interfaces: MetaElementReference<FreMetaInterface>[] = []; // the interfaces that this concept implements
 
     allPrimProperties(): FreMetaPrimitiveProperty[] {
-        const result: FreMetaPrimitiveProperty[] = this.implementedPrimProperties();
+        const result: FreMetaPrimitiveProperty[] = [...this.implementedPrimProperties()];
         if (!!this.base && !!this.base.referred) {
             this.base.referred.allPrimProperties().forEach((p) => {
                 // hide overwritten property
@@ -351,7 +478,7 @@ export class FreMetaConcept extends FreMetaClassifier {
     }
 
     allReferences(): FreMetaConceptProperty[] {
-        const result: FreMetaConceptProperty[] = this.implementedReferences();
+        const result: FreMetaConceptProperty[] = [...this.implementedReferences()];
         if (!!this.base && !!this.base.referred) {
             this.base.referred.allReferences().forEach((p) => {
                 // hide overwritten property
@@ -398,7 +525,15 @@ export class FreMetaConcept extends FreMetaClassifier {
         return result;
     }
 
+    /**
+     * Cache for Implemented Primitive Properties
+     */
+    $$implementedParts: FreMetaConceptProperty[] | null = null
+
     implementedParts(): FreMetaConceptProperty[] {
+        if (this.$$implementedParts !== null) {
+            return [...this.$$implementedParts]
+        }
         let result: FreMetaConceptProperty[] = this.parts();
         for (const intf of this.interfaces) {
             for (const intfProp of intf.referred.allParts()) {
@@ -418,10 +553,19 @@ export class FreMetaConcept extends FreMetaClassifier {
                 }
             }
         }
+        this.$$implementedParts = [...result]
         return result;
     }
 
+    /**
+     * Cache for Implemented Reference Properties
+     */
+    $$implementedReferences: FreMetaConceptProperty[] | null = null
+
     implementedReferences(): FreMetaConceptProperty[] {
+        if (this.$$implementedReferences !== null) {
+            return this.$$implementedReferences
+        }
         let result: FreMetaConceptProperty[] = this.references();
         for (const intf of this.interfaces) {
             for (const intfProp of intf.referred.allReferences()) {
@@ -441,6 +585,7 @@ export class FreMetaConcept extends FreMetaClassifier {
                 }
             }
         }
+        this.$$implementedReferences = result
         return result;
     }
 
@@ -556,7 +701,7 @@ export class FreMetaProperty extends FreMetaLangElement {
         return this.$type?.referred;
     }
     set type(t: FreMetaClassifier) {
-        this.$type = MetaElementReference.create<FreMetaClassifier>(t, "FreClassifier");
+        this.$type = MetaElementReference.create<FreMetaClassifier>(t);
         this.$type.owner = this;
     }
     get typeReference(): MetaElementReference<FreMetaClassifier> {

@@ -1,10 +1,12 @@
-import { IObservableValue, IArrayWillChange, IArrayWillSplice, observable, intercept, runInAction, configure } from "mobx";
+import type { IObservableValue, IArrayWillChange, IArrayWillSplice } from "mobx";
+import { observable, intercept, runInAction, configure } from "mobx";
 import "reflect-metadata";
-import { FreNode } from "../FreNode.js";
+import type { FreNode } from "../FreNode.js";
 
-import { allOwners, DecoratedModelElement } from "./DecoratedModelElement.js";
+import { allOwners } from "./DecoratedModelElement.js";
+import type { DecoratedModelElement } from "./DecoratedModelElement.js";
 import { FreChangeManager } from "../../change-manager/index.js";
-import { PrimType } from "../../language/index.js";
+import type { PrimType } from "../../language/index.js";
 import { FreLogger } from "../../logging/index.js";
 
 configure({
@@ -127,28 +129,31 @@ export function observablepartlist(target: Object, propertyKey: string) {
 export function observableprim(target: DecoratedModelElement, propertyKey: string) {
     const privatePropertyKey = MODEL_PREFIX + propertyKey.toString();
     const getter = function (this: any) {
-        const storedObserver = this[privatePropertyKey] as IObservableValue<string | number | boolean>;
+        const storedObserver = this[privatePropertyKey] as IObservableValue<string | number | boolean | undefined>;
         if (!!storedObserver) {
             return storedObserver.get();
         } else {
-            this[privatePropertyKey] = observable.box(null);
+            this[privatePropertyKey] = observable.box(undefined);
             return this[privatePropertyKey].get();
         }
     };
 
-    const setter = function (this: any, newValue: string | number | boolean) {
-        FreChangeManager.getInstance().setPrimitive(this, propertyKey, newValue);
+    const setter = function (this: any, newValue: string | number | boolean | undefined) {
 
-        let storedObserver = this[privatePropertyKey] as IObservableValue<string | number | boolean>;
+        let storedObserver = this[privatePropertyKey] as IObservableValue<string | number | boolean | undefined>;
 
         if (!!storedObserver) {
+            const oldValue = storedObserver.get()
             runInAction(() => {
                 storedObserver.set(newValue);
             });
+            FreChangeManager.getInstance().setPrimitive(this, propertyKey, oldValue, newValue);
         } else {
             storedObserver = observable.box(newValue);
             this[privatePropertyKey] = storedObserver;
+            FreChangeManager.getInstance().setPrimitive(this, propertyKey, undefined, newValue);
         }
+        
     };
     // tslint:disable no-unused-expression
     Reflect.deleteProperty(target, propertyKey);
@@ -180,6 +185,8 @@ function observablelist(target: Object, propertyKey: string, isPrimitive: boolea
     const privatePropertyKey = MODEL_PREFIX + propertyKey;
 
     const getter = function (this: any) {
+        // LOGGER.log("Getting part " + privatePropertyKey)
+
         return this[privatePropertyKey];
     };
 
@@ -250,6 +257,7 @@ function objectWillChange(
     change: IArrayWillChange<DecoratedModelElement> | IArrayWillSplice<DecoratedModelElement>,
     propertyKey: string,
 ): IArrayWillChange<DecoratedModelElement> | IArrayWillSplice<DecoratedModelElement> | null {
+    // LOGGER.log("objectWillChange " + propertyKey + "   " + change.type + ":" + change.index)
     switch (change.type) {
         case "update":
             const newValue = change.newValue;

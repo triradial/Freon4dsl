@@ -1,4 +1,18 @@
 /* #region GENERAL */
+:root {
+  color-scheme: dark;
+
+  /* #region Custom Select Component */
+  --custom-select-bg: #5b6788;
+  --custom-select-text: #ffffff;
+  --custom-select-border: #333333;
+
+  --custom-select-selected-bg: #32cd3263;
+  --custom-select-selected-text: #ffffff;
+  /* #endregion */
+}
+
+
 .mdc-drawer {
   background-color: #e4e4e4 !important;
 }
@@ -69,38 +83,66 @@
   background-color: inherit;
 }
 
+.single-line-item-label {
+  color: var(--gray-700);
+}
+
 /* #endregion */
 
 /* #region Text Component */
-/* text-component-text text-dropdown-component */
-
-.text-dropdown-component .text-component-input,
 .text-component-input {
   color: #015f01;
   background-color: var(--green-20t);
 }
 
-.text-dropdown-component .text-component-text,
 .text-component-text {
-  color: #35a52b;
+  color: #015f01;
   background-color: inherit;
 }
 
-.text-dropdown-component .text-component-text:hover,
 .text-component-text:hover {
   color: rgb(1, 95, 1);
   background-color: var(--green-30t);
 }
 
-.text-dropdown-component .text-component-placeholder,
+.text-component-input::placeholder,
 .text-component-placeholder {
-  color: #35a52b;
-  background-color: transparent;
+  color: #015f01;
+  opacity: 1;
 }
 
-.text-component-action-placeholder {
-  color: #35a52b;
-  background-color: transparent;
+.text-component-input:focus {
+  --tw-ring-color: #015f01 !important;
+}
+/* #endregion */
+
+/* #region Text Dropdown Component */ 
+.text-dropdown-component .text-component-input {
+  color: var(--blue-90t);
+  background-color: var(--blue-40t);
+}
+
+.text-dropdown-component .text-component-text {
+  color: var(--blue-90t);
+  background-color: inherit;
+}
+
+.text-dropdown-component .text-component-text:hover {
+  color: var(--blue-90t) !important;
+  background-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component .text-component-input::placeholder {
+  color: var(--blue-90t) !important;
+  opacity: 1 !important;
+}
+
+.text-dropdown-component .text-component-input:focus {
+  --tw-ring-color: var(--blue-40t) !important;
+}
+
+.text-dropdown-component .text-component-input-wrapper::before {
+  color: #adadad;
 }
 
 /* #endregion */
@@ -133,19 +175,24 @@
 /* #region List Group Component */
 .list-group.type1 {
   background-color: var(--primary-900t);
+  border-bottom: 1px solid #fff;
 }
 
 .list-group.type2 {
-  background-color: var(--black-5t);
+  background-color: var(--black-20t);
+  border-bottom: 1px solid #fff;
 }
 
 .list-group.type3 {
-  border-bottom: 1px solid var(--white-20t);
+  border-bottom: 1px solid var(--black-30t);
 }
 
 .list-group.type4 {
   border-bottom: 1px solid #1191b9;
-  ;
+}
+
+.list-group.type5 {
+  border-bottom: 1px solid #1191b9;
 }
 
 .list-group.type1 .list-group-label {
@@ -161,25 +208,62 @@
 }
 
 .list-group.type4 .list-group-label {
-  color: #1191b9;
+  color: #666666 !important;
 }
 
 .list-group.type4 .toggle-button {
-  color: #1191b9;
+  color: #666666 !important;
+}
+
+.list-group.type4 .list-group-label {
+  color: #1191b9 !important;
+}
+
+.list-group.type4 .toggle-button {
+  color: #1191b9 !important;
 }
 
 .list-group .toggle-button {
-  border: none;
+  border: 1px solid transparent;
   color: var(--gray-800);
   background-color: transparent;
 }
 
 .list-group .toggle-button:hover {
-  background-color: var(--black-10t);
+  background-color: var(--primary-600);
+  color: var(--white);
 }
 
 .list-group .toggle-button:active {
-  background-color: var(--black-20t);
+  background-color: var(--primary-600);
+}
+
+.list-group .toggle-button:focus {
+  background-color: var(--primary-800);
+  color: var(--white);
+}
+
+.drag-handle svg {
+  color: var(--green);
+}
+
+.action-button {
+  color: var(--gray-800) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--gray-800) !important;
+}
+
+.action-button:hover {
+  color: var(--white) !important;
+  background-color: var(--primary-600) !important;
+  border: 1px solid var(--primary-600) !important;
+}
+
+.action-button:active,
+.action-button:focus {
+  color: var(--white) !important;
+  background-color: var(--primary-900) !important;
+  border: 1px solid var(--primary-900) !important;
 }
 
 /* #endregion */
@@ -213,17 +297,23 @@
 }
 
 .item-group .toggle-button {
-  border: none;
+  border: 1px solid transparent;
   color: var(--gray-800);
   background-color: transparent;
 }
 
 .item-group .toggle-button:hover {
-  background-color: var(--black-10t);
+  background-color: var(--primary-600);
+  color: var(--white);
 }
 
 .item-group .toggle-button:active {
-  background-color: var(--black-20t);
+  background-color: var(--primary-600);
+}
+
+.item-group .toggle-button:focus {
+  background-color: var(--primary-800);
+  color: var(--white);
 }
 
 .drag-button {
@@ -320,9 +410,9 @@
   background-color: var(--black-10t);
 }
 
-.reference-button {
+.reference-arrow {
   background-color: transparent !important;
-  color: var(--gray-700) !important;
+  fill: var(--gray-700) !important;
 }
 
 .reference-button:hover {
@@ -405,6 +495,43 @@
   border: rgb(1, 95, 1);
 }
 
+.datepicker-display {
+  color: rgb(1, 95, 1);
+  background-color: transparent
+}
+
+.dsl-date-text,
+.dsl-input-text {
+  color: rgb(1, 95, 1) !important;
+}
+
+/* Highlight date segments when the datepicker input is focused */
+.datepicker-input:focus .dsl-date-text,
+.datepicker-input:focus .dsl-input-text,
+.datepicker-input:focus-within .dsl-date-text,
+.datepicker-input:focus-within .dsl-input-text {
+  background-color: var(--green-10t) !important;
+}
+
+/* Highlight individual segments when they receive focus */
+.dsl-date-text:focus,
+.dsl-input-text:focus {
+  background-color: var(--green-10t) !important;
+  outline: 1px solid rgb(1, 95, 1) !important;
+  outline-offset: 1px !important;
+}
+
+/* Highlight calendar icon trigger when focused */
+.datepicker-input button:focus,
+.datepicker-input button:focus-visible,
+button[data-bits-popover-trigger]:focus,
+button[data-bits-popover-trigger]:focus-visible,
+.datepicker-input ~ button:focus,
+.datepicker-input ~ button:focus-visible {
+  background-color: var(--green-10t) !important;
+  outline: 1px solid rgb(1, 95, 1) !important;
+  outline-offset: 2px !important;
+}
 /* #endregion */
 
 /* #region Timepicker */
@@ -426,14 +553,27 @@
   background-color: var(--green-10t);
   border: rgb(1, 95, 1);
 }
-
+/* 
 input[type="time"]::-webkit-calendar-picker-indicator {
   background: white;
   color: black;
-}
-
+} */
 /* #endregion */
 
+/* #region Render Component */
 .render-component-selected {
-  background-color: var(--black-2t);
+  background-color: #a57cc718;
 }
+/* #endregion */
+
+/* #region Drag Handle */
+.drag-handle-icon {
+  fill: var(--black);
+}
+/* #endregion */
+
+/* #region Abbreviation Components */
+.abbreviation-text {
+  color: var(--gray-700) !important;
+}
+/* #endregion */ 

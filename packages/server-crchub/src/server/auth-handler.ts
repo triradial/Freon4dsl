@@ -1,102 +1,134 @@
 import { IRouterContext } from "koa-router";
-import * as path from "node:path";
+import { consoleLogInfo, consoleLogError, consoleLogSuccess, consoleLogWarning } from './logging.js';
+import * as authService from '../service/auth-service.js';
+
+const moduleName = '[auth-handler]';
 
 export class AuthHandler {
 
+    /**
+     * Sign in endpoint - authenticates user with username and password
+     * Uses new authentication flow:
+     * 1. Validates username in Azure AD
+     * 2. Gets OID from Azure AD
+     * 3. Checks database with OID and password
+     * 4. Checks active flag
+     * 5. Returns fake JWT token
+     */
     public static async signIn(username: string, password: string, ctx: IRouterContext) {
         try {
-            console.log(`[AUTH] Sign in attempt for user: ${username}`);
-            const token = await this.authenticate(username, password);
+            consoleLogInfo(moduleName, `Sign in attempt for user: ${username}`);
+            
+            // Use the new authentication service
+            const result = await authService.authenticateUser(username, password);
+            
             ctx.response.type = 'application/json';
-            if (token) {
+            
+            if (result.success && result.token && result.oid) {
                 ctx.status = 200;
-                ctx.response.body = { token: token, username: username };
+                ctx.response.body = { 
+                    token: result.token, 
+                    oid: result.oid, 
+                    username: username 
+                };
+                consoleLogSuccess(moduleName, `Sign in successful for user: ${username}`);
             } else {
-                ctx.status = 404;
-                ctx.response.body = { error: "Authentication failed", username };
+                // Map error types to appropriate HTTP status codes
+                switch (result.errorType) {
+                    case 'not_found':
+                        ctx.status = 404;
+                        break;
+                    case 'inactive':
+                        ctx.status = 403;
+                        break;
+                    case 'invalid_password':
+                        ctx.status = 401;
+                        break;
+                    case 'auth':
+                    default:
+                        ctx.status = 500;
+                        break;
+                }
+                ctx.response.body = { 
+                    error: result.error || "Authentication failed", 
+                    username 
+                };
+                consoleLogWarning(moduleName, `Sign in failed for user: ${username} - ${result.error}`);
             }
         } catch (e) {
             ctx.status = 500;
-            ctx.response.body = { error: "Error retrieving study", details: e.message };
+            ctx.response.body = { error: "Error during authentication", details: String(e) };
+            consoleLogError(moduleName, `Sign in error: ${String(e)}`);
         }
     }
 
+    /**
+     * Sign out endpoint
+     */
     public static async signOut(ctx: IRouterContext) {
         ctx.response.type = 'application/json';
         ctx.status = 200;
         ctx.response.body = { message: "Sign out successful" };
     }
 
-    private static async authenticate(username: string, password: string) {
+    /**
+     * Get Azure AD user information by username (email)
+     * This endpoint is used for validating users during authentication
+     */
+    public static async getADUserByUsername(username: string, ctx: IRouterContext) {
+        const action = moduleName + ' getADUserByUsername';
         try {
-            // Check if we're in local environment
-            if (process.env.AZURE_ENVIRONMENT === 'local') {
-                console.log('Auth Environment:', {
-                    environment: process.env.AZURE_ENVIRONMENT,
-                    username: username
-                });
-                if (password === '#2Pencil' && username.endsWith('@triradialapps.onmicrosoft.com')) {
-                    const localUser = username.split('@')[0].toLowerCase();
-                    switch (localUser) {
-                        case 'graham': return { token: "fa12eb", uid: "d1537092-f9a9-4516-a8b5-bf4c52a16c28" };
-                        case 'mike': return { token: "ea12eb", uid: "42825aeb-bb4c-4c4c-b775-4e4f6d2f8526" };
-                        default: return false;
-                    }
-                }
-                return false;
+            consoleLogInfo(action, `Looking up AD user: ${username}`);
+            
+            const result = await authService.getADUserByUsername(username);
+            
+            ctx.response.type = 'application/json';
+            
+            if (result.error && result.errorType === 'auth') {
+                ctx.status = 500;
+                ctx.response.body = { error: "Authentication error", details: result.error };
+                consoleLogError(action, `Auth error: ${result.error}`);
+            } else if (result.user) {
+                ctx.status = 200;
+                ctx.response.body = { ADUser: result.user };
+                consoleLogSuccess(action, `User found: ${result.user.email}`);
+            } else {
+                ctx.status = 404;
+                ctx.response.body = { error: "User not found", username };
+                consoleLogWarning(action, `User not found: ${username}`);
             }
+        } catch (ex) {
+            ctx.status = 500;
+            ctx.response.body = { error: "Error looking up user", details: String(ex) };
+            consoleLogError(action, `Error: ${String(ex)}`);
+        }
+    }
 
-            // Non-local environment: Use Azure AD authentication
-            const tenantID = process.env.AD_B2C_TENANT;
-            const clientId = process.env.AD_B2C_CLIENT_ID;
-            const clientSecret = process.env.AD_B2C_CLIENT_SECRET;
-            const tokenEndpointTemplate = process.env.AD_B2C_URL;
-            const tokenEndpoint = tokenEndpointTemplate?.replace('${tenantID}', tenantID ?? '');
-
-            console.log('Auth Environment:', {
-                environment: process.env.AD_ENVIRONMENT,
-                clientId: clientId,
-                tokenEndpoint: tokenEndpoint,
-                username: username,
-            });
-
-
-            const params = new URLSearchParams();
-            params.append('grant_type', 'password');
-            params.append('client_id', clientId);
-            params.append('client_secret', clientSecret);
-            params.append('scope', 'openid profile offline_access');
-            params.append('username', username);
-            params.append('password', password);
-            params.append('response_type', 'code');
-            params.append('response_mode', 'query');
-
-            const response = await fetch(tokenEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: params
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Authentication failed:', errorText);
-                return false;
+    /**
+     * Get Azure AD user information by OID
+     */
+    public static async getADUserByOID(oid: string, ctx: IRouterContext) {
+        const action = moduleName + ' getADUserByOID';
+        try {
+            consoleLogInfo(action, `Looking up AD user by OID: ${oid}`);
+            
+            const user = await authService.getADUserByOID(oid);
+            
+            ctx.response.type = 'application/json';
+            
+            if (user) {
+                ctx.status = 200;
+                ctx.response.body = { ADUser: user };
+                consoleLogSuccess(action, `User found: ${user.email}`);
+            } else {
+                ctx.status = 404;
+                ctx.response.body = { error: "User not found", oid };
+                consoleLogWarning(action, `User not found with OID: ${oid}`);
             }
-
-            const data = await response.json();
-
-            if (data.access_token) {
-                return {
-                    token: data.access_token,
-                    uid: data.uid // Assuming the Azure response includes a user ID
-                };
-            }
-            return false;
-        } catch (error) {
-            console.error('Authentication error:', error);
-            return false;
+        } catch (ex) {
+            ctx.status = 500;
+            ctx.response.body = { error: "Error looking up user", details: String(ex) };
+            consoleLogError(action, `Error: ${String(ex)}`);
         }
     }
 }

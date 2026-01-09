@@ -21,7 +21,15 @@ export const environments: Record<Environment, EnvironmentConfig> = {
         serverUrl: "http://localhost:8080",
         serverPort: 8080,
         serverTimeout: 2000,
-        corsOrigins: ["http://127.0.0.1:8004", "http://localhost:8004", "http://127.0.0.1:8000", "http://localhost:8000"],
+        corsOrigins: [
+            "http://127.0.0.1:8004", 
+            "http://localhost:8004", 
+            "http://127.0.0.1:8000", 
+            "http://localhost:8000",
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://localhost:5175"
+        ],
         logLevel: "debug",
         storage: "local", // 'azure' or 'local'
     },

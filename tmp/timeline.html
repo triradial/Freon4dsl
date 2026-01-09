@@ -1,100 +1,102 @@
 <!DOCTYPE HTML>
           <html>
           <head>
-            <title>Timeline Chart</title>
-            <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
-            <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
-            <link id="theme-stylesheet" rel='stylesheet' href='/assets/styles/bundle-dark.css'>
-             <!--    -->
-            </head>
-            <body>
-            <div id="visualization" style="position: unset !important; height:auto"></div>  
-            <div class="timeline-instructions">
-              <ul style="list-style-type: none;">
-                  <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline </li>
-                  <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline</li>
-              </ul>
-              <div class="timeline-key">
-                  <div class="key-item"><div class="square scheduled-event"></div><span>Scheduled time of an Event/Visit</span></div>
-                  <div class="key-item"><div class="square window"></div><span>Window before and after a Scheduled Event/Visit</span></div>
-                  <div class="key-item"><div class="square on-scheduled-date"></div><span>Date patient visit occurred on the scheduled date</span></div>
-                  <div class="key-item"><div class="square in-window"></div><span>Date patient visit occurred in the scheduled window</span></div>
-                  <div class="key-item"><div class="square out-of-window"></div><span>Date patient visit occurred outside the scheduled window</span></div>
-                  <div class="key-item"><div class="square not-available"></div><span>Date(s) the patient is unavailable</span></div>
-                  <div class="key-item"><div class="square staff"></div><span>Staff(#) - '(#)' is the total amount of staff available for the study. The number in the box is the staff on that date. The full staff is available on any date without a box with a number</span></div>
-              </div>
-          </div>
-            <script>
-              var groups = new vis.DataSet([
-              { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-              { "content": "Visit 1", "id": "Visit 1" },
-              
-              
-              ]);
-              
-              var items = new vis.DataSet([
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
-              { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
-              { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
-              { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
-              { start: new Date(2024, 00, 07, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 14" },
-              { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 15" },
-              { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 16" },
-              { start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 17" },
-              { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 18" },
-              { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 19" },
-              
-              
-              
-              
-              ])
-              // create visualization
-              var container = document.getElementById('visualization');
-                  var options = {
-                                showCurrentTime: false,
-                                format: {
-                                    minorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'DDD',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    },
-                                    majorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'w',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    }
+          
+      <title>Timeline Chart</title>
+      <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
+      <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+      <link id="theme-stylesheet" rel='stylesheet' href='/assets/styles/bundle-dark.css'>
+       <!--    -->
+      </head>
+      <body>
+      <div id="visualization" style="position: unset !important; height:auto"></div>  
+      <div class="timeline-instructions">
+        <ul style="list-style-type: none;">
+            <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline </li>
+            <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline</li>
+        </ul>
+        <div class="timeline-key">
+            <div class="key-item"><div class="square scheduled-event"></div><span>Scheduled time of an Event/Visit</span></div>
+            <div class="key-item"><div class="square window"></div><span>Window before and after a Scheduled Event/Visit</span></div>
+            
+            
+        </div>
+    </div>
+      <script>
+        var groups = new vis.DataSet([
+            { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+            { "content": "Visit 1", "id": "Visit 1" },
+            
+            
+          ]);
+
+        var items = new vis.DataSet([
+            { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: 0", content: "<b>Screening</b>", id: "Screening0" },
+            { start: new Date(2023, 11, 31, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 11" },
+                                { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 12" },
+                                { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 02, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 13" },
+{ start: new Date(2024, 00, 07, 00, 00, 00), end: new Date(2024, 00, 07, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 14" },
+                                { start: new Date(2024, 00, 08, 00, 00, 00), end: new Date(2024, 00, 08, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 15" },
+                                { start: new Date(2024, 00, 09, 00, 00, 00), end: new Date(2024, 00, 09, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 16" },
+{ start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Visit 1", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-Visit 17" },
+                                { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Visit 1", className: "scheduled-event", title: "Visit 1: day 0", content: "&nbsp;", id: "Visit 18" },
+                                { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 16, 23, 59, 59), group: "Visit 1", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-Visit 19" },
                 
-                                },
-                                timeAxis: {scale: 'day', step: 1},
-                                showMajorLabels: true,
-                                orientation: 'both',
-                                start: new Date(2024, 0, 1),
-                                end: new Date(2024, 0, 16),
-                                min: new Date(2024, 0, 1),
-                                max: new Date(2024, 0, 16),
-                                zoomFriction:30,
-                                margin: {
-                                    item: {
-                                        horizontal: 0,
-                                    },
-                                },
-                            };
-              var timeline = new vis.Timeline(container);
-              timeline.setOptions(options);
-              timeline.setGroups(groups);
-              timeline.setItems(items);
-            </script>
+            
+
+            
+          ])
+
+// create visualization
+var container = document.getElementById('visualization');
+    var options = {
+      showCurrentTime: false,
+      format: {
+          minorLabels: {
+              millisecond:'',
+              second:     '',
+              minute:     '',
+              hour:       '',
+              weekday:    '',
+              day:        'DDD',
+              week:       '',
+              month:      '',
+              year:       ''
+          },
+          majorLabels: {
+              millisecond:'',
+              second:     '',
+              minute:     '',
+              hour:       '',
+              weekday:    '',
+              day:        'w',
+              week:       '',
+              month:      '',
+              year:       ''
+          }
+
+      },
+      timeAxis: {scale: 'day', step: 1},
+      showMajorLabels: true,
+      orientation: 'both',
+      start: new Date(2024, 0, 1),
+      end: new Date(2024, 0, 16),
+      min: new Date(2024, 0, 1),
+      max: new Date(2024, 0, 16),
+      zoomFriction:30,
+      margin: {
+          item: {
+              horizontal: 0,
+          },
+      },
+  };
+
+        var timeline = new vis.Timeline(container);
+        timeline.setOptions(options);
+        timeline.setGroups(groups);
+        timeline.setItems(items);
+      </script>
+    
           </body>
           </html>
+              

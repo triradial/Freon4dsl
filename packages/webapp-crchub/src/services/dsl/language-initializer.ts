@@ -1,10 +1,4 @@
-import {
-    fileExtensions,
-    languageName,
-    projectionNames,
-    projectionsShown,
-    unitTypes,
-} from "./language-store.js";
+import { fileExtensions, languageName, projectionNames, projectionsShown, unitTypes } from "./language-store.js";
 import { FreProjectionHandler, FreLanguage, FreUndoManager, type FreEnvironment } from "@freon4dsl/core";
 import { setUserMessage } from "./usermessage-store.js";
 import { WebappConfigurator } from "./webapp-configurator.js";
@@ -15,12 +9,15 @@ export class LanguageInitializer {
      * and make sure that the editor is able to get user message to the webapp.
      */
     static initialize(): void {
-        let langEnv: FreEnvironment = WebappConfigurator.getInstance().editorEnvironment;
+        let langEnv: FreEnvironment | undefined = WebappConfigurator.getInstance().editorEnvironment;
+        if (!langEnv) {
+            return;
+        }
         // the language name
         languageName.set(langEnv.languageName);
 
         // the names of the unit types
-        unitTypes.set(FreLanguage.getInstance().getUnitNames());
+        unitTypes.set({ list: FreLanguage.getInstance().getUnitNames() });
 
         // the file extensions for all unit types
         // because 'langEnv.fileExtensions.values()' is not an Array but an IterableIterator,
@@ -29,13 +26,13 @@ export class LanguageInitializer {
         for (const val of langEnv.fileExtensions.values()) {
             tmp.push(val);
         }
-        fileExtensions.set(tmp);
+        fileExtensions.set({ list: tmp });
 
         // the names of the projections / views
-        const proj = langEnv.editor.projection;
-        let nameList: string[] = proj instanceof FreProjectionHandler ? proj.projectionNames() : ["default"];
-        projectionNames.set(nameList);
-        projectionsShown.set(nameList); // initialy, all projections are shown
+        const proj: FreProjectionHandler = langEnv.editor.projection;
+        let nameList: string[] = proj.projectionNames();
+        projectionNames.set({ list: nameList });
+        projectionsShown.set({ list: nameList }); // initially, all projections are shown
 
         // let the editor know how to set the user message,
         // we do this by assigning our own method to the editor's method

@@ -1,0 +1,70 @@
+editor default
+
+Availability {
+  [
+    STAFFING
+      Number of CRCs Normally Available: ${baselineStaff}
+
+      Staffing Level Changes:
+      ${staffLevels}
+
+  ]
+}
+
+PatientNotAvailable {
+  [
+  ${dates}
+  ]
+}
+
+StaffLevel {
+  [ 
+    [fragment staffLevelDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="# Staff"]
+  ] trigger = "Staff Level"
+  fragment staffLevelDetails [
+    ${staffAvailable} on: ${dateOrRange replace=DateRangePickerComponent}
+  ]
+}
+
+DateRange {
+  [
+    [fragment dateRangeDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="From"]
+  ] trigger = "Dates"
+  fragment dateRangeDetails [
+    ${startDate} thru:${endDate}
+  ]
+}
+
+DateConcept {
+  [${dateAsString replace=DatePickerComponent startDate="30/09/2024"}]
+}
+
+
+PatientInfo {
+  [
+   ${patientHistories}
+  ]
+}
+
+PatientHistory {
+  [
+   ID ${patient_id} 
+   ${patientVisits wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Patient Visits"} 
+   ${patientNotAvailableDates wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Patient Not Available Dates"}
+  ]
+}
+
+PatientVisit {
+  [
+      [fragment visitDetails wrap = SingleLineItemComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Visit"]
+  ] trigger = "Patient Visit"
+  fragment visitDetails [
+    ${visit}was ${status}on ${actualVisitDate} 
+  ]
+}
+
+PatientHistoryUnit {
+  [
+    ${patientHistory}
+  ]
+}

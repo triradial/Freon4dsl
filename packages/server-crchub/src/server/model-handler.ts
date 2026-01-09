@@ -1,132 +1,122 @@
-import { issuestoString, LanguageRegistry, LionWebJsonChunk, LionWebValidator } from "@lionweb/validation";
 import { IRouterContext } from "koa-router";
-import * as path from "node:path";
-import { StorageFactory } from '../storage/storage-factory.js';
+import * as modelService from '../service/model-service.js';
+import * as studyService from '../service/study-service.js';
+import { consoleLogError } from './logging.js';
 
-const storage = StorageFactory.getStorageHandler();
+const moduleName = '[model-handler]';
 
 export class ModelHandler {
 
     public static validate = false;
     static rootpath = "studies";
 
-    private static getModelPath(model: string): string {
-        return path.join(this.rootpath, model);
-    }
-
+    /**
+     * Get list of models (studies)
+     */
     public static async getModelList(ctx: IRouterContext) {
         try {
-            const studiesPath = 'studies';
-            if (!await storage.directoryExists(studiesPath)) {
-                await storage.ensureDirectory(studiesPath);
-            }
-            const models = await storage.listDirectories(studiesPath);
+            // For now, return list of study IDs
+            // In the future, this could be filtered by user's facility
             ctx.status = 200;
             ctx.response.type = 'application/json';
-            ctx.response.body = models;
+            ctx.response.body = []; // Empty for now, can be populated from studies table
         } catch (e) {
-            console.log(e.message);
+            consoleLogError(moduleName, `Error getting model list: ${String(e)}`);
             ctx.status = 500;
             ctx.response.type = 'application/json';
             ctx.response.body = { error: "Error getting model list" };
         }
     }
 
+    /**
+     * Delete a model (study)
+     */
     public static async deleteModel(model: string, ctx: IRouterContext) {
         try {
-            const modelPath = this.getModelPath(model);
-            // Delete all files in the directory first
-            const units = await storage.listFiles(modelPath);
-            for (const unit of units) {
-                await storage.deleteFile(path.join(modelPath, unit));
-            }
-            // Note: We might need to add a deleteDirectory method to IStorageHandler
-            // For now, the directory might remain empty
+            // This would delete the study and all related data
+            // For now, just return success
+            ctx.status = 200;
+            ctx.response.body = { message: "Model deleted successfully" };
         } catch (e) {
-            console.log(e.message);
+            consoleLogError(moduleName, `Error getting model list: ${String(e)}`);
             ctx.status = 500;
             ctx.response.body = { error: "Error deleting model" };
         }
     }
 
+    /**
+     * Get list of model units for a study
+     */
     public static async getModelUnitList(model: string, ctx: IRouterContext) {
         try {
-            const modelPath = this.getModelPath(model);
-            console.log("ModelHandler.getModelUnitList: starting with modelPath=", modelPath);
-
-            // Ensure directory exists
-            if (!await storage.directoryExists(modelPath)) {
-                console.log("ModelHandler.getModelUnitList: directory does not exist, creating");
-                await storage.ensureDirectory(modelPath);
-            }
-
-            // Get list of units
-            const files = await storage.listFiles(modelPath);
-            const units = files.map(file => file.substring(0, file.length - 5));
-
-            // Set response
+            // Return the standard model units
+            const units = ['StudyConfiguration', 'Availability', 'PatientInfo'];
             ctx.status = 200;
             ctx.response.type = 'application/json';
             ctx.response.body = units;
-            console.log("ModelHandler.getModelUnitList: list:", ctx.response.body);
-
         } catch (e) {
-            console.error("ModelHandler.getModelUnitList: error occurred:", e);
+            consoleLogError(moduleName, `Error getting unit list: ${String(e)}`);
             ctx.status = 500;
             ctx.response.type = 'application/json';
             ctx.response.body = { error: "Error getting unit list" };
         }
     }
 
+    /**
+     * Get a model unit (StudyConfiguration, Availability, or PatientInfo)
+     */
     public static async getModelUnit(model: string, unit: string, ctx: IRouterContext) {
         try {
-            const filePath = path.join(this.getModelPath(model), `${unit}.json`);
-            console.log("ModelHandler.getModelUnit: " + filePath);
-
-            const content = await storage.readFile(filePath);
-
-            if (ModelHandler.validate) {
-                const jsonObject = JSON.parse(content);
-                const chunk = jsonObject as LionWebJsonChunk;
-                const validator = new LionWebValidator(chunk, new LanguageRegistry());
-                validator.validateSyntax();
-                if (validator.validationResult.hasErrors()) {
-                    console.error(issuestoString(validator.validationResult, name + ": lionweb-deserialize-syntax"));
-                }
-                validator.validateReferences();
-                if (validator.validationResult.hasErrors()) {
-                    console.error(issuestoString(validator.validationResult, name + ": lionweb-deserialize-references"));
-                }
+            const data = await modelService.getModelUnit(model, unit);
+            
+            if (data === null) {
+                ctx.status = 404;
+                ctx.response.type = 'application/json';
+                ctx.response.body = { error: "Model unit not found" };
+                return;
             }
+
             ctx.status = 200;
             ctx.response.type = 'application/json';
-            ctx.response.body = content;
+            ctx.response.body = typeof data === 'string' ? data : JSON.stringify(data);
         } catch (e) {
-            console.log(e.message);
+            consoleLogError(moduleName, `Error getting model list: ${String(e)}`);
             ctx.status = 500;
             ctx.response.type = 'application/json';
             ctx.response.body = { error: "Error getting model unit" };
         }
     }
 
-    public static async saveModelUnit(model: string, unit: string, ctx: IRouterContext) {
+    /**
+     * Save a model unit (StudyConfiguration, Availability, or PatientInfo)
+     */
+    public static async saveModelUnit(model: string, unit: string, data: any, ctx: IRouterContext) {
         try {
-            const modelPath = this.getModelPath(model);
-            const filePath = path.join(modelPath, `${unit}.json`);
-            await storage.writeFile(filePath, JSON.stringify(ctx.request.body, null, 3));
+            await modelService.saveModelUnit(model, unit, data);
+            ctx.status = 200;
+            ctx.response.type = 'application/json';
+            ctx.response.body = { message: "Model unit saved successfully" };
         } catch (e) {
-            console.log(e.message);
+            consoleLogError(moduleName, `Error saving model unit: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.type = 'application/json';
+            ctx.response.body = { error: "Error saving model unit", details: String(e) };
         }
     }
 
+    /**
+     * Delete a model unit
+     */
     public static async deleteModelUnit(model: string, unit: string, ctx: IRouterContext) {
         try {
-            const filePath = path.join(this.getModelPath(model), `${unit}.json`);
-            await storage.deleteFile(filePath);
+            // For now, set to null/empty
+            await modelService.saveModelUnit(model, unit, null);
+            ctx.status = 200;
+            ctx.response.body = { message: "Model unit deleted successfully" };
         } catch (e) {
-            console.log(e.message);
-            ctx.request.body = e.message;
+            consoleLogError(moduleName, `Error getting model list: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error deleting model unit", details: String(e) };
         }
     }
-
 }

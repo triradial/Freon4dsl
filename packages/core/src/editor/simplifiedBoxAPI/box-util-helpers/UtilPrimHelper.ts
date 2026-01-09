@@ -1,25 +1,24 @@
-import { FreNode } from "../../../ast/index.js";
+import type { FreNode } from "../../../ast/index.js";
 import { AST } from "../../../change-manager/index.js";
 import {
     BoolDisplay,
-    BooleanControlBox,
-    Box,
+    type BooleanControlBox,
+    type Box,
     BoxFactory,
-    // CharAllowed,
-    NumberControlBox,
+    CharAllowed, MultiLineTextBox,
+    type NumberControlBox,
     NumberDisplay,
-    NumberDisplayInfo,
-    SelectBox,
-    SelectOption,
-    TextBox,
-} from "../../boxes/index.js";
-import { FreEditor } from "../../FreEditor.js";
+    type NumberDisplayInfo,
+    type SelectBox,
+    type SelectOption,
+    type TextBox
+} from '../../boxes/index.js';
+import { type FreEditor } from "../../FreEditor.js";
 import { BehaviorExecutionResult } from "../../util/index.js";
 import { UtilCheckers } from "./UtilCheckers.js";
-import { FreLanguage, FreLanguageProperty } from "../../../language/index.js";
+import { FreLanguage, type FreLanguageProperty } from "../../../language/index.js";
 import { RoleProvider } from "../RoleProvider.js";
-import { FreUtils } from "../../../util/index.js";
-import { CharAllowed } from "../../boxes/index.js";
+import { FreUtils } from "../../../util/index.js"
 
 export class UtilPrimHelper {
     public static textBox(node: FreNode, propertyName: string, index?: number): TextBox {
@@ -43,7 +42,7 @@ export class UtilPrimHelper {
                         AST.change(() => {
                             node[propertyName][index] = v;
                         }),
-                    { placeHolder: `<${propertyName}>` },
+                    { placeHolder: `${propertyName}` },
                 );
             } else {
                 result = BoxFactory.text(
@@ -54,7 +53,7 @@ export class UtilPrimHelper {
                         AST.change(() => {
                             node[propertyName] = v;
                         }),
-                    { placeHolder: `<${propertyName}>` },
+                    { placeHolder: `${propertyName}` },
                 );
                 // ENSURE TEXTBOX IS SEEN AS DIRTY
                 // result.isDirty()
@@ -66,6 +65,52 @@ export class UtilPrimHelper {
         }
         return result;
     }
+
+    public static multilineTextBox(node: FreNode, propertyName: string, index?: number): MultiLineTextBox {
+        let result: MultiLineTextBox = null;
+        // find the information on the property to be shown
+        const propInfo: FreLanguageProperty = FreLanguage.getInstance().classifierProperty(
+          node.freLanguageConcept(),
+          propertyName,
+        );
+        const isList: boolean = propInfo.isList;
+        const property = node[propertyName];
+        // create the box
+        if (property !== undefined && property !== null && typeof property === "string") {
+            const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "multilinetextbox", index);
+            if (isList && UtilCheckers.checkList(isList, index, propertyName)) {
+                result = BoxFactory.multiline(
+                  node,
+                  roleName,
+                  () => node[propertyName][index],
+                  (v: string) =>
+                    AST.change(() => {
+                        node[propertyName][index] = v;
+                    }),
+                  { placeHolder: `${propertyName}` },
+                );
+            } else {
+                result = BoxFactory.multiline(
+                  node,
+                  roleName,
+                  () => node[propertyName],
+                  (v: string) =>
+                    AST.change(() => {
+                        node[propertyName] = v;
+                    }),
+                  { placeHolder: `${propertyName}` },
+                );
+                // ENSURE TEXTBOX IS SEEN AS DIRTY
+                // result.isDirty()
+            }
+            result.propertyName = propertyName;
+            result.propertyIndex = index;
+        } else {
+            FreUtils.CHECK(false, "Property " + propertyName + " does not exist or is not a string: " + property + '"');
+        }
+        return result;
+    }
+
     public static numberBox(
         node: FreNode,
         propertyName: string,
@@ -100,9 +145,9 @@ export class UtilPrimHelper {
     public static booleanBox(
         node: FreNode,
         propertyName: string,
-        labels: { yes: string; no: string } = {
+        labels: { yes: string; no: string, unknown?: string } = {
             yes: "yes",
-            no: "no",
+            no: "no"
         },
         kind: BoolDisplay,
         index?: number,
@@ -113,18 +158,18 @@ export class UtilPrimHelper {
             propertyName,
         );
         const isList: boolean = propInfo.isList;
-        const property: FreNode = node[propertyName];
+        // const property: FreNode = node[propertyName];
 
         // check the found information
-        if (!(property !== undefined && property !== null)) {
-            FreUtils.CHECK(false, "Property " + propertyName + " does not exist:" + property + '"');
-        }
-        if (!(typeof property === "boolean" || typeof property === "string")) {
-            FreUtils.CHECK(
-                false,
-                "Property " + propertyName + " is not a boolean:" + property.freLanguageConcept() + '"',
-            );
-        }
+        // if (!(property !== undefined && property !== null)) {
+        //     FreUtils.CHECK(false, "Property " + propertyName + " does not exist:" + property + '"');
+        // }
+        // if (!(typeof property === "boolean" || typeof property === "string")) {
+        //     FreUtils.CHECK(
+        //         false,
+        //         "Property " + propertyName + " is not a boolean:" + property.freLanguageConcept() + '"',
+        //     );
+        // }
 
         // all's well, create the box
         const roleName: string = RoleProvider.property(node.freLanguageConcept(), propertyName, "booleanbox", index);
@@ -151,7 +196,7 @@ export class UtilPrimHelper {
             return BoxFactory.text(
                 node,
                 roleName,
-                () => {
+                () => { 
                     const propValue = node[propertyName][index]
                     if (isNaN(propValue)) {
                         return ""
@@ -164,7 +209,7 @@ export class UtilPrimHelper {
                         node[propertyName][index] = Number.parseInt(v, 10);
                     }),
                 {
-                    placeHolder: `<${propertyName}>`,
+                    placeHolder: `${propertyName}`,
                     isCharAllowed: (currentText: string, key: string, innerIndex: number) => {
                         return isNumber(currentText, key, innerIndex);
                     }
@@ -187,7 +232,7 @@ export class UtilPrimHelper {
                         node[propertyName] = Number.parseInt(v, 10);
                     }),
                 {
-                    placeHolder: `<${propertyName}>`,
+                    placeHolder: `${propertyName}`,
                     isCharAllowed: (currentText: string, key: string, innerIndex: number) => {
                         return isNumber(currentText, key, innerIndex);
                     }
@@ -240,7 +285,7 @@ export class UtilPrimHelper {
     public static makeBooleanControlBox(
         node: FreNode,
         propertyName: string,
-        labels: { yes: string; no: string } = {
+        labels: { yes: string; no: string, unknown?: string } = {
             yes: "yes",
             no: "no",
         },
@@ -272,7 +317,11 @@ export class UtilPrimHelper {
                         node[propertyName] = v;
                     }),
                 {
-                    labels: { yes: labels.yes, no: labels.no },
+                    labels: ((FreLanguage.getInstance().classifierProperty(node.freLanguageConcept(), propertyName).isOptional) ? 
+                                { yes: labels.yes, no: labels.no, unknown: labels.unknown } 
+                            :
+                            { yes: labels.yes, no: labels.no }
+                    ),
                 },
             );
         }
@@ -282,9 +331,9 @@ export class UtilPrimHelper {
     public static makeBooleanSelectBox(
         node: FreNode,
         propertyName: string,
-        labels: { yes: string; no: string } = {
+        labels: { yes: string; no: string, unknown?: string } = {
             yes: "yes",
-            no: "no",
+            no: "no"
         },
         isList: boolean,
         roleName: string,
@@ -324,15 +373,23 @@ export class UtilPrimHelper {
                 node,
                 roleName,
                 "<optional>",
-                () => [
-                    { id: labels.yes, label: labels.yes },
-                    { id: labels.no, label: labels.no },
-                ],
+                () => ((FreLanguage.getInstance().classifierProperty(node.freLanguageConcept(), propertyName).isOptional) ? [
+                            { id: labels.yes, label: labels.yes },
+                            { id: labels.no, label: labels.no },
+                            { id: labels.unknown, label: labels.unknown }
+                        ] :
+                        [
+                            { id: labels.yes, label: labels.yes },
+                            { id: labels.no, label: labels.no }
+                        ]
+                ),
                 () => {
                     if (node[propertyName] === true) {
                         return { id: labels.yes, label: labels.yes };
-                    } else {
+                    } else if (node[propertyName] === false) {
                         return { id: labels.no, label: labels.no };
+                    } else {
+                        return { id: labels.unknown, label: labels.unknown };
                     }
                 },
                 // @ts-ignore
@@ -342,6 +399,8 @@ export class UtilPrimHelper {
                             node[propertyName] = true;
                         } else if (option.id === labels.no) {
                             node[propertyName] = false;
+                        } else if (option.id === labels.unknown) {
+                            node[propertyName] = undefined;
                         }
                     });
                     return BehaviorExecutionResult.EXECUTED;

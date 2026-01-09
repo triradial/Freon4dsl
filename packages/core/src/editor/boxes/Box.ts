@@ -1,12 +1,17 @@
-import { FreNode } from "../../ast/index.js";
-import { isNullOrUndefined, FreUtils, FRE_BINARY_EXPRESSION_LEFT, FRE_BINARY_EXPRESSION_RIGHT } from "../../util/index.js";
+import type { FreNode } from "../../ast/index.js";
+import {
+    notNullOrUndefined,
+    FreUtils,
+    FRE_BINARY_EXPRESSION_LEFT,
+    FRE_BINARY_EXPRESSION_RIGHT,
+    isExpressionPreOrPost, isNullOrUndefined
+} from "../../util/index.js"
 import { FreLogger } from "../../logging/index.js";
-import { BehaviorExecutionResult } from "../util/index.js";
-import { FrePostAction } from "../actions/index.js";
-import { runInAction } from "mobx";
-import { FreEditor } from "../FreEditor.js";
+import type { ClientRectangle } from "../ClientRectangleTypes.js";
+import { UndefinedRectangle } from "../ClientRectangleTypes.js";
 
 const LOGGER = new FreLogger("Box");
+
 
 /**
  * The root of the Box class hierarchy, contains all generic properties and a number of navigation/search functions.
@@ -38,6 +43,11 @@ export abstract class Box {
     protected _errorMessages: string[] = [];
 
     refreshComponent: (why?: string) => void; // The refresh method from the component that displays this box.
+    /**
+     * Get the client rectangle of this box in the browser.
+     * This is a callback method to the corresponding component in the browser.
+     */
+    getClientRectangle: () => ClientRectangle = () => { return UndefinedRectangle }
 
     /**
      *  Called when the box is dirty, refreshes the corresponding component.
@@ -78,17 +88,17 @@ export abstract class Box {
      */
     addErrorMessage(val: string | string[]) {
         if (Array.isArray(val)) {
-            val.forEach((v) => {
+            val.forEach(v => {
                 if (!this._errorMessages.includes(v)) {
                     this._errorMessages.push(v);
                 }
-            });
+            })
         } else {
             if (!this._errorMessages.includes(val)) {
                 this._errorMessages.push(val);
             }
         }
-        this.isDirty();
+        this.isDirty()
     }
 
     resetErrorMessages() {
@@ -96,14 +106,7 @@ export abstract class Box {
         this.isDirty();
     }
 
-    // Never set these manually, these properties are set after rendering to get the
-    // actual coordinates as rendered in the browser,
-    // TODO see whether these can be set on demand and whether this is useful ??? Probably yes.
-    actualX: number = -1;
-    actualY: number = -1;
-    actualWidth: number = -1;
-    actualHeight: number = -1;
-
+    i: number = 0
     protected constructor(node: FreNode, role: string) {
         FreUtils.CHECK(!!node, "Element cannot be empty in Box constructor");
         this.node = node;
@@ -112,8 +115,8 @@ export abstract class Box {
     }
 
     get id(): string {
-        if (!!this.node) {
-            return this.node.freId() + (this.role === null ? "" : "-" + this.role);
+        if (notNullOrUndefined(this.node)) {
+            return this.node.freId() + (isNullOrUndefined(this.role) ? `-${this.i++}` : "-" + this.role);
         } else {
             return "unknown-element-" + this.role;
         }
@@ -186,10 +189,10 @@ export abstract class Box {
         }
         const thisIndex: number = this.parent.children.indexOf(this);
         if (thisIndex === -1) {
-            // LOGGER.error(`nextLeafRight: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
-            // LOGGER.error(`  boxid: ${this.id} parent [id: ${this.parent.id}, id: ${this.parent.kind}, node: ${this.parent.node.freLanguageConcept()}]`)
-            // LOGGER.error(`  tree: ${(this.parent.parent !== undefined && this.parent.parent !== null) ? this.parent.parent.toStringRecursive("  "):this.parent.toStringRecursive("  ")}`)
-            return null;
+            LOGGER.error(`nextLeafRight: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
+            LOGGER.error(`  boxid: ${this.id} parent [id: ${this.parent.id}, id: ${this.parent.kind}, node: ${this.parent.node.freLanguageConcept()}]`)
+            LOGGER.error(`  tree: ${(this.parent.parent !== undefined && this.parent.parent !== null) ? this.parent.parent.toStringRecursive("  "):this.parent.toStringRecursive("  ")}`)
+            return null
         }
         const rightSiblings: Box[] = this.parent.children.slice(thisIndex + 1, this.parent.children.length);
         for (const sibling of rightSiblings) {
@@ -201,8 +204,44 @@ export abstract class Box {
                 return sibling;
             }
         }
-        LOGGER.log(`${this.id} nextLeafRight: referring to parent`);
+        LOGGER.log(`${this.id} nextLeafRight: referring to parent`)
         return this.parent.nextLeafRight;
+    }
+
+    /**
+     * Get the left (previous) leaf box, but ignore the expression placeholders at the start and end of an expression
+     * and the placeholders arounf binary symbols.
+     * Used when tabbing through an expression.
+     */
+    get nextLeafLeftWithoutExpressionPlaceHolders(): Box {
+        const boxLeft: Box = this.nextLeafLeft;
+        if (notNullOrUndefined(boxLeft)) {
+            if (isExpressionPreOrPost(boxLeft)) {
+                // Special expression prefix or postfix box, don't return it
+                return boxLeft.nextLeafLeftWithoutExpressionPlaceHolders;
+            } else {
+                return boxLeft;
+            }
+        }
+        return null
+    }
+
+    /**
+     * Get the right (next) leaf box, but ignore the expression placeholders at the start and end of an expression
+     * and the placeholders arounf binary symbols.
+     * Used when tabbing through an expression.
+     */
+    get nextLeafRightWithoutExpressionPlaceHolders(): Box {
+        const boxRight: Box = this.nextLeafRight;
+        if (notNullOrUndefined(boxRight)) {
+            if (isExpressionPreOrPost(boxRight)) {
+                // Special expression prefix or postfix box, don't return it
+                return boxRight.nextLeafRightWithoutExpressionPlaceHolders;
+            } else {
+                return boxRight;
+            }
+        }
+        return null
     }
 
     // TODO change name into nextSelectableLeafLeft or something similar?
@@ -215,7 +254,7 @@ export abstract class Box {
         }
         const thisIndex: number = this.parent.children.indexOf(this);
         if (thisIndex === -1) {
-            LOGGER.error(`nextLeafLeft: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `);
+            LOGGER.error(`nextLeafLeft: ${this.kind} for ${this.node?.freId()} of concept ${this.node?.freLanguageConcept()} is missing in its parent (index === -1) `)
             return null
         }
         const leftSiblings: Box[] = this.parent.children.slice(0, thisIndex).reverse();
@@ -274,9 +313,9 @@ export abstract class Box {
      * @param propertyName
      */
     // findBox(elementId: string, propertyName?: string, propertyIndex?: number): Box {
-    //     if (!isNullOrUndefined(this.element) && this.element.freId() === elementId) {
-    //         if (!isNullOrUndefined(propertyName)) {
-    //             if (!isNullOrUndefined(propertyIndex)) {
+    //     if (notNullOrUndefined(this.element) && this.element.freId() === elementId) {
+    //         if (notNullOrUndefined(propertyName)) {
+    //             if (notNullOrUndefined(propertyIndex)) {
     //                 if (this.propertyName === propertyName && this.propertyIndex === propertyIndex) {
     //                     return this;
     //                 }
@@ -309,18 +348,16 @@ export abstract class Box {
      */
     findChildBoxForProperty(propertyName?: string, propertyIndex?: number): Box | null {
         // if (propertyName === "value" && propertyIndex === undefined) {
-        LOGGER.log("findChildBoxForProperty " + this.role + "[" + propertyName + ", " + propertyIndex + "]");
+        LOGGER.log(`findChildBoxForProperty ${this.kind}  ` + this.role + "[" + propertyName + ", " + propertyIndex + "]");
         // }
         for (const child of this.children) {
-            // console.log('===> child: [' + child.propertyName + ", " + child.propertyIndex + "]")
             if (!isNullOrUndefined(propertyName)) {
                 if (!isNullOrUndefined(propertyIndex)) {
-                    if (child.propertyName === propertyName && child.propertyIndex === propertyIndex) {
+                    if (child.propertyName === propertyName && (child.propertyIndex === propertyIndex || child.propertyIndex === undefined)) {
                         return child;
                     }
                 } else {
                     if (child.propertyName === propertyName) {
-                        // console.log('returning child box ' + child.role);
                         return child;
                     }
                 }
@@ -328,11 +365,10 @@ export abstract class Box {
                 return child;
             }
             const result: Box = child.findChildBoxForProperty(propertyName, propertyIndex);
-            if (!isNullOrUndefined(result) && result.node === this.node) {
+            if (notNullOrUndefined(result) && result.node === this.node) {
                 return result;
             }
         }
-        // console.log('not found!!!');
         return null;
     }
 
@@ -349,7 +385,9 @@ export abstract class Box {
      * AND this method is not overridden, then the focus will be set to the parent box.
      */
     setFocus: () => void = async () => {
-        console.log(this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id);
+        console.log(
+            this.kind + ":setFocus not implemented for " + this.id + " id " + this.$id
+        );
         // this.parent?.setFocus();
     };
 
@@ -372,10 +410,9 @@ export abstract class Box {
 
     // TODO This will find all editable children, but not editable children of an editable child.
     //      Looking at the usage, we only need the first editable child, so maybe this could be simplified.
-    private getEditableChildrenRecursive(result: Box[], ignoreEdtitableParent?: boolean) {
+    private getEditableChildrenRecursive(result: Box[]) {
         LOGGER.info("getEditableChildrenRecursive for " + this.kind);
-        if (ignoreEdtitableParent === undefined) ignoreEdtitableParent = false;
-        if (this.isEditable() && !ignoreEdtitableParent) {
+        if (this.isEditable()) {
             LOGGER.info("Found editable: " + this.role);
             result.push(this);
             return;
@@ -390,27 +427,12 @@ export abstract class Box {
     isEditable(): boolean {
         return false;
     }
-
+    
     toStringRecursive(indent: string = ""): string {
-        let result = indent + this.id + " (" + this.kind + ")";
-        this.children.forEach((child) => {
-            result += "\n" + child.toStringRecursive(indent + "  ");
-        });
-        return result;
-    }
-
-    /* GM - execute actions */
-    executeAction(editor: FreEditor, trigger: string): BehaviorExecutionResult {
-        for (const action of editor.newFreActions.filter((action) => action.activeInBoxRoles.includes(this.role) && action.trigger === trigger)) {
-            let postAction: FrePostAction = null;
-            runInAction(() => {
-                action.execute(this, trigger, editor, -1);
-            });
-            if (!!postAction) {
-                postAction();
-            }
-            return BehaviorExecutionResult.EXECUTED;
-        }
-        return BehaviorExecutionResult.NULL;
+        let result = indent + this.id + " (" + this.kind + ")"
+        this.children.forEach(child => {
+            result += "\n" + child.toStringRecursive(indent + "  ")
+        })
+        return result
     }
 }

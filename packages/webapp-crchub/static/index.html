@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script>
+  // Check for saved theme preference or default to dark theme
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  const themeStylesheet = document.getElementById('theme-stylesheet');
+  if (themeStylesheet) {
+    themeStylesheet.href = savedTheme === 'dark' ? '/styles/bundle-dark.css' : '/styles/bundle-light.css';
+  }
+</script>
+
+<html lang="en">
+
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+
+  <title>CRCHub</title>
+
+  <link rel='icon' type='image/svg' href='/images/logo_grey.svg'>
+  <link id="tailwind-stylesheet" rel='stylesheet' href='/styles/tailwind.css'>
+  <link id="theme-stylesheet" rel='stylesheet' href='/styles/bundle-dark.css'>
+  <link id="markdown-stylesheet" rel="stylesheet" href="/styles/github-markdown.css">
+  <!-- <link rel="stylesheet" href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css">
+    <script src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script> -->
+  <script type="module" defer src='/scripts/main.js'></script>
+</head>
+
+<body>
+</body>
+
+</html>
