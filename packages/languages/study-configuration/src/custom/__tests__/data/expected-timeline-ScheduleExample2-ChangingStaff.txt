@@ -1,28 +1,29 @@
 var groups = new vis.DataSet([
-  { "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
-  { "content": "V1 Randomization", "id": "V1 Randomization" },
-  { "content": "V1 Run In", "id": "V1 Run In" },
-  { "content": "V2 Randomization", "id": "V2 Randomization" },
-  { "content": "V2 Run In", "id": "V2 Run In" },
-  { "content": "V3 Randomization", "id": "V3 Randomization" },
-  { "content": "V3 Run In", "id": "V3 Run In" },
-  { "content": "V4-V7 Randomization", "id": "V4-V7 Randomization" },
-  { "content": "V4-V7 Run In", "id": "V4-V7 Run In" },
-  { "content": "V8-V13 Randomization", "id": "V8-V13 Randomization" },
-  { "content": "V8-V13 Run In", "id": "V8-V13 Run In" },
-  { "content": "V14-V18 Randomization", "id": "V14-V18 Randomization" },
-  { "content": "V14-V18 Run In", "id": "V14-V18 Run In" },
-  { "content": "V19 Randomization", "id": "V19 Randomization" },
-  { "content": "V19 Run In", "id": "V19 Run In" },
-  { "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },
-  { "content": "<b>Staff(4)</b>", "id": "Staff", className: 'staff' },
-  ]);
-  
-  var items = new vis.DataSet([
+{ "content": "<b>Phase</b>", "id": "Phase", className: 'phase' },
+{ "content": "V1 Randomization", "id": "V1 Randomization" },
+{ "content": "V1 Run In", "id": "V1 Run In" },
+{ "content": "V2 Randomization", "id": "V2 Randomization" },
+{ "content": "V2 Run In", "id": "V2 Run In" },
+{ "content": "V3 Randomization", "id": "V3 Randomization" },
+{ "content": "V3 Run In", "id": "V3 Run In" },
+{ "content": "V4-V7 Randomization", "id": "V4-V7 Randomization" },
+{ "content": "V4-V7 Run In", "id": "V4-V7 Run In" },
+{ "content": "V8-V13 Randomization", "id": "V8-V13 Randomization" },
+{ "content": "V8-V13 Run In", "id": "V8-V13 Run In" },
+{ "content": "V14-V18 Randomization", "id": "V14-V18 Randomization" },
+{ "content": "V14-V18 Run In", "id": "V14-V18 Run In" },
+{ "content": "V19 Randomization", "id": "V19 Randomization" },
+{ "content": "V19 Run In", "id": "V19 Run In" },
+{ "content": "<b>Patient: MV</b>", "id": "Patient-MV", className: 'patient' },
+{ "content": "<b>Staff(4)</b>", "id": "Staff", className: 'staff' },
+]);
+
+        var items = new vis.DataSet([
   { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 28, 23, 59, 59), group: "Phase", className: "screening-phase", title: "Day: -28", content: "<b>Screening</b>", id: "Screening0" },
   { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 10, 14, 23, 59, 59), group: "Phase", className: "treatment-phase", title: "Day: 0", content: "<b>Treatment</b>", id: "Treatment1" },
   { start: new Date(2023, 11, 24, 00, 00, 00), end: new Date(2023, 11, 31, 23, 59, 59), group: "V1 Randomization", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 Randomization2" },
   { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "V1 Randomization", className: "scheduled-event", title: "V1 Randomization: on the start day of the study - 4 weeks", content: "&nbsp;", id: "V1 Randomization3" },
+
   { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 03, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V1 Run In4" },
   { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "V1 Run In", className: "scheduled-event", title: "V1 Run In: when V1 Randomization completed + 3 days", content: "&nbsp;", id: "V1 Run In5" },
   { start: new Date(2024, 00, 05, 00, 00, 00), end: new Date(2024, 00, 06, 23, 59, 59), group: "V1 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V1 Run In6" },
@@ -32,7 +33,9 @@ var groups = new vis.DataSet([
   { start: new Date(2024, 00, 16, 00, 00, 00), end: new Date(2024, 00, 17, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V2 Run In10" },
   { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "V2 Run In", className: "scheduled-event", title: "V2 Run In: when V2 Randomization completed + 3 days", content: "&nbsp;", id: "V2 Run In11" },
   { start: new Date(2024, 00, 19, 00, 00, 00), end: new Date(2024, 00, 20, 23, 59, 59), group: "V2 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V2 Run In12" },
-  { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization: as the start day of the study", content: "&nbsp;", id: "V3 Randomization13" },
+
+  { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "V3 Randomization", className: "scheduled-event", title: "V3 Randomization:  as the start day of the study", content: "&nbsp;", id: "V3 Randomization13" },
+
   { start: new Date(2024, 00, 30, 00, 00, 00), end: new Date(2024, 00, 31, 23, 59, 59), group: "V3 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V3 Run In14" },
   { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "V3 Run In", className: "scheduled-event", title: "V3 Run In: when V3 Randomization completed + 3 days", content: "&nbsp;", id: "V3 Run In15" },
   { start: new Date(2024, 01, 02, 00, 00, 00), end: new Date(2024, 01, 03, 23, 59, 59), group: "V3 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V3 Run In16" },
@@ -135,19 +138,19 @@ var groups = new vis.DataSet([
   { start: new Date(2024, 10, 12, 00, 00, 00), end: new Date(2024, 10, 13, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-V19 Run In113" },
   { start: new Date(2024, 10, 14, 00, 00, 00), end: new Date(2024, 10, 14, 23, 59, 59), group: "V19 Run In", className: "scheduled-event", title: "V19 Run In: when V19 Randomization completed + 3 days", content: "&nbsp;", id: "V19 Run In114" },
   { start: new Date(2024, 10, 15, 00, 00, 00), end: new Date(2024, 10, 16, 23, 59, 59), group: "V19 Run In", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-V19 Run In115" },
-  
-  { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V1 Randomization'", content: "&nbsp;", id: "V1 Randomization116" },
-  { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V1 Run In'", content: "&nbsp;", id: "V1 Run In117" },
-  { start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Patient", className: "in-window", title: "Patient visit:V2 Randomization'", content: "&nbsp;", id: "V2 Randomization118" },
-  { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V2 Run In'", content: "&nbsp;", id: "V2 Run In119" },
-  { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V3 Randomization'", content: "&nbsp;", id: "V3 Randomization120" },
-  { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V3 Run In'", content: "&nbsp;", id: "V3 Run In121" },
-  { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient", className: "out-of-window", title: "Patient visit:V4-V7 Randomization'", content: "&nbsp;", id: "V4-V7 Randomization122" },
-  { start: new Date(2024, 01, 08, 00, 00, 00), end: new Date(2024, 01, 08, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V4-V7 Run In'", content: "&nbsp;", id: "V4-V7 Run In123" },
-  { start: new Date(2024, 01, 14, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "Patient", className: "in-window", title: "Patient visit:V4-V7 Randomization' #2", content: "&nbsp;", id: "V4-V7 Randomization124" },
-  { start: new Date(2024, 01, 15, 00, 00, 00), end: new Date(2024, 01, 15, 23, 59, 59), group: "Patient", className: "on-scheduled-date", title: "Patient visit:V4-V7 Run In' #2", content: "&nbsp;", id: "V4-V7 Run In125" },
-  
+
+  { start: new Date(2024, 00, 01, 00, 00, 00), end: new Date(2024, 00, 01, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V1 Randomization'", content: "&nbsp;", id: "V1 Randomization116" },
+  { start: new Date(2024, 00, 04, 00, 00, 00), end: new Date(2024, 00, 04, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V1 Run In'", content: "&nbsp;", id: "V1 Run In117" },
+  { start: new Date(2024, 00, 14, 00, 00, 00), end: new Date(2024, 00, 14, 23, 59, 59), group: "Patient-MV", className: "in-window", title: "Patient visit:V2 Randomization'", content: "&nbsp;", id: "V2 Randomization118" },
+  { start: new Date(2024, 00, 18, 00, 00, 00), end: new Date(2024, 00, 18, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V2 Run In'", content: "&nbsp;", id: "V2 Run In119" },
+  { start: new Date(2024, 00, 29, 00, 00, 00), end: new Date(2024, 00, 29, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V3 Randomization'", content: "&nbsp;", id: "V3 Randomization120" },
+  { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V3 Run In'", content: "&nbsp;", id: "V3 Run In121" },
+  { start: new Date(2024, 01, 01, 00, 00, 00), end: new Date(2024, 01, 01, 23, 59, 59), group: "Patient-MV", className: "out-of-window", title: "Patient visit:V4-V7 Randomization'", content: "&nbsp;", id: "V4-V7 Randomization122" },
+  { start: new Date(2024, 01, 08, 00, 00, 00), end: new Date(2024, 01, 08, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V4-V7 Run In'", content: "&nbsp;", id: "V4-V7 Run In123" },
+  { start: new Date(2024, 01, 14, 00, 00, 00), end: new Date(2024, 01, 14, 23, 59, 59), group: "Patient-MV", className: "in-window", title: "Patient visit:V4-V7 Randomization' #2", content: "&nbsp;", id: "V4-V7 Randomization124" },
+  { start: new Date(2024, 01, 15, 00, 00, 00), end: new Date(2024, 01, 15, 23, 59, 59), group: "Patient-MV", className: "on-scheduled-date", title: "Patient visit:V4-V7 Run In' #2", content: "&nbsp;", id: "V4-V7 Run In125" },
+
   { start: new Date(2024, 00, 02, 00, 00, 00), end: new Date(2024, 00, 05, 23, 59, 59), group: "Staff", className: "staff", title: "3", content: "3", id: "3126" },
   { start: new Date(2024, 00, 15, 00, 00, 00), end: new Date(2024, 00, 15, 23, 59, 59), group: "Staff", className: "staff", title: "2", content: "2", id: "2127" },
   { start: new Date(2024, 00, 30, 00, 00, 00), end: new Date(2024, 00, 30, 23, 59, 59), group: "Staff", className: "staff", title: "2", content: "2", id: "2128" },
-])
+  ])
