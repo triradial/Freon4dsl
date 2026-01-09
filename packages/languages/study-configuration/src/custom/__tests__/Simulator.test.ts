@@ -517,7 +517,7 @@ describe("Study Simulation", () => {
             let timeline = simulator.timeline;
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(2, timeline, [], new Date(2024, 0, 1));
             let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
-            timeline.addPatientEvents(patientHistory);
+            timeline.addPatientEvents(patientHistory, "MV");
 
 
             // WHEN the study is simulated and a timeline picture is generated
@@ -580,7 +580,7 @@ describe("Study Simulation", () => {
             let timeline = simulator.timeline;
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(3, timeline, [], new Date(2024, 0, 1));
             let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
-            timeline.addPatientEvents(patientHistory);
+            timeline.addPatientEvents(patientHistory, "MV");
 
             // WHEN the study is simulated and a timeline picture is generated
             utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
@@ -733,7 +733,7 @@ describe("Study Simulation", () => {
             dateRangeList.push(dateRange);
             let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: dateRangeList });
 
-            timeline.addPatientEvents(patientHistory);
+            timeline.addPatientEvents(patientHistory, "MV");
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
@@ -839,7 +839,7 @@ describe("Study Simulation", () => {
                 patientVisits: completedPatientVisits,
                 patientNotAvailableDates: [],
             });
-            timeline.addPatientEvents(patientHistory);
+            timeline.addPatientEvents(patientHistory, "MV");
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
