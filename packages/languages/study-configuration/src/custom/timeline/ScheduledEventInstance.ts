@@ -37,11 +37,17 @@ export class ScheduledEventInstance extends TimelineEventInstance {
     }
 
     getStartDayOfWindow() {
-        return this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count;
+        let eventWindow =
+            this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        if (!eventWindow) return 0; // event window is optional
+        return eventWindow.daysBefore.count;
     }
 
     getEndDayOfWindow() {
-        return this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysAfter.count;
+        let eventWindow =
+            this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        if (!eventWindow) return 0; // event window is optional
+        return eventWindow.daysAfter.count;
     }
 
     completed() {
@@ -63,18 +69,18 @@ export class ScheduledEventInstance extends TimelineEventInstance {
     }
 
     anyDaysBefore() {
-        const daysBefore = this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count;
-        if (this.getName() == "V1 Randomization") {
-            TimelineLogger.log("ScheduledEventInstance.anyDaysBefore() for: V1 Randomization daysBefore: " + daysBefore);
-        }
-        if (daysBefore !== 0 && daysBefore != undefined) {
-            TimelineLogger.log("ScheduledEventInstance.anyDaysBefore() for: " + this.getName() + " daysBefore: " + daysBefore);
-        }
+        let eventWindow =
+            this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        if (!eventWindow) return false; // event window is optional
+        const daysBefore = eventWindow.daysBefore.count;
         return daysBefore !== 0 && daysBefore != undefined;
     }
 
     anyDaysAfter() {
-        const daysAfter = this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysAfter.count;
+         let eventWindow =
+           this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        if (!eventWindow) return false; // event window is optional
+        const daysAfter = eventWindow.daysAfter.count;
         return daysAfter != 0 && daysAfter != undefined;
     }
 

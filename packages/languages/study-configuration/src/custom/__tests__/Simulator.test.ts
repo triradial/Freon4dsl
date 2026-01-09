@@ -399,12 +399,17 @@ describe("Study Simulation", () => {
             testStudyInFile("ScheduleExample1", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2018, 2, 13));
         });
 
+        // it("generates chart for example study 2", () => {
+        //     // Load from DSL text file exported from the database instead of JSON files
+        //     // This avoids the corruption issue in the JSON files where the first visit has a ghost daysBefore
+        //     const dslFilePath = path.resolve(__dirname, "..", "..", "..", "..", "..", "server-crchub", "tmp", "ScheduleExample2.dsl.txt");
+        //     const expectedTimelineDataAsScript = loadExpectedTimelineData("ScheduleExample2");
+        //     testStudyFromDSLFile(dslFilePath, studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
+        // });
+
         it("generates chart for example study 2", () => {
-            // Load from DSL text file exported from the database instead of JSON files
-            // This avoids the corruption issue in the JSON files where the first visit has a ghost daysBefore
-            const dslFilePath = path.resolve(__dirname, "..", "..", "..", "..", "..", "server-crchub", "tmp", "ScheduleExample2.dsl.txt");
             const expectedTimelineDataAsScript = loadExpectedTimelineData("ScheduleExample2");
-            testStudyFromDSLFile(dslFilePath, studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
+            testStudyInFile("ScheduleExample2", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
         });
 
         it("generates chart for example study 3", () => {
@@ -847,7 +852,7 @@ describe("Study Simulation", () => {
             expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
 
-        it("generate a chart from the text version of the study", () => {
+        it.skip("generate a chart from the text version of the study", () => {
             // Test is skipped because this is only possible when parsing works. Kept for example of how to read text version from file.
 
             // GIVEN a study configuration loaded from a string
