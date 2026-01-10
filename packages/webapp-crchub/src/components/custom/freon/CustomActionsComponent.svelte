@@ -17,6 +17,7 @@
     import { onMount, tick } from "svelte";
     import type { FreComponentProps } from "@freon4dsl/core-svelte";
     import { componentId, RenderComponent as RenderComponentRecursive } from "@freon4dsl/core-svelte";
+    import SelectableWrapperComponent from "./SelectableWrapperComponent.svelte";
 
     let { editor, box, isEditing = $bindable(false) }: FreComponentProps<any> & { isEditing?: boolean } = $props();
     
@@ -277,13 +278,16 @@
             return new Set<number>(); // No matches when no text
         }
         const searchText = text.toLowerCase().trim();
+        // Extract prefix from search text (before colon) for matching
+        const searchParts = searchText.split(':');
+        const searchPrefix = searchParts[0].trim();
         const matches = new Set<number>();
         listboxData.forEach((item, index) => {
             // Extract the prefix part (before colon) for matching
             const labelParts = item.label.split(':');
             const prefix = labelParts[0].trim().toLowerCase();
-            // Match against the prefix only (the part before the colon) - must start with searchText
-            if (prefix.startsWith(searchText)) {
+            // Match against the prefix only (the part before the colon) - must start with searchPrefix
+            if (prefix.startsWith(searchPrefix)) {
                 matches.add(index);
             }
         });
@@ -309,8 +313,19 @@
     // Handle input change - update text and show dropdown
     function onInputChange(e: Event) {
         const newText = (e.target as HTMLInputElement).value;
+        const oldText = text;
+        const oldSelectedIndex = selectedIndex;
         text = newText;
         dropdownOpen = true;
+        // Reset selectedIndex when text changes
+        selectedIndex = -1;
+        
+        console.log('🔵 CustomActionsComponent: onInputChange', {
+            oldText,
+            newText,
+            oldSelectedIndex,
+            newSelectedIndex: selectedIndex
+        });
         
         // Update input width
         tick().then(() => {
@@ -362,16 +377,10 @@
                         propertyValueVersion++;
                         console.log('🔵 CustomActionsComponent: Incremented propertyValueVersion to:', propertyValueVersion);
                         
-                        // Force refresh the editor projection FIRST to populate box.children
-                        if (editor?.projection) {
-                            console.log('🔵 CustomActionsComponent: Calling editor.projection.update()');
-                            editor.projection.update();
-                        }
-                        
-                        // Then wait another tick for box.children to be populated
+                        // Wait a tick for the AST change to propagate
                         return tick();
                     }).then(() => {
-                        // Force another reactive update after projection is updated
+                        // Force another reactive update after AST change
                         propertyValueVersion++;
                         console.log('🔵 CustomActionsComponent: Second propertyValueVersion increment to:', propertyValueVersion);
                         
@@ -379,10 +388,6 @@
                         if (box && box.refreshComponent) {
                             console.log('🔵 CustomActionsComponent: Calling box.refreshComponent()');
                             box.refreshComponent();
-                        }
-                        // Final projection update
-                        if (editor?.projection) {
-                            editor.projection.update();
                         }
                     });
                 }
@@ -406,9 +411,6 @@
                     if (box && box.refreshComponent) {
                         box.refreshComponent();
                     }
-                    if (editor && editor.projection) {
-                        editor.projection.update();
-                    }
                 });
             } else {
                 console.error('🔵 CustomActionsComponent: No box or action available to execute');
@@ -425,38 +427,99 @@
     
     // Handle typing full name - check if it matches exactly, or if there's only one match from start
     function checkExactMatch() {
-        if (!actionBox) return;
+        console.log('🔵 CustomActionsComponent: checkExactMatch called', {
+            hasActionBox: !!actionBox,
+            selectedIndex,
+            text,
+            listboxDataLength: listboxData.length,
+            matchingItemsLength: matchingItems.length,
+            hasSingleMatch,
+            matchCount
+        });
         
-        // If text is empty, just exit
+        if (!actionBox) {
+            console.log('🔵 CustomActionsComponent: checkExactMatch - no actionBox, returning');
+            return;
+        }
+        
+        // First priority: Check if user has navigated to an item with arrow keys (even if text is empty)
+        console.log('🔵 CustomActionsComponent: checkExactMatch - checking selectedIndex', {
+            selectedIndex,
+            listboxDataLength: listboxData.length,
+            isValidIndex: selectedIndex >= 0 && selectedIndex < listboxData.length
+        });
+        
+        if (selectedIndex >= 0 && selectedIndex < listboxData.length) {
+            const selectedItem = listboxData[selectedIndex];
+            console.log('🔵 CustomActionsComponent: checkExactMatch - found selectedItem via selectedIndex', {
+                selectedIndex,
+                itemLabel: selectedItem?.label,
+                hasOption: !!selectedItem?.option
+            });
+            if (selectedItem && selectedItem.option) {
+                console.log('🔵 CustomActionsComponent: checkExactMatch - calling selectItem with selectedIndex item');
+                selectItem(selectedItem);
+                return;
+            } else {
+                console.log('🔵 CustomActionsComponent: checkExactMatch - selectedItem found but no option', {
+                    selectedItem: !!selectedItem,
+                    hasOption: !!selectedItem?.option
+                });
+            }
+        }
+        
+        // If text is empty and no selectedIndex, just exit
         if (!text.trim()) {
+            console.log('🔵 CustomActionsComponent: checkExactMatch - text is empty and no selectedIndex, closing dropdown');
             dropdownOpen = false;
             return;
         }
         
         const searchText = text.trim().toLowerCase();
         
-        // First check for exact match
+        // Second priority: Check for exact match
         const exactMatch = listboxData.find(item => 
             item.label.toLowerCase() === searchText
         );
         
+        console.log('🔵 CustomActionsComponent: checkExactMatch - checking exact match', {
+            searchText,
+            exactMatch: exactMatch ? exactMatch.label : null,
+            hasOption: !!exactMatch?.option
+        });
+        
         if (exactMatch && exactMatch.option) {
+            console.log('🔵 CustomActionsComponent: checkExactMatch - calling selectItem with exact match');
             selectItem(exactMatch);
             return;
         }
         
-        // If no exact match, check if there's exactly one match from start (auto-select on tab out)
+        // Third priority: Check if there's exactly one match from start (auto-select on tab out)
+        console.log('🔵 CustomActionsComponent: checkExactMatch - checking single match', {
+            hasSingleMatch,
+            matchCount,
+            matchingItemIndices: Array.from(matchingItemIndices)
+        });
+        
         if (hasSingleMatch && matchCount === 1) {
             const matchingIndex = Array.from(matchingItemIndices)[0];
             const singleMatch = listboxData[matchingIndex];
+            console.log('🔵 CustomActionsComponent: checkExactMatch - found single match', {
+                matchingIndex,
+                itemLabel: singleMatch?.label,
+                hasOption: !!singleMatch?.option
+            });
             if (singleMatch && singleMatch.option) {
+                console.log('🔵 CustomActionsComponent: checkExactMatch - calling selectItem with single match');
                 selectItem(singleMatch);
             } else {
+                console.log('🔵 CustomActionsComponent: checkExactMatch - single match found but no option, ending editing');
                 dropdownOpen = false;
                 endEditing();
             }
         } else {
             // No single match - just exit
+            console.log('🔵 CustomActionsComponent: checkExactMatch - no match found, ending editing');
             dropdownOpen = false;
             endEditing();
         }
@@ -466,6 +529,7 @@
     async function startEditing() {
         isEditing = true;
         dropdownOpen = true;
+        selectedIndex = -1;
         await tick();
         if (inputElement) {
             inputElement.focus();
@@ -479,6 +543,7 @@
         isEditing = false;
         dropdownOpen = false;
         text = '';
+        selectedIndex = -1;
     }
     
     // Set focus function
@@ -494,6 +559,18 @@
     // Refresh function
     const refresh = (why?: string): void => {
         text = '';
+        // Increment propertyValueVersion to force reactive updates when property value changes
+        // This is needed when deletion happens from child components like SelectableWrapperComponent
+        const oldVersion = propertyValueVersion;
+        propertyValueVersion++;
+        console.log('🔵 CustomActionsComponent: refresh called', {
+            why,
+            propertyName: isPartReplacerBox(box) ? box.propertyName : 'N/A',
+            oldVersion,
+            newVersion: propertyValueVersion,
+            nodePropertyValue: isPartReplacerBox(box) && box.propertyName ? (box.node[box.propertyName]?.freLanguageConcept?.() || null) : null,
+            hasDirectValue: isPartReplacerBox(box) ? (box.node[box.propertyName] && typeof box.node[box.propertyName] === 'object' && 'freLanguageConcept' in box.node[box.propertyName]) : false
+        });
     };
     
     // Handle click on span to start editing or remove value
@@ -533,8 +610,21 @@
     
     // Handle keydown on input
     function onKeyDown(event: KeyboardEvent) {
+        console.log('🔵 CustomActionsComponent: onKeyDown', { 
+            key: event.key, 
+            selectedIndex, 
+            text, 
+            listboxDataLength: listboxData.length,
+            matchingItemsLength: matchingItems.length
+        });
+        
         // Allow Tab to leave (will end editing via onFocusOut)
         if (event.key === 'Tab') {
+            console.log('🔵 CustomActionsComponent: Tab pressed, calling checkExactMatch', {
+                selectedIndex,
+                text,
+                listboxDataLength: listboxData.length
+            });
             checkExactMatch();
             return;
         }
@@ -549,6 +639,11 @@
         
         // Handle Enter - treat like Tab (exit editing)
         if (event.key === 'Enter') {
+            console.log('🔵 CustomActionsComponent: Enter pressed, calling checkExactMatch', {
+                selectedIndex,
+                text,
+                listboxDataLength: listboxData.length
+            });
             event.preventDefault();
             event.stopPropagation();
             checkExactMatch();
@@ -557,30 +652,83 @@
         
         // Handle Arrow keys - navigate through options
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            console.log('🔵 CustomActionsComponent: Arrow key pressed', { key: event.key, dropdownOpen, listboxDataLength: listboxData.length, text });
             event.preventDefault();
             event.stopPropagation();
             
+            // Ensure dropdown is open
             if (!dropdownOpen) {
                 dropdownOpen = true;
             }
             
-            if (matchingItems.length === 0) {
+            // Always navigate through all items in the list
+            if (listboxData.length === 0) {
+                console.log('🔵 CustomActionsComponent: Arrow keys: No items to navigate', { listboxData: listboxData.length, text });
                 return;
             }
             
+            // Find the current selected index
+            let currentIndex = selectedIndex >= 0 && selectedIndex < listboxData.length ? selectedIndex : -1;
+            
+            // Determine new index based on arrow direction and current state
+            let newIndex = -1;
+            const hasText = text.trim().length > 0;
+            const hasMultipleMatches = matchCount > 1 && hasText;
+            
             if (event.key === 'ArrowDown') {
-                selectedIndex = (selectedIndex + 1) % matchingItems.length;
+                // Down arrow
+                if (currentIndex < 0 || hasMultipleMatches) {
+                    // Nothing selected OR multiple items match - go to first item
+                    newIndex = 0;
+                } else {
+                    // One item selected - move to next item, wrap around if at end
+                    newIndex = (currentIndex + 1) % listboxData.length;
+                }
             } else {
-                selectedIndex = selectedIndex <= 0 ? matchingItems.length - 1 : selectedIndex - 1;
+                // ArrowUp
+                if (currentIndex < 0 || hasMultipleMatches) {
+                    // Nothing selected OR multiple items match - go to last item
+                    newIndex = listboxData.length - 1;
+                } else {
+                    // One item selected - move to previous item, wrap around if at start
+                    newIndex = currentIndex - 1;
+                    if (newIndex < 0) {
+                        newIndex = listboxData.length - 1;
+                    }
+                }
             }
             
-            // Scroll into view
-            tick().then(() => {
-                const itemElement = document.querySelector(`[data-item-index="${selectedIndex}"]`) as HTMLElement;
-                if (itemElement) {
-                    itemElement.scrollIntoView({ block: 'nearest' });
+            // Update selectedIndex and text for visual feedback
+            if (newIndex >= 0 && newIndex < listboxData.length) {
+                const selectedItem = listboxData[newIndex];
+                
+                if (selectedItem) {
+                    selectedIndex = newIndex;
+                    text = selectedItem.label; // Update text for visual feedback
+                    console.log('🔵 CustomActionsComponent: Arrow keys: Updated selection', { 
+                        direction: event.key, 
+                        newIndex, 
+                        itemLabel: selectedItem.label,
+                        listboxDataLength: listboxData.length,
+                        currentIndex
+                    });
+                    
+                    // Update input width to fit new text
+                    tick().then(() => {
+                        setInputWidth();
+                    });
                 }
-            });
+                
+                // Scroll into view
+                tick().then(() => {
+                    const itemElement = document.querySelector(`[data-item-index="${newIndex}"]`) as HTMLElement;
+                    if (itemElement) {
+                        itemElement.scrollIntoView({ block: 'nearest' });
+                    }
+                });
+            } else {
+                console.log('🔵 CustomActionsComponent: Arrow keys: Invalid newIndex', { newIndex, listboxDataLength: listboxData.length });
+            }
             
             return;
         }
@@ -609,12 +757,19 @@
     function onFocusOut(event: FocusEvent) {
         const relatedTarget = event.relatedTarget as HTMLElement;
         
+        console.log('🔵 CustomActionsComponent: onFocusOut', {
+            relatedTarget: relatedTarget?.tagName || 'null',
+            selectedIndex,
+            text
+        });
+        
         if (relatedTarget) {
             if (
                 (inputElement && inputElement.contains(relatedTarget)) ||
                 (dropdownElement && dropdownElement.contains(relatedTarget)) ||
                 (componentWrapper && componentWrapper.contains(relatedTarget))
             ) {
+                console.log('🔵 CustomActionsComponent: onFocusOut - focus still within component, returning');
                 return;
             }
         }
@@ -627,9 +782,11 @@
                     (dropdownElement && dropdownElement.contains(activeElement)) ||
                     (componentWrapper && componentWrapper.contains(activeElement))
                 ) {
+                    console.log('🔵 CustomActionsComponent: onFocusOut - activeElement still within component, returning');
                     return;
                 }
             }
+            console.log('🔵 CustomActionsComponent: onFocusOut - calling checkExactMatch then endEditing');
             checkExactMatch();
             endEditing();
         }, 100);
@@ -711,12 +868,13 @@
 </script>
 
 {#if actionBox || (isPartReplacerBox(box) && (hasDirectValue || (hasValue && currentPropertyValue)))}
-    {@const checkDirectValue = isPartReplacerBox(box) && box.propertyName ? (box.node[box.propertyName] && typeof box.node[box.propertyName] === 'object' && 'freLanguageConcept' in box.node[box.propertyName] ? box.node[box.propertyName] : null) : null}
+    {@const checkDirectValue = directNodeValue || currentPropertyValue}
     {@const hasDirectValueInTemplate = checkDirectValue !== null && checkDirectValue !== undefined}
     {@const shouldShowValue = hasDirectValueInTemplate || hasDirectValue || (hasValue && currentPropertyValue)}
     {@const nodeValueToUse = checkDirectValue || directNodeValue || currentPropertyValue}
     {(() => {
         if (isPartReplacerBox(box)) {
+            const rawNodeValue = box.node[box.propertyName];
             console.log('🔵 CustomActionsComponent: Template rendering decision', {
                 propertyName: box.propertyName,
                 hasDirectValueInTemplate,
@@ -725,7 +883,10 @@
                 currentPropertyValue: currentPropertyValue?.freLanguageConcept?.(),
                 shouldShowValue,
                 boxChildren: box.children?.length || 0,
-                checkDirectValue: checkDirectValue?.freLanguageConcept?.()
+                checkDirectValue: checkDirectValue?.freLanguageConcept?.(),
+                rawNodeValue: rawNodeValue?.freLanguageConcept?.() || (rawNodeValue === null ? 'null' : (rawNodeValue === undefined ? 'undefined' : String(rawNodeValue))),
+                propertyValueVersion,
+                nodeValueToUse: nodeValueToUse?.freLanguageConcept?.()
             });
         }
         return '';
@@ -754,9 +915,11 @@
             })()}
             {#if isPartReplacerBox(box) && box.children && box.children.length > 0}
                 <!-- First: Render children if they exist (Freon's default behavior) -->
-                {#each box.children as childBox}
-                    <RenderComponentRecursive box={childBox} {editor} />
-                {/each}
+                <SelectableWrapperComponent {box} {editor}>
+                    {#each box.children as childBox}
+                        <RenderComponentRecursive box={childBox} {editor} />
+                    {/each}
+                </SelectableWrapperComponent>
             {:else if nodeValueToUse && editor?.projection}
                 <!-- Second: Get box from projection using the node value -->
                 {@const propBox = editor.projection.getBox(nodeValueToUse)}
@@ -769,7 +932,9 @@
                     return '';
                 })()}
                 {#if propBox}
-                    <RenderComponentRecursive box={propBox} {editor} />
+                    <SelectableWrapperComponent {box} {editor}>
+                        <RenderComponentRecursive box={propBox} {editor} />
+                    </SelectableWrapperComponent>
                 {:else}
                     <!-- Third: Try to get box using getBoxProvider -->
                     {@const boxProvider = editor.projection.getBoxProvider(nodeValueToUse)}
@@ -782,7 +947,9 @@
                         return '';
                     })()}
                     {#if boxProvider && boxProvider.box}
-                        <RenderComponentRecursive box={boxProvider.box} {editor} />
+                        <SelectableWrapperComponent {box} {editor}>
+                            <RenderComponentRecursive box={boxProvider.box} {editor} />
+                        </SelectableWrapperComponent>
                     {:else}
                         <!-- Last resort: show concept name -->
                         {(() => {
@@ -791,34 +958,38 @@
                             });
                             return '';
                         })()}
-                        <span
-                            bind:this={spanElement}
-                            class="custom-select-text cursor-pointer"
-                            tabindex="0"
-                            role="textbox"
-                            onmousedown={onMouseDown}
-                            onkeydown={onSpanKeyDown}
-                            onfocusin={onSpanFocusIn}
-                            title="Click to change or remove"
-                        >
-                            {nodeValueToUse?.freLanguageConcept?.() || 'Unknown'}
-                        </span>
+                        <SelectableWrapperComponent {box} {editor}>
+                            <span
+                                bind:this={spanElement}
+                                class="custom-select-text cursor-pointer"
+                                tabindex="0"
+                                role="textbox"
+                                onmousedown={onMouseDown}
+                                onkeydown={onSpanKeyDown}
+                                onfocusin={onSpanFocusIn}
+                                title="Click to change or remove"
+                            >
+                                {nodeValueToUse?.freLanguageConcept?.() || 'Unknown'}
+                            </span>
+                        </SelectableWrapperComponent>
                     {/if}
                 {/if}
             {:else if nodeValueToUse}
                 <!-- No projectionHandler: show concept name -->
-                <span
-                    bind:this={spanElement}
-                    class="custom-select-text cursor-pointer"
-                    tabindex="0"
-                    role="textbox"
-                    onmousedown={onMouseDown}
-                    onkeydown={onSpanKeyDown}
-                    onfocusin={onSpanFocusIn}
-                    title="Click to change or remove"
-                >
-                    {nodeValueToUse.freLanguageConcept()}
-                </span>
+                <SelectableWrapperComponent {box} {editor}>
+                    <span
+                        bind:this={spanElement}
+                        class="custom-select-text cursor-pointer"
+                        tabindex="0"
+                        role="textbox"
+                        onmousedown={onMouseDown}
+                        onkeydown={onSpanKeyDown}
+                        onfocusin={onSpanFocusIn}
+                        title="Click to change or remove"
+                    >
+                        {nodeValueToUse.freLanguageConcept()}
+                    </span>
+                </SelectableWrapperComponent>
             {/if}
         {:else if isEditing}
             <!-- Edit mode: Show input with Listbox -->
@@ -849,11 +1020,12 @@
                       style="position: absolute; z-index: 99999; top: 100%; left: 0; margin-top: 2px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
                       role="listbox">
                         <ul style="list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto;">
-                            {#each matchingItems as item, index (item.value + '-' + index)}
+                            {#each listboxData as item, index (item.value + '-' + index)}
                                 {@const isMatch = matchingItemIndices.has(index)}
                                 {@const isHighlighted = isMatch && text.trim().length > 0}
                                 {@const isSelected = selectedIndex === index}
                                 {@const matchClass = isHighlighted ? (hasSingleMatch ? 'matched' : hasMultipleMatches ? 'matched-multiple' : '') : ''}
+                                {@const colonIndex = item.label.indexOf(':')}
                                 <li
                                     data-item-index={index}
                                     role="option"
@@ -884,7 +1056,14 @@
                                     }}
                                     tabindex="0"
                                 >
-                                    <span>{item.label}</span>
+                                    {#if colonIndex >= 0}
+                                        <span class="label">
+                                            <span class="prefix">{item.label.substring(0, colonIndex)}:</span>
+                                            <span class="suffix">{item.label.substring(colonIndex + 1)}</span>
+                                        </span>
+                                    {:else}
+                                        <span class="prefix">{item.label}</span>
+                                    {/if}
                                     {#if isHighlighted}
                                         <span class="match-indicator">✓</span>
                                     {/if}

@@ -6,7 +6,9 @@ import {
     Event,
     EventStart,
     FirstDayOfStudy,
+    MinusTimeAmount,
     Period,
+    PlusTimeAmount,
     RepeatCondition,
     RepeatCount,
     StudyConfiguration,
@@ -88,19 +90,24 @@ export class ScheduledEvent {
         if (this.isScheduledOnASpecificDay()) {
             TimelineLogger.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + this.interpret(eventStart, timeline));
         } else if (eventStart instanceof When) {
-            if ((eventStart as When).timeAmountPart !== undefined && (eventStart as When).timeAmountPart !== null) {
-                TimelineLogger.log(
-                    "ScheduledEvent.day() eventStart is a When for: " +
-                        this.getName() +
-                        " is a When with timeAmount of: " +
-                        (eventStart as When).timeAmountPart.operator.name +
-                        " " +
-                        (eventStart as When).timeAmountPart.timeAmount.value +
-                        " " +
-                        (eventStart as When).timeAmountPart.timeAmount.unit.name,
-                );
+            const when = eventStart as When;
+            if (when.timeAmount !== undefined && when.timeAmount !== null) {
+                const timeAmount = when.timeAmount;
+                if (timeAmount instanceof PlusTimeAmount || timeAmount instanceof MinusTimeAmount) {
+                    const operator = timeAmount instanceof MinusTimeAmount ? "-" : "+";
+                    TimelineLogger.log(
+                        "ScheduledEvent.day() eventStart is a When for: " +
+                            this.getName() +
+                            " is a When with timeAmount of: " +
+                            operator +
+                            " " +
+                            timeAmount.value +
+                            " " +
+                            timeAmount.unit.name,
+                    );
+                }
             } else {
-                TimelineLogger.log("ScheduledEvent.day() eventStart is a When for: " + this.getName() + " with no timeAmountPart");
+                TimelineLogger.log("ScheduledEvent.day() eventStart is a When for: " + this.getName() + " with no timeAmount");
             }
         } else {
             TimelineLogger.log("ScheduledEvent.day() eventStart is not a Day or When ");
@@ -245,7 +252,12 @@ export class ScheduledEvent {
             let eventStart = this.configuredEvent.schedule.eventStart as EventStart;
             let repeatDays = undefined;
             if (eventStart instanceof When) {
-                repeatDays = this.interpret((eventStart as When).timeAmountPart.timeAmount, timeline) as RtNumber;
+                const when = eventStart as When;
+                if (when.timeAmount !== undefined && when.timeAmount !== null) {
+                    repeatDays = this.interpret(when.timeAmount, timeline) as RtNumber;
+                } else {
+                    repeatDays = this.interpret(eventStart, timeline) as RtNumber;
+                }
             } else {
                 repeatDays = this.interpret(eventStart, timeline) as RtNumber;
             }

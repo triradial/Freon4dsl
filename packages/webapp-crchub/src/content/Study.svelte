@@ -58,8 +58,10 @@
     let unsubscribeChangeManager: (() => void) | undefined;
 
     function debouncedSave() {
+        console.log('💾 Study.svelte: debouncedSave called');
         if (saveTimeout) clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
+            console.log('💾 Study.svelte: debouncedSave timeout fired, calling handleSaveStudy');
             handleSaveStudy();
         }, 1000); // 1 second debounce
     }
@@ -132,17 +134,27 @@
         const changeCallback = (delta) => {
             if (delta instanceof FrePrimDelta) {
                 if (delta.oldValue != delta.newValue) {
-                    // console.debug("✅ Data changed from FreChangeManager:", delta);
+                    console.log("💾 Study.svelte: FrePrimDelta change detected", {
+                        propertyName: delta.propertyName,
+                        oldValue: delta.oldValue,
+                        newValue: delta.newValue
+                    });
                     debouncedSave();
                 }
-            } else             if (delta instanceof FrePrimListDelta) {
-                // console.debug("✅ List change from FreChangeManager:", delta);
+            } else if (delta instanceof FrePrimListDelta) {
+                console.log("💾 Study.svelte: FrePrimListDelta change detected", {
+                    propertyName: delta.propertyName
+                });
                 debouncedSave();
             } else if (delta instanceof FrePartListDelta) {
-                // console.debug("✅ Part List change from FreChangeManager:", delta);
+                console.log("💾 Study.svelte: FrePartListDelta change detected", {
+                    propertyName: delta.propertyName
+                });
                 debouncedSave();
             } else if (delta instanceof FrePartDelta) {
-                // console.debug("✅ Part change from FreChangeManager:", delta);
+                console.log("💾 Study.svelte: FrePartDelta change detected", {
+                    propertyName: delta.propertyName
+                });
                 debouncedSave();
             } else {
                 console.warn("⚠️ Unknown change from FreChangeManager:", delta);
@@ -268,6 +280,7 @@
     }
 
     function handleSaveStudy() {
+        console.log('💾 Study.svelte: handleSaveStudy called');
         ModelManager.getInstance().saveCurrentUnit();
     }
 

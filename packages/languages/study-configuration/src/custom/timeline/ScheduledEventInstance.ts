@@ -1,3 +1,4 @@
+import { RecommendedWindowOf } from "../../language/gen/index.js";
 import { ScheduledEvent } from "./ScheduledEvent.js";
 import { Timeline } from "./Timeline.js";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
@@ -37,11 +38,13 @@ export class ScheduledEventInstance extends TimelineEventInstance {
     }
 
     getStartDayOfWindow() {
-        return this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count;
+        const eventWindow = this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        return eventWindow instanceof RecommendedWindowOf ? eventWindow.daysBefore.count : 0;
     }
 
     getEndDayOfWindow() {
-        return this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysAfter.count;
+        const eventWindow = this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        return eventWindow instanceof RecommendedWindowOf ? eventWindow.daysAfter.count : 0;
     }
 
     completed() {
@@ -63,7 +66,8 @@ export class ScheduledEventInstance extends TimelineEventInstance {
     }
 
     anyDaysBefore() {
-        const daysBefore = this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count;
+        const eventWindow = this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        const daysBefore = eventWindow instanceof RecommendedWindowOf ? eventWindow.daysBefore.count : 0;
         if (this.getName() == "V1 Randomization") {
             TimelineLogger.log("ScheduledEventInstance.anyDaysBefore() for: V1 Randomization daysBefore: " + daysBefore);
         }
@@ -74,13 +78,16 @@ export class ScheduledEventInstance extends TimelineEventInstance {
     }
 
     anyDaysAfter() {
-        const daysAfter = this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysAfter.count;
+        const eventWindow = this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        const daysAfter = eventWindow instanceof RecommendedWindowOf ? eventWindow.daysAfter.count : 0;
         return daysAfter != 0 && daysAfter != undefined;
     }
 
     startDayOfBeforeWindowAsDate(timeline: Timeline) {
         const startDate = new Date(this.getStartDayAsDate(timeline));
-        startDate.setDate(startDate.getDate() - this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysBefore.count);
+        const eventWindow = this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        const daysBefore = eventWindow instanceof RecommendedWindowOf ? eventWindow.daysBefore.count : 0;
+        startDate.setDate(startDate.getDate() - daysBefore);
         return startDate;
     }
 
@@ -113,7 +120,9 @@ export class ScheduledEventInstance extends TimelineEventInstance {
 
     endDayOfAfterWindowAsDate(timeline: Timeline) {
         const endDate = new Date(this.getStartDayAsDate(timeline));
-        endDate.setDate(endDate.getDate() + this.getScheduledEvent().configuredEvent.schedule.eventWindow.daysAfter.count);
+        const eventWindow = this.getScheduledEvent().configuredEvent.schedule.eventWindow;
+        const daysAfter = eventWindow instanceof RecommendedWindowOf ? eventWindow.daysAfter.count : 0;
+        endDate.setDate(endDate.getDate() + daysAfter);
         endDate.setHours(23);
         endDate.setMinutes(59);
         endDate.setSeconds(59);

@@ -2,7 +2,7 @@ import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from 
 import * as fs from "fs";
 import * as path from "path";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
-import { Availability, DateConcept, DateRange, Day, Days, Event, EventReference, EventSchedule, EventState, EventWindow, FirstDayOfStudy, PatientHistory, PatientInfo, PatientVisit, PatientVisitStatus, Period, RepeatCondition, SimpleOperators, StaffLevel, StudyConfiguration, StudyStart, TimeAmount, TimeAmountPart, TimeUnit, VisitDate, Weekly, When } from "../../language/gen/index.js";
+import { Availability, DateConcept, DateRange, Day, Days, Event, EventReference, EventSchedule, EventState, EventWindow, FirstDayOfStudy, MinusTimeAmount, PatientHistory, PatientInfo, PatientVisit, PatientVisitStatus, Period, PlusTimeAmount, RecommendedWindowOf, RepeatCondition, SimpleOperators, StaffLevel, StudyConfiguration, StudyStart, TimeAmount, TimeUnit, VisitDate, Weekly, When } from "../../language/gen/index.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
 import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";
@@ -15,10 +15,8 @@ import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
 // Create a EventSchedule DSL element and set its 'eventStart' to a 'When' DSL element.
 // The When is populated using the parameters. These parameters match the fields of the When.startWhen EventReference.
 // The EventSchedule's EventWindow, RepeatExpression, and EventTimeOfDay are empty.
-export function createWhenEventSchedule(eventName: string, eventState: EventState, operator: SimpleOperators, timeAmount: TimeAmount) {
-    let referenceToOperator = FreNodeReference.create<SimpleOperators>(operator, "SimpleOperators");
-
-    // console.log("createWhenEventSchedule eventName: " + eventName + " eventState: " + eventState + " operator: " + operator + " timeAmount: " + timeAmount.value + " " + timeAmount.unit.name);
+export function createWhenEventSchedule(eventName: string, eventState: EventState, operator: SimpleOperators, value: number, unit: FreNodeReference<TimeUnit>) {
+    // console.log("createWhenEventSchedule eventName: " + eventName + " eventState: " + eventState + " operator: " + operator + " value: " + value + " " + unit.name);
     let referenceToEventState = FreNodeReference.create(eventState, "EventState");
     const freNodeReference = FreNodeReference.create<Event>(eventName, "Event");
     let referencedEvent = freNodeReference;
@@ -27,12 +25,16 @@ export function createWhenEventSchedule(eventName: string, eventState: EventStat
         event: referencedEvent,
     });
 
+    let timeAmount: PlusTimeAmount | MinusTimeAmount;
+    if (operator === SimpleOperators.plus) {
+        timeAmount = PlusTimeAmount.create({ value, unit });
+    } else {
+        timeAmount = MinusTimeAmount.create({ value, unit });
+    }
+
     const whenExpression = When.create({
         startWhen: startWhenEventReference,
-        timeAmountPart: TimeAmountPart.create({
-            operator: referenceToOperator,
-            timeAmount: timeAmount,
-        }),
+        timeAmount: timeAmount,
     });
     const eventSchedule = EventSchedule.create({ eventStart: whenExpression });
     return eventSchedule;
@@ -46,14 +48,12 @@ export function createWhenEventSchedule(eventName: string, eventState: EventStat
 // }
 
 export function createEventWindow(uniquePrefix: string, daysBefore: number, daysAfter: number) {
-    //TODO: change new to create
-    let eventWindow = new EventWindow("EventWindow");
-    let daysBeforeDay = new Days(uniquePrefix + "DaysBefore");
-    daysBeforeDay.count = daysBefore;
-    let daysAfterDay = new Days(uniquePrefix + "DaysAfter");
-    daysAfterDay.count = daysAfter;
-    eventWindow.daysBefore = daysBeforeDay;
-    eventWindow.daysAfter = daysAfterDay;
+    let daysBeforeDay = Days.create({ count: daysBefore });
+    let daysAfterDay = Days.create({ count: daysAfter });
+    let eventWindow = RecommendedWindowOf.create({
+        daysBefore: daysBeforeDay,
+        daysAfter: daysAfterDay
+    });
     return eventWindow;
 }
 
@@ -103,16 +103,12 @@ export function addAPeriodWithEventOnDayAndEventUsingStudyStart(
     let dayEventSchedule = createEventScheduleStartingOnADay(event1Name, event1Day);
     createEventAndAddToPeriod(period, event1Name, dayEventSchedule);
 
-    let referenceToOperator = FreNodeReference.create<SimpleOperators>("+", "SimpleOperators");
     let days = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
 
     const studyStart = FirstDayOfStudy.create({
-        timeAmountPart: TimeAmountPart.create({
-            operator: referenceToOperator,
-            timeAmount: TimeAmount.create({
-                value: secondEventDaysAfterStudyStart,
-                unit: days,
-            }),
+        timeAmount: PlusTimeAmount.create({
+            value: secondEventDaysAfterStudyStart,
+            unit: days,
         }),
     });
     let eventSchedule = EventSchedule.create({ eventStart: studyStart });
@@ -137,29 +133,21 @@ export function addAPeriodWithEventBeforeStudyStart(
     const eventSchedule = EventSchedule.create({ eventStart: studyStart });
     createEventAndAddToPeriod(period, event1Name, eventSchedule);
 
-    const referenceToMinusOperator = FreNodeReference.create<SimpleOperators>("-", "SimpleOperators");
     const days = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
     const fromStudyStart = FirstDayOfStudy.create({
-        timeAmountPart: TimeAmountPart.create({
-            operator: referenceToMinusOperator,
-            timeAmount: TimeAmount.create({
-                value: secondEventDaysBeforeStudyStart,
-                unit: days,
-            }),
+        timeAmount: MinusTimeAmount.create({
+            value: secondEventDaysBeforeStudyStart,
+            unit: days,
         }),
     });
     const eventSchedule2 = EventSchedule.create({ eventStart: fromStudyStart });
     createEventAndAddToPeriod(period, secondEventName, eventSchedule2);
 
-    const referenceToPlusOperator = FreNodeReference.create<SimpleOperators>("+", "SimpleOperators");
     const days2 = FreNodeReference.create<TimeUnit>("days", "TimeUnit");
     const fromStudyStart2 = FirstDayOfStudy.create({
-        timeAmountPart: TimeAmountPart.create({
-            operator: referenceToPlusOperator,
-            timeAmount: TimeAmount.create({
-                value: 2,
-                unit: days2,
-            }),
+        timeAmount: PlusTimeAmount.create({
+            value: 2,
+            unit: days2,
         }),
     });
     const eventSchedule3 = EventSchedule.create({ eventStart: fromStudyStart2 });
@@ -187,8 +175,7 @@ export function addEventScheduledOffCompletedEvent(
 
     const timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
     console.log("addEventScheduledOffCompletedEvent timeUnit: " + timeUnit.name);
-    const timeAmount = TimeAmount.create({ value: event2DaysAfterEvent1, unit: timeUnit });
-    let when = createWhenEventSchedule(event2Name, EventState.completed, SimpleOperators.plus, timeAmount);
+    let when = createWhenEventSchedule(event2Name, EventState.completed, SimpleOperators.plus, event2DaysAfterEvent1, timeUnit);
     createEventAndAddToPeriod(period, event2Name, when);
 
     studyConfiguration.periods.push(period);
@@ -225,7 +212,6 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
     studyConfiguration.periods.push(period);
 
     // Add subsequent events scheduled off the previous event
-    let timeAmount = null;
     let isFirstEvent = true;
     eventsToAdd.forEach((eventToAdd) => {
         console.log(
@@ -248,18 +234,17 @@ export function addEventsScheduledOffCompletedEvents(studyConfiguration: StudyCo
         let freNodeReference = FreNodeReference.create(previousEvent, "Event");
         eventReference.event = freNodeReference;
         let timeUnit = FreNodeReference.create(TimeUnit.days, "TimeUnit");
-        timeAmount = TimeAmount.create({ value: eventToAdd.daysToAdd, unit: timeUnit });
         console.log(
             "addEventsScheduledOffCompletedEvents  eventToAdd: " +
                 eventToAdd.eventName +
                 " at " +
-                timeAmount.value +
+                eventToAdd.daysToAdd +
                 " " +
                 timeUnit.name +
                 " after: " +
                 previousEvent.name,
         );
-        let when = createWhenEventSchedule(previousEvent.name, EventState.completed, SimpleOperators.plus, timeAmount);
+        let when = createWhenEventSchedule(previousEvent.name, EventState.completed, SimpleOperators.plus, eventToAdd.daysToAdd, timeUnit);
         previousEvent = createEventAndAddToPeriod(period, eventToAdd.eventName, when);
         if (newPeriod) {
             // console.log("Adding the new period: " + periodName);

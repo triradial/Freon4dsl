@@ -3,23 +3,22 @@ editor default
 global {
     external {
         ListGroupComponent,
-        ItemGroupComponent,
-        ItemGroupComponent2,
         SingleLineItemComponent,
         DatePickerComponent,
         DateRangePickerComponent,
-        TimePickerComponent,
         MultilineTextComponent,
         AbbreviationComponent,
         DisplayNothingComponent,
-        TabFixComponent,
-        TabFixComponent2,
         ReferenceComponent,
         UrlInputComponent,
         PhoneInputComponent,
+
+        ItemGroupComponent,
+        ItemGroupComponent2,
         CustomNumericComponent,
         CustomSelectComponent,
-        CustomActionsComponent
+        CustomActionsComponent,
+        CustomTimePickerComponent
     }
 }
 

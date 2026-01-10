@@ -10,20 +10,21 @@ import AbbreviationComponent from "./components/custom/AbbreviationComponent.sve
 import DatePickerComponent from "./components/custom/DatePickerComponent.svelte";
 import DateRangePickerComponent from "./components/custom/DateRangePickerComponent.svelte";
 import DisplayNothingComponent from "./components/custom/DisplayNothingComponent.svelte";
-import ItemGroupComponent from "./components/custom/ItemGroupComponent.svelte";
-import ItemGroupComponent2 from "./components/custom/ItemGroupComponent2.svelte";
+
 import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
 import PhoneInputComponent from "./components/custom/PhoneInputComponent.svelte";
 import ReferenceComponent from "./components/custom/ReferenceComponent.svelte";
 import SingleLineItemComponent from "./components/custom/SingleLineItemComponent.svelte";
-import TabFixComponent from "./components/custom/TabFixComponent.svelte";
-import TabFixComponent2 from "./components/custom/TabFixComponent2.svelte";
-import TimePickerComponent from "./components/custom/TimePickerComponent.svelte";
 import UrlInputComponent from "./components/custom/UrlInputComponent.svelte";
+
 import CustomNumericComponent from "./components/custom/freon/CustomNumericComponent.svelte";
 import CustomSelectComponent from "./components/custom/freon/CustomSelectComponent.svelte";
 import CustomActionsComponent from "./components/custom/freon/CustomActionsComponent.svelte";
+import SelectableWrapperComponent from "./components/custom/freon/SelectableWrapperComponent.svelte";
+import CustomTimePickerComponent from "./components/custom/freon/CustomTimePickerComponent.svelte";
+import ItemGroupComponent from "./components/custom/freon/ItemGroupComponent.svelte";
+import ItemGroupComponent2 from "./components/custom/freon/CustomTimePickerComponent.svelte";
 
 const LOGGER = new FreLogger("init");
 
@@ -80,22 +81,21 @@ LOGGER.log('Editor environment configured');
 setCustomComponents([
     { component: DatePickerComponent, knownAs: "DatePickerComponent" },
     { component: DateRangePickerComponent, knownAs: "DateRangePickerComponent" },
-    { component: TimePickerComponent, knownAs: "TimePickerComponent" },
+    { component: CustomTimePickerComponent, knownAs: "CustomTimePickerComponent" },
     { component: ListGroupComponent, knownAs: "ListGroupComponent" },
     { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
     { component: ItemGroupComponent2, knownAs: "ItemGroupComponent2" },
     { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
     { component: DisplayNothingComponent, knownAs: "DisplayNothingComponent" },
     { component: AbbreviationComponent, knownAs: "AbbreviationComponent" },
-    { component: TabFixComponent, knownAs: "TabFixComponent" },
     { component: ReferenceComponent, knownAs: "ReferenceComponent" },
     { component: UrlInputComponent, knownAs: "UrlInputComponent" },
     { component: PhoneInputComponent, knownAs: "PhoneInputComponent" },
     { component: SingleLineItemComponent, knownAs: "SingleLineItemComponent" },
-    { component: TabFixComponent2, knownAs: "TabFixComponent2" },
     { component: CustomNumericComponent, knownAs: "CustomNumericComponent" },
     { component: CustomSelectComponent, knownAs: "CustomSelectComponent" },
     { component: CustomActionsComponent, knownAs: "CustomActionsComponent" },
+    { component: SelectableWrapperComponent, knownAs: "SelectableWrapperComponent" },
 ])
 
 LOGGER.log('--- END ---');

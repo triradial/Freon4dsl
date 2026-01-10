@@ -100,12 +100,14 @@
     // Text state for input
     let text = $state('');
     
-    // Update text when selection changes
+    // Update text when selection changes (only when not editing, to avoid overwriting user input)
     $effect(() => {
-        if (selectedOption) {
-            text = selectedOption.label;
-        } else {
-            text = '';
+        if (!isEditing) {
+            if (selectedOption) {
+                text = selectedOption.label;
+            } else {
+                text = '';
+            }
         }
     });
     
@@ -1014,6 +1016,7 @@
                                 {@const isHighlighted = isMatch && text.trim().length > 0}
                                 {@const isSelected = selectedOption && item.value === selectedOption.id && isMatch && !isHighlighted}
                                 {@const matchClass = isHighlighted ? (hasSingleMatch ? 'matched' : hasMultipleMatches ? 'matched-multiple' : '') : ''}
+                                {@const colonIndex = item.label.indexOf(':')}
                                 <li
                                     data-item-index={index}
                                     role="option"
@@ -1059,7 +1062,14 @@
                                     }}
                                     tabindex="0"
                                 >
-                                    <span>{item.label}</span>
+                                    {#if colonIndex >= 0}
+                                        <span class="label">
+                                            <span class="prefix">{item.label.substring(0, colonIndex)}:</span>
+                                            <span class="suffix">{item.label.substring(colonIndex + 1)}</span>
+                                        </span>
+                                    {:else}
+                                        <span class="prefix">{item.label}</span>
+                                    {/if}
                                     {#if isHighlighted}
                                         <span class="match-indicator">✓</span>
                                     {/if}

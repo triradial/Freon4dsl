@@ -1,6 +1,6 @@
 import { Timeline } from "../../custom/timeline/Timeline.js";
 import { ScheduledEventInstance } from "../../custom/timeline/ScheduledEventInstance.js";
-import { NoComplianceWindow, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
+import { NoComplianceWindow, Period, RecommendedWindowOf, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
 class MarkdownBuilder {
@@ -114,14 +114,19 @@ export class StudyChecklistDocumentTemplate {
             .flatMap((timelineDay, counter) =>
                 timelineDay
                     .getEventInstances()
-                    .map((eventInstance, index) => [
-                        eventInstance.getName(),
-                        eventInstance.getScheduledEvent().configuredEvent.alternativeName,
-                        (eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name,
-                        eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count?.toString() ?? "",
-                        (eventInstance.getStartDay() + 1).toString(),
-                        eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count?.toString() ?? ""
-                    ])
+                    .map((eventInstance, index) => {
+                        const eventWindow = eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow;
+                        const daysBefore = eventWindow instanceof RecommendedWindowOf ? eventWindow.daysBefore.count.toString() : "";
+                        const daysAfter = eventWindow instanceof RecommendedWindowOf ? eventWindow.daysAfter.count.toString() : "";
+                        return [
+                            eventInstance.getName(),
+                            eventInstance.getScheduledEvent().configuredEvent.alternativeName,
+                            ((eventInstance.getScheduledEvent().configuredEvent as any).freOwner() as Period).name,
+                            daysBefore,
+                            (eventInstance.getStartDay() + 1).toString(),
+                            daysAfter
+                        ];
+                    })
             );
         
         // Create table with spacing between each row
@@ -224,11 +229,10 @@ export class StudyChecklistDocumentTemplate {
         const eventRepeat = event.schedule.eventRepeat
             ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
             : "";
-        let complianceWindow = " with no extra compliance window";
-        if (!event.schedule.eventWindow.complianceWindow) {
-            event.schedule.eventWindow.complianceWindow = new NoComplianceWindow();
+        let complianceWindow = "";
+        if (event.schedule.complianceWindow) {
+            complianceWindow = " " + writer.writeToString(event.schedule.complianceWindow).replace(/"/g, "");
         }
-        complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
 
         // Event heading with spacing and visual indicator
         builder.addHeading(2, `${headingPrefix}${event.name}`);
@@ -238,12 +242,16 @@ export class StudyChecklistDocumentTemplate {
         }
 
         const schedulingInfo = [
-            `This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}`,
-            `with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}`
+            `This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}`
         ];
+        
+        if (event.schedule.eventWindow) {
+            schedulingInfo.push(`with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}`);
+        }
         
         if (eventRepeat) schedulingInfo.push(eventRepeat);
         if (timeOfDay) schedulingInfo.push(timeOfDay);
+        if (complianceWindow) schedulingInfo.push(complianceWindow);
         
         builder.addParagraph(schedulingInfo.join(' '), true);
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { NumberReplacerBox, isNumberReplacerBox } from "@freon4dsl/core";
+    import { AST, NumberReplacerBox, isNumberReplacerBox, isPartReplacerBox, type Box } from "@freon4dsl/core";
     import { onMount, tick } from "svelte";
 
-    let { box, isEditing = $bindable(false) } = $props<{ box: NumberReplacerBox; isEditing?: boolean }>();
+    let { box, isEditing = $bindable(false) } = $props<{ box: Box; isEditing?: boolean }>();
     let value = $state<string>("");
     // svelte-ignore non_reactive_update
     let inputElement: HTMLInputElement | null = null;
@@ -108,11 +108,28 @@
     }
 
     function getValue() {
-        const propertyValue: number | undefined = box.getPropertyValue();
-        if (typeof propertyValue === "number") {
-            value = propertyValue.toString();
+        if (isNumberReplacerBox(box)) {
+            const propertyValue: number | undefined = box.getPropertyValue();
+            if (typeof propertyValue === "number") {
+                value = propertyValue.toString();
+            } else {
+                // Display "0" as default in UI, but don't write to model until user interacts
+                value = "0";
+            }
+        } else if (isPartReplacerBox(box)) {
+            // For PartReplacerBox (e.g., Days concept), get the count property from the node
+            // Try getPropertyValue first, but also check node property directly
+            let partNode = box.getPropertyValue();
+            if (!partNode && box.propertyName) {
+                // Fallback: try direct access from node
+                partNode = (box.node as any)[box.propertyName];
+            }
+            if (partNode && typeof (partNode as any).count === "number") {
+                value = ((partNode as any).count).toString();
+            } else {
+                value = "0";
+            }
         } else {
-            // Display "0" as default in UI, but don't write to model until user interacts
             value = "0";
         }
         return value;
@@ -147,6 +164,7 @@
     }
 
     function endEditing() {
+        console.log('🔢 CustomNumericComponent: endEditing called', { isEditing, hasBox: !!box, boxKind: box?.kind });
         if (isEditing) {
             isEditing = false;
             // Normalize and validate on blur
@@ -159,13 +177,47 @@
                     const maxVal = getMax();
                     const numValue = 0;
                     
-                    // Only set 0 if it's within the valid range and box is correct type
-                    if (isFinite(numValue) && isNumberReplacerBox(box)) {
+                    // Only set 0 if it's within the valid range
+                    if (isFinite(numValue)) {
                         const isZeroValid = (minVal === undefined || numValue >= minVal) && 
                                            (maxVal === undefined || numValue <= maxVal);
                         if (isZeroValid) {
                             value = "0";
-                            box.setPropertyValue(numValue);
+                            if (isNumberReplacerBox(box)) {
+                                console.log('🔢 CustomNumericComponent: Setting property to 0 (endEditing) - NumberReplacerBox', {
+                                    propertyName: box.propertyName,
+                                    numValue,
+                                    boxKind: box.kind
+                                });
+                                AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
+                                    box.setPropertyValue(numValue);
+                                });
+                                console.log('🔢 CustomNumericComponent: AST.changeNamed completed for 0');
+                            } else if (isPartReplacerBox(box)) {
+                                // Try getPropertyValue first, but also check node property directly
+                                let partNode = box.getPropertyValue();
+                                if (!partNode && box.propertyName) {
+                                    // Fallback: try direct access from node
+                                    partNode = (box.node as any)[box.propertyName];
+                                }
+                                if (partNode) {
+                                    console.log('🔢 CustomNumericComponent: Setting count to 0 (endEditing) - PartReplacerBox', {
+                                        propertyName: box.propertyName,
+                                        numValue,
+                                        boxKind: box.kind,
+                                        nodeConcept: (partNode as any).freLanguageConcept?.()
+                                    });
+                                    AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
+                                        (partNode as any).count = numValue;
+                                    });
+                                    console.log('🔢 CustomNumericComponent: AST.changeNamed completed for 0 - PartReplacerBox');
+                                } else {
+                                    console.warn('🔢 CustomNumericComponent: Could not find partNode for PartReplacerBox (setting 0)', {
+                                        propertyName: box.propertyName,
+                                        boxKind: box.kind
+                                    });
+                                }
+                            }
                         } else {
                             // 0 is outside range, keep current value or leave undefined
                             // Don't update the model
@@ -194,9 +246,45 @@
                     // Valid value - update model (convert string to number)
                     value = trimmed;
                     const numValue = parseFloat(trimmed);
-                    // Ensure it's a valid finite number and box is correct type before setting
-                    if (isFinite(numValue) && isNumberReplacerBox(box)) {
-                        box.setPropertyValue(numValue);
+                    // Ensure it's a valid finite number before setting
+                    if (isFinite(numValue)) {
+                        if (isNumberReplacerBox(box)) {
+                            console.log('🔢 CustomNumericComponent: Setting property value (endEditing) - NumberReplacerBox', {
+                                propertyName: box.propertyName,
+                                numValue,
+                                trimmed,
+                                boxKind: box.kind
+                            });
+                            AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
+                                box.setPropertyValue(numValue);
+                            });
+                            console.log('🔢 CustomNumericComponent: AST.changeNamed completed (endEditing)');
+                        } else if (isPartReplacerBox(box)) {
+                            // Try getPropertyValue first, but also check node property directly
+                            let partNode = box.getPropertyValue();
+                            if (!partNode && box.propertyName) {
+                                // Fallback: try direct access from node
+                                partNode = (box.node as any)[box.propertyName];
+                            }
+                            if (partNode) {
+                                console.log('🔢 CustomNumericComponent: Setting count property (endEditing) - PartReplacerBox', {
+                                    propertyName: box.propertyName,
+                                    numValue,
+                                    trimmed,
+                                    boxKind: box.kind,
+                                    nodeConcept: (partNode as any).freLanguageConcept?.()
+                                });
+                                AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
+                                    (partNode as any).count = numValue;
+                                });
+                                console.log('🔢 CustomNumericComponent: AST.changeNamed completed (endEditing) - PartReplacerBox');
+                            } else {
+                                console.warn('🔢 CustomNumericComponent: Could not find partNode for PartReplacerBox (endEditing)', {
+                                    propertyName: box.propertyName,
+                                    boxKind: box.kind
+                                });
+                            }
+                        }
                     }
                 }
             }
@@ -217,6 +305,12 @@
     };
 
     onMount(() => {
+        console.log('🔢 CustomNumericComponent: Component mounted', { 
+            hasBox: !!box, 
+            boxKind: box?.kind, 
+            propertyName: (box as any)?.propertyName,
+            initialValue: (box as any)?.getPropertyValue?.()
+        });
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
@@ -229,16 +323,54 @@
 
     function onInputChange(e: Event) {
         const newVal = (e.target as HTMLInputElement).value;
+        console.log('🔢 CustomNumericComponent: onInputChange called', { newVal, hasBox: !!box, boxKind: box?.kind, propertyName: (box as any)?.propertyName });
         
         // Only allow numeric input
         if (isNumeric(newVal)) {
             value = newVal;
-            // Only update model if it's a valid complete number and box is correct type
-            if (isValidNumericValue(newVal) && isNumberReplacerBox(box)) {
+            // Only update model if it's a valid complete number
+            if (isValidNumericValue(newVal)) {
                 const numValue = parseFloat(newVal);
                 // Ensure it's a valid finite number before setting
                 if (isFinite(numValue)) {
-                    box.setPropertyValue(numValue);
+                    if (isNumberReplacerBox(box)) {
+                        console.log('🔢 CustomNumericComponent: Setting property value (onInputChange) - NumberReplacerBox', {
+                            propertyName: box.propertyName,
+                            numValue,
+                            newVal,
+                            boxKind: box.kind
+                        });
+                        AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
+                            box.setPropertyValue(numValue);
+                        });
+                        console.log('🔢 CustomNumericComponent: AST.changeNamed completed (onInputChange)');
+                    } else if (isPartReplacerBox(box)) {
+                        // For PartReplacerBox (e.g., Days concept), set the count property on the node
+                        // Try getPropertyValue first, but also check node property directly
+                        let partNode = box.getPropertyValue();
+                        if (!partNode && box.propertyName) {
+                            // Fallback: try direct access from node
+                            partNode = (box.node as any)[box.propertyName];
+                        }
+                        if (partNode) {
+                            console.log('🔢 CustomNumericComponent: Setting count property (onInputChange) - PartReplacerBox', {
+                                propertyName: box.propertyName,
+                                numValue,
+                                newVal,
+                                boxKind: box.kind,
+                                nodeConcept: (partNode as any).freLanguageConcept?.()
+                            });
+                            AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
+                                (partNode as any).count = numValue;
+                            });
+                            console.log('🔢 CustomNumericComponent: AST.changeNamed completed (onInputChange) - PartReplacerBox');
+                        } else {
+                            console.warn('🔢 CustomNumericComponent: Could not find partNode for PartReplacerBox', {
+                                propertyName: box.propertyName,
+                                boxKind: box.kind
+                            });
+                        }
+                    }
                 }
             }
             
@@ -407,12 +539,48 @@
         const clipboardData = e.clipboardData || (e as any).originalEvent?.clipboardData;
         if (clipboardData) {
             const pastedText = clipboardData.getData('text');
-            if (pastedText && isNumeric(pastedText) && isValidNumericValue(pastedText) && isNumberReplacerBox(box)) {
+            if (pastedText && isNumeric(pastedText) && isValidNumericValue(pastedText)) {
                 value = pastedText;
                 const numValue = parseFloat(pastedText);
                 // Ensure it's a valid finite number before setting
                 if (isFinite(numValue)) {
-                    box.setPropertyValue(numValue);
+                    if (isNumberReplacerBox(box)) {
+                        console.log('🔢 CustomNumericComponent: Setting property value (onPaste) - NumberReplacerBox', {
+                            propertyName: box.propertyName,
+                            numValue,
+                            pastedText,
+                            boxKind: box.kind
+                        });
+                        AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
+                            box.setPropertyValue(numValue);
+                        });
+                        console.log('🔢 CustomNumericComponent: AST.changeNamed completed (onPaste)');
+                    } else if (isPartReplacerBox(box)) {
+                        // Try getPropertyValue first, but also check node property directly
+                        let partNode = box.getPropertyValue();
+                        if (!partNode && box.propertyName) {
+                            // Fallback: try direct access from node
+                            partNode = (box.node as any)[box.propertyName];
+                        }
+                        if (partNode) {
+                            console.log('🔢 CustomNumericComponent: Setting count property (onPaste) - PartReplacerBox', {
+                                propertyName: box.propertyName,
+                                numValue,
+                                pastedText,
+                                boxKind: box.kind,
+                                nodeConcept: (partNode as any).freLanguageConcept?.()
+                            });
+                            AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
+                                (partNode as any).count = numValue;
+                            });
+                            console.log('🔢 CustomNumericComponent: AST.changeNamed completed (onPaste) - PartReplacerBox');
+                        } else {
+                            console.warn('🔢 CustomNumericComponent: Could not find partNode for PartReplacerBox (onPaste)', {
+                                propertyName: box.propertyName,
+                                boxKind: box.kind
+                            });
+                        }
+                    }
                 }
                 // Update input width
                 tick().then(() => {

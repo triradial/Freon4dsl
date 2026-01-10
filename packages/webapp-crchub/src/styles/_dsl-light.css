@@ -2,13 +2,39 @@
 :root {
   color-scheme: dark;
 
-  /* #region Custom Select Component */
-  --custom-select-bg: #5b6788;
-  --custom-select-text: #ffffff;
-  --custom-select-border: #333333;
+  /* #region Text Component */
+  --text-component-text: #46D246;
+  /* #endregion */
 
-  --custom-select-selected-bg: #32cd3263;
-  --custom-select-selected-text: #ffffff;
+  /* #region Custom Select Component */
+  --custom-select-text: #3a64b3;
+  --custom-select-text-hover-bg: #d7def2 ;
+  --custom-select-text-hover: #546d9b;
+  --custom-select-text-placeholder: #697699;
+  --custom-select-text-bg: #d7def2;
+
+  --custom-select-dropdown-bg: #d7def2 ;
+  --custom-select-dropdown-border: #bbc5df ;
+  --custom-select-item-text: #000000;
+  --custom-select-item-text-suffix: #96abd3;
+  --custom-select-item-selected-bg: #32cd3263;
+  --custom-select-selected-text: #595959;
+  --custom-select-single-match-text: #3c513c;
+  --custom-select-multiple-match-text: #564343;
+  /* #endregion */
+
+  /* #region Custom Wrapper Component */
+  --custom-wrapper-bg: #5b6788;
+  --custom-wrapper-hover-bg: #4f5975;
+  --custom-wrapper-text: #ffffff;
+  --custom-wrapper-text-underline: #647092;
+  --custom-wrapper-border: #333333;
+  /* #endregion */
+
+  /* #region Custom Time Picker Component */
+  --custom-timepicker-bg: var(--green-30t);
+  --custom-timepicker-text: #46D246;
+  --custom-timepicker-border: var(--green-50t);
   /* #endregion */
 }
 
@@ -93,11 +119,6 @@
 .text-component-input {
   color: #015f01;
   background-color: var(--green-20t);
-}
-
-.text-component-text {
-  color: #015f01;
-  background-color: inherit;
 }
 
 .text-component-text:hover {
@@ -250,7 +271,14 @@
 .action-button {
   color: var(--gray-800) !important;
   background-color: transparent !important;
+}
+
+.action-button .border {
   border: 1px solid var(--gray-800) !important;
+}
+
+.action-button .borderless {
+  border: none !important;
 }
 
 .action-button:hover {
@@ -562,7 +590,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 /* #region Render Component */
 .render-component-selected {
-  background-color: #a57cc718;
+  /* background-color: #a57cc718; */
 }
 /* #endregion */
 

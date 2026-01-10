@@ -1,5 +1,5 @@
 import { Timeline } from "../timeline/Timeline.js";
-import { Period } from "../../language/gen/index.js";
+import { Period, RecommendedWindowOf } from "../../language/gen/index.js";
 
 export class TimelineTableTemplate {
     static getTimelineTableHTMLStyles(external: boolean = false): string {
@@ -34,18 +34,20 @@ ${timeline
     .map((timelineDay, counter) =>
         timelineDay
             .getEventInstances()
-            .map(
-                (eventInstance, index) =>
-                    `<tr>
+            .map((eventInstance, index) => {
+                const eventWindow = eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow;
+                const daysBefore = eventWindow instanceof RecommendedWindowOf ? eventWindow.daysBefore.count.toString() : "";
+                const daysAfter = eventWindow instanceof RecommendedWindowOf ? eventWindow.daysAfter.count.toString() : "";
+                return `<tr>
         <td>${eventInstance.getName()}</td>
         <td>${eventInstance.getAlternativeName()}</td>
         <td>${(eventInstance.getScheduledEvent().configuredEvent.freOwner() as Period).name}</td>
-        <td class="text-center">${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore.count ?? ""}</td>
+        <td class="text-center">${daysBefore}</td>
         <td class="text-center">${(eventInstance.getStartDay() + 1).toString() ?? ""}</td>
-        <td class="text-center">${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter.count ?? ""}</td>
+        <td class="text-center">${daysAfter}</td>
         <td>&nbsp;</td>
-        </tr>`,
-            )
+        </tr>`;
+            })
             .join(""),
     )
     .join("")}

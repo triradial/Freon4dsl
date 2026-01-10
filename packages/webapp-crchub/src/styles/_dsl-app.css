@@ -56,7 +56,7 @@ main {
   font-family: var(--font-family-sans);
   font-variant: normal;
   margin: 0 !important;
-  padding: 2px 0px 0px 2px;
+  padding: 2px 2px 0px 2px;
   white-space: nowrap;
   display: inline-block;
   line-height: 20px !important;
@@ -120,6 +120,8 @@ main {
   white-space: normal;
   display: inline-block;
   height: 24px;
+  color: var(--text-component-text);
+  background-color: inherit;
 }
 
 .text-dropdown-component-wrapper {
@@ -525,7 +527,6 @@ main {
 /* #region Item Group Component */
 .circle-button {
   padding: 0 0.25rem !important;
-  border-width: 1px !important;
   height: 1.5rem !important;
   width: 1.5rem !important;
   border-radius: 99rem !important;
@@ -650,9 +651,9 @@ main {
 .layout-component-horizontal {
   white-space: nowrap;
   display: flex;
-  padding: 0px;
+  padding: 0;
   height: 100%;
-  margin: 0 0 0 0.25rem !important;
+  margin: 0 !important;
 }
 
 .layout-component-vertical {
@@ -1122,36 +1123,6 @@ span:has(> .tinymce-inline) {
 
 /* #endregion */
 
-/* #region Timepicker */
-.timepicker-container {
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-  margin-left: 0.25rem
-}
-.timepicker-input {
-  font-size: 0.75rem;
-  padding: 2px 2px;
-  min-width: 64px;
-  height: 1.5rem;
-  outline: none;
-}
-/* .timepicker-input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-} */
-.timepicker-display {
-  font-size: 0.75rem;
-  padding: 2px 2px;
-  cursor: pointer;
-  user-select: text;
-  border: none;
-  outline: none;
-  min-width: 64px;
-  display: inline-block;
-}
-
-/* #endregion */
-
 /* #region TAILWIND OVERRIDES */
 
 [type='text']:focus,
@@ -1235,7 +1206,7 @@ select:focus {
   align-items: flex-start;
   position: relative;
   flex-direction: column;
-  color: var(--custom-select-text);
+  color: var(--custom-select-item-text);
 }
 
 .custom-select-dropdown {
@@ -1243,28 +1214,41 @@ select:focus {
   align-items: flex-start;
   position: relative;
   flex-direction: column;
-  background-color: var(--custom-select-bg);
-  color: var(--custom-select-text);
-  border: 1px solid var(--custom-select-border);
+  background-color: var(--custom-select-dropdown-bg);
+  border: 1px solid var(--custom-select-dropdown-border);
 }
 
 .custom-select-item {
-  padding: 0.25rem 0.75rem;
+  padding: 0.125rem 0.5rem;
   cursor: pointer;
   background-color: transparent;
-  color: var(--custom-select-text);
+  color: var(--custom-select-item-text);
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  .label {
+    white-space: nowrap;
+  }
+  .prefix {
+    white-space: nowrap;
+    font-weight: normal;
+  } 
+  .suffix {
+    font-style: italic;
+    font-weight: lighter;
+    color: var(--custom-select-item-text-suffix);
+    white-space: nowrap;
+  }
 }
 
 .custom-select-item:hover {
-  background-color: #d5d5d525;
+  background-color: #d5d5d53f;
 }
 
 .custom-select-item.matched {
   background-color: #32cd3263;
-  color: white;
+  color: var(--custom-select-item-text);
 }
 
 .custom-select-item.matched:hover {
@@ -1273,7 +1257,7 @@ select:focus {
 
 .custom-select-item.matched-multiple {
   background-color: #dc262663;
-  color: white;
+  color: var(--custom-select-item-text);
 }
 
 .custom-select-item.matched-multiple:hover {
@@ -1281,19 +1265,19 @@ select:focus {
 }
 
 .custom-select-item .match-indicator {
-  color: white;
+  color: var(--custom-select-item-text);
   font-weight: bold;
   margin-left: 0.5rem;
 }
 
 .custom-select-item.selected {
-    background-color: var(--custom-select-selected-bg);
+    background-color: var(--custom-select-item-selected-bg);
     color: var(--custom-select-selected-text);
 }
 
 .custom-select-item.keyboard-highlighted {
-    background-color: #d5d5d525;
-    outline: 2px solid var(--blue-40t);
+    background-color: #57eeff;
+    outline: 2px solid #3ab397;
     outline-offset: -2px;
 }
 
@@ -1304,23 +1288,23 @@ select:focus {
   font-style: italic;
   text-align: left;
   border-top: 1px solid var(--color-surface-500);
-  color: white;
+  color: var(--custom-select-item-text);
   width: 100%;
 }
 
 .custom-select-match-count.no-match {
   background-color: #dc262663;
-  color: #d7a8a8;
+  color: var(--custom-select-multiple-match-text);
 }
 
 .custom-select-match-count.single-match {
   background-color: #32cd3263;
-  color: #aee0ae;
+  color: var(--custom-select-single-match-text);
 }
 
 .custom-select-match-count.multiple-match {
   background-color: #dc262663;
-  color: #d7a8a8;
+  color: var(--custom-select-multiple-match-text);
 }
 
 .custom-select-text {
@@ -1331,24 +1315,24 @@ select:focus {
   white-space: normal;
   display: inline-block;
   height: 1.5rem;
-  color: var(--blue-90t);
-  background-color: inherit;
+  color: var(--custom-select-text);
+  background-color: transparent;
 }
 
 .custom-select-text:hover {
-  color: var(--blue-90t) !important;
-  background-color: var(--blue-40t) !important;
+  color: var(--custom-select-text-hover) !important;
+  background-color: var(--custom-select-text-hover-bg) !important;
 }
 
 .custom-select-text::placeholder,
 .custom-select-input::placeholder {
-  color: var(--blue-50t) !important;
+  color: var(--custom-select-text-placeholder) !important;
   opacity: 1 !important;
   font-style: italic !important;
 }
 
 .custom-select-placeholder {
-  color: var(--blue-90t) !important;
+  color: var(--custom-select-text-placeholder) !important;
   opacity: 1 !important;
   font-style: italic !important;
 }
@@ -1370,8 +1354,121 @@ select:focus {
   padding: 0.125rem 0.15rem 0 0.2rem;
   padding-block: 0.15rem;
   height: 1.5rem;
-  color: var(--blue-90t);
-  background-color: var(--blue-40t);
+  color: var(--custom-select-text);
+  background-color: var(--custom-select-text-bg);
   min-width: 2ch;
 }
+/* #endregion */
+
+/* #region Custom Wrapper Component */
+
+.custom-selectable-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  outline: none;
+  border-radius: 3px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.custom-selectable-wrapper:focus {
+  outline: 4px solid var(--custom-wrapper-bg);
+  outline-offset: 1px;
+}
+
+.custom-selectable-wrapper-content {
+  display: inline-flex;
+  align-items: center;
+}
+
+.custom-selectable-wrapper-content.with-underline {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--custom-wrapper-text-underline);
+  text-underline-offset: 0.25em;
+}
+
+.custom-selectable-wrapper.selected {
+  outline: 4px solid var(--custom-wrapper-bg);
+  outline-offset: 1px;
+}
+
+.custom-selectable-wrapper-delete {
+  position: absolute;
+  left: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--custom-wrapper-bg);
+  color: var(--custom-wrapper-text);
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+  z-index: 10;
+  transition: background-color 0.15s ease;
+}
+
+.custom-selectable-wrapper-delete:hover {
+  background: var(--custom-wrapper-hover-bg);
+}
+
+.custom-selectable-wrapper-delete:active {
+  background: var(--custom-wrapper-hover-bg);
+}
+
+/* #endregion */
+
+/* #region Custom Timepicker */
+.custom-timepicker-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  margin-left: 0.25rem
+}
+.custom-timepicker-input {
+  font-size: var(--standard-font-size);
+  padding: 2px 2px;
+  min-width: 3rem;
+  height: 1.5rem;
+  outline: none;
+  background-color: var(--custom-timepicker-bg);
+  color: var(--custom-timepicker-text);
+  border: 1px solid var(--custom-timepicker-border);
+}
+
+.custom-timepicker-input::placeholder {
+  color: var(--green-90t);
+}
+
+.custom-timepicker-input .segment-value {
+  padding-left: 0.125rem;
+  padding-right: 0.125rem;
+}
+
+.custom-timepicker-input .segment-value:focus {
+  outline: 1px solid var(--green);
+  outline-offset: 1px;
+}
+
+.custom-timepicker-display {
+  font-size: var(--standard-font-size);
+  padding: 2px 2px;
+  cursor: pointer;
+  user-select: text;
+  border: none;
+  outline: none;
+  min-width: 3rem;
+  display: inline-block;
+  color: var(--custom-timepicker-text);
+  background-color: transparent;
+}
+
 /* #endregion */

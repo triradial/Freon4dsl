@@ -302,23 +302,65 @@ export class ModelManager {
     }
 
     async saveModelUnit(unit: FreModelUnit) {
+        console.log('💾 ModelManager: saveModelUnit called', {
+            unitName: unit.name,
+            unitType: unit.freLanguageConcept?.(),
+            hasEvents: (unit as any).events?.length >= 0,
+            eventsCount: (unit as any).events?.length || 0
+        });
+        
+        // Debug EventSchedule properties if this is a StudyConfiguration
+        if (unit.freLanguageConcept?.() === 'StudyConfiguration' && (unit as any).periods) {
+            (unit as any).periods.forEach((period: any, periodIdx: number) => {
+                if (period.events) {
+                    period.events.forEach((event: any, eventIdx: number) => {
+                        if (event.eventSchedule) {
+                            const schedule = event.eventSchedule;
+                            console.log(`💾 ModelManager: EventSchedule at periods[${periodIdx}].events[${eventIdx}]`, {
+                                eventStart: schedule.eventStart?.freLanguageConcept?.(),
+                                eventWindow: schedule.eventWindow?.freLanguageConcept?.(),
+                                complianceWindow: schedule.complianceWindow?.freLanguageConcept?.(),
+                                eventTimeOfDay: schedule.eventTimeOfDay?.freLanguageConcept?.(),
+                                eventRepeat: schedule.eventRepeat?.freLanguageConcept?.(),
+                                eventStartValue: schedule.eventStart || null,
+                                eventWindowValue: schedule.eventWindow || null,
+                                complianceWindowValue: schedule.complianceWindow || null,
+                                eventTimeOfDayValue: schedule.eventTimeOfDay || null,
+                                eventRepeatValue: schedule.eventRepeat || null
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        
         await this.modelStore.saveUnit(unit);
+        console.log('💾 ModelManager: saveModelUnit completed');
     }
 
     async saveCurrentUnit() {
+        console.log('💾 ModelManager: saveCurrentUnit called');
         const unit: FreModelUnit = this.langEnv.editor.rootElement as FreModelUnit;
         if (!!unit) {
             if (!!this.currentModel?.name && this.currentModel?.name?.length) {
                 if (!!unit.name && unit.name.length > 0) {
-                    await this.modelStore.saveUnit(unit);
+                    console.log('💾 ModelManager: saveCurrentUnit - calling saveModelUnit', {
+                        unitName: unit.name,
+                        modelName: this.currentModel.name
+                    });
+                    await this.saveModelUnit(unit);
                     setCurrentUnitName(unit.name);
+                    console.log('💾 ModelManager: saveCurrentUnit completed');
                 } else {
+                    console.warn('💾 ModelManager: saveCurrentUnit - unit has no name');
                     setUserMessage(`Unit without name cannot be saved. Please, name it and try again.`);
                 }
             } else {
+                console.warn('💾 ModelManager: saveCurrentUnit - no current model');
                 LOGGER.log("Internal error: cannot save unit because current model is unknown.");
             }
         } else {
+            console.warn('💾 ModelManager: saveCurrentUnit - no current unit');
             LOGGER.log("No current model unit");
         }
     }

@@ -150,22 +150,22 @@
     <span class="item-group-label" tabindex="-1">{label()}:</span>
     <RenderComponent box={referenceBox} {editor} cssClass={cssContainerClass} />
     {#if canDuplicate}
-        <button class="circle-button action-button" onclick={duplicateItem} onkeydown={(e) => e.key === 'Enter' && duplicateItem(e)} title="Duplicate" tabindex="0">
+        <button class="circle-button action-button borderless" onclick={duplicateItem} onkeydown={(e) => e.key === 'Enter' && duplicateItem(e)} title="Duplicate" tabindex="0">
             <IconDuplicate size={14} />
         </button>
     {/if}
     {#if canDelete}
-        <button class="circle-button action-button" onclick={deleteItem} onkeydown={(e) => e.key === 'Enter' && deleteItem(e)} title="Delete" tabindex="0">
+        <button class="circle-button action-button borderless" onclick={deleteItem} onkeydown={(e) => e.key === 'Enter' && deleteItem(e)} title="Delete" tabindex="0">
             <IconDelete size={14} />
         </button>
     {/if}
     {#if canShare}
-        <button class="circle-button action-button" onclick={shareItem} onkeydown={(e) => e.key === 'Enter' && shareItem(e)} title="Share" tabindex="0">
+        <button class="circle-button action-button borderless" onclick={shareItem} onkeydown={(e) => e.key === 'Enter' && shareItem(e)} title="Share" tabindex="0">
             <IconShare2 size={14} />
         </button>
     {/if}
     {#if canCRUD}
-        <button class="circle-button action-button" title="More..." tabindex="0">
+        <button class="circle-button action-button borderless" title="More..." tabindex="0">
             <IconEllipsisVertical size={14} />
         </button>
     {/if}

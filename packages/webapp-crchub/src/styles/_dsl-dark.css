@@ -2,13 +2,40 @@
 :root {
   color-scheme: dark;
 
-  /* #region Custom Select Component */
-  --custom-select-bg: #5b6788;
-  --custom-select-text: #ffffff;
-  --custom-select-border: #333333;
+  /* #region Text Component */
+  --text-component-text: #259f25;
 
-  --custom-select-selected-bg: #32cd3263;
+  /* #endregion */
+
+  /* #region Custom Select Component */
+  --custom-select-text: #88AAE7;
+  --custom-select-text-hover-bg: #4f5975;
+  --custom-select-text-hover: #7b99cf;
+  --custom-select-text-placeholder: #7684ac;
+  --custom-select-text-bg: #4f5975;
+
+  --custom-select-dropdown-bg: #4f5975;
+  --custom-select-dropdown-border: #333333;
+  --custom-select-item-text: #ffffff;
+  --custom-select-item-text-suffix: #c3c3c3;
+  --custom-select-item-selected-bg: #32cd3263;
   --custom-select-selected-text: #ffffff;
+  --custom-select-single-match-text: #aee0ae;
+  --custom-select-multiple-match-text: #d7a8a8;
+  /* #endregion */
+
+  /* #region Custom Wrapper Component */
+  --custom-wrapper-bg: #5b6788;
+  --custom-wrapper-hover-bg: #4f5975;
+  --custom-wrapper-text: #ffffff;
+  --custom-wrapper-text-underline: #6c7899;
+  --custom-wrapper-border: #333333;
+  /* #endregion */
+
+  /* #region Custom Time Picker Component */
+  --custom-timepicker-bg: var(--green-30t);
+  --custom-timepicker-text: #259f25;
+  --custom-timepicker-border: var(--green-50t);
   /* #endregion */
 }s
 
@@ -79,7 +106,7 @@
 }
 
 .label-component {
-  color: var(--gray-400);
+  color: var(--gray-500);
   background-color: inherit;
 }
 
@@ -93,11 +120,6 @@
 .text-component-input {
   color: var(--green-90t);
   background-color: var(--green-30t);
-}
-
-.text-component-text {
-  color: var(--green-90t);
-  background-color: inherit;
 }
 
 .text-component-text:hover {
@@ -249,20 +271,25 @@
 .action-button {
   color: var(--white) !important;
   background-color: transparent !important;
-  border: 1px solid var(--white) !important;
+}
+
+.action-button .border {
+  border: 1px solid var(--gray-200) !important;
+}
+
+.action-button .borderless {
+  border: none !important;
 }
 
 .action-button:hover {
   color: var(--white) !important;
   background-color: var(--primary-600) !important;
-  border: 1px solid var(--primary-600) !important;
 }
 
 .action-button:active,
 .action-button:focus {
   color: var(--white) !important;
   background-color: var(--primary-400) !important;
-  border: 1px solid var(--primary-400) !important;
 }
 
 /* #endregion */
@@ -639,27 +666,9 @@ div[data-range-calendar-root] th {
 }
 /* #endregion */
 
-/* #region Timepicker */
-.timepicker-input {
-  background-color: var(--green-30t);
-  color: var(--green-90t);
-  border: 1px solid var(--green-90t);
-}
-/* .timepicker-input::-ms-input-placeholder {
-  color: var(--green-90t);
-} */
-.timepicker-input::placeholder {
-  color: var(--green-90t);
-}
-.timepicker-display {
-  color: var(--green-90t);
-  background-color: transparent
-}
-/* #endregion */
-
 /* #region Render Component */
 .render-component-selected {
-  background-color: #c9daff40 !important;
+  /* background-color: #c9daff40 !important; */
 }
 
 /* #endregion */
