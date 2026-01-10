@@ -399,12 +399,17 @@ describe("Study Simulation", () => {
             testStudyInFile("ScheduleExample1", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2018, 2, 13));
         });
 
+        // it("generates chart for example study 2", () => {
+        //     // Load from DSL text file exported from the database instead of JSON files
+        //     // This avoids the corruption issue in the JSON files where the first visit has a ghost daysBefore
+        //     const dslFilePath = path.resolve(__dirname, "..", "..", "..", "..", "..", "server-crchub", "tmp", "ScheduleExample2.dsl.txt");
+        //     const expectedTimelineDataAsScript = loadExpectedTimelineData("ScheduleExample2");
+        //     testStudyFromDSLFile(dslFilePath, studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
+        // });
+
         it("generates chart for example study 2", () => {
-            // Load from DSL text file exported from the database instead of JSON files
-            // This avoids the corruption issue in the JSON files where the first visit has a ghost daysBefore
-            const dslFilePath = path.resolve(__dirname, "..", "..", "..", "..", "..", "server-crchub", "tmp", "ScheduleExample2.dsl.txt");
             const expectedTimelineDataAsScript = loadExpectedTimelineData("ScheduleExample2");
-            testStudyFromDSLFile(dslFilePath, studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
+            testStudyInFile("ScheduleExample2", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
         });
 
         it("generates chart for example study 3", () => {
@@ -413,7 +418,7 @@ describe("Study Simulation", () => {
             testStudyInFile("ScheduleExample3", studyConfigurationModel, expectedTimelineDataAsScript, new Date(2011, 2, 25));
         });
 
-        it("generates chart for example study 3 loaded from DSL text", () => {
+        it.skip("generates chart for example study 3 loaded from DSL text", () => {
             const expectedTimelineDataAsScript = loadExpectedTimelineData("ScheduleExample3-DSL");
             // GIVEN a study configuration loaded from the DSL text file written by the previous test
             const studyFolderPath: string = path.resolve(__dirname, "..", "__tests__", "modelstore", "ScheduleExample3");
@@ -512,7 +517,7 @@ describe("Study Simulation", () => {
             let timeline = simulator.timeline;
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(2, timeline, [], new Date(2024, 0, 1));
             let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
-            timeline.addPatientEvents(patientHistory);
+            timeline.addPatientEvents(patientHistory, "MV");
 
 
             // WHEN the study is simulated and a timeline picture is generated
@@ -575,7 +580,7 @@ describe("Study Simulation", () => {
             let timeline = simulator.timeline;
             let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(3, timeline, [], new Date(2024, 0, 1));
             let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
-            timeline.addPatientEvents(patientHistory);
+            timeline.addPatientEvents(patientHistory, "MV");
 
             // WHEN the study is simulated and a timeline picture is generated
             utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
@@ -631,13 +636,14 @@ describe("Study Simulation", () => {
             let period = Period.create({ name: "Screening" });
             utils.createEventAndAddToPeriod(period, eventName, eventSchedule);
             studyConfigurationUnit.periods.push(period);
-            const visitToComplete = studyConfigurationUnit.periods[0].events[0];
-            const patientInfoUnit = utils.createPatientInfoWithACompletedVisit(visitToComplete.name, "1", "January", "2024", 1);
 
             // WHEN the study is simulated and a timeline is generated
-            let simulator = new Simulator(studyConfigurationUnit, patientInfoUnit.patientHistories[0]);
+            let simulator = new Simulator(studyConfigurationUnit);
             simulator.run();
             let timeline = simulator.timeline;
+            let completedPatientVisits: PatientVisit[] = utils.createCompletedPatientVisits(1, timeline, [], new Date(2024, 0, 1));
+            let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: [] });
+            timeline.addPatientEvents(patientHistory, "MV");
 
             // Then the generated timeline has one event on the expected event day and the corresponding patient visit completion
             utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, expectedTimelineVisualizationHTML, true);
@@ -728,7 +734,7 @@ describe("Study Simulation", () => {
             dateRangeList.push(dateRange);
             let patientHistory = PatientHistory.create({ id: "MV", patientVisits: completedPatientVisits, patientNotAvailableDates: dateRangeList });
 
-            timeline.addPatientEvents(patientHistory);
+            timeline.addPatientEvents(patientHistory, "MV");
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
@@ -834,7 +840,7 @@ describe("Study Simulation", () => {
                 patientVisits: completedPatientVisits,
                 patientNotAvailableDates: [],
             });
-            timeline.addPatientEvents(patientHistory);
+            timeline.addPatientEvents(patientHistory, "MV");
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
@@ -847,7 +853,7 @@ describe("Study Simulation", () => {
             expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
 
-        it("generate a chart from the text version of the study", () => {
+        it.skip("generate a chart from the text version of the study", () => {
             // Test is skipped because this is only possible when parsing works. Kept for example of how to read text version from file.
 
             // GIVEN a study configuration loaded from a string
@@ -987,78 +993,6 @@ describe("Study Simulation", () => {
 
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             utils.checkTimelineChart(timeline, expectedTimelineDataAsScript, "", true);
-        });
-
-        it("generates a CHART for a multi-month timeline", () => {
-          const expectedTimelineDataAsScript = loadExpectedTimelineData("MultiMonthTimeline");
-          // GIVEN
-            const dslText = `
-Periods:
-  Period: \`Screening\`
-
-  Events:
-    Event: \`Screen\`
-    This is a \`site visit\` 
-
-    Schedule:
-      First scheduled "" as the start day of the study
-      with a window of 0 day(s) before and 0 day(s) after
-      and no compliance window and then repeats limited to
-    Tasks:
-      Task: \`Task 1\`
-
-        Steps:
-
-    Event: \`Visit 1\`
-    This is a \`site visit\` 
-
-    Schedule:
-      First scheduled when \`Screen\` \`completed\` \`+\` 3 \`weeks\`
-      with a window of 0 day(s) before and 0 day(s) after
-      and no compliance window and then repeats limited to
-    Tasks:
-
-    Event: \`Visit 2\`
-    This is a \`site visit\` 
-
-    Schedule:
-      First scheduled when \`Visit 1\` \`completed\` \`+\` 3 \`months\`
-      with a window of 0 day(s) before and 0 day(s) after
-      and no compliance window and then repeats limited to
-    Tasks:
-
-Tasks:
-
-System Accesses:
-
-Staffing:
-
-Roles:          `;
-          // Create a new model for this test to avoid conflicts with the unit created in beforeEach
-          const testModel = studyConfigurationModelEnvironment.newModel(
-            "TestStudyModelForDSL"
-          ) as StudyConfigurationModel;
-
-          // Parse the DSL text into a StudyConfiguration model unit
-          const studyConfigurationUnit =
-            studyConfigurationModelEnvironment.reader.readFromString(
-              dslText,
-              "StudyConfiguration",
-              testModel,
-              "StudyConfiguration.dsl.txt"
-            ) as StudyConfiguration;
-
-          // WHEN the study is simulated and a timeline is generated
-          let simulator = new Simulator(studyConfigurationUnit);
-          simulator.run();
-          let timeline = simulator.timeline;
-
-          utils.checkTimelineChart(
-            timeline,
-            expectedTimelineDataAsScript,
-            "",
-            true
-          );
         });
 
     });

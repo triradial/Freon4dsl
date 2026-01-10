@@ -79,7 +79,9 @@ export class TimelineChartTemplate {
                         .map(
                             (patientEventInstance, index) => {
                                 const patientId = patientEventInstance.getPatientIdentifier();
-                                const groupId = patientId ? `Patient-${patientId}` : "Patient";
+                                const groupId = patientId
+                                  ? `Patient-${patientId}`
+                                  : "NO-Patient-ID";
                                 return `{ start: new Date(${patientEventInstance.getStartDayAsDateString(timeline)}), end: new Date(${patientEventInstance.getEndDayAsDateString(timeline)}), group: "${groupId}", className: "${patientEventInstance.getClassForDisplay(timeline)}", title: "${patientEventInstance.getTitle()}", content: "&nbsp;", id: "${patientEventInstance.getName() + getUniqueNumber()}" },`;
                             }
                         )

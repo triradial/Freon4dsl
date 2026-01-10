@@ -1,5 +1,5 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
-import type { FreEnvironment, FreModel, FreModelUnit, FreNode, FreOwnerDescriptor, IServerCommunication } from "@freon4dsl/core";
+import type { FreEnvironment, FreModel, FreModelUnit, FreNode, FreOwnerDescriptor, InMemoryError, IServerCommunication } from "@freon4dsl/core";
 import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel } from "@freon4dsl/core";
 import { Event, Period, StudyConfiguration, Task } from "@freon4dsl/study-configuration";
 import { runInAction } from "mobx";
@@ -16,6 +16,8 @@ export class ModelManager {
     private modelErrors: {list: FreError[]} = {list: []};
     private langEnv: FreEnvironment = WebappConfigurator.getInstance().editorEnvironment;
     private serverCommunication: IServerCommunication = WebappConfigurator.getInstance().serverCommunication;
+    // Track in-progress openModel operations to avoid race conditions
+    private openModelPromises: Map<string, Promise<FreModel | InMemoryError>> = new Map();
 
     static getInstance(): ModelManager {
         if (ModelManager.instance === null) {
@@ -53,6 +55,34 @@ export class ModelManager {
         return this.modelStore.model;
     }
 
+
+    //TODO: Graham to review this workaround to avoid race conditions when multiple calls try to open the same model.
+    /**
+     * Wrapper around modelStore.openModel that tracks in-progress operations
+     * to avoid race conditions when multiple calls try to open the same model.
+     * If the model is already being opened, this will return the existing promise.
+     */
+    private async openModelWithTracking(modelName: string): Promise<FreModel | InMemoryError> {
+        // Check if there's already an openModel in progress for this model
+        const existingPromise = this.openModelPromises.get(modelName);
+        if (existingPromise) {
+            LOGGER.log(`openModel already in progress for "${modelName}", reusing existing promise`);
+            return existingPromise;
+        }
+
+        // Start opening the model and track the promise
+        const openModelPromise = this.modelStore.openModel(modelName);
+        this.openModelPromises.set(modelName, openModelPromise);
+        
+        try {
+            const result = await openModelPromise;
+            return result;
+        } finally {
+            // Remove the promise once it completes (success or failure)
+            this.openModelPromises.delete(modelName);
+        }
+    }
+
     async createModel(modelName: string) {
         try {
             LOGGER.log("ModelHandler.createModel name: " + modelName);
@@ -69,7 +99,7 @@ export class ModelManager {
         updateEditorState(true, true, false);
         this.resetGlobalVariables();
         //await this.saveCurrentUnit();
-        await this.modelStore.openModel(modelName);
+        await this.openModelWithTracking(modelName);
         const unitIdentifiers = this.modelStore.getUnitIdentifiers();
         if (!!unitIdentifiers && unitIdentifiers.length > 0) {
             let first: boolean = true;
@@ -151,9 +181,19 @@ export class ModelManager {
     async getModelUnitWithoutOpening(modelName: string, unitName: string): Promise<FreModelUnit | undefined> {
         LOGGER.log("ModelManager.getModelUnitWithoutOpening modelName: " + modelName + " unitName: " + unitName);
         
-        // If the model is already open, just get the unit directly
+        // If the model is already open, check if openModel is still in progress
         if (this.currentModel?.name === modelName) {
-            LOGGER.log("Model already open, getting unit directly");
+            LOGGER.log("Model already open, checking if openModel is in progress...");
+            
+            // Wait for openModel to complete if it's still loading units
+            // We check the map directly to avoid starting a new openModel if none is in progress
+            const openModelPromise = this.openModelPromises.get(modelName);
+            if (openModelPromise) {
+                LOGGER.log(`openModel is still in progress for "${modelName}", waiting for it to complete...`);
+                await openModelPromise;
+            }
+            
+            // Now get the unit (should be loaded by now)
             const unit = this.modelStore.getUnitByName(unitName);
             if (unit) {
                 LOGGER.log(`ModelManager.getModelUnitWithoutOpening: found unit "${unitName}" (type: ${unit.freLanguageConcept()}, id: ${unit.freId()})`);
@@ -172,7 +212,7 @@ export class ModelManager {
         try {
             // Open the model in the modelStore (loads from server into memory)
             // This will replace the current model, but we'll restore it after
-            await this.modelStore.openModel(modelName);
+            await this.openModelWithTracking(modelName);
             
             // Get the unit by name
             const unit = this.modelStore.getUnitByName(unitName);
@@ -184,7 +224,7 @@ export class ModelManager {
             
             // Restore previous model if it was different
             if (previousModelName && previousModelName !== modelName) {
-                await this.modelStore.openModel(previousModelName);
+                await this.openModelWithTracking(previousModelName);
             }
             
             // Restore previous editor state
@@ -201,7 +241,7 @@ export class ModelManager {
             // Try to restore state even on error
             if (previousModelName) {
                 try {
-                    await this.modelStore.openModel(previousModelName);
+                    await this.openModelWithTracking(previousModelName);
                     if (previousCurrentUnit) {
                         this.setCurrentUnit(previousCurrentUnit);
                         runInAction(() => {
@@ -224,7 +264,7 @@ export class ModelManager {
         // await this.saveCurrentUnit();
         
         console.log(`[ModelManager] Calling modelStore.openModel(${modelName})`);
-        const openModelResult = await this.modelStore.openModel(modelName);
+        const openModelResult = await this.openModelWithTracking(modelName);
         console.log(`[ModelManager] modelStore.openModel returned:`, {
             resultType: typeof openModelResult,
             isError: openModelResult?.constructor?.name === 'InMemoryError',
@@ -258,7 +298,7 @@ export class ModelManager {
         // save the old current unit, if there is one
         // await this.saveCurrentUnit();
         // create new model instance in memory and set its name
-        await this.modelStore.openModel(modelName);
+        await this.openModelWithTracking(modelName);
         const unit = this.modelStore.getUnitByName(unitName);
         console.log("openModelUnit unit:", unit);
         if (unit) {
