@@ -1,6 +1,5 @@
 import { Timeline } from "../../custom/timeline/Timeline.js";
-import { ScheduledEventInstance } from "../../custom/timeline/ScheduledEventInstance.js";
-import { NoComplianceWindow, Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
+import { Period, StudyConfiguration, Task, TaskReference } from "../../language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
 class MarkdownBuilder {
@@ -224,11 +223,12 @@ export class StudyChecklistDocumentTemplate {
         const eventRepeat = event.schedule.eventRepeat
             ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
             : "";
-        let complianceWindow = " with no extra compliance window";
-        if (!event.schedule.eventWindow.complianceWindow) {
-            event.schedule.eventWindow.complianceWindow = new NoComplianceWindow();
+        let complianceWindow = "";
+        if (event.schedule.eventWindow?.complianceWindow) {
+            complianceWindow = " " + writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
+        } else {
+            complianceWindow = " with no extra compliance window";
         }
-        complianceWindow = writer.writeToString(event.schedule.eventWindow.complianceWindow).replace(/"/g, "");
 
         // Event heading with spacing and visual indicator
         builder.addHeading(2, `${headingPrefix}${event.name}`);

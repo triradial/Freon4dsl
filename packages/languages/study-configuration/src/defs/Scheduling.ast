@@ -1,14 +1,64 @@
 language StudyConfigurationModel
 
+//----------------------------------------------------------
+// EVENT SCHEDULE
+//----------------------------------------------------------
+concept EventSchedule {
+    eventStart: EventStart;
+    eventWindow?: EventWindow;
+    eventRepeat?: RepeatExpression;
+    eventTimeOfDay?: EventTimeOfDay;
+}
+
 concept EventReference {
     reference event: Event;
     eventState: EventState = EventState:completed;
+}
+
+//----------------------------------------------------------
+// LIMITED CONCEPTS
+//----------------------------------------------------------
+
+limited TimeUnit {
+   hours; days; weeks; months;  
+}
+
+limited PhaseState {
+    completed; started; skipped;
+}
+
+limited EventState {
+    completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
+}
+
+limited SimpleOperators {
+    plus = { name:"+" } minus = { name: "-" }
+}
+
+
+//----------------------------------------------------------
+// TIME CONCEPTS
+//----------------------------------------------------------
+
+concept Days {
+    count: number;
+}
+
+concept TimeAmount   {
+    value: number;
+    unit: TimeUnit = TimeUnit:days;
 }
 
 concept TimeAmountPart {
     operator: SimpleOperators = SimpleOperators:plus;
     timeAmount: TimeAmount;
 }  
+
+
+//----------------------------------------------------------
+// EVENT START {eventStart}
+//----------------------------------------------------------
+
 
 interface EventStart {
     timeAmountPart?: TimeAmountPart;
@@ -42,18 +92,59 @@ concept Unscheduled implements EventStart {
 concept AnyDay base Unscheduled {
 }
 
-limited TimeUnit {
-   hours; days; weeks; months;  
+
+//----------------------------------------------------------
+// WINDOWS
+//----------------------------------------------------------
+
+concept EventWindow {
+    daysBefore: Days;
+    daysAfter: Days;
+    complianceWindow?: ComplianceWindow;
 }
 
-limited PhaseState {
-    completed; started; skipped;
+
+// MAKE THIS A CONCRETE CONCEPT now that noComplianceWindow is gone?
+
+abstract concept ComplianceWindow {
 }
 
-limited EventState {
-    completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
+concept ComplianceWindowOf base ComplianceWindow {
+    maxDaysBefore: Days;
+    maxDaysAfter: Days;
 }
 
+
+//----------------------------------------------------------
+// EVENT TIME OF DAY
+//----------------------------------------------------------
+interface EventTimeOfDay { }
+
+concept StartingBy implements EventTimeOfDay {
+    startTimeAsString: string;
+    startHour: number;
+    startMinute: number;
+}
+
+concept EndingBy implements EventTimeOfDay {
+    endTimeAsString: string;
+    endHour: number;
+    endMinute: number;
+}
+ 
+concept BetweenTimes implements EventTimeOfDay {
+    startTimeAsString: string;
+    endTimeAsString: string;
+    startHour: number;
+    startMinute: number;
+    endHour: number;
+    endMinute: number;
+}
+
+
+//----------------------------------------------------------
+// REPEAT
+//----------------------------------------------------------
 
 //TODO: rename to something other than 'Expression' or determine if it should be an expression.
 interface RepeatExpression {}
@@ -90,62 +181,3 @@ concept RepeatCount implements RepeatExpression {
 }
 
 
-concept TimeAmount   {
-    value: number;
-    unit: TimeUnit = TimeUnit:days;
-}
-
-limited SimpleOperators {
-    plus = { name:"+" } minus = { name: "-" }
-}
-
-concept Days {
-    count: number;
-}
-
-abstract concept ComplianceWindow {
-}
-
-concept NoComplianceWindow base ComplianceWindow {
-}
-
-concept ComplianceWindowOf base ComplianceWindow {
-    maxDaysBefore: Days;
-    maxDaysAfter: Days;
-}
-
-concept EventWindow {
-    daysBefore: Days;
-    daysAfter: Days;
-    complianceWindow?: ComplianceWindow;
-}
-
-interface EventTimeOfDay { }
-
-concept StartingBy implements EventTimeOfDay {
-    startTimeAsString: string;
-    startHour: number;
-    startMinute: number;
-}
-
-concept EndingBy implements EventTimeOfDay {
-    endTimeAsString: string;
-    endHour: number;
-    endMinute: number;
-}
- 
-concept BetweenTimes implements EventTimeOfDay {
-    startTimeAsString: string;
-    endTimeAsString: string;
-    startHour: number;
-    startMinute: number;
-    endHour: number;
-    endMinute: number;
-}
-
-concept EventSchedule {
-    eventStart: EventStart;
-    eventWindow?: EventWindow;
-    eventRepeat?: RepeatExpression;
-    eventTimeOfDay?: EventTimeOfDay;
-}

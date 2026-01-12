@@ -1,0 +1,221 @@
+editor default
+
+////////////////////////////////////////////////////////////
+// EVENT SCHEDULE {eventSchedule}
+////////////////////////////////////////////////////////////
+EventSchedule {
+    [
+        First scheduled ${eventStart replace=CustomActionsComponent placeholder="event start"}
+        ${eventWindow replace=CustomActionsComponent placeholder="recommended window"}
+        ${complianceWindow replace=CustomActionsComponent placeholder="compliance window"}
+        ${eventTimeOfDay replace=CustomActionsComponent placeholder="time of day"}
+        ${eventRepeat replace=CustomActionsComponent placeholder="repeat"}
+    ] 
+    trigger = "event schedule"
+}
+
+EventReference {
+    [ ${event replace=CustomSelectComponent placeholder="event reference"} is ${eventState replace=CustomSelectComponent placeholder="event state"} ]
+    referenceShortcut = ${event}
+}
+
+// EventSchedule {
+//     [
+//         First scheduled ${eventStart} 
+//         [? ${eventWindow} ] 
+//         [? and then repeats ${eventRepeat}]
+//         [? limited to ${eventTimeOfDay}]
+//     ] 
+//     trigger = "event schedule"
+// } 
+
+// EventSchedule {
+//     [
+//         First scheduled [fragment eventStarts wrap = TabFixComponent2 cssClass="type1" canAdd="false" canExpand="false" isExpanded="true" selectable="true" label="X"]
+//         ${eventWindow} 
+//         [? and then repeats ${eventRepeat} ]
+//         [? limited to ${eventTimeOfDay} ]
+//     ] 
+//     trigger = "event schedule"
+//     fragment eventStarts [
+//         ${eventStart}
+//     ]     replace=CustomActionsComponent placeholder="repeat expression"
+// } 
+
+////////////////////////////////////////////////////////////
+// TIME UNITS
+////////////////////////////////////////////////////////////
+
+Days {
+    [${count replace=CustomNumericComponent}]
+}
+
+PlusTimeAmount {
+    [ plus ${value replace=CustomNumericComponent placeholder="#"}${unit replace=CustomSelectComponent placeholder="unit"} ]
+    trigger = "plus time amount"
+} 
+
+MinusTimeAmount {
+    [ minus ${value replace=CustomNumericComponent placeholder="#"}${unit replace=CustomSelectComponent placeholder="unit"} ]
+    trigger = "minus time amount"
+} 
+
+Daily {
+    [ daily ]
+    trigger = "daily"
+}
+
+Weekly {
+    [ weekly ]
+    trigger = "weekly"
+}
+
+Monthly {
+    [ monthly ]
+    trigger = "monthly"
+}
+
+Forever {
+    [ forever ]
+    trigger = "forever"
+}
+
+////////////////////////////////////////////////////////////
+// EVENT START {eventStart}
+////////////////////////////////////////////////////////////
+
+StudyStart {
+    [as the first day of the study] 
+    trigger = "study start: declares this event to be the start of the study"
+} 
+
+FirstDayOfStudy {
+    [ on the start day of the study ${timeAmount replace=CustomActionsComponent placeholder="time adjustment"} ]
+    trigger = "start day: depends on the first day of the study +/- some amount of time"
+}
+
+Baseline {
+    [ as the baseline of the study ${timeAmount replace=CustomActionsComponent placeholder="time adjustment"} ]
+    trigger = "baseline: an alternate name for a reference to the first day of the study"
+}
+
+Day {
+    [ on day ${startDay replace=CustomNumericComponent min="0" max="999"} ]
+    trigger = "day: a day of the study"
+}
+
+When {
+    [ when ${startWhen} ${timeAmount replace=CustomActionsComponent placeholder="time adjustment"}]
+    trigger = "when: depends on when another event occurs"
+}  
+
+Previous {
+    [ when the previous event ${eventState replace=CustomSelectComponent placeholder="event state"} ${timeAmount replace=CustomActionsComponent placeholder="time adjustment"} ]
+    trigger = "previous: depends on the previous event"
+}
+
+Unscheduled {
+    [ on any day (an unscheduled event) ]
+    trigger = "unscheduled: an unscheduled event"
+}
+
+AnyDay {
+    [ on any day ]
+    trigger = "any day: an alternative name for an unscheduled event"
+} 
+
+////////////////////////////////////////////////////////////
+// RECOMMENDED WINDOW {eventWindow}
+////////////////////////////////////////////////////////////
+
+NoRecommendedWindow {
+    [ with no recommended window ] 
+    trigger = "no recommended window"
+}
+
+RecommendedWindowOf {
+    [ with a recommended window of ${daysBefore replace=CustomNumericComponent min="0" max="30"} day(s) before and ${daysAfter replace=CustomNumericComponent min="0" max="30"} day(s) after  ] 
+    trigger = "window: a recommended window of time before and after the event"
+}
+
+RecommendedBeforeOf {
+    [ with a recommended window of ${daysBefore replace=CustomNumericComponent min="0" max="30"} day(s) before ] 
+    trigger = "before: a recommended window of time before the event"
+}
+
+RecommendedAfterOf {
+    [ with a recommended window of ${daysAfter replace=CustomNumericComponent min="0" max="30"} day(s) after ] 
+    trigger = "after: a recommended window of time after the event"
+}   
+
+////////////////////////////////////////////////////////////
+// COMPLIANCE WINDOW {complianceWindow}
+////////////////////////////////////////////////////////////
+
+NoComplianceWindow {
+    [ and no additional compliance window ] 
+    trigger = "no compliance window"
+}
+
+ComplianceWindowOf {
+    [ and an additional compliance window of ${maxDaysBefore replace=CustomNumericComponent min="0" max="30"} day(s) before and ${maxDaysAfter replace=CustomNumericComponent min="0" max="30"} day(s) after ] 
+    trigger = "window: a compliance window of time before and after the event"
+}
+
+ComplianceBeforeOf {
+    [ and an additional compliance window of ${maxDaysBefore replace=CustomNumericComponent min="0" max="30"} day(s) before ] 
+    trigger = "before: a compliance window of time before the event"
+}
+
+ComplianceAfterOf {
+    [ and an additional compliance window of ${maxDaysAfter replace=CustomNumericComponent min="0" max="30"} day(s) after ] 
+    trigger = "after: a compliance window of time after the event"
+}
+
+////////////////////////////////////////////////////////////
+// EVENT TIME OF DAY {eventTimeOfDay}
+////////////////////////////////////////////////////////////
+
+AnyStartTime {
+    [ at any time of day ] 
+    trigger = "any time of day"
+}
+
+StartingBy {
+    [ at some time after ${startTimeAsString replace=CustomTimePickerComponent } ] 
+    trigger = "after: time must start after"
+} 
+
+EndingBy {
+    [ at some time before ${endTimeAsString replace=CustomTimePickerComponent} ] 
+    trigger = "before: time must start before"
+} 
+
+BetweenTimes {
+    [ at some time between ${startTimeAsString replace=CustomTimePickerComponent} and ${endTimeAsString replace=CustomTimePickerComponent} ] 
+    trigger = "between times: time must start between"
+} 
+
+////////////////////////////////////////////////////////////
+// REPEAT {repeatExpression}
+////////////////////////////////////////////////////////////
+
+NoRepeats {
+    [ and no repetition ] 
+    trigger = "no repetition"
+}
+
+RepeatEvery {
+    [ and repeats every ${repeatEvery} ]
+    trigger = "every"
+}
+
+RepeatCondition {
+    [ and repeats ${repeatUnit replace=CustomSelectComponent placeholder="frequency"} up to ${maxRepeats replace=CustomNumericComponent min="2" max="999" defaultValue="2"} times [? until ${until}] ] 
+    trigger = "until: repeat until a condition occurs"
+} 
+
+RepeatCount {
+    [ and repeats ${repeatCount replace=CustomNumericComponent min="2" max="999" defaultValue="2"} times ] 
+    trigger = "count: repeat a specific number of times"
+} 

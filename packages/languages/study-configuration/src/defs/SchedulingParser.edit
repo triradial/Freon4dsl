@@ -1,52 +1,26 @@
 editor parser
 
-TimeAmount {
-    [${value}${unit}]
-}
+//----------------------------------------------------------
+// EVENT SCHEDULE {eventSchedule}
+//----------------------------------------------------------
 
-TimeAmountPart {
-    [${operator}${timeAmount}]
+EventSchedule {
+    [
+        First scheduled ${eventStart} 
+        [? ${eventWindow} ]
+        [? and then repeats ${eventRepeat} ]
+        [? limited to ${eventTimeOfDay} ]
+    ] 
     
 } 
 
-Day {
-    [ day ${startDay} ]
-    
-}
+EventReference {
+    [${event}${eventState} ]
+    }
 
-When {
-    [ when ${startWhen} [? ${timeAmountPart}]]
-    
-}  
-
-StudyStart {
-    [${dummyText wrap=TabFixComponent selectable="false"} as the start day of the study] 
-    
-} 
-
-FirstDayOfStudy {
-    [ on the start day of the study ${timeAmountPart} ]
-    
-}
-
-Baseline {
-    [ on the baseline/start day of the study ${timeAmountPart} ]
-    
-}
-
-Previous {
-    [ when the previous event ${eventState} ${timeAmountPart} ]
-    
-}
-Unscheduled {
-    [ on any day (an unscheduled event) ]
-    
-}
-
-AnyDay {
-    [ on any day (an unscheduled event) ]
-    
-} 
+//----------------------------------------------------------
+// TIME CONCEPTS
+//----------------------------------------------------------
 
 Daily {
     [ daily ]
@@ -68,23 +42,83 @@ Forever {
     
 }
 
-RepeatEvery {
-    [ every: ${repeatEvery} ]
+TimeAmount {
+    [${value}${unit}]
+}
+
+TimeAmountPart {
+    [${operator}${timeAmount}]
+    
+} 
+
+Days {
+    [${count}]
+}
+
+//----------------------------------------------------------
+// EVENT START 
+//----------------------------------------------------------
+
+StudyStart {
+    [${dummyText wrap=TabFixComponent selectable="false"} as the start day of the study] 
+    
+} 
+
+FirstDayOfStudy {
+    [ on the start day of the study ${timeAmountPart} ]
     
 }
 
-RepeatCondition {
-    [
-    ${repeatUnit}  [? up to ${maxRepeats} times] [? until ${until} ] 
-    ] 
-} 
+Baseline {
+    [ on the baseline/start day of the study ${timeAmountPart} ]
+    
+}
 
-RepeatCount {
-    [
-        ${repeatCount} time(s)  
-    ] 
+Day {
+    [ day ${startDay} ]
+    
+}
+
+When {
+    [ when ${startWhen} [? ${timeAmountPart}]]
+    
+}  
+
+Previous {
+    [ when the previous event ${eventState} ${timeAmountPart} ]
+    
+}
+
+Unscheduled {
+    [ on any day (an unscheduled event) ]
+    
+}
+
+AnyDay {
+    [ on any day (an unscheduled event) ]
     
 } 
+
+//----------------------------------------------------------
+// WINDOWS
+//----------------------------------------------------------
+
+EventWindow {
+    [
+        with a window of ${daysBefore} day(s) before and ${daysAfter}day(s) after
+        ${complianceWindow} 
+    ] 
+}
+
+ComplianceWindowOf {
+    [
+        and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+    ] 
+}
+
+//----------------------------------------------------------
+// EVENT TIME OF DAY
+//----------------------------------------------------------
 
 BetweenTimes {
     [
@@ -107,42 +141,24 @@ EndingBy {
     
 } 
 
+//----------------------------------------------------------
+// REPEAT
+//----------------------------------------------------------
 
-NoComplianceWindow {
-    [and no compliance window] 
+RepeatEvery {
+    [ every: ${repeatEvery} ]
+    
 }
 
-ComplianceWindowOf {
+RepeatCondition {
     [
-        and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+    ${repeatUnit}  [? up to ${maxRepeats} times] [? until ${until} ] 
     ] 
-}
+} 
 
-EventWindow {
+RepeatCount {
     [
-        with a window of ${daysBefore} day(s) before and ${daysAfter}day(s) after
-        ${complianceWindow} 
-    ] 
-}
-
-//RepeatExpression {
-//    [${eventRepeat}]
-//}
-
-EventSchedule {
-    [
-        First scheduled ${eventStart} 
-        [? ${eventWindow} ]
-        [? and then repeats ${eventRepeat} ]
-        [? limited to ${eventTimeOfDay} ]
+        ${repeatCount} time(s)  
     ] 
     
 } 
-
-EventReference {
-    [${event}${eventState} ]
-    }
-
-Days {
-    [${count}]
-}

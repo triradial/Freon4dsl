@@ -1,0 +1,148 @@
+editor parser
+
+TimeAmount {
+    [${value}${unit}]
+}
+
+TimeAmountPart {
+    [${operator}${timeAmount}]
+    
+} 
+
+Day {
+    [ day ${startDay} ]
+    
+}
+
+When {
+    [ when ${startWhen} [? ${timeAmountPart}]]
+    
+}  
+
+StudyStart {
+    [${dummyText wrap=TabFixComponent selectable="false"} as the start day of the study] 
+    
+} 
+
+FirstDayOfStudy {
+    [ on the start day of the study ${timeAmountPart} ]
+    
+}
+
+Baseline {
+    [ on the baseline/start day of the study ${timeAmountPart} ]
+    
+}
+
+Previous {
+    [ when the previous event ${eventState} ${timeAmountPart} ]
+    
+}
+Unscheduled {
+    [ on any day (an unscheduled event) ]
+    
+}
+
+AnyDay {
+    [ on any day (an unscheduled event) ]
+    
+} 
+
+Daily {
+    [ daily ]
+    
+}
+
+Weekly {
+    [ weekly ]
+    
+}
+
+Monthly {
+    [ monthly ]
+    
+}
+
+Forever {
+    [ forever ]
+    
+}
+
+RepeatEvery {
+    [ every: ${repeatEvery} ]
+    
+}
+
+RepeatCondition {
+    [
+    ${repeatUnit}  [? up to ${maxRepeats} times] [? until ${until} ] 
+    ] 
+} 
+
+RepeatCount {
+    [
+        ${repeatCount} time(s)  
+    ] 
+    
+} 
+
+BetweenTimes {
+    [
+        starting by ${startTimeAsString replace=TimePickerComponent} and ending by ${endTimeAsString replace=TimePickerComponent}
+    ] 
+    
+}   
+
+StartingBy {
+    [
+        starting by ${startTimeAsString replace=TimePickerComponent}
+    ] 
+    
+} 
+
+EndingBy {
+    [
+        ending by ${endTimeAsString replace=TimePickerComponent}
+    ] 
+    
+} 
+
+
+NoComplianceWindow {
+    [and no compliance window] 
+}
+
+ComplianceWindowOf {
+    [
+        and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+    ] 
+}
+
+EventWindow {
+    [
+        with a window of ${daysBefore} day(s) before and ${daysAfter}day(s) after
+        ${complianceWindow} 
+    ] 
+}
+
+//RepeatExpression {
+//    [${eventRepeat}]
+//}
+
+EventSchedule {
+    [
+        First scheduled ${eventStart} 
+        [? ${eventWindow} ]
+        [? and then repeats ${eventRepeat} ]
+        [? limited to ${eventTimeOfDay} ]
+    ] 
+    
+} 
+
+EventReference {
+    [${event}${eventState} ]
+    }
+
+Days {
+    [${count}]
+}

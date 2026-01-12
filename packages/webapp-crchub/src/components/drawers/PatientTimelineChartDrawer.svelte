@@ -44,10 +44,10 @@
     }
 
     async function loadChartForAllPatients() {
-        await loadChartWithTiming(
-            () => getChartForAllPatients(undefined),
-            `Error fetching chart data for all patients in study: ${studyId}`
-        );
+        // await loadChartWithTiming(
+        //     () => getChartForAllPatients(undefined),
+        //     `Error fetching chart data for all patients in study: ${studyId}`
+        // );
     }
 
     function getTimelineChartError() {

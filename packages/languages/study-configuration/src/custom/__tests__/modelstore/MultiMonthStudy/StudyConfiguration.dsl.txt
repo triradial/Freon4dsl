@@ -10,7 +10,7 @@ Periods:
     Schedule:
       First scheduled "" as the start day of the study
 with a window of 0 day(s) before and 0 day(s) after
-and no compliance window
+
     Tasks:
       Task: `Task 1`
 
@@ -24,7 +24,7 @@ and no compliance window
     Schedule:
       First scheduled when `Screen` `completed` `+` 3 `weeks`
 with a window of 0 day(s) before and 0 day(s) after
-and no compliance window
+
     Tasks:
 
     Event: `Visit 2`

@@ -1,16 +1,17 @@
-import { beforeEach, describe, expect, it } from "vitest";
 import * as Sim from "@freon4dsl/study-configuration";
-import { 
-    Day, 
-    Days, 
-    Event, 
-    EventSchedule, 
-    EventWindow, 
-    Period, 
+import {
+    Day,
+    Days,
+    Event,
+    EventSchedule,
+    EventWindow,
+    getVisitChecklistAsMarkdown,
+    Period,
     StudyConfiguration,
     LanguageEnvironment as StudyConfigurationModelEnvironment
 } from "@freon4dsl/study-configuration";
-import { getVisitChecklistAsMarkdown } from "../../../../../webapp-crchub/src/services/app/study-timeline.js";
+import { beforeEach, describe, expect, it } from "vitest";
+
 
 // Helper function to create an event schedule starting on a specific day
 function createEventScheduleStartingOnADay(uniquePrefix: string, startDay: number, daysBefore: number = 1, daysAfter: number = 1): EventSchedule {
