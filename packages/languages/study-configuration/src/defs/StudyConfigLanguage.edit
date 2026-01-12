@@ -18,7 +18,11 @@ global {
         CustomNumericComponent,
         CustomSelectComponent,
         CustomActionsComponent,
-        CustomTimePickerComponent
+        CustomTimePickerComponent,
+
+        TimePickerComponent,
+        TabFixComponent,
+        TabFixComponent2
     }
 }
 

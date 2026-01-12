@@ -160,8 +160,8 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             //     result = result + 1;
             // }
             const when = node.freOwner() as language.When;
-            if (when.timeAmount !== undefined && when.timeAmount !== null) {
-                const timeAmount = main.evaluate(when.timeAmount, ctx) as RtNumber;
+            if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
+                const timeAmount = main.evaluate(when.timeAmountPart, ctx) as RtNumber;
                 return new RtNumber(result + timeAmount.value);
             } else {
                 return new RtNumber(result);
@@ -236,16 +236,22 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
     evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
-        return studyStartDayNumber;
+        let startDay = studyStartDayNumber.value;
+        if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
+            const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
+            return new RtNumber(timeAmount.value + startDay);
+        } else {
+            return studyStartDayNumber;
+        }
     }
 
     evalFirstDayOfStudy(node: language.FirstDayOfStudy, ctx: InterpreterContext): RtObject {
         // TODO: Ask Jos if should create an expression for this rather than hardcoding the operator.
         let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
         let startDay = studyStartDayNumber.value;
-        if (node.timeAmount !== undefined && node.timeAmount !== null) {
-            const timeAmount = main.evaluate(node.timeAmount, ctx) as RtNumber;
-            return new RtNumber(startDay + timeAmount.value);
+        if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
+            const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
+            return new RtNumber(timeAmount.value + startDay);
         } else {
             return studyStartDayNumber;
         }
@@ -255,15 +261,28 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         return this.evalFirstDayOfStudy(node, ctx);
     }
 
-    evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {
-        if (node instanceof language.PlusTimeAmount) {
-            return calcTimeAmount(node.value, node.unit.name);
-        } else if (node instanceof language.MinusTimeAmount) {
-            const result = calcTimeAmount(node.value, node.unit.name) as RtNumber;
-            return new RtNumber(-result.value);
-        } else {
-            throw new RtError("evalTimeAmount: unknown TimeAmount type");
+    evalTimeAmountPart(node: language.TimeAmountPart, ctx: InterpreterContext): RtObject {
+        let result = 0;
+        if (node !== undefined && node !== null) {
+            let displacementFromEvent = main.evaluate(node.timeAmount, ctx) as RtNumber;
+            if (node.operator == undefined || node.operator == null) {
+                throw new RtError("evalStudyStart: operator is undefined or null");
+            }
+            const operator = node.operator.name;
+            if (operator === language.SimpleOperators.plus.name) {
+                result = result + displacementFromEvent.value;
+            } else if (operator === language.SimpleOperators.minus.name) {
+                result = result - displacementFromEvent.value;
+            } else {
+                throw new RtError("evalTimeAmountPart: operator of: " + operator + " not implemented");
+            }
         }
+
+        return new RtNumber(result);
+    }
+
+    evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {
+        return calcTimeAmount(node.value, node.unit.name);
     }
 
     evalTime(node: language.Time, ctx: InterpreterContext): RtObject {

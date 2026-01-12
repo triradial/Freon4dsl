@@ -1,159 +1,148 @@
 editor parser
 
-////////////////////////////////////////////////////////////
-// EVENT SCHEDULE {eventSchedule}
-////////////////////////////////////////////////////////////
-EventSchedule {
-    [
-        First scheduled ${eventStart} 
-        ${eventWindow}
-        ${complianceWindow}
-        ${eventTimeOfDay}
-        ${eventRepeat}
-    ]    
-} 
-
-EventReference {
-    [${event}${eventState} ]
+TimeAmount {
+    [${value}${unit}]
 }
 
-////////////////////////////////////////////////////////////
-// TIME UNITS
-////////////////////////////////////////////////////////////
-
-Days {
-    [ ${count} ]
-}
-
-PlusTimeAmount {
-    [ plus ${value}${unit} ]
-}
-
-MinusTimeAmount {
-    [ minus ${value}${unit} ]
-}
-
-////////////////////////////////////////////////////////////
-// EVENT START {eventStart}
-////////////////////////////////////////////////////////////
-
-
-StudyStart {
-    [${dummyText} as the start day of the study] 
+TimeAmountPart {
+    [${operator}${timeAmount}]
+    
 } 
 
 Day {
-    [ day ${startDay} ] 
+    [ day ${startDay} ]
+    
 }
 
 When {
-    [ when ${startWhen} [? ${timeAmount}]] 
+    [ when ${startWhen} [? ${timeAmountPart}]]
+    
 }  
 
+StudyStart {
+    [${dummyText wrap=TabFixComponent selectable="false"} as the start day of the study] 
+    
+} 
 
 FirstDayOfStudy {
-    [ on the start day of the study ${timeAmount} ]   
+    [ on the start day of the study ${timeAmountPart} ]
+    
 }
 
 Baseline {
-    [ on the baseline/start day of the study ${timeAmount} ]
+    [ on the baseline/start day of the study ${timeAmountPart} ]
+    
 }
 
 Previous {
-    [ when the previous event ${eventState} ${timeAmount} ] 
+    [ when the previous event ${eventState} ${timeAmountPart} ]
+    
 }
 Unscheduled {
-    [ on any day (an unscheduled event) ] 
+    [ on any day (an unscheduled event) ]
+    
 }
 
 AnyDay {
     [ on any day (an unscheduled event) ]
+    
 } 
 
 Daily {
     [ daily ]
+    
 }
 
 Weekly {
-    [ weekly ] 
+    [ weekly ]
+    
 }
 
 Monthly {
-    [ monthly ]  
+    [ monthly ]
+    
 }
 
 Forever {
-    [ forever ] 
+    [ forever ]
+    
 }
-
-////////////////////////////////////////////////////////////
-// RECOMMENDED WINDOW {eventWindow}
-////////////////////////////////////////////////////////////
-
-NoRecommendedWindow {
-    [ with no recommended window ] 
-}
-
-RecommendedWindowOf {
-    [ with a recommended window of ${daysBefore} day(s) before and ${daysAfter}day(s) after ] 
-}
-
-RecommendedBeforeOf {
-    [ with a recommended window of ${daysBefore} day(s) before ] 
-}
-
-RecommendedAfterOf {
-    [ with a recommended window of ${daysAfter}day(s) after ] 
-}
-
-////////////////////////////////////////////////////////////
-// COMPLIANCE WINDOW {complianceWindow}
-////////////////////////////////////////////////////////////
-
-NoComplianceWindow {
-    [ and no compliance window ] 
-}
-
-ComplianceWindowOf {
-    [ and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after ] 
-}
-
-ComplianceBeforeOf {
-    [ and a compliance window of ${maxDaysBefore} day(s) before ] 
-}
-
-ComplianceAfterOf {
-    [ and a compliance window of ${maxDaysAfter}day(s) after ] 
-}
-
-////////////////////////////////////////////////////////////
-// REPEAT {repeatExpression}
-////////////////////////////////////////////////////////////
 
 RepeatEvery {
-    [ every: ${repeatEvery} ]   
+    [ every: ${repeatEvery} ]
+    
 }
 
 RepeatCondition {
-    [ ${repeatUnit}  [? up to ${maxRepeats} times] [? until ${until} ]  ] 
+    [
+    ${repeatUnit}  [? up to ${maxRepeats} times] [? until ${until} ] 
+    ] 
 } 
 
 RepeatCount {
-    [ ${repeatCount} time(s) ]  
+    [
+        ${repeatCount} time(s)  
+    ] 
+    
 } 
 
-////////////////////////////////////////////////////////////
-// EVENT TIME OF DAY {eventTimeOfDay}
-////////////////////////////////////////////////////////////
-
 BetweenTimes {
-    [ starting by ${startTimeAsString replace=CustomTimePickerComponent} and ending by ${endTimeAsString replace=CustomTimePickerComponent} ]  
+    [
+        starting by ${startTimeAsString replace=TimePickerComponent} and ending by ${endTimeAsString replace=TimePickerComponent}
+    ] 
+    
 }   
 
 StartingBy {
-    [ starting by ${startTimeAsString replace=CustomTimePickerComponent} ]    
+    [
+        starting by ${startTimeAsString replace=TimePickerComponent}
+    ] 
+    
 } 
 
 EndingBy {
-    [ ending by ${endTimeAsString replace=CustomTimePickerComponent} ]    
+    [
+        ending by ${endTimeAsString replace=TimePickerComponent}
+    ] 
+    
 } 
+
+
+NoComplianceWindow {
+    [and no compliance window] 
+}
+
+ComplianceWindowOf {
+    [
+        and a compliance window of ${maxDaysBefore} additional day(s) before and ${maxDaysAfter}day(s) after
+    ] 
+}
+
+EventWindow {
+    [
+        with a window of ${daysBefore} day(s) before and ${daysAfter}day(s) after
+        ${complianceWindow} 
+    ] 
+}
+
+//RepeatExpression {
+//    [${eventRepeat}]
+//}
+
+EventSchedule {
+    [
+        First scheduled ${eventStart} 
+        [? ${eventWindow} ]
+        [? and then repeats ${eventRepeat} ]
+        [? limited to ${eventTimeOfDay} ]
+    ] 
+    
+} 
+
+EventReference {
+    [${event}${eventState} ]
+    }
+
+Days {
+    [${count}]
+}

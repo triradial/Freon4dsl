@@ -1,31 +1,49 @@
 language StudyConfigurationModel
 
-////////////////////////////////////////////////////////////
-// EVENT SCHEDULE {eventSchedule}
-////////////////////////////////////////////////////////////
-concept EventSchedule {
-    eventStart: EventStart;
-    eventWindow: EventWindow;
-    complianceWindow: ComplianceWindow;
-    eventTimeOfDay: EventTimeOfDay;
-    eventRepeat: RepeatExpression;
-}
-
 concept EventReference {
     reference event: Event;
     eventState: EventState = EventState:completed;
 }
 
-////////////////////////////////////////////////////////////
-// LIMITED LISTS
-////////////////////////////////////////////////////////////
+concept TimeAmountPart {
+    operator: SimpleOperators = SimpleOperators:plus;
+    timeAmount: TimeAmount;
+}  
+
+interface EventStart {
+    timeAmountPart?: TimeAmountPart;
+}  
+
+concept Day implements EventStart {
+    startDay: number;
+}
+
+concept When implements EventStart {
+    startWhen: EventReference;
+}
+
+concept StudyStart implements EventStart {
+    dummyText: string;
+}
+
+concept FirstDayOfStudy implements EventStart {
+}
+
+concept Baseline base FirstDayOfStudy {
+}
+
+concept Previous implements EventStart {
+    eventState: EventState;
+}
+
+concept Unscheduled implements EventStart {
+}
+
+concept AnyDay base Unscheduled {
+}
 
 limited TimeUnit {
    hours; days; weeks; months;  
-}
-
-limited SimpleOperators {
-    plus = { name:"plus" } minus = { name: "minus" }
 }
 
 limited PhaseState {
@@ -36,91 +54,54 @@ limited EventState {
     completed; eachCompleted = { name:"each completed"} started; scheduled; skipped;
 }
 
-////////////////////////////////////////////////////////////
-// TIME UNITS
-////////////////////////////////////////////////////////////
+
+//TODO: rename to something other than 'Expression' or determine if it should be an expression.
+interface RepeatExpression {}
+
+concept RepeatCondition implements RepeatExpression {
+    repeatUnit: RepeatUnit;
+    maxRepeats: number = 0;
+    until?: ScheduleExpression;
+}
+
+//TODO: determine why RepeatUnit isn't better as a limited
+
+//limited RepeatUnit implements RepeatExpression {
+//limited RepeatUnit {
+//    daily; weekly; monthly; forever;
+//}
+
+interface RepeatUnit {}
+
+concept Daily implements RepeatUnit {}
+
+concept Weekly implements RepeatUnit {}
+
+concept Monthly implements RepeatUnit {}
+
+concept Forever implements RepeatUnit {}
+
+concept RepeatEvery implements RepeatUnit {
+    repeatEvery: Time;
+}
+
+concept RepeatCount implements RepeatExpression {
+    repeatCount: number;
+}
+
+
+concept TimeAmount   {
+    value: number;
+    unit: TimeUnit = TimeUnit:days;
+}
+
+limited SimpleOperators {
+    plus = { name:"+" } minus = { name: "-" }
+}
 
 concept Days {
     count: number;
 }
-
-interface TimeAmount { }
-
-concept PlusTimeAmount implements TimeAmount {
-    value: number;
-    unit: TimeUnit;
-}  
-
-concept MinusTimeAmount implements TimeAmount {
-    value: number;
-    unit: TimeUnit;
-}  
-
-////////////////////////////////////////////////////////////
-// EVENT START {eventStart}
-////////////////////////////////////////////////////////////
-
-interface EventStart {
-}  
-
-concept Day implements EventStart {
-    startDay: number;
-}
-
-concept When implements EventStart {
-    startWhen: EventReference;
-    timeAmount?: TimeAmount;
-}
-
-concept StudyStart implements EventStart {
-    dummyText: string;
-}
-
-concept FirstDayOfStudy implements EventStart {
-    timeAmount?: TimeAmount;
-}
-
-concept Baseline base FirstDayOfStudy {
-}
-
-concept Previous implements EventStart {
-    eventState: EventState;
-    timeAmount?: TimeAmount;
-}
-
-concept Unscheduled implements EventStart {
-}
-
-concept AnyDay base Unscheduled {
-}
-
-
-////////////////////////////////////////////////////////////
-// RECOMMENDED WINDOW
-////////////////////////////////////////////////////////////
-
-abstract concept EventWindow {
-}
-
-concept NoRecommendedWindow base EventWindow {
-}
-
-concept RecommendedWindowOf base EventWindow {
-    daysBefore: Days;
-    daysAfter: Days;
-}
-
-concept RecommendedBeforeOf base EventWindow {
-    daysBefore: Days;
-}
-
-concept RecommendedAfterOf base EventWindow {
-    daysAfter: Days;
-}
-
-////////////////////////////////////////////////////////////
-// COMPLIANCE WINDOW
-////////////////////////////////////////////////////////////
 
 abstract concept ComplianceWindow {
 }
@@ -133,22 +114,13 @@ concept ComplianceWindowOf base ComplianceWindow {
     maxDaysAfter: Days;
 }
 
-concept ComplianceBeforeOf base ComplianceWindow { 
-    maxDaysBefore: Days;
+concept EventWindow {
+    daysBefore: Days;
+    daysAfter: Days;
+    complianceWindow?: ComplianceWindow;
 }
-
-concept ComplianceAfterOf base ComplianceWindow {
-    maxDaysAfter: Days;
-}
-
-////////////////////////////////////////////////////////////
-// EVENT TIME OF DAY
-////////////////////////////////////////////////////////////
 
 interface EventTimeOfDay { }
-
-concept AnyStartTime implements EventTimeOfDay {
-}
 
 concept StartingBy implements EventTimeOfDay {
     startTimeAsString: string;
@@ -171,42 +143,9 @@ concept BetweenTimes implements EventTimeOfDay {
     endMinute: number;
 }
 
-////////////////////////////////////////////////////////////
-// REPEAT {repeatExpression}
-////////////////////////////////////////////////////////////
-
-interface RepeatExpression {}
-
-concept NoRepeats implements RepeatExpression {}
-
-concept RepeatCondition implements RepeatExpression {
-    repeatUnit: RepeatUnit;
-    maxRepeats: number = 0;
-    until?: ScheduleExpression;
+concept EventSchedule {
+    eventStart: EventStart;
+    eventWindow?: EventWindow;
+    eventRepeat?: RepeatExpression;
+    eventTimeOfDay?: EventTimeOfDay;
 }
-
-concept RepeatEvery implements RepeatUnit {
-    repeatEvery: Time;
-}
-
-concept RepeatCount implements RepeatExpression {
-    repeatCount: number;
-}
-
-//TODO: determine why RepeatUnit isn't better as a limited
-
-//limited RepeatUnit implements RepeatExpression {
-//limited RepeatUnit {
-//    daily; weekly; monthly; forever;
-//}
-
-interface RepeatUnit {}
-
-concept Daily implements RepeatUnit {}
-
-concept Weekly implements RepeatUnit {}
-
-concept Monthly implements RepeatUnit {}
-
-concept Forever implements RepeatUnit {}
-
