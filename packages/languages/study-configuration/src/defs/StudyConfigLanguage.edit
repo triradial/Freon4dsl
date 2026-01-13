@@ -12,17 +12,14 @@ global {
         ReferenceComponent,
         UrlInputComponent,
         PhoneInputComponent,
-
+        EmailInputComponent,
         ItemGroupComponent,
         ItemGroupComponent2,
         CustomNumericComponent,
         CustomSelectComponent,
         CustomActionsComponent,
         CustomTimePickerComponent,
-
-        TimePickerComponent,
-        TabFixComponent,
-        TabFixComponent2
+        TimePickerComponent
     }
 }
 
@@ -62,7 +59,7 @@ Event {
 Task {
     [
         [fragment taskDetails wrap = ItemGroupComponent cssClass="type3" canShare="true" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
-    ]
+    ] trigger = "Checklist Task"
     fragment taskDetails [
         ${name}
         ${description}
@@ -73,7 +70,7 @@ Task {
 TaskReference {
     [
         [fragment taskReferenceDetails wrap =  ReferenceComponent cssClass="type3" canDelete="true" canExpand="false" isExpanded="false" selectable="true" label="Task"]
-    ]
+    ] trigger = "Task Reference"
     fragment taskReferenceDetails [
         ${task}
     ]
@@ -97,9 +94,10 @@ SystemAccess {
         ${name}
         ${description}
         ${accessedAt}
-        ${robotMappings wrap=ListGroupComponent cssClass="type3" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Robot Mappings"}
     ]
 }
+
+//        ${robotMappings wrap=ListGroupComponent cssClass="type3" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Robot Mappings"}
 
 
 SystemAccessReference {
@@ -129,10 +127,8 @@ Person {
     ] trigger = "Person"
     fragment personDetails [
         ${name}
-        Email: ${email}
-        Phone: ${phoneNumber wrap=PhoneInputComponent}
-        Role: ${role}
-        Notes:${description}
+        In role: ${role replace=CustomSelectComponent placeholder="role"} at ${email wrap=EmailInputComponent} or ${phoneNumber wrap=PhoneInputComponent}
+        Notes: ${description}
     ]
 }
 
@@ -192,4 +188,9 @@ SourceToTargetMapping {
 
 Description {
     [ ${rawText wrap=AbbreviationComponent} ]
+}
+
+// Notes are always displayed and editable
+Notes {
+    [ ${rawText wrap=MultilineTextComponent} ]
 }

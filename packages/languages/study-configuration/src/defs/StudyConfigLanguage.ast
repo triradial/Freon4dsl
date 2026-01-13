@@ -56,7 +56,7 @@ abstract concept EventTask base AbstractTask {
 
 concept Task base EventTask {
     name: identifier;
-    description: Description;
+    description: Notes;
     numberedSteps: boolean;
     showDetails: boolean;
     steps: Step[];
@@ -100,6 +100,10 @@ concept Description {
     rawText: string = " ";
 }
 
+// Notes are always Descriptions that are always displayed and editable
+concept Notes base Description {
+}
+
 abstract concept AbstractSystemAccess {
 }
 
@@ -129,7 +133,7 @@ concept AccessedAPhoneNumber implements AccessedAt {
 
 concept StaffRole {
     name: identifier;
-    description: Description;
+    description: Notes;
 }
 abstract concept AbstractPerson {
 }
@@ -140,7 +144,7 @@ concept PersonReference base AbstractPerson {
 
 concept Person base AbstractPerson {
     name: identifier;
-    description: Description;
+    description: Notes;
     email: string;
     phoneNumber: string;
     reference role: StaffRole;

@@ -30,19 +30,6 @@ EventReference {
 //     trigger = "event schedule"
 // } 
 
-// EventSchedule {
-//     [
-//         First scheduled [fragment eventStarts wrap = TabFixComponent2 cssClass="type1" canAdd="false" canExpand="false" isExpanded="true" selectable="true" label="X"]
-//         ${eventWindow} 
-//         [? and then repeats ${eventRepeat} ]
-//         [? limited to ${eventTimeOfDay} ]
-//     ] 
-//     trigger = "event schedule"
-//     fragment eventStarts [
-//         ${eventStart}
-//     ]     replace=CustomActionsComponent placeholder="repeat expression"
-// } 
-
 //----------------------------------------------------------
 // TIME CONCEPTS
 //----------------------------------------------------------

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { StringReplacerBox, AST } from "@freon4dsl/core";
-    import LinkSimple from "phosphor-svelte/lib/LinkSimple";
+    import Envelope from "phosphor-svelte/lib/Envelope";
     import { onMount, tick } from "svelte";
 
     const { box } = $props<{ box: StringReplacerBox }>();
@@ -15,18 +15,15 @@
     let componentWrapper: HTMLDivElement | null = null;
     let isTouched = $state(false);
 
-    function isValidUrl(str: string): boolean {
-        try {
-            const url = new URL(str);
-            return url.protocol === "http:" || url.protocol === "https:";
-        } catch (_) {
-            return false;
-        }
+    function isValidEmail(str: string): boolean {
+        // Basic email validation - checks for @ and domain with at least one dot
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(str.trim());
     }
 
     function normalizeForStorage(str: string): string {
-        // Trim whitespace for URLs
-        return str.trim();
+        // Trim whitespace and convert to lowercase (standard email convention)
+        return str.trim().toLowerCase();
     }
 
     function getValue() {
@@ -64,7 +61,7 @@
         // Only save if different from current value
         const currentBoxValue = theBox?.getPropertyValue();
         if (stored !== currentBoxValue) {
-            AST.changeNamed(`UrlInputComponent: Set ${theBox?.propertyName || 'property'} to ${stored}`, () => {
+            AST.changeNamed(`EmailInputComponent: Set ${theBox?.propertyName || 'property'} to ${stored}`, () => {
                 const setter: any = theBox as any;
                 if (setter && typeof setter.setPropertyValue === "function") {
                     setter.setPropertyValue(stored);
@@ -75,7 +72,7 @@
         // Update display value
         value = stored;
 
-        isTouched = !isValidUrl(stored) && stored.length > 0;
+        isTouched = !isValidEmail(stored) && stored.length > 0;
         isEditing = false;
     }
 
@@ -117,14 +114,14 @@
         const stored = normalizeForStorage(raw);
 
         // Update property in real-time during editing
-        AST.changeNamed(`UrlInputComponent: Update ${theBox?.propertyName || 'property'}`, () => {
+        AST.changeNamed(`EmailInputComponent: Update ${theBox?.propertyName || 'property'}`, () => {
             const setter: any = theBox as any;
             if (setter && typeof setter.setPropertyValue === "function") {
                 setter.setPropertyValue(stored);
             }
         });
 
-        if (isTouched && isValidUrl(stored)) {
+        if (isTouched && isValidEmail(stored)) {
             isTouched = false;
         }
     }
@@ -194,7 +191,7 @@
     let showError = $state(false);
     $effect(() => {
         const trimmed = value.trim();
-        const next = isTouched && trimmed.length > 0 && !isValidUrl(trimmed);
+        const next = isTouched && trimmed.length > 0 && !isValidEmail(trimmed);
         if (showError !== next) {
             showError = next;
         }
@@ -211,8 +208,8 @@
             <input
                 bind:this={inputElement}
                 class="text-component-input pr-8 w-full"
-                type="url"
-                placeholder="https://example.com"
+                type="email"
+                placeholder="user@example.com"
                 bind:value={value}
                 oninput={onInputChange}
                 onkeydown={onKeyDown}
@@ -224,7 +221,7 @@
                         // Keep it as-is during editing
                         value = raw;
                         const stored = normalizeForStorage(raw);
-                        AST.changeNamed(`UrlInputComponent: Paste ${theBox?.propertyName || 'property'}`, () => {
+                        AST.changeNamed(`EmailInputComponent: Paste ${theBox?.propertyName || 'property'}`, () => {
                             const setter: any = theBox as any;
                             if (setter && typeof setter.setPropertyValue === "function") {
                                 setter.setPropertyValue(stored);
@@ -233,8 +230,8 @@
                     }, 0);
                 }}
             />
-            <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 z-10" style="color: var(--green-90t);">
-                <LinkSimple class="w-4 h-4" />
+            <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 z-10" style="color: var(--blue-90t);">
+                <Envelope class="w-4 h-4" />
             </span>
         </span>
     {:else}
@@ -249,17 +246,15 @@
             onfocusin={onSpanFocusIn}
         >
             {#if hasValue}
-                <LinkSimple class="w-4 h-4 inline-block" style="color: var(--green-90t);" />
+                <Envelope class="w-4 h-4 inline-block" style="color: var(--blue-90t);" />
                 {displayValue}
             {:else}
-                <LinkSimple class="w-4 h-4 inline-block opacity-50" style="color: var(--green-90t);" />
-                <span class="text-component-text opacity-50">https://example.com</span>
+                <Envelope class="w-4 h-4 inline-block opacity-50" style="color: var(--blue-90t);" />
+                <span class="text-component-text opacity-50">user@example.com</span>
             {/if}
         </span>
     {/if}
     {#if showError}
-        <span class="small-label-text mt-1 self-start" style="color:#ef4444">Enter a valid URL (http/https).</span>
+        <span class="small-label-text mt-1 self-start" style="color:#ef4444">Enter a valid email address.</span>
     {/if}
 </div>
-
-

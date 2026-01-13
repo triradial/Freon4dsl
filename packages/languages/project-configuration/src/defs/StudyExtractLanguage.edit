@@ -12,7 +12,6 @@ global {
         MultilineTextComponent,
         AbbreviationComponent,
         DisplayNothingComponent,
-        TabFixComponent,
         ReferenceComponent,
         UrlInputComponent,
         PhoneInputComponent,

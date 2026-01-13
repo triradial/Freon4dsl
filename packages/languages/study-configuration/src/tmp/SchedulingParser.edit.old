@@ -20,7 +20,7 @@ When {
 }  
 
 StudyStart {
-    [${dummyText wrap=TabFixComponent selectable="false"} as the start day of the study] 
+    [${dummyText} as the start day of the study] 
     
 } 
 

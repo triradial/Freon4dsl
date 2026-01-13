@@ -11,6 +11,7 @@ import DatePickerComponent from "./components/custom/DatePickerComponent.svelte"
 import DateRangePickerComponent from "./components/custom/DateRangePickerComponent.svelte";
 import DisplayNothingComponent from "./components/custom/DisplayNothingComponent.svelte";
 
+import EmailInputComponent from "./components/custom/EmailInputComponent.svelte";
 import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
 import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
 import PhoneInputComponent from "./components/custom/PhoneInputComponent.svelte";
@@ -18,13 +19,12 @@ import ReferenceComponent from "./components/custom/ReferenceComponent.svelte";
 import SingleLineItemComponent from "./components/custom/SingleLineItemComponent.svelte";
 import UrlInputComponent from "./components/custom/UrlInputComponent.svelte";
 
+import CustomActionsComponent from "./components/custom/freon/CustomActionsComponent.svelte";
 import CustomNumericComponent from "./components/custom/freon/CustomNumericComponent.svelte";
 import CustomSelectComponent from "./components/custom/freon/CustomSelectComponent.svelte";
-import CustomActionsComponent from "./components/custom/freon/CustomActionsComponent.svelte";
-import SelectableWrapperComponent from "./components/custom/freon/SelectableWrapperComponent.svelte";
-import CustomTimePickerComponent from "./components/custom/freon/CustomTimePickerComponent.svelte";
+import { default as CustomTimePickerComponent, default as ItemGroupComponent2 } from "./components/custom/freon/CustomTimePickerComponent.svelte";
 import ItemGroupComponent from "./components/custom/freon/ItemGroupComponent.svelte";
-import ItemGroupComponent2 from "./components/custom/freon/CustomTimePickerComponent.svelte";
+import SelectableWrapperComponent from "./components/custom/freon/SelectableWrapperComponent.svelte";
 
 const LOGGER = new FreLogger("init");
 
@@ -90,6 +90,7 @@ setCustomComponents([
     { component: AbbreviationComponent, knownAs: "AbbreviationComponent" },
     { component: ReferenceComponent, knownAs: "ReferenceComponent" },
     { component: UrlInputComponent, knownAs: "UrlInputComponent" },
+    { component: EmailInputComponent, knownAs: "EmailInputComponent" },
     { component: PhoneInputComponent, knownAs: "PhoneInputComponent" },
     { component: SingleLineItemComponent, knownAs: "SingleLineItemComponent" },
     { component: CustomNumericComponent, knownAs: "CustomNumericComponent" },
