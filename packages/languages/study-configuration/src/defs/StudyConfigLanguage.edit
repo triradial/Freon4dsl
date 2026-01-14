@@ -19,7 +19,8 @@ global {
         CustomSelectComponent,
         CustomActionsComponent,
         CustomTimePickerComponent,
-        TimePickerComponent
+        TimePickerComponent,
+        SelectableListItemComponent
     }
 }
 
@@ -58,13 +59,9 @@ Event {
 
 Task {
     [
-        [fragment taskDetails wrap = ItemGroupComponent cssClass="type3" canShare="true" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Task"]
-    ] trigger = "Checklist Task"
-    fragment taskDetails [
-        ${name}
-        ${description}
+        Task:${name} ${description}
         ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
-    ]
+    ] trigger = "Checklist Task"
 }
 
 TaskReference {
@@ -78,7 +75,7 @@ TaskReference {
 
 Step {
     [
-        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true"  canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
     ]
     fragment stepDetails [
         ${name}
@@ -88,12 +85,12 @@ Step {
 
 SystemAccess {
     [
-        [fragment systemAccessDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="System Access"]
-    ] trigger = "System Access"
+        [fragment systemAccessDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true"]
+    ]
+    trigger = "System Access"
     fragment systemAccessDetails [
-        ${name}
+        System: ${name} ${accessedAt replace=CustomActionsComponent placeholder="accessed at"}
         ${description}
-        ${accessedAt}
     ]
 }
 
@@ -111,26 +108,51 @@ SystemAccessReference {
 
 AccessedAtURL {
     [
-        URL: ${url wrap=UrlInputComponent}
-    ]
+        ${url wrap=UrlInputComponent}
+    ] trigger = "Website Address"
 }
 
 AccessedAPhoneNumber {
     [
-        Phone Number: ${phoneNumber wrap=PhoneInputComponent}
-    ]
+        ${phoneNumber wrap=PhoneInputComponent}
+    ] trigger = "Phone Number"
 }
+
+// Person {
+//     [
+//         [fragment personDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Person"]
+//     ] trigger = "Person"
+//     fragment personDetails [
+//         ${name}
+//         In role: ${role replace=CustomSelectComponent placeholder="role"} at ${email wrap=EmailInputComponent} or ${phoneNumber wrap=PhoneInputComponent}
+//         Notes: ${description}
+//     ]
+// }
+
+// Person {
+//     [
+//         ${name} in role: ${role replace=CustomSelectComponent placeholder="role"} 
+//         at ${email wrap=EmailInputComponent} or ${phoneNumber wrap=PhoneInputComponent} ${description}
+//     ] trigger = "Person"
+// }
 
 Person {
     [
-        [fragment personDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Person"]
-    ] trigger = "Person"
+        [fragment personDetails wrap = SelectableListItemComponent cssClass="type4" canDelete="true" showDeleteOnHover="true"]
+    ]
+    trigger = "Person"
     fragment personDetails [
-        ${name}
-        In role: ${role replace=CustomSelectComponent placeholder="role"} at ${email wrap=EmailInputComponent} or ${phoneNumber wrap=PhoneInputComponent}
-        Notes: ${description}
+        ${name} in role: ${role replace=CustomSelectComponent placeholder="role"}
+        at ${email wrap=EmailInputComponent} or ${phoneNumber wrap=PhoneInputComponent} ${description}
     ]
 }
+
+
+// Person { table [
+//     NameX          | Role          | Email          | Phone          | Description
+//     ${name}          |  ${role}          |  ${email}          |  ${phoneNumber}          |  ${description}
+// ] trigger = "Person"
+// }
 
 PersonReference {
     [
@@ -141,15 +163,14 @@ PersonReference {
     ]
 }
 
-
 Reference {
     [
-        [fragment referenceDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Reference"]
+        [fragment referenceDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true"]
     ]
     fragment referenceDetails [
-    ${name} 
-    Document is at: ${link wrap=UrlInputComponent}
-    ${description}
+        Reference: ${name}
+        Document is at: ${link wrap=UrlInputComponent}
+        ${description}
     ]
 }
 

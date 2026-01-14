@@ -78,11 +78,11 @@ Step {
 SystemAccess {
     [
         System Name:${name}
-        ${description}
-        ${description}
         Accessed At:${accessedAt}
-        Robot Mappings:
+        ${description}
+        [? Robot Mappings:
             ${robotMappings}
+        ]
     ]
 }
 

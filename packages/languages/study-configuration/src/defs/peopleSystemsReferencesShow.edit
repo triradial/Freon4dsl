@@ -2,13 +2,14 @@ editor peopleSystemsReferencesShow precedence 207
 
 Step {
     [
-        [fragment stepDetailsWithPeopleSystemsReferences wrap = ItemGroupComponent cssClass="type4" canDelete="true"  canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+        [fragment stepDetailsWithPeopleSystemsReferences wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
     ]
     fragment stepDetailsWithPeopleSystemsReferences [
         ${name}
         ${description}
-        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
-        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Systems Used"}
-        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="References"   }
+        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
+        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Systems Used"}
+        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="References"}
     ]
 }
+        // ${people table rows}

@@ -1,14 +1,14 @@
+import { action, makeObservable, observable, runInAction } from "mobx";
+import type { FreNode } from "../../ast/index.js";
 import { FreLogger } from "../../logging/index.js";
+import { ArrayUtil } from "../../util/ArrayUtil.js";
+import { isNullOrUndefined } from "../../util/index.js";
 import type { Box, ElementBox } from "../boxes/index.js";
 import { BoxFactory } from "../boxes/index.js";
-import { isNullOrUndefined } from "../../util/index.js";
-import type { FreNode } from "../../ast/index.js";
 import type { FreBoxProvider } from "./FreBoxProvider.js";
-import type { FreProjection } from "./FreProjection.js";
-import { action, makeObservable, observable, runInAction } from "mobx";
-import { ArrayUtil } from "../../util/ArrayUtil.js";
-import type { FreTableHeaderInfo } from "./FreTableHeaderInfo.js";
 import { FreHeaderProvider } from "./FreHeaderProvider.js";
+import type { FreProjection } from "./FreProjection.js";
+import type { FreTableHeaderInfo } from "./FreTableHeaderInfo.js";
 
 const LOGGER = new FreLogger("FreProjectionHandler");
 /**
@@ -251,7 +251,11 @@ export class FreProjectionHandler {
 
     getKnownTableProjectionsFor(conceptName: string): string[] {
         LOGGER.log("getKnownTableProjectionsFor: " + conceptName);
-        const providerConstructor = this.conceptNameToProviderConstructor.get(conceptName)(this);
+        const constructorFunction = this.conceptNameToProviderConstructor.get(conceptName);
+        if (!constructorFunction) {
+            return [];
+        }
+        const providerConstructor = constructorFunction(this);
         if (!!providerConstructor) {
             return providerConstructor.knownTableProjections;
         } else {
