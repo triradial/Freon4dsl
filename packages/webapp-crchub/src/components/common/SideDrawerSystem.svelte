@@ -4,9 +4,8 @@
 // @ts-ignore
     import { Printer as IconPrinter, RefreshCw as IconRefreshCw, X as IconX } from '@lucide/svelte';
 
-    let { isOpen = false } = $props<{ isOpen?: boolean }>();
-
     let activeDrawer = $derived($drawerStore.activeDrawer);
+    let isOpen = $derived(activeDrawer !== null);
     let drawerWidth = $derived(activeDrawer ? getDrawerWidth(activeDrawer) : 400);
     let drawers = $derived($drawerStore.drawerOrder.map(key => $drawerStore.drawers[key]).filter(Boolean));
     let activeDrawerTitle = $derived(activeDrawer ? ($drawerStore.drawers[activeDrawer]?.title ?? "") : "");
@@ -37,19 +36,15 @@
     const dispatch = createEventDispatcher();
 
     function toggleDrawer(drawerKey: string) {
-        if (isOpen && activeDrawer === drawerKey) {
-            isOpen = false;
+        if (activeDrawer === drawerKey) {
             setActiveDrawer(null);
         } else {
-            isOpen = true;
             setActiveDrawer(drawerKey);
-            drawerWidth = getDrawerWidth(drawerKey);
         }
         dispatch("drawerToggle", { isOpen, activeDrawer });
     }
 
     function closeDrawer() {
-        isOpen = false;
         setActiveDrawer(null);
         dispatch("drawerToggle", { isOpen, activeDrawer: "" });
     }

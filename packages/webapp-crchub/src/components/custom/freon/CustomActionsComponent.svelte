@@ -110,7 +110,9 @@
     let placeholderText = $derived(isExternalBox(box) ? (box.findParam("placeholder") || undefined) : undefined);
     
     // Initialize actionBox (create from PartReplacerBox when no value exists)
+    // Make this reactive to property value changes by depending on propertyValueVersion
     $effect(() => {
+        propertyValueVersion; // Make this reactive to property value changes
         if (isActionBox(box)) {
             // Direct ActionBox - use it directly
             actionBox = box;
@@ -128,18 +130,35 @@
                 hasValue: currentValue !== null && currentValue !== undefined,
                 value: currentValue,
                 hasDirectValue: hasDirect,
-                directValue: directValue?.freLanguageConcept?.()
+                directValue: directValue?.freLanguageConcept?.(),
+                propertyValueVersion
             });
             
             // If PartReplacerBox already has a value, we should show it (not create ActionBox)
             // The component will handle this via hasValue check in the template
-            if (currentValue !== null && currentValue !== undefined) {
+            // Check both getPropertyValue() and direct node access for interface types
+            const hasValueNow = (currentValue !== null && currentValue !== undefined) || hasDirect;
+            if (hasValueNow) {
                 // Has value - don't create ActionBox, let the view mode show the value
+                console.log('🔵 CustomActionsComponent: Has value, not creating ActionBox', {
+                    propertyName,
+                    currentValue: currentValue?.freLanguageConcept?.(),
+                    hasDirect,
+                    directValue: directValue?.freLanguageConcept?.(),
+                    propertyValueVersion
+                });
                 actionBox = null;
                 return; // Exit early - the value will be shown in view mode
             }
             
             // No value - create ActionBox to show the list
+            console.log('🔵 CustomActionsComponent: No value, creating ActionBox', {
+                propertyName,
+                currentValue,
+                hasDirect,
+                directValue,
+                propertyValueVersion
+            });
             // Get property type from language definition
             const lang = FreLanguage.getInstance();
             const nodeConcept = node.freLanguageConcept();
@@ -231,6 +250,91 @@
         actionBox ? actionBox.getOptions(editor) : []
     );
     
+    // Define sort order for options based on Scheduling.edit file
+    // This ensures dropdown items appear in the same order as defined in the editor definition
+    const getSortOrder = (conceptName: string, propertyName: string): number => {
+        // EventStart order from Scheduling.edit (lines 74-112)
+        if (propertyName === 'eventStart' || conceptName === 'EventStart') {
+            const eventStartOrder: Record<string, number> = {
+                'StudyStart': 1,
+                'FirstDayOfStudy': 2,
+                'Baseline': 3,
+                'Day': 4,
+                'When': 5,
+                'Previous': 6,
+                'Unscheduled': 7,
+                'AnyDay': 8
+            };
+            return eventStartOrder[conceptName] ?? 999; // Unknown concepts go to end
+        }
+        
+        // RepeatUnit order from Scheduling.edit (lines 37-55, 163-166)
+        if (propertyName === 'repeatUnit' || conceptName === 'RepeatUnit') {
+            const repeatUnitOrder: Record<string, number> = {
+                'Daily': 1,
+                'Weekly': 2,
+                'Monthly': 3,
+                'Forever': 4,
+                'RepeatEvery': 5
+            };
+            return repeatUnitOrder[conceptName] ?? 999;
+        }
+        
+        // RepeatExpression order from Scheduling.edit (lines 163-179)
+        if (propertyName === 'eventRepeat' || propertyName === 'repeatExpression' || conceptName === 'RepeatExpression') {
+            const repeatExpressionOrder: Record<string, number> = {
+                'RepeatCondition': 1,
+                'RepeatCount': 2
+            };
+            return repeatExpressionOrder[conceptName] ?? 999;
+        }
+        
+        // EventTimeOfDay order from Scheduling.edit (lines 137-156)
+        if (propertyName === 'eventTimeOfDay' || conceptName === 'EventTimeOfDay') {
+            const eventTimeOfDayOrder: Record<string, number> = {
+                'BetweenTimes': 1,
+                'StartingBy': 2,
+                'EndingBy': 3
+            };
+            return eventTimeOfDayOrder[conceptName] ?? 999;
+        }
+        
+        // No specific order defined - maintain original order
+        return 999;
+    };
+    
+    // Sort options based on Scheduling.edit order
+    let sortedOptions = $derived.by(() => {
+        if (!actionBox) return [];
+        
+        const propertyName = actionBox.propertyName || '';
+        const conceptName = actionBox.conceptName || '';
+        const options = [...allOptions];
+        
+        // Sort by the order defined in Scheduling.edit
+        return options.sort((a, b) => {
+            // Extract concept name from option id (which is the concept name)
+            const aConcept = a.id;
+            const bConcept = b.id;
+            
+            // Try propertyName first, then conceptName
+            const aOrder = getSortOrder(aConcept, propertyName);
+            const bOrder = getSortOrder(bConcept, propertyName);
+            
+            // If propertyName didn't give us an order, try conceptName
+            const aOrderFinal = aOrder !== 999 ? aOrder : getSortOrder(aConcept, conceptName);
+            const bOrderFinal = bOrder !== 999 ? bOrder : getSortOrder(bConcept, conceptName);
+            
+            // If both have defined orders, sort by order
+            if (aOrderFinal !== 999 || bOrderFinal !== 999) {
+                return aOrderFinal - bOrderFinal;
+            }
+            
+            // Otherwise maintain original order (alphabetical by label)
+            return a.label.localeCompare(b.label);
+        });
+    });
+    
     // Debug logging
     $effect(() => {
         if (actionBox) {
@@ -242,12 +346,16 @@
                 conceptName: actionBox.conceptName,
                 boxKind: box?.kind
             });
+            console.log('🔵 CustomActionsComponent: sortedOptions', {
+                count: sortedOptions.length,
+                options: sortedOptions.map(o => ({ id: o.id, label: o.label, order: getSortOrder(o.id, actionBox.propertyName || '') }))
+            });
         }
     });
     
-    // Convert SelectOption[] to Listbox format (label and value)
+    // Convert SelectOption[] to Listbox format (label and value) - use sorted options
     let listboxData = $derived(
-        allOptions.map((opt) => ({
+        sortedOptions.map((opt) => ({
             label: opt.label,
             value: opt.id,
             option: opt, // Keep reference to original SelectOption
@@ -563,13 +671,27 @@
         // This is needed when deletion happens from child components like SelectableWrapperComponent
         const oldVersion = propertyValueVersion;
         propertyValueVersion++;
+        
+        // After property value changes, we need to recreate actionBox if the value was deleted
+        if (isPartReplacerBox(box)) {
+            const propertyName = box.propertyName;
+            const nodeValue = box.node[propertyName];
+            const hasValue = nodeValue && typeof nodeValue === 'object' && 'freLanguageConcept' in nodeValue;
+            
+            // If value was deleted (no value), recreate actionBox
+            if (!hasValue && !actionBox) {
+                console.log('🔵 CustomActionsComponent: refresh - value deleted, will recreate actionBox in next effect');
+            }
+        }
+        
         console.log('🔵 CustomActionsComponent: refresh called', {
             why,
             propertyName: isPartReplacerBox(box) ? box.propertyName : 'N/A',
             oldVersion,
             newVersion: propertyValueVersion,
             nodePropertyValue: isPartReplacerBox(box) && box.propertyName ? (box.node[box.propertyName]?.freLanguageConcept?.() || null) : null,
-            hasDirectValue: isPartReplacerBox(box) ? (box.node[box.propertyName] && typeof box.node[box.propertyName] === 'object' && 'freLanguageConcept' in box.node[box.propertyName]) : false
+            hasDirectValue: isPartReplacerBox(box) ? (box.node[box.propertyName] && typeof box.node[box.propertyName] === 'object' && 'freLanguageConcept' in box.node[box.propertyName]) : false,
+            hasActionBox: !!actionBox
         });
     };
     
@@ -867,7 +989,23 @@
     });
 </script>
 
-{#if actionBox || (isPartReplacerBox(box) && (hasDirectValue || (hasValue && currentPropertyValue)))}
+{#if (() => {
+    // Debug logging for the if condition - always log to see what's happening
+    const conditionResult = actionBox || (isPartReplacerBox(box) && (hasDirectValue || (hasValue && currentPropertyValue)));
+    const debugInfo = {
+        hasActionBox: !!actionBox,
+        isPartReplacerBox: isPartReplacerBox(box),
+        hasDirectValue,
+        hasValue,
+        currentPropertyValue: currentPropertyValue?.freLanguageConcept?.(),
+        propertyValueVersion,
+        conditionResult,
+        propertyName: isPartReplacerBox(box) ? box.propertyName : 'N/A',
+        rawNodeValue: isPartReplacerBox(box) && box.propertyName ? (box.node[box.propertyName]?.freLanguageConcept?.() || (box.node[box.propertyName] === null ? 'null' : (box.node[box.propertyName] === undefined ? 'undefined' : String(box.node[box.propertyName])))) : 'N/A'
+    };
+    console.log('🔵 CustomActionsComponent: If condition evaluation', debugInfo);
+    return conditionResult;
+})()}
     {@const checkDirectValue = directNodeValue || currentPropertyValue}
     {@const hasDirectValueInTemplate = checkDirectValue !== null && checkDirectValue !== undefined}
     {@const shouldShowValue = hasDirectValueInTemplate || hasDirectValue || (hasValue && currentPropertyValue)}
@@ -1101,6 +1239,7 @@
 {:else}
     <div class="custom-select-error" style="padding: 4px; background: #fee; border: 1px solid #fcc; color: #c00; border-radius: 4px; display: inline-block;">
         [CustomActionsComponent: {box?.kind || 'unknown'}]
+        
     </div>
 {/if}
 

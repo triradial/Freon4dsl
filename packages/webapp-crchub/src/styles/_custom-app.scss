@@ -540,8 +540,9 @@
     display: flex;
     flex-direction: column;
     height: calc(100vh - 3.75rem);
-    overflow-x: visible;
-    overflow-y: auto;
+    overflow: hidden;
+    // overflow-x: visible;
+    // overflow-y: auto;
   }
 
   #content-container>main {
@@ -1491,27 +1492,31 @@
   }
 
   .drawer-system {
-    position: fixed;
-    top: 5.5rem;
-    right: 0;
-    bottom: 0;
-    height: calc(100vh - 5.5rem);
-    display: flex;
-    flex-direction: row;
-    z-index: 850 !important;
-    isolation: isolate;
+    // position: fixed;
+    // top: 3.5rem;
+    // right: 0;
+    // bottom: 0;
+    // height: calc(100vh - 3.5rem);
+    // display: flex;
+    // flex-direction: row;
+    // z-index: 850 !important;
+    // isolation: isolate;
+    padding-left: 0.25rem;
   }
 
   .drawer-buttons {
     position: fixed;
     right: 0;
-    top: 5.5rem;
+    top: 3.5rem;
+    height: calc(100vh - 3.5rem);
     bottom: 0;
     display: flex;
     flex-direction: column;
     padding: 0.075rem;
     z-index: 900 !important;
     isolation: isolate;
+    background-color: var(--drawer-background);
+    box-shadow: 20px 0 20px -20px rgba(0, 0, 0, 0.7);
   }
 
   .drawer-button {
