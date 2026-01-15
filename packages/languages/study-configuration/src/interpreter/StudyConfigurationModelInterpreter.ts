@@ -207,34 +207,16 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
   evalPrevious(node: language.Previous, ctx: InterpreterContext): RtObject {
     const timeline = ctx.find("timeline") as unknown as Timeline;
-    console.log("entered evalPrevious");
     const lastCompletedEvent =
       timeline.getLastCompletedScheduledEventInstance();
     console.log("evalPrevious: lastCompletedEvent: " + lastCompletedEvent?.startDay);
     if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
       const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
+      console.log("evalPrevious: timeAmount: " + timeAmount.value);
       return new RtNumber(lastCompletedEvent.startDay + timeAmount.value);
     } else {
+      console.log("evalPrevious without time amount: lastCompletedEvent.startDay: " + lastCompletedEvent?.startDay);
       return new RtNumber(lastCompletedEvent?.startDay);
-    }
-
-    if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
-      const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
-      const result = new RtNumber(
-        lastCompletedEvent.startDay + timeAmount.value
-      );
-      console.log("evalPrevious: result: " + result.value);
-      return result;
-    } else {
-      return new RtNumber(lastCompletedEvent.startDay);
-    }
-
-    if (lastCompletedEvent === null || lastCompletedEvent === undefined) {
-    } else {
-      console.log(
-        "evalPrevious: lastCompletedEvent: " + lastCompletedEvent.startDay
-      );
-      return new RtNumber(lastCompletedEvent.startDay);
     }
   }
 
