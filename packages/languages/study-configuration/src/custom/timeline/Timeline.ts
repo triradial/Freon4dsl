@@ -159,13 +159,9 @@ export class Timeline extends RtObject {
     }
 
     getLastScheduledEventInstanceForThisEventsName(eventToMatch: Event): ScheduledEventInstance {
-        // Flatten the list of events and filter for EventInstance
-        let allEventInstances = this.days.flatMap((day) =>
-            day.events.filter((event) => event instanceof ScheduledEventInstance).map((event) => ({ event, day: day.day })),
-        );
-
         // Filter the events to match the given event name
-        let eventInstances = allEventInstances.filter(({ event }) => eventToMatch.name === event.getName());
+        let eventInstances = this.getAllScheduledEventInstancesWithDays()
+            .filter(({ event }) => eventToMatch.name === event.getName());
 
         // Sort the events by the day value
         eventInstances.sort((a, b) => a.day - b.day);
@@ -253,20 +249,46 @@ export class Timeline extends RtObject {
         return !this.hasCompletedInstanceOf(scheduledEvent);
     }
 
+    /**
+     * Helper method to flatten all ScheduledEventInstances across all days
+     * Returns an array of objects containing the event and its day number
+     */
+    private getAllScheduledEventInstancesWithDays(): Array<{ event: ScheduledEventInstance; day: number }> {
+        return this.days.flatMap((day) =>
+            day.events
+                .filter((event) => event instanceof ScheduledEventInstance)
+                .map((event) => ({ event: event as ScheduledEventInstance, day: day.day }))
+        );
+    }
+
+    getLastCompletedScheduledEventInstance(): ScheduledEventInstance | null {
+        // Filter for completed ScheduledEventInstances
+        let completedEvents = this.getAllScheduledEventInstancesWithDays()
+            .filter(({ event }) => event.state === TimelineInstanceState.Completed);
+
+        if (completedEvents.length === 0) {
+            return null;
+        }
+
+        // Sort by day to get the last completed event
+        completedEvents.sort((a, b) => b.day - a.day);
+
+        return completedEvents[0].event;
+    }
+
     getPeriods() {
         return this.days.flatMap((day) => day.events.filter((event) => event instanceof PeriodEventInstance));
     }
 
     getScheduleEventInstancesOrderByDay(): ScheduledEventInstance[] {
-        const result = this.days
-            .flatMap((day) => day.events.filter((event) => event instanceof ScheduledEventInstance).map((event) => ({ event, day: day.day })))
+        const result = this.getAllScheduledEventInstancesWithDays()
             .sort((a, b) => {
                 // console.log(`Comparing: ${a.event.getName()} day: ${a.day} and ${b.event.getName()} day: ${b.day}`);
                 return a.day - b.day;
             })
             .map(({ event }) => event);
         // console.log("Ordered events: " + result.map((event) => event.getName()));
-        return result as ScheduledEventInstance[];
+        return result;
     }
 
     getPeriodInstanceFor(scheduledPeriodName: string) {
