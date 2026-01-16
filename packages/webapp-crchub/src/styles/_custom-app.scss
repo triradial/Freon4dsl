@@ -1015,7 +1015,7 @@
   }
 
   .crc-content-width {
-    width: calc(100% - 2.75rem);
+    width: 100%;
   }
 
   .footer-container {
@@ -3592,3 +3592,38 @@
       opacity: 0.7;
   }
   /* #endregion Day View */
+
+  /* #region Splitter */
+  .splitter-container {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .splitter-container.dragging {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: col-resize;
+  }
+
+  .splitter-handle {
+    width: 4px;
+    background-color: var(--white-20t);
+    cursor: col-resize;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  .splitter-handle:hover {
+    background-color: var(--white-30t);
+  }
+
+  .splitter-panel {
+    overflow: hidden;
+    position: relative;
+  }
+  /* #endregion Splitter */

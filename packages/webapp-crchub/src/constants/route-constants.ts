@@ -8,7 +8,9 @@ export const ROUTE = Object.freeze({
     ORGANIZATIONS: 'organizations',
     PEOPLE: 'people',
     STUDY: 'study',
-    PATIENT: 'patient'
+    PATIENT: 'patient',
+    STUDY_DESIGN: 'study-design',
+    STUDY_PATIENTS: 'study-patients'
 });
 
 export const VALID_ROUTES = [
@@ -21,12 +23,16 @@ export const VALID_ROUTES = [
     ROUTE.ORGANIZATIONS,
     ROUTE.PEOPLE,
     ROUTE.STUDY,
-    ROUTE.PATIENT
+    ROUTE.PATIENT,
+    ROUTE.STUDY_DESIGN,
+    ROUTE.STUDY_PATIENTS
 ] as const;
 
 export const VALID_ROUTES_WITH_ID = [
     ROUTE.PATIENT,
-    ROUTE.STUDY
+    ROUTE.STUDY,
+    ROUTE.STUDY_DESIGN,
+    ROUTE.STUDY_PATIENTS
 ] as const;
 
 export type ValidRoute = typeof VALID_ROUTES[number];
