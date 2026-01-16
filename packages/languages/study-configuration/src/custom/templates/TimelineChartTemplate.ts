@@ -26,9 +26,15 @@ export class TimelineChartTemplate {
                 .join("\n")}
             ${timeline.anyPatientEventInstances() ? (
                 timeline.getUniquePatientIdentifiers().length > 0
-                    ? timeline.getUniquePatientIdentifiers()
-                        .map((patientId) => `{ "content": "<b>Patient: ${patientId}</b>", "id": "Patient-${patientId}", className: 'patient' },`)
-                        .join("\n")
+                    ? (() => {
+                        const patientIds = timeline.getUniquePatientIdentifiers();
+                        const isMultiPatient = patientIds.length > 1;
+                        // Use shorter labels for multi-patient timelines
+                        const patientLabel = isMultiPatient 
+                            ? (patientId: string) => `{ "content": "<b>${patientId}</b>", "id": "Patient-${patientId}", className: 'patient' },`
+                            : (patientId: string) => `{ "content": "<b>Patient: ${patientId}</b>", "id": "Patient-${patientId}", className: 'patient' },`;
+                        return patientIds.map(patientLabel).join("\n");
+                    })()
                     : `{ "content": "<b>Patient Visits /<br><span class='not-available-row-label'>Not Available</span></b>", "id": "Patient", className: 'patient' },`
             ) : ""}
             ${timeline.anyStaffAvailabilityEventInstances() ? `{ "content": "<b>Staff(${timeline.getBaselineStaff()})</b>", "id": "Staff", className: 'staff' },` : ""}
@@ -151,6 +157,22 @@ export class TimelineChartTemplate {
       <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
       <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
       <link id="theme-stylesheet" rel='stylesheet' href='/assets/styles/bundle-dark.css'>
+      <style>
+        /* Compact styles for multi-patient timelines */
+        .vis-label {
+          font-size: 12px !important;
+          padding: 2px 4px !important;
+        }
+        .vis-group.patient .vis-label {
+          font-size: 11px !important;
+          padding: 1px 3px !important;
+        }
+        .vis-item {
+          height: 18px !important;
+          margin-top: 1px !important;
+          margin-bottom: 1px !important;
+        }
+      </style>
        <!--    -->
       </head>
       <body>
