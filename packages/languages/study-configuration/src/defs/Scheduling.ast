@@ -73,7 +73,7 @@ concept When implements EventStart {
 }
 
 concept StudyStart implements EventStart {
-    dummyText: string;
+    dummyText?: string;
 }
 
 concept FirstDayOfStudy implements EventStart {

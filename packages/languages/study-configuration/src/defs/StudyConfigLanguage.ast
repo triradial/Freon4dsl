@@ -29,7 +29,7 @@ modelunit StudyConfiguration {
 
 concept Period {
     name: identifier;
-    description: Description;
+    description?: Description;
     events: Event[];
 }
 
@@ -96,8 +96,8 @@ concept WorkflowBranch implements WorkflowDecision {
 
 // TODO: Customize the validator to allow these strings to be empty.
 concept Description {
-    text: string = " ";
-    rawText: string = " ";
+    text?: string = " ";
+    rawText?: string = " ";
 }
 
 // Notes are always Descriptions that are always displayed and editable
