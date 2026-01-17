@@ -60,10 +60,10 @@ export async function saveStudyConfiguration(studyId: string, configuration: any
         throw new Error(`Site not found for study: ${studyId}`);
     }
 
-    // Update or insert study_configuration
+    // Update or insert study_configuration and set study_simulations_sync = false
     const updateResult = await pool.query(
         `UPDATE site_protocol_versions
-         SET study_configuration = $1
+         SET study_configuration = $1, study_simulations_sync = false
          WHERE site_id = $2 AND protocol_version_id = $3`,
         [JSON.stringify(configuration), siteId, protocolVersionId]
     );
@@ -71,10 +71,11 @@ export async function saveStudyConfiguration(studyId: string, configuration: any
     if (updateResult.rowCount === 0) {
         // Insert if doesn't exist
         await pool.query(
-            `INSERT INTO site_protocol_versions (site_id, protocol_version_id, study_configuration)
-             VALUES ($1, $2, $3)
+            `INSERT INTO site_protocol_versions (site_id, protocol_version_id, study_configuration, study_simulations_sync)
+             VALUES ($1, $2, $3, false)
              ON CONFLICT (site_id, protocol_version_id) DO UPDATE SET
-                 study_configuration = EXCLUDED.study_configuration`,
+                 study_configuration = EXCLUDED.study_configuration,
+                 study_simulations_sync = false`,
             [siteId, protocolVersionId, JSON.stringify(configuration)]
         );
     }
@@ -217,6 +218,121 @@ export async function getModelUnit(studyId: string, unit: string): Promise<any |
         default:
             return null;
     }
+}
+
+/**
+ * Get StudySimulation (cached Timeline) for a study
+ * StudySimulation is stored in site_protocol_versions.study_simulations
+ */
+export async function getStudySimulation(studyId: string): Promise<any | null> {
+    const pool = getDbPool();
+    
+    console.log(`[model-service] getStudySimulation: studyId=${studyId}`);
+    
+    const result = await pool.query(
+        `SELECT spv.study_simulations
+         FROM site_protocol_versions spv
+         JOIN site s ON spv.site_id = s.site_id
+         JOIN protocol_version pv ON spv.protocol_version_id = pv.protocol_version_id
+         JOIN protocol pr ON pv.protocol_id = pr.protocol_id
+         JOIN study st ON pr.study_id = st.study_id
+         WHERE st.study_id = $1
+         LIMIT 1`,
+        [studyId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].study_simulations) {
+        console.log(`[model-service] getStudySimulation: NO DATA for studyId=${studyId} (rows=${result.rows.length})`);
+        return null;
+    }
+
+    const simulationPreview = JSON.stringify(result.rows[0].study_simulations).substring(0, 100);
+    console.log(`[model-service] getStudySimulation: FOUND DATA for studyId=${studyId}, preview=${simulationPreview}...`);
+    return result.rows[0].study_simulations;
+}
+
+/**
+ * Save StudySimulation (cached Timeline) for a study
+ * Sets study_simulations_sync = true when successfully saved
+ */
+export async function saveStudySimulation(studyId: string, simulation: any): Promise<boolean> {
+    const pool = getDbPool();
+    
+    // Get or create site_protocol_version for this study
+    const siteResult = await pool.query(
+        `SELECT s.site_id, pv.protocol_version_id
+         FROM study st
+         LEFT JOIN site s ON st.study_id = s.study_id
+         LEFT JOIN protocol pr ON st.study_id = pr.study_id
+         LEFT JOIN protocol_version pv ON pr.protocol_id = pv.protocol_id
+         WHERE st.study_id = $1
+         LIMIT 1`,
+        [studyId]
+    );
+
+    if (siteResult.rows.length === 0) {
+        throw new Error(`Study not found: ${studyId}`);
+    }
+
+    const siteId = siteResult.rows[0].site_id;
+    const protocolVersionId = siteResult.rows[0].protocol_version_id;
+
+    if (!siteId) {
+        throw new Error(`Site not found for study: ${studyId}`);
+    }
+
+    // Update or insert study_simulations and set study_simulations_sync = true
+    const updateResult = await pool.query(
+        `UPDATE site_protocol_versions
+         SET study_simulations = $1, study_simulations_sync = true
+         WHERE site_id = $2 AND protocol_version_id = $3`,
+        [JSON.stringify(simulation), siteId, protocolVersionId]
+    );
+
+    if (updateResult.rowCount === 0) {
+        // Insert if doesn't exist
+        await pool.query(
+            `INSERT INTO site_protocol_versions (site_id, protocol_version_id, study_simulations, study_simulations_sync)
+             VALUES ($1, $2, $3, true)
+             ON CONFLICT (site_id, protocol_version_id) DO UPDATE SET
+                 study_simulations = EXCLUDED.study_simulations,
+                 study_simulations_sync = true`,
+            [siteId, protocolVersionId, JSON.stringify(simulation)]
+        );
+    }
+
+    return true;
+}
+
+/**
+ * Get StudySimulation sync status for a study
+ * Returns true if study_simulations_sync is true, false otherwise
+ */
+export async function getStudySimulationSyncStatus(studyId: string): Promise<boolean> {
+    const pool = getDbPool();
+    
+    console.log(`[model-service] getStudySimulationSyncStatus: studyId=${studyId}`);
+    
+    const result = await pool.query(
+        `SELECT spv.study_simulations_sync
+         FROM site_protocol_versions spv
+         JOIN site s ON spv.site_id = s.site_id
+         JOIN protocol_version pv ON spv.protocol_version_id = pv.protocol_version_id
+         JOIN protocol pr ON pv.protocol_id = pr.protocol_id
+         JOIN study st ON pr.study_id = st.study_id
+         WHERE st.study_id = $1
+         LIMIT 1`,
+        [studyId]
+    );
+
+    if (result.rows.length === 0) {
+        console.log(`[model-service] getStudySimulationSyncStatus: NO DATA for studyId=${studyId}`);
+        return false;
+    }
+
+    const syncStatus = result.rows[0].study_simulations_sync ?? false;
+    console.log(`[model-service] getStudySimulationSyncStatus: studyId=${studyId}, sync=${syncStatus}`);
+    return syncStatus;
 }
 
 /**

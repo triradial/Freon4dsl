@@ -1,65 +1,67 @@
 <script lang="ts">
-    import { RtString } from "@freon4dsl/core";
-    import { getTimelineChart, StudyConfiguration } from "@freon4dsl/study-configuration";
-    import { ModelManager } from "../../services/dsl/model-manager.js";
     import ContentLoader from "../../components/drawers/ContentLoader.svelte";
+    import { simulationService } from "../../services/simulation/simulation-service.js";
 
     let { studyId } = $props<{ studyId: string }>();
     let isLoading = $state(true);
-    let showChart = $state(false);
     let chartHtml = $state<string>("");
     let error = $state<string | null>(null);
     let container = $state<HTMLElement | null>(null);
+    let hasRenderedBefore = $state(false);
+    let lastSuccessfulContent = $state<string>("");
 
-    export function refresh() {
-        buildChart(studyId);
+    export function refresh(forceRefresh: boolean = false) {
+        loadChart(forceRefresh);
     }
 
     $effect(() => {
-        console.log("[StudyTimelineChart] $effect studyId:", studyId);
         if (studyId) {
-            console.log("studyId", studyId);
-            buildChart(studyId);
+            loadChart(false);
         }
     });
 
-    async function buildChart(id: string) {
-        console.log("build StudyTimelineChart: ", id);
-        isLoading = true;
-        showChart = false;
-        error = null;
-        try {
-            const startTime = Date.now();
+    // Execute scripts when chartHtml changes and container is available
+    $effect(() => {
+        if (chartHtml && container && !isLoading) {
+            // Wait a bit for DOM to settle, then execute scripts
+            setTimeout(() => {
+                executeScripts();
+            }, 100);
+        }
+    });
 
-            // Get the configuration unit without opening the model (to preserve current model if viewing patient)
-            const modelManager = ModelManager.getInstance();
-            const unit = await modelManager.getModelUnitWithoutOpening(id, "StudyConfiguration") as StudyConfiguration;
-            if (!unit) {
-                throw new Error("Configuration unit is not available in the model.");
-            }
-            // Get the timeline chart
-            const rtObject = getTimelineChart(unit, false, true) as RtString;
-            chartHtml = rtObject.asString();
-            await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
-            await loadChartData();
-            const elapsedTime = Date.now() - startTime;
-            if (elapsedTime < 5000) {
-                await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
-            }
-            showChart = true;
+    async function loadChart(forceRefresh: boolean = false) {
+        const startTime = performance.now();
+        console.log(`[StudyTimelineChart] Loading chart for ${studyId}, forceRefresh=${forceRefresh}`);
+        
+        isLoading = true;
+        error = null;
+        
+        try {
+            const simulationData = await simulationService.getSimulationData(studyId, forceRefresh);
             
+            if (simulationData) {
+                chartHtml = simulationData.chartHtml;
+                lastSuccessfulContent = chartHtml;
+                hasRenderedBefore = true;
+                error = null;
+                
+                const elapsed = performance.now() - startTime;
+                console.log(`[StudyTimelineChart] Chart loaded in ${elapsed.toFixed(2)}ms`);
+            } else {
+                throw new Error("Failed to generate simulation data");
+            }
         } catch (err: unknown) {
-            console.error(`Error fetching chart data for study: ${id}`, err);
-            error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
+            console.error(`[StudyTimelineChart] Error loading chart:`, err);
+            if (hasRenderedBefore) {
+                error = "Current design has issues that prevent this chart from updating";
+                chartHtml = lastSuccessfulContent;
+            } else {
+                error = "Current design has issues that prevent this chart from showing";
+                chartHtml = "";
+            }
         } finally {
             isLoading = false;
-        }
-    }
-
-    async function loadChartData() {
-        if (container) {
-            container.innerHTML = chartHtml;
-            await executeScripts(); // Wait for scripts to actually execute
         }
     }
 
@@ -102,11 +104,11 @@
 <div class="p-2">
     {#if error}
         <div class="drawer-error p-4">{error}</div>
-    {:else}
-        <div style="display: {isLoading ? 'block' : 'none'}">
-            <ContentLoader />   
-        </div>
-        <div class="chart-content-wrapper" style="display: {!isLoading && showChart ? 'block' : 'none'}">
+    {/if}
+    {#if isLoading}
+        <ContentLoader />   
+    {:else if chartHtml}
+        <div class="chart-content-wrapper">
             <div bind:this={container}>
                 {@html chartHtml}
             </div>

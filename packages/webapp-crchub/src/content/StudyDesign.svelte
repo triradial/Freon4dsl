@@ -18,6 +18,7 @@
     import StudyTimelineTable from "./study/StudyTimelineTable.svelte";
     import StudyTimelineChart from "./study/StudyTimelineChart.svelte";
     import StudyChecklist from "./study/StudyChecklist.svelte";
+    import { simulationService } from "../services/simulation/simulation-service.js";
 
     let { id } = $props<{ id: string }>();
 
@@ -52,6 +53,11 @@
     
     let studyCardWidth = $state(STUDY_CARD_DEFAULT_WIDTH);
     let tabsPanelWidth = $state(TABS_PANEL_DEFAULT_WIDTH);
+    let errorsComponent: StudyDesignErrors | undefined = $state();
+    let timelineTableComponent: StudyTimelineTable | undefined = $state();
+    let timelineChartComponent: StudyTimelineChart | undefined = $state();
+    let checklistComponent: StudyChecklist | undefined = $state();
+    let errorCountRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
 
     function debouncedSave() {
         console.log('💾 StudyDesign.svelte: debouncedSave called');
@@ -242,6 +248,9 @@
     onDestroy(() => {
         editorLoaded = false;
         if (unsubscribeChangeManager) unsubscribeChangeManager();
+        if (errorCountRefreshTimeout) {
+            clearTimeout(errorCountRefreshTimeout);
+        }
     });
 
     // Show the projections that are enabled in the study configuration.
@@ -315,27 +324,86 @@
         }
     }
 
+    // Async function to update error count without blocking UI
+    function updateErrorCountAsync() {
+        if (errorCountRefreshTimeout) {
+            clearTimeout(errorCountRefreshTimeout);
+        }
+
+        errorCountRefreshTimeout = setTimeout(() => {
+            if (typeof requestIdleCallback !== 'undefined') {
+                requestIdleCallback(() => {
+                    errorCount = ModelManager.getInstance().runValidator().length;
+                    // Refresh the errors component
+                    if (errorsComponent) {
+                        errorsComponent.refresh();
+                    }
+                    // Only refresh the currently active timeline tab (not all tabs)
+                    if (activeTab === 'timeline-table' && timelineTableComponent) {
+                        timelineTableComponent.refresh(true); // force refresh
+                    } else if (activeTab === 'timeline-chart' && timelineChartComponent) {
+                        timelineChartComponent.refresh(true); // force refresh
+                    } else if (activeTab === 'checklist' && checklistComponent) {
+                        checklistComponent.refresh(true); // force refresh
+                    }
+                }, { timeout: 1000 });
+            } else {
+                setTimeout(() => {
+                    errorCount = ModelManager.getInstance().runValidator().length;
+                    // Refresh the errors component
+                    if (errorsComponent) {
+                        errorsComponent.refresh();
+                    }
+                    // Only refresh the currently active timeline tab (not all tabs)
+                    if (activeTab === 'timeline-table' && timelineTableComponent) {
+                        timelineTableComponent.refresh(true); // force refresh
+                    } else if (activeTab === 'timeline-chart' && timelineChartComponent) {
+                        timelineChartComponent.refresh(true); // force refresh
+                    } else if (activeTab === 'checklist' && checklistComponent) {
+                        checklistComponent.refresh(true); // force refresh
+                    }
+                }, 0);
+            }
+        }, 300); // 300ms debounce
+    }
+
     function handleSaveStudy() {
         console.log('💾 StudyDesign.svelte: handleSaveStudy called');
         ModelManager.getInstance().saveCurrentUnit();
-        // Update error count after save
-        errorCount = ModelManager.getInstance().runValidator().length;
+        // Clear simulation cache since model has changed
+        simulationService.clearCache(id);
+        // Update error count and refresh active timeline tab asynchronously after save
+        updateErrorCountAsync();
     }
 
     function handleUndoAction() {
         EditorRequestsHandler.getInstance().undo();
-        errorCount = ModelManager.getInstance().runValidator().length;
+        // Update error count and refresh timeline components asynchronously
+        updateErrorCountAsync();
     }
 
     function handleRedoAction() {
         EditorRequestsHandler.getInstance().redo();
-        errorCount = ModelManager.getInstance().runValidator().length;
+        // Update error count and refresh timeline components asynchronously
+        updateErrorCountAsync();
     }
 
     // Update error count when tab changes to errors
     $effect(() => {
         if (activeTab === 'errors' && editorLoaded) {
-            errorCount = ModelManager.getInstance().runValidator().length;
+            // Update error count asynchronously when tab becomes active
+            updateErrorCountAsync();
+        }
+    });
+
+    // Refresh timeline tab when it becomes active (lazy load)
+    $effect(() => {
+        if (activeTab === 'timeline-table' && timelineTableComponent) {
+            timelineTableComponent.refresh(false); // use cache if available
+        } else if (activeTab === 'timeline-chart' && timelineChartComponent) {
+            timelineChartComponent.refresh(false); // use cache if available
+        } else if (activeTab === 'checklist' && checklistComponent) {
+            checklistComponent.refresh(false); // use cache if available
         }
     });
 </script>
@@ -396,13 +464,13 @@
         
         <!-- Right Panel: Tabs -->
         <div class="splitter-panel" style="width: {tabsPanelWidth}rem; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden;">
-            <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2" contentBase="mt-0">
+            <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-8" listMargin="mb-1" base="mt-4 mr-4 ml-4" contentBase="mt-0">
                 {#snippet list()}
                     <Tabs.Control stateActive="tab-active" value="errors">
-                        <div class="tab-item">
-                            Errors
+                        <div class="tab-item tab-item-with-badge">
+                            <span>Errors</span>
                             {#if errorCount > 0}
-                                <span class="badge preset-filled-error-500 ml-2">{errorCount}</span>
+                                <span class="badge tab-badge">{errorCount}</span>
                             {/if}
                         </div>
                     </Tabs.Control>
@@ -420,22 +488,22 @@
                 {#snippet content()}
                     <Tabs.Panel value="errors">
                         <div class="tab-content-wrapper">
-                            <StudyDesignErrors studyId={id} />
+                            <StudyDesignErrors bind:this={errorsComponent} studyId={id} />
                         </div>
                     </Tabs.Panel>
                     <Tabs.Panel value="timeline-table">
                         <div class="tab-content-wrapper">
-                            <StudyTimelineTable studyId={id} />
+                            <StudyTimelineTable bind:this={timelineTableComponent} studyId={id} />
                         </div>
                     </Tabs.Panel>
                     <Tabs.Panel value="timeline-chart">
                         <div class="tab-content-wrapper">
-                            <StudyTimelineChart studyId={id} />
+                            <StudyTimelineChart bind:this={timelineChartComponent} studyId={id} />
                         </div>
                     </Tabs.Panel>
                     <Tabs.Panel value="checklist">
                         <div class="tab-content-wrapper">
-                            <StudyChecklist studyId={id} />
+                            <StudyChecklist bind:this={checklistComponent} studyId={id} />
                         </div>
                     </Tabs.Panel>
                 {/snippet}
@@ -467,4 +535,5 @@
         overflow: auto;
         padding: 0;
     }
+
 </style>

@@ -37,6 +37,12 @@
   --breadcrumb-link: #2a3852;
   --breadcrumb-link-hover: #1d283c;
   --breadcrumb-text: #000000;
+  --breadcrumb-border: #b8b8b8;
+  /* #endregion */
+
+  /* #region Splitter */
+  --splitter-handle-bg: #b8b8b8;
+  --splitter-handle-hover-bg: #2880d8;
   /* #endregion */
 
   /* #region Drawer */
@@ -60,6 +66,13 @@
   --toolbar-button-active-background: var(--black-20t);
   /* #endregion */
 
+  /* #region Tab */
+  --tab-item-text: #000000;
+  --tab-item-hover-background: #00000011;
+  --tab-active-text: var(--primary-600);
+  --tab-active-border: var(--primary-600);
+  /* #endregion */  
+
   /* #region Name Link */
   --name-link-text: #4C5C96;
   --grid-button-color: #4C5C96;
@@ -75,6 +88,8 @@
   
   // #region Controls
   --checkbox-bg: #3b82f6;
+  --badge-bg: #c3939d;
+  --badge-text: #000;
   // #endregion
 
   /* #region Buttons */
@@ -185,8 +200,16 @@
   --dayview-patients-count: #3b82f6;
 /* #endregion */
 
+/* #region Checklist */
+  --checklist-h1: #4C5C96;
+  --checklist-h2: #000000;
+  --checklist-h3: #000000;
+  --checklist-text: #4d4d4d;
 
-  /* #endregion */
+  --checklist-error-bg: #fae4e7;
+  --checklist-error-text: #ae2b22;
+  --checklist-error-indicator: #c75047;
+/* #endregion */
 
   --content-background: #cfd6e0;
 
@@ -477,24 +500,6 @@ input:disabled {
 
 /* #endregion */
 
-/* #region Tab */
-.tab-item {
-  color: var(--black);
-  background-color: transparent;
-  border-bottom: 2px solid transparent !important;
-}
-
-.tab-item:hover {
-  background-color: var(--black-10t) !important;
-}
-
-.tab-active {
-  color: var(--primary-600) !important;
-  border-bottom: 2px solid var(--primary-600) !important;
-}
-
-/* #endregion */
-
 /* #region Drawer */
 
 .drawer-button {
@@ -685,30 +690,38 @@ input:disabled {
 
 /* #endregion */
 
-/* #region Error Drawer */
-.error-drawer {
-  color: var(--black) !important;
+/* #region Model Error List */
+.model-error {
+  color: var(--gray-900) !important;
 }
 
-.error-drawer-head {
-  color: var(--black) !important;
+.model-error-head {
+  color: var(--gray-900) !important;
 }
 
-.error-drawer-cell {
-  color: var(--black) !important;
-} 
+.model-error-cell {
+  color: var(--gray-900) !important;
+}
 
-.error-drawer-button{
+.model-error tbody tr:nth-child(even) td {
+  background-color: var(--black-10t) !important;
+}
+
+.model-error tbody tr:nth-child(odd) td {
+  background-color: var(--black-5t) !important;
+}
+
+.model-error-button{
   background: var(--toolbar-button-background) !important;
   color: var(--toolbar-button) !important;
 }
 
-.error-drawer-button:hover {
+.model-error-button:hover {
   background: var(--toolbar-button-hover-background) !important;
   color: var(--toolbar-button-hover) !important;
 } 
 
-.error-drawer-button:active {
+.model-error-button:active {
   background: var(--toolbar-button-active-background) !important;
   color: var(--toolbar-button-active) !important;
 } 

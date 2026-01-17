@@ -277,7 +277,6 @@ export class StudyChecklistDocumentTemplate {
         });
 
         const result = builder.build();
-        console.log("getVisitsByPeriodAsMarkdown visitsByPeriodMarkdown: ", result);
         return result;
     }
 
