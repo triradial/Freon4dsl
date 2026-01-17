@@ -2,13 +2,14 @@ editor peopleSystemsShow precedence 204
 
 Step {
     [
-        [fragment stepDetailsWithPeopleSystems wrap = ItemGroupComponent cssClass="type4" canDelete="true"  canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+        [fragment stepDetailsWithPeopleSystems wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
     ]
     fragment stepDetailsWithPeopleSystems [
         ${name}
         ${description}
-        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
-        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Systems Used"}
+        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
+        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Systems Used"}
     ]
 }
+        // ${people table rows}
 

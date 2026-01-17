@@ -8,9 +8,10 @@
     interface Props {
         box: Box;
         editor: any;
+        onDelete?: () => void;
     }
 
-    let { box, editor, children }: FreComponentProps<Box> & { children: Snippet } = $props();
+    let { box, editor, children, onDelete }: FreComponentProps<Box> & { children: Snippet, onDelete?: () => void } = $props();
     
     // Track hover state
     let isHovered = $state(false);
@@ -38,9 +39,9 @@
     
     // Combined state for showing blue border and delete button
     let showWrapper = $derived(isSelected || isHovered || isFocused);
-    
-    // Only show delete button if the box is actually deletable (PartReplacerBox)
-    let canDelete = $derived(isPartReplacerBox(box));
+
+    // Only show delete button if the box is actually deletable (PartReplacerBox) OR custom delete handler provided
+    let canDelete = $derived(isPartReplacerBox(box) || !!onDelete);
     let showDeleteButton = $derived(showWrapper && canDelete);
     
     let wrapperElement: HTMLElement | null = $state(null);
@@ -60,9 +61,17 @@
             boxKind: box?.kind,
             boxId: (box as any)?.id,
             hasPropertyName: !!(box as any)?.propertyName,
-            propertyName: (box as any)?.propertyName
+            propertyName: (box as any)?.propertyName,
+            hasCustomDeleteHandler: !!onDelete
         });
-        
+
+        // If custom delete handler provided, use it
+        if (onDelete) {
+            console.log('🟢 SelectableWrapperComponent: Using custom delete handler');
+            onDelete();
+            return;
+        }
+
         // Double-check that box is still a PartReplacerBox (it might have changed)
         if (!isPartReplacerBox(box)) {
             console.warn('🔴 SelectableWrapperComponent: Cannot delete - box is not a PartReplacerBox', {

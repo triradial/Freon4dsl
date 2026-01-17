@@ -39,264 +39,337 @@ function calcTimeAmount(value: number, unit: string): RtObject {
  * This class is initially empty, and will not be overwritten if it already exists.
  */
 export class StudyConfigurationModelInterpreter extends StudyConfigurationModelInterpreterBase {
-    constructor(m: IMainInterpreter) {
-        super();
-        main = m;
+  constructor(m: IMainInterpreter) {
+    super();
+    main = m;
+  }
+
+  evalStudyConfiguration(
+    node: language.StudyConfiguration,
+    ctx: InterpreterContext
+  ): RtObject {
+    try {
+      var simulator;
+      var studyConfigurationModel: StudyConfigurationModel;
+      const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
+
+      new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
+      let studyConfigurationUnit = node as StudyConfiguration;
+      simulator = new Simulator(studyConfigurationUnit);
+
+      // WHEN the study is simulated and a timeline picture is generated
+      simulator.run();
+      let timeline = simulator.timeline;
+
+      const timelineDataAsScript =
+        TimelineChartTemplate.getTimelineDataHTML(timeline);
+      const timelineVisualizationHTML =
+        TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
+      const styles = ``;
+      const tableHTML =
+        TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
+      const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(
+        timelineDataAsScript + timelineVisualizationHTML
+      );
+      const html = `${styles}<div class="limited-width-container">${tableHTML + chartHTML}</div>`;
+      return new RtString(html);
+    } catch (e: any) {
+      return new RtString(e.message);
     }
+  }
 
-    evalStudyConfiguration(node: language.StudyConfiguration, ctx: InterpreterContext): RtObject {
-        try {
-            var simulator;
-            var studyConfigurationModel: StudyConfigurationModel;
-            const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
+  evalAndExpression(
+    node: language.AndExpression,
+    ctx: InterpreterContext
+  ): RtObject {
+    const left = main.evaluate(node.left, ctx) as RtBoolean;
+    const right = main.evaluate(node.right, ctx) as RtBoolean;
+    return left.and(right);
+  }
 
-            new Sim.Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
-            let studyConfigurationUnit = node as StudyConfiguration;
-            simulator = new Simulator(studyConfigurationUnit);
+  evalDay(node: language.Day, ctx: InterpreterContext): RtObject {
+    // console.log("entered evalDay");
+    // console.log("evalDay node: " + node.startDay);
+    return new RtNumber(node.startDay);
+  }
 
-            // WHEN the study is simulated and a timeline picture is generated
-            simulator.run();
-            let timeline = simulator.timeline;
+  evalDaily(node: language.Daily, ctx: InterpreterContext): RtObject {
+    return new RtNumber(1);
+  }
 
-            const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
-            const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
-            const styles = ``;
-            const tableHTML = TimelineTableTemplate.getTimeLineTableAndStyles(timeline);
-            const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML);
-            const html = `${styles}<div class="limited-width-container">${tableHTML + chartHTML}</div>`;
-            return new RtString(html);
-        } catch (e: any) {
-            return new RtString(e.message);
-        }
-    }
+  evalEqualsExpression(
+    node: language.EqualsExpression,
+    ctx: InterpreterContext
+  ): RtObject {
+    const left = main.evaluate(node.left, ctx);
+    const right = main.evaluate(node.right, ctx);
+    return left.equals(right);
+  }
 
-    evalAndExpression(node: language.AndExpression, ctx: InterpreterContext): RtObject {
-        const left = main.evaluate(node.left, ctx) as RtBoolean;
-        const right = main.evaluate(node.right, ctx) as RtBoolean;
-        return left.and(right);
-    }
+  evalEventReference(
+    node: language.EventReference,
+    ctx: InterpreterContext
+  ): RtObject {
+    // console.log("entered evalEventReference");
+    const timeline = ctx.find("timeline") as unknown as Timeline;
+    const referencedEvent = node.$event;
+    const eventState = node.eventState; //TODO: need to check for the correct state.
 
-    evalDay(node: language.Day, ctx: InterpreterContext): RtObject {
-        // console.log("entered evalDay");
-        // console.log("evalDay node: " + node.startDay);
-        return new RtNumber(node.startDay);
-    }
-
-    evalDaily(node: language.Daily, ctx: InterpreterContext): RtObject {
-        return new RtNumber(1);
-    }
-
-    evalEqualsExpression(node: language.EqualsExpression, ctx: InterpreterContext): RtObject {
-        const left = main.evaluate(node.left, ctx);
-        const right = main.evaluate(node.right, ctx);
-        return left.equals(right);
-    }
-
-    evalEventReference(node: language.EventReference, ctx: InterpreterContext): RtObject {
-        // console.log("entered evalEventReference");
-        const timeline = ctx.find("timeline") as unknown as Timeline;
-        const referencedEvent = node.$event;
-        const eventState = node.eventState; //TODO: need to check for the correct state.
-
-        let owningEvent = ownerOfType(node, "Event") as language.Event;
-        // if (referencedEvent == undefined || referencedEvent == null) {
-        //     console.log("evalEventReference: owningEvent: " + "owningEvent.name");
-        // }
-        // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
-        // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
-        // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
-        // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
-        let lastInstanceOfReferencedEvent = timeline.getLastScheduledEventInstanceForThisEventsName(referencedEvent);
-        if (lastInstanceOfReferencedEvent === null || lastInstanceOfReferencedEvent === undefined) {
-            // console.log(
-            //     "The event '" +
-            //         "owningEvent.name" +
-            //         "' reference to: '" +
-            //         "referencedEvent.name" +
-            //         "' cannot be evaluated because the referenced event is not on the timeline",
-            // );
-            return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
-        } else {
-            if (lastInstanceOfReferencedEvent.getScheduledEvent().isRepeatingEvent()) {
-                if (node.eventState.name === language.EventState.eachCompleted.name) {
-                    const numberOfReferencedEventCompleted = timeline.numberCompletedInstancesOf(lastInstanceOfReferencedEvent.getScheduledEvent());
-                    let owningScheduledEvent = (ctx.find("scheduledEvent") as RtObjectScheduledEventWrapper).getScheduledEvent();
-                    const numberOfThisEventCompleted = timeline.numberCompletedInstancesOf(owningScheduledEvent);
-                    if (numberOfReferencedEventCompleted <= numberOfThisEventCompleted) {
-                        if (numberOfReferencedEventCompleted >= owningScheduledEvent.numberOfRepeats(timeline) + 1) {
-                            console.log(
-                                "The event '" +
-                                    owningEvent.name +
-                                    "' has a each-completed reference to:'" +
-                                    referencedEvent.name +
-                                    "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated",
-                            );
-                        } else {
-                            console.log(
-                                "The event '" +
-                                    owningEvent.name +
-                                    "' has a each-completed reference to:'" +
-                                    referencedEvent.name +
-                                    "' and the parallel repeating event is completed",
-                            );
-                        }
-                        return undefined; // dependency on a repeating event that we run in parallel with and the parallel event hasn't completed yet
-                    }
-                } else {
-                    if (lastInstanceOfReferencedEvent.getScheduledEvent().anyRepeatsNotCompleted(timeline)) {
-                        console.log(
-                            "The event '" +
-                                owningEvent.name +
-                                "' has a reference to:'" +
-                                referencedEvent.name +
-                                "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated",
-                        );
-                        return undefined; // dependency on a repeating event that hasn't completed yet
-                    }
-                }
-            }
-            let result = lastInstanceOfReferencedEvent.startDay;
-            // if (eventState.name === language.EventState.completed.name || eventState.name === language.EventState.eachCompleted.name) {
-            //     result = result + 1;
-            // }
-            const when = node.freOwner() as language.When;
-            if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
-                const timeAmount = main.evaluate(when.timeAmountPart, ctx) as RtNumber;
-                return new RtNumber(result + timeAmount.value);
+    let owningEvent = ownerOfType(node, "Event") as language.Event;
+    // if (referencedEvent == undefined || referencedEvent == null) {
+    //     console.log("evalEventReference: owningEvent: " + "owningEvent.name");
+    // }
+    // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
+    // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
+    // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
+    // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
+    let lastInstanceOfReferencedEvent =
+      timeline.getLastScheduledEventInstanceForThisEventsName(referencedEvent);
+    if (
+      lastInstanceOfReferencedEvent === null ||
+      lastInstanceOfReferencedEvent === undefined
+    ) {
+      // console.log(
+      //     "The event '" +
+      //         "owningEvent.name" +
+      //         "' reference to: '" +
+      //         "referencedEvent.name" +
+      //         "' cannot be evaluated because the referenced event is not on the timeline",
+      // );
+      return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
+    } else {
+      if (
+        lastInstanceOfReferencedEvent.getScheduledEvent().isRepeatingEvent()
+      ) {
+        if (node.eventState.name === language.EventState.eachCompleted.name) {
+          const numberOfReferencedEventCompleted =
+            timeline.numberCompletedInstancesOf(
+              lastInstanceOfReferencedEvent.getScheduledEvent()
+            );
+          let owningScheduledEvent = (
+            ctx.find("scheduledEvent") as RtObjectScheduledEventWrapper
+          ).getScheduledEvent();
+          const numberOfThisEventCompleted =
+            timeline.numberCompletedInstancesOf(owningScheduledEvent);
+          if (numberOfReferencedEventCompleted <= numberOfThisEventCompleted) {
+            if (
+              numberOfReferencedEventCompleted >=
+              owningScheduledEvent.numberOfRepeats(timeline) + 1
+            ) {
+              console.log(
+                "The event '" +
+                  owningEvent.name +
+                  "' has a each-completed reference to:'" +
+                  referencedEvent.name +
+                  "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated"
+              );
             } else {
-                return new RtNumber(result);
+              console.log(
+                "The event '" +
+                  owningEvent.name +
+                  "' has a each-completed reference to:'" +
+                  referencedEvent.name +
+                  "' and the parallel repeating event is completed"
+              );
             }
-        }
-    }
-
-    evalEventStart(node: language.EventStart, ctx: InterpreterContext): RtObject {
-        throw new RtError("evalEventStart should not be called. It is an interface and should not be instantiated.");
-        // if (node instanceof language.Day) {
-        //     console.log("evalEventStart: node is a Day");
-        //     return main.evaluate(node, ctx);
-        // } else if (node instanceof language.When) {
-        //     console.log("evalEventStart: node is a When");
-        //     return main.evaluate(node, ctx);
-        // } else {
-        //     throw new RtError("evalEventSchedule: eventStart is not a Day or When");
-        // }
-    }
-
-    evalGreaterThenExpression(node: language.GreaterThenExpression, ctx: InterpreterContext): RtObject {
-        const left = main.evaluate(node.left, ctx) as RtNumber;
-        const right = main.evaluate(node.right, ctx) as RtNumber;
-        return RtBoolean.of(left.value > right.value);
-    }
-
-    evalMinusExpression(node: language.MinusExpression, ctx: InterpreterContext): RtObject {
-        const left = main.evaluate(node.left, ctx);
-        const right = main.evaluate(node.right, ctx);
-        return (left as RtNumber).minus(right as RtNumber);
-    }
-
-    evalMonthly(node: language.Monthly, ctx: InterpreterContext): RtObject {
-        return new RtNumber(30);
-    }
-
-    evalNumber(node: language.NumberLiteralExpression, ctx: InterpreterContext): RtObject {
-        return new RtNumber(node.value);
-    }
-
-    evalNumberLiteralExpression(node: language.NumberLiteralExpression, ctx: InterpreterContext): RtObject {
-        return new RtNumber(node.value);
-    }
-
-    evalOrExpression(node: language.OrExpression, ctx: InterpreterContext): RtObject {
-        const left = main.evaluate(node.left, ctx) as RtBoolean;
-        const right = main.evaluate(node.right, ctx) as RtBoolean;
-        return left.or(right);
-    }
-
-    evalPlusExpression(node: language.PlusExpression, ctx: InterpreterContext): RtObject {
-        const left = main.evaluate(node.left, ctx);
-        const right = main.evaluate(node.right, ctx);
-        return (left as RtNumber).plus(right as RtNumber);
-    }
-
-    evalRepeatCount(node: language.RepeatCount, ctx: InterpreterContext): RtObject {
-        return new RtNumber(node.repeatCount);
-    }
-
-    evalRepeatEvery(node: language.RepeatEvery, ctx: InterpreterContext): RtObject {
-        let timeInDays = main.evaluate(node.repeatEvery, ctx) as RtNumber;
-        return timeInDays;
-    }
-
-    // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
-    evalStartDay(node: language.StartDay, ctx: InterpreterContext): RtObject {
-        let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
-        return studyStartDayNumber;
-    }
-
-    // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
-    evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
-        let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
-        let startDay = studyStartDayNumber.value;
-        if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
-            const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
-            return new RtNumber(timeAmount.value + startDay);
+            return undefined; // dependency on a repeating event that we run in parallel with and the parallel event hasn't completed yet
+          }
         } else {
-            return studyStartDayNumber;
+          if (
+            lastInstanceOfReferencedEvent
+              .getScheduledEvent()
+              .anyRepeatsNotCompleted(timeline)
+          ) {
+            console.log(
+              "The event '" +
+                owningEvent.name +
+                "' has a reference to:'" +
+                referencedEvent.name +
+                "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated"
+            );
+            return undefined; // dependency on a repeating event that hasn't completed yet
+          }
         }
-    }
-
-    evalFirstDayOfStudy(node: language.FirstDayOfStudy, ctx: InterpreterContext): RtObject {
-        // TODO: Ask Jos if should create an expression for this rather than hardcoding the operator.
-        let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
-        let startDay = studyStartDayNumber.value;
-        if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
-            const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
-            return new RtNumber(timeAmount.value + startDay);
-        } else {
-            return studyStartDayNumber;
-        }
-    }
-
-    evalBaseline(node: language.Baseline, ctx: InterpreterContext): RtObject {
-        return this.evalFirstDayOfStudy(node, ctx);
-    }
-
-    evalTimeAmountPart(node: language.TimeAmountPart, ctx: InterpreterContext): RtObject {
-        let result = 0;
-        if (node !== undefined && node !== null) {
-            let displacementFromEvent = main.evaluate(node.timeAmount, ctx) as RtNumber;
-            if (node.operator == undefined || node.operator == null) {
-                throw new RtError("evalStudyStart: operator is undefined or null");
-            }
-            const operator = node.operator.name;
-            if (operator === language.SimpleOperators.plus.name) {
-                result = result + displacementFromEvent.value;
-            } else if (operator === language.SimpleOperators.minus.name) {
-                result = result - displacementFromEvent.value;
-            } else {
-                throw new RtError("evalTimeAmountPart: operator of: " + operator + " not implemented");
-            }
-        }
-
+      }
+      let result = lastInstanceOfReferencedEvent.startDay;
+      // if (eventState.name === language.EventState.completed.name || eventState.name === language.EventState.eachCompleted.name) {
+      //     result = result + 1;
+      // }
+      const when = node.freOwner() as language.When;
+      if (when.timeAmountPart !== undefined && when.timeAmountPart !== null) {
+        const timeAmount = main.evaluate(when.timeAmountPart, ctx) as RtNumber;
+        return new RtNumber(result + timeAmount.value);
+      } else {
         return new RtNumber(result);
+      }
+    }
+  }
+
+  evalPrevious(node: language.Previous, ctx: InterpreterContext): RtObject {
+    const timeline = ctx.find("timeline") as unknown as Timeline;
+    const lastCompletedEvent =
+      timeline.getLastCompletedScheduledEventInstance();
+    console.log("evalPrevious: lastCompletedEvent: " + lastCompletedEvent?.startDay);
+    if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
+      const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
+      console.log("evalPrevious: timeAmount: " + timeAmount.value);
+      return new RtNumber(lastCompletedEvent.startDay + timeAmount.value);
+    } else {
+      console.log("evalPrevious without time amount: lastCompletedEvent.startDay: " + lastCompletedEvent?.startDay);
+      return new RtNumber(lastCompletedEvent?.startDay);
+    }
+  }
+
+  evalGreaterThenExpression(
+    node: language.GreaterThenExpression,
+    ctx: InterpreterContext
+  ): RtObject {
+    const left = main.evaluate(node.left, ctx) as RtNumber;
+    const right = main.evaluate(node.right, ctx) as RtNumber;
+    return RtBoolean.of(left.value > right.value);
+  }
+
+  evalMinusExpression(
+    node: language.MinusExpression,
+    ctx: InterpreterContext
+  ): RtObject {
+    const left = main.evaluate(node.left, ctx);
+    const right = main.evaluate(node.right, ctx);
+    return (left as RtNumber).minus(right as RtNumber);
+  }
+
+  evalMonthly(node: language.Monthly, ctx: InterpreterContext): RtObject {
+    return new RtNumber(30);
+  }
+
+  evalNumber(
+    node: language.NumberLiteralExpression,
+    ctx: InterpreterContext
+  ): RtObject {
+    return new RtNumber(node.value);
+  }
+
+  evalNumberLiteralExpression(
+    node: language.NumberLiteralExpression,
+    ctx: InterpreterContext
+  ): RtObject {
+    return new RtNumber(node.value);
+  }
+
+  evalOrExpression(
+    node: language.OrExpression,
+    ctx: InterpreterContext
+  ): RtObject {
+    const left = main.evaluate(node.left, ctx) as RtBoolean;
+    const right = main.evaluate(node.right, ctx) as RtBoolean;
+    return left.or(right);
+  }
+
+  evalPlusExpression(
+    node: language.PlusExpression,
+    ctx: InterpreterContext
+  ): RtObject {
+    const left = main.evaluate(node.left, ctx);
+    const right = main.evaluate(node.right, ctx);
+    return (left as RtNumber).plus(right as RtNumber);
+  }
+
+  evalRepeatCount(
+    node: language.RepeatCount,
+    ctx: InterpreterContext
+  ): RtObject {
+    return new RtNumber(node.repeatCount);
+  }
+
+  evalRepeatEvery(
+    node: language.RepeatEvery,
+    ctx: InterpreterContext
+  ): RtObject {
+    let timeInDays = main.evaluate(node.repeatEvery, ctx) as RtNumber;
+    return timeInDays;
+  }
+
+  // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
+  evalStartDay(node: language.StartDay, ctx: InterpreterContext): RtObject {
+    let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
+    return studyStartDayNumber;
+  }
+
+  // StartDay is used in expressions vs. StudyStart is used in Scheduling. Will this be confusing to users?
+  evalStudyStart(node: language.StudyStart, ctx: InterpreterContext): RtObject {
+    let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
+    let startDay = studyStartDayNumber.value;
+    if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
+      const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
+      return new RtNumber(timeAmount.value + startDay);
+    } else {
+      return studyStartDayNumber;
+    }
+  }
+
+  evalFirstDayOfStudy(
+    node: language.FirstDayOfStudy,
+    ctx: InterpreterContext
+  ): RtObject {
+    // TODO: Ask Jos if should create an expression for this rather than hardcoding the operator.
+    let studyStartDayNumber = ctx.find("studyStartDayNumber") as RtNumber;
+    let startDay = studyStartDayNumber.value;
+    if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
+      const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
+      return new RtNumber(timeAmount.value + startDay);
+    } else {
+      return studyStartDayNumber;
+    }
+  }
+
+  evalBaseline(node: language.Baseline, ctx: InterpreterContext): RtObject {
+    return this.evalFirstDayOfStudy(node, ctx);
+  }
+
+  evalTimeAmountPart(
+    node: language.TimeAmountPart,
+    ctx: InterpreterContext
+  ): RtObject {
+    let result = 0;
+    if (node !== undefined && node !== null) {
+      let displacementFromEvent = main.evaluate(
+        node.timeAmount,
+        ctx
+      ) as RtNumber;
+      if (node.operator == undefined || node.operator == null) {
+        throw new RtError("evalStudyStart: operator is undefined or null");
+      }
+      const operator = node.operator.name;
+      if (operator === language.SimpleOperators.plus.name) {
+        result = result + displacementFromEvent.value;
+      } else if (operator === language.SimpleOperators.minus.name) {
+        result = result - displacementFromEvent.value;
+      } else {
+        throw new RtError(
+          "evalTimeAmountPart: operator of: " + operator + " not implemented"
+        );
+      }
     }
 
-    evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {
-        return calcTimeAmount(node.value, node.unit.name);
-    }
+    return new RtNumber(result);
+  }
 
-    evalTime(node: language.Time, ctx: InterpreterContext): RtObject {
-        //TODO: Unify TimeAmount and Time?
-        const value = Number(node.value);
-        return calcTimeAmount(value, node.unit.name);
-    }
+  evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {
+    return calcTimeAmount(node.value, node.unit.name);
+  }
 
-    evalWeekly(node: language.Weekly, ctx: InterpreterContext): RtObject {
-        return new RtNumber(7);
-    }
+  evalTime(node: language.Time, ctx: InterpreterContext): RtObject {
+    //TODO: Unify TimeAmount and Time?
+    const value = Number(node.value);
+    return calcTimeAmount(value, node.unit.name);
+  }
 
-    evalWhen(node: language.When, ctx: InterpreterContext): RtObject {
-        // console.log("entered evalWhen: " + node.startWhen.freLanguageConcept);
-        return main.evaluate(node.startWhen, ctx);
-    }
+  evalWeekly(node: language.Weekly, ctx: InterpreterContext): RtObject {
+    return new RtNumber(7);
+  }
+
+  evalWhen(node: language.When, ctx: InterpreterContext): RtObject {
+    // console.log("entered evalWhen: " + node.startWhen.freLanguageConcept);
+    return main.evaluate(node.startWhen, ctx);
+  }
 }

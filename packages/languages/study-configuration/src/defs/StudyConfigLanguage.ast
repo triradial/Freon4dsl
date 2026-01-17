@@ -109,7 +109,7 @@ abstract concept AbstractSystemAccess {
 
 concept SystemAccess base AbstractSystemAccess {
     name: identifier;
-    description: Description;
+    description: Notes;
     isShared: boolean;
     functionName: string;
     accessedAt: AccessedAt;

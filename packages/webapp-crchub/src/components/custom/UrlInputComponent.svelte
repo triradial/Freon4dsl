@@ -1,6 +1,9 @@
 <script lang="ts">
-    import { StringReplacerBox, AST } from "@freon4dsl/core";
+    import { AST, StringReplacerBox } from "@freon4dsl/core";
     import LinkSimple from "phosphor-svelte/lib/LinkSimple";
+    import PencilSimple from "phosphor-svelte/lib/PencilSimple";
+// @ts-ignore
+    import { ExternalLink } from "@lucide/svelte";
     import { onMount, tick } from "svelte";
 
     const { box } = $props<{ box: StringReplacerBox }>();
@@ -14,6 +17,7 @@
     // svelte-ignore non_reactive_update
     let componentWrapper: HTMLDivElement | null = null;
     let isTouched = $state(false);
+    let pendingNavigation: ReturnType<typeof setTimeout> | null = null;
 
     function isValidUrl(str: string): boolean {
         try {
@@ -145,12 +149,104 @@
         }
     }
 
+    function openUrl() {
+        const trimmed = displayValue.trim();
+        if (trimmed && isValidUrl(trimmed)) {
+            window.open(trimmed, '_blank', 'noopener,noreferrer');
+        }
+    }
+
+    function openUrlFromValue() {
+        // Open URL from the current value (used in edit mode)
+        const trimmed = value.trim();
+        if (trimmed && isValidUrl(trimmed)) {
+            window.open(trimmed, '_blank', 'noopener,noreferrer');
+        }
+    }
+
     function onMouseDown(event: MouseEvent) {
         if (event.button === 0) { // left click
-            event.preventDefault();
-            event.stopPropagation();
-            startEditing();
+            // Check if the click is on the link, button, or icon - if so, don't interfere at all
+            const target = event.target as HTMLElement;
+            const isOnLink = target.tagName === 'A' || target.closest('a');
+            const isOnButton = target.tagName === 'BUTTON' || target.closest('button');
+            const isOnLinkIcon = target.closest('[data-link-icon]') || (target.closest('svg') && target.closest('a'));
+            
+            if (isOnLink || isOnButton || isOnLinkIcon) {
+                // Click is on interactive elements, completely ignore it
+                return;
+            }
+            
+            // For double clicks, always start editing
+            if (event.detail === 2) {
+                event.preventDefault();
+                event.stopPropagation();
+                startEditing();
+            }
+            // For single clicks on invalid/empty URLs, start editing
+            else if (event.detail === 1 && !isValidUrlValue) {
+                event.preventDefault();
+                event.stopPropagation();
+                startEditing();
+            }
+            // For single clicks on valid URLs (but not on interactive elements), open the URL
+            else if (event.detail === 1 && isValidUrlValue) {
+                event.preventDefault();
+                event.stopPropagation();
+                openUrl();
+            }
         }
+    }
+
+    function onLinkMouseDown(event: MouseEvent) {
+        // Always stop propagation to prevent parent handlers from interfering
+        event.stopPropagation();
+        
+        // For double clicks, prevent navigation and start editing
+        if (event.detail === 2) {
+            event.preventDefault();
+            // Clear any pending navigation
+            if (pendingNavigation) {
+                clearTimeout(pendingNavigation);
+                pendingNavigation = null;
+            }
+            // Start editing immediately
+            startEditing();
+            return;
+        }
+        // For single clicks, don't prevent default - let the click handler manage it
+    }
+
+    function onLinkClick(event: MouseEvent) {
+        // Always prevent default since we're handling navigation manually
+        event.preventDefault();
+        // Stop propagation to prevent any parent handlers
+        event.stopPropagation();
+        
+        // For double clicks, start editing instead of navigating
+        if (event.detail === 2) {
+            // Clear any pending navigation
+            if (pendingNavigation) {
+                clearTimeout(pendingNavigation);
+                pendingNavigation = null;
+            }
+            // Start editing
+            startEditing();
+            return;
+        }
+        
+        // For single clicks, open the URL in a new tab
+        // Use a small delay to allow double-click detection
+        if (pendingNavigation) {
+            clearTimeout(pendingNavigation);
+        }
+        pendingNavigation = setTimeout(() => {
+            const trimmed = displayValue.trim();
+            if (trimmed && isValidUrl(trimmed)) {
+                window.open(trimmed, '_blank', 'noopener,noreferrer');
+            }
+            pendingNavigation = null;
+        }, 200); // Small delay to detect double-clicks
     }
 
     function onSpanKeyDown(event: KeyboardEvent) {
@@ -161,7 +257,19 @@
         }
     }
 
-    function onSpanFocusIn() {
+    function onSpanFocusIn(event: FocusEvent) {
+        // Never start editing if there's a valid URL - it should be clickable, not editable
+        if (isValidUrlValue) {
+            return;
+        }
+        
+        // Don't start editing if focus is on the link itself or a button
+        const target = event.target as HTMLElement;
+        if (target.tagName === 'A' || target.closest('a') || target.tagName === 'BUTTON' || target.closest('button')) {
+            return;
+        }
+        
+        // Only start editing for invalid/empty URLs
         startEditing();
     }
 
@@ -202,15 +310,17 @@
 
     const displayValue = $derived(value || "");
     const hasValue = $derived(displayValue.trim().length > 0);
+    const isValidUrlValue = $derived(hasValue && isValidUrl(displayValue.trim()));
+    let isHovering = $state(false);
 </script>
 
 <div bind:this={componentWrapper} class="inline-flex flex-col align-middle w-full">
     {#if isEditing}
-        <!-- Edit mode: Show input with icon -->
+        <!-- Edit mode: Show input with clickable icon -->
         <span class="relative inline-block w-full">
             <input
                 bind:this={inputElement}
-                class="text-component-input pr-8 w-full"
+                class="text-component-input pr-10 w-full"
                 type="url"
                 placeholder="https://example.com"
                 bind:value={value}
@@ -233,27 +343,84 @@
                     }, 0);
                 }}
             />
-            <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 z-10" style="color: var(--green-90t);">
-                <LinkSimple class="w-4 h-4" />
-            </span>
+            <!-- Icon always visible in edit mode, clickable when URL is valid -->
+            {#if isValidUrl(value.trim())}
+                <!-- Clickable icon to open URL when valid -->
+                <button
+                    type="button"
+                    class="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-1 hover:opacity-80 cursor-pointer flex items-center justify-center"
+                    onclick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openUrlFromValue();
+                    }}
+                    onmousedown={(e) => e.stopPropagation()}
+                    title="Open URL in new tab"
+                    aria-label="Open URL in new tab"
+                    style="color: var(--green-90t);"
+                >
+                    <ExternalLink class="w-4 h-4" />
+                </button>
+            {:else}
+                <!-- Non-clickable icon when URL is invalid or empty - always visible -->
+                <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center" style="color: var(--green-90t);">
+                    <LinkSimple class="w-4 h-4" weight="regular" />
+                </span>
+            {/if}
         </span>
     {:else}
-        <!-- View mode: Show span that looks like text -->
+        <!-- View mode: Show clickable link or editable text -->
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
         <span
             bind:this={spanElement}
-            class="text-component-text cursor-pointer inline-flex items-center gap-1"
-            tabindex="0"
-            role="textbox"
+            class="text-component-text inline-flex items-center gap-1 relative group"
+            tabindex={isValidUrlValue ? -1 : 0}
+            role={isValidUrlValue ? undefined : "textbox"}
             onmousedown={onMouseDown}
             onkeydown={onSpanKeyDown}
             onfocusin={onSpanFocusIn}
+            onmouseenter={() => isHovering = true}
+            onmouseleave={() => isHovering = false}
         >
             {#if hasValue}
-                <LinkSimple class="w-4 h-4 inline-block" style="color: var(--green-90t);" />
-                {displayValue}
+                {#if isValidUrlValue}
+                    <!-- Valid URL: Show as clickable link with icon -->
+                    <!-- svelte-ignore a11y_invalid_attribute -->
+                    <a
+                        href="#"
+                        class="inline-flex items-center gap-1 text-component-text underline hover:opacity-80 cursor-pointer"
+                        onmousedown={onLinkMouseDown}
+                        onclick={onLinkClick}
+                        data-link-icon
+                    >
+                        <LinkSimple class="w-4 h-4 inline-block flex-shrink-0" weight="regular" style="color: var(--green-90t);" />
+                        {displayValue}
+                    </a>
+                    <!-- Edit icon on hover -->
+                    {#if isHovering}
+                        <button
+                            class="ml-1 opacity-70 hover:opacity-100 flex-shrink-0"
+                            onclick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                startEditing();
+                            }}
+                            onmousedown={(e) => e.stopPropagation()}
+                            title="Edit URL"
+                            aria-label="Edit URL"
+                        >
+                            <PencilSimple class="w-3.5 h-3.5" style="color: var(--green-90t);" />
+                        </button>
+                    {/if}
+                {:else}
+                    <!-- Invalid URL: Show as editable text with icon -->
+                    <LinkSimple class="w-4 h-4 inline-block flex-shrink-0" weight="regular" style="color: var(--green-90t);" />
+                    <span class="cursor-pointer">{displayValue}</span>
+                {/if}
             {:else}
-                <LinkSimple class="w-4 h-4 inline-block opacity-50" style="color: var(--green-90t);" />
-                <span class="text-component-text opacity-50">https://example.com</span>
+                <!-- Empty state: Show placeholder with icon -->
+                <LinkSimple class="w-4 h-4 inline-block flex-shrink-0 opacity-50" weight="regular" style="color: var(--green-90t);" />
+                <span class="text-component-text opacity-50 cursor-pointer">https://example.com</span>
             {/if}
         </span>
     {/if}

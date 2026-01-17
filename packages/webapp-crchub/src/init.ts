@@ -24,6 +24,7 @@ import CustomNumericComponent from "./components/custom/freon/CustomNumericCompo
 import CustomSelectComponent from "./components/custom/freon/CustomSelectComponent.svelte";
 import { default as CustomTimePickerComponent, default as ItemGroupComponent2 } from "./components/custom/freon/CustomTimePickerComponent.svelte";
 import ItemGroupComponent from "./components/custom/freon/ItemGroupComponent.svelte";
+import SelectableListItemComponent from "./components/custom/freon/SelectableListItemComponent.svelte";
 import SelectableWrapperComponent from "./components/custom/freon/SelectableWrapperComponent.svelte";
 
 const LOGGER = new FreLogger("init");
@@ -96,6 +97,7 @@ setCustomComponents([
     { component: CustomNumericComponent, knownAs: "CustomNumericComponent" },
     { component: CustomSelectComponent, knownAs: "CustomSelectComponent" },
     { component: CustomActionsComponent, knownAs: "CustomActionsComponent" },
+    { component: SelectableListItemComponent, knownAs: "SelectableListItemComponent" },
     { component: SelectableWrapperComponent, knownAs: "SelectableWrapperComponent" },
 ])
 

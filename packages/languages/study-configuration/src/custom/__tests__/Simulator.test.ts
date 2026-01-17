@@ -209,7 +209,7 @@ describe("Study Simulation", () => {
             expect(timeline).toEqual(expectedTimeline);
         });
 
-        it("generates a three visit timeline for visits 7 days after the end of the previous visit", () => {
+        it("generates a three visit timeline for visits 7 days after the end of the second visit", () => {
             const expectedTimelineDataAsScript = loadExpectedTimelineData("ThreeVisitTimeline");
             testStudyInFile("TwoP3V", studyConfigurationModel, expectedTimelineDataAsScript);
         });
