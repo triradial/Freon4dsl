@@ -1,11 +1,11 @@
 import { defineWorkspace } from 'vitest/config'
 
 export default defineWorkspace([
-  // Reference individual package configs
+  // Priority: Language packages first (most important for development)
   './packages/languages/study-configuration/vitest.config.ts',
   './packages/languages/project-configuration/vitest.config.ts',
+  // Other packages
   './packages/webapp-crchub/vitest.config.ts',
-  './packages/meta/src/vitest.config.ts',
   // Inline configs for packages without explicit config files
   {
     test: {

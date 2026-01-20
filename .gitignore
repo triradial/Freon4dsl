@@ -107,3 +107,6 @@ packages/server/modelstore/x/StudyConfigurationPublic.json
 /packages/webapp-crchub/.svelte-kit/
 packages/webapp-crchub/static/styles/bundle-dark.css
 packages/webapp-crchub/static/styles/bundle-light.css
+
+# Generated timeline files
+tmp/timeline.html
