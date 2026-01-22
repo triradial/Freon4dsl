@@ -4,7 +4,7 @@
     import { get } from "svelte/store";
     import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { setDrawerTitle } from "../../services/stores/side-drawer-store.js";
+    import { setDrawerTitle, setDrawerProps } from "../../services/stores/side-drawer-store.js";
 
     let { id, studyId, showAllPatients = false } = $props<{ id?: string; studyId: string; showAllPatients?: boolean }>();
 
@@ -45,10 +45,10 @@
     }
 
     async function loadChartForAllPatients() {
-        // await loadChartWithTiming(
-        //     () => getChartForAllPatients(undefined),
-        //     `Error fetching chart data for all patients in study: ${studyId}`
-        // );
+        await loadChartWithTiming(
+            () => getChartForAllPatients(undefined),
+            `Error fetching chart data for all patients in study: ${studyId}`
+        );
     }
 
     function getTimelineChartError() {
@@ -221,8 +221,8 @@
             const originalHistory = findPatientHistoryByPatientNumber(patientInfo.patientHistories, patient.patientNumber);
             if (originalHistory) {
                 const copiedHistory = copyPatientHistoryWithFilledDates(originalHistory);
-                // Add patient events to timeline with patient identifier (use display name or patient number)
-                const patientIdentifier = patient.displayName || patient.name || patient.patientNumber;
+                // Add patient events to timeline with patient identifier (use initials or patient number)
+                const patientIdentifier = patient.initials || patient.patientNumber;
                 timeline.addPatientEvents(copiedHistory, patientIdentifier);
             }
         }
@@ -423,6 +423,37 @@
         if (container) {
             container.innerHTML = chartHtml;
             await executeEmbeddedChartScripts(); // Wait for scripts to actually execute
+            
+            // Add event listener for patient timeline clicks (only for multi-patient view)
+            if (showAllPatients || !id) {
+                const visualizationDiv = container.querySelector('#visualization');
+                if (visualizationDiv) {
+                    visualizationDiv.addEventListener('openPatientTimeline', async (event: any) => {
+                        const patientIdentifier = event.detail?.patientId;
+                        if (patientIdentifier) {
+                            // Find the patient by identifier (could be patient number, display name, etc.)
+                            await dataStore.getStudyPatients(studyId);
+                            const storeState = get(dataStore);
+                            const allPatients = storeState.studyPatients.filter(p => p.studyId === studyId);
+                            
+                            // Try to find patient by patient number or initials
+                            const patient = allPatients.find(p => 
+                                p.patientNumber === patientIdentifier || 
+                                p.initials === patientIdentifier
+                            );
+                            
+                            if (patient) {
+                                // Update drawer props to show this specific patient
+                                setDrawerProps("patientTimelineChart", { 
+                                    id: patient.id, 
+                                    studyId: studyId, 
+                                    showAllPatients: false 
+                                });
+                            }
+                        }
+                    });
+                }
+            }
         }
     }
 

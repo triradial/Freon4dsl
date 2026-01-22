@@ -487,11 +487,17 @@ export class Timeline extends RtObject {
         return this.days.some((day) => day.events.some((event) => event instanceof StaffAvailabilityEventInstance));
     }
 
-    getOptions(timeline: Timeline): string {
+    getOptions(timeline: Timeline, isMultiPatient: boolean = false): string {
         // result differs by whether to show actual dates or week numbers for the major and minor labels.
         // If showing a study level chart then OrganizeByStudyDay should be true and major and minor are not actual dates
         // If showing for a specific patient or a specific start day then major and minor are actual dates
         let result = undefined;
+        
+        // Common options for multi-patient compact view - enable stacking for better visualization
+        const multiPatientOptions = isMultiPatient ? `
+                stack: true,
+                stackSubgroups: true,` : '';
+        
         if (this.organizeByStudyDay) {
             result = `  var options = {
                 showCurrentTime: false,
@@ -532,7 +538,7 @@ export class Timeline extends RtObject {
                     item: {
                         horizontal: 0,
                     },
-                },
+                },${multiPatientOptions}
             };`;
         } else {
             result = `          var options = {
@@ -572,7 +578,7 @@ export class Timeline extends RtObject {
                     item: {
                         horizontal: 0,
                     },
-                },
+                },${multiPatientOptions}
             };
             `;
         }
@@ -594,11 +600,12 @@ export class Timeline extends RtObject {
     // }
 
     public getTimelineChartHtml(): RtString {
+        const isMultiPatient = this.getUniquePatientIdentifiers().length > 1;
         const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
-        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
+        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this, isMultiPatient);
         console.log("anyPatientEventInstances: " + this.anyPatientEventInstances());
         console.log("anyStaffAvailabilityEventInstances: " + this.anyStaffAvailabilityEventInstances());
-        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, this.anyPatientEventInstances(), this.anyStaffAvailabilityEventInstances() );
+        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, this.anyPatientEventInstances(), this.anyStaffAvailabilityEventInstances(), isMultiPatient );
         const html = `<div class="limited-width-container">${chartHTML}</div>`;
         return new RtString(html);
     }
