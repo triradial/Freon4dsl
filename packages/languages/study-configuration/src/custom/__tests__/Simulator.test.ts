@@ -695,10 +695,9 @@ describe("Study Simulation", () => {
             // Original visit-based grouping (for comparison)
             const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
             // New patient-based grouping (Phase 3 - grouped by patient, not visit)
-            const timelineDataAsScriptPatients = TimelineChartTemplate.getPatientsTimelineHTML(timeline);
             const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
             // Save full HTML of chart for viewing / debugging (using patient-based grouping)
-            utils.saveTimeline(timelineDataAsScriptPatients + timelineVisualizationHTML);
+            utils.saveTimeline(timelineDataAsScript + timelineVisualizationHTML);
 
             const normalizedTimelineDataAsScript = timelineDataAsScript.replace(/\s+/g, "");
             const normalizedExpectedTimelineDataAsScript = expectedTimelineDataAsScript.replace(/\s+/g, "");

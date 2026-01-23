@@ -179,6 +179,41 @@ export class TimelineChartTemplate {
                 .getDays()
                 .map((timelineDay, counter) =>
                     timelineDay
+                        .getEventInstances()
+                        .map(
+                            (
+                                eventInstance,
+                                index,
+                            ) => {
+                                // For patient-based grouping, assign scheduled events to patient groups
+                                // When there are patient identifiers, show scheduled events in each patient's row
+                                const groups: string[] = patientIds.length > 0
+                                    ? patientIds.map(pid => `Patient-${pid}`)
+                                    : ["Patient"]; // Fallback if no patient IDs
+                                
+                                // Generate items for each patient group
+                                return groups.map(groupId => {
+                                    const beforeWindow = eventInstance.anyDaysBefore() 
+                                        ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${groupId}", className: "window", title: "Window before Event", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },`
+                                        : "";
+                                    const mainEvent = `{ start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${groupId}", className: "scheduled-event", title: "${eventInstance.getName() + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/["`]/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },`;
+                                    const afterWindow = eventInstance.anyDaysAfter() 
+                                        ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(timeline)}), group: "${groupId}", className: "window", title: "Window after Event", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },`
+                                        : "";
+                                    return beforeWindow + mainEvent + afterWindow;
+                                }).join("");
+                            }
+                        )
+                        .filter((item) => item !== "")
+                        .join("\n    "),
+                )
+                .filter((item) => item !== "")
+                .join("\n")}
+                
+            ${timeline
+                .getDays()
+                .map((timelineDay, counter) =>
+                    timelineDay
                         .getPatientEventInstances()
                         .map(
                             (patientEventInstance, index) => {

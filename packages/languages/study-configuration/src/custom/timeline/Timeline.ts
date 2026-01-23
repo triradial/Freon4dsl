@@ -1,6 +1,5 @@
 import { FreNodeReference, RtBoolean, RtObject, RtString } from "@freon4dsl/core";
 import { Availability, DateConcept, Event, Month, PatientHistory } from "../../language/gen/index.js";
-import { TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
 import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance.js";
 import { PeriodEventInstance } from "./PeriodEventInstance.js";
@@ -599,16 +598,6 @@ export class Timeline extends RtObject {
     //     return new RtString(html);
     // }
 
-    public getTimelineChartHtml(): RtString {
-        const isMultiPatient = this.getUniquePatientIdentifiers().length > 1;
-        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
-        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this, isMultiPatient);
-        console.log("anyPatientEventInstances: " + this.anyPatientEventInstances());
-        console.log("anyStaffAvailabilityEventInstances: " + this.anyStaffAvailabilityEventInstances());
-        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, this.anyPatientEventInstances(), this.anyStaffAvailabilityEventInstances(), isMultiPatient );
-        const html = `<div class="limited-width-container">${chartHTML}</div>`;
-        return new RtString(html);
-    }
     
     // The DateConcept is updated inline hence no return value.
     public static fillDateConceptFromAsString(dateConcept: DateConcept) {
