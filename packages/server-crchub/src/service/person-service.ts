@@ -517,6 +517,7 @@ export async function removePersonFromOrganization(
 
 /**
  * Get unavailable dates for a person in an organization
+ * Now reads from org_persons.availability column
  */
 export async function getPersonUnavailableDates(
     oid: string,
@@ -532,7 +533,7 @@ export async function getPersonUnavailableDates(
     
     try {
         const result = await pool.query(
-            `SELECT org_person_attributes->>'unavailable' as unavailable
+            `SELECT availability
              FROM org_persons
              WHERE person_id = $1 AND org_id = $2`,
             [personId, orgId]
@@ -542,8 +543,8 @@ export async function getPersonUnavailableDates(
             return [];
         }
         
-        const unavailable = result.rows[0].unavailable;
-        return unavailable ? JSON.parse(unavailable) : [];
+        const availability = result.rows[0].availability || {};
+        return availability.unavailable || [];
     } catch (error) {
         console.error('Error fetching person unavailable dates:', error);
         throw error;
@@ -552,6 +553,7 @@ export async function getPersonUnavailableDates(
 
 /**
  * Set unavailable dates for a person in an organization
+ * Now writes to org_persons.availability column
  */
 export async function setPersonUnavailableDates(
     oid: string,
@@ -567,16 +569,18 @@ export async function setPersonUnavailableDates(
     }
     
     try {
-        // Update the org_person_attributes JSONB column
+        // Sort dates
+        const sortedDates = [...unavailableDates].sort();
+        const availability = {
+            unavailable: sortedDates
+        };
+        
+        // Update the availability JSONB column
         await pool.query(
             `UPDATE org_persons
-             SET org_person_attributes = jsonb_set(
-                 COALESCE(org_person_attributes, '{}'::jsonb),
-                 '{unavailable}',
-                 $1::jsonb
-             )
+             SET availability = $1
              WHERE person_id = $2 AND org_id = $3`,
-            [JSON.stringify(unavailableDates), personId, orgId]
+            [JSON.stringify(availability), personId, orgId]
         );
         
         console.log(`[person-service] Set unavailable dates for person ${personId} in org ${orgId}:`, unavailableDates);

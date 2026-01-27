@@ -216,6 +216,83 @@ export class DataHandler {
         }
     }
 
+    public static async getPatientUnavailableDates(patientId: string, ctx: IRouterContext) {
+        try {
+            ctx.response.type = 'application/json';
+            const dates = await patientService.getPatientUnavailableDates(patientId);
+            ctx.status = 200;
+            ctx.response.body = dates;
+        } catch (e) {
+            consoleLogError(moduleName, `Error retrieving patient unavailable dates: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error retrieving patient unavailable dates", details: String(e) };
+        }
+    }
+
+    public static async setPatientUnavailableDates(patientId: string, ctx: IRouterContext) {
+        try {
+            ctx.response.type = 'application/json';
+            const { dates } = ctx.request.body as { dates: string[] };
+            const success = await patientService.setPatientUnavailableDates(patientId, dates || []);
+            if (success) {
+                ctx.status = 200;
+                ctx.response.body = { message: "Patient unavailable dates updated successfully" };
+            } else {
+                ctx.status = 404;
+                ctx.response.body = { error: "Patient not found", patientId };
+            }
+        } catch (e) {
+            consoleLogError(moduleName, `Error setting patient unavailable dates: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error setting patient unavailable dates", details: String(e) };
+        }
+    }
+
+    public static async getPatientSchedule(patientId: string, ctx: IRouterContext) {
+        try {
+            ctx.response.type = 'application/json';
+            const schedule = await patientService.getPatientSchedule(patientId);
+            ctx.status = 200;
+            ctx.response.body = schedule;
+        } catch (e) {
+            consoleLogError(moduleName, `Error retrieving patient schedule: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error retrieving patient schedule", details: String(e) };
+        }
+    }
+
+    public static async setPatientSchedule(patientId: string, ctx: IRouterContext) {
+        try {
+            ctx.response.type = 'application/json';
+            const schedule = ctx.request.body as patientService.PatientSchedule;
+            const success = await patientService.setPatientSchedule(patientId, schedule);
+            if (success) {
+                ctx.status = 200;
+                ctx.response.body = { message: "Patient schedule updated successfully" };
+            } else {
+                ctx.status = 404;
+                ctx.response.body = { error: "Patient not found", patientId };
+            }
+        } catch (e) {
+            consoleLogError(moduleName, `Error setting patient schedule: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error setting patient schedule", details: String(e) };
+        }
+    }
+
+    public static async getStudyPatientsWithSchedules(studyId: string, ctx: IRouterContext) {
+        try {
+            ctx.response.type = 'application/json';
+            const patients = await patientService.getStudyPatientsWithSchedules(studyId);
+            ctx.status = 200;
+            ctx.response.body = patients;
+        } catch (e) {
+            consoleLogError(moduleName, `Error retrieving study patients with schedules: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error retrieving study patients with schedules", details: String(e) };
+        }
+    }
+
     // Users  
     public static async getUsers(ctx: IRouterContext) {
         try {

@@ -28,4 +28,4 @@
   });
 </script>
 
-<StudyContent {id} /> 
+<StudyContent {id} />

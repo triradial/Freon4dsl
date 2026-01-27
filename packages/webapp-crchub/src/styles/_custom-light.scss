@@ -75,6 +75,7 @@
 
   /* #region Name Link */
   --name-link-text: #4C5C96;
+  --name-link-text-hover: #3A4A7A;
   --grid-button-color: #4C5C96;
   /* #endregion */
 
@@ -87,7 +88,7 @@
   /* #endregion */
   
   // #region Controls
-  --checkbox-bg: #3b82f6;
+  --checkbox-bg: #4C5C96;
   --badge-bg: #c3939d;
   --badge-text: #000;
   // #endregion
@@ -161,6 +162,9 @@
   --calendar-weekends-checkbox-text: #000000;
   --calendar-legend-text: #000000;
   --calendar-person-name-text: #000000;
+  --calendar-weekend-bg: #f3f4f6;
+  --calendar-available-bg: #86c78e; // Lighter green for available (light theme)
+  --calendar-unavailable-bg: #e8a1a8; // Lighter maroon/red for unavailable (light theme)
 
   --availability-model-panel-text: #000000;
 
@@ -211,6 +215,60 @@
   --checklist-error-indicator: #c75047;
 /* #endregion */
 
+/* #region Timeline Chart */
+  --timeline-section-title: var(--primary-600);
+  --timeline-control-label: #525252;
+  --timeline-range-label: #525252;
+  --timeline-day-header: #525252;
+  --timeline-row-label: #525252;
+  --timeline-day-number-weekend: #646464;
+
+  --timeline-month-01: #b1bbca;
+  --timeline-month-02: #b0c2c5;
+  --timeline-month-03: #e8eaf0;
+  --timeline-month-04: #c7b8c7;
+  --timeline-month-05: #afb8a6;
+  --timeline-month-06: #b9b0a6;
+  --timeline-month-07: #c7b8b8;
+  --timeline-month-08: #b1bbbe;
+  --timeline-month-09: #c4b7c4;
+  --timeline-month-10: #c4c4ba;
+  --timeline-month-11: #ccb9c7;
+  --timeline-month-12: #c0c0c0;
+
+  --timeline-unscheduled-bg: #ffb8ec61;
+  --timeline-unscheduled-icon: #e9e9e9;
+  --timeline-on-scheduled-date-bg: #14b8a580;
+  --timeline-on-scheduled-date-icon: #1a1a1a;
+  --timeline-out-of-window-bg: #d4900080;
+  --timeline-out-of-window-icon: #1a1a1a;
+  --timeline-in-window-bg: #3b83f680;
+  --timeline-in-window-icon: #1a1a1a;
+  --timeline-canceled-visit-bg: #ef4444;
+  --timeline-canceled-visit-icon: #1a1a1a;
+  --timeline-missed-visit-bg: #ec4899;
+  --timeline-missed-visit-icon: #1a1a1a;
+
+  --timeline-window-bg: #9292928c;
+  
+  --timeline-mode-scheduling-bg: #4C5C96;
+  --timeline-mode-scheduling-border: #4C5C96;
+  --timeline-mode-scheduling-text: #ffffff;
+  --timeline-mode-scheduling-hover-bg: #4C5C96;
+  --timeline-mode-unavailable-bg: #6031317a;
+  --timeline-mode-unavailable-border: #6b2a2a;
+  --timeline-mode-unavailable-text: #F8A8A8;
+  --timeline-mode-unavailable-hover-bg: #7d2a2a;
+
+  --timeline-mode-toggle-text: #000000;
+  --timeline-mode-toggle-bg: #ffffff;
+  --timeline-mode-toggle-border: #000000;
+  --timeline-mode-toggle-hover-bg: #00000011;
+
+  --tooltip-text: #000000;
+  --tooltip-date: var(--primary-500);
+
+/* #endregion */
   --content-background: #cfd6e0;
 
   --card-background: #ffffff;
@@ -821,5 +879,12 @@ select.input-field.error option {
 /* #region Placeholders */  
 .placeholder, .placeholder-circle {
   background-color: var(--black-20t);
+}
+/* #endregion */
+
+/* #region Timeline Chart */
+// Light mode hover overlay (black 20% instead of white 20%)
+.timeline-chart-wrapper .timeline-cell.clickable::after {
+  background-color: rgba(0, 0, 0, 0.2);
 }
 /* #endregion */

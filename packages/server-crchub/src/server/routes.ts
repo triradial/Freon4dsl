@@ -387,6 +387,66 @@ router.delete("/deletePatient", async (ctx: Router.IRouterContext) => {
     }
 });
 
+router.get("/getPatientUnavailableDates", async (ctx: Router.IRouterContext) => {
+    const id = ctx.query["id"];
+    consoleLogInfo(moduleName, `getPatientUnavailableDates: id=${id}`);
+    if (!!id && typeof id === "string") {
+        await DataHandler.getPatientUnavailableDates(id, ctx);
+    } else {
+        ctx.status = 412;
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'id'" };
+    }
+});
+
+router.put("/setPatientUnavailableDates", async (ctx: Router.IRouterContext) => {
+    const id = ctx.query["id"];
+    consoleLogInfo(moduleName, `setPatientUnavailableDates: id=${id}`);
+    if (!!id && typeof id === "string") {
+        await DataHandler.setPatientUnavailableDates(id, ctx);
+    } else {
+        ctx.status = 412;
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'id'" };
+    }
+});
+
+router.get("/getPatientSchedule", async (ctx: Router.IRouterContext) => {
+    const id = ctx.query["id"];
+    consoleLogInfo(moduleName, `getPatientSchedule: id=${id}`);
+    if (!!id && typeof id === "string") {
+        await DataHandler.getPatientSchedule(id, ctx);
+    } else {
+        ctx.status = 412;
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'id'" };
+    }
+});
+
+router.put("/setPatientSchedule", async (ctx: Router.IRouterContext) => {
+    const id = ctx.query["id"];
+    consoleLogInfo(moduleName, `setPatientSchedule: id=${id}`);
+    if (!!id && typeof id === "string") {
+        await DataHandler.setPatientSchedule(id, ctx);
+    } else {
+        ctx.status = 412;
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'id'" };
+    }
+});
+
+router.get("/getStudyPatientsWithSchedules", async (ctx: Router.IRouterContext) => {
+    const id = ctx.query["id"];
+    consoleLogInfo(moduleName, `getStudyPatientsWithSchedules: id=${id}`);
+    if (!!id && typeof id === "string") {
+        await DataHandler.getStudyPatientsWithSchedules(id, ctx);
+    } else {
+        ctx.status = 412;
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'id'" };
+    }
+});
+
 /* ------------------------------------------------------------ */
 // User requests
 /* ------------------------------------------------------------ */

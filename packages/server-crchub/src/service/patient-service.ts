@@ -10,6 +10,7 @@ export interface Patient {
     studyId: string;
     study?: string;
     attributes?: any;
+    createdAt?: string;
 }
 
 /**
@@ -76,6 +77,7 @@ export async function getPatients(oid: string): Promise<Patient[]> {
             gender: row.gender,
             studyId: row.studyId,
             study: row.study,
+            createdAt: row.created_at,
             ...cleanAttributes
         };
     });
@@ -130,6 +132,7 @@ export async function getStudyPatients(oid: string, studyId: string): Promise<Pa
             gender: row.gender,
             studyId: row.studyId,
             study: row.study,
+            createdAt: row.created_at,
             ...cleanAttributes
         };
     });
@@ -385,6 +388,155 @@ export async function updatePatient(oid: string, patientId: string, patientData:
         study: studyInfo?.name,
         ...cleanAttributes
     };
+}
+
+/**
+ * Patient schedule data structure
+ */
+export interface PatientScheduleDay {
+    day: number;
+    date: string;
+    events: PatientScheduleEvent[];
+}
+
+export interface PatientScheduleEvent {
+    id: string;
+    type: string;
+    name: string;
+    actualDay?: number;
+    scheduledDay: number;
+    status?: string;
+    state?: string;
+    window?: {
+        daysBefore: number;
+        daysAfter: number;
+    };
+}
+
+export interface PatientSchedule {
+    referenceDate: string;
+    days: PatientScheduleDay[];
+}
+
+/**
+ * Get patient availability data from availability column
+ * Returns the unavailable dates array
+ */
+export async function getPatientUnavailableDates(patientId: string): Promise<string[]> {
+    const pool = getDbPool();
+    
+    const result = await pool.query(
+        `SELECT availability FROM patient WHERE patient_id = $1`,
+        [patientId]
+    );
+
+    if (result.rows.length === 0) {
+        return [];
+    }
+
+    const availability = result.rows[0].availability || {};
+    return availability.unavailable || [];
+}
+
+/**
+ * Set patient unavailable dates in availability column
+ * Structure: { "unavailable": ["2025-12-01", "2025-12-02"] }
+ */
+export async function setPatientUnavailableDates(patientId: string, dates: string[]): Promise<boolean> {
+    const pool = getDbPool();
+    
+    // Sort dates
+    const sortedDates = [...dates].sort();
+    const availability = {
+        unavailable: sortedDates
+    };
+
+    const result = await pool.query(
+        `UPDATE patient SET availability = $1 WHERE patient_id = $2`,
+        [JSON.stringify(availability), patientId]
+    );
+
+    return result.rowCount !== null && result.rowCount > 0;
+}
+
+/**
+ * Get patient schedule from schedule column
+ */
+export async function getPatientSchedule(patientId: string): Promise<PatientSchedule | null> {
+    const pool = getDbPool();
+    
+    const result = await pool.query(
+        `SELECT schedule FROM patient WHERE patient_id = $1`,
+        [patientId]
+    );
+
+    if (result.rows.length === 0) {
+        return null;
+    }
+
+    return result.rows[0].schedule || null;
+}
+
+/**
+ * Set patient schedule in schedule column
+ */
+export async function setPatientSchedule(patientId: string, schedule: PatientSchedule): Promise<boolean> {
+    const pool = getDbPool();
+    
+    const result = await pool.query(
+        `UPDATE patient SET schedule = $1 WHERE patient_id = $2`,
+        [JSON.stringify(schedule), patientId]
+    );
+
+    return result.rowCount !== null && result.rowCount > 0;
+}
+
+/**
+ * Get all patients with their schedules for a study
+ * Returns patients with their schedule data for the timeline view
+ */
+export async function getStudyPatientsWithSchedules(studyId: string): Promise<Array<Patient & { schedule: PatientSchedule | null; unavailableDates: string[] }>> {
+    const pool = getDbPool();
+    
+    const result = await pool.query(
+        `SELECT 
+            p.patient_id as id,
+            p.patient_number as "patientNumber",
+            p.initials,
+            p.dob,
+            p.age,
+            p.gender,
+            p.patient_attributes as attributes,
+            p.availability as availability,
+            p.schedule as schedule,
+            st.study_id as "studyId",
+            st.name as study
+         FROM patient p
+         JOIN site s ON p.site_id = s.site_id
+         JOIN study st ON s.study_id = st.study_id
+         WHERE st.study_id = $1
+         ORDER BY p.created_at DESC`,
+        [studyId]
+    );
+
+    return result.rows.map(row => {
+        const attributes = row.attributes || {};
+        const availability = row.availability || {};
+        const { id: _attrId, ...cleanAttributes } = attributes;
+        return {
+            id: row.id,
+            patientNumber: row.patientNumber,
+            initials: row.initials,
+            dob: row.dob,
+            age: row.age,
+            gender: row.gender,
+            studyId: row.studyId,
+            study: row.study,
+            schedule: row.schedule || null,
+            unavailableDates: availability.unavailable || [],
+            ...cleanAttributes
+        };
+    });
 }
 
 /**

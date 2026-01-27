@@ -74,32 +74,38 @@ export async function editObject(type: 'study' | 'patient' | 'organization' | 'p
 }
 
 export async function saveObject(updatedObject: any) {
-    objectDrawerStore.update(store => {
-        if (store.type === 'study') {
-            if (store.action === 'add') {
-                dataStore.addStudy(updatedObject);
-            } else {
-                dataStore.updateStudy(updatedObject.id, updatedObject);
-            }
-        } else if (store.type === 'patient') {
-            if (store.action === 'add') {
-                dataStore.addPatient(updatedObject);
-            } else {
-                dataStore.updatePatient(updatedObject.id, updatedObject);
-            }
-        } else if (store.type === 'organization') {
-            if (store.action === 'add') {
-                dataStore.addOrganization(updatedObject);
-            } else {
-                dataStore.updateOrganization(updatedObject.id, updatedObject);
-            }
-        } else if (store.type === 'person') {
-            if (store.action === 'add') {
-                dataStore.addPerson(updatedObject);
-            } else {
-                dataStore.updatePerson(updatedObject.id, updatedObject);
-            }
+    // Get current store state to determine type and action
+    let storeState: { type: string | null; action: string | null } = { type: null, action: null };
+    objectDrawerStore.subscribe(s => { storeState = s; })();
+    
+    // Await the async dataStore operation before closing the drawer
+    // This ensures the data is saved and state is updated before the drawer closes
+    if (storeState.type === 'study') {
+        if (storeState.action === 'add') {
+            await dataStore.addStudy(updatedObject);
+        } else {
+            await dataStore.updateStudy(updatedObject);
         }
-        return { ...store, open: false };
-    });
+    } else if (storeState.type === 'patient') {
+        if (storeState.action === 'add') {
+            await dataStore.addPatient(updatedObject);
+        } else {
+            await dataStore.updatePatient(updatedObject);
+        }
+    } else if (storeState.type === 'organization') {
+        if (storeState.action === 'add') {
+            await dataStore.addOrganization(updatedObject);
+        } else {
+            await dataStore.updateOrganization(updatedObject.id, updatedObject);
+        }
+    } else if (storeState.type === 'person') {
+        if (storeState.action === 'add') {
+            await dataStore.addPerson(updatedObject);
+        } else {
+            await dataStore.updatePerson(updatedObject.id, updatedObject);
+        }
+    }
+    
+    // Now close the drawer after the save has completed
+    objectDrawerStore.set({ open: false, type: null, action: null, data: null });
 }

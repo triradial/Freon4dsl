@@ -6,7 +6,6 @@
     import { runInAction } from "mobx";
     import { onDestroy, onMount } from "svelte";
     import { browser } from '$app/environment';
-    import StudyCard from "../components/cards/StudyCard.svelte";
     import DSLFooter from "../components/common/DSLFooter.svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
@@ -35,29 +34,49 @@
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
     let unsubscribeChangeManager: (() => void) | undefined;
 
-    // Splitter state
-    let isDraggingSplitter1 = $state(false);
-    let isDraggingSplitter2 = $state(false);
+    // Splitter state for editor/tabs panels
+    let isDraggingSplitter = $state(false);
     let splitterContainer: HTMLDivElement | undefined = $state();
-    let splitterHandle1: HTMLButtonElement | undefined = $state();
-    let splitterHandle2: HTMLButtonElement | undefined = $state();
+    let splitterHandle: HTMLButtonElement | undefined = $state();
     
     // Panel widths in rem
-    const STUDY_CARD_MIN_WIDTH = 12;
-    const STUDY_CARD_MAX_WIDTH = 30;
-    const STUDY_CARD_DEFAULT_WIDTH = 18;
-    
     const TABS_PANEL_MIN_WIDTH = 20;
     const TABS_PANEL_MAX_WIDTH = 90;
     const TABS_PANEL_DEFAULT_WIDTH = 30;
+    const SPLITTER_STORAGE_KEY = 'study-design-tabs-width';
     
-    let studyCardWidth = $state(STUDY_CARD_DEFAULT_WIDTH);
     let tabsPanelWidth = $state(TABS_PANEL_DEFAULT_WIDTH);
     let errorsComponent: StudyDesignErrors | undefined = $state();
     let timelineTableComponent: StudyTimelineTable | undefined = $state();
     let timelineChartComponent: StudyTimelineChart | undefined = $state();
     let checklistComponent: StudyChecklist | undefined = $state();
     let errorCountRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    // Load splitter setting from localStorage
+    function loadSplitterSetting() {
+        if (!browser) return;
+        try {
+            const saved = localStorage.getItem(SPLITTER_STORAGE_KEY);
+            if (saved) {
+                const parsed = parseFloat(saved);
+                if (!isNaN(parsed) && parsed >= TABS_PANEL_MIN_WIDTH && parsed <= TABS_PANEL_MAX_WIDTH) {
+                    tabsPanelWidth = parsed;
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to load splitter setting:', e);
+        }
+    }
+    
+    // Save splitter setting to localStorage
+    function saveSplitterSetting() {
+        if (!browser) return;
+        try {
+            localStorage.setItem(SPLITTER_STORAGE_KEY, tabsPanelWidth.toString());
+        } catch (e) {
+            console.warn('Failed to save splitter setting:', e);
+        }
+    }
 
     function debouncedSave() {
         console.log('💾 StudyDesign.svelte: debouncedSave called');
@@ -91,57 +110,31 @@
     });
 
     // Splitter handlers
-    function handleSplitter1MouseDown(event: MouseEvent) {
+    function handleSplitterMouseDown(event: MouseEvent) {
         if (!browser) return;
         event.preventDefault();
-        isDraggingSplitter1 = true;
-        document.addEventListener('mousemove', handleSplitter1MouseMove);
-        document.addEventListener('mouseup', handleSplitter1MouseUp);
+        isDraggingSplitter = true;
+        document.addEventListener('mousemove', handleSplitterMouseMove);
+        document.addEventListener('mouseup', handleSplitterMouseUp);
     }
 
-    function handleSplitter1MouseMove(event: MouseEvent) {
-        if (!isDraggingSplitter1 || !splitterContainer) return;
+    function handleSplitterMouseMove(event: MouseEvent) {
+        if (!isDraggingSplitter || !splitterContainer) return;
         
         const rect = splitterContainer.getBoundingClientRect();
         const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-        const newWidth = ((event.clientX - rect.left) / rootFontSize);
-        
-        const constrainedWidth = Math.max(STUDY_CARD_MIN_WIDTH, Math.min(STUDY_CARD_MAX_WIDTH, newWidth));
-        studyCardWidth = constrainedWidth;
-    }
-
-    function handleSplitter1MouseUp() {
-        if (!browser) return;
-        isDraggingSplitter1 = false;
-        document.removeEventListener('mousemove', handleSplitter1MouseMove);
-        document.removeEventListener('mouseup', handleSplitter1MouseUp);
-    }
-
-    function handleSplitter2MouseDown(event: MouseEvent) {
-        if (!browser) return;
-        event.preventDefault();
-        isDraggingSplitter2 = true;
-        document.addEventListener('mousemove', handleSplitter2MouseMove);
-        document.addEventListener('mouseup', handleSplitter2MouseUp);
-    }
-
-    function handleSplitter2MouseMove(event: MouseEvent) {
-        if (!isDraggingSplitter2 || !splitterContainer) return;
-        
-        const rect = splitterContainer.getBoundingClientRect();
-        const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-        const totalWidth = rect.width / rootFontSize;
         const newTabsWidth = ((rect.right - event.clientX) / rootFontSize);
         
         const constrainedWidth = Math.max(TABS_PANEL_MIN_WIDTH, Math.min(TABS_PANEL_MAX_WIDTH, newTabsWidth));
         tabsPanelWidth = constrainedWidth;
     }
 
-    function handleSplitter2MouseUp() {
+    function handleSplitterMouseUp() {
         if (!browser) return;
-        isDraggingSplitter2 = false;
-        document.removeEventListener('mousemove', handleSplitter2MouseMove);
-        document.removeEventListener('mouseup', handleSplitter2MouseUp);
+        isDraggingSplitter = false;
+        document.removeEventListener('mousemove', handleSplitterMouseMove);
+        document.removeEventListener('mouseup', handleSplitterMouseUp);
+        saveSplitterSetting();
     }
 
     async function initializeStudy() {
@@ -184,6 +177,7 @@
     }
 
     onMount(async () => {
+        loadSplitterSetting();
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         await initializeStudy();
 
@@ -409,23 +403,8 @@
 </script>
 
 {#if study}
-    <div bind:this={splitterContainer} class="splitter-container" class:dragging={isDraggingSplitter1 || isDraggingSplitter2}>
-        <!-- Left Panel: Study Card -->
-        <div class="splitter-panel" style="width: {studyCardWidth}rem; flex-shrink: 0;">
-            <StudyCard studyId={study.id} />
-        </div>
-        
-        <!-- First Splitter -->
-        <button 
-            type="button"
-            bind:this={splitterHandle1}
-            class="splitter-handle"
-            onmousedown={handleSplitter1MouseDown}
-            role="slider"
-            aria-label="Resize study card panel"
-        ></button>
-        
-        <!-- Middle Panel: Study Designer -->
+    <div bind:this={splitterContainer} class="splitter-container" class:dragging={isDraggingSplitter}>
+        <!-- Left Panel: Study Designer -->
         <div class="splitter-panel" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
             <div class="main-label-text mb-2" style="padding: 0.5rem 1rem 0 1rem;">Study Design</div>
             {#if editorLoaded}
@@ -451,17 +430,10 @@
                 {/if}
             {/if}
         </div>
-        
-        <!-- Second Splitter -->
-        <button 
-            type="button"
-            bind:this={splitterHandle2}
-            class="splitter-handle"
-            onmousedown={handleSplitter2MouseDown}
-            role="slider"
-            aria-label="Resize tabs panel"
-        ></button>
-        
+            
+        <!-- Splitter -->
+        <button type="button" bind:this={splitterHandle} class="splitter-handle" onmousedown={handleSplitterMouseDown} role="slider" aria-label="Resize tabs panel"></button>
+            
         <!-- Right Panel: Tabs -->
         <div class="splitter-panel" style="width: {tabsPanelWidth}rem; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden;">
             <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-8" listMargin="mb-1" base="mt-4 mr-4 ml-4" contentBase="mt-0">
@@ -531,9 +503,8 @@
     }
     
     :global(.tab-content-wrapper) {
-        height: calc(100vh - 9.2rem);
+        height: calc(100vh - 12.5rem);
         overflow: auto;
         padding: 0;
     }
-
 </style>

@@ -96,7 +96,7 @@
             </select>
         </div>
     </div>
-    <div class="flex items-center justify-right mt-8">
+    <div class="mutation-buttons">
         <button class="standard-button primary inverted" onclick={handleSave} disabled={hasErrors}><IconSave size="16" />Save</button>
         <button class="standard-button gray inverted" onclick={handleClose}><IconX size="16" />Cancel</button>
     </div>

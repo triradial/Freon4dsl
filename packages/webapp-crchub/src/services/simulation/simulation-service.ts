@@ -79,7 +79,22 @@ class SimulationService {
         // Initialize Sim - needed for Sim to be properly loaded in Scheduler class
         new Sim();
         const simulator = new Simulator(unit);
-        simulator.run();
+        
+        try {
+            simulator.run();
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            const errorStack = err instanceof Error ? err.stack : undefined;
+            console.error(`[SimulationService] Error running simulator:`, {
+                error: err,
+                message: errorMessage,
+                stack: errorStack,
+                studyId
+            });
+            // Re-throw with more context
+            throw new Error(`Simulation failed: ${errorMessage}. This usually indicates missing or invalid data in the study configuration (e.g., undefined event names, periods, or scheduling properties).`);
+        }
+        
         const timeline = simulator.timeline;
         const timelineElapsed = performance.now() - timelineStartTime;
         console.log(`[SimulationService] ⚡ Timeline generated in ${timelineElapsed.toFixed(2)}ms (simulator ran once)`);

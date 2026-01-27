@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { navigateTo } from '../../../services/routing/route-action.js';
-	import { Pencil, Trash2, Palette as IconPalette, Users as IconUsers } from '@lucide/svelte';
+	import { Pencil, Trash2 } from '@lucide/svelte';
 
 	interface Props {
 		params: any; // AG Grid cell renderer params
@@ -18,17 +18,11 @@
 	// Check patientCount (camelCase field from data-store transformation)
 	let canDelete = $derived(!studyData?.patientCount || studyData.patientCount === 0);
 
-	function handleStudyDesign(event: MouseEvent) {
+	function handleOpenStudy(event: MouseEvent) {
+		event.preventDefault();
 		event.stopPropagation();
 		if (browser && studyData?.id) {
-			navigateTo("study-design", studyData.id);
-		}
-	}
-
-	function handleStudyPatients(event: MouseEvent) {
-		event.stopPropagation();
-		if (browser && studyData?.id) {
-			navigateTo("study-patients", studyData.id);
+			navigateTo("study", studyData.id);
 		}
 	}
 
@@ -54,17 +48,11 @@
 	onmouseleave={() => (showActions = false)}
 >
 	<div class="study-name-content">
-		<span>{studyData?.name || ''}</span>
+		<button type="button" class="name-link" onclick={handleOpenStudy}>{studyData?.name || ''}</button>
 		{#if showActions && studyData?.id}
 			<div class="grid-actions">
 				<button type="button" class="grid-button general-button" onclick={handleEdit} title="Edit Study" aria-label="Edit Study">
 					<Pencil size={16} />
-				</button>
-				<button type="button" class="grid-button general-button" onclick={handleStudyDesign} title="Study Design" aria-label="Study Design">
-					<IconPalette size={16} />
-				</button>
-				<button type="button" class="grid-button general-button" onclick={handleStudyPatients} title="Study Patients" aria-label="Study Patients">
-					<IconUsers size={16} />
 				</button>
 				{#if canDelete}
 					<button type="button" class="grid-button delete-button" onclick={handleDelete} title="Delete Study" aria-label="Delete Study">

@@ -175,7 +175,7 @@
             <input class="input-field {getErrorState('siteNumber')}" type="text" bind:value={siteNumber} oninput={handleInput("siteNumber")} />
         </div>
     </div>
-    <div class="flex items-center justify-right mt-8">
+    <div class="mutation-buttons">
         <button class="standard-button primary inverted" onclick={handleSave} disabled={hasErrors}><IconSave size="16" />Save</button>
         <button class="standard-button gray inverted" onclick={handleClose}><IconX size="16" />Cancel</button>
     </div>

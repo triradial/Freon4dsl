@@ -75,6 +75,7 @@
 
   /* #region Name Link */
   --name-link-text: #92A7CE;
+  --name-link-text-hover: #B8C9E8;
   --grid-button-color: #92A7CE;
   /* #endregion */
 
@@ -87,7 +88,7 @@
   /* #endregion */
 
   // #region Controls
-  --checkbox-bg: #3b82f6;
+  --checkbox-bg: #4C5C96;
   --badge-bg: #94354a;
   --badge-text: #ffffff;
   // #endregion
@@ -166,6 +167,9 @@
   --calendar-weekends-checkbox-text: #ffffff;
   --calendar-legend-text: #ffffff;
   --calendar-person-name-text: #ffffff;
+  --calendar-weekend-bg: #656b723f;
+  --calendar-available-bg: #3a5a40; // Green for available
+  --calendar-unavailable-bg: #643A3F; // Maroon/red for unavailable
 
   --availability-model-panel-text: #ffffff;
   
@@ -214,12 +218,78 @@
 /* #region Checklist */
   --checklist-h1: #4C5C96;
   --checklist-h2: #ffffff;
-  --checklist-h3: #ffffff;
+  --checklist-h3: #aaaaaa;
   --checklist-text: #adadad;
 
   --checklist-error-bg: #fae4e7;
   --checklist-error-text: #ae2b22;
   --checklist-error-indicator: #c75047;
+/* #endregion */
+
+/* #region Timeline Chart */
+  --timeline-section-title: var(--primary-600);
+  --timeline-control-label: #b1b1b1;
+  --timeline-range-label: #b1b1b1;
+  --timeline-day-header: #b8b8b8;
+  --timeline-row-label: #b8b8b8;
+  --timeline-day-number-weekend: #a0a0a0;
+
+  --timeline-month-01: #24345e8c;
+  --timeline-month-02: #244f5e8c;
+  --timeline-month-03: #3f466a8c;
+  --timeline-month-04: #5144548c;
+  --timeline-month-05: #474f3c8c;
+  --timeline-month-06: #544a418c;
+  --timeline-month-07: #3a27278c;
+  --timeline-month-08: #27333a8c;
+  --timeline-month-09: #5144548c;
+  --timeline-month-10: #3a3a278c;
+  --timeline-month-11: #3828358c;
+  --timeline-month-12: #3535358c;
+
+  --timeline-unscheduled-bg: #ffb8ec61;
+  --timeline-unscheduled-icon: #e9e9e9;
+  --timeline-on-scheduled-date-bg: #14b8a557;
+  --timeline-on-scheduled-date-icon: #e9e9e9;
+  --timeline-planned-visit-bg: #14b8a6;
+  --timeline-planned-visit-icon: #e9e9e9;
+  --timeline-out-of-window-bg: #b28343b3;
+  --timeline-out-of-window-icon: #e9e9e9;
+  --timeline-in-window-bg: #3b83f667;
+  --timeline-in-window-icon: #e9e9e9;
+  --timeline-canceled-visit-bg: #ef4444;
+  --timeline-canceled-visit-icon: #e9e9e9;
+  --timeline-missed-visit-bg: #ec4899;
+  --timeline-missed-visit-icon: #e9e9e9;
+  --timeline-window-bg: #14b8a513;;
+  --timeline-window-icon: #9c9c9c71;
+
+  --timeline-mode-scheduling-bg: #4C5C96;
+  --timeline-mode-scheduling-border: #4C5C96;
+  --timeline-mode-scheduling-text: #ffffff;
+  --timeline-mode-scheduling-hover-bg: #4C5C96;
+  --timeline-mode-unavailable-bg: #6031317a;
+  --timeline-mode-unavailable-border: #6b2a2a;
+  --timeline-mode-unavailable-text: #F8A8A8;
+  --timeline-mode-unavailable-hover-bg: #7d2a2a;
+
+  --timeline-range-thumb: #4C5C96;
+  --timeline-range-thumb-hover: #435183;
+  --timeline-range-track: #6d6d6d;
+
+  --popup-day-number-text: #ffffff;
+  --popup-patient-id-text: #ffffff;
+  --popup-date-text: #8D99C5;
+  --popup-event-name-text: #ffffff;
+
+  --timeline-mode-toggle-text: #ffffff;
+  --timeline-mode-toggle-bg: #50637e7e;
+  --timeline-mode-toggle-border: #171a1f;
+  --timeline-mode-toggle-hover-bg: #33383e;
+
+  --tooltip-text: #ffffff;
+  --tooltip-date: var(--primary-500);
+
 /* #endregion */
 
   --content-background: #22272e;
@@ -776,9 +846,7 @@ border-bottom: 1px solid var(--white-5t) !important;
   color: var(--error-indicator) !important;
 }
 
-.mutation-area {
-  /* Mutation area styles */
-}
+// .mutation-area - no specific dark mode styles needed
 /* #endregion */
 
 /* #region Labels */
@@ -879,3 +947,45 @@ select.input-field.error option {
   color: var(--white-70t) !important;
 }
 /* #endregion */  
+
+/* #region JSON Sidebar */
+.json-sidebar {
+  background: var(--color-surface-800);
+  border-left-color: var(--color-surface-600);
+
+  .sidebar-header {
+    background: var(--color-surface-700);
+    border-bottom-color: var(--color-surface-600);
+
+    h3 {
+      color: var(--color-surface-100);
+    }
+
+    .copy-btn {
+      color: var(--color-surface-200);
+      background: var(--color-surface-600);
+      border-color: var(--color-surface-500);
+
+      &:hover {
+        background: var(--color-surface-500);
+        border-color: var(--color-surface-400);
+      }
+
+      &:active {
+        background: var(--color-surface-400);
+      }
+    }
+  }
+
+  h3 {
+    background: var(--color-surface-700);
+    border-bottom-color: var(--color-surface-600);
+    color: var(--color-surface-100);
+  }
+
+  pre {
+    background: var(--color-surface-800);
+    color: var(--color-surface-200);
+  }
+}
+/* #endregion */

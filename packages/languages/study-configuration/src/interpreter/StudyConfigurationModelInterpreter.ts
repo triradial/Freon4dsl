@@ -372,4 +372,17 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     // console.log("entered evalWhen: " + node.startWhen.freLanguageConcept);
     return main.evaluate(node.startWhen, ctx);
   }
+
+  // Unscheduled events don't have a predetermined schedule day - they are only
+  // added to a patient's schedule when explicitly triggered (e.g., termination,
+  // adverse event, protocol deviation). Return undefined so the simulator 
+  // skips scheduling them automatically.
+  evalUnscheduled(node: language.Unscheduled, ctx: InterpreterContext): RtObject {
+    return undefined;
+  }
+
+  // AnyDay extends Unscheduled - same behavior
+  evalAnyDay(node: language.AnyDay, ctx: InterpreterContext): RtObject {
+    return undefined;
+  }
 }

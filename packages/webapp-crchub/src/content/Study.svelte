@@ -1,27 +1,30 @@
 <script lang="ts">
-    import { AST, FreChangeManager, FreEditor, FrePartDelta, FrePartListDelta, FrePrimDelta, FrePrimListDelta } from "@freon4dsl/core";
-    import { FreonComponent } from "@freon4dsl/core-svelte";
-    import { type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { Tabs } from "@skeletonlabs/skeleton-svelte";
-    import { runInAction } from "mobx";
     import { onDestroy, onMount } from "svelte";
+    import { browser } from '$app/environment';
     import StudyCard from "../components/cards/StudyCard.svelte";
-    import DSLFooter from "../components/common/DSLFooter.svelte";
-    import PatientGrid from "../components/content/patient/PatientGrid.svelte";
+    import PatientStaffTimelineChart from "../components/content/patient/PatientStaffTimelineChart.svelte";
+    import StudyDesign from "./StudyDesign.svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
-    import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
-    import { ModelManager } from "../services/dsl/model-manager.js";
-    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
-    import { getActiveDrawer, setActiveDrawer, setAllDrawersVisibility, setDrawerProps, setDrawerVisibility } from "../services/stores/side-drawer-store.js";
-// @ts-ignore
-    import { PencilRuler as IconPencilRuler, Redo as IconRedo, Undo as IconUndo, User as IconUser } from '@lucide/svelte';
+    import { setAllDrawersVisibility, setDrawerVisibility, setDrawerProps, getActiveDrawer, setActiveDrawer } from "../services/stores/side-drawer-store.js";
 
     let { id } = $props<{ id: string }>();
 
     let study = $state<Study | undefined>(undefined);
-    let editorLoaded = $state(false);
-    let noModelAvailable = $state(false);
     let activeTab = $state('patients');
+
+    // Splitter state
+    let isDraggingSplitter = $state(false);
+    let splitterContainer: HTMLDivElement | undefined = $state();
+    let splitterHandle: HTMLButtonElement | undefined = $state();
+    
+    // Panel widths in rem
+    const STUDY_CARD_MIN_WIDTH = 12;
+    const STUDY_CARD_MAX_WIDTH = 25;
+    const STUDY_CARD_DEFAULT_WIDTH = 18;
+    const SPLITTER_STORAGE_KEY = 'study-card-width';
+    
+    let studyCardWidth = $state(STUDY_CARD_DEFAULT_WIDTH);
 
     // Update drawer visibility based on active tab
     $effect(() => {
@@ -38,55 +41,62 @@
             // Study Design tab: show all study-related drawers (no patient timeline chart)
             setAllDrawersVisibility(false);
             setDrawerVisibility("help", true);
-            setDrawerVisibility("dslErrors", true);
-            setDrawerVisibility("studyTimelineTable", true);
-            setDrawerVisibility("studyTimelineChart", true);
-            setDrawerVisibility("studyChecklist", true);
-            // Set drawer props for study design tab
-            setDrawerProps("dslErrors", { studyId: id });
-            setDrawerProps("studyTimelineTable", { studyId: id });
-            setDrawerProps("studyTimelineChart", { studyId: id });
-            setDrawerProps("studyChecklist", { studyId: id });
         }
     });
 
-    let dslEditor = $state<FreEditor | undefined>(undefined);
-    let unit = $state<StudyConfiguration | undefined>(undefined);
-    let mobxVersion = $state(0);
-
-    let saveTimeout: ReturnType<typeof setTimeout> | null = null;
-    let unsubscribeChangeManager: (() => void) | undefined;
-
-    function debouncedSave() {
-        console.log('💾 Study.svelte: debouncedSave called');
-        if (saveTimeout) clearTimeout(saveTimeout);
-        saveTimeout = setTimeout(() => {
-            console.log('💾 Study.svelte: debouncedSave timeout fired, calling handleSaveStudy');
-            handleSaveStudy();
-        }, 1000); // 1 second debounce
+    // Load splitter setting from localStorage
+    function loadSplitterSetting() {
+        if (!browser) return;
+        try {
+            const saved = localStorage.getItem(SPLITTER_STORAGE_KEY);
+            if (saved) {
+                const parsed = parseFloat(saved);
+                if (!isNaN(parsed) && parsed >= STUDY_CARD_MIN_WIDTH && parsed <= STUDY_CARD_MAX_WIDTH) {
+                    studyCardWidth = parsed;
+                }
+            }
+        } catch (e) {
+            console.warn('Failed to load splitter setting:', e);
+        }
+    }
+    
+    // Save splitter setting to localStorage
+    function saveSplitterSetting() {
+        if (!browser) return;
+        try {
+            localStorage.setItem(SPLITTER_STORAGE_KEY, studyCardWidth.toString());
+        } catch (e) {
+            console.warn('Failed to save splitter setting:', e);
+        }
     }
 
-    const footerConfig = [
-        { id: "showScheduling", label: "Scheduling" },
-        { id: "showChecklists", label: "Checklists" },
-        { id: "showReferences", label: "References", parent: "showChecklists" },
-        { id: "showSystems", label: "Systems", parent: "showChecklists" },
-        { id: "showPeople", label: "People", parent: "showChecklists" },
-        { id: "showDescriptions", label: "Descriptions" },
-        { id: "showSharedTasks", label: "Shared Tasks" },
-    ];
+    // Splitter handlers
+    function handleSplitterMouseDown(event: MouseEvent) {
+        if (!browser) return;
+        event.preventDefault();
+        isDraggingSplitter = true;
+        document.addEventListener('mousemove', handleSplitterMouseMove);
+        document.addEventListener('mouseup', handleSplitterMouseUp);
+    }
 
-    let footerItems = $derived(() => {
-        mobxVersion;
-        if (!unit) {
-            return footerConfig.map(cfg => ({ ...cfg, visible: false }));
-        } else {
-            return footerConfig.map(cfg => ({
-                ...cfg,
-                visible: !!unit[cfg.id as keyof StudyConfiguration],
-            }));
-        }
-    });
+    function handleSplitterMouseMove(event: MouseEvent) {
+        if (!isDraggingSplitter || !splitterContainer) return;
+        
+        const rect = splitterContainer.getBoundingClientRect();
+        const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+        const newWidth = ((event.clientX - rect.left) / rootFontSize);
+        
+        const constrainedWidth = Math.max(STUDY_CARD_MIN_WIDTH, Math.min(STUDY_CARD_MAX_WIDTH, newWidth));
+        studyCardWidth = constrainedWidth;
+    }
+
+    function handleSplitterMouseUp() {
+        if (!browser) return;
+        isDraggingSplitter = false;
+        document.removeEventListener('mousemove', handleSplitterMouseMove);
+        document.removeEventListener('mouseup', handleSplitterMouseUp);
+        saveSplitterSetting();
+    }
 
     async function initializeStudy() {
         // get the study data
@@ -99,248 +109,68 @@
             console.error(`Study with id ${id} not found`);
             return;
         }
-        
-        // Get the model data for the study
-        console.log(`[Study.svelte] initializeStudy: Starting to load model for study ${study.id} (${study.name})`);
-        console.log(`[Study.svelte] Calling ModelManager.openModelUnit(${study.id}, "StudyConfiguration")`);
-        
-        const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration") as StudyConfiguration;
-        
-        console.log(`[Study.svelte] ModelManager.openModelUnit returned:`, {
-            resultType: typeof result,
-            isUndefined: result === undefined,
-            isNull: result === null,
-            hasValue: result !== undefined && result !== null
-        });
-        
-        if (result !== undefined && result !== null) {
-            unit = result;
-            editorLoaded = true;
-            console.log(`[Study.svelte] ✅ Model loaded successfully for study ${study.id}`);
-            updateVisibleProjections(unit);
-        } else {
-            noModelAvailable = true;
-            console.warn(`[Study.svelte] ⚠️ Study ${study.id} (${study.name}) has no StudyConfiguration model available`);
-            console.warn(`[Study.svelte] Result was ${result === undefined ? 'undefined' : 'null'}`);
-            // Don't call updateVisibleProjections with undefined - just leave projections as default
-        }
     }
 
     onMount(async () => {
-        dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
+        loadSplitterSetting();
         await initializeStudy();
-
-        // Subscribe to FreChangeManager changes
-        const changeCallback = (delta) => {
-            if (delta instanceof FrePrimDelta) {
-                if (delta.oldValue != delta.newValue) {
-                    console.log("💾 Study.svelte: FrePrimDelta change detected", {
-                        propertyName: delta.propertyName,
-                        oldValue: delta.oldValue,
-                        newValue: delta.newValue
-                    });
-                    debouncedSave();
-                }
-            } else if (delta instanceof FrePrimListDelta) {
-                console.log("💾 Study.svelte: FrePrimListDelta change detected", {
-                    propertyName: delta.propertyName
-                });
-                debouncedSave();
-            } else if (delta instanceof FrePartListDelta) {
-                console.log("💾 Study.svelte: FrePartListDelta change detected", {
-                    propertyName: delta.propertyName
-                });
-                debouncedSave();
-            } else if (delta instanceof FrePartDelta) {
-                console.log("💾 Study.svelte: FrePartDelta change detected", {
-                    propertyName: delta.propertyName
-                });
-                debouncedSave();
-            } else {
-                console.warn("⚠️ Unknown change from FreChangeManager:", delta);
-            }
-        };
-        FreChangeManager.getInstance().subscribeToPrimitive(changeCallback);
-        FreChangeManager.getInstance().subscribeToPart(changeCallback);
-        FreChangeManager.getInstance().subscribeToListElement(changeCallback);
-        FreChangeManager.getInstance().subscribeToList(changeCallback);
-        unsubscribeChangeManager = () => {
-            const manager = FreChangeManager.getInstance();
-            // Remove from primitive callbacks
-            const primArr = manager.changePrimCallbacks;
-            const primIdx = primArr.indexOf(changeCallback);
-            if (primIdx !== -1) primArr.splice(primIdx, 1);
-
-            // Remove from part callbacks
-            const partArr = manager.changePartCallbacks;
-            const partIdx = partArr.indexOf(changeCallback);
-            if (partIdx !== -1) partArr.splice(partIdx, 1);
-
-            // Remove from list element callbacks
-            const listElemArr = manager.changeListElemCallbacks;
-            const listElemIdx = listElemArr.indexOf(changeCallback);
-            if (listElemIdx !== -1) listElemArr.splice(listElemIdx, 1);
-
-            // Remove from list callbacks
-            const listArr = manager.changeListCallbacks;
-            const listIdx = listArr.indexOf(changeCallback);
-            if (listIdx !== -1) listArr.splice(listIdx, 1);
-        };
     });
 
     onDestroy(() => {
-        editorLoaded = false;
-        if (unsubscribeChangeManager) unsubscribeChangeManager();
         var activeDrawer = getActiveDrawer();
-        if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors") {
+        if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors" || activeDrawer === "patientTimelineChart") {
             setActiveDrawer(null);
         }
         setDrawerVisibility("dslErrors", false);
         setDrawerVisibility("studyTimelineTable", false);
         setDrawerVisibility("studyTimelineChart", false);
+        setDrawerVisibility("patientTimelineChart", false);
     });
-
-    // Show the projections that are enabled in the study configuration.
-    function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
-        let names = [];
-
-        const showScheduling = studyConfiguration.showScheduling;
-        const showChecklists = studyConfiguration.showChecklists;
-        const showSharedTasks = studyConfiguration.showSharedTasks;
-        const showPeople = studyConfiguration.showPeople;
-        const showSystems = studyConfiguration.showSystems;
-        const showReferences = studyConfiguration.showReferences;
-        const showDescriptions = studyConfiguration.showDescriptions;
-
-        // Scheduling and checklists are both part of Event so they need combined and separate projections.
-        if (showScheduling && showChecklists) {
-            names.push("schedulingAndChecklistsShow");
-        } else if (showScheduling) {
-            names.push("schedulingShow");
-        } else if (showChecklists) {
-            names.push("checklistsShow");
-        }
-
-        // Shared tasks are part of AbstractTask so they need a separate projection.
-        if (showSharedTasks) {
-            names.push("sharedTasksShow");
-        }
-        
-        // Handle combinations of people, systems, and references  
-        if (showPeople && showSystems && showReferences) {
-            names.push("peopleSystemsReferencesShow");
-        } else if (showPeople && showSystems) {
-            names.push("peopleSystemsShow");
-        } else if (showPeople && showReferences) {
-            names.push("peopleReferencesShow");
-        } else if (showSystems && showReferences) {
-            names.push("systemsReferencesShow");
-        } else {
-            // Individual projections
-            if (showPeople) {
-                names.push("peopleShow");
-            }
-            if (showSystems) {
-                names.push("systemsShow");
-            }
-            if (showReferences) {
-                names.push("referencesShow");
-            }
-        }
-        if (studyConfiguration.showDescriptions) {
-            names.push("descriptionsShow");
-        }
-        
-        //TODO: determine why this projection is needed
-        // names.push("Custom");
-
-        const proj = dslEditor.projection;
-    
-        AST.change(() => {
-            proj.enableProjections(names);
-
-            // Let the editor know that the projections have changed.
-            // TODO: This should go automatically through mobx.
-            //       But observing the projections array does not work as expected.
-            runInAction( () => {
-                dslEditor.forceRecalculateProjection++;
-            });
-            // redo the validation to set the errors in the new box tree
-            // todo reinstate the following statement
-            // this.validate();
-        });
-    }
-
-    function handleCheckboxChange(id: string, visible: boolean) {
-        if (unit && id in unit) {
-            (unit[id as keyof StudyConfiguration] as boolean) = visible;
-            updateVisibleProjections(unit as StudyConfiguration);
-            mobxVersion++;
-        }
-    }
-
-    function handleSaveStudy() {
-        console.log('💾 Study.svelte: handleSaveStudy called');
-        ModelManager.getInstance().saveCurrentUnit();
-    }
-
-    function handleUndoAction() {
-        EditorRequestsHandler.getInstance().undo();
-    }
-
-    function handleRedoAction() {
-        EditorRequestsHandler.getInstance().redo();
-    }
 </script>
 
 {#if study}
-    <div class="crc-container">
-        <div class="card-container">
-            <StudyCard studyId={study.id} />
-        </div>
-        <div class="crc-content">
-            <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2" contentBase="mt-0">
-                {#snippet list()}
-                    <Tabs.Control stateActive="tab-active" value="patients">
-                        <div class="tab-item">Patients</div>
-                    </Tabs.Control>
-                    <Tabs.Control stateActive="tab-active" value="design">
-                        <div class="tab-item">Study Design</div> 
-                    </Tabs.Control>
-                {/snippet}
+    <div class="crc-container" style="height: calc(100vh - 5.75rem);">
+        <div bind:this={splitterContainer} class="splitter-container" class:dragging={isDraggingSplitter} style="height: 100%;">
+            <!-- Left Panel: Study Card -->
+            <div class="splitter-panel" style="width: {studyCardWidth}rem; flex-shrink: 0;">
+                <StudyCard studyId={study.id} />
+            </div>
+            
+            <!-- Splitter -->
+            <button type="button"
+                bind:this={splitterHandle}
+                class="splitter-handle"
+                onmousedown={handleSplitterMouseDown}
+                role="slider"
+                aria-label="Resize study card panel"
+            ></button>
+            
+            <!-- Right Panel: Tab Content -->
+            <div class="splitter-panel" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+                <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2 ml-2" contentBase="mt-0">
+                    {#snippet list()}
+                        <Tabs.Control stateActive="tab-active" value="patients">
+                            <div class="tab-item">Patients</div>
+                        </Tabs.Control>
+                        <Tabs.Control stateActive="tab-active" value="design">
+                            <div class="tab-item">Study Design</div> 
+                        </Tabs.Control>
+                    {/snippet}
 
-                {#snippet content()}
-                    <Tabs.Panel value="patients">
-                        <div class="crc-grid inside-tab">
-                            <PatientGrid studyId={study.id} />
-                        </div>
-                    </Tabs.Panel>
-                    <Tabs.Panel value="design">
-                       {#if editorLoaded}
-                            <div class="flex gap-2 mb-2">
-                                <button type="button" class="icon-button primary inverted" onclick={handleUndoAction} tabindex="-1"><IconUndo /></button>
-                                <button type="button" class="icon-button primary inverted" onclick={handleRedoAction} tabindex="-1"><IconRedo /></button>
+                    {#snippet content()}
+                        <Tabs.Panel value="patients">
+                            <div class="tab-panel-content">
+                                <PatientStaffTimelineChart studyId={study.id} />
                             </div>
-                            <div class="crc-editor crc-content-width">
-                                <FreonComponent editor={dslEditor} />
+                        </Tabs.Panel>
+                        <Tabs.Panel value="design">
+                            <div class="tab-panel-content design-content">
+                                <StudyDesign {id} />
                             </div>
-                            <div class="crc-editor-footer h-8 crc-content-width">
-                                <DSLFooter items={footerItems()} onCheckboxChange={handleCheckboxChange} />
-                            </div>
-                        {:else}
-                            {#if noModelAvailable === false}
-                                <div class="crc-editor crc-content-width">
-                                    <div class="placeholder animate-pulse"></div>
-                                </div>
-                            {:else}
-                                <div class="crc-editor crc-content-width">
-                                    <span class="editor-message">No model available</span>
-                                </div>
-                            {/if}
-                        {/if}
-                    </Tabs.Panel>
-                {/snippet}
-            </Tabs>
+                        </Tabs.Panel>
+                    {/snippet}
+                </Tabs>
+            </div>
         </div>
     </div>
 {:else}
@@ -348,3 +178,18 @@
         <div class="placeholder animate-pulse"></div>
     </div>
 {/if}
+
+<style>
+    .splitter-panel {
+        height: 100%;
+    }
+    
+    .tab-panel-content {
+        height: calc(100vh - 9rem);
+        overflow: hidden;
+    }
+    
+    .design-content {
+        padding: 0;
+    }
+</style>

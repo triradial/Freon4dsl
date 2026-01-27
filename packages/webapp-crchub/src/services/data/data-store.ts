@@ -11,6 +11,34 @@ export interface Patient {
   gender: string;
   studyId: string;
   study: string;
+  unavailableDates?: string[];
+  schedule?: PatientSchedule;
+  createdAt?: string;
+}
+
+export interface PatientScheduleEvent {
+  id: string;
+  type: string;
+  name: string;
+  actualDay?: number;
+  scheduledDay: number;
+  status?: string;
+  state?: string;
+  window?: {
+    daysBefore: number;
+    daysAfter: number;
+  };
+}
+
+export interface PatientScheduleDay {
+  day: number;
+  date: string;
+  events: PatientScheduleEvent[];
+}
+
+export interface PatientSchedule {
+  referenceDate: string;
+  days: PatientScheduleDay[];
 }
 
 export interface Study {
@@ -380,6 +408,72 @@ function createDataStore() {
     } catch (error) {
       console.error('Error deleting patient:', error);
       throw error; // Re-throw to let the dialog handle the error message
+    }
+  }
+
+  async function getPatientUnavailableDates(patientId: string): Promise<string[]> {
+    try {
+      const response = await fetch(`${env.serverUrl}/getPatientUnavailableDates?id=${patientId}`);
+      if (!response.ok) throw new Error('Failed to get patient unavailable dates');
+      const dates = await response.json();
+      return dates || [];
+    } catch (error) {
+      console.error('Error getting patient unavailable dates:', error);
+      return [];
+    }
+  }
+
+  async function setPatientUnavailableDates(patientId: string, dates: string[]): Promise<boolean> {
+    try {
+      const response = await fetch(`${env.serverUrl}/setPatientUnavailableDates?id=${patientId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dates })
+      });
+      if (!response.ok) throw new Error('Failed to set patient unavailable dates');
+      return true;
+    } catch (error) {
+      console.error('Error setting patient unavailable dates:', error);
+      return false;
+    }
+  }
+
+  async function getPatientSchedule(patientId: string): Promise<PatientSchedule | null> {
+    try {
+      const response = await fetch(`${env.serverUrl}/getPatientSchedule?id=${patientId}`);
+      if (!response.ok) throw new Error('Failed to get patient schedule');
+      const schedule = await response.json();
+      return schedule || null;
+    } catch (error) {
+      console.error('Error getting patient schedule:', error);
+      return null;
+    }
+  }
+
+  async function setPatientSchedule(patientId: string, schedule: PatientSchedule): Promise<boolean> {
+    try {
+      const response = await fetch(`${env.serverUrl}/setPatientSchedule?id=${patientId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(schedule)
+      });
+      if (!response.ok) throw new Error('Failed to set patient schedule');
+      return true;
+    } catch (error) {
+      console.error('Error setting patient schedule:', error);
+      return false;
+    }
+  }
+
+  async function getStudyPatientsWithSchedules(studyId: string): Promise<Patient[]> {
+    try {
+      const response = await fetch(`${env.serverUrl}/getStudyPatientsWithSchedules?id=${studyId}`);
+      if (!response.ok) throw new Error('Failed to get study patients with schedules');
+      const patients = await response.json();
+      return patients || [];
+    } catch (error) {
+      console.error('Error getting study patients with schedules:', error);
+      return [];
     }
   }
 
@@ -1064,6 +1158,11 @@ function createDataStore() {
     addPatient,
     updatePatient,
     deletePatient,
+    getPatientUnavailableDates,
+    setPatientUnavailableDates,
+    getPatientSchedule,
+    setPatientSchedule,
+    getStudyPatientsWithSchedules,
     getOrganizations,
     getOrganization,
     getUserOrganization,

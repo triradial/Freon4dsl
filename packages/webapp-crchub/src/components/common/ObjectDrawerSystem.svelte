@@ -70,6 +70,10 @@
                     onsave={async (patient) => {
                         if (action === 'add') {
                             await dataStore.addPatient(patient);
+                            // Refresh study patients from server to ensure store is fully synced
+                            if (patient.studyId) {
+                                await dataStore.getStudyPatients(patient.studyId);
+                            }
                         } else if (action === 'edit') {
                             await dataStore.updatePatient(patient);
                         }
