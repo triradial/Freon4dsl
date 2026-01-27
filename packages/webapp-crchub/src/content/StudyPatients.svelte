@@ -1,19 +1,21 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { browser } from '$app/environment';
-    import { simulationService } from "../../../services/simulation/simulation-service.js";
-    import { dataStore } from "../../../services/data/data-store.js";
+    import { simulationService } from "../services/simulation/simulation-service.js";
+    import { dataStore } from "../services/data/data-store.js";
     import { Timeline, getTimelineAsOfADate, type StudyConfiguration, Day, Unscheduled, AnyDay } from "@freon4dsl/study-configuration";
-    import { ModelManager } from "../../../services/dsl/model-manager.js";
+    import { ModelManager } from "../services/dsl/model-manager.js";
     import { get } from "svelte/store";
     import dayjs from "dayjs";
     // @ts-ignore
     import { CircleChevronLeft as IconChevronCircleLeft, CircleChevronRight as IconChevronCircleRight, Calendar as IconCalendar, Calendar1 as IconCalendar1, CalendarCheck as IconCalendarCheck, Grid2x2 as IconWindow, Check as IconCheck, X as IconX, Plus as IconPlus, Minus as IconMinus, Pencil as IconPencil, Trash2 as IconTrash, ArrowRightToLine as IconArrowRightToLine, Info as IconInfo, RefreshCw as IconRefresh } from '@lucide/svelte';
-    import { editObject, addObject, objectDrawerStore } from "../../../services/stores/object-drawer-store.js";
-    import DeleteObjectDialog from "../../dialogs/DeleteObjectDialog.svelte";
-    import DayCellPopup, { type PopupType, type EventOption, type DayEvent, type DayData, type PopupResult } from './DayCellPopup.svelte';
-    import TimelineCalendarHeader, { type MonthGroup } from './TimelineCalendarHeader.svelte';
-    import StaffTimelineSection from './StaffTimelineSection.svelte';
+    import { editObject, addObject, objectDrawerStore } from "../services/stores/object-drawer-store.js";
+    import { staffAvailabilityStore } from "../services/stores/staff-availability-store.js";
+    import DeleteObjectDialog from "../components/dialogs/DeleteObjectDialog.svelte";
+    import DayCellPopup, { type PopupType, type EventOption, type DayEvent, type DayData, type PopupResult } from '../components/content/patient/DayCellPopup.svelte';
+    import TimelineCalendarHeader, { type MonthGroup } from '../components/content/patient/TimelineCalendarHeader.svelte';
+    import StaffTimelineSection from '../components/content/facility/StaffTimelineSection.svelte';
+    import PatientTimelineSection from '../components/content/patient/PatientTimelineSection.svelte';
 
     let { studyId } = $props<{ studyId: string }>();
     
@@ -37,6 +39,9 @@
     
     // Info popup state (shown on hover)
     let showInfoPopup = $state(false);
+    
+    // Staff timeline visibility (controlled from NavBar user profile)
+    let showStaffTimeline = $derived($staffAvailabilityStore);
     
     // Load splitter setting from localStorage
     function loadSplitterSetting() {
@@ -148,6 +153,12 @@
     
     // Track if we need to reload patients after drawer closes
     let needsPatientReload = $state(false);
+    
+    // Quick filter for patients
+    let patientQuickFilter = $state('');
+    
+    // Quick filter for staff
+    let staffQuickFilter = $state('');
     
     // Scroll sync refs for patient/staff rows
     let patientLabelsScrollRef = $state<HTMLElement | null>(null);
@@ -897,9 +908,25 @@
         return combined;
     });
 
-    // Get visible patients - show all patients (scrolling handles overflow)
+    // Get visible patients - filtered by quick filter (scrolling handles overflow)
     let visiblePatientIds = $derived.by(() => {
-        return uniquePatientIds;
+        if (!patientQuickFilter.trim()) {
+            return uniquePatientIds;
+        }
+        
+        const filter = patientQuickFilter.toLowerCase().trim();
+        return uniquePatientIds.filter(patientId => {
+            // Search in patient number
+            if (patientId.toLowerCase().includes(filter)) {
+                return true;
+            }
+            // Search in initials if available
+            const patient = patients.find(p => p.patientNumber === patientId);
+            if (patient?.initials && patient.initials.toLowerCase().includes(filter)) {
+                return true;
+            }
+            return false;
+        });
     });
 
     // Patient-centric data structure (simplified format)
@@ -1493,11 +1520,23 @@
         return staffMap;
     });
 
-    // Get visible staff (from real staff members, not simulation)
+    // Get filtered staff (from real staff members, filtered by quick filter)
+    let filteredStaffMembers = $derived.by(() => {
+        if (!staffQuickFilter.trim()) {
+            return staffMembers;
+        }
+        
+        const filter = staffQuickFilter.toLowerCase().trim();
+        return staffMembers.filter(staff => 
+            staff.name.toLowerCase().includes(filter)
+        );
+    });
+    
+    // Get visible staff (filtered and paginated)
     let visibleStaff = $derived.by(() => {
         const start = staffScrollOffset2;
-        const end = Math.min(start + STAFF_MEMBERS_PER_PAGE, staffMembers.length);
-        return staffMembers.slice(start, end);
+        const end = Math.min(start + STAFF_MEMBERS_PER_PAGE, filteredStaffMembers.length);
+        return filteredStaffMembers.slice(start, end);
     });
 
     // Get day data for a specific patient and date from the patient-centric structure
@@ -2398,6 +2437,16 @@
         console.log('[handleRefreshStaff] Refreshed', staffMembers.length, 'staff members');
     }
     
+    // Quick filter handler for patients
+    function handlePatientQuickFilterChange(value: string) {
+        patientQuickFilter = value;
+    }
+    
+    // Quick filter handler for staff
+    function handleStaffQuickFilterChange(value: string) {
+        staffQuickFilter = value;
+    }
+    
     function handleEditPatient(patientId: string) {
         // Find patient data from the patients array
         const patientData = patients.find(p => p.patientNumber === patientId || p.id === patientId);
@@ -3102,7 +3151,7 @@
                 </div>
                 <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div class="control-group info-control" onmouseenter={() => showInfoPopup = true} onmouseleave={() => showInfoPopup = false}>
-                    <button class="info-button" title="Show legend" aria-label="Show legend">
+                    <button class="info-button" aria-label="Show legend">
                         <IconInfo size={22} />
                     </button>
                     {#if showInfoPopup}
@@ -3181,180 +3230,53 @@
         <!-- Timeline Sections Container (Patients + Staff with splitter) -->
         <div class="timeline-sections-container" class:dragging={isDraggingSplitter} bind:this={timelineSectionsRef}>
         
-        <!-- Patients Section -->
-        <div class="timeline-section patients" style="flex: {splitRatio}; min-height: 0;">
-            <div class="timeline-grid">
-                <!-- Left column: Patients label, nav buttons, patient labels -->
-                <div class="left-column">
-                    <!-- Patients label (aligned with month row) -->
-                    <div class="section-label-row">
-                        <h3 class="section-title">Patients</h3>
-                        <button class="grid-button general-button" onclick={handleAddPatient} title="Add Patient" aria-label="Add Patient">
-                            <IconPlus size={16} />
-                        </button>
-                        <button class="grid-button general-button" onclick={handleRefreshPatients} title="Refresh Patients" aria-label="Refresh Patients">
-                            <IconRefresh size={16} />
-                        </button>
-                    </div>
-                    
-                    <!-- Navigation buttons (aligned with day row) -->
-                    <div class="nav-buttons-row">
-                        <button class="grid-button general-button" onclick={navigatePrevious} disabled={visibleStartDay <= dateRangeStart} aria-label="Previous page">
-                            <IconChevronCircleLeft size={24} />
-                        </button>
-                        <button class="grid-button general-button" onclick={navigateNext} disabled={visibleEndDay >= dateRangeEnd} aria-label="Next page">
-                            <IconChevronCircleRight size={24} />
-                        </button>
-                    </div>
-                    
-                    <!-- Patient labels column (scrollable) -->
-                    <div class="patient-labels-scroll-wrapper" bind:this={patientLabelsScrollRef} onscroll={() => syncPatientScroll('labels')}>
-                        <div class="patient-labels-column">
-                            {#each visiblePatientIds as patientId}
-                                {@const patientRecord = patients.find(p => p.patientNumber === patientId)}
-                                {@const hasFirstVisit = patientHasFirstVisit(patientId)}
-                                <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                <div class="row-label-container" onmouseenter={() => { if (deletePopupPatientId !== patientId) hoveredPatientId = patientId; }} onmouseleave={() => { if (deletePopupPatientId !== patientId) hoveredPatientId = null; }}>    
-                                    <div class="row-left-content">
-                                        <span class="row-label-text">
-                                            <a href="/patient?id={patientRecord?.id || ''}&studyId={studyId}" class="name-link-text">{patientId}</a>{patientRecord?.initials ? ` • ${patientRecord.initials}` : ''}
-                                        </span>
-                                        {#if hoveredPatientId === patientId && deletePopupPatientId !== patientId}
-                                            <div class="row-actions">
-                                                <button class="grid-button general-button" onclick={() => handleEditPatient(patientId)} title="Edit Patient" aria-label="Edit Patient">
-                                                    <IconPencil size={14} />
-                                                </button>
-                                                <button class="grid-button delete-button" onclick={() => handleDeletePatient(patientId)} title="Delete Patient" aria-label="Delete Patient">
-                                                    <IconTrash size={14} />
-                                                </button>
-                                            </div>
-                                        {/if}
-                                    </div>
-                                    {#if hasFirstVisit}
-                                        <button class="grid-button general-button jump-to-first-visit" onclick={() => handleJumpToFirstVisit(patientId)} title="Jump to first visit" aria-label="Jump to first visit">
-                                            <IconArrowRightToLine size={14} />
-                                        </button>
-                                    {/if}
-                                </div>
-                            {/each}
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Days columns -->
-                <div class="days-container" style="--day-width: {dayWidth}px;">
-                    <!-- Month headers with background -->
-                    <div class="month-headers-row">
-                        {#each monthGroups as group}
-                            <div class="month-header" style="grid-column: {group.startIndex + 1} / {group.endIndex + 2}; background-color: {group.backgroundColor};">
-                                {getMonthAbbr(new Date(group.year, group.month, 1))} {group.year}
-                            </div>
-                        {/each}
-                    </div>
-                    
-                    <!-- Day headers - date above day of week -->
-                    <div class="day-headers-row">
-                        {#each visibleDays as day}
-                            {@const date = getDateFromDay(day)}
-                            {@const monthGroup = monthGroups.find(g => {
-                                const dayMonth = getMonthForDay(day);
-                                return g.month === dayMonth.month && g.year === dayMonth.year;
-                            })}
-                            <div 
-                                class="day-header" 
-                                class:weekend={isWeekend(date)}
-                                class:today={isToday(day)}
-                                style={monthGroup && !isWeekend(date) && !isToday(day) ? `background-color: ${monthGroup.backgroundColor};` : ''}
-                            >
-                                <span class="day-number">{date.getDate()}</span>
-                                <span class="day-of-week">{getDayOfWeekAbbr(date)}</span>
-                            </div>
-                        {/each}
-                    </div>
-                    
-                    <!-- Patient rows (scrollable) -->
-                    <div class="patient-rows-scroll-wrapper" bind:this={patientRowsScrollRef} onscroll={() => syncPatientScroll('rows')}>
-                        {#each visiblePatientIds as patientId}
-                            <div class="patient-row">
-                            {#each visibleDays as day}
-                                {@const date = getDateFromDay(day)}
-                                {@const dayData = getPatientDayData(day, patientId)}
-                                {@const renderingInfo = getDayRenderingInfo(day, patientId)}
-                                {@const isUnavailable = isPatientUnavailable(day, patientId)}
-                                {@const isDayZero = isPatientDayZero(day, patientId)}
-                                {@const shouldShowUnavailable = isUnavailable && (viewMode === 'availability' || showAvailability)}
-                                
-                                {@const unavailableOnly = shouldShowUnavailable && !renderingInfo.event && (!renderingInfo.isWindow || !showWindows)}
-                                <div 
-                                    class="timeline-cell clickable" 
-                                    class:weekend={isWeekend(date)}
-                                    class:today={isToday(day)}
-                                    class:day-zero={isDayZero}
-                                    class:unavailable={shouldShowUnavailable}
-                                    class:unavailable-only={unavailableOnly}
-                                    role="button"
-                                    tabindex="0"
-                                    onclick={(e) => handleCellClick(e, day, patientId)}
-                                    onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleCellClick(e as unknown as MouseEvent, day, patientId); }}
-                                    onmouseenter={(e) => handleCellMouseEnter(e, day, patientId)}
-                                    onmousemove={handleCellMouseMove}
-                                    onmouseleave={handleCellMouseLeave}
-                                >
-                                    {#if dayData && renderingInfo.isWindow && showWindows}
-                                        <!-- Window day with no events -->
-                                        <div class="event-indicator window">
-                                            <IconWindow size={14} />
-                                        </div>
-                                    {:else if dayData && renderingInfo.event}
-                                        <!-- Event day -->
-                                        {@const event = renderingInfo.event}
-                                        {@const state = renderingInfo.state}
-                                        {@const isActual = renderingInfo.isActual}
-                                        {@const isUnscheduled = renderingInfo.isUnscheduledEvent}
-                                        {@const eventTypeClass = isActual ? 'actual' : (isUnscheduled ? 'unscheduled' : 'scheduled')}
-                                        <div class="event-indicator {eventTypeClass} {state}" class:day-zero-indicator={isDayZero}>
-                                            {#if isActual}
-                                                <!-- Actual/Completed event: check icon with stripe -->
-                                                {#if state === "on-scheduled-date" || state === "in-window" || state === "out-of-window"}
-                                                    <IconCheck size={18} />
-                                                {:else if state === "canceled-visit" || state === "missed-visit"}
-                                                    <IconX size={18} />
-                                                {/if}
-                                            {:else if isDayZero}
-                                                <!-- Day 0 scheduled event: Calendar-1 icon -->
-                                                <IconCalendar1 size={16} />
-                                            {:else}
-                                                <!-- Scheduled/Pending event: calendar icon without stripe -->
-                                                <IconCalendar size={16} />
-                                            {/if}
-                                        </div>
-                                    {/if}
-                                    {#if shouldShowUnavailable}
-                                        <div class="unavailable-overlay"></div>
-                                    {/if}
-                                </div>
-                            {/each}
-                        </div>
-                        {/each}
-                    </div>
-                </div>
-                
-                <!-- Delete confirmation popup overlay -->
-                {#if deletePopupPatientId && deletePopupRowIndex >= 0}
-                    {@const patientRecord = patients.find(p => p.patientNumber === deletePopupPatientId)}
-                    {@const scrollOffset = patientLabelsScrollRef?.scrollTop || 0}
-                    {@const rowTop = deletePopupRowIndex * 40 - scrollOffset}
-                    <div class="delete-popup-overlay" style="top: calc(5rem + {rowTop}px);">
-                        <div class="inline-delete-popup">
-                            <span class="delete-popup-patient">{deletePopupPatientId}{patientRecord?.initials ? ` • ${patientRecord.initials}` : ''}</span>
-                            <span class="delete-popup-separator">|</span>
-                            <span class="delete-popup-text">Delete patient?</span>
-                            <button class="delete-popup-btn keep" onclick={cancelDeletePatient}>No, keep</button>
-                            <button class="delete-popup-btn delete" onclick={() => confirmDeletePatient(deletePopupPatientId!)}>Yes, delete</button>
-                        </div>
-                    </div>
-                {/if}
-            </div>
+        <!-- Patients Section (uses shared component) -->
+        <div class="patient-section-wrapper" style="flex: {showStaffTimeline ? splitRatio : 1}; min-height: 0;">
+            <PatientTimelineSection
+                {studyId}
+                {visibleDays}
+                {visiblePatientIds}
+                {patients}
+                {monthGroups}
+                {dayWidth}
+                {viewMode}
+                {showAvailability}
+                {showWindows}
+                {getDateFromDay}
+                {isWeekend}
+                {isToday}
+                getMonthName={getMonthAbbr}
+                {getDayOfWeekAbbr}
+                {getMonthForDay}
+                {getPatientDayData}
+                {getDayRenderingInfo}
+                {isPatientUnavailable}
+                {isPatientDayZero}
+                {patientHasFirstVisit}
+                onPatientCellClick={handleCellClick}
+                onPatientCellMouseEnter={handleCellMouseEnter}
+                onPatientCellMouseMove={handleCellMouseMove}
+                onPatientCellMouseLeave={handleCellMouseLeave}
+                onAddPatient={handleAddPatient}
+                onRefreshPatients={handleRefreshPatients}
+                onEditPatient={handleEditPatient}
+                onDeletePatient={handleDeletePatient}
+                onJumpToFirstVisit={handleJumpToFirstVisit}
+                onNavigatePrevious={navigatePrevious}
+                onNavigateNext={navigateNext}
+                canNavigatePrevious={visibleStartDay > dateRangeStart}
+                canNavigateNext={visibleEndDay < dateRangeEnd}
+                bind:quickFilter={patientQuickFilter}
+                onQuickFilterChange={handlePatientQuickFilterChange}
+                bind:hoveredPatientId
+                bind:patientLabelsScrollRef
+                bind:patientRowsScrollRef
+                onPatientScroll={syncPatientScroll}
+                deletePopupPatientId={deletePopupPatientId}
+                deletePopupRowIndex={deletePopupRowIndex}
+                onConfirmDelete={confirmDeletePatient}
+                onCancelDelete={cancelDeletePatient}
+            />
         </div>
 
         <!-- Tooltip -->
@@ -3381,6 +3303,7 @@
             </div>
         {/if}
 
+        {#if showStaffTimeline}
         <!-- Horizontal Splitter between Patients and Staff -->
         <button 
             type="button"
@@ -3389,6 +3312,7 @@
             role="slider"
             aria-label="Resize patient and staff sections"
         ></button>
+        {/if}
 
         <!-- Day Cell Popup -->
         <DayCellPopup
@@ -3407,6 +3331,7 @@
             on:availabilityChange={(e) => handleAvailabilityChange(e.detail)}
         />
 
+        {#if showStaffTimeline}
         <!-- Staff Section (uses shared component) -->
         <div class="staff-section-wrapper" style="flex: {1 - splitRatio}; min-height: 0;">
             <StaffTimelineSection
@@ -3430,6 +3355,8 @@
                 onNavigateNext={navigateNext}
                 canNavigatePrevious={visibleStartDay > dateRangeStart}
                 canNavigateNext={visibleEndDay < dateRangeEnd}
+                bind:quickFilter={staffQuickFilter}
+                onQuickFilterChange={handleStaffQuickFilterChange}
                 bind:hoveredStaffId
                 bind:staffLabelsScrollRef
                 bind:staffRowsScrollRef
@@ -3440,6 +3367,7 @@
                 onCancelDelete={cancelDeleteStaff}
             />
         </div>
+        {/if}
         
         </div><!-- End of timeline-sections-container -->
         

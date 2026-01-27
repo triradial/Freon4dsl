@@ -33,7 +33,7 @@
 <div class="card card-area max-w-sm h-full">
     <div class="flex items-center mb-4">
         <h3 class="main-label-text mr-2">Study</h3>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1">
             <button type="button" class="grid-button general-button" onclick={onEditClick} title="Edit Study" aria-label="Edit Study">
                 <IconPencil size={16} />
             </button>

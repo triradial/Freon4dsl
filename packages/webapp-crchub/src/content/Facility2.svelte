@@ -4,7 +4,7 @@
     import { get } from "svelte/store";
     import dayjs from "dayjs";
     import FacilityCard from "../components/cards/FacilityCard.svelte";
-    import StaffTimelineSection, { type StaffMember } from "../components/content/patient/StaffTimelineSection.svelte";
+    import StaffTimelineSection, { type StaffMember } from "../components/content/facility/StaffTimelineSection.svelte";
     import type { MonthGroup } from "../components/content/patient/TimelineCalendarHeader.svelte";
     import { dataStore } from "../services/data/data-store.js";
     import { addObject, editObject } from "../services/stores/object-drawer-store.js";
@@ -39,6 +39,9 @@
     let staffRowsScrollRef = $state<HTMLElement | null>(null);
     let deletePopupStaffId = $state<string | null>(null);
     let deletePopupStaffRowIndex = $state(-1);
+    
+    // Quick filter for staff
+    let staffQuickFilter = $state('');
 
     // Timeline date range
     let referenceDate = $state<Date>(new Date());
@@ -345,14 +348,26 @@
         return groups;
     });
 
-    // Visible staff (pagination)
+    // Visible staff (filtered and paginated)
     const STAFF_MEMBERS_PER_PAGE = 10;
     let staffScrollOffset = $state(0);
     
+    // Get filtered staff (filtered by quick filter)
+    let filteredStaffMembers = $derived.by(() => {
+        if (!staffQuickFilter.trim()) {
+            return staffMembers;
+        }
+        
+        const filter = staffQuickFilter.toLowerCase().trim();
+        return staffMembers.filter(staff => 
+            staff.name.toLowerCase().includes(filter)
+        );
+    });
+    
     let visibleStaff = $derived.by(() => {
         const start = staffScrollOffset;
-        const end = Math.min(start + STAFF_MEMBERS_PER_PAGE, staffMembers.length);
-        return staffMembers.slice(start, end);
+        const end = Math.min(start + STAFF_MEMBERS_PER_PAGE, filteredStaffMembers.length);
+        return filteredStaffMembers.slice(start, end);
     });
 
     // Navigation
@@ -435,6 +450,11 @@
     async function handleRefreshStaff() {
         console.log('[Facility2] Refreshing staff data');
         await loadStaffData();
+    }
+    
+    // Quick filter handler for staff
+    function handleStaffQuickFilterChange(value: string) {
+        staffQuickFilter = value;
     }
     
     function handleEditStaff(staffId: string) {
@@ -539,6 +559,8 @@
                         onNavigateNext={navigateNext}
                         canNavigatePrevious={canNavigatePrevious}
                         canNavigateNext={canNavigateNext}
+                        bind:quickFilter={staffQuickFilter}
+                        onQuickFilterChange={handleStaffQuickFilterChange}
                         bind:hoveredStaffId
                         bind:staffLabelsScrollRef
                         bind:staffRowsScrollRef

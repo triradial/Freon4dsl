@@ -3,7 +3,7 @@
     import { onDestroy, onMount } from "svelte";
     import { browser } from '$app/environment';
     import StudyCard from "../components/cards/StudyCard.svelte";
-    import PatientStaffTimelineChart from "../components/content/patient/PatientStaffTimelineChart.svelte";
+    import StudyPatients from "./StudyPatients.svelte";
     import StudyDesign from "./StudyDesign.svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
     import { setAllDrawersVisibility, setDrawerVisibility, setDrawerProps, getActiveDrawer, setActiveDrawer } from "../services/stores/side-drawer-store.js";
@@ -160,7 +160,7 @@
                     {#snippet content()}
                         <Tabs.Panel value="patients">
                             <div class="tab-panel-content">
-                                <PatientStaffTimelineChart studyId={study.id} />
+                                <StudyPatients studyId={study.id} />
                             </div>
                         </Tabs.Panel>
                         <Tabs.Panel value="design">

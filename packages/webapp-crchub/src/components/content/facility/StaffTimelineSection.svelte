@@ -4,7 +4,7 @@
     
     // @ts-ignore
     import { CircleChevronLeft as IconChevronCircleLeft, CircleChevronRight as IconChevronCircleRight, Plus as IconPlus, Pencil as IconPencil, Trash2 as IconTrash, RefreshCw as IconRefresh } from '@lucide/svelte';
-    import TimelineCalendarHeader, { type MonthGroup } from './TimelineCalendarHeader.svelte';
+    import { type MonthGroup } from './TimelineCalendarHeader.svelte';
     
     export interface StaffMember {
         id: string;
@@ -40,7 +40,9 @@
         deletePopupStaffId = null,
         deletePopupRowIndex = -1,
         onConfirmDelete,
-        onCancelDelete
+        onCancelDelete,
+        quickFilter = $bindable(''),
+        onQuickFilterChange
     } = $props<{
         visibleDays: number[];
         visibleStaff: StaffMember[];
@@ -70,6 +72,8 @@
         deletePopupRowIndex?: number;
         onConfirmDelete?: (staffId: string) => void;
         onCancelDelete?: () => void;
+        quickFilter?: string;
+        onQuickFilterChange?: (value: string) => void;
     }>();
 
     // Tooltip state
@@ -120,12 +124,25 @@
         handleCellMouseLeave();
         onStaffCellClick(e, day, staffId);
     }
+    
+    // Handle quick filter input change
+    function handleFilterInput(event: Event) {
+        const target = event.target as HTMLInputElement;
+        quickFilter = target.value;
+        onQuickFilterChange?.(target.value);
+    }
+    
+    // Clear quick filter
+    function clearFilter() {
+        quickFilter = '';
+        onQuickFilterChange?.('');
+    }
 </script>
 
 <!-- Staff Section -->
 <div class="timeline-section staff">
     <div class="timeline-grid">
-        <!-- Left column: Staff label, nav buttons, staff labels -->
+        <!-- Left column: Staff label, staff labels -->
         <div class="left-column">
             <!-- Staff label (aligned with month row) -->
             <div class="section-label-row">
@@ -133,19 +150,25 @@
                 <button class="grid-button general-button" onclick={onAddStaff} title="Add Staff" aria-label="Add Staff">
                     <IconPlus size={16} />
                 </button>
-                <button class="grid-button general-button" onclick={onRefreshStaff} title="Refresh Staff" aria-label="Refresh Staff">
+                <button class="grid-button green-button" onclick={onRefreshStaff} title="Refresh Staff" aria-label="Refresh Staff">
                     <IconRefresh size={16} />
                 </button>
             </div>
             
-            <!-- Navigation buttons (aligned with day row) -->
-            <div class="nav-buttons-row">
-                <button class="grid-button general-button" onclick={onNavigatePrevious} disabled={!canNavigatePrevious} aria-label="Previous page">
-                    <IconChevronCircleLeft size={24} />
-                </button>
-                <button class="grid-button general-button" onclick={onNavigateNext} disabled={!canNavigateNext} aria-label="Next page">
-                    <IconChevronCircleRight size={24} />
-                </button>
+            <!-- Quick filter row -->
+            <div class="quick-filter-row">
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        placeholder="Quick filter..." 
+                        class="quick-input-field" 
+                        value={quickFilter} 
+                        oninput={handleFilterInput} 
+                    />
+                    {#if quickFilter}
+                        <button type="button" class="clear-search-button" onclick={clearFilter}>×</button>
+                    {/if}
+                </div>
             </div>
             
             <!-- Staff labels column (scrollable) -->
@@ -175,17 +198,45 @@
         
         <!-- Days columns with calendar header -->
         <div class="days-container" style="--day-width: {dayWidth}px;">
-            <!-- Calendar header (month + day headers) -->
-            <TimelineCalendarHeader
-                {visibleDays}
-                {monthGroups}
-                {getDateFromDay}
-                {isWeekend}
-                {isToday}
-                {getMonthName}
-                {getDayOfWeekAbbr}
-                {getMonthForDay}
-            />
+            <!-- Month headers with navigation buttons -->
+            <div class="month-headers-row with-nav">
+                <div class="month-nav-buttons">
+                    <button class="grid-button general-button" onclick={onNavigatePrevious} disabled={!canNavigatePrevious} aria-label="Previous month">
+                        <IconChevronCircleLeft size={20} />
+                    </button>
+                    <button class="grid-button general-button" onclick={onNavigateNext} disabled={!canNavigateNext} aria-label="Next month">
+                        <IconChevronCircleRight size={20} />
+                    </button>
+                </div>
+                {#each monthGroups as group}
+                    <div 
+                        class="month-header" 
+                        style="grid-column: {group.startIndex + 1} / {group.endIndex + 2}; background-color: {group.backgroundColor};"
+                    >
+                        {getMonthName(new Date(group.year, group.month, 1))} {group.year}
+                    </div>
+                {/each}
+            </div>
+            
+            <!-- Day headers - date above day of week -->
+            <div class="day-headers-row">
+                {#each visibleDays as day}
+                    {@const date = getDateFromDay(day)}
+                    {@const monthGroup = monthGroups.find(g => {
+                        const dayMonth = getMonthForDay(day);
+                        return g.month === dayMonth.month && g.year === dayMonth.year;
+                    })}
+                    <div 
+                        class="day-header" 
+                        class:weekend={isWeekend(date)}
+                        class:today={isToday(day)}
+                        style={monthGroup && !isWeekend(date) && !isToday(day) ? `background-color: ${monthGroup.backgroundColor};` : ''}
+                    >
+                        <span class="day-number">{date.getDate()}</span>
+                        <span class="day-of-week">{getDayOfWeekAbbr(date)}</span>
+                    </div>
+                {/each}
+            </div>
             
             <!-- Staff rows (scrollable) -->
             <div class="staff-rows-scroll-wrapper" bind:this={staffRowsScrollRef} onscroll={() => onStaffScroll?.('rows')}>
