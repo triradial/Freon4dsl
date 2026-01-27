@@ -116,26 +116,26 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     const eventState = node.eventState; //TODO: need to check for the correct state.
 
     let owningEvent = ownerOfType(node, "Event") as language.Event;
-    // if (referencedEvent == undefined || referencedEvent == null) {
-    //     console.log("evalEventReference: owningEvent: " + "owningEvent.name");
-    // }
-    // console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
+    if (referencedEvent == undefined || referencedEvent == null) {
+        console.log("evalEventReference: owningEvent: " + "owningEvent.name");
+    }
+    console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
     // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
     // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
-    // console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
+    console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
     let lastInstanceOfReferencedEvent =
       timeline.getLastScheduledEventInstanceForThisEventsName(referencedEvent);
     if (
       lastInstanceOfReferencedEvent === null ||
       lastInstanceOfReferencedEvent === undefined
     ) {
-      // console.log(
-      //     "The event '" +
-      //         "owningEvent.name" +
-      //         "' reference to: '" +
-      //         "referencedEvent.name" +
-      //         "' cannot be evaluated because the referenced event is not on the timeline",
-      // );
+      console.log(
+          "The event '" +
+              "owningEvent.name" +
+              "' reference to: '" +
+              "referencedEvent.name" +
+              "' cannot be evaluated because the referenced event is not on the timeline",
+      );
       return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
     } else {
       if (

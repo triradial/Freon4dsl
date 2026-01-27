@@ -80,11 +80,12 @@ SystemAccess {
         System Name:${name}
         Accessed At:${accessedAt}
         ${description}
-        [? Robot Mappings:
-            ${robotMappings}
-        ]
     ]
 }
+
+        // [? Robot Mappings:
+        //     ${robotMappings}
+        // ]
 
 
 SystemAccessReference {
