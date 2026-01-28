@@ -38,6 +38,21 @@
     }
     .vis-item.not-available { background-color: #b0395f; }
     
+    /* Ensure consistent item height and alignment */
+    .vis-timeline .vis-item {
+      box-sizing: border-box;
+      height: 30px !important;
+      line-height: 30px !important;
+    }
+    
+    /* Ensure all items align to top of their container */
+    .vis-timeline .vis-item-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+    
     .test-section {
       margin: 20px 0;
       padding: 15px;
@@ -200,11 +215,12 @@
 <div class="test-section">
   <h3>Observations & Notes:</h3>
   <ul>
-    <li><strong>Single Line Approach:</strong> Events are now on one line in the same column - items that occur on the same day are combined into a single item.</li>
+    <li><strong>Single Line Approach:</strong> Events are on one line in the same column - items that occur on the same day are combined into a single item.</li>
     <li><strong>Same Day:</strong> When patient event occurs on scheduled date, they are combined into one item (Patient A - Visit 1, Patient B - Visit 1).</li>
     <li><strong>In Window:</strong> When patient event occurs within a window day, that window day item is replaced with the patient event item (Patient A - Visit 2 & 3, Patient B - Visit 2).</li>
     <li><strong>Out of Window:</strong> Patient events outside windows appear as separate items on their own days (Patient C - both visits).</li>
-    <li><strong>Stack Behavior:</strong> With `stack: true`, items that don't overlap in time appear on the same horizontal line.</li>
+    <li><strong>Stack Behavior:</strong> With `stack: false`, items never stack vertically - all items stay on one line, even if they overlap in time.</li>
+    <li><strong>No More "Boxes Extending Up":</strong> Using `stack: false` prevents any vertical stacking, keeping all items on a single horizontal line.</li>
   </ul>
 </div>
 
@@ -216,7 +232,7 @@
     <li>If patient event is on scheduled date: combine into one item with patient event className (e.g., "on-scheduled-date").</li>
     <li>If patient event is in a window day: replace that window day's item with the patient event item (e.g., "in-window").</li>
     <li>If patient event is outside window: add as separate item with "out-of-window" className.</li>
-    <li>Use `stack: true` to keep items on one line when they don't overlap in time.</li>
+    <li>Use `stack: false` to prevent any vertical stacking - all items stay on one line even if they overlap in time.</li>
   </ol>
 </div>
 
