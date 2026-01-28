@@ -1,0 +1,58 @@
+{
+  "scenario": "Patient with unscheduled visits mixed with scheduled visits",
+  "description": "Patient ARCX-1005 with regular schedule plus unscheduled emergency checks",
+  "patientId": "ARCX-1005",
+  "referenceDate": "2026-01-14",
+  "days": {
+    "0": {
+      "eventName": "Prescreen",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": true,
+        "eventType": "actual-event",
+        "isUnscheduledEvent": false
+      }
+    },
+    "3": {
+      "eventName": "Emergency Check (unscheduled)",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": false,
+        "eventType": "unscheduled-event",
+        "isUnscheduledEvent": true
+      }
+    },
+    "7": {
+      "eventName": "Screen",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": true,
+        "eventType": "actual-event",
+        "isUnscheduledEvent": false
+      }
+    },
+    "10": {
+      "eventName": "Follow-up Check (unscheduled)",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": false,
+        "eventType": "unscheduled-event",
+        "isUnscheduledEvent": true
+      }
+    },
+    "14": {
+      "eventName": "Post Screen",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": true,
+        "eventType": "actual-event",
+        "isUnscheduledEvent": false
+      }
+    }
+  }
+}

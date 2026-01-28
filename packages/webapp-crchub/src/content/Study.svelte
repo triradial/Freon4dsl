@@ -132,21 +132,15 @@
     <div class="crc-container" style="height: calc(100vh - 5.75rem);">
         <div bind:this={splitterContainer} class="splitter-container" class:dragging={isDraggingSplitter} style="height: 100%;">
             <!-- Left Panel: Study Card -->
-            <div class="splitter-panel" style="width: {studyCardWidth}rem; flex-shrink: 0;">
+            <div class="splitter-panel left" style="width: {studyCardWidth}rem; flex-shrink: 0;">
                 <StudyCard studyId={study.id} />
             </div>
             
             <!-- Splitter -->
-            <button type="button"
-                bind:this={splitterHandle}
-                class="splitter-handle"
-                onmousedown={handleSplitterMouseDown}
-                role="slider"
-                aria-label="Resize study card panel"
-            ></button>
+            <button type="button" bind:this={splitterHandle} class="splitter-handle" onmousedown={handleSplitterMouseDown} role="slider" aria-label="Resize study card panel"></button>
             
             <!-- Right Panel: Tab Content -->
-            <div class="splitter-panel" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+            <div class="splitter-panel right" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
                 <Tabs value={activeTab} onValueChange={(e) => activeTab = e.value} listGap="gap-6" listMargin="mb-2" base="mt-2 ml-2" contentBase="mt-0">
                     {#snippet list()}
                         <Tabs.Control stateActive="tab-active" value="patients">

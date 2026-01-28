@@ -1,0 +1,4928 @@
+{
+  "initialDayNumber": 0,
+  "patients": [
+    {
+      "patientId": "ARCX-1001",
+      "referenceDate": "2026-01-14",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-01-14",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "actualDay": 0,
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-01-21",
+          "events": [
+            {
+              "id": "screen-1",
+              "name": "Screen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "actualDay": 7,
+              "scheduledDay": 7
+            }
+          ]
+        },
+        {
+          "day": 13,
+          "date": "2026-01-27",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "name": "Post Screen",
+              "type": "actual-event",
+              "state": "out-of-window",
+              "status": "completed",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "actualDay": 13,
+              "scheduledDay": 13,
+              "originalScheduledDay": 14
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-01-28",
+          "windows": [
+            {
+              "eventId": "post-screen-1",
+              "eventName": "Post Screen"
+            }
+          ]
+        },
+        {
+          "day": 23,
+          "date": "2026-02-06",
+          "windows": [
+            {
+              "eventId": "termination-1",
+              "eventName": "Termination"
+            }
+          ]
+        },
+        {
+          "day": 26,
+          "date": "2026-02-09",
+          "events": [
+            {
+              "id": "termination-1",
+              "name": "Termination",
+              "type": "scheduled-event",
+              "state": "out-of-window",
+              "status": "planned",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 26,
+              "originalScheduledDay": 23
+            }
+          ]
+        },
+        {
+          "day": 35,
+          "date": "2026-02-18",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 36,
+          "date": "2026-02-19",
+          "events": [
+            {
+              "id": "visit-1-1",
+              "name": "Visit 1",
+              "type": "scheduled-event",
+              "state": "in-window",
+              "status": "pending",
+              "window": {
+                "daysAfter": 7,
+                "daysBefore": 0
+              },
+              "scheduledDay": 36,
+              "originalScheduledDay": 35
+            }
+          ]
+        },
+        {
+          "day": 37,
+          "date": "2026-02-20",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 38,
+          "date": "2026-02-21",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 39,
+          "date": "2026-02-22",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 40,
+          "date": "2026-02-23",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 41,
+          "date": "2026-02-24",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            },
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 42,
+          "date": "2026-02-25",
+          "events": [
+            {
+              "id": "visit-2-1",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 42
+            }
+          ]
+        },
+        {
+          "day": 43,
+          "date": "2026-02-26",
+          "windows": [
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 48,
+          "date": "2026-03-03",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 49,
+          "date": "2026-03-04",
+          "events": [
+            {
+              "id": "visit-2-2",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 49
+            }
+          ]
+        },
+        {
+          "day": 50,
+          "date": "2026-03-05",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 55,
+          "date": "2026-03-10",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 56,
+          "date": "2026-03-11",
+          "events": [
+            {
+              "id": "visit-2-3",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 56
+            }
+          ]
+        },
+        {
+          "day": 57,
+          "date": "2026-03-12",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 62,
+          "date": "2026-03-17",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 63,
+          "date": "2026-03-18",
+          "events": [
+            {
+              "id": "visit-2-4",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 63
+            }
+          ]
+        },
+        {
+          "day": 64,
+          "date": "2026-03-19",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 69,
+          "date": "2026-03-24",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 70,
+          "date": "2026-03-25",
+          "events": [
+            {
+              "id": "visit-3-1",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 70
+            }
+          ]
+        },
+        {
+          "day": 71,
+          "date": "2026-03-26",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 76,
+          "date": "2026-03-31",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 77,
+          "date": "2026-04-01",
+          "events": [
+            {
+              "id": "visit-3-2",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 77
+            }
+          ]
+        },
+        {
+          "day": 78,
+          "date": "2026-04-02",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 83,
+          "date": "2026-04-07",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 84,
+          "date": "2026-04-08",
+          "events": [
+            {
+              "id": "visit-3-3",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 84
+            }
+          ]
+        },
+        {
+          "day": 85,
+          "date": "2026-04-09",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 90,
+          "date": "2026-04-14",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 91,
+          "date": "2026-04-15",
+          "events": [
+            {
+              "id": "visit-3-4",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 91
+            }
+          ]
+        },
+        {
+          "day": 92,
+          "date": "2026-04-16",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 97,
+          "date": "2026-04-21",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 98,
+          "date": "2026-04-22",
+          "events": [
+            {
+              "id": "visit-3-5",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 98
+            }
+          ]
+        },
+        {
+          "day": 99,
+          "date": "2026-04-23",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 103,
+          "date": "2026-04-27",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 104,
+          "date": "2026-04-28",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 105,
+          "date": "2026-04-29",
+          "events": [
+            {
+              "id": "visit-4-1",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 105
+            }
+          ]
+        },
+        {
+          "day": 106,
+          "date": "2026-04-30",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 107,
+          "date": "2026-05-01",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 110,
+          "date": "2026-05-04",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 111,
+          "date": "2026-05-05",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 112,
+          "date": "2026-05-06",
+          "events": [
+            {
+              "id": "visit-4-2",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 112
+            }
+          ]
+        },
+        {
+          "day": 113,
+          "date": "2026-05-07",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 114,
+          "date": "2026-05-08",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 117,
+          "date": "2026-05-11",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 118,
+          "date": "2026-05-12",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 119,
+          "date": "2026-05-13",
+          "events": [
+            {
+              "id": "visit-4-3",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 119
+            }
+          ]
+        },
+        {
+          "day": 120,
+          "date": "2026-05-14",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 121,
+          "date": "2026-05-15",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 126,
+          "date": "2026-05-20",
+          "events": [
+            {
+              "id": "follow-up-1",
+              "name": "Follow-up",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 126
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "patientId": "ARCX-1002",
+      "referenceDate": "2026-01-27",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-01-27",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "actualDay": 0,
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 5,
+          "date": "2026-02-01",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 6,
+          "date": "2026-02-02",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-02-03",
+          "events": [
+            {
+              "id": "screen-1",
+              "name": "Screen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 7
+            }
+          ]
+        },
+        {
+          "day": 8,
+          "date": "2026-02-04",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 9,
+          "date": "2026-02-05",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-02-10",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "name": "Post Screen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 14
+            }
+          ]
+        },
+        {
+          "day": 35,
+          "date": "2026-03-03",
+          "events": [
+            {
+              "id": "visit-1-1",
+              "name": "Visit 1",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 7,
+                "daysBefore": 0
+              },
+              "scheduledDay": 35
+            }
+          ]
+        },
+        {
+          "day": 36,
+          "date": "2026-03-04",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 37,
+          "date": "2026-03-05",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 38,
+          "date": "2026-03-06",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 39,
+          "date": "2026-03-07",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 40,
+          "date": "2026-03-08",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 41,
+          "date": "2026-03-09",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            },
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 42,
+          "date": "2026-03-10",
+          "events": [
+            {
+              "id": "visit-2-1",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 42
+            }
+          ]
+        },
+        {
+          "day": 43,
+          "date": "2026-03-11",
+          "windows": [
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 48,
+          "date": "2026-03-16",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 49,
+          "date": "2026-03-17",
+          "events": [
+            {
+              "id": "visit-2-2",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 49
+            }
+          ]
+        },
+        {
+          "day": 50,
+          "date": "2026-03-18",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 55,
+          "date": "2026-03-23",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 56,
+          "date": "2026-03-24",
+          "events": [
+            {
+              "id": "visit-2-3",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 56
+            }
+          ]
+        },
+        {
+          "day": 57,
+          "date": "2026-03-25",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 62,
+          "date": "2026-03-30",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 63,
+          "date": "2026-03-31",
+          "events": [
+            {
+              "id": "visit-2-4",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 63
+            }
+          ]
+        },
+        {
+          "day": 64,
+          "date": "2026-04-01",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 69,
+          "date": "2026-04-06",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 70,
+          "date": "2026-04-07",
+          "events": [
+            {
+              "id": "visit-3-1",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 70
+            }
+          ]
+        },
+        {
+          "day": 71,
+          "date": "2026-04-08",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 76,
+          "date": "2026-04-13",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 77,
+          "date": "2026-04-14",
+          "events": [
+            {
+              "id": "visit-3-2",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 77
+            }
+          ]
+        },
+        {
+          "day": 78,
+          "date": "2026-04-15",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 83,
+          "date": "2026-04-20",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 84,
+          "date": "2026-04-21",
+          "events": [
+            {
+              "id": "visit-3-3",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 84
+            }
+          ]
+        },
+        {
+          "day": 85,
+          "date": "2026-04-22",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 90,
+          "date": "2026-04-27",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 91,
+          "date": "2026-04-28",
+          "events": [
+            {
+              "id": "visit-3-4",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 91
+            }
+          ]
+        },
+        {
+          "day": 92,
+          "date": "2026-04-29",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 97,
+          "date": "2026-05-04",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 98,
+          "date": "2026-05-05",
+          "events": [
+            {
+              "id": "visit-3-5",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 98
+            }
+          ]
+        },
+        {
+          "day": 99,
+          "date": "2026-05-06",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 103,
+          "date": "2026-05-10",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 104,
+          "date": "2026-05-11",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 105,
+          "date": "2026-05-12",
+          "events": [
+            {
+              "id": "visit-4-1",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 105
+            }
+          ]
+        },
+        {
+          "day": 106,
+          "date": "2026-05-13",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 107,
+          "date": "2026-05-14",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 110,
+          "date": "2026-05-17",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 111,
+          "date": "2026-05-18",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 112,
+          "date": "2026-05-19",
+          "events": [
+            {
+              "id": "visit-4-2",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 112
+            }
+          ]
+        },
+        {
+          "day": 113,
+          "date": "2026-05-20",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 114,
+          "date": "2026-05-21",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 117,
+          "date": "2026-05-24",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 118,
+          "date": "2026-05-25",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 119,
+          "date": "2026-05-26",
+          "events": [
+            {
+              "id": "visit-4-3",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 119
+            }
+          ]
+        },
+        {
+          "day": 120,
+          "date": "2026-05-27",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 121,
+          "date": "2026-05-28",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 126,
+          "date": "2026-06-02",
+          "events": [
+            {
+              "id": "follow-up-1",
+              "name": "Follow-up",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 126
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "patientId": "ARCX-1003",
+      "referenceDate": "2026-01-27",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-01-27",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "actualDay": 0,
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 5,
+          "date": "2026-02-01",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 6,
+          "date": "2026-02-02",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-02-03",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 8,
+          "date": "2026-02-04",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 9,
+          "date": "2026-02-05",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 10,
+          "date": "2026-02-06",
+          "events": [
+            {
+              "id": "screen-1",
+              "name": "Screen",
+              "type": "scheduled-event",
+              "state": "out-of-window",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 10,
+              "originalScheduledDay": 7
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-02-10",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "name": "Post Screen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 14
+            }
+          ]
+        },
+        {
+          "day": 35,
+          "date": "2026-03-03",
+          "events": [
+            {
+              "id": "visit-1-1",
+              "name": "Visit 1",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 7,
+                "daysBefore": 0
+              },
+              "scheduledDay": 35
+            }
+          ]
+        },
+        {
+          "day": 36,
+          "date": "2026-03-04",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 37,
+          "date": "2026-03-05",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 38,
+          "date": "2026-03-06",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 39,
+          "date": "2026-03-07",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 40,
+          "date": "2026-03-08",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 41,
+          "date": "2026-03-09",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            },
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 42,
+          "date": "2026-03-10",
+          "events": [
+            {
+              "id": "visit-2-1",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 42
+            }
+          ]
+        },
+        {
+          "day": 43,
+          "date": "2026-03-11",
+          "windows": [
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 48,
+          "date": "2026-03-16",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 49,
+          "date": "2026-03-17",
+          "events": [
+            {
+              "id": "visit-2-2",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 49
+            }
+          ]
+        },
+        {
+          "day": 50,
+          "date": "2026-03-18",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 55,
+          "date": "2026-03-23",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 56,
+          "date": "2026-03-24",
+          "events": [
+            {
+              "id": "visit-2-3",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 56
+            }
+          ]
+        },
+        {
+          "day": 57,
+          "date": "2026-03-25",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 62,
+          "date": "2026-03-30",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 63,
+          "date": "2026-03-31",
+          "events": [
+            {
+              "id": "visit-2-4",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 63
+            }
+          ]
+        },
+        {
+          "day": 64,
+          "date": "2026-04-01",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 69,
+          "date": "2026-04-06",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 70,
+          "date": "2026-04-07",
+          "events": [
+            {
+              "id": "visit-3-1",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 70
+            }
+          ]
+        },
+        {
+          "day": 71,
+          "date": "2026-04-08",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 76,
+          "date": "2026-04-13",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 77,
+          "date": "2026-04-14",
+          "events": [
+            {
+              "id": "visit-3-2",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 77
+            }
+          ]
+        },
+        {
+          "day": 78,
+          "date": "2026-04-15",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 83,
+          "date": "2026-04-20",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 84,
+          "date": "2026-04-21",
+          "events": [
+            {
+              "id": "visit-3-3",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 84
+            }
+          ]
+        },
+        {
+          "day": 85,
+          "date": "2026-04-22",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 90,
+          "date": "2026-04-27",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 91,
+          "date": "2026-04-28",
+          "events": [
+            {
+              "id": "visit-3-4",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 91
+            }
+          ]
+        },
+        {
+          "day": 92,
+          "date": "2026-04-29",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 97,
+          "date": "2026-05-04",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 98,
+          "date": "2026-05-05",
+          "events": [
+            {
+              "id": "visit-3-5",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 98
+            }
+          ]
+        },
+        {
+          "day": 99,
+          "date": "2026-05-06",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 103,
+          "date": "2026-05-10",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 104,
+          "date": "2026-05-11",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 105,
+          "date": "2026-05-12",
+          "events": [
+            {
+              "id": "visit-4-1",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 105
+            }
+          ]
+        },
+        {
+          "day": 106,
+          "date": "2026-05-13",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 107,
+          "date": "2026-05-14",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 110,
+          "date": "2026-05-17",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 111,
+          "date": "2026-05-18",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 112,
+          "date": "2026-05-19",
+          "events": [
+            {
+              "id": "visit-4-2",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 112
+            }
+          ]
+        },
+        {
+          "day": 113,
+          "date": "2026-05-20",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 114,
+          "date": "2026-05-21",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 117,
+          "date": "2026-05-24",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 118,
+          "date": "2026-05-25",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 119,
+          "date": "2026-05-26",
+          "events": [
+            {
+              "id": "visit-4-3",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 119
+            }
+          ]
+        },
+        {
+          "day": 120,
+          "date": "2026-05-27",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 121,
+          "date": "2026-05-28",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 126,
+          "date": "2026-06-02",
+          "events": [
+            {
+              "id": "follow-up-1",
+              "name": "Follow-up",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 126
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "patientId": "ARCX-1004",
+      "referenceDate": "2026-01-19",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-01-19",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "actualDay": 0,
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-01-26",
+          "events": [
+            {
+              "id": "screen-1",
+              "name": "Screen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "actualDay": 7,
+              "scheduledDay": 7
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-02-02",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "name": "Post Screen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 14
+            }
+          ]
+        },
+        {
+          "day": 35,
+          "date": "2026-02-23",
+          "events": [
+            {
+              "id": "visit-1-1",
+              "name": "Visit 1",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 7,
+                "daysBefore": 0
+              },
+              "scheduledDay": 35
+            }
+          ]
+        },
+        {
+          "day": 36,
+          "date": "2026-02-24",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 37,
+          "date": "2026-02-25",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 38,
+          "date": "2026-02-26",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 39,
+          "date": "2026-02-27",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 40,
+          "date": "2026-02-28",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 41,
+          "date": "2026-03-01",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            },
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 42,
+          "date": "2026-03-02",
+          "events": [
+            {
+              "id": "visit-2-1",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 42
+            }
+          ]
+        },
+        {
+          "day": 43,
+          "date": "2026-03-03",
+          "windows": [
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 48,
+          "date": "2026-03-08",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 49,
+          "date": "2026-03-09",
+          "events": [
+            {
+              "id": "visit-2-2",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 49
+            }
+          ]
+        },
+        {
+          "day": 50,
+          "date": "2026-03-10",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 55,
+          "date": "2026-03-15",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 56,
+          "date": "2026-03-16",
+          "events": [
+            {
+              "id": "visit-2-3",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 56
+            }
+          ]
+        },
+        {
+          "day": 57,
+          "date": "2026-03-17",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 62,
+          "date": "2026-03-22",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 63,
+          "date": "2026-03-23",
+          "events": [
+            {
+              "id": "visit-2-4",
+              "name": "Visit 2",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 63
+            }
+          ]
+        },
+        {
+          "day": 64,
+          "date": "2026-03-24",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 69,
+          "date": "2026-03-29",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 70,
+          "date": "2026-03-30",
+          "events": [
+            {
+              "id": "visit-3-1",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 70
+            }
+          ]
+        },
+        {
+          "day": 71,
+          "date": "2026-03-31",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 76,
+          "date": "2026-04-05",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 77,
+          "date": "2026-04-06",
+          "events": [
+            {
+              "id": "visit-3-2",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 77
+            }
+          ]
+        },
+        {
+          "day": 78,
+          "date": "2026-04-07",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 83,
+          "date": "2026-04-12",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 84,
+          "date": "2026-04-13",
+          "events": [
+            {
+              "id": "visit-3-3",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 84
+            }
+          ]
+        },
+        {
+          "day": 85,
+          "date": "2026-04-14",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 90,
+          "date": "2026-04-19",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 91,
+          "date": "2026-04-20",
+          "events": [
+            {
+              "id": "visit-3-4",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 91
+            }
+          ]
+        },
+        {
+          "day": 92,
+          "date": "2026-04-21",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 97,
+          "date": "2026-04-26",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 98,
+          "date": "2026-04-27",
+          "events": [
+            {
+              "id": "visit-3-5",
+              "name": "Visit 3",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              },
+              "scheduledDay": 98
+            }
+          ]
+        },
+        {
+          "day": 99,
+          "date": "2026-04-28",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 103,
+          "date": "2026-05-02",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 104,
+          "date": "2026-05-03",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 105,
+          "date": "2026-05-04",
+          "events": [
+            {
+              "id": "visit-4-1",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 105
+            }
+          ]
+        },
+        {
+          "day": 106,
+          "date": "2026-05-05",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 107,
+          "date": "2026-05-06",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 110,
+          "date": "2026-05-09",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 111,
+          "date": "2026-05-10",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 112,
+          "date": "2026-05-11",
+          "events": [
+            {
+              "id": "visit-4-2",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 112
+            }
+          ]
+        },
+        {
+          "day": 113,
+          "date": "2026-05-12",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 114,
+          "date": "2026-05-13",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 117,
+          "date": "2026-05-16",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 118,
+          "date": "2026-05-17",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 119,
+          "date": "2026-05-18",
+          "events": [
+            {
+              "id": "visit-4-3",
+              "name": "Visit 4",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              },
+              "scheduledDay": 119
+            }
+          ]
+        },
+        {
+          "day": 120,
+          "date": "2026-05-19",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 121,
+          "date": "2026-05-20",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 126,
+          "date": "2026-05-25",
+          "events": [
+            {
+              "id": "follow-up-1",
+              "name": "Follow-up",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "pending",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 126
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "patientId": "ARCX-1005",
+      "referenceDate": "2026-03-20",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-03-20",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "planned",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 5,
+          "date": "2026-03-25",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 6,
+          "date": "2026-03-26",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-03-27",
+          "events": [
+            {
+              "id": "screen-1",
+              "type": "scheduled-event",
+              "name": "Screen",
+              "scheduledDay": 7,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 2,
+                "daysAfter": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 8,
+          "date": "2026-03-28",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 9,
+          "date": "2026-03-29",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-04-03",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "type": "scheduled-event",
+              "name": "Post Screen",
+              "scheduledDay": 14,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 0,
+                "daysAfter": 0
+              }
+            }
+          ]
+        },
+        {
+          "day": 35,
+          "date": "2026-04-24",
+          "events": [
+            {
+              "id": "visit-1-1",
+              "type": "scheduled-event",
+              "name": "Visit 1",
+              "scheduledDay": 35,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 0,
+                "daysAfter": 7
+              }
+            }
+          ]
+        },
+        {
+          "day": 36,
+          "date": "2026-04-25",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 37,
+          "date": "2026-04-26",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 38,
+          "date": "2026-04-27",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 39,
+          "date": "2026-04-28",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 40,
+          "date": "2026-04-29",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 41,
+          "date": "2026-04-30",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            },
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 42,
+          "date": "2026-05-01",
+          "events": [
+            {
+              "id": "visit-2-1",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 42,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 43,
+          "date": "2026-05-02",
+          "windows": [
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 48,
+          "date": "2026-05-07",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 49,
+          "date": "2026-05-08",
+          "events": [
+            {
+              "id": "visit-2-2",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 49,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 50,
+          "date": "2026-05-09",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 55,
+          "date": "2026-05-14",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 56,
+          "date": "2026-05-15",
+          "events": [
+            {
+              "id": "visit-2-3",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 56,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 57,
+          "date": "2026-05-16",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 62,
+          "date": "2026-05-21",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 63,
+          "date": "2026-05-22",
+          "events": [
+            {
+              "id": "visit-2-4",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 63,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 64,
+          "date": "2026-05-23",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 69,
+          "date": "2026-05-28",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 70,
+          "date": "2026-05-29",
+          "events": [
+            {
+              "id": "visit-3-1",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 70,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 71,
+          "date": "2026-05-30",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 76,
+          "date": "2026-06-04",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 77,
+          "date": "2026-06-05",
+          "events": [
+            {
+              "id": "visit-3-2",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 77,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 78,
+          "date": "2026-06-06",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 83,
+          "date": "2026-06-11",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 84,
+          "date": "2026-06-12",
+          "events": [
+            {
+              "id": "visit-3-3",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 84,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 85,
+          "date": "2026-06-13",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 90,
+          "date": "2026-06-18",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 91,
+          "date": "2026-06-19",
+          "events": [
+            {
+              "id": "visit-3-4",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 91,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 92,
+          "date": "2026-06-20",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 97,
+          "date": "2026-06-25",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 98,
+          "date": "2026-06-26",
+          "events": [
+            {
+              "id": "visit-3-5",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 98,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 99,
+          "date": "2026-06-27",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 103,
+          "date": "2026-07-01",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 104,
+          "date": "2026-07-02",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 105,
+          "date": "2026-07-03",
+          "events": [
+            {
+              "id": "visit-4-1",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 105,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 2,
+                "daysAfter": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 106,
+          "date": "2026-07-04",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 107,
+          "date": "2026-07-05",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 110,
+          "date": "2026-07-08",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 111,
+          "date": "2026-07-09",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 112,
+          "date": "2026-07-10",
+          "events": [
+            {
+              "id": "visit-4-2",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 112,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 2,
+                "daysAfter": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 113,
+          "date": "2026-07-11",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 114,
+          "date": "2026-07-12",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 117,
+          "date": "2026-07-15",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 118,
+          "date": "2026-07-16",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 119,
+          "date": "2026-07-17",
+          "events": [
+            {
+              "id": "visit-4-3",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 119,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 2,
+                "daysAfter": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 120,
+          "date": "2026-07-18",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 121,
+          "date": "2026-07-19",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 126,
+          "date": "2026-07-24",
+          "events": [
+            {
+              "id": "follow-up-1",
+              "type": "scheduled-event",
+              "name": "Follow-up",
+              "scheduledDay": 126,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 0,
+                "daysAfter": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "patientId": "ARCX-1006",
+      "referenceDate": "2026-02-11",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-02-11",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "planned",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              },
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 5,
+          "date": "2026-02-16",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 6,
+          "date": "2026-02-17",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-02-18",
+          "events": [
+            {
+              "id": "screen-1",
+              "type": "scheduled-event",
+              "name": "Screen",
+              "scheduledDay": 7,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 2,
+                "daysAfter": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 8,
+          "date": "2026-02-19",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 9,
+          "date": "2026-02-20",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-02-25",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "type": "scheduled-event",
+              "name": "Post Screen",
+              "scheduledDay": 14,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 0,
+                "daysAfter": 0
+              }
+            }
+          ]
+        },
+        {
+          "day": 35,
+          "date": "2026-03-18",
+          "events": [
+            {
+              "id": "visit-1-1",
+              "type": "scheduled-event",
+              "name": "Visit 1",
+              "scheduledDay": 35,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 0,
+                "daysAfter": 7
+              }
+            }
+          ]
+        },
+        {
+          "day": 36,
+          "date": "2026-03-19",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 37,
+          "date": "2026-03-20",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 38,
+          "date": "2026-03-21",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 39,
+          "date": "2026-03-22",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 40,
+          "date": "2026-03-23",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 41,
+          "date": "2026-03-24",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            },
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 42,
+          "date": "2026-03-25",
+          "events": [
+            {
+              "id": "visit-2-1",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 42,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 43,
+          "date": "2026-03-26",
+          "windows": [
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 48,
+          "date": "2026-03-31",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 49,
+          "date": "2026-04-01",
+          "events": [
+            {
+              "id": "visit-2-2",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 49,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 50,
+          "date": "2026-04-02",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 55,
+          "date": "2026-04-07",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 56,
+          "date": "2026-04-08",
+          "events": [
+            {
+              "id": "visit-2-3",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 56,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 57,
+          "date": "2026-04-09",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 62,
+          "date": "2026-04-14",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 63,
+          "date": "2026-04-15",
+          "events": [
+            {
+              "id": "visit-2-4",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 63,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 64,
+          "date": "2026-04-16",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 69,
+          "date": "2026-04-21",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 70,
+          "date": "2026-04-22",
+          "events": [
+            {
+              "id": "visit-3-1",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 70,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 71,
+          "date": "2026-04-23",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 76,
+          "date": "2026-04-28",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 77,
+          "date": "2026-04-29",
+          "events": [
+            {
+              "id": "visit-3-2",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 77,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 78,
+          "date": "2026-04-30",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 83,
+          "date": "2026-05-05",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 84,
+          "date": "2026-05-06",
+          "events": [
+            {
+              "id": "visit-3-3",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 84,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 85,
+          "date": "2026-05-07",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 90,
+          "date": "2026-05-12",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 91,
+          "date": "2026-05-13",
+          "events": [
+            {
+              "id": "visit-3-4",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 91,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 92,
+          "date": "2026-05-14",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 97,
+          "date": "2026-05-19",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 98,
+          "date": "2026-05-20",
+          "events": [
+            {
+              "id": "visit-3-5",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 98,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 1,
+                "daysAfter": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 99,
+          "date": "2026-05-21",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 103,
+          "date": "2026-05-25",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 104,
+          "date": "2026-05-26",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 105,
+          "date": "2026-05-27",
+          "events": [
+            {
+              "id": "visit-4-1",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 105,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 2,
+                "daysAfter": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 106,
+          "date": "2026-05-28",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 107,
+          "date": "2026-05-29",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 110,
+          "date": "2026-06-01",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 111,
+          "date": "2026-06-02",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 112,
+          "date": "2026-06-03",
+          "events": [
+            {
+              "id": "visit-4-2",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 112,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 2,
+                "daysAfter": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 113,
+          "date": "2026-06-04",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 114,
+          "date": "2026-06-05",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 117,
+          "date": "2026-06-08",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 118,
+          "date": "2026-06-09",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 119,
+          "date": "2026-06-10",
+          "events": [
+            {
+              "id": "visit-4-3",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 119,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 2,
+                "daysAfter": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 120,
+          "date": "2026-06-11",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 121,
+          "date": "2026-06-12",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 126,
+          "date": "2026-06-17",
+          "events": [
+            {
+              "id": "follow-up-1",
+              "type": "scheduled-event",
+              "name": "Follow-up",
+              "scheduledDay": 126,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysBefore": 0,
+                "daysAfter": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "patientId": "ARCX-1007",
+      "referenceDate": "2026-03-18",
+      "days": [
+        {
+          "day": 5,
+          "date": "2026-03-23",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 6,
+          "date": "2026-03-24",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-03-25",
+          "events": [
+            {
+              "id": "screen-1",
+              "type": "scheduled-event",
+              "name": "Screen",
+              "scheduledDay": 7,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 8,
+          "date": "2026-03-26",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 9,
+          "date": "2026-03-27",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-04-01",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "type": "scheduled-event",
+              "name": "Post Screen",
+              "scheduledDay": 14,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              }
+            }
+          ]
+        },
+        {
+          "day": 33,
+          "date": "2026-04-20",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "type": "scheduled-event",
+              "name": "Prescreen",
+              "scheduledDay": 33,
+              "status": "planned",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              }
+            }
+          ]
+        },
+        {
+          "day": 35,
+          "date": "2026-04-22",
+          "events": [
+            {
+              "id": "visit-1-1",
+              "type": "scheduled-event",
+              "name": "Visit 1",
+              "scheduledDay": 35,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 7,
+                "daysBefore": 0
+              }
+            }
+          ]
+        },
+        {
+          "day": 36,
+          "date": "2026-04-23",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 37,
+          "date": "2026-04-24",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 38,
+          "date": "2026-04-25",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 39,
+          "date": "2026-04-26",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 40,
+          "date": "2026-04-27",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            }
+          ]
+        },
+        {
+          "day": 41,
+          "date": "2026-04-28",
+          "windows": [
+            {
+              "eventId": "visit-1-1",
+              "eventName": "Visit 1"
+            },
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 42,
+          "date": "2026-04-29",
+          "events": [
+            {
+              "id": "visit-2-1",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 42,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 43,
+          "date": "2026-04-30",
+          "windows": [
+            {
+              "eventId": "visit-2-1",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 48,
+          "date": "2026-05-05",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 49,
+          "date": "2026-05-06",
+          "events": [
+            {
+              "id": "visit-2-2",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 49,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 50,
+          "date": "2026-05-07",
+          "windows": [
+            {
+              "eventId": "visit-2-2",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 55,
+          "date": "2026-05-12",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 56,
+          "date": "2026-05-13",
+          "events": [
+            {
+              "id": "visit-2-3",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 56,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 57,
+          "date": "2026-05-14",
+          "windows": [
+            {
+              "eventId": "visit-2-3",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 62,
+          "date": "2026-05-19",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 63,
+          "date": "2026-05-20",
+          "events": [
+            {
+              "id": "visit-2-4",
+              "type": "scheduled-event",
+              "name": "Visit 2",
+              "scheduledDay": 63,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 64,
+          "date": "2026-05-21",
+          "windows": [
+            {
+              "eventId": "visit-2-4",
+              "eventName": "Visit 2"
+            }
+          ]
+        },
+        {
+          "day": 69,
+          "date": "2026-05-26",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 70,
+          "date": "2026-05-27",
+          "events": [
+            {
+              "id": "visit-3-1",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 70,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 71,
+          "date": "2026-05-28",
+          "windows": [
+            {
+              "eventId": "visit-3-1",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 76,
+          "date": "2026-06-02",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 77,
+          "date": "2026-06-03",
+          "events": [
+            {
+              "id": "visit-3-2",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 77,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 78,
+          "date": "2026-06-04",
+          "windows": [
+            {
+              "eventId": "visit-3-2",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 83,
+          "date": "2026-06-09",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 84,
+          "date": "2026-06-10",
+          "events": [
+            {
+              "id": "visit-3-3",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 84,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 85,
+          "date": "2026-06-11",
+          "windows": [
+            {
+              "eventId": "visit-3-3",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 90,
+          "date": "2026-06-16",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 91,
+          "date": "2026-06-17",
+          "events": [
+            {
+              "id": "visit-3-4",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 91,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 92,
+          "date": "2026-06-18",
+          "windows": [
+            {
+              "eventId": "visit-3-4",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 97,
+          "date": "2026-06-23",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 98,
+          "date": "2026-06-24",
+          "events": [
+            {
+              "id": "visit-3-5",
+              "type": "scheduled-event",
+              "name": "Visit 3",
+              "scheduledDay": 98,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 1,
+                "daysBefore": 1
+              }
+            }
+          ]
+        },
+        {
+          "day": 99,
+          "date": "2026-06-25",
+          "windows": [
+            {
+              "eventId": "visit-3-5",
+              "eventName": "Visit 3"
+            }
+          ]
+        },
+        {
+          "day": 103,
+          "date": "2026-06-29",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 104,
+          "date": "2026-06-30",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 105,
+          "date": "2026-07-01",
+          "events": [
+            {
+              "id": "visit-4-1",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 105,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 106,
+          "date": "2026-07-02",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 107,
+          "date": "2026-07-03",
+          "windows": [
+            {
+              "eventId": "visit-4-1",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 110,
+          "date": "2026-07-06",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 111,
+          "date": "2026-07-07",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 112,
+          "date": "2026-07-08",
+          "events": [
+            {
+              "id": "visit-4-2",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 112,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 113,
+          "date": "2026-07-09",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 114,
+          "date": "2026-07-10",
+          "windows": [
+            {
+              "eventId": "visit-4-2",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 117,
+          "date": "2026-07-13",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 118,
+          "date": "2026-07-14",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 119,
+          "date": "2026-07-15",
+          "events": [
+            {
+              "id": "visit-4-3",
+              "type": "scheduled-event",
+              "name": "Visit 4",
+              "scheduledDay": 119,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 2,
+                "daysBefore": 2
+              }
+            }
+          ]
+        },
+        {
+          "day": 120,
+          "date": "2026-07-16",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 121,
+          "date": "2026-07-17",
+          "windows": [
+            {
+              "eventId": "visit-4-3",
+              "eventName": "Visit 4"
+            }
+          ]
+        },
+        {
+          "day": 126,
+          "date": "2026-07-22",
+          "events": [
+            {
+              "id": "follow-up-1",
+              "type": "scheduled-event",
+              "name": "Follow-up",
+              "scheduledDay": 126,
+              "status": "pending",
+              "state": "on-scheduled-date",
+              "window": {
+                "daysAfter": 0,
+                "daysBefore": 0
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "studyReferenceDate": "2026-01-14",
+  "note": "Schedule data only. Availability is stored separately in patient.availability column."
+}

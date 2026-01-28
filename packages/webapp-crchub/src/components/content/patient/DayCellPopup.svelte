@@ -9,9 +9,11 @@
     // Types for popup data
     export type PopupType = 'initial' | 'event-day' | 'no-event';
     export type EventStatus = 'planned' | 'pending' | 'completed' | 'cancelled' | 'missed';
-    // Simplified actions: do-nothing, complete, reschedule, cancel, missed, delete (for unscheduled)
+    // Simplified actions: do-nothing, complete, reschedule, move, cancel, missed, delete (for unscheduled)
     // 'change-status' is kept for handler compatibility (maps from complete/cancel/missed)
-    export type EventAction = 'do-nothing' | 'complete' | 'reschedule' | 'cancel' | 'missed' | 'delete' | 'change-status';
+    // 'reschedule' - for regular planned events (creates window days around original date)
+    // 'move' - for day 0 and unscheduled events (does NOT create window days, triggers recalculation)
+    export type EventAction = 'do-nothing' | 'complete' | 'reschedule' | 'move' | 'cancel' | 'missed' | 'delete' | 'change-status';
     
     export interface EventOption {
         name: string;
@@ -42,7 +44,19 @@
     // Per-event action state
     interface EventActionState {
         action: EventAction;
-        rescheduleDate: string; // YYYY-MM-DD format
+        rescheduleDate: string; // YYYY-MM-DD format (used for both reschedule and move actions)
+    }
+    
+    // Helper to check if an event is a day 0 event
+    function isDayZeroEvent(event: DayEvent): boolean {
+        // Day 0 event has scheduledDay === 0 (or originalScheduledDay === 0 if it was moved)
+        const originalDay = event.originalScheduledDay !== undefined ? event.originalScheduledDay : event.scheduledDay;
+        return originalDay === 0;
+    }
+    
+    // Helper to check if an event can be rescheduled/moved (only planned/pending status)
+    function canBeRescheduledOrMoved(event: DayEvent): boolean {
+        return event.status === 'planned' || event.status === 'pending';
     }
     
     export interface PopupResult {
@@ -127,6 +141,36 @@
     let initialized = $state(false);
     let lastInitDate = $state<string>('');
     let lastInitPatientId = $state<string>('');
+    
+    // Today's date string for validation (cannot add unscheduled events or reschedule/move before today)
+    let todayDateString = $derived.by(() => {
+        const today = new Date();
+        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    });
+    
+    // Get the popup date as YYYY-MM-DD string for comparison
+    let popupDateString = $derived.by(() => {
+        if (!date) return '';
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    });
+    
+    // Restriction: Cannot add unscheduled event before Day 0 OR before today
+    // Day 0 is the reference date, so day number must be >= 0
+    // Also, the date must be >= today
+    let canAddUnscheduledEvent = $derived(
+        dayData?.day !== undefined && 
+        dayData.day >= 0 && 
+        popupDateString >= todayDateString
+    );
+    
+    // Parse today as a CalendarDate for date picker minValue
+    let todayCalendarDate = $derived.by(() => {
+        try {
+            return parseDate(todayDateString);
+        } catch {
+            return undefined;
+        }
+    });
 
     // Helper to get a date string from a day number relative to reference date
     function getDateStringFromDay(dayNumber: number, refDate: string | null): string {
@@ -414,7 +458,8 @@
                         eventResult.action = 'change-status' as EventAction;
                     }
                     
-                    if (actionState.action === 'reschedule' && actionState.rescheduleDate) {
+                    // Both 'reschedule' and 'move' actions include the target date
+                    if ((actionState.action === 'reschedule' || actionState.action === 'move') && actionState.rescheduleDate) {
                         eventResult.rescheduleDate = actionState.rescheduleDate;
                     }
                     
@@ -465,15 +510,34 @@
         }
     }
     
-    // Get action options for an event
+    // Get action options for an event based on its type and status
+    // Rules:
+    // 1. Only planned/pending events can be rescheduled or moved
+    // 2. Day 0 events and unscheduled events use "Move" (no window days created)
+    // 3. Regular scheduled events use "Reschedule" (window days created around original date)
+    // 4. Completed/cancelled/missed events cannot be rescheduled or moved
     function getActionOptions(event: DayEvent): { value: EventAction; label: string }[] {
         const options: { value: EventAction; label: string }[] = [
             { value: 'do-nothing', label: 'Do nothing' },
             { value: 'complete', label: 'Complete' },
-            { value: 'reschedule', label: 'Reschedule' },
-            { value: 'cancel', label: 'Cancel' },
-            { value: 'missed', label: 'Missed' }
         ];
+        
+        // Only add reschedule/move option for planned/pending events
+        if (canBeRescheduledOrMoved(event)) {
+            const isDay0 = isDayZeroEvent(event);
+            const isUnscheduled = event.isUnscheduledEvent || event.type === 'unscheduled-event';
+            
+            if (isDay0 || isUnscheduled) {
+                // Day 0 and unscheduled events use "Move" - no windows created
+                options.push({ value: 'move', label: 'Move' });
+            } else {
+                // Regular scheduled events use "Reschedule" - windows created around original date
+                options.push({ value: 'reschedule', label: 'Reschedule' });
+            }
+        }
+        
+        options.push({ value: 'cancel', label: 'Cancel' });
+        options.push({ value: 'missed', label: 'Missed' });
         
         // Add Delete option for unscheduled events that were added
         if (event.isUnscheduledEvent || event.type === 'unscheduled-event') {
@@ -565,13 +629,14 @@
                             </select>
                             
                             <div class="action-data">
-                                {#if actionState?.action === 'reschedule'}
+                                {#if actionState?.action === 'reschedule' || actionState?.action === 'move'}
                                     {@const datePickerValue = parseDateString(actionState.rescheduleDate)}
                                     {@const datePickerOpen = isDatePickerOpen(event.id)}
                                     <DatePicker.Root 
                                         open={datePickerOpen}
                                         onOpenChange={(isOpen) => setDatePickerOpen(event.id, isOpen)}
                                         value={datePickerValue}
+                                        minValue={todayCalendarDate}
                                         onValueChange={(newValue) => {
                                             if (newValue) {
                                                 const dateStr = `${newValue.year}-${String(newValue.month).padStart(2, '0')}-${String(newValue.day).padStart(2, '0')}`;
@@ -655,8 +720,8 @@
                     {/each}
                 </div>
                 
-                <!-- Unscheduled Event section - only show if unscheduled events are defined in the model -->
-                {#if unscheduledEvents.length > 0}
+                <!-- Unscheduled Event section - only show if unscheduled events are defined in the model AND day >= 0 -->
+                {#if unscheduledEvents.length > 0 && canAddUnscheduledEvent}
                     <!-- Separator -->
                     <div class="popup-separator"></div>
                     
@@ -696,8 +761,8 @@
             {/if}
             
             <!-- ==================== POPUP 3: No Event Day ==================== -->
-            <!-- Only show this popup type if there are unscheduled events defined in the model -->
-            {#if popupType === 'no-event' && unscheduledEvents.length > 0}
+            <!-- Only show this popup type if there are unscheduled events defined in the model AND day >= 0 -->
+            {#if popupType === 'no-event' && unscheduledEvents.length > 0 && canAddUnscheduledEvent}
                 <div class="popup-section">
                     <div class="section-header-row">
                         <span class="section-label">Unscheduled Event</span>

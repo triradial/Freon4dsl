@@ -1,0 +1,58 @@
+{
+  "scenario": "Patient with window days around scheduled visit",
+  "description": "Patient ARCX-1002 with Screen on day 7 with 2-day window (days 5-6 before, 8-9 after)",
+  "patientId": "ARCX-1002",
+  "referenceDate": "2026-01-14",
+  "days": {
+    "5": {
+      "eventName": "Screen (window before)",
+      "expected": {
+        "isWindow": true,
+        "state": "",
+        "isActual": false,
+        "eventType": "",
+        "isUnscheduledEvent": false
+      }
+    },
+    "6": {
+      "eventName": "Screen (window before)",
+      "expected": {
+        "isWindow": true,
+        "state": "",
+        "isActual": false,
+        "eventType": "",
+        "isUnscheduledEvent": false
+      }
+    },
+    "7": {
+      "eventName": "Screen",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": true,
+        "eventType": "actual-event",
+        "isUnscheduledEvent": false
+      }
+    },
+    "8": {
+      "eventName": "Screen (window after)",
+      "expected": {
+        "isWindow": true,
+        "state": "",
+        "isActual": false,
+        "eventType": "",
+        "isUnscheduledEvent": false
+      }
+    },
+    "9": {
+      "eventName": "Screen (window after)",
+      "expected": {
+        "isWindow": true,
+        "state": "",
+        "isActual": false,
+        "eventType": "",
+        "isUnscheduledEvent": false
+      }
+    }
+  }
+}

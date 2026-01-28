@@ -1,0 +1,38 @@
+{
+  "scenario": "Basic patient with 3 scheduled visits on scheduled dates",
+  "description": "Patient ARCX-1001 with Prescreen (day 0), Screen (day 7), and Termination (day 26) all completed on scheduled dates",
+  "patientId": "ARCX-1001",
+  "referenceDate": "2026-01-14",
+  "days": {
+    "0": {
+      "eventName": "Prescreen",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": true,
+        "eventType": "actual-event",
+        "isUnscheduledEvent": false
+      }
+    },
+    "7": {
+      "eventName": "Screen",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": true,
+        "eventType": "actual-event",
+        "isUnscheduledEvent": false
+      }
+    },
+    "26": {
+      "eventName": "Termination",
+      "expected": {
+        "isWindow": false,
+        "state": "on-scheduled-date",
+        "isActual": true,
+        "eventType": "actual-event",
+        "isUnscheduledEvent": false
+      }
+    }
+  }
+}

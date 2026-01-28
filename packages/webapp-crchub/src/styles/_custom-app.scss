@@ -3717,6 +3717,10 @@
   .splitter-panel {
     overflow: hidden;
     position: relative;
+    &.right {
+      margin-right: 3rem;
+    }
+
   }
 
   /* Timeline Sections Container (vertical splitter for patient/staff) */

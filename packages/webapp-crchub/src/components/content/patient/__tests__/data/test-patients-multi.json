@@ -1,0 +1,266 @@
+{
+  "scenario": "Multiple patients at different stages of their study journey",
+  "description": "Three patients: one completed, one in progress, one just started",
+  "initialDayNumber": 0,
+  "patients": [
+    {
+      "patientId": "ARCX-1001",
+      "patientNumber": "001",
+      "description": "Completed patient - all visits done",
+      "referenceDate": "2026-01-01",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-01-01",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "actualDay": 0,
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-01-08",
+          "events": [
+            {
+              "id": "screen-1",
+              "name": "Screen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "actualDay": 7,
+              "scheduledDay": 7
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-01-15",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "name": "Post Screen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "actualDay": 14,
+              "scheduledDay": 14
+            }
+          ]
+        },
+        {
+          "day": 26,
+          "date": "2026-01-27",
+          "events": [
+            {
+              "id": "termination-1",
+              "name": "Termination",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "actualDay": 26,
+              "scheduledDay": 26
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "patientId": "ARCX-1002",
+      "patientNumber": "002",
+      "description": "In-progress patient - midway through visits with some shifts",
+      "referenceDate": "2026-01-14",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-01-14",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "actualDay": 0,
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 5,
+          "date": "2026-01-19",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 6,
+          "date": "2026-01-20",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 8,
+          "date": "2026-01-22",
+          "events": [
+            {
+              "id": "screen-1",
+              "name": "Screen",
+              "type": "actual-event",
+              "state": "in-window",
+              "status": "completed",
+              "actualDay": 8,
+              "scheduledDay": 7
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-01-28",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "name": "Post Screen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "planned",
+              "scheduledDay": 14
+            }
+          ]
+        },
+        {
+          "day": 26,
+          "date": "2026-02-09",
+          "events": [
+            {
+              "id": "termination-1",
+              "name": "Termination",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "planned",
+              "scheduledDay": 26
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "patientId": "ARCX-1003",
+      "patientNumber": "003",
+      "description": "New patient - just enrolled, only Prescreen completed",
+      "referenceDate": "2026-01-28",
+      "days": [
+        {
+          "day": 0,
+          "date": "2026-01-28",
+          "events": [
+            {
+              "id": "prescreen-1",
+              "name": "Prescreen",
+              "type": "actual-event",
+              "state": "on-scheduled-date",
+              "status": "completed",
+              "actualDay": 0,
+              "scheduledDay": 0
+            }
+          ]
+        },
+        {
+          "day": 5,
+          "date": "2026-02-02",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 6,
+          "date": "2026-02-03",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 7,
+          "date": "2026-02-04",
+          "events": [
+            {
+              "id": "screen-1",
+              "name": "Screen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "planned",
+              "scheduledDay": 7
+            }
+          ]
+        },
+        {
+          "day": 8,
+          "date": "2026-02-05",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 9,
+          "date": "2026-02-06",
+          "windows": [
+            {
+              "eventId": "screen-1",
+              "eventName": "Screen"
+            }
+          ]
+        },
+        {
+          "day": 14,
+          "date": "2026-02-11",
+          "events": [
+            {
+              "id": "post-screen-1",
+              "name": "Post Screen",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "planned",
+              "scheduledDay": 14
+            }
+          ]
+        },
+        {
+          "day": 26,
+          "date": "2026-02-23",
+          "events": [
+            {
+              "id": "termination-1",
+              "name": "Termination",
+              "type": "scheduled-event",
+              "state": "on-scheduled-date",
+              "status": "planned",
+              "scheduledDay": 26
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

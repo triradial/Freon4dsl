@@ -491,6 +491,10 @@
                 firstDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
                 lastDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0]
             });
+            
+            // Extend date range based on actual patient schedules in database
+            // (simulation only shows projected events, database has actual scheduled dates)
+            updateDateRangeFromPatientData();
         } catch (err: unknown) {
             console.error("Error loading timeline:", err);
             error = err instanceof Error ? err.message : "Failed to load timeline data";
@@ -2225,6 +2229,144 @@
                     } else {
                         console.warn('[handlePopupApply] Event not found for reschedule:', scheduledEventResult.eventId, scheduledEventResult.eventName);
                     }
+                } else if (scheduledEventResult.action === 'move' && scheduledEventResult.rescheduleDate) {
+                    // MOVE action: For day 0 and unscheduled events
+                    // Key differences from reschedule:
+                    // 1. Does NOT set originalScheduledDay (no window days created)
+                    // 2. Day 0 events: reference date changes, event STAYS at day 0
+                    // 3. Unscheduled events: move to new day, recalculate dependents
+                    console.log('[handlePopupApply] Processing MOVE for:', scheduledEventResult.eventName, 'to:', scheduledEventResult.rescheduleDate);
+                    
+                    // Find the event in the current day
+                    const eventIndex = dayDataToUpdate.events.findIndex(
+                        (e: any) => e.id === scheduledEventResult.eventId || e.name === scheduledEventResult.eventName
+                    );
+                    
+                    if (eventIndex >= 0) {
+                        // Get the event and remove it from current day
+                        const event = { ...dayDataToUpdate.events[eventIndex] };
+                        dayDataToUpdate.events.splice(eventIndex, 1);
+                        console.log('[handlePopupApply] Removed event from day', dayNumber, 'for move');
+                        
+                        // Check if this is a day 0 event (original scheduled day is 0)
+                        const originalDay = event.originalScheduledDay !== undefined 
+                            ? event.originalScheduledDay 
+                            : event.scheduledDay;
+                        const isDay0Event = originalDay === 0;
+                        const isUnscheduledEvent = event.isUnscheduledEvent || event.type === 'unscheduled-event';
+                        
+                        // State is always 'on-scheduled-date' for moved events
+                        event.state = 'on-scheduled-date';
+                        
+                        // Keep type consistent
+                        if (isUnscheduledEvent) {
+                            event.type = 'unscheduled-event';
+                        } else {
+                            event.type = 'scheduled-event';
+                        }
+                        
+                        // Update the source day in patientData.days IMMEDIATELY
+                        if (existingDayIndex >= 0) {
+                            patientData.days[existingDayIndex] = dayDataToUpdate;
+                            console.log('[handlePopupApply] Updated source day', dayNumber, 'at index', existingDayIndex);
+                        }
+                        
+                        // SPECIAL HANDLING: Day 0 events
+                        if (isDay0Event) {
+                            console.log('[handlePopupApply] MOVE - Day 0 event moved! Event stays at day 0, reference date changes.');
+                            
+                            // Day 0 event ALWAYS stays at day 0 - only the reference date changes
+                            event.scheduledDay = 0;
+                            
+                            // Update the reference date to the new date
+                            const oldReferenceDate = patientData.referenceDate;
+                            patientData.referenceDate = scheduledEventResult.rescheduleDate;
+                            console.log('[handlePopupApply] MOVE - Reference date changed from', oldReferenceDate, 'to', scheduledEventResult.rescheduleDate);
+                            
+                            // Find or create day 0
+                            let day0Index = patientData.days.findIndex((d: any) => d.day === 0);
+                            let day0Data: any;
+                            
+                            if (day0Index >= 0) {
+                                // Day 0 exists - make a deep copy
+                                day0Data = { 
+                                    ...patientData.days[day0Index],
+                                    date: scheduledEventResult.rescheduleDate, // Update date
+                                    events: patientData.days[day0Index].events 
+                                        ? [...patientData.days[day0Index].events]
+                                        : []
+                                };
+                            } else {
+                                // Create day 0
+                                day0Data = {
+                                    day: 0,
+                                    date: scheduledEventResult.rescheduleDate,
+                                    events: []
+                                };
+                            }
+                            
+                            // Add the event to day 0
+                            day0Data.events.push(event);
+                            console.log('[handlePopupApply] MOVE - Added Day 0 event:', event);
+                            
+                            // Update the patient data for day 0
+                            if (day0Index >= 0) {
+                                patientData.days[day0Index] = day0Data;
+                            } else {
+                                patientData.days.push(day0Data);
+                                patientData.days.sort((a: any, b: any) => a.day - b.day);
+                            }
+                            
+                            // Recalculate all other days' dates based on new reference date
+                            recalculateScheduleFromDay0(patientData, scheduledEventResult.rescheduleDate);
+                        } else {
+                            // Non-Day-0 events (unscheduled events): calculate new day number and move
+                            const newDayNumber = getCalendarDayDiff(scheduledEventResult.rescheduleDate, patientData.referenceDate);
+                            console.log('[handlePopupApply] MOVE - Unscheduled event new day number:', newDayNumber);
+                            
+                            event.scheduledDay = newDayNumber;
+                            
+                            // Find or create the target day
+                            let targetDayIndex = patientData.days.findIndex((d: any) => d.day === newDayNumber);
+                            let targetDayData: any;
+                            
+                            if (targetDayIndex >= 0) {
+                                targetDayData = { 
+                                    ...patientData.days[targetDayIndex],
+                                    events: patientData.days[targetDayIndex].events 
+                                        ? [...patientData.days[targetDayIndex].events]
+                                        : []
+                                };
+                            } else {
+                                targetDayData = {
+                                    day: newDayNumber,
+                                    date: scheduledEventResult.rescheduleDate,
+                                    events: []
+                                };
+                            }
+                            
+                            // Add the event to the target day
+                            targetDayData.events.push(event);
+                            console.log('[handlePopupApply] MOVE - Added unscheduled event to day', newDayNumber, ':', event);
+                            
+                            // Update the patient data for target day
+                            if (targetDayIndex >= 0) {
+                                patientData.days[targetDayIndex] = targetDayData;
+                            } else {
+                                patientData.days.push(targetDayData);
+                                patientData.days.sort((a: any, b: any) => a.day - b.day);
+                            }
+                            
+                            // Recalculate any events that depend on this unscheduled event
+                            console.log('[handlePopupApply] MOVE - Unscheduled event moved! Checking for dependent events...');
+                            recalculateDependentEvents(patientData, event, newDayNumber);
+                        }
+                        
+                        // Re-find existingDayIndex after potential changes
+                        existingDayIndex = patientData.days.findIndex((d: any) => d.day === dayNumber);
+                    } else {
+                        console.warn('[handlePopupApply] Event not found for move:', scheduledEventResult.eventId, scheduledEventResult.eventName);
+                    }
                 } else if (scheduledEventResult.action === 'delete') {
                     console.log('[handlePopupApply] Processing delete for:', scheduledEventResult.eventName);
                     
@@ -2311,6 +2453,139 @@
         popupOpen = false;
     }
     
+    // Recalculate all days' calendar dates when a Day 0 event is moved
+    // When Day 0 is moved to a new date:
+    // - The reference date has already been changed (before this function is called)
+    // - Day 0 event stays at day 0 with the new date
+    // - All other events maintain their relative day numbers (day 7 stays day 7)
+    // - But their calendar dates are recalculated based on the new reference date
+    function recalculateScheduleFromDay0(patientData: any, newReferenceDate: string) {
+        console.log('[recalculateScheduleFromDay0] Recalculating dates from new reference:', newReferenceDate);
+        
+        // Update all days: their day numbers stay the same, but dates are recalculated
+        for (const day of patientData.days) {
+            // Calculate new date based on new reference date and existing day number
+            const newDate = new Date(newReferenceDate + 'T00:00:00');
+            newDate.setDate(newDate.getDate() + day.day);
+            day.date = `${newDate.getFullYear()}-${String(newDate.getMonth() + 1).padStart(2, '0')}-${String(newDate.getDate()).padStart(2, '0')}`;
+            
+            // Update events within this day
+            if (day.events) {
+                for (const event of day.events) {
+                    // For non-actual events, clear any originalScheduledDay
+                    // since we're doing a full recalculation from the new reference
+                    if (event.type !== 'actual-event') {
+                        delete event.originalScheduledDay;
+                        event.state = 'on-scheduled-date';
+                    }
+                }
+            }
+        }
+        
+        console.log('[recalculateScheduleFromDay0] All days recalculated with new dates');
+    }
+    
+    // Recalculate events that depend on a moved unscheduled event
+    // This handles cases where other events have their scheduling relative to this event
+    function recalculateDependentEvents(patientData: any, movedEvent: any, newDayNumber: number) {
+        console.log('[recalculateDependentEvents] Checking for events dependent on:', movedEvent.name);
+        
+        // TODO: In the future, we may need to query the study configuration to find
+        // events that have scheduling dependencies on this event (e.g., "X days after Event Y")
+        // For now, we log that this would need implementation based on the study's DSL model
+        
+        // The simulation service would be used here to re-run the schedule calculation
+        // for events that depend on the moved event's completion
+        
+        // Currently, unscheduled events typically don't have dependents in the same way
+        // that regular scheduled events do. This is a placeholder for future enhancement.
+        
+        console.log('[recalculateDependentEvents] Dependency recalculation completed (no dependents found)');
+        
+        // Note: If there were dependents, we would:
+        // 1. Find all events in the DSL model that have schedules relative to movedEvent
+        // 2. Calculate their new scheduled days based on newDayNumber
+        // 3. Update those events in patientData.days
+        // 4. This might involve calling simulationService to re-run partial simulation
+    }
+    
+    // Update the date range based on current patient schedules
+    // Called after schedule changes to ensure the timeline shows all relevant dates
+    function updateDateRangeFromPatientData() {
+        if (!timeline) return;
+        
+        const refDate = timeline.getReferenceDate();
+        
+        // Find the latest day number across all patient schedules
+        let latestDayNumber = 0;
+        
+        // Check patientCentricData if available (reactive derived state)
+        if (patientCentricData?.patients) {
+            for (const patient of patientCentricData.patients as any[]) {
+                if (patient.days && patient.referenceDate) {
+                    for (const day of patient.days) {
+                        // Get the timeline day number for this patient day
+                        // Patient day is relative to patient's reference date
+                        // We need to convert to timeline day (relative to timeline reference date)
+                        const patientDate = new Date(patient.referenceDate + 'T00:00:00');
+                        patientDate.setDate(patientDate.getDate() + day.day);
+                        const timelineDayNumber = getCalendarDayDiff(patientDate, refDate);
+                        
+                        if (timelineDayNumber > latestDayNumber) {
+                            latestDayNumber = timelineDayNumber;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Also check the database schedules directly (works during initial load before derived state is ready)
+        for (const [patientId, schedule] of patientSchedulesFromDB) {
+            if (schedule.referenceDate && schedule.days) {
+                for (const day of schedule.days) {
+                    const patientDate = new Date(schedule.referenceDate + 'T00:00:00');
+                    patientDate.setDate(patientDate.getDate() + day.day);
+                    const timelineDayNumber = getCalendarDayDiff(patientDate, refDate);
+                    
+                    if (timelineDayNumber > latestDayNumber) {
+                        latestDayNumber = timelineDayNumber;
+                    }
+                }
+            }
+        }
+        
+        // Only proceed if we found any data
+        if (latestDayNumber === 0) {
+            console.log('[updateDateRangeFromPatientData] No patient schedule data found');
+            return;
+        }
+        
+        // Calculate the end of the month containing the latest day
+        const latestDate = getDateFromDay(latestDayNumber);
+        const lastMonthEnd = new Date(latestDate.getFullYear(), latestDate.getMonth() + 1, 0);
+        const newDateRangeEnd = getCalendarDayDiff(lastMonthEnd, refDate);
+        
+        // Only update if the new range is larger
+        if (newDateRangeEnd > dateRangeEnd) {
+            console.log('[updateDateRangeFromPatientData] Extending date range:', {
+                oldEnd: dateRangeEnd,
+                oldEndDate: getDateFromDay(dateRangeEnd).toISOString().split('T')[0],
+                newEnd: newDateRangeEnd,
+                newEndDate: lastMonthEnd.toISOString().split('T')[0],
+                latestDayNumber,
+                latestDate: latestDate.toISOString().split('T')[0]
+            });
+            dateRangeEnd = newDateRangeEnd;
+        } else {
+            console.log('[updateDateRangeFromPatientData] Range is already sufficient:', {
+                currentEnd: dateRangeEnd,
+                currentEndDate: getDateFromDay(dateRangeEnd).toISOString().split('T')[0],
+                latestDayNumber,
+                latestDate: latestDate.toISOString().split('T')[0]
+            });
+        }
+    }
+    
     // Save patient schedule to database
     async function savePatientScheduleToDatabase(patientNumber: string, patientData: any) {
         // Find patient UUID from patientNumber
@@ -2357,6 +2632,9 @@
                 newSchedules.set(patientId, schedule);
                 patientSchedulesFromDB = newSchedules;
                 console.log('[savePatientScheduleToDatabase] Updated local cache');
+                
+                // Recalculate the date range to include any new dates
+                updateDateRangeFromPatientData();
             } else {
                 console.error('[savePatientScheduleToDatabase] Failed to save schedule');
             }
