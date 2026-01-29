@@ -11,7 +11,9 @@
     "packages/meta",
     "packages/languages/study-configuration",
     "packages/server-crchub",
-    "packages/webapp-crchub",
+    "packages/webapp-crchub"
+  ],
+  "_workspacesRemoved_islr": [
     "packages/languages/project-configuration",
     "packages/server-islr",
     "packages/webapp-islr"
