@@ -3121,6 +3121,27 @@
     margin: 4px 0;
   }
 
+  // Today button styles - matches the today header background color (#005dff)
+  .today-button {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--standard-font-size);
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #005effad;
+    border: 1px solid #005dffad;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-left: 0.5rem;
+    
+    &:hover {
+        background-color: #0047cc;
+        border-color: #0047cc;
+        color: #ffffff;
+    }
+  }
+
   // Availability status background colors (when showing counts for all staff)
   .calendar-day.all-available {
     background-color: var(--calendar-available-bg);
@@ -4330,26 +4351,7 @@
         }
     }
     
-    // Today button styles - matches the today header background color (#005dff)
-    .today-button {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        font-size: var(--standard-font-size);
-        font-weight: 500;
-        color: #ffffff;
-        background-color: #005effad;
-        border: 1px solid #005dffad;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        margin-left: 0.5rem;
-        
-        &:hover {
-            background-color: #0047cc;
-            border-color: #0047cc;
-            color: #ffffff;
-        }
-    }
+
     
     // Patient link styles
     .name-link-text {

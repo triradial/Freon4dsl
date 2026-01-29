@@ -7,8 +7,11 @@ import type { StaffAvailability } from '../data/availability-service.js';
 
 export interface PatientVisitRow {
     patientId: string;
+    patientIdLink: string; // actual patient.id for navigation
     studyName: string;
+    studyId: string; // for navigation
     visitNumber: string;
+    status?: 'planned' | 'completed' | 'missed' | 'canceled';
 }
 
 export interface StaffRow {
@@ -155,7 +158,9 @@ function createDayViewStore() {
                             const studyName = studyMap.get(patient.studyId) || patient.studyId;
                             patientVisits.push({
                                 patientId: patient.patientNumber || patient.id,
+                                patientIdLink: patient.id,
                                 studyName: studyName,
+                                studyId: patient.studyId,
                                 visitNumber: visit.name || `Visit ${visit.visitInstanceNumber || ''}`
                             });
                         }

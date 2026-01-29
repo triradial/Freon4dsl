@@ -64,8 +64,15 @@ export async function getStudies(oid: string, all: boolean = false): Promise<Stu
             (
                 SELECT COUNT(DISTINCT p.patient_id)
                 FROM patient p
-                JOIN site st ON p.site_id = st.site_id
-                WHERE st.study_id = s.study_id
+                WHERE EXISTS (
+                    SELECT 1 FROM patient_protocol pp
+                    JOIN protocol_version pv ON pp.protocol_version_id = pv.protocol_version_id
+                    JOIN protocol pr ON pv.protocol_id = pr.protocol_id
+                    WHERE pp.patient_id = p.patient_id AND pr.study_id = s.study_id
+                ) OR EXISTS (
+                    SELECT 1 FROM site st
+                    WHERE st.site_id = p.site_id AND st.study_id = s.study_id
+                )
             )::integer as patient_count,
             user_site.site_number,
             (
@@ -91,8 +98,15 @@ export async function getStudies(oid: string, all: boolean = false): Promise<Stu
             (
                 SELECT COUNT(DISTINCT p.patient_id)
                 FROM patient p
-                JOIN site st ON p.site_id = st.site_id
-                WHERE st.study_id = s.study_id
+                WHERE EXISTS (
+                    SELECT 1 FROM patient_protocol pp
+                    JOIN protocol_version pv ON pp.protocol_version_id = pv.protocol_version_id
+                    JOIN protocol pr ON pv.protocol_id = pr.protocol_id
+                    WHERE pp.patient_id = p.patient_id AND pr.study_id = s.study_id
+                ) OR EXISTS (
+                    SELECT 1 FROM site st
+                    WHERE st.site_id = p.site_id AND st.study_id = s.study_id
+                )
             )::integer as patient_count,
             user_site.site_number,
             user_org.name as organization_name

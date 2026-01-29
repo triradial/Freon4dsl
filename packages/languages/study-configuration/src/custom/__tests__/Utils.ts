@@ -1,7 +1,12 @@
 import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from "@freon4dsl/core";
 import * as fs from "fs";
 import * as path from "path";
+import { fileURLToPath } from "url";
 import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
+
+// ESM-compatible __dirname for absolute path resolution
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { Availability, DateConcept, DateRange, Day, Days, Event, EventReference, EventSchedule, EventState, EventWindow, FirstDayOfStudy, PatientHistory, PatientInfo, PatientVisit, PatientVisitStatus, Period, RepeatCondition, SimpleOperators, StaffLevel, StudyConfiguration, StudyStart, TimeAmount, TimeAmountPart, TimeUnit, VisitDate, Weekly, When } from "../../language/gen/index.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
@@ -360,15 +365,17 @@ export function loadModelUnit(modelFolderName: string, modelUnitName: string, al
 }
 
 export function saveChecklistDocument(stringToSave: string) {
-    const filename = "../../../tmp/StudyChecklistOneVisitOneChecklist.md";
-    this.saveToFile(stringToSave, filename);
+    // Path to workspace root tmp folder: __tests__ -> custom -> src -> study-configuration -> languages -> packages -> root
+    const filename = path.resolve(__dirname, "../../../../../../tmp/StudyChecklistOneVisitOneChecklist.md");
+    saveToFile(stringToSave, filename);
 }
 
 export function saveTimelineTable(timelineTableAsScript: string) {
-    const filename = "../../../tmp/timeline-table.html";
+    // Path to workspace root tmp folder: __tests__ -> custom -> src -> study-configuration -> languages -> packages -> root
+    const filename = path.resolve(__dirname, "../../../../../../tmp/timeline-table.html");
     const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTMLPage(timelineTableAsScript);
 
-    this.saveToFile(timelineTableAsHTML, filename);
+    saveToFile(timelineTableAsHTML, filename);
 }
 
 export function saveToFile(stringToSave: string, filename: string) {
@@ -381,7 +388,8 @@ export function saveToFile(stringToSave: string, filename: string) {
 }
 
 export function saveTimeline(timelineDataAsScript: string) {
-    const filename = "../../../tmp/timeline.html";
+    // Path to workspace root tmp folder: __tests__ -> custom -> src -> study-configuration -> languages -> packages -> root
+    const filename = path.resolve(__dirname, "../../../../../../tmp/timeline.html");
     const timelineDataAsHTML = TimelineChartTemplate.getTimelineAsHTMLPage(timelineDataAsScript);
 
     saveToFile(timelineDataAsHTML, filename);
