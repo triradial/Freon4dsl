@@ -139,13 +139,13 @@ export class Timeline extends RtObject {
 
     // Only add if the event is not already on the timeline
     addEvent(event: TimelineEventInstance) {
-        let day = this.days.find((d) => d.day === event.startDay);
+        let day = this.days.find((d) => d != null && d.day === event.startDay) as TimelineDay | undefined;
         if (!day) {
             day = new TimelineDay(event.startDay);
             this.days.push(day);
         }
 
-        // Check if the exact same instance of the event is already present
+        if (!day.events) day.events = [];
         const eventExists = day.events.find((e) => e === event);
         if (!eventExists) {
             day.events.push(event);
@@ -153,17 +153,20 @@ export class Timeline extends RtObject {
     }
 
     getEvents(day: number) {
-        let timelineDay = this.days.find((d) => d.day === day);
-        return timelineDay ? timelineDay.events : [];
+        const timelineDay = this.days.find((d) => d != null && d.day === day);
+        return timelineDay ? (timelineDay.events ?? []) : [];
     }
 
     getLastScheduledEventInstanceForThisEventsName(eventToMatch: Event): ScheduledEventInstance {
+        if (!eventToMatch) return null;
+        const matchName = (eventToMatch as { name?: string; referred?: { name?: string } })?.name ?? (eventToMatch as { referred?: { name?: string } })?.referred?.name;
+        if (matchName == null) return null;
         // Filter the events to match the given event name
         let eventInstances = this.getAllScheduledEventInstancesWithDays()
-            .filter(({ event }) => eventToMatch.name === event.getName());
+            .filter(({ event }) => matchName === event.getName());
 
         // Sort the events by the day value
-        eventInstances.sort((a, b) => a.day - b.day);
+        eventInstances.sort((a, b) => (a?.day ?? 0) - (b?.day ?? 0));
 
         // Get the last instance from the sorted list
         const lastInstance = eventInstances.length > 0 ? (eventInstances[eventInstances.length - 1].event as ScheduledEventInstance) : null;
@@ -178,9 +181,10 @@ export class Timeline extends RtObject {
 
     printTimeline() {
         TimelineLogger.log("Timeline:");
-        this.days.forEach((day) => {
+        const validDays = (this.days ?? []).filter((d): d is TimelineDay => d != null);
+        validDays.forEach((day) => {
             TimelineLogger.log("Day: " + day.day);
-            day.events.forEach((event) => {
+            (day.events ?? []).forEach((event) => {
                 TimelineLogger.log("Event: " + event.getName() + " day: " + event.startDay + " status: " + event.getState());
             });
         });
@@ -188,8 +192,9 @@ export class Timeline extends RtObject {
 
     printTimelineOfScheduledEventInstances() {
         let output = "Scheduled Event Instances on Timeline:\n";
-        this.days.forEach((day) => {
-            day.events.forEach((event) => {
+        const validDays = (this.days ?? []).filter((d): d is TimelineDay => d != null);
+        validDays.forEach((day) => {
+            (day.events ?? []).forEach((event) => {
                 if (event instanceof ScheduledEventInstance) {
                     let scheduledEventInstance = event as ScheduledEventInstance;
                     output +=
@@ -210,8 +215,9 @@ export class Timeline extends RtObject {
 
     // Return true if the event has already been completed on a previous day at least once
     hasCompletedInstanceOf(scheduledEvent: ScheduledEvent) {
-        for (const day of this.days) {
-            for (const event of day.events) {
+        const validDays = (this.days ?? []).filter((d): d is TimelineDay => d != null);
+        for (const day of validDays) {
+            for (const event of day.events ?? []) {
                 if (event instanceof ScheduledEventInstance) {
                     let eventInstance = event as ScheduledEventInstance;
                     // console.log("hasCompletedInstanceOf checking if completed instance of: " + scheduledEvent.getName() + " matches event: " + eventInstance.getName() + " in state: " + eventInstance.state + " one day: " + day.day);
@@ -227,10 +233,10 @@ export class Timeline extends RtObject {
     }
 
     numberCompletedInstancesOf(scheduledEvent: ScheduledEvent) {
-        // what happens when event is a period
         let count = 0;
-        for (const day of this.days) {
-            for (const event of day.events) {
+        const validDays = (this.days ?? []).filter((d): d is TimelineDay => d != null);
+        for (const day of validDays) {
+            for (const event of day.events ?? []) {
                 if (
                     event instanceof ScheduledEventInstance &&
                     event.getScheduledEvent().getName() === scheduledEvent.getName() &&
@@ -253,8 +259,9 @@ export class Timeline extends RtObject {
      * Returns an array of objects containing the event and its day number
      */
     private getAllScheduledEventInstancesWithDays(): Array<{ event: ScheduledEventInstance; day: number }> {
-        return this.days.flatMap((day) =>
-            day.events
+        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
+        return validDays.flatMap((day) =>
+            (day.events ?? [])
                 .filter((event) => event instanceof ScheduledEventInstance)
                 .map((event) => ({ event: event as ScheduledEventInstance, day: day.day }))
         );
@@ -269,22 +276,19 @@ export class Timeline extends RtObject {
             return null;
         }
 
-        // Sort by day to get the last completed event
-        completedEvents.sort((a, b) => b.day - a.day);
+        completedEvents.sort((a, b) => (b?.day ?? 0) - (a?.day ?? 0));
 
         return completedEvents[0].event;
     }
 
     getPeriods() {
-        return this.days.flatMap((day) => day.events.filter((event) => event instanceof PeriodEventInstance));
+        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
+        return validDays.flatMap((day) => (day.events ?? []).filter((event) => event instanceof PeriodEventInstance));
     }
 
     getScheduleEventInstancesOrderByDay(): ScheduledEventInstance[] {
         const result = this.getAllScheduledEventInstancesWithDays()
-            .sort((a, b) => {
-                // console.log(`Comparing: ${a.event.getName()} day: ${a.day} and ${b.event.getName()} day: ${b.day}`);
-                return a.day - b.day;
-            })
+            .sort((a, b) => (a?.day ?? 0) - (b?.day ?? 0))
             .map(({ event }) => event);
         // console.log("Ordered events: " + result.map((event) => event.getName()));
         return result;
@@ -315,8 +319,9 @@ export class Timeline extends RtObject {
     // }
 
     getUniqueEventInstanceNames(): string[] {
-        let sortedDays = this.days.sort((a, b) => a.day - b.day);
-        let eventNames = sortedDays.flatMap((day) => day.events.filter((event) => event instanceof ScheduledEventInstance).map((event) => event.getName()));
+        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
+        let sortedDays = [...validDays].sort((a, b) => a.day - b.day);
+        let eventNames = sortedDays.flatMap((day) => (day.events ?? []).filter((event) => event instanceof ScheduledEventInstance).map((event) => event.getName()));
         let uniqueEventNames = [];
         let seen = new Set();
 
@@ -331,9 +336,10 @@ export class Timeline extends RtObject {
     }
 
     getUniquePatientIdentifiers(): string[] {
-        let sortedDays = this.days.sort((a, b) => a.day - b.day);
+        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
+        let sortedDays = [...validDays].sort((a, b) => a.day - b.day);
         let patientIdentifiers = sortedDays.flatMap((day) => 
-            day.events
+            (day.events ?? [])
                 .filter((event) => event instanceof PatientEventInstance)
                 .map((event) => (event as PatientEventInstance).getPatientIdentifier())
                 .filter((id): id is string => id !== undefined && id !== null)
@@ -342,21 +348,23 @@ export class Timeline extends RtObject {
     }
 
     getOffsetOfFirstEventInstance() {
-        const lowestDayItem = this.days.reduce((minItem, currentItem) => {
+        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
+        if (validDays.length === 0) return 0;
+        const lowestDayItem = validDays.reduce((minItem, currentItem) => {
             return currentItem.day < minItem.day ? currentItem : minItem;
-        }, this.days[0]);
+        }, validDays[0]);
         if (lowestDayItem.day >= 0) {
-            // Offset only comes into play when it is negative
             return 0;
-        } else {
-            return Math.abs(lowestDayItem.day);
         }
+        return Math.abs(lowestDayItem.day);
     }
 
     getOffsetOfLastEventInstance() {
-        const highestDayItem = this.days.reduce((maxItem, currentItem) => {
+        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
+        if (validDays.length === 0) return 0;
+        const highestDayItem = validDays.reduce((maxItem, currentItem) => {
             return currentItem.day > maxItem.day ? currentItem : maxItem;
-        }, this.days[0]);
+        }, validDays[0]);
         return highestDayItem.day;
     }
 
@@ -394,31 +402,37 @@ export class Timeline extends RtObject {
     addPatientEvents(patientHistory: PatientHistory, patientIdentifier?: string) {
         this.setPatientHistory(patientHistory!);
 
+        const safeMonthName = (m: { name?: string; referred?: { name?: string } } | null | undefined) =>
+            m?.name ?? m?.referred?.name ?? null;
+
         patientHistory.patientVisits.forEach((patientVisit) => {
-            const actualVisitDateAsDate = this.dateStringsToDate(
-                patientVisit.actualVisitDate.day,
-                patientVisit.actualVisitDate.month.name,
-                patientVisit.actualVisitDate.year,
-            );
+            const avd = patientVisit.actualVisitDate;
+            const monthName = safeMonthName(avd?.month as { name?: string; referred?: { name?: string } });
+            if (!avd?.day || !monthName || !avd?.year) return;
+            const visit = patientVisit.visit?.referred ?? patientVisit.visit;
+            const visitName = (visit as { name?: string })?.name ?? (patientVisit.visit as { name?: string })?.name;
+            if (!visitName) return;
+            const actualVisitDateAsDate = this.dateStringsToDate(avd.day, monthName, avd.year);
             const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
-            this.addEvent(new PatientVisitEventInstance(patientVisit.visit.name, patientVisit.visitInstanceNumber, dayOnTimeline, undefined, patientIdentifier || patientHistory.patient_id, patientVisit.status));
-            console.log("Added patient visit event: " + patientVisit.visit.name + " on day: " + dayOnTimeline + (patientIdentifier ? " for patient: " + patientIdentifier : ""));
+            this.addEvent(new PatientVisitEventInstance(visitName, patientVisit.visitInstanceNumber, dayOnTimeline, undefined, patientIdentifier || patientHistory.patient_id, patientVisit.status));
+            console.log("Added patient visit event: " + visitName + " on day: " + dayOnTimeline + (patientIdentifier ? " for patient: " + patientIdentifier : ""));
         });
         patientHistory.patientNotAvailableDates.forEach((patientNotAvailableDate) => {
-            const startDateAsDate = this.dateStringsToDate(
-                patientNotAvailableDate.startDate.day,
-                patientNotAvailableDate.startDate.month.name,
-                patientNotAvailableDate.startDate.year,
-            );
-            let endDateAsDate = undefined;
-            if (patientNotAvailableDate.endDate == undefined) {
+            const startDate = patientNotAvailableDate.startDate;
+            const startMonthName = safeMonthName(startDate?.month as { name?: string; referred?: { name?: string } });
+            if (!startDate?.day || !startMonthName || !startDate?.year) return;
+            const startDateAsDate = this.dateStringsToDate(startDate.day, startMonthName, startDate.year);
+            let endDateAsDate: Date;
+            const endDate = patientNotAvailableDate.endDate;
+            if (endDate == null) {
                 endDateAsDate = new Date(startDateAsDate);
             } else {
-                endDateAsDate = this.dateStringsToDate(
-                    patientNotAvailableDate.endDate.day,
-                    patientNotAvailableDate.endDate.month.name,
-                    patientNotAvailableDate.endDate.year,
-                );
+                const endMonthName = safeMonthName(endDate?.month as { name?: string; referred?: { name?: string } });
+                if (!endDate?.day || !endMonthName || !endDate?.year) {
+                    endDateAsDate = new Date(startDateAsDate);
+                } else {
+                    endDateAsDate = this.dateStringsToDate(endDate.day, endMonthName, endDate.year);
+                }
             }
             this.addEvent(
                 new PatientUnAvailableEventInstance("Patient Not Available", this.getDayOnTimeline(startDateAsDate), this.getDayOnTimeline(endDateAsDate), patientIdentifier || patientHistory.patient_id),
@@ -448,21 +462,25 @@ export class Timeline extends RtObject {
         TimelineLogger.log("Adding Staff Availability to Timeline");
         this.availability = availability;
 
+        const safeMonthName = (m: { name?: string; referred?: { name?: string } } | null | undefined) =>
+            m?.name ?? m?.referred?.name ?? null;
+
         availability.staffLevels.forEach((staffLevel) => {
-            const startDateAsDate = this.dateStringsToDate(
-                staffLevel.dateOrRange.startDate.day,
-                staffLevel.dateOrRange.startDate.month.name,
-                staffLevel.dateOrRange.startDate.year,
-            );
-            let endDateAsDate = undefined;
-            if (staffLevel.dateOrRange.endDate == undefined) {
+            const start = staffLevel.dateOrRange?.startDate;
+            const startMonthName = start ? safeMonthName(start.month as { name?: string; referred?: { name?: string } }) : null;
+            if (!start?.day || !startMonthName || !start?.year) return;
+            const startDateAsDate = this.dateStringsToDate(start.day, startMonthName, start.year);
+            let endDateAsDate: Date;
+            const end = staffLevel.dateOrRange?.endDate;
+            if (end == null) {
                 endDateAsDate = new Date(startDateAsDate);
             } else {
-                endDateAsDate = this.dateStringsToDate(
-                    staffLevel.dateOrRange.endDate.day,
-                    staffLevel.dateOrRange.endDate.month.name,
-                    staffLevel.dateOrRange.endDate.year,
-                );
+                const endMonthName = safeMonthName(end.month as { name?: string; referred?: { name?: string } });
+                if (!end?.day || !endMonthName || !end?.year) {
+                    endDateAsDate = new Date(startDateAsDate);
+                } else {
+                    endDateAsDate = this.dateStringsToDate(end.day, endMonthName, end.year);
+                }
             }
             this.addEvent(
                 new StaffAvailabilityEventInstance(

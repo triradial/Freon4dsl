@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     build: {
+        emptyOutDir: false, // preserve tsc output (e.g. index.js) when bundling index.custom.js
         lib: {
             entry: 'src/index.custom.ts',
             formats: ['es'],

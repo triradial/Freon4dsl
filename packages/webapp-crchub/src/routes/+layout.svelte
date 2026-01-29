@@ -12,7 +12,7 @@
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
     import PatientStudyTimelineChartDrawer from "../components/drawers/PatientStudyTimelineChartDrawer.svelte";
-    import PatientTimelineChartDrawer from "../components/drawers/PatientTimelineChartDrawer.svelte";
+    import PatientsTimelineChartDrawer from "../components/drawers/PatientsTimelineChartDrawer.svelte";
     import StaffAvailabilityDrawer from "../components/drawers/StaffAvailabilityDrawer.svelte";
     import StudyChecklistDrawer from "../components/drawers/StudyChecklistDrawer.svelte";
     import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
@@ -23,7 +23,7 @@
     import { isAuthenticated } from "../services/security/auth.js";
     import { addDrawer, drawerStore } from '../services/stores/side-drawer-store.js';
     import { objectDrawerStore } from '../services/stores/object-drawer-store.js';
-    import { theme } from "../services/stores/theme-store.js";
+    import { themeBundle } from "../services/stores/theme-store.js";
     import { userStore } from "../services/stores/users-store.js";
     import { adminModeStore } from "../services/stores/admin-mode-store.js";
     import { staffAvailabilityStore } from "../services/stores/staff-availability-store.js";
@@ -75,7 +75,7 @@
             addDrawer({ key: "patientStudyTimelineChart", icon: IconSquareChartGantt, component: PatientStudyTimelineChartDrawer, title: "Study Timeline Chart - Date Selected", description: "View the study timeline chart for the selected date for this patient.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "visitChecklist", icon: IconClipboardCheck, component: VisitChecklistDrawer, title: "Visit Checklist", description: "View the checklist for visits scheduled for the selected date.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "studyChecklist", icon: IconCheckSquare, component: StudyChecklistDrawer, title: "Study Checklist", description: "View the checklist for this study.", supportsRefresh: true, supportsPrint: true, defaultWidth: 800, });   
-            addDrawer({ key: "patientTimelineChart", icon: IconCalendar, component: PatientTimelineChartDrawer, title: "Patient Timeline", description: "View patient timelines and visit schedules for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
+            addDrawer({ key: "patientTimelineChart", icon: IconCalendar, component: PatientsTimelineChartDrawer, title: "Patient Timeline", description: "View patient timelines and visit schedules for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "staffAvailability", icon: IconUsers, component: StaffAvailabilityDrawer, title: "Staff Availability", description: "View the availability of staff for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
 
             // Debug: log all drawers after registration
@@ -89,7 +89,7 @@
 </script>
 
 <svelte:head>
-    <link rel="stylesheet" href="/styles/bundle-{$theme}.css" />
+    <link rel="stylesheet" href="/styles/bundle-{$themeBundle}.css" />
 </svelte:head>
 
 {#if auth}

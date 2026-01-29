@@ -49,7 +49,7 @@
             runValidatorAsync().then((errors) => {
                 modelErrors = errors;
                 isRefreshing = false;
-                LOGGER.log("async refresh errors", modelErrors.length);
+                LOGGER.log(`async refresh errors: ${modelErrors.length}`);
             });
         }, 300); // 300ms debounce
     }
@@ -60,7 +60,7 @@
         runValidatorAsync().then((errors) => {
             modelErrors = errors;
             isRefreshing = false;
-            LOGGER.log("onMount modelErrors:", modelErrors.length);
+            LOGGER.log(`onMount modelErrors: ${modelErrors.length}`);
         });
     });
 

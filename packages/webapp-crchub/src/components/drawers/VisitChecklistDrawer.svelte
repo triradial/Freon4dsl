@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { StudyConfiguration, getVisitChecklistAsMarkdown } from "@freon4dsl/study-configuration";
+    import { type PatientInfo, findAppropriateVisitDate, getVisitChecklistAsMarkdown, type StudyConfiguration } from "@freon4dsl/study-configuration";
     import MarkdownIt from "markdown-it";
     import { createEventDispatcher } from "svelte";
     import { ModelManager } from "../../services/dsl/model-manager.js";
@@ -93,15 +93,15 @@
             if (patientId) {
                 patientInfo = await modelManager.getModelUnitWithoutOpening(studyId, "PatientInfo") as PatientInfo | null;
                 
-                // Find the appropriate visit date from patient visits
+                // Find the appropriate visit date from patient visits (for checklist for that date/event)
                 const foundDate = findAppropriateVisitDate(patientInfo, patientId);
                 if (foundDate) {
                     determinedVisitDate = foundDate;
                 }
             }
             
-            // Check if we have a date to use (either selectedDate or determined from visits)
-            const dateToUse = visitDateToUse();
+            // Use selected date if provided, otherwise the date we just determined from patient visits
+            const dateToUse = normalizedSelectedDate() ?? determinedVisitDate ?? undefined;
             if (!dateToUse) {
                 if (patientId) {
                     error = "No visit found for this patient. Please select a date or ensure the patient has visits scheduled.";
