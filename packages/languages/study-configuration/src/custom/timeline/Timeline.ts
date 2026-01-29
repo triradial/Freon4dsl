@@ -1,6 +1,5 @@
 import { FreNodeReference, RtBoolean, RtObject, RtString } from "@freon4dsl/core";
 import { Availability, DateConcept, Event, Month, PatientHistory } from "../../language/gen/index.js";
-import { TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
 import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance.js";
 import { PeriodEventInstance } from "./PeriodEventInstance.js";
@@ -487,11 +486,17 @@ export class Timeline extends RtObject {
         return this.days.some((day) => day.events.some((event) => event instanceof StaffAvailabilityEventInstance));
     }
 
-    getOptions(timeline: Timeline): string {
+    getOptions(timeline: Timeline, isMultiPatient: boolean = false): string {
         // result differs by whether to show actual dates or week numbers for the major and minor labels.
         // If showing a study level chart then OrganizeByStudyDay should be true and major and minor are not actual dates
         // If showing for a specific patient or a specific start day then major and minor are actual dates
         let result = undefined;
+        
+        // Common options for multi-patient compact view - enable stacking for better visualization
+        const multiPatientOptions = isMultiPatient ? `
+                stack: true,
+                stackSubgroups: true,` : '';
+        
         if (this.organizeByStudyDay) {
             result = `  var options = {
                 showCurrentTime: false,
@@ -532,7 +537,7 @@ export class Timeline extends RtObject {
                     item: {
                         horizontal: 0,
                     },
-                },
+                },${multiPatientOptions}
             };`;
         } else {
             result = `          var options = {
@@ -572,7 +577,7 @@ export class Timeline extends RtObject {
                     item: {
                         horizontal: 0,
                     },
-                },
+                },${multiPatientOptions}
             };
             `;
         }
@@ -593,15 +598,6 @@ export class Timeline extends RtObject {
     //     return new RtString(html);
     // }
 
-    public getTimelineChartHtml(): RtString {
-        const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(this);
-        const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(this);
-        console.log("anyPatientEventInstances: " + this.anyPatientEventInstances());
-        console.log("anyStaffAvailabilityEventInstances: " + this.anyStaffAvailabilityEventInstances());
-        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, this.anyPatientEventInstances(), this.anyStaffAvailabilityEventInstances() );
-        const html = `<div class="limited-width-container">${chartHTML}</div>`;
-        return new RtString(html);
-    }
     
     // The DateConcept is updated inline hence no return value.
     public static fillDateConceptFromAsString(dateConcept: DateConcept) {

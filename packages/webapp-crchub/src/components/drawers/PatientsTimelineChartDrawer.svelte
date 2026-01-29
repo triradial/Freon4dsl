@@ -13,7 +13,6 @@
     let chartHtml = $state<string>("");
     let error = $state<string | null>(null);
     let container = $state<HTMLElement | null>(null);
-    let timelineData = $state<any>(null);
 
     export function refresh() {
         if (showAllPatients || !id) {
@@ -101,95 +100,7 @@
         // Get patient identifier for single patient view
         const patientIdentifier = fetchedPatient.patientNumber || fetchedPatient.id;
         const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, patientHistory, patientIdentifier);
-        
-        // Store timeline data for JSON output (patient-centric with window data)
-        const refDate = timeline.getReferenceDate();
-        
-        // Helper to get window info from scheduled event
-        const getWindowInfo = (scheduledEvent: any) => {
-            try {
-                const daysBefore = scheduledEvent.getStartDayOfWindow ? scheduledEvent.getStartDayOfWindow() : 0;
-                const daysAfter = scheduledEvent.getEndDayOfWindow ? scheduledEvent.getEndDayOfWindow() : 0;
-                const hasBefore = scheduledEvent.anyDaysBefore ? scheduledEvent.anyDaysBefore() : false;
-                const hasAfter = scheduledEvent.anyDaysAfter ? scheduledEvent.anyDaysAfter() : false;
-                return {
-                    daysBefore,
-                    daysAfter,
-                    hasBefore,
-                    hasAfter
-                };
-            } catch (e) {
-                return { daysBefore: 0, daysAfter: 0, hasBefore: false, hasAfter: false };
-            }
-        };
-        
-        // Get unique patient identifiers
-        const uniquePatientIds = timeline.getUniquePatientIdentifiers();
-        if (uniquePatientIds.length === 0) {
-            uniquePatientIds.push(patientIdentifier);
-        }
-        
-        // Build patient-centric structure
-        const patientData: any = {};
-        uniquePatientIds.forEach(pid => {
-            patientData[pid] = {
-                patientId: pid,
-                referenceDate: refDate.toISOString(),
-                days: []
-            };
-        });
-        
-        // Process each day
-        timeline.getDays().forEach((day: any) => {
-            const date = new Date(refDate);
-            date.setDate(date.getDate() + day.day);
-            const dayStr = date.toISOString().split('T')[0];
-            
-            // Get scheduled events with window info
-            const scheduledEvents = day.getEventInstances().map((e: any) => {
-                const windowInfo = getWindowInfo(e);
-                return {
-                    name: e.getName(),
-                    title: e.getTitle ? e.getTitle() : null,
-                    startDay: e.startDay,
-                    window: windowInfo
-                };
-            });
-            
-            // Get patient events grouped by patient
-            const patientEvents = day.getPatientEventInstances();
-            const eventsByPatient = new Map<string, any[]>();
-            patientEvents.forEach((e: any) => {
-                const pid = e.getPatientIdentifier ? e.getPatientIdentifier() : 'unknown';
-                if (!eventsByPatient.has(pid)) {
-                    eventsByPatient.set(pid, []);
-                }
-                eventsByPatient.get(pid)!.push({
-                    name: e.getName(),
-                    title: e.getTitle ? e.getTitle() : null,
-                    startDay: e.startDay,
-                    stateClass: e.getClassForDisplay ? e.getClassForDisplay(timeline) : null
-                });
-            });
-            
-            // Add day to each patient's timeline
-            uniquePatientIds.forEach(pid => {
-                patientData[pid].days.push({
-                    day: day.day,
-                    date: dayStr,
-                    scheduledEvents: scheduledEvents,
-                    patientEvents: eventsByPatient.get(pid) || []
-                });
-            });
-        });
-        
-        timelineData = {
-            referenceDate: refDate.toISOString(),
-            note: "Reference date is day 0 for each patient. Days are relative to this date.",
-            patients: Object.values(patientData)
-        };
-        
-        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        const html = getTimelineChartHtml(timeline).asString();
         return html;
     };
 
@@ -227,99 +138,7 @@
             }
         }
 
-        // Store timeline data for JSON output (patient-centric with window data)
-        const refDate = timeline.getReferenceDate();
-        
-        // Helper to get window info from scheduled event
-        const getWindowInfo = (scheduledEvent: any) => {
-            try {
-                const daysBefore = scheduledEvent.getStartDayOfWindow ? scheduledEvent.getStartDayOfWindow() : 0;
-                const daysAfter = scheduledEvent.getEndDayOfWindow ? scheduledEvent.getEndDayOfWindow() : 0;
-                const hasBefore = scheduledEvent.anyDaysBefore ? scheduledEvent.anyDaysBefore() : false;
-                const hasAfter = scheduledEvent.anyDaysAfter ? scheduledEvent.anyDaysAfter() : false;
-                return {
-                    daysBefore,
-                    daysAfter,
-                    hasBefore,
-                    hasAfter
-                };
-            } catch (e) {
-                return { daysBefore: 0, daysAfter: 0, hasBefore: false, hasAfter: false };
-            }
-        };
-        
-        // Get unique patient identifiers
-        const uniquePatientIds = timeline.getUniquePatientIdentifiers();
-        if (uniquePatientIds.length === 0) {
-            allPatients.forEach(p => {
-                const pid = p.displayName || p.name || p.patientNumber;
-                if (pid && !uniquePatientIds.includes(pid)) {
-                    uniquePatientIds.push(pid);
-                }
-            });
-        }
-        
-        // Build patient-centric structure
-        const patientData: any = {};
-        uniquePatientIds.forEach(pid => {
-            patientData[pid] = {
-                patientId: pid,
-                referenceDate: refDate.toISOString(),
-                days: []
-            };
-        });
-        
-        // Process each day
-        timeline.getDays().forEach((day: any) => {
-            const date = new Date(refDate);
-            date.setDate(date.getDate() + day.day);
-            const dayStr = date.toISOString().split('T')[0];
-            
-            // Get scheduled events with window info
-            const scheduledEvents = day.getEventInstances().map((e: any) => {
-                const windowInfo = getWindowInfo(e);
-                return {
-                    name: e.getName(),
-                    title: e.getTitle ? e.getTitle() : null,
-                    startDay: e.startDay,
-                    window: windowInfo
-                };
-            });
-            
-            // Get patient events grouped by patient
-            const patientEvents = day.getPatientEventInstances();
-            const eventsByPatient = new Map<string, any[]>();
-            patientEvents.forEach((e: any) => {
-                const pid = e.getPatientIdentifier ? e.getPatientIdentifier() : 'unknown';
-                if (!eventsByPatient.has(pid)) {
-                    eventsByPatient.set(pid, []);
-                }
-                eventsByPatient.get(pid)!.push({
-                    name: e.getName(),
-                    title: e.getTitle ? e.getTitle() : null,
-                    startDay: e.startDay,
-                    stateClass: e.getClassForDisplay ? e.getClassForDisplay(timeline) : null
-                });
-            });
-            
-            // Add day to each patient's timeline
-            uniquePatientIds.forEach(pid => {
-                patientData[pid].days.push({
-                    day: day.day,
-                    date: dayStr,
-                    scheduledEvents: scheduledEvents,
-                    patientEvents: eventsByPatient.get(pid) || []
-                });
-            });
-        });
-        
-        timelineData = {
-            referenceDate: refDate.toISOString(),
-            note: "Reference date is day 0 for each patient. Days are relative to this date.",
-            patients: Object.values(patientData)
-        };
-
-        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        const html = getTimelineChartHtml(timeline).asString();
         return html;
     };
 
@@ -478,13 +297,5 @@
                 {@html chartHtml}
             </div>
         </div>
-        
-        <!-- Raw Timeline Data Output (for debugging) -->
-        {#if timelineData}
-            <div class="simulation-data-output" style="margin-top: 1rem; padding: 1rem; background-color: #ffffff; border: 1px solid var(--calendar-day-border); border-radius: 4px; max-height: 400px; overflow-y: scroll;">
-                <h3 style="margin-top: 0; margin-bottom: 0.5rem;">Raw Timeline Data (JSON) - Old Drawer</h3>
-                <pre style="white-space: pre-wrap; word-wrap: break-word; font-size: 0.75rem;">{JSON.stringify(timelineData, null, 2)}</pre>
-            </div>
-        {/if}
     </div>
 {/if}

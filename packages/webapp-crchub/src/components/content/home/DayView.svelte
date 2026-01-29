@@ -6,8 +6,8 @@
     import { theme } from "../../../services/stores/theme-store.js";
     import { staffAvailabilityStore } from "../../../services/stores/staff-availability-store.js";
     import { dataStore } from "../../../services/data/data-store.js";
-    import { ModelManager } from "../../../services/dsl/model-manager.js";
-    import type { PatientInfo, PatientHistory, PatientVisit } from "@freon4dsl/study-configuration";
+    // ModelManager no longer needed - using dataStore for patient schedules
+    // PatientInfo no longer needed - using patient schedules from database
     import type { StaffAvailability } from "../../../services/data/availability-service.js";
     import { convertToModel } from "../../../services/data/availability-interpreter.js";
     import { env } from "../../../config/env.js";
@@ -28,8 +28,11 @@
 
     interface PatientVisitRow {
         patientId: string;
+        patientIdLink: string; // actual patient.id for navigation
         studyName: string;
+        studyId: string; // for navigation
         visitNumber: string;
+        status?: 'planned' | 'completed' | 'missed' | 'canceled';
     }
 
     interface StaffRow {
@@ -71,8 +74,27 @@
     let orgPersonsMap = $state<Map<string, any>>(dayViewCache.getAllPersons());
     let patientVisitsCache = $state<Map<string, PatientVisitRow[]>>(new Map());
     
-    // Cache PatientInfo models by studyId to avoid reloading the same model multiple times
-    let patientInfoCache = new Map<string, PatientInfo>();
+    // Patient schedule cache - stores schedules keyed by patient ID to avoid repeated fetches
+    let patientScheduleCache = $state<Map<string, any>>(new Map());
+    let patientSchedulesLoaded = $state(false);
+    
+    // Cache flags to avoid redundant database calls
+    let studiesAndPatientsLoaded = $state(false);
+    let staffDataLoaded = $state(false);
+    let cachedStudyMap = $state<Map<string, string>>(new Map());
+    
+    // Performance logging helper
+    const PERF_ENABLED = true;
+    function perf(label: string, startTime?: number): number {
+        const now = performance.now();
+        if (PERF_ENABLED && startTime !== undefined) {
+            const elapsed = Math.round(now - startTime);
+            console.log(`[DayView PERF] ${label}: ${elapsed}ms`);
+        } else if (PERF_ENABLED) {
+            console.log(`[DayView PERF] ${label} started`);
+        }
+        return now;
+    }
     
     // Sync local state with persistent cache
     function syncFromCache() {
@@ -407,6 +429,7 @@
     }
 
     function previousDay() {
+        const start = perf('previousDay navigation');
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() - 1);
         selectedDate = newDate;
@@ -415,10 +438,12 @@
         
         const dateStr = formatDateString(selectedDate);
         updateUIFromCache(dateStr);
-        loadDayData();
+        perf('previousDay UI update (sync)', start);
+        loadDayData(); // Async background load
     }
 
     function nextDay() {
+        const start = perf('nextDay navigation');
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() + 1);
         selectedDate = newDate;
@@ -427,10 +452,12 @@
         
         const dateStr = formatDateString(selectedDate);
         updateUIFromCache(dateStr);
-        loadDayData();
+        perf('nextDay UI update (sync)', start);
+        loadDayData(); // Async background load
     }
 
     function previousWeek() {
+        const start = perf('previousWeek navigation');
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() - 7);
         selectedDate = newDate;
@@ -439,10 +466,12 @@
         
         const dateStr = formatDateString(selectedDate);
         updateUIFromCache(dateStr);
-        loadDayData();
+        perf('previousWeek UI update (sync)', start);
+        loadDayData(); // Async background load
     }
 
     function nextWeek() {
+        const start = perf('nextWeek navigation');
         const newDate = new Date(selectedDate);
         newDate.setDate(newDate.getDate() + 7);
         selectedDate = newDate;
@@ -451,17 +480,34 @@
         
         const dateStr = formatDateString(selectedDate);
         updateUIFromCache(dateStr);
-        loadDayData();
+        perf('nextWeek UI update (sync)', start);
+        loadDayData(); // Async background load
     }
 
     function selectDay(date: Date) {
+        const start = perf('selectDay navigation');
         selectedDate = new Date(date);
         saveSelectedDate();
         updateWeekDays();
         
         const dateStr = formatDateString(selectedDate);
         updateUIFromCache(dateStr);
-        loadDayData();
+        perf('selectDay UI update (sync)', start);
+        loadDayData(); // Async background load
+    }
+
+    function gotoToday() {
+        const start = perf('gotoToday navigation');
+        const newToday = new Date();
+        newToday.setHours(0, 0, 0, 0);
+        selectedDate = newToday;
+        saveSelectedDate();
+        updateWeekDays();
+        
+        const dateStr = formatDateString(selectedDate);
+        updateUIFromCache(dateStr);
+        perf('gotoToday UI update (sync)', start);
+        loadDayData(); // Async background load
     }
 
     function initializeStaffGrids() {
@@ -593,7 +639,46 @@
     }
 
     
-    // Load patient visits for a specific date
+    // Load all patient schedules in parallel (called once, used for all dates)
+    async function loadAllPatientSchedules(allPatients: any[]): Promise<void> {
+        if (patientSchedulesLoaded && patientScheduleCache.size > 0) {
+            console.log('[DayView PERF] Using cached patient schedules:', patientScheduleCache.size, 'patients (skipping fetch)');
+            return;
+        }
+        
+        const patientsWithStudy = allPatients.filter(patient => patient.id && patient.studyId);
+        console.log('[DayView] Loading schedules for', patientsWithStudy.length, 'patients in parallel...');
+        const startTime = perf('Loading all patient schedules (parallel)');
+        
+        // Load all schedules in parallel
+        const schedulePromises = patientsWithStudy.map(async (patient) => {
+            try {
+                const schedule = await dataStore.getPatientSchedule(patient.id);
+                return { patientId: patient.id, schedule };
+            } catch (error) {
+                console.error(`[DayView] Error loading schedule for patient ${patient.id}:`, error);
+                return { patientId: patient.id, schedule: null };
+            }
+        });
+        
+        const results = await Promise.all(schedulePromises);
+        
+        // Update cache with all results
+        const newCache = new Map<string, any>();
+        for (const { patientId, schedule } of results) {
+            if (schedule) {
+                newCache.set(patientId, schedule);
+            }
+        }
+        
+        patientScheduleCache = newCache;
+        patientSchedulesLoaded = true;
+        
+        perf('Loading all patient schedules (parallel)', startTime);
+        console.log('[DayView] Cached', patientScheduleCache.size, 'patient schedules for future use');
+    }
+    
+    // Load patient visits for a specific date using cached schedule data
     async function loadPatientVisitsForDate(dateStr: string, allPatients: any[], studyMap: Map<string, string>): Promise<PatientVisitRow[]> {
         // Check cache first
         if (patientVisitsCache.has(dateStr)) {
@@ -602,54 +687,57 @@
         
         const patientVisits: PatientVisitRow[] = [];
         
-        // Group patients by studyId to avoid loading the same PatientInfo model multiple times
-        const patientsByStudy = new Map<string, any[]>();
+        // Use cached schedules (loaded in parallel beforehand)
         for (const patient of allPatients) {
-            if (!patient.studyId) continue;
-            if (!patientsByStudy.has(patient.studyId)) {
-                patientsByStudy.set(patient.studyId, []);
-            }
-            patientsByStudy.get(patient.studyId)!.push(patient);
-        }
-        
-        // Load PatientInfo models once per study and process all patients for that study
-        for (const [studyId, patients] of patientsByStudy.entries()) {
-            try {
-                // Check cache first
-                let patientInfo = patientInfoCache.get(studyId);
+            if (!patient.id || !patient.studyId) continue;
+            
+            // Get schedule from cache
+            const schedule = patientScheduleCache.get(patient.id);
+            
+            if (schedule && schedule.days) {
+                // Find any day that matches the requested date
+                const matchingDay = schedule.days.find((day: any) => day.date === dateStr);
                 
-                if (!patientInfo) {
-                    // Load PatientInfo model only if not cached
-                    patientInfo = await ModelManager.getInstance().getModelUnitWithoutOpening(studyId, "PatientInfo") as PatientInfo;
-                    if (patientInfo) {
-                        // Cache it for future use
-                        patientInfoCache.set(studyId, patientInfo);
-                    }
-                }
-                
-                if (!patientInfo) continue;
-
-                // Process all patients for this study
-                for (const patient of patients) {
-                    const patientHistory = patientInfo.patientHistories.find(
-                        ph => ph.patient_id === patient.patientNumber || ph.patient_id === patient.id
-                    );
-
-                    if (patientHistory) {
-                        for (const visit of patientHistory.patientVisits) {
-                            if (visit.actualVisitDate?.dateAsString === dateStr) {
-                                const studyName = studyMap.get(studyId) || studyId;
-                                patientVisits.push({
-                                    patientId: patient.patientNumber || patient.id,
-                                    studyName: studyName,
-                                    visitNumber: visit.name || `Visit ${visit.visitInstanceNumber || ''}`
-                                });
+                if (matchingDay && matchingDay.events && matchingDay.events.length > 0) {
+                    const studyName = studyMap.get(patient.studyId) || patient.studyId;
+                    
+                    // Add each event as a visit row
+                        for (const event of matchingDay.events) {
+                            // Determine status based on event.status first, then fallback to state
+                            let status: 'planned' | 'completed' | 'missed' | 'canceled' = 'planned';
+                            
+                            // Use event.status if available (primary indicator)
+                            if (event.status) {
+                                const eventStatus = event.status.toLowerCase();
+                                if (eventStatus === 'completed') {
+                                    status = 'completed';
+                                } else if (eventStatus === 'cancelled' || eventStatus === 'canceled') {
+                                    status = 'canceled';
+                                } else if (eventStatus === 'missed') {
+                                    status = 'missed';
+                                } else if (eventStatus === 'pending' || eventStatus === 'planned') {
+                                    status = 'planned'; // Planned/pending = future visit
+                                }
                             }
-                        }
+                            // Fallback: check state for canceled/missed markers
+                            else if (event.state === 'canceled-visit') {
+                                status = 'canceled';
+                            } else if (event.state === 'missed-visit') {
+                                status = 'missed';
+                            }
+                            // Note: 'on-scheduled-date', 'in-window', 'out-of-window' are window positions,
+                            // not completion indicators - keep as 'planned' unless event.status says otherwise
+                            
+                            patientVisits.push({
+                            patientId: patient.patientNumber || patient.id,
+                            patientIdLink: patient.id,
+                            studyName: studyName,
+                            studyId: patient.studyId,
+                            visitNumber: event.name || `Visit`,
+                            status: status
+                        });
                     }
                 }
-            } catch (error) {
-                console.error(`[DayView] Error loading patient info for study ${studyId}:`, error);
             }
         }
         
@@ -689,43 +777,64 @@
     
 
     async function loadDayData() {
+        const totalStart = perf('loadDayData total');
         const dateStr = formatDateString(selectedDate);
         console.log('[DayView] Loading data for date:', dateStr);
 
-        // Load patients and their visits
-        await dataStore.getPatients();
-        await dataStore.getStudies();
-        const allPatients = $dataStore.patients;
+        // Load patients and studies only once (avoid redundant database calls)
+        let allPatients: any[];
+        let studies: any[];
         
-        // Get all studies to map patient to study
-        const studies = $dataStore.studies || [];
-        console.log('[DayView] Loaded', studies.length, 'studies');
-        const studyMap = new Map<string, string>();
-        for (const study of studies) {
-            studyMap.set(study.id, study.name || study.id);
+        if (!studiesAndPatientsLoaded) {
+            const fetchStart = perf('Fetching studies and patients from database');
+            await Promise.all([
+                dataStore.getPatients(),
+                dataStore.getStudies()
+            ]);
+            perf('Fetching studies and patients from database', fetchStart);
+            
+            allPatients = $dataStore.patients;
+            studies = $dataStore.studies || [];
+            
+            // Build study map once
+            cachedStudyMap = new Map<string, string>();
+            for (const study of studies) {
+                cachedStudyMap.set(study.id, study.name || study.id);
+            }
+            
+            studiesAndPatientsLoaded = true;
+            console.log('[DayView] Loaded', studies.length, 'studies,', allPatients.length, 'patients (cached for future)');
+        } else {
+            console.log('[DayView] Using cached studies and patients data');
+            allPatients = $dataStore.patients;
+            studies = $dataStore.studies || [];
         }
 
         // Try to get from persistent cache first
+        const cacheStart = perf('Checking patient visits cache');
         const cachedVisits = dayViewCache.getPatientVisits(dateStr) || patientVisitsCache.get(dateStr);
         if (cachedVisits) {
             patientsData = cachedVisits;
-            // Also update local cache
             patientVisitsCache.set(dateStr, cachedVisits);
             patientVisitsCache = new Map(patientVisitsCache);
+            perf('Patient visits loaded from cache', cacheStart);
         } else {
-            // Load for this date and cache it
-            const patientVisits = await loadPatientVisitsForDate(dateStr, allPatients, studyMap);
+            // Load all patient schedules in parallel first (if not already cached)
+            await loadAllPatientSchedules(allPatients);
+            // Load for this date and cache it (fast now since schedules are cached)
+            const visitStart = perf('Loading patient visits for date');
+            const patientVisits = await loadPatientVisitsForDate(dateStr, allPatients, cachedStudyMap);
             patientsData = patientVisits;
-            // Cache it (both local and persistent)
             patientVisitsCache.set(dateStr, patientVisits);
             patientVisitsCache = new Map(patientVisitsCache);
             dayViewCache.setPatientVisits(dateStr, patientVisits);
+            perf('Loading patient visits for date', visitStart);
         }
 
-        // Load studies data
+        // Load studies data (fast - just transforms existing data)
+        const studiesStart = perf('Building studies grid data');
         const studiesRows: StudyRow[] = [];
         for (const study of studies) {
-            // Count patients for this study
             const studyPatients = allPatients.filter(p => p.studyId === study.id);
             studiesRows.push({
                 studyName: study.name || study.id,
@@ -734,70 +843,96 @@
             });
         }
         studiesData = studiesRows;
+        perf('Building studies grid data', studiesStart);
 
         // Load organization dates FIRST (independent of studies)
-        // Facility dates are needed for date filtering even if there are no studies
-        // Check if we haven't loaded organization dates yet (both are null)
         if (organizationStartDate === null && organizationEndDate === null && organizationId === null) {
+            const orgDatesStart = perf('Loading organization dates');
             await loadOrganizationDates();
+            perf('Loading organization dates', orgDatesStart);
         }
 
-        // Load staff availability
-        // Get organization from first study
+        // Load staff availability only once (avoid redundant database calls)
         const firstStudy = studies[0];
         if (!firstStudy) {
             staffInData = [];
             staffOutData = [];
+            perf('loadDayData total (no studies)', totalStart);
             return;
         }
 
-        const site = await dataStore.getUserStudySite(firstStudy.id);
-        if (!site || !site.orgId) {
-            staffInData = [];
-            staffOutData = [];
-            organizationId = site?.orgId || null;
-            return;
-        }
-
-        organizationId = site.orgId;
-        studyId = firstStudy.id;
-
-        // Get all persons for the organization (same approach as Facility.svelte)
-        await dataStore.getPersons();
-        const allPersons = $dataStore.persons;
-        const orgPersons = allPersons.filter(person => 
-            person.organizations?.some((org: any) => org.org_id === site.orgId)
-        );
-        
-        totalStaff = orgPersons.length;
-        
-        // Load all person unavailable dates as simple arrays (load once, use everywhere)
-        const newPersonUnavailableDates = new Map<string, string[]>();
-        const newOrgPersonsMap = new Map<string, any>();
-        
-        for (const person of orgPersons) {
-            // Store person object for quick lookup
-            newOrgPersonsMap.set(person.id, person);
+        if (!staffDataLoaded) {
+            const staffStart = perf('Loading staff data from database');
             
-            // Load unavailable dates as simple string array
-            const unavailableDates = await dataStore.getPersonUnavailableDates(person.id, site.orgId);
-            newPersonUnavailableDates.set(person.id, unavailableDates);
+            const site = await dataStore.getUserStudySite(firstStudy.id);
+            if (!site || !site.orgId) {
+                staffInData = [];
+                staffOutData = [];
+                organizationId = site?.orgId || null;
+                perf('loadDayData total (no site)', totalStart);
+                return;
+            }
+
+            organizationId = site.orgId;
+            studyId = firstStudy.id;
+
+            // Get all persons for the organization
+            const personsStart = perf('Fetching persons');
+            await dataStore.getPersons();
+            perf('Fetching persons', personsStart);
+            
+            const allPersons = $dataStore.persons;
+            const orgPersons = allPersons.filter(person => 
+                person.organizations?.some((org: any) => org.org_id === site.orgId)
+            );
+            
+            totalStaff = orgPersons.length;
+            console.log('[DayView] Found', orgPersons.length, 'org persons');
+            
+            // Load all person unavailable dates IN PARALLEL (not sequential!)
+            const unavailStart = perf('Loading person unavailable dates (parallel)');
+            const newPersonUnavailableDates = new Map<string, string[]>();
+            const newOrgPersonsMap = new Map<string, any>();
+            
+            // First, build the persons map (fast)
+            for (const person of orgPersons) {
+                newOrgPersonsMap.set(person.id, person);
+            }
+            
+            // Load all unavailable dates in parallel
+            const unavailablePromises = orgPersons.map(async (person) => {
+                const unavailableDates = await dataStore.getPersonUnavailableDates(person.id, site.orgId);
+                return { personId: person.id, unavailableDates };
+            });
+            
+            const unavailableResults = await Promise.all(unavailablePromises);
+            for (const { personId, unavailableDates } of unavailableResults) {
+                newPersonUnavailableDates.set(personId, unavailableDates);
+            }
+            perf('Loading person unavailable dates (parallel)', unavailStart);
+            
+            personUnavailableDates = newPersonUnavailableDates;
+            orgPersonsMap = newOrgPersonsMap;
+            staffDataLoaded = true;
+            
+            // Sync to persistent cache
+            syncToCache();
+            console.log('[DayView] Staff data loaded and cached for future');
+        } else {
+            console.log('[DayView] Using cached staff data');
         }
-        
-        personUnavailableDates = newPersonUnavailableDates;
-        orgPersonsMap = newOrgPersonsMap;
-        
-        // Sync to persistent cache
-        syncToCache();
 
         // Compute staff for selected date (fast - just checks arrays)
+        const computeStart = perf('Computing staff for date');
         const staffData = computeStaffDataForDate(dateStr);
         staffInData = staffData.staffIn;
         staffOutData = staffData.staffOut;
+        perf('Computing staff for date', computeStart);
 
-        console.log('[DayView] Loaded staff for date', dateStr, ':', staffInData.length, 'in,', staffOutData.length, 'out');
+        console.log('[DayView] Staff for date', dateStr, ':', staffInData.length, 'in,', staffOutData.length, 'out');
         
         // Manually update grids after data loads
+        const gridStart = perf('Updating grids');
         if (studiesGridApi && !isSelectedDateBeforeOrgStart()) {
             studiesGridApi.setGridOption("rowData", studiesData);
         }
@@ -810,9 +945,14 @@
         if (staffOutGridApi && !isSelectedDateBeforeOrgStart()) {
             staffOutGridApi.setGridOption("rowData", staffOutData);
         }
+        perf('Updating grids', gridStart);
         
         // Load staff counts for all days in the week
+        const weekStart = perf('Loading week staff data');
         await loadWeekStaffData();
+        perf('Loading week staff data', weekStart);
+        
+        perf('loadDayData total', totalStart);
     }
     
     
@@ -891,53 +1031,50 @@
     }
     
     async function loadWeekStaffData() {
-        // Load patient visits for all days in the week (if not cached)
-        await dataStore.getPatients();
-        await dataStore.getStudies();
+        const totalStart = perf('loadWeekStaffData total');
+        
+        // Use cached patients data (already loaded in loadDayData)
         const allPatients = $dataStore.patients;
-        const studies = $dataStore.studies || [];
-        const studyMap = new Map<string, string>();
-        for (const study of studies) {
-            studyMap.set(study.id, study.name || study.id);
-        }
         
-        // Preload all PatientInfo models for unique studies (only load once per study)
-        const uniqueStudyIds = new Set<string>();
-        for (const patient of allPatients) {
-            if (patient.studyId && !patientInfoCache.has(patient.studyId)) {
-                uniqueStudyIds.add(patient.studyId);
-            }
-        }
-        
-        // Load all PatientInfo models in parallel
-        const loadPromises = Array.from(uniqueStudyIds).map(async (studyId) => {
-            try {
-                const patientInfo = await ModelManager.getInstance().getModelUnitWithoutOpening(studyId, "PatientInfo") as PatientInfo;
-                if (patientInfo) {
-                    patientInfoCache.set(studyId, patientInfo);
-                }
-            } catch (error) {
-                console.error(`[DayView] Error preloading PatientInfo for study ${studyId}:`, error);
-            }
-        });
-        await Promise.all(loadPromises);
-        
-        // Load visits for dates not in cache (check both local and persistent)
+        // Check if any dates need loading
+        const datesToLoad: string[] = [];
         for (const day of weekDays) {
             const dateStr = formatDateString(day);
             const cached = dayViewCache.getPatientVisits(dateStr) || patientVisitsCache.get(dateStr);
             if (!cached) {
-                const visits = await loadPatientVisitsForDate(dateStr, allPatients, studyMap);
-                // Cache is already set in loadPatientVisitsForDate
+                datesToLoad.push(dateStr);
             } else {
                 // Restore to local cache
                 patientVisitsCache.set(dateStr, cached);
             }
         }
+        
+        // If there are dates to load, first load all patient schedules in parallel
+        if (datesToLoad.length > 0) {
+            console.log('[DayView] Loading week data for', datesToLoad.length, 'uncached dates');
+            
+            const scheduleStart = perf('Loading patient schedules for week');
+            await loadAllPatientSchedules(allPatients);
+            perf('Loading patient schedules for week', scheduleStart);
+            
+            // Now process each date (fast since schedules are cached)
+            const visitsStart = perf('Processing visits for ' + datesToLoad.length + ' dates');
+            for (const dateStr of datesToLoad) {
+                await loadPatientVisitsForDate(dateStr, allPatients, cachedStudyMap);
+            }
+            perf('Processing visits for ' + datesToLoad.length + ' dates', visitsStart);
+        } else {
+            console.log('[DayView] All week dates already cached');
+        }
+        
         patientVisitsCache = new Map(patientVisitsCache); // Trigger reactivity
         
         // Update week data (staff is computed instantly from arrays)
+        const updateStart = perf('Updating week display data');
         updateWeekData();
+        perf('Updating week display data', updateStart);
+        
+        perf('loadWeekStaffData total', totalStart);
     }
 
     // Update week data when weekDays changes (staff is computed instantly)
@@ -966,8 +1103,12 @@
     });
 
     onMount(async () => {
+        const mountStart = perf('onMount total');
+        
         // Restore from persistent cache first (instant)
+        const cacheRestoreStart = perf('Restoring from cache');
         syncFromCache();
+        perf('Restoring from cache', cacheRestoreStart);
         
         // Load saved date from localStorage, or use today
         const savedDate = loadSelectedDate();
@@ -1050,11 +1191,110 @@
         // Initialize patients grid
         const patientsGridElement = document.querySelector("#patientsGrid") as HTMLElement;
         if (patientsGridElement && !patientsGridElement.querySelector('.ag-root')) {
+            function createPatientIdCellRenderer(params: any) {
+                const container = document.createElement('div');
+                container.className = 'patient-id-cell-container';
+                container.style.width = '100%';
+                container.style.height = '100%';
+                
+                const content = document.createElement('div');
+                content.className = 'patient-id-content';
+                
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'name-link';
+                button.textContent = params.data?.patientId || '';
+                button.title = 'Open patient';
+                button.setAttribute('data-patient-id', params.data?.patientIdLink || '');
+                button.onclick = (e) => {
+                    e.stopPropagation();
+                    if (params.data?.patientIdLink) {
+                        navigateTo("patient", params.data.patientIdLink);
+                    }
+                };
+                
+                content.appendChild(button);
+                container.appendChild(content);
+                
+                return container;
+            }
+            
+            function createStudyNameCellRendererForPatients(params: any) {
+                const container = document.createElement('div');
+                container.className = 'study-name-cell-container';
+                container.style.width = '100%';
+                container.style.height = '100%';
+                
+                const content = document.createElement('div');
+                content.className = 'study-name-content';
+                
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'name-link';
+                button.textContent = params.data?.studyName || '';
+                button.title = 'Open study';
+                button.setAttribute('data-study-id', params.data?.studyId || '');
+                button.onclick = (e) => {
+                    e.stopPropagation();
+                    if (params.data?.studyId) {
+                        navigateTo("study", params.data.studyId);
+                    }
+                };
+                
+                content.appendChild(button);
+                container.appendChild(content);
+                
+                return container;
+            }
+            
+            function createStatusCellRenderer(params: any) {
+                const container = document.createElement('div');
+                container.style.display = 'flex';
+                container.style.alignItems = 'center';
+                container.style.gap = '0.25rem';
+                
+                const status = params.value || 'scheduled';
+                const statusText = status.charAt(0).toUpperCase() + status.slice(1);
+                
+                const dot = document.createElement('span');
+                dot.style.width = '8px';
+                dot.style.height = '8px';
+                dot.style.borderRadius = '50%';
+                dot.style.display = 'inline-block';
+                
+                // Color coding for status
+                switch (status) {
+                    case 'completed':
+                        dot.style.backgroundColor = 'var(--color-success, #22c55e)';
+                        break;
+                    case 'planned':
+                        dot.style.backgroundColor = 'var(--color-primary, #3b82f6)';
+                        break;
+                    case 'missed':
+                        dot.style.backgroundColor = 'var(--color-warning, #f59e0b)';
+                        break;
+                    case 'canceled':
+                        dot.style.backgroundColor = 'var(--color-error, #ef4444)';
+                        break;
+                    default:
+                        dot.style.backgroundColor = 'var(--color-text-muted, #9ca3af)';
+                }
+                
+                const text = document.createElement('span');
+                text.textContent = statusText;
+                
+                container.appendChild(dot);
+                container.appendChild(text);
+                
+                return container;
+            }
+            
             const patientsGridOptions: GridOptions = {
                 columnDefs: [
-                    { field: "patientId", headerName: "Patient ID", flex: 1, minWidth: 100 },
-                    { field: "studyName", headerName: "Study", flex: 1, minWidth: 150 },
-                    { field: "visitNumber", headerName: "Visit", flex: 1, minWidth: 100 }
+                    { field: "patientId", headerName: "Patient ID", flex: 1, minWidth: 100, cellRenderer: createPatientIdCellRenderer },
+                    { field: "studyName", headerName: "Study", flex: 1.5, minWidth: 150, cellRenderer: createStudyNameCellRendererForPatients },
+                    { field: "visitNumber", headerName: "Visit", flex: 1, minWidth: 100 },
+                    { field: "status", headerName: "Status", flex: 1, minWidth: 100, cellRenderer: createStatusCellRenderer }
                 ],
                 rowData: patientsData,
                 defaultColDef: {
@@ -1137,13 +1377,19 @@
         // Only load if we don't have cached data
         const needsDataLoad = !dayViewCache.hasOrganizationData();
         
+        perf('onMount sync portion complete', mountStart);
+        
         if (needsDataLoad) {
+            console.log('[DayView] No cached organization data - loading from database');
             // Load in background
             (async () => {
+                const bgStart = perf('Background data load');
                 await loadOrganizationDates();
                 await loadDayData();
+                perf('Background data load', bgStart);
             })();
         } else {
+            console.log('[DayView] Using cached organization data');
             // Data already cached - just refresh current date (non-blocking)
             loadDayData();
         }
@@ -1171,24 +1417,16 @@
             </button>
             {#if isToday(selectedDate)}
                 <div class="date-label">TODAY</div>
-            {:else if isYesterday(selectedDate)}
-                <div class="date-label">YESTERDAY</div>
-            {:else if isTomorrow(selectedDate)}
-                <div class="date-label">TOMORROW</div>
+            {:else}
+                <button class="today-button" onclick={gotoToday} title="Go to today">
+                    Goto Today
+                </button>
             {/if}
         </div>
     </div>
 
-    <!-- Main Content: Studies, Patients and Staff -->
-    <div class="main-content" style:grid-template-columns={showStaffAvailability ? '1fr 1fr 1fr' : '1fr 1fr'}>
-        <div class="studies-section">
-            <h3>Studies</h3>
-            {#if isSelectedDateBeforeOrgStart()}
-                <div class="not-applicable-message">Not Applicable</div>
-            {/if}
-            <div id="studiesGrid" class="{gridTheme} ag-grid" style:display={isSelectedDateBeforeOrgStart() ? 'none' : 'block'}></div>
-        </div>
-
+    <!-- Main Content: Patients, Staff, Studies (ratio 3:2:3) -->
+    <div class="main-content" style:grid-template-columns={showStaffAvailability ? '3fr 2fr 3fr' : '3fr 3fr'}>
         <div class="patients-section">
             <h3>Patients</h3>
             {#if isSelectedDateBeforeOrgStart()}
@@ -1218,6 +1456,14 @@
                 </div>
             </div>
         {/if}
+
+        <div class="studies-section">
+            <h3>Studies</h3>
+            {#if isSelectedDateBeforeOrgStart()}
+                <div class="not-applicable-message">Not Applicable</div>
+            {/if}
+            <div id="studiesGrid" class="{gridTheme} ag-grid" style:display={isSelectedDateBeforeOrgStart() ? 'none' : 'block'}></div>
+        </div>
     </div>
 
     <!-- Bottom Section: Week View -->

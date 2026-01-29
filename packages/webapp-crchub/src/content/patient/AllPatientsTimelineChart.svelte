@@ -1,6 +1,6 @@
 <script lang="ts">
     import { RtString } from "@freon4dsl/core";
-    import { PatientHistory, copyPatientHistoryWithFilledDates, determineReferenceDate, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getTimelineAsOfADate, type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { PatientHistory, copyPatientHistoryWithFilledDates, determineReferenceDate, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getTimelineAsOfADate, getTimelineChartHtml, type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { get } from "svelte/store";
     import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
@@ -89,7 +89,7 @@
             }
         }
 
-        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        const html = getTimelineChartHtml(timeline).asString();
         return html;
     };
 
