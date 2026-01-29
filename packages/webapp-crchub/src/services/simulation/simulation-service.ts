@@ -1,4 +1,4 @@
-import { StudyConfiguration, TimelineTableTemplate, TimelineChartTemplate, StudyChecklistDocumentTemplate, Simulator, Sim } from "@freon4dsl/study-configuration";
+import { Sim, Simulator, StudyChecklistDocumentTemplate, StudyConfiguration, TimelineChartTemplate, TimelineTableTemplate } from "@freon4dsl/study-configuration";
 import { ModelManager } from "../dsl/model-manager.js";
 
 interface SimulationCache {
@@ -86,12 +86,13 @@ class SimulationService {
             const errorMessage = err instanceof Error ? err.message : String(err);
             const errorStack = err instanceof Error ? err.stack : undefined;
             console.error(`[SimulationService] Error running simulator:`, {
-                error: err,
                 message: errorMessage,
-                stack: errorStack,
                 studyId
             });
-            // Re-throw with more context
+            if (errorStack) {
+                console.error('[SimulationService] Stack trace:\n', errorStack);
+            }
+            // Re-throw with more context (original stack already logged above)
             throw new Error(`Simulation failed: ${errorMessage}. This usually indicates missing or invalid data in the study configuration (e.g., undefined event names, periods, or scheduling properties).`);
         }
         
