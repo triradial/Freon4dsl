@@ -1,5 +1,5 @@
 import { AST, RtString } from "@freon4dsl/core";
-import { PatientHistory, StudyConfiguration } from "../../language/gen/index.js";
+import { PatientHistory, PatientInfo, StudyConfiguration } from "../../language/gen/index.js";
 import * as Sim from "../simjs/sim.js";
 import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate.js";
 import { TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
@@ -133,6 +133,25 @@ export function findFirstPatientHistoryWithVisits(
         }
     }
     return undefined;
+}
+
+/**
+ * Finds an appropriate visit date for a patient from PatientInfo.
+ * Used when no specific date is selected: returns the reference date (earliest visit) for that patient
+ * so the visit checklist shows tasks for that date/event.
+ * @param patientInfo The PatientInfo unit, or null
+ * @param patientId The patient number/identifier
+ * @returns The date to use for the checklist, or undefined if no visits found
+ */
+export function findAppropriateVisitDate(patientInfo: PatientInfo | null, patientId: string): Date | undefined {
+    if (!patientInfo || !patientId) {
+        return undefined;
+    }
+    const patientHistory = findPatientHistoryByPatientNumber(patientInfo.patientHistories, patientId);
+    if (!patientHistory || patientHistory.patientVisits.length === 0) {
+        return undefined;
+    }
+    return determineReferenceDate(undefined, patientHistory);
 }
 
 /**

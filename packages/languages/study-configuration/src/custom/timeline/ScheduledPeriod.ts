@@ -1,4 +1,4 @@
-import { Period } from "../../language/gen/index.js";
+import { Event, Period } from "../../language/gen/index.js";
 import { ScheduledEvent } from "./ScheduledEvent.js";
 
 export class ScheduledPeriod {
@@ -7,9 +7,10 @@ export class ScheduledPeriod {
 
     constructor(configuredPeriod: Period) {
         this.configuredPeriod = configuredPeriod;
-        this.scheduledEvents = configuredPeriod.events.map((event) => {
-            return new ScheduledEvent(event);
-        });
+        const events = (configuredPeriod as { events?: Event[] })?.events ?? [];
+        this.scheduledEvents = events
+            .filter((e): e is Event => e != null)
+            .map((event) => new ScheduledEvent(event));
     }
 
     getScheduledEvent(eventName: string) {
@@ -21,7 +22,7 @@ export class ScheduledPeriod {
     }
 
     getName() {
-        // return this.configuredPeriod.freId();
-        return this.configuredPeriod.name;
+        const p = this.configuredPeriod as { name?: string; referred?: { name?: string } };
+        return p?.name ?? p?.referred?.name ?? "Period";
     }
 }

@@ -466,13 +466,17 @@ function createDataStore() {
   }
 
   async function getStudyPatientsWithSchedules(studyId: string): Promise<Patient[]> {
+    const url = `${env.serverUrl}/getStudyPatientsWithSchedules?id=${studyId}`;
     try {
-      const response = await fetch(`${env.serverUrl}/getStudyPatientsWithSchedules?id=${studyId}`);
-      if (!response.ok) throw new Error('Failed to get study patients with schedules');
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error(`getStudyPatientsWithSchedules failed: ${response.status} ${response.statusText}`, { url, studyId });
+        throw new Error(`Failed to get study patients with schedules: ${response.status}`);
+      }
       const patients = await response.json();
       return patients || [];
     } catch (error) {
-      console.error('Error getting study patients with schedules:', error);
+      console.error('Error getting study patients with schedules:', error, { url, studyId });
       return [];
     }
   }

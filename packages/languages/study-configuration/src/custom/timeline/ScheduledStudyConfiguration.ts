@@ -15,7 +15,10 @@ export class ScheduledStudyConfiguration {
     //TODO: change so the Scheduled Events are inside the scheduled periods
     constructor(studyConfiguration: StudyConfiguration) {
         this.studyConfiguration = studyConfiguration;
-        this.scheduledPeriods = this.getConfiguredPeriods().map((configuredPeriod) => new ScheduledPeriod(configuredPeriod));
+        const periods = this.getConfiguredPeriods() ?? [];
+        this.scheduledPeriods = periods
+            .filter((p): p is NonNullable<typeof p> => p != null)
+            .map((configuredPeriod) => new ScheduledPeriod(configuredPeriod));
     }
 
     getAllEventsInSchedule() {
@@ -73,6 +76,10 @@ export class ScheduledStudyConfiguration {
                 return false;
             }
         });
+        if (!firstEventOnDay1) {
+            TimelineLogger.log("getFirstStudyStartEvent: no event on day 1 found");
+            return undefined;
+        }
         TimelineLogger.log("getFirstStudyStartEvent firstEventOnDay1: " + firstEventOnDay1.getName());
         return firstEventOnDay1;
     }

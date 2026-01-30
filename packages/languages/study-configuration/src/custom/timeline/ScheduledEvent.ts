@@ -89,15 +89,18 @@ export class ScheduledEvent {
             TimelineLogger.log("ScheduledEvent.day() eventStart is a Day for: " + this.getName() + " is a specific day: " + this.interpret(eventStart, timeline));
         } else if (eventStart instanceof When) {
             if ((eventStart as When).timeAmountPart !== undefined && (eventStart as When).timeAmountPart !== null) {
+                const whenPart = (eventStart as When).timeAmountPart;
+                const opName = whenPart?.operator?.name ?? whenPart?.operator?.referred?.name ?? "";
+                const unitName = whenPart?.timeAmount?.unit?.name ?? whenPart?.timeAmount?.unit?.referred?.name ?? "";
                 TimelineLogger.log(
                     "ScheduledEvent.day() eventStart is a When for: " +
                         this.getName() +
                         " is a When with timeAmount of: " +
-                        (eventStart as When).timeAmountPart.operator.name +
+                        opName +
                         " " +
-                        (eventStart as When).timeAmountPart.timeAmount.value +
+                        (whenPart?.timeAmount?.value ?? "") +
                         " " +
-                        (eventStart as When).timeAmountPart.timeAmount.unit.name,
+                        unitName,
                 );
             } else {
                 TimelineLogger.log("ScheduledEvent.day() eventStart is a When for: " + this.getName() + " with no timeAmountPart");
@@ -165,7 +168,8 @@ export class ScheduledEvent {
     }
 
     getName(): string {
-        return this.configuredEvent.name;
+        const ev = this.configuredEvent as { name?: string; referred?: { name?: string } };
+        return ev?.name ?? ev?.referred?.name ?? "Event";
     }
 
     dependency(): string {
@@ -404,9 +408,9 @@ export class ScheduledEvent {
     }
 
     private addPeriodInstance(period: Period, scheduledStudyConfiguration: ScheduledStudyConfiguration, periodStartDay: number, timeline: Timeline) {
-        // let periodInstance = new PeriodInstance(scheduledStudyConfiguration.getScheduledPeriod(period), this.day(timeline));
-        let periodInstance = new PeriodEventInstance(scheduledStudyConfiguration.getScheduledPeriod(period), this.day(timeline));
-        // console.log("ScheduledEvent.addPeriodInstance() for: " + this.getName() + " periodInstance: " + periodInstance.getName() + " period: " + period.name);
+        const scheduledPeriod = scheduledStudyConfiguration.getScheduledPeriod(period);
+        if (!scheduledPeriod) return;
+        const periodInstance = new PeriodEventInstance(scheduledPeriod, this.day(timeline));
         timeline.addEvent(periodInstance as TimelineEventInstance);
     }
 
@@ -427,12 +431,14 @@ export class ScheduledEvent {
   */
     started(scheduledStudyConfiguration: ScheduledStudyConfiguration, timeline: Timeline, currentDayOfSchedule: number) {
         let period = this.configuredEvent.freOwner() as unknown as Period;
+        if (!period) return;
+        const periodName = (period as { name?: string })?.name ?? "Period";
         let activePeriodInstance = timeline.getActivePeriod();
         if (activePeriodInstance) {
-            if (activePeriodInstance.getName() != period.name) {
+            if (activePeriodInstance.getName() != periodName) {
                 TimelineLogger.log(
                     "Active period name is not equal to period of started event so setting new active period to: " +
-                        period.name +
+                        periodName +
                         " and completing period: " +
                         activePeriodInstance.getName() +
                         " because event: '" +
@@ -448,7 +454,7 @@ export class ScheduledEvent {
         } else {
             TimelineLogger.log(
                 "No active period so adding period: '" +
-                    period.name +
+                    periodName +
                     "' because event: '" +
                     this.getName() +
                     "' was started on timeline.currentDay: " +

@@ -189,7 +189,7 @@
             patients: Object.values(patientData)
         };
         
-        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        const html = getTimelineChartHtml(timeline).asString();
         return html;
     };
 
@@ -319,7 +319,7 @@
             patients: Object.values(patientData)
         };
 
-        const html = (timeline.getTimelineChartHtml() as RtString).asString();
+        const html = getTimelineChartHtml(timeline).asString();
         return html;
     };
 

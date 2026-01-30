@@ -1,10 +1,11 @@
 <script lang="ts">
     import { RtString } from "@freon4dsl/core";
-    import { PatientHistory, PatientInfo, copyPatientHistoryWithFilledDates, determineReferenceDate, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getTimelineAsOfADate, getTimelineChartHtml, type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { PatientHistory, PatientInfo, copyPatientHistoryWithFilledDates, determineReferenceDate, findPatientHistoryByPatientNumber, getTimelineAsOfADate, getTimelineChartHtml, type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { get } from "svelte/store";
     import { dataStore } from "../../services/data/data-store.js";
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { setDrawerTitle, setDrawerProps } from "../../services/stores/side-drawer-store.js";
+    import { buildAllPatientsTimelineChartHtml } from "./all-patients-timeline-chart-builder.js";
 
     let { id, studyId, showAllPatients = false } = $props<{ id?: string; studyId: string; showAllPatients?: boolean }>();
 
@@ -30,6 +31,14 @@
 
     $effect(() => {
         if (showAllPatients || !id) {
+            if (!studyId) {
+                error = null;
+                chartHtml = `<div class="limited-width-container"><div class='text-yellow-500'>Select a study to view the All Patients timeline.</div></div>`;
+                isLoading = false;
+                showChart = true;
+                queueMicrotask(() => renderChart());
+                return;
+            }
             loadChartForAllPatients();
         } else {
             loadChartForOnePatient(id);
@@ -104,42 +113,27 @@
         return html;
     };
 
-    const getChartForAllPatients = async (referenceDate: Date | undefined) => {
-        // Get all patients for the study
-        await dataStore.getStudyPatients(studyId);
-        const storeState = get(dataStore);
-        const allPatients = storeState.studyPatients.filter(p => p.studyId === studyId);
-        
-        if (allPatients.length === 0) {
+    /**
+     * All Patients Timeline: pull patient schedule data from the database, render with study
+     * schedule (same simulated data, no re-simulation). Chart matches patient-event-overlay-test.html
+     * (phases, scheduled events, windows, on-scheduled-date, in-window, out-of-window, not-available).
+     */
+    const getChartForAllPatients = async (_referenceDate: Date | undefined) => {
+        if (!studyId) {
+            return `<div class="limited-width-container"><div class='text-yellow-500'>Select a study to view the All Patients timeline.</div></div>`;
+        }
+        const patientsWithSchedules = await dataStore.getStudyPatientsWithSchedules(studyId);
+        if (patientsWithSchedules.length === 0) {
             return `<div class="limited-width-container"><div class='text-yellow-500'>No patients found for this study</div></div>`;
         }
 
-        // Get study units
-        const { patientInfo, studyConfig } = await getPatientAndStudyUnits(studyId);
-
-        // Determine reference date from first patient visit if available
-        // Find the first patient history with visits to use as reference
-        const firstPatientHistoryWithVisits = findFirstPatientHistoryWithVisits(patientInfo.patientHistories, allPatients);
-        
-        const referenceDateForTimeline = determineReferenceDate(referenceDate, firstPatientHistoryWithVisits);
-        console.log("referenceDateForTimeline", referenceDateForTimeline);
-
-        // Create timeline with study configuration
-        const timeline = getTimelineAsOfADate(studyConfig, referenceDateForTimeline, undefined);
-
-        // Add events for all patients
-        for (const patient of allPatients) {
-            const originalHistory = findPatientHistoryByPatientNumber(patientInfo.patientHistories, patient.patientNumber);
-            if (originalHistory) {
-                const copiedHistory = copyPatientHistoryWithFilledDates(originalHistory);
-                // Add patient events to timeline with patient identifier (use initials or patient number)
-                const patientIdentifier = patient.initials || patient.patientNumber;
-                timeline.addPatientEvents(copiedHistory, patientIdentifier);
-            }
+        const modelManager = ModelManager.getInstance();
+        const studyConfig = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+        if (!studyConfig) {
+            return `<div class="limited-width-container"><div class='text-red-500'>Study configuration not found</div></div>`;
         }
 
-        const html = getTimelineChartHtml(timeline).asString();
-        return html;
+        return buildAllPatientsTimelineChartHtml(patientsWithSchedules, studyConfig);
     };
 
     /**
@@ -217,15 +211,12 @@
         showChart = false;
         error = null;
         try {
-            const startTime = Date.now();
             chartHtml = await chartFunction();
-            await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Allow DOM to update
-            await renderChart();
-            const elapsedTime = Date.now() - startTime;
-            if (elapsedTime < 5000) {
-                await new Promise((resolve) => setTimeout(resolve, 5000 - elapsedTime));
-            }
+            await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Yield so container can bind
             showChart = true;
+            isLoading = false; // Chart block visible (display depends on !isLoading && showChart)
+            await new Promise((resolve) => setTimeout(() => resolve(null), 0)); // Ensure chart block rendered
+            await renderChart();
         } catch (err: unknown) {
             console.error(errorContext, err);
             error = err instanceof Error ? err.message : "An error occurred while fetching chart data";
@@ -245,7 +236,7 @@
             
             // Add event listener for patient timeline clicks (only for multi-patient view)
             if (showAllPatients || !id) {
-                const visualizationDiv = container.querySelector('#visualization');
+                const visualizationDiv = container.querySelector('#all-patients-visualization');
                 if (visualizationDiv) {
                     visualizationDiv.addEventListener('openPatientTimeline', async (event: any) => {
                         const patientIdentifier = event.detail?.patientId;
@@ -293,9 +284,7 @@
         </div>
         
         <div style="display: {!isLoading && showChart ? 'block' : 'none'}">
-            <div bind:this={container}>
-                {@html chartHtml}
-            </div>
+            <div bind:this={container} class="timeline-chart-container"></div>
         </div>
     </div>
 {/if}

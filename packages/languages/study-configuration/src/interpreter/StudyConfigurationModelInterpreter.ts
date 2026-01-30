@@ -117,12 +117,13 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
     let owningEvent = ownerOfType(node, "Event") as language.Event;
     if (referencedEvent == undefined || referencedEvent == null) {
-        console.log("evalEventReference: owningEvent: " + "owningEvent.name");
+        console.log("evalEventReference: referencedEvent is null/undefined for owningEvent");
+        return undefined;
     }
-    console.log("evalEventReference: referencedEvent: " + referencedEvent.name);
-    // console.log("evalEventReference: referencedEvent: operator: " + operator.name);
-    // console.log("evalEventReference: referencedEvent: timeAmount: " + timeAmount.value + " unit: " + timeAmount.unit.name);
-    console.log("evalEventReference: referencedEvent: eventState: " + eventState.name);
+    const referencedEventName = (referencedEvent as { name?: string; referred?: { name?: string } })?.name ?? (referencedEvent as { referred?: { name?: string } })?.referred?.name;
+    const eventStateName = (eventState as { name?: string })?.name ?? (eventState as { referred?: { name?: string } })?.referred?.name;
+    console.log("evalEventReference: referencedEvent: " + referencedEventName);
+    console.log("evalEventReference: referencedEvent: eventState: " + eventStateName);
     let lastInstanceOfReferencedEvent =
       timeline.getLastScheduledEventInstanceForThisEventsName(referencedEvent);
     if (
@@ -141,7 +142,8 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
       if (
         lastInstanceOfReferencedEvent.getScheduledEvent().isRepeatingEvent()
       ) {
-        if (node.eventState.name === language.EventState.eachCompleted.name) {
+        const nodeEventStateName = (node.eventState as { name?: string })?.name ?? (node.eventState as { referred?: { name?: string } })?.referred?.name;
+        if (nodeEventStateName === (language.EventState.eachCompleted as { name?: string })?.name) {
           const numberOfReferencedEventCompleted =
             timeline.numberCompletedInstancesOf(
               lastInstanceOfReferencedEvent.getScheduledEvent()
@@ -158,17 +160,17 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
             ) {
               console.log(
                 "The event '" +
-                  owningEvent.name +
+                  (owningEvent as { name?: string })?.name +
                   "' has a each-completed reference to:'" +
-                  referencedEvent.name +
+                  referencedEventName +
                   "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated"
               );
             } else {
               console.log(
                 "The event '" +
-                  owningEvent.name +
+                  (owningEvent as { name?: string })?.name +
                   "' has a each-completed reference to:'" +
-                  referencedEvent.name +
+                  referencedEventName +
                   "' and the parallel repeating event is completed"
               );
             }
@@ -182,9 +184,9 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
           ) {
             console.log(
               "The event '" +
-                owningEvent.name +
+                (owningEvent as { name?: string })?.name +
                 "' has a reference to:'" +
-                referencedEvent.name +
+                referencedEventName +
                 "' a repeating event that hasn't completed yet so the expression containing it cannot yet be evaluated"
             );
             return undefined; // dependency on a repeating event that hasn't completed yet
@@ -336,13 +338,11 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
         node.timeAmount,
         ctx
       ) as RtNumber;
-      if (node.operator == undefined || node.operator == null) {
-        throw new RtError("evalStudyStart: operator is undefined or null");
-      }
-      const operator = node.operator.name;
-      if (operator === language.SimpleOperators.plus.name) {
+      const op = node.operator as { name?: string; referred?: { name?: string } } | null | undefined;
+      const operator = op?.name ?? op?.referred?.name ?? "";
+      if (operator === (language.SimpleOperators.plus as { name?: string })?.name) {
         result = result + displacementFromEvent.value;
-      } else if (operator === language.SimpleOperators.minus.name) {
+      } else if (operator === (language.SimpleOperators.minus as { name?: string })?.name) {
         result = result - displacementFromEvent.value;
       } else {
         throw new RtError(
@@ -355,13 +355,17 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
   }
 
   evalTimeAmount(node: language.TimeAmount, ctx: InterpreterContext): RtObject {
-    return calcTimeAmount(node.value, node.unit.name);
+    const unit = node.unit as { name?: string; referred?: { name?: string } } | null | undefined;
+    const unitName = unit?.name ?? unit?.referred?.name ?? "day";
+    return calcTimeAmount(node.value, unitName);
   }
 
   evalTime(node: language.Time, ctx: InterpreterContext): RtObject {
     //TODO: Unify TimeAmount and Time?
     const value = Number(node.value);
-    return calcTimeAmount(value, node.unit.name);
+    const unit = node.unit as { name?: string; referred?: { name?: string } } | null | undefined;
+    const unitName = unit?.name ?? unit?.referred?.name ?? "day";
+    return calcTimeAmount(value, unitName);
   }
 
   evalWeekly(node: language.Weekly, ctx: InterpreterContext): RtObject {
