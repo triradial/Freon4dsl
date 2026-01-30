@@ -1,6 +1,10 @@
 // Re-export everything from the generated index
 export * from "./index.js";
 
+// Explicit re-exports for consumers (e.g. server export-study script)
+export { StudyConfigurationModelEnvironment as LanguageEnvironment } from "./config/gen/StudyConfigurationModelEnvironment.js";
+export { StudyConfigurationModel } from "./language/gen/index.js";
+
 // Re-export specific items from custom to avoid naming conflicts
 export { Sim } from "./custom/simjs/sim.js";
 export { StudyChecklistDocumentTemplate } from "./custom/templates/StudyChecklistDocumentTemplate.js";
