@@ -93,7 +93,7 @@
     <title>CRCHub v{version.trim()}</title>
     <link rel="stylesheet" href="/styles/tailwind.css" />
     <link rel="stylesheet" href="/styles/github-markdown.css" />
-    <link rel="stylesheet" href="/styles/bundle-{$theme}.css" />
+    <link rel="stylesheet" href="/styles/bundle-{$themeBundle}.css" />
 </svelte:head>
 
 {#if auth}
