@@ -28,8 +28,8 @@ export class Simulator {
     constructor(studyConfiguration: StudyConfiguration, patientHistory: PatientHistory, availability: Availability);
     constructor(studyConfiguration: StudyConfiguration, param2?: PatientHistory | Availability, param3?: Availability) {
         // Disable timeline logging by default
-        // TimelineLogger.disable();
-        TimelineLogger.enable();
+        TimelineLogger.disable();
+        // TimelineLogger.enable();
         
         // Setup the Scheduler
         this.scheduledStudyConfiguration = new ScheduledStudyConfiguration(studyConfiguration);

@@ -1,24 +1,35 @@
 <script lang="ts">
-    import { 
-        SelectBox, 
-        isSelectBox, 
-        type SelectOption, 
-        type FreEditor,
-        PartReplacerBox,
-        isPartReplacerBox,
-        RefReplacerBox,
-        isRefReplacerBox,
+    import {
+        AST,
+        BehaviorExecutionResult,
         BoxFactory,
         FreLanguage,
         FreLanguageEnvironment,
-        AST,
-        BehaviorExecutionResult,
+        FreNodeReference,
+        SelectBox,
         isExternalBox,
-        FreNodeReference
+        isPartReplacerBox,
+        isRefReplacerBox,
+        isSelectBox,
+        type FreEditor,
+        type SelectOption
     } from "@freon4dsl/core";
-    import { onMount, tick } from "svelte";
     import type { FreComponentProps } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
+    import { onMount, tick } from "svelte";
+
+    // Set to true to enable CustomSelectComponent debug logging
+    let customSelectLoggingEnabled = false;
+
+    function logInfo(...args: any[]) {
+        if (customSelectLoggingEnabled) console.log(...args);
+    }
+    function logError(...args: any[]) {
+        if (customSelectLoggingEnabled) console.error(...args);
+    }
+    function logWarn(...args: any[]) {
+        if (customSelectLoggingEnabled) console.warn(...args);
+    }
 
     let { editor, box, isEditing = $bindable(false) }: FreComponentProps<any> & { isEditing?: boolean } = $props();
     
@@ -48,7 +59,7 @@
     $effect(() => {
         if (selectBox) {
             const opts = selectBox.getOptions(editor);
-            console.log('🔵 CustomSelectComponent: allOptions', { 
+            logInfo('🔵 CustomSelectComponent: allOptions', { 
                 count: opts.length, 
                 options: opts,
                 propertyName: selectBox.propertyName,
@@ -71,7 +82,7 @@
     
     // Debug logging for listboxData
     $effect(() => {
-        console.log('🔵 CustomSelectComponent: listboxData', { 
+        logInfo('🔵 CustomSelectComponent: listboxData', { 
             count: listboxData.length, 
             data: listboxData 
         });
@@ -91,7 +102,7 @@
     
     // Debug logging for selectedOption
     $effect(() => {
-        console.log('🔵 CustomSelectComponent: selectedOption changed', { 
+        logInfo('🔵 CustomSelectComponent: selectedOption changed', { 
             selectedOption: selectedOption?.label,
             displayText 
         });
@@ -127,7 +138,7 @@
             const propInfo = lang.classifierProperty(nodeConcept, propertyName);
             const propType = propInfo?.type;
             
-            console.log(`🔵 CustomSelectComponent: RefReplacerBox/PartReplacerBox check for ${propertyName}`, { propType, boxKind: box.kind, nodeConcept });
+            logInfo(`🔵 CustomSelectComponent: RefReplacerBox/PartReplacerBox check for ${propertyName}`, { propType, boxKind: box.kind, nodeConcept });
             
             // Get current value
             const currentValueRaw = node[propertyName];
@@ -139,7 +150,7 @@
             const concept = propType ? lang.concept(propType) : null;
             const isLimited = concept && concept.isLimited;
             
-            console.log(`🔵 CustomSelectComponent: Limited check for ${propertyName} (RefReplacerBox)`, { propType, concept: !!concept, isLimited, instanceNames: isLimited ? concept.instanceNames : null });
+            logInfo(`🔵 CustomSelectComponent: Limited check for ${propertyName} (RefReplacerBox)`, { propType, concept: !!concept, isLimited, instanceNames: isLimited ? concept.instanceNames : null });
             
             if (isLimited && concept) {
                 // Limited concept - use instance names
@@ -178,7 +189,7 @@
                                     id: node.name,
                                     label: node.name
                                 }));
-                            console.log(`🔵 CustomSelectComponent: getOptions for limited ${propertyName} (RefReplacerBox) using scoper.getVisibleNodes`, { count: options.length, visibleNodesCount: visibleNodes.length, options, instanceNames });
+                            logInfo(`🔵 CustomSelectComponent: getOptions for limited ${propertyName} (RefReplacerBox) using scoper.getVisibleNodes`, { count: options.length, visibleNodesCount: visibleNodes.length, options, instanceNames });
                             return options;
                         } else {
                             // Fallback to instance names if scoper is not available
@@ -188,7 +199,7 @@
                                     label: instanceName
                                 };
                             });
-                            console.log(`🔵 CustomSelectComponent: getOptions for limited ${propertyName} (RefReplacerBox) fallback to instanceNames`, { count: options.length, instanceNames, options });
+                            logInfo(`🔵 CustomSelectComponent: getOptions for limited ${propertyName} (RefReplacerBox) fallback to instanceNames`, { count: options.length, instanceNames, options });
                             return options;
                         }
                     },
@@ -222,7 +233,7 @@
                                     box.setPropertyValue(ref);
                                 });
                             } else {
-                                console.error(`CustomSelectComponent: Could not find instance node for ${option.label}`);
+                                logError(`CustomSelectComponent: Could not find instance node for ${option.label}`);
                             }
                         } else {
                             AST.changeNamed(`CustomSelectComponent: Set ${propertyName} to null`, () => {
@@ -239,7 +250,7 @@
                 const scoper = FreLanguageEnvironment.getInstance().scoper;
                 
                 if (!scoper) {
-                    console.error(`CustomSelectComponent: Scoper is not available for ${propertyName}`);
+                    logError(`CustomSelectComponent: Scoper is not available for ${propertyName}`);
                     selectBox = null;
                     return;
                 }
@@ -252,7 +263,7 @@
                 if (interfaceInfo) {
                     // Get all concepts that implement this interface
                     implementingConceptNames = lang.subConcepts(propType);
-                    console.log(`🔵 CustomSelectComponent: Interface ${propType} has implementing concepts`, implementingConceptNames);
+                    logInfo(`🔵 CustomSelectComponent: Interface ${propType} has implementing concepts`, implementingConceptNames);
                 }
                 
                 selectBox = BoxFactory.select(
@@ -412,9 +423,9 @@
                                             try {
                                                 // Create a new instance of the concept
                                                 selectedNode = concept.constructor();
-                                                console.log(`🔵 CustomSelectComponent: Created new instance of ${conceptName} (trigger: ${concept.trigger})`, selectedNode);
+                                                logInfo(`🔵 CustomSelectComponent: Created new instance of ${conceptName} (trigger: ${concept.trigger})`, selectedNode);
                                             } catch (e) {
-                                                console.error(`CustomSelectComponent: Failed to create instance of ${conceptName}`, e);
+                                                logError(`CustomSelectComponent: Failed to create instance of ${conceptName}`, e);
                                             }
                                         }
                                     }
@@ -438,7 +449,7 @@
                                     }
                                 });
                             } else {
-                                console.error(`CustomSelectComponent: Could not find or create node for ${option.label}`);
+                                logError(`CustomSelectComponent: Could not find or create node for ${option.label}`);
                             }
                         } else {
                             AST.changeNamed(`CustomSelectComponent: Set ${propertyName} to null`, () => {
@@ -452,7 +463,7 @@
                 selectBox.propertyName = propertyName;
             }
         } else {
-            console.error("CustomSelectComponent: Expected SelectBox, PartReplacerBox, or RefReplacerBox but got", box?.kind || typeof box);
+            logError("CustomSelectComponent: Expected SelectBox, PartReplacerBox, or RefReplacerBox but got", box?.kind || typeof box);
             selectBox = null;
         }
     });
@@ -559,10 +570,10 @@
     
     // Handle selection from listbox item
     function selectItem(item: typeof listboxData[0]) {
-        console.log('🔵 CustomSelectComponent: selectItem called', { item: item?.label, hasSelectBox: !!selectBox, itemOption: item?.option });
+        logInfo('🔵 CustomSelectComponent: selectItem called', { item: item?.label, hasSelectBox: !!selectBox, itemOption: item?.option });
         if (item && selectBox) {
             const result = selectBox.executeOption(editor, item.option);
-            console.log('🔵 CustomSelectComponent: executeOption result', result);
+            logInfo('🔵 CustomSelectComponent: executeOption result', result);
             // Force reactive update
             selectionVersion++;
             text = item.label;
@@ -580,7 +591,7 @@
                 }
             });
         } else {
-            console.error('🔵 CustomSelectComponent: selectItem failed', { item: !!item, selectBox: !!selectBox });
+            logError('🔵 CustomSelectComponent: selectItem failed', { item: !!item, selectBox: !!selectBox });
         }
     }
     
@@ -757,7 +768,7 @@
             
             // Handle Arrow keys - directly change selection
             if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                console.log('🔵 Arrow key pressed', { key: event.key, dropdownOpen, listboxDataLength: listboxData.length, text });
+                logInfo('🔵 Arrow key pressed', { key: event.key, dropdownOpen, listboxDataLength: listboxData.length, text });
                 event.preventDefault();
                 event.stopPropagation();
                 
@@ -768,7 +779,7 @@
                 
                 // Always navigate through all items in the list
                 if (listboxData.length === 0) {
-                    console.log('🔵 Arrow keys: No items to navigate', { listboxData: listboxData.length, text });
+                    logInfo('🔵 Arrow keys: No items to navigate', { listboxData: listboxData.length, text });
                     return;
                 }
                 
@@ -810,7 +821,7 @@
                         selectBox.executeOption(editor, selectedItem.option);
                         selectionVersion++;
                         text = selectedItem.label;
-                        console.log('🔵 Arrow keys: Updated selection', { 
+                        logInfo('🔵 Arrow keys: Updated selection', { 
                             direction: event.key, 
                             newIndex, 
                             itemLabel: selectedItem.label,
@@ -832,7 +843,7 @@
                         }
                     });
                 } else {
-                    console.log('🔵 Arrow keys: Invalid newIndex', { newIndex, listboxDataLength: listboxData.length });
+                    logInfo('🔵 Arrow keys: Invalid newIndex', { newIndex, listboxDataLength: listboxData.length });
                 }
                 
                 return;
@@ -1035,7 +1046,7 @@
                                         // Only handle clicks on the list item itself, not scrollbar
                                         const target = e.target as HTMLElement;
                                         if (target.tagName === 'LI' || target.closest('li') === e.currentTarget) {
-                                            console.log('🔵 CustomSelectComponent: item clicked', { itemLabel: item.label, index });
+                                            logInfo('🔵 CustomSelectComponent: item clicked', { itemLabel: item.label, index });
                                             e.preventDefault();
                                             e.stopPropagation();
                                             selectItem(item);

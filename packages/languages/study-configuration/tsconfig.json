@@ -3,7 +3,7 @@
     "src",
     "src/**/*",
     "src/@types/svg.d.ts"
-  ],
+, "src/custom/templates/StudyChecklistDocumentTemplate.ts"  ],
   "compilerOptions": {
     "allowImportingTsExtensions": false,
     /* Visit https://aka.ms/tsconfig.json to read more about this file */

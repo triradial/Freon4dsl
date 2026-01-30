@@ -32,12 +32,14 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
+- Make default study have a start event
 - Finish Checklist display and printing as HTML: 
   - Add unscheduled event support to checklist (mike)
   - Add Schedule and Checklist details
   - Make links to systems be real html links
   - Make tasks be clickable checkboxes
   - Improve formatting overall
+- Model unscheduled and other special events in the language in a better way. 
 - Update to current Freon version. We need to discuss how to approach this. 
 - Improve validation error messages (mike)
 - Determine whether optional from Freon is needed and where 
