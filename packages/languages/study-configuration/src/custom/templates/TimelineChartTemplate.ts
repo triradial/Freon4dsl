@@ -343,7 +343,6 @@ export class TimelineChartTemplate {
         }`;
         
         return dedent`
-      <title>Timeline Chart</title>
       <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
       <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
       <link id="theme-stylesheet" rel='stylesheet' href='/assets/styles/bundle-dark.css'>

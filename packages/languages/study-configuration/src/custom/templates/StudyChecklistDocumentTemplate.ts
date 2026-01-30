@@ -155,6 +155,14 @@ export class StudyChecklistDocumentTemplate {
         return builder.addList(items).build();
     }
 
+    static getSystemsAsMarkdown(systems) {
+        if (!systems || systems.length === 0) return '';
+        
+        const builder = new MarkdownBuilder();
+        const items = systems.map(system => `${system.name} (${system.accessedAt}) ${system.description}`);
+        return builder.addList(items).build();
+    }
+
     /**
      * Helper method to render a step as markdown
      * @param builder The markdown builder
@@ -181,6 +189,13 @@ export class StudyChecklistDocumentTemplate {
             const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
             if (peopleMarkdown) {
                 builder.addRaw(peopleMarkdown);
+            }
+        }
+        if (step.systems.length > 0) {
+            builder.addParagraph("**SYSTEMS**");
+            const systemsMarkdown = StudyChecklistDocumentTemplate.getSystemsAsMarkdown(step.systems);
+            if (systemsMarkdown) {
+                builder.addRaw(systemsMarkdown);
             }
         }
     }
