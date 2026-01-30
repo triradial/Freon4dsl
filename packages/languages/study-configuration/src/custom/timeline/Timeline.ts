@@ -348,9 +348,12 @@ export class Timeline extends RtObject {
     }
 
     getOffsetOfFirstEventInstance() {
-        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
-        if (validDays.length === 0) return 0;
-        const lowestDayItem = validDays.reduce((minItem, currentItem) => {
+        // Handle empty days array - return 0 offset when no events exist
+        if (this.days.length === 0) {
+            console.warn('[Timeline] getOffsetOfFirstEventInstance called with empty days array - no scheduled events exist');
+            return 0;
+        }
+        const lowestDayItem = this.days.reduce((minItem, currentItem) => {
             return currentItem.day < minItem.day ? currentItem : minItem;
         }, validDays[0]);
         if (lowestDayItem.day >= 0) {
@@ -360,9 +363,12 @@ export class Timeline extends RtObject {
     }
 
     getOffsetOfLastEventInstance() {
-        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
-        if (validDays.length === 0) return 0;
-        const highestDayItem = validDays.reduce((maxItem, currentItem) => {
+        // Handle empty days array - return 0 when no events exist
+        if (this.days.length === 0) {
+            console.warn('[Timeline] getOffsetOfLastEventInstance called with empty days array - no scheduled events exist');
+            return 0;
+        }
+        const highestDayItem = this.days.reduce((maxItem, currentItem) => {
             return currentItem.day > maxItem.day ? currentItem : maxItem;
         }, validDays[0]);
         return highestDayItem.day;

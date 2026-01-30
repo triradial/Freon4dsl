@@ -25,6 +25,7 @@
     import { objectDrawerStore } from '../services/stores/object-drawer-store.js';
     import { themeBundle } from "../services/stores/theme-store.js";
     import { userStore } from "../services/stores/users-store.js";
+    import version from '../../static/version.txt?raw';
     import { adminModeStore } from "../services/stores/admin-mode-store.js";
     import { staffAvailabilityStore } from "../services/stores/staff-availability-store.js";
 // @ts-ignore
@@ -89,7 +90,10 @@
 </script>
 
 <svelte:head>
-    <link rel="stylesheet" href="/styles/bundle-{$themeBundle}.css" />
+    <title>CRCHub v{version.trim()}</title>
+    <link rel="stylesheet" href="/styles/tailwind.css" />
+    <link rel="stylesheet" href="/styles/github-markdown.css" />
+    <link rel="stylesheet" href="/styles/bundle-{$theme}.css" />
 </svelte:head>
 
 {#if auth}

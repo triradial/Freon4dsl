@@ -411,12 +411,10 @@
                 <div class="flex gap-2 mb-2" style="padding: 0 1rem;">
                     <button type="button" class="icon-button primary inverted" onclick={handleUndoAction} tabindex="-1"><IconUndo /></button>
                     <button type="button" class="icon-button primary inverted" onclick={handleRedoAction} tabindex="-1"><IconRedo /></button>
+                    <DSLFooter items={footerItems()} onCheckboxChange={handleCheckboxChange} />
                 </div>
                 <div class="crc-editor crc-content-width" style="flex: 1; overflow: auto;">
                     <FreonComponent editor={dslEditor} />
-                </div>
-                <div class="crc-editor-footer h-8 crc-content-width">
-                    <DSLFooter items={footerItems()} onCheckboxChange={handleCheckboxChange} />
                 </div>
             {:else}
                 {#if noModelAvailable === false}

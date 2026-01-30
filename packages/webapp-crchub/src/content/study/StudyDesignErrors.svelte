@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { onMount, onDestroy } from "svelte";
-    import type { FreError } from "@freon4dsl/core";
+    import type { FreError, FreNode } from "@freon4dsl/core";
     import { FreLogger } from "@freon4dsl/core";
     // @ts-ignore
     import { Locate as IconLocate } from '@lucide/svelte';
@@ -14,6 +14,58 @@
     let isRefreshing = $state(false);
 
     const LOGGER = new FreLogger("StudyDesignErrors");
+
+    /**
+     * Convert camelCase or PascalCase to readable format.
+     * e.g., "eventStart" → "event start", "EventSchedule" → "Event Schedule"
+     */
+    function toReadable(str: string): string {
+        if (!str) return str;
+        return str
+            .replace(/([a-z])([A-Z])/g, '$1 $2')  // Insert space before capitals
+            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')  // Handle consecutive capitals
+            .toLowerCase();
+    }
+
+    /**
+     * Get the concept type from an error for prefixing the message.
+     * Returns readable format like "Event" or "Event schedule"
+     */
+    function getConceptType(error: FreError): string {
+        const node = Array.isArray(error.reportedOn) ? error.reportedOn[0] : error.reportedOn;
+        if (!node) return '';
+        
+        try {
+            const conceptType = node.freLanguageConcept?.() || '';
+            return toReadable(conceptType);
+        } catch (e) {
+            return '';
+        }
+    }
+
+    /**
+     * Format the error message with concept type prefix and readable property names.
+     * e.g., "Property 'eventStart' must have a value" → "Event schedule property 'event start' must have a value"
+     */
+    function formatErrorMessage(error: FreError): string {
+        const conceptType = getConceptType(error);
+        let message = error.message;
+        
+        // Convert property names in the message to readable format
+        // Matches patterns like 'propertyName' or "propertyName"
+        message = message.replace(/'([^']+)'/g, (match, propName) => {
+            return `'${toReadable(propName)}'`;
+        });
+        
+        // Prefix with concept type if available
+        if (conceptType) {
+            // Capitalize first letter of concept type
+            const capitalizedType = conceptType.charAt(0).toUpperCase() + conceptType.slice(1);
+            return `${capitalizedType} ${message.charAt(0).toLowerCase()}${message.slice(1)}`;
+        }
+        
+        return message;
+    }
 
     // Run validator asynchronously to avoid blocking UI
     function runValidatorAsync(): Promise<FreError[]> {
@@ -49,9 +101,8 @@
             runValidatorAsync().then((errors) => {
                 modelErrors = errors;
                 isRefreshing = false;
-                LOGGER.log(`async refresh errors: ${modelErrors.length}`);
             });
-        }, 300); // 300ms debounce
+        }, 300); 
     }
 
     onMount(() => {
@@ -60,7 +111,6 @@
         runValidatorAsync().then((errors) => {
             modelErrors = errors;
             isRefreshing = false;
-            LOGGER.log(`onMount modelErrors: ${modelErrors.length}`);
         });
     });
 
@@ -86,17 +136,80 @@
     });
 
     const handleClick = (index: number) => {
-        if (!!modelErrors && modelErrors.length > 0) {
-            const item: FreError = modelErrors[index];
-            // TODO declaredType should be changed to property coming from error object.
-            if (Array.isArray(item.reportedOn)) {
-                ModelManager.getInstance().selectElement(item.reportedOn[0], item.propertyName);
-            } else {
-                ModelManager.getInstance().selectElement(item.reportedOn, item.propertyName);
-            }
+        console.group(`[StudyDesignErrors] Navigation Debug - Error #${index + 1}`);
+        
+        if (!modelErrors || modelErrors.length === 0) {
+            console.error('No errors available');
+            console.groupEnd();
+            return;
         }
+        
+        const item: FreError = modelErrors[index];
+        const node = Array.isArray(item.reportedOn) ? item.reportedOn[0] : item.reportedOn;
+        
+        console.log('Error details:', {
+            message: item.message,
+            propertyName: item.propertyName,
+            propertyIndex: item.propertyIndex,
+            locationdescription: item.locationdescription,
+            severity: item.severity,
+            reportedOnIsArray: Array.isArray(item.reportedOn)
+        });
+        
+        if (!node) {
+            console.error('Cannot navigate: error has no reportedOn node');
+            console.groupEnd();
+            return;
+        }
+        
+        console.log('Node details:', {
+            conceptType: node.freLanguageConcept?.(),
+            nodeId: node.freId?.(),
+            nodeName: (node as any).name,
+            hasOwner: !!node.freOwner?.(),
+            ownerType: node.freOwner?.()?.freLanguageConcept?.(),
+            ownerId: node.freOwner?.()?.freId?.()
+        });
+        
+        // Check if the node is part of the current unit
+        const modelManager = ModelManager.getInstance();
+        const currentUnit = modelManager.getCurrentUnit();
+        console.log('Current unit:', {
+            unitName: currentUnit?.name,
+            unitType: currentUnit?.freLanguageConcept?.(),
+            unitId: currentUnit?.freId?.()
+        });
+        
+        // Try to trace the node's path to root
+        let current = node;
+        const path: string[] = [];
+        let depth = 0;
+        while (current && depth < 20) {
+            path.push(`${current.freLanguageConcept?.() || 'unknown'}[${current.freId?.() || '?'}]`);
+            const owner = current.freOwner?.();
+            if (!owner) break;
+            current = owner;
+            depth++;
+        }
+        console.log('Node path to root:', path.join(' → '));
+        
+        try {
+            console.log(`Calling selectElement with node ${node.freId?.()} and property "${item.propertyName}"`);
+            modelManager.selectElement(node, item.propertyName);
+            console.log('selectElement completed without error');
+        } catch (e) {
+            console.error('selectElement threw an error:', e);
+        }
+        
+        console.groupEnd();
     };
 </script>
+
+<style>
+    .model-error-head {
+        text-align: left;
+    }
+</style>
 
 <div class="table-wrap">
     <table class="table table-hover table-striped model-error">
@@ -118,7 +231,7 @@
                 <tr class="model-error-row">
                     <td class="model-error-cell">{index + 1}</td>
                     <td class="model-error-cell">
-                        <span>{error.message}</span>
+                        <span>{formatErrorMessage(error)}</span>
                     </td>
                     <td class="model-error-cell">{error.severity}</td>
                     <td class="model-error-cell">

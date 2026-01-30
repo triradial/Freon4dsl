@@ -3667,7 +3667,7 @@
     </div>
 
     <!-- Right Sidebar: JSON Data (Schedule Only - Availability is stored separately) -->
-    {#if rawSimulationData && patientCentricData}
+    <!-- {#if rawSimulationData && patientCentricData}
         {@const scheduleData = {
             ...patientCentricData,
             note: "Schedule data only. Availability is stored separately in patient.availability column."
@@ -3685,5 +3685,5 @@
             </div>
             <pre>{JSON.stringify(scheduleData, null, 2)}</pre>
         </div>
-    {/if}
+    {/if} -->
 </div>

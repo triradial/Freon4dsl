@@ -2,7 +2,7 @@ import { Sim, Simulator, StudyChecklistDocumentTemplate, StudyConfiguration, Tim
 import { ModelManager } from "../dsl/model-manager.js";
 
 interface SimulationCache {
-    timeline: any; // Timeline object
+    timeline: any;
     tableHtml: string;
     chartHtml: string;
     checklistMarkdown: string;
@@ -103,6 +103,21 @@ class SimulationService {
         const timeline = simulator.timeline;
         const timelineElapsed = performance.now() - timelineStartTime;
         console.log(`[SimulationService] ⚡ Timeline generated in ${timelineElapsed.toFixed(2)}ms (simulator ran once)`);
+        
+        // Diagnostic logging to help debug empty timeline issues
+        const daysCount = timeline.getDays?.()?.length ?? 0;
+        if (daysCount === 0) {
+            console.warn(`[SimulationService] ⚠️ Timeline has NO days! This indicates the study configuration has no scheduled events.`);
+            console.warn(`[SimulationService] Study config details:`, {
+                studyId,
+                hasTimeline: !!timeline,
+                currentDay: timeline.currentDay,
+                studyStartDayNumber: timeline.studyStartDayNumber,
+                referenceDate: timeline.referenceDate
+            });
+        } else {
+            console.log(`[SimulationService] Timeline has ${daysCount} days`);
+        }
 
         // Generate all three views from the SAME Timeline (no additional simulator runs)
         const tableStartTime = performance.now();
