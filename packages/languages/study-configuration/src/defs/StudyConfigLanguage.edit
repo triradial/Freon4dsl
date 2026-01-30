@@ -210,8 +210,3 @@ SourceToTargetMapping {
 Description {
     [ ${rawText wrap=AbbreviationComponent} ]
 }
-
-// Notes are always displayed and editable
-Notes {
-    [ ${rawText wrap=MultilineTextComponent} ]
-}

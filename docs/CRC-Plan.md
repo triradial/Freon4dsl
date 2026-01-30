@@ -12,6 +12,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
   - return and tab need to not jump out of editor
 - Add existing single patient full schedule chart to a draw / panel in the new UI
 - Add single event patient checklist to be displayed from the patient page and selected date. See if the template the Jon created can be used for this checklist.
+- Copy a study feature
 - Make error messages jump to concept with error
 - Update what is displayed on Info / Help panel
   - Write/generate a simple user guide with focus on how to create a study design
@@ -21,7 +22,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - Create a repeatable demo script (whoever is done first will do this)
 
 ### In-Progress
-- Show Patient page when no patients to allow getting started on study
+- Show Patient page when no patients to allow getting started on study; Include a place for notes about a patient 
 - 
 
 ### Done
@@ -31,14 +32,13 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
-- Review single event patient checklist that Jon created to determine if Graham can use it. 
-- Update to current Freon version. We need to discuss how to approach this. 
 - Finish Checklist display and printing as HTML: 
   - Add unscheduled event support to checklist (mike)
   - Add Schedule and Checklist details
   - Make links to systems be real html links
   - Make tasks be clickable checkboxes
   - Improve formatting overall
+- Update to current Freon version. We need to discuss how to approach this. 
 - Improve validation error messages (mike)
 - Determine whether optional from Freon is needed and where 
 - Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
@@ -48,11 +48,11 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - Not needed for user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
-- Get rid of the 'Notes' stuff, have only description and explore always having descriptions displayed. 
 - 
 
 ### Done
-- NA
+- Get rid of the 'Notes' stuff, have only description and explore always having descriptions displayed. 
+- Review single event patient checklist that Jon created to determine if Graham can use it. -> It should be useable after the rest of the checklist display is cleaned-up 
 
 
 ## Jon

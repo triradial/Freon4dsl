@@ -16,8 +16,7 @@ modelunit StudyConfiguration {
     showReferences: boolean = false;
     showSystems: boolean = false;
     showPeople: boolean = false;
-    showDescriptions: boolean = false;
-    showNotes: boolean = true;
+    showDescriptions: boolean = true;
     studyStartDayNumber: number = 0;
     periods: Period[];
     tasks: SharedTask[];
@@ -56,7 +55,7 @@ abstract concept EventTask base AbstractTask {
 
 concept Task base EventTask {
     name: identifier;
-    description?: Notes;
+    description?: Description;
     numberedSteps: boolean;
     showDetails: boolean;
     steps: Step[];
@@ -100,16 +99,12 @@ concept Description {
     rawText?: string = " ";
 }
 
-// Notes are always Descriptions that are always displayed and editable
-concept Notes base Description {
-}
-
 abstract concept AbstractSystemAccess {
 }
 
 concept SystemAccess base AbstractSystemAccess {
     name: identifier;
-    description?: Notes;
+    description?: Description;
     isShared: boolean = false;
     functionName?: string;
     accessedAt: AccessedAt;
@@ -133,7 +128,7 @@ concept AccessedAPhoneNumber implements AccessedAt {
 
 concept StaffRole {
     name: identifier;
-    description?: Notes;
+    description?: Description;
 }
 abstract concept AbstractPerson {
 }
@@ -144,7 +139,7 @@ concept PersonReference base AbstractPerson {
 
 concept Person base AbstractPerson {
     name: identifier;
-    description?: Notes;
+    description?: Description;
     email?: string;
     phoneNumber?: string;
     reference role: StaffRole;

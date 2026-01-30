@@ -1,23 +1,23 @@
 <script lang="ts">
+    import { browser } from '$app/environment';
     import { AST, FreChangeManager, FreEditor, FrePartDelta, FrePartListDelta, FrePrimDelta, FrePrimListDelta } from "@freon4dsl/core";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { Tabs } from "@skeletonlabs/skeleton-svelte";
     import { runInAction } from "mobx";
     import { onDestroy, onMount } from "svelte";
-    import { browser } from '$app/environment';
     import DSLFooter from "../components/common/DSLFooter.svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
-    // @ts-ignore
-    import { Undo as IconUndo, Redo as IconRedo } from '@lucide/svelte';
-    import StudyDesignErrors from "./study/StudyDesignErrors.svelte";
-    import StudyTimelineTable from "./study/StudyTimelineTable.svelte";
-    import StudyTimelineChart from "./study/StudyTimelineChart.svelte";
-    import StudyChecklist from "./study/StudyChecklist.svelte";
+// @ts-ignore
+    import { Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
     import { simulationService } from "../services/simulation/simulation-service.js";
+    import StudyChecklist from "./study/StudyChecklist.svelte";
+    import StudyDesignErrors from "./study/StudyDesignErrors.svelte";
+    import StudyTimelineChart from "./study/StudyTimelineChart.svelte";
+    import StudyTimelineTable from "./study/StudyTimelineTable.svelte";
 
     let { id } = $props<{ id: string }>();
 
@@ -93,7 +93,7 @@
         { id: "showReferences", label: "References", parent: "showChecklists" },
         { id: "showSystems", label: "Systems", parent: "showChecklists" },
         { id: "showPeople", label: "People", parent: "showChecklists" },
-        { id: "showDescriptions", label: "Descriptions" },
+        // { id: "showDescriptions", label: "Descriptions" },
         { id: "showSharedTasks", label: "Shared Tasks" },
     ];
 
