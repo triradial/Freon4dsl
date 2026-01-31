@@ -8,12 +8,12 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ### To-Do 
 - Get undo-redo working again
+- Add patient page with visits / checklist, add note taking place
+  - Add existing single patient full schedule chart to a draw / panel in the new UI
 - HTML editor:
   - return and tab need to not jump out of editor
-- Add existing single patient full schedule chart to a draw / panel in the new UI
 - Add single event patient checklist to be displayed from the patient page and selected date. See if the template the Jon created can be used for this checklist.
-- Copy a study feature
-- Make error messages jump to concept with error
+- Copy a study feature -> Jon
 - Update what is displayed on Info / Help panel
   - Write/generate a simple user guide with focus on how to create a study design
 - Deploy to Azure
@@ -22,11 +22,11 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - Create a repeatable demo script (whoever is done first will do this)
 
 ### In-Progress
-- Show Patient page when no patients to allow getting started on study; Include a place for notes about a patient 
-- 
+
 
 ### Done
-- NA
+- Show Patients page when no patients to allow getting started on study
+- Make error messages jump to concept with error; also improved the message with context
 
 
 ## Mike

@@ -406,7 +406,6 @@
     <div bind:this={splitterContainer} class="splitter-container" class:dragging={isDraggingSplitter}>
         <!-- Left Panel: Study Designer -->
         <div class="splitter-panel" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
-            <div class="main-label-text mb-2" style="padding: 0.5rem 1rem 0 1rem;">Study Design</div>
             {#if editorLoaded}
                 <div class="flex gap-2 mb-2" style="padding: 0 1rem;">
                     <button type="button" class="icon-button primary inverted" onclick={handleUndoAction} tabindex="-1"><IconUndo /></button>

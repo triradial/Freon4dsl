@@ -17,7 +17,7 @@
     import StaffTimelineSection from '../components/content/facility/StaffTimelineSection.svelte';
     import PatientTimelineSection from '../components/content/patient/PatientTimelineSection.svelte';
 
-    let { studyId } = $props<{ studyId: string }>();
+    let { studyId, active = true } = $props<{ studyId: string; active?: boolean }>();
     
     // Splitter constants and state
     const SPLITTER_STORAGE_KEY = 'timeline-patient-staff-split';
@@ -151,6 +151,11 @@
     let rawSimulationData = $state<any>(null);
     // NOTE: patientInfo DSL model is no longer used - patient data is fully database-driven
     
+    // Model/study design error state - separate from fatal errors
+    // When modelError is set, the page can still display patient schedules from the database
+    // but operations requiring the model (like adding first visit) will show an error popup
+    let modelError = $state<string | null>(null);
+    
     // Track if we need to reload patients after drawer closes
     let needsPatientReload = $state(false);
     
@@ -223,6 +228,7 @@
     let popupScheduledEvents = $state<DayEvent[]>([]);
     let studyConfig = $state<StudyConfiguration | null>(null);
     let popupAnchorElement = $state<HTMLElement | null>(null);
+    let popupModelError = $state<string | null>(null); // Set when popup should show model error message
     
     // Derived: Get patient reference date for popup
     let popupPatientRefDate = $derived.by(() => {
@@ -304,10 +310,34 @@
         return dayjs(date1).startOf('day').diff(dayjs(date2).startOf('day'), 'day');
     }
 
+    // Get the fallback reference date from database patient schedules
+    // Used when timeline is not available (model errors)
+    function getFallbackReferenceDate(): Date {
+        let fallbackDate = new Date();
+        fallbackDate.setHours(0, 0, 0, 0);
+        
+        for (const patient of patients) {
+            const schedule = patientSchedulesFromDB.get(patient.id);
+            if (schedule && schedule.referenceDate) {
+                const [year, month, day] = schedule.referenceDate.split('-').map(Number);
+                const patientRefDate = new Date(year, month - 1, day);
+                if (patientRefDate < fallbackDate) {
+                    fallbackDate = patientRefDate;
+                }
+            }
+        }
+        return fallbackDate;
+    }
+
     // Get date from day offset using dayjs
     function getDateFromDay(day: number): Date {
-        if (!timeline) return new Date();
-        const refDate = timeline.getReferenceDate();
+        let refDate: Date;
+        if (timeline) {
+            refDate = timeline.getReferenceDate();
+        } else {
+            // Fallback: use the earliest patient reference date from database
+            refDate = getFallbackReferenceDate();
+        }
         return dayjs(refDate).add(day, 'day').toDate();
     }
 
@@ -319,8 +349,13 @@
 
     // Check if a day number is today
     function isToday(day: number): boolean {
-        if (!timeline) return false;
-        const refDate = timeline.getReferenceDate();
+        let refDate: Date;
+        if (timeline) {
+            refDate = timeline.getReferenceDate();
+        } else {
+            // Fallback: use the earliest patient reference date from database
+            refDate = getFallbackReferenceDate();
+        }
         const todayDay = getCalendarDayDiff(new Date(), refDate);
         return day === todayDay;
     }
@@ -346,35 +381,95 @@
     }
 
     // Load timeline data - fully database-driven (no PatientInfo DSL model dependency)
+    // IMPORTANT: This function is designed to show patient schedules even when the study design
+    // model has errors. The model is only needed for operations like adding first visit or
+    // modifying schedules that require simulation.
     async function loadTimeline() {
         isLoading = true;
         error = null;
+        modelError = null; // Reset model error state
         
         try {
-            // Get patients for the study
+            // STEP 1: Get patients for the study (database-driven, always works)
             await dataStore.getStudyPatients(studyId);
             const storeState = get(dataStore);
             const allPatients = storeState.studyPatients.filter(p => p.studyId === studyId);
             patients = allPatients;
 
-            if (allPatients.length === 0) {
-                throw new Error("No patients found for this study");
+            // Note: We no longer throw an error if there are no patients
+            // Instead, we show an empty timeline starting from the site start date
+            
+            // STEP 2: Load patient unavailable dates and schedules from database (always works)
+            if (allPatients.length > 0) {
+                await loadPatientUnavailableDates();
+                await loadPatientSchedules();
+            }
+
+            // STEP 3: Try to load the StudyConfiguration DSL model
+            // This may fail if there are errors in the study design, but we should still
+            // be able to display patient schedules from the database
+            let loadedStudyConfig: StudyConfiguration | null = null;
+            let modelLoadError: string | null = null;
+            
+            try {
+                const modelManager = ModelManager.getInstance();
+                loadedStudyConfig = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+                
+                if (loadedStudyConfig) {
+                    // Try to create a timeline - this may throw if the model has invalid data
+                    // We wrap this in a separate try-catch to isolate model-related errors
+                    try {
+                        // Determine reference date from DATABASE patient schedules
+                        let referenceDateForTimeline = new Date();
+                        referenceDateForTimeline.setHours(0, 0, 0, 0);
+                        
+                        const patientRefDates: Date[] = [];
+                        for (const patient of allPatients) {
+                            const schedule = patientSchedulesFromDB.get(patient.id);
+                            if (schedule && schedule.referenceDate) {
+                                const [year, month, day] = schedule.referenceDate.split('-').map(Number);
+                                patientRefDates.push(new Date(year, month - 1, day, 0, 0, 0));
+                            }
+                        }
+                        
+                        if (patientRefDates.length > 0) {
+                            referenceDateForTimeline = patientRefDates.reduce((earliest, date) => 
+                                date < earliest ? date : earliest, patientRefDates[0]);
+                            console.log("[loadTimeline] Reference date from database schedules:", formatDateString(referenceDateForTimeline));
+                        } else {
+                            console.log("[loadTimeline] No patient schedules found, using today as reference date");
+                        }
+
+                        // Create timeline with study configuration
+                        const createdTimeline = getTimelineAsOfADate(loadedStudyConfig, referenceDateForTimeline, undefined);
+                        timeline = createdTimeline;
+                        studyConfig = loadedStudyConfig;
+                        
+                        console.log("[loadTimeline] Model loaded successfully, timeline created");
+                    } catch (timelineErr: unknown) {
+                        // Timeline creation failed - model has invalid data
+                        const errMsg = timelineErr instanceof Error ? timelineErr.message : String(timelineErr);
+                        modelLoadError = "timeline_error";
+                        console.warn("[loadTimeline] Timeline creation failed:", errMsg);
+                        loadedStudyConfig = null;
+                    }
+                } else {
+                    modelLoadError = "config_not_found";
+                }
+            } catch (modelErr: unknown) {
+                const errMsg = modelErr instanceof Error ? modelErr.message : String(modelErr);
+                modelLoadError = "model_load_error";
+                console.warn("[loadTimeline] Model loading failed:", errMsg);
             }
             
-            // Load patient unavailable dates and schedules from database
-            await loadPatientUnavailableDates();
-            await loadPatientSchedules();
-
-            // Get StudyConfiguration DSL model (still needed for scheduled events)
-            const modelManager = ModelManager.getInstance();
-            const loadedStudyConfig = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
-            if (!loadedStudyConfig) {
-                throw new Error(`StudyConfiguration unit not found for study: ${studyId}`);
+            // Set model error if there was one (but don't fail the page)
+            if (modelLoadError) {
+                modelError = modelLoadError;
+                console.warn("[loadTimeline] Model error set (patient schedules will still display):", modelLoadError);
             }
-            studyConfig = loadedStudyConfig; // Store for popup to access events
-
-            // Determine reference date from DATABASE patient schedules (not PatientInfo DSL)
-            // Find the earliest patient reference date from stored schedules
+            
+            // STEP 4: Calculate date range - use database patient schedules as source of truth
+            // This should work even if the model failed to load
             let referenceDateForTimeline = new Date();
             referenceDateForTimeline.setHours(0, 0, 0, 0);
             
@@ -388,50 +483,22 @@
             }
             
             if (patientRefDates.length > 0) {
-                // Use the earliest patient reference date (FPFV - First Patient First Visit)
                 referenceDateForTimeline = patientRefDates.reduce((earliest, date) => 
                     date < earliest ? date : earliest, patientRefDates[0]);
-                console.log("[loadTimeline] Reference date from database schedules:", formatDateString(referenceDateForTimeline));
-            } else {
-                console.log("[loadTimeline] No patient schedules found, using today as reference date");
             }
-
-            // Create timeline with study configuration using the reference date
-            // NOTE: We no longer call addPatientEvents - patient data comes from database schedules
-            const createdTimeline = getTimelineAsOfADate(loadedStudyConfig, referenceDateForTimeline, undefined);
-
-            timeline = createdTimeline;
             
-            // Store raw simulation data for debugging (create a simplified version)
+            // Store raw simulation data for debugging
             rawSimulationData = {
                 referenceDate: formatDateString(referenceDateForTimeline),
                 studyId,
                 patientCount: allPatients.length,
-                dataSource: 'database' // Indicate this is database-driven
+                dataSource: 'database',
+                modelAvailable: !modelError
             };
             
-            // Debug: Log scheduled events from timeline (no patient events from DSL anymore)
-            console.log("=== TIMELINE EVENTS DEBUG (Database-driven) ===");
-            const days = timeline.getDays();
-            const sortedDays = [...days].sort((a, b) => a.day - b.day);
-            for (const day of sortedDays) {
-                const date = getDateFromDay(day.day);
-                const scheduledEvents = day.getEventInstances();
-                if (scheduledEvents.length > 0) {
-                    console.log(`Day ${day.day} (${formatDateString(date)}):`);
-                    for (const event of scheduledEvents) {
-                        console.log(`  Scheduled: ${event.getName()} - ${event.getTitle ? event.getTitle() : ''}`);
-                    }
-                }
-            }
-            console.log("=== END TIMELINE EVENTS DEBUG ===");
-            
-            // Calculate date range using studyReference date as the start
-            // This is FPFV (First Patient First Visit) - the earliest patient's Prescreen date
-            const refDate = timeline.getReferenceDate();
-            
-            // Calculate the actual studyReferenceDate from database patient schedules
-            let studyRefDate: Date = refDate; // Default fallback
+            // Calculate date range based on reference date
+            const refDate = timeline?.getReferenceDate() ?? referenceDateForTimeline;
+            let studyRefDate: Date = refDate;
             
             if (patientRefDates.length > 0) {
                 studyRefDate = patientRefDates.reduce((earliest, date) => 
@@ -439,19 +506,64 @@
                 console.log("[loadTimeline] Calculated studyReferenceDate from database:", formatDateString(studyRefDate));
             }
             
-            let firstDataDate: Date;
-            let lastDataDate: Date;
+            let firstDataDate: Date = studyRefDate;
+            let lastDataDate: Date = studyRefDate;
             
-            // Start from the studyReference date (earliest patient's Prescreen date)
-            firstDataDate = studyRefDate;
-            
-            if (days.length > 0) {
-                // Last date should be the last day with ANY data (patient events OR scheduled events)
-                const lastDataDay = sortedDays[sortedDays.length - 1].day;
-                lastDataDate = getDateFromDay(lastDataDay);
+            // Handle case with no patients - show 1 year starting from today (or site start date if available later)
+            if (allPatients.length === 0) {
+                console.log("[loadTimeline] No patients - using today as reference with 1-year range");
+                firstDataDate = new Date();
+                firstDataDate.setHours(0, 0, 0, 0);
+                // Set last data date to 1 year from now
+                lastDataDate = new Date(firstDataDate);
+                lastDataDate.setFullYear(lastDataDate.getFullYear() + 1);
+            } else if (timeline) {
+                // If timeline exists, use its days for date range
+                const days = timeline.getDays();
+                const sortedDays = [...days].sort((a, b) => a.day - b.day);
+                
+                // Debug: Log scheduled events from timeline
+                console.log("=== TIMELINE EVENTS DEBUG (Database-driven) ===");
+                for (const day of sortedDays) {
+                    const date = getDateFromDay(day.day);
+                    const scheduledEvents = day.getEventInstances();
+                    if (scheduledEvents.length > 0) {
+                        console.log(`Day ${day.day} (${formatDateString(date)}):`);
+                        for (const event of scheduledEvents) {
+                            console.log(`  Scheduled: ${event.getName()} - ${event.getTitle ? event.getTitle() : ''}`);
+                        }
+                    }
+                }
+                console.log("=== END TIMELINE EVENTS DEBUG ===");
+                
+                if (sortedDays.length > 0) {
+                    const lastDataDay = sortedDays[sortedDays.length - 1].day;
+                    lastDataDate = getDateFromDay(lastDataDay);
+                }
             } else {
-                // No data, use the reference date as both start and end
-                lastDataDate = studyRefDate;
+                // No timeline - extend date range based on database patient schedules
+                // Look at all patient days to find the last date
+                console.log("[loadTimeline] No timeline - calculating range from database schedules");
+                console.log("[loadTimeline] patientSchedulesFromDB size:", patientSchedulesFromDB.size);
+                
+                for (const patient of allPatients) {
+                    const schedule = patientSchedulesFromDB.get(patient.id);
+                    if (schedule && schedule.days) {
+                        console.log(`[loadTimeline] Patient ${patient.patientNumber}: ${schedule.days.length} days`);
+                        for (const day of schedule.days) {
+                            // Each day has a 'date' property (YYYY-MM-DD)
+                            if (day.date) {
+                                const [year, month, dayNum] = day.date.split('-').map(Number);
+                                const dayDate = new Date(year, month - 1, dayNum);
+                                if (dayDate > lastDataDate) {
+                                    lastDataDate = dayDate;
+                                    console.log(`[loadTimeline] New lastDataDate: ${formatDateString(dayDate)} from ${patient.patientNumber}`);
+                                }
+                            }
+                        }
+                    }
+                }
+                console.log("[loadTimeline] Final lastDataDate:", formatDateString(lastDataDate));
             }
             
             // Start range at the first day of the month containing the first data
@@ -474,13 +586,12 @@
                 lastMonthEnd: lastMonthEnd.toISOString().split('T')[0],
                 dateRangeStart,
                 dateRangeEnd,
-                rangeDays: dateRangeEnd - dateRangeStart
+                rangeDays: dateRangeEnd - dateRangeStart,
+                modelAvailable: !modelError
             });
             
             // Calculate initial visible window based on container width
-            // Use a default if container not ready yet
             const daysThatFit = containerRef ? calculateVisibleDays() : 31;
-            // Always start at the first day of the month
             visibleStartDay = firstMonthStartDay;
             visibleEndDay = Math.min(visibleStartDay + daysThatFit - 1, dateRangeEnd);
             
@@ -493,19 +604,19 @@
             });
             
             // Extend date range based on actual patient schedules in database
-            // (simulation only shows projected events, database has actual scheduled dates)
             updateDateRangeFromPatientData();
         } catch (err: unknown) {
+            // Only set fatal error for things that truly prevent displaying any data
+            // (like no patients found)
             console.error("Error loading timeline:", err);
             error = err instanceof Error ? err.message : "Failed to load timeline data";
         } finally {
             isLoading = false;
             
             // Schedule recalculation after DOM has updated with the chart content
-            // Using setTimeout to ensure this runs after Svelte's DOM update cycle
             setTimeout(() => {
                 requestAnimationFrame(() => {
-                    if (containerRef && containerRef.clientWidth > 0 && timeline) {
+                    if (containerRef && containerRef.clientWidth > 0) {
                         const actualDaysThatFit = calculateVisibleDays();
                         console.log("[loadTimeline] Post-render check:", {
                             actualDaysThatFit,
@@ -617,13 +728,6 @@
         
         // Only update if site start is earlier than current range start
         if (siteStartDay < dateRangeStart) {
-            console.log("[updateDateRangeFromSiteStart] Updating date range:", {
-                oldStart: dateRangeStart,
-                newStart: siteStartDay,
-                siteStartDate,
-                siteStartMonthFirst: formatDateString(siteStartMonthFirst)
-            });
-            
             dateRangeStart = siteStartDay;
             
             // Recalculate visible window
@@ -933,9 +1037,167 @@
         });
     });
 
+    // Build patient-centric data structure purely from database schedules
+    // Used when timeline is not available (model errors) to still display existing patient data
+    function buildPatientCentricDataFromDatabase(): any {
+        console.log("[buildPatientCentricDataFromDatabase] Building patient data from database schedules");
+        const allPatientRecords = patients;
+        const patientIds = uniquePatientIds;
+        
+        console.log("[buildPatientCentricDataFromDatabase] Patients:", allPatientRecords.length, "Patient IDs:", patientIds.length);
+        console.log("[buildPatientCentricDataFromDatabase] Schedule map size:", patientSchedulesFromDB.size);
+        
+        // Find earliest reference date (FPFV) from database schedules
+        let studyReferenceDate: Date | null = null;
+        for (const patient of allPatientRecords) {
+            const schedule = patientSchedulesFromDB.get(patient.id);
+            console.log(`[buildPatientCentricDataFromDatabase] Patient ${patient.patientNumber} (${patient.id}): schedule =`, schedule ? `${schedule.days?.length || 0} days` : 'none');
+            if (schedule && schedule.referenceDate) {
+                const [year, month, day] = schedule.referenceDate.split('-').map(Number);
+                const patientRefDate = new Date(year, month - 1, day, 0, 0, 0);
+                if (!studyReferenceDate || patientRefDate < studyReferenceDate) {
+                    studyReferenceDate = patientRefDate;
+                }
+            }
+        }
+        
+        // Use today as fallback if no schedules
+        if (!studyReferenceDate) {
+            studyReferenceDate = new Date();
+            studyReferenceDate.setHours(0, 0, 0, 0);
+        }
+        
+        // Build patient data from database schedules
+        const patientDataMap: any = {};
+        
+        for (const patientId of patientIds) {
+            const patientRecord = allPatientRecords.find(p => p.patientNumber === patientId);
+            if (!patientRecord) continue;
+            
+            const schedule = patientSchedulesFromDB.get(patientRecord.id);
+            
+            if (schedule && schedule.referenceDate) {
+                // Patient has a schedule - use it directly
+                const [year, month, day] = schedule.referenceDate.split('-').map(Number);
+                const patientRefDate = new Date(year, month - 1, day, 0, 0, 0);
+                const patientRefDateStr = schedule.referenceDate;
+                
+                // Convert database days format to the format expected by the UI
+                const days: any[] = [];
+                const dayWindowsMap = new Map<number, Array<{eventId: string, eventName: string}>>();
+                
+                for (const dbDay of (schedule.days || [])) {
+                    const dayDate = dbDay.date || dayjs(patientRefDateStr).add(dbDay.day, 'day').format('YYYY-MM-DD');
+                    
+                    // Process events and collect window days
+                    const events = (dbDay.events || []).map((event: any) => {
+                        // Add window days for scheduled events
+                        if (event.window && event.scheduledDay !== undefined) {
+                            const windowStart = event.scheduledDay - (event.window.daysBefore || 0);
+                            const windowEnd = event.scheduledDay + (event.window.daysAfter || 0);
+                            for (let wd = windowStart; wd <= windowEnd; wd++) {
+                                if (wd !== event.scheduledDay && wd !== dbDay.day) {
+                                    if (!dayWindowsMap.has(wd)) {
+                                        dayWindowsMap.set(wd, []);
+                                    }
+                                    dayWindowsMap.get(wd)!.push({
+                                        eventId: event.id,
+                                        eventName: event.name
+                                    });
+                                }
+                            }
+                        }
+                        return event;
+                    });
+                    
+                    days.push({
+                        day: dbDay.day,
+                        date: dayDate,
+                        events
+                    });
+                }
+                
+                // Add window-only days (days that don't have events but are in a window)
+                for (const [windowDay, windowEvents] of dayWindowsMap) {
+                    // Check if this day already exists
+                    const existingDay = days.find(d => d.day === windowDay);
+                    if (!existingDay) {
+                        const windowDate = dayjs(patientRefDateStr).add(windowDay, 'day').format('YYYY-MM-DD');
+                        days.push({
+                            day: windowDay,
+                            date: windowDate,
+                            events: [],
+                            windows: windowEvents
+                        });
+                    } else if (!existingDay.windows) {
+                        existingDay.windows = windowEvents;
+                    }
+                }
+                
+                // Sort days by day number
+                days.sort((a, b) => a.day - b.day);
+                
+                patientDataMap[patientId] = {
+                    patientId,
+                    referenceDate: patientRefDateStr,
+                    days
+                };
+            } else {
+                // Patient doesn't have a schedule yet
+                patientDataMap[patientId] = {
+                    patientId,
+                    referenceDate: null,
+                    days: []
+                };
+            }
+        }
+        
+        const result = {
+            studyReferenceDate: formatDateString(studyReferenceDate),
+            initialDayNumber: 0,
+            patients: Object.values(patientDataMap)
+        };
+        
+        console.log("[buildPatientCentricDataFromDatabase] Result:", {
+            studyReferenceDate: result.studyReferenceDate,
+            patientCount: result.patients.length,
+            patientsWithDays: result.patients.filter((p: any) => p.days && p.days.length > 0).length
+        });
+        
+        // Log details for first patient with days
+        const firstPatientWithDays = result.patients.find((p: any) => p.days && p.days.length > 0) as any;
+        if (firstPatientWithDays) {
+            console.log("[buildPatientCentricDataFromDatabase] First patient with data:", {
+                patientId: firstPatientWithDays.patientId,
+                referenceDate: firstPatientWithDays.referenceDate,
+                dayCount: firstPatientWithDays.days.length,
+                firstDay: firstPatientWithDays.days[0],
+                lastDay: firstPatientWithDays.days[firstPatientWithDays.days.length - 1]
+            });
+        }
+        
+        return result;
+    }
+
     // Patient-centric data structure (simplified format)
+    // IMPORTANT: This should work even when timeline is not available (model errors)
+    // by using the database schedules directly
     let patientCentricData = $derived.by(() => {
-        if (!timeline) return null;
+        // Track dependencies: patientSchedulesFromDB, patients, uniquePatientIds
+        // This ensures the derived recomputes when these change
+        const schedules = patientSchedulesFromDB;
+        const patientList = patients;
+        const patientIdList = uniquePatientIds;
+        
+        // If no patients, return null
+        if (patientList.length === 0) return null;
+        
+        // If no timeline but we have patients with database schedules, build from database
+        if (!timeline) {
+            console.log("[patientCentricData] No timeline available, building from database schedules");
+            console.log("[patientCentricData] Patients:", patientList.length, "Schedules:", schedules.size);
+            return buildPatientCentricDataFromDatabase();
+        }
         
         const timelineRefDate = timeline.getReferenceDate();
         const patientIds = uniquePatientIds; // Array of patient ID strings
@@ -1546,16 +1808,38 @@
     // Get day data for a specific patient and date from the patient-centric structure
     // Uses date string (YYYY-MM-DD) for lookup since patient days are relative to patient reference date
     function getPatientDayData(day: number, patientId: string): any {
-        if (!patientCentricData || !patientCentricData.patients) return null;
+        if (!patientCentricData || !patientCentricData.patients) {
+            // Only log once per patient to avoid spam
+            if (day === 0) {
+                console.log(`[getPatientDayData] No patientCentricData for ${patientId}`);
+            }
+            return null;
+        }
         const patient = (patientCentricData.patients as any[]).find((p: any) => p.patientId === patientId);
-        if (!patient || !patient.days) return null;
+        if (!patient || !patient.days) {
+            if (day === 0) {
+                console.log(`[getPatientDayData] No patient or days for ${patientId}, patients:`, patientCentricData.patients?.length);
+            }
+            return null;
+        }
         
         // Convert timeline day to date string for lookup
         const dateForDay = getDateFromDay(day);
         const dateStr = formatDateString(dateForDay);
         
         // Find patient day by date (not by day number, since patient days are relative to patient's reference)
-        return (patient.days as any[]).find((d: any) => d.date === dateStr);
+        const dayData = (patient.days as any[]).find((d: any) => d.date === dateStr);
+        
+        // Log found data for debugging (only for day 0 to avoid spam)
+        if (day === 0 && patientId === 'ARCX-1001') {
+            console.log(`[getPatientDayData] ${patientId} day ${day} (${dateStr}):`, dayData ? `found ${dayData.events?.length || 0} events` : 'not found');
+            console.log(`[getPatientDayData] ${patientId} has ${patient.days.length} days, ref: ${patient.referenceDate}`);
+            if (!dayData && patient.days.length > 0) {
+                console.log(`[getPatientDayData] First 3 days:`, patient.days.slice(0, 3).map((d: any) => d.date));
+            }
+        }
+        
+        return dayData;
     }
 
     // Get event rendering info for a day (uses simplified structure)
@@ -1897,10 +2181,28 @@
         handleCellMouseLeave();
         
         // Get date for this day using dayjs (no Date objects, no timezone issues)
-        const timelineRefDateStr = timeline ? dayjs(timeline.getReferenceDate()).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD');
+        // Use a fallback reference date if timeline is not available (model errors)
+        let timelineRefDateStr: string;
+        if (timeline) {
+            timelineRefDateStr = dayjs(timeline.getReferenceDate()).format('YYYY-MM-DD');
+        } else {
+            // Fallback: use the earliest patient reference date from database, or today
+            let fallbackDate = dayjs();
+            for (const patient of patients) {
+                const schedule = patientSchedulesFromDB.get(patient.id);
+                if (schedule && schedule.referenceDate) {
+                    const patientRefDate = dayjs(schedule.referenceDate);
+                    if (patientRefDate.isBefore(fallbackDate)) {
+                        fallbackDate = patientRefDate;
+                    }
+                }
+            }
+            timelineRefDateStr = fallbackDate.format('YYYY-MM-DD');
+        }
         const dateStr = dayjs(timelineRefDateStr).add(day, 'day').format('YYYY-MM-DD');
         
         // In AVAILABILITY mode: toggle availability directly and save to database
+        // This works even when the model is not available
         if (viewMode === 'availability') {
             // Find patient UUID from patientNumber
             const patientRecord = patients.find(p => p.patientNumber === patientIdParam || p.id === patientIdParam);
@@ -1922,8 +2224,25 @@
         }
         
         // In SCHEDULING mode: open popup for event scheduling
+        // Determine popup type first to check if we should show popup at all
+        const type = determinePopupType(patientIdParam, day);
+        
+        // Get unscheduled events to check if there are any actions available for 'no-event' days
+        // NOTE: When there's a model error, this will return empty because studyConfig is not available
+        const availableUnscheduledEvents = getUnscheduledEvents();
+        
+        // For 'no-event' days when there's NO model error and no unscheduled events,
+        // don't show popup - there are truly no actions available
+        // But when there IS a model error, we assume there might be unscheduled events we can't see
+        if (!modelError && type === 'no-event' && availableUnscheduledEvents.length === 0) {
+            return;
+        }
+        
         // Capture the clicked element as anchor for the popover
         popupAnchorElement = event.currentTarget as HTMLElement;
+        
+        // Set the model error state for the popup
+        popupModelError = modelError;
         
         // Calculate patient day number (relative to patient's reference date, not timeline)
         let patientDayNumber = day; // Default fallback
@@ -1934,9 +2253,6 @@
                 patientDayNumber = dayjs(dateStr).diff(dayjs(patientData.referenceDate), 'day');
             }
         }
-        
-        // Determine popup type
-        const type = determinePopupType(patientIdParam, day);
         
         // Get day data from derived data
         const dayData = getPatientDayData(day, patientIdParam);
@@ -2052,6 +2368,31 @@
             
             dayDataToUpdate.events.push(newEvent);
             console.log('[handlePopupApply] Added initial event:', newEvent);
+            
+            // Also handle unscheduled event if included with initial popup
+            if (result.unscheduledEvent?.enabled) {
+                console.log('[handlePopupApply] Unscheduled event with initial:', result.unscheduledEvent);
+                
+                const isCompletedUnscheduled = ['completed', 'cancelled', 'missed'].includes(result.unscheduledEvent.status);
+                const unscheduledNewEvent: any = {
+                    id: `${result.unscheduledEvent.eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
+                    type: isCompletedUnscheduled ? 'actual-event' : 'unscheduled-event',
+                    name: result.unscheduledEvent.eventName,
+                    scheduledDay: dayNumber,
+                    status: result.unscheduledEvent.status,
+                    state: 'on-scheduled-date',
+                    window: { daysBefore: 0, daysAfter: 0 },
+                    isUnscheduledEvent: true  // Track that this is an unscheduled event for styling
+                };
+                
+                // For completed events, set actualDay (immutable, set by popup)
+                if (isCompletedUnscheduled) {
+                    unscheduledNewEvent.actualDay = dayNumber;
+                }
+                
+                dayDataToUpdate.events.push(unscheduledNewEvent);
+                console.log('[handlePopupApply] Added unscheduled event with initial:', unscheduledNewEvent);
+            }
             
             // Apply the day 0 changes
             if (existingDayIndex >= 0) {
@@ -2511,13 +2852,15 @@
     
     // Update the date range based on current patient schedules
     // Called after schedule changes to ensure the timeline shows all relevant dates
+    // Works with or without timeline (uses fallback reference date when timeline is null)
     function updateDateRangeFromPatientData() {
-        if (!timeline) return;
+        // Use timeline reference date or fallback to database-derived reference date
+        const refDate = timeline ? timeline.getReferenceDate() : getFallbackReferenceDate();
         
-        const refDate = timeline.getReferenceDate();
-        
-        // Find the latest day number across all patient schedules
+        // Find the earliest and latest day numbers across all patient schedules
+        let earliestDayNumber = 0;
         let latestDayNumber = 0;
+        let hasData = false;
         
         // Check patientCentricData if available (reactive derived state)
         if (patientCentricData?.patients) {
@@ -2531,8 +2874,17 @@
                         patientDate.setDate(patientDate.getDate() + day.day);
                         const timelineDayNumber = getCalendarDayDiff(patientDate, refDate);
                         
-                        if (timelineDayNumber > latestDayNumber) {
+                        if (!hasData) {
+                            earliestDayNumber = timelineDayNumber;
                             latestDayNumber = timelineDayNumber;
+                            hasData = true;
+                        } else {
+                            if (timelineDayNumber < earliestDayNumber) {
+                                earliestDayNumber = timelineDayNumber;
+                            }
+                            if (timelineDayNumber > latestDayNumber) {
+                                latestDayNumber = timelineDayNumber;
+                            }
                         }
                     }
                 }
@@ -2547,41 +2899,82 @@
                     patientDate.setDate(patientDate.getDate() + day.day);
                     const timelineDayNumber = getCalendarDayDiff(patientDate, refDate);
                     
-                    if (timelineDayNumber > latestDayNumber) {
+                    if (!hasData) {
+                        earliestDayNumber = timelineDayNumber;
                         latestDayNumber = timelineDayNumber;
+                        hasData = true;
+                    } else {
+                        if (timelineDayNumber < earliestDayNumber) {
+                            earliestDayNumber = timelineDayNumber;
+                        }
+                        if (timelineDayNumber > latestDayNumber) {
+                            latestDayNumber = timelineDayNumber;
+                        }
                     }
                 }
             }
         }
         
         // Only proceed if we found any data
-        if (latestDayNumber === 0) {
+        if (!hasData) {
             console.log('[updateDateRangeFromPatientData] No patient schedule data found');
             return;
         }
+        
+        // Calculate the start of the month containing the earliest day
+        const earliestDate = getDateFromDay(earliestDayNumber);
+        const firstMonthStart = new Date(earliestDate.getFullYear(), earliestDate.getMonth(), 1);
+        const newDateRangeStart = getCalendarDayDiff(firstMonthStart, refDate);
         
         // Calculate the end of the month containing the latest day
         const latestDate = getDateFromDay(latestDayNumber);
         const lastMonthEnd = new Date(latestDate.getFullYear(), latestDate.getMonth() + 1, 0);
         const newDateRangeEnd = getCalendarDayDiff(lastMonthEnd, refDate);
         
-        // Only update if the new range is larger
-        if (newDateRangeEnd > dateRangeEnd) {
-            console.log('[updateDateRangeFromPatientData] Extending date range:', {
+        let rangeChanged = false;
+        
+        // Update start if new range is earlier
+        if (newDateRangeStart < dateRangeStart || dateRangeStart === dateRangeEnd) {
+            console.log('[updateDateRangeFromPatientData] Updating date range start:', {
+                oldStart: dateRangeStart,
+                newStart: newDateRangeStart
+            });
+            dateRangeStart = newDateRangeStart;
+            rangeChanged = true;
+        }
+        
+        // Update end if new range is later
+        if (newDateRangeEnd > dateRangeEnd || dateRangeStart === dateRangeEnd) {
+            console.log('[updateDateRangeFromPatientData] Extending date range end:', {
                 oldEnd: dateRangeEnd,
-                oldEndDate: getDateFromDay(dateRangeEnd).toISOString().split('T')[0],
+                oldEndDate: dateRangeEnd !== 0 ? getDateFromDay(dateRangeEnd).toISOString().split('T')[0] : 'N/A',
                 newEnd: newDateRangeEnd,
                 newEndDate: lastMonthEnd.toISOString().split('T')[0],
                 latestDayNumber,
                 latestDate: latestDate.toISOString().split('T')[0]
             });
             dateRangeEnd = newDateRangeEnd;
-        } else {
+            rangeChanged = true;
+        }
+        
+        // If range changed and visible window is unset or out of range, reset it
+        if (rangeChanged && (visibleStartDay === visibleEndDay || visibleEndDay < dateRangeStart)) {
+            const daysThatFit = containerRef ? calculateVisibleDays() : 31;
+            visibleStartDay = dateRangeStart;
+            visibleEndDay = Math.min(visibleStartDay + daysThatFit - 1, dateRangeEnd);
+            console.log('[updateDateRangeFromPatientData] Reset visible window:', {
+                visibleStartDay,
+                visibleEndDay,
+                daysThatFit
+            });
+        }
+        
+        if (!rangeChanged) {
             console.log('[updateDateRangeFromPatientData] Range is already sufficient:', {
+                currentStart: dateRangeStart,
                 currentEnd: dateRangeEnd,
-                currentEndDate: getDateFromDay(dateRangeEnd).toISOString().split('T')[0],
-                latestDayNumber,
-                latestDate: latestDate.toISOString().split('T')[0]
+                earliestDayNumber,
+                latestDayNumber
             });
         }
     }
@@ -2693,8 +3086,8 @@
     async function handleRefreshPatients() {
         console.log('[handleRefreshPatients] Refreshing patient data');
         try {
-            // Force reload from database
-            await dataStore.getStudyPatients(studyId, true);
+            // Reload from database
+            await dataStore.getStudyPatients(studyId);
             const storeState = get(dataStore);
             const updatedPatients = storeState.studyPatients.filter(p => p.studyId === studyId);
             patients = updatedPatients;
@@ -2891,25 +3284,14 @@
             days.push(day);
         }
         
-        // Debug logging
-        if (days.length > 0) {
-            console.log("[visibleDays] Calculated:", {
-                count: days.length,
-                startDay: visibleStartDay,
-                endDay: visibleEndDay,
-                startDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
-                endDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0],
-                dateRangeStart,
-                dateRangeEnd
-            });
-        }
-        
         return days;
     });
 
     // Update visible window when zoom or container size changes
+    // Effect to recalculate visible window when container or date range changes
+    // Works with or without timeline (uses date range from database schedules)
     $effect(() => {
-        if (containerRef && timeline && dateRangeStart !== dateRangeEnd && dateRangeStart >= 0 && dateRangeEnd > dateRangeStart) {
+        if (containerRef && dateRangeStart !== dateRangeEnd && dateRangeEnd > dateRangeStart) {
             // Always ensure we start at the beginning of a month
             const monthStart = getMonthStartDay(visibleStartDay);
             if (visibleStartDay !== monthStart) {
@@ -2923,10 +3305,13 @@
     });
 
     // Get all month starts in the date range (based on dateRangeStart and dateRangeEnd)
+    // Works with or without timeline (uses fallback reference date when timeline is null)
     function getAllMonthStarts(): number[] {
-        if (!timeline || dateRangeStart === dateRangeEnd) return [];
+        // Check for uninitialized or invalid range
+        if (dateRangeStart === dateRangeEnd && dateRangeStart === 0) return [];
+        if (dateRangeEnd <= dateRangeStart) return [];
         const monthStarts: number[] = [];
-        const refDate = timeline.getReferenceDate();
+        const refDate = timeline ? timeline.getReferenceDate() : getFallbackReferenceDate();
         const refDateDayjs = dayjs(refDate);
         
         // Use the actual date range (from patient events, not all timeline days)
@@ -2959,69 +3344,30 @@
             }
         }
         
-        console.log("[getAllMonthStarts] Found", monthStarts.length, "months. All:", monthStarts.map(d => {
-            const date = getDateFromDay(d);
-            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            return `${dateStr} (day ${d})`;
-        }));
-        
         return monthStarts;
     }
 
     // Date range slider handlers - acts as scrollbar, snaps to month starts
+    // Works with or without timeline (uses date range from database schedules)
     function onRangeChange(event: Event) {
-        if (!timeline) {
-            console.log("[onRangeChange] No timeline");
-            return;
-        }
-        
-        const beforeState = {
-            visibleStartDay,
-            visibleEndDay,
-            startDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
-            endDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0]
-        };
+        // Check for uninitialized or invalid range
+        if (dateRangeStart === dateRangeEnd && dateRangeStart === 0) return;
+        if (dateRangeEnd <= dateRangeStart) return;
         
         const target = event.target as HTMLInputElement;
         const value = parseInt(target.value);
         
-        console.log("[onRangeChange] Before:", beforeState);
-        console.log("[onRangeChange] Slider value:", value);
-        
         // Get all month starts in range
         const monthStarts = getAllMonthStarts();
-        console.log("[onRangeChange] Month starts:", {
-            count: monthStarts.length,
-            first: monthStarts[0] ? getDateFromDay(monthStarts[0]).toISOString().split('T')[0] : 'none',
-            last: monthStarts.length > 0 ? getDateFromDay(monthStarts[monthStarts.length - 1]).toISOString().split('T')[0] : 'none'
-        });
-        
-        if (monthStarts.length === 0) {
-            console.log("[onRangeChange] No month starts found");
-            return;
-        }
+        if (monthStarts.length === 0) return;
         
         // Value is already the month index (0 to number of months - 1)
         const monthIndex = Math.min(Math.max(0, value), monthStarts.length - 1);
         const targetMonthStart = monthStarts[monthIndex];
         
-        console.log("[onRangeChange] Calculations:", {
-            monthIndex,
-            targetMonthStart,
-            targetMonthStartDate: getDateFromDay(targetMonthStart).toISOString().split('T')[0]
-        });
-        
         const daysThatFit = calculateVisibleDays();
         visibleStartDay = targetMonthStart;
         visibleEndDay = Math.min(targetMonthStart + daysThatFit - 1, dateRangeEnd);
-        
-        console.log("[onRangeChange] After:", {
-            visibleStartDay,
-            visibleEndDay,
-            daysThatFit,
-            startDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
-            endDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0]
-        });
     }
 
     // Zoom handler - 4 discrete levels
@@ -3040,7 +3386,7 @@
     // Get the first day of the month containing a given day
     // Get the month start day for a given day, using the month starts array
     function getMonthStartDay(day: number): number {
-        if (!timeline) return day;
+        // Works with or without timeline (getAllMonthStarts uses fallback reference date)
         const monthStarts = getAllMonthStarts();
         if (monthStarts.length === 0) return day;
         
@@ -3055,7 +3401,7 @@
 
     // Get the first day of the next month, using the month starts array
     function getNextMonthStartDay(day: number): number {
-        if (!timeline) return day;
+        // Works with or without timeline (getAllMonthStarts uses fallback reference date)
         const monthStarts = getAllMonthStarts();
         if (monthStarts.length === 0) return day;
         
@@ -3075,7 +3421,7 @@
 
     // Get the first day of the previous month, using the month starts array
     function getPreviousMonthStartDay(day: number): number {
-        if (!timeline) return day;
+        // Works with or without timeline (getAllMonthStarts uses fallback reference date)
         const monthStarts = getAllMonthStarts();
         if (monthStarts.length === 0) return day;
         
@@ -3095,104 +3441,62 @@
 
     // Prev/Next navigation - moves by whole months, always starting at 1st of month
     function navigatePrevious() {
-        if (!timeline) {
-            console.log("[navigatePrevious] No timeline");
-            return;
-        }
-        
-        const beforeState = {
-            visibleStartDay,
-            visibleEndDay,
-            startDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
-            endDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0]
-        };
+        // Works with or without timeline (uses date range from database schedules)
+        if (dateRangeStart === dateRangeEnd) return;
         
         // Always move to the previous month start
         const currentMonthStart = getMonthStartDay(visibleStartDay);
         const prevMonthStart = getPreviousMonthStartDay(currentMonthStart);
-        
-        console.log("[navigatePrevious] Before:", beforeState);
-        console.log("[navigatePrevious] Calculations:", {
-            currentMonthStart,
-            currentMonthStartDate: getDateFromDay(currentMonthStart).toISOString().split('T')[0],
-            prevMonthStart,
-            prevMonthStartDate: getDateFromDay(prevMonthStart).toISOString().split('T')[0],
-            dateRangeStart,
-            dateRangeEnd,
-            canMove: prevMonthStart >= dateRangeStart
-        });
         
         // Ensure we don't go before the range start
         if (prevMonthStart >= dateRangeStart) {
             const daysThatFit = calculateVisibleDays();
             visibleStartDay = prevMonthStart;
             visibleEndDay = Math.min(prevMonthStart + daysThatFit - 1, dateRangeEnd);
-            
-            console.log("[navigatePrevious] After:", {
-                visibleStartDay,
-                visibleEndDay,
-                daysThatFit,
-                startDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
-                endDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0]
-            });
-        } else {
-            console.log("[navigatePrevious] Cannot move - already at start of range");
         }
     }
 
     function navigateNext() {
-        if (!timeline) {
-            console.log("[navigateNext] No timeline");
-            return;
-        }
-        
-        const beforeState = {
-            visibleStartDay,
-            visibleEndDay,
-            startDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
-            endDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0]
-        };
+        // Works with or without timeline (uses date range from database schedules)
+        if (dateRangeStart === dateRangeEnd) return;
         
         // Always move to the next month start
         const currentMonthStart = getMonthStartDay(visibleStartDay);
         const nextMonthStart = getNextMonthStartDay(currentMonthStart);
         
-        console.log("[navigateNext] Before:", beforeState);
-        console.log("[navigateNext] Calculations:", {
-            currentMonthStart,
-            currentMonthStartDate: getDateFromDay(currentMonthStart).toISOString().split('T')[0],
-            nextMonthStart,
-            nextMonthStartDate: getDateFromDay(nextMonthStart).toISOString().split('T')[0],
-            dateRangeStart,
-            dateRangeEnd,
-            canMove: nextMonthStart <= dateRangeEnd
-        });
-        
         if (nextMonthStart <= dateRangeEnd) {
             const daysThatFit = calculateVisibleDays();
             visibleStartDay = nextMonthStart;
             visibleEndDay = Math.min(nextMonthStart + daysThatFit - 1, dateRangeEnd);
-            
-            console.log("[navigateNext] After:", {
-                visibleStartDay,
-                visibleEndDay,
-                daysThatFit,
-                startDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
-                endDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0]
-            });
-        } else {
-            console.log("[navigateNext] Cannot move - already at end of range");
         }
     }
+    
+    // Derived: Can navigate to previous month?
+    let canNavigatePrevious = $derived.by(() => {
+        if (dateRangeStart === dateRangeEnd) return false;
+        const currentMonthStart = getMonthStartDay(visibleStartDay);
+        const prevMonthStart = getPreviousMonthStartDay(currentMonthStart);
+        // Must be strictly less than current to be a valid previous month
+        return prevMonthStart < currentMonthStart && prevMonthStart >= dateRangeStart;
+    });
+    
+    // Derived: Can navigate to next month?
+    let canNavigateNext = $derived.by(() => {
+        if (dateRangeStart === dateRangeEnd) return false;
+        const currentMonthStart = getMonthStartDay(visibleStartDay);
+        const nextMonthStart = getNextMonthStartDay(currentMonthStart);
+        // Must be strictly greater than current to be a valid next month
+        return nextMonthStart > currentMonthStart && nextMonthStart <= dateRangeEnd;
+    });
 
     // Navigate to today - moves to the month containing today
+    // Works with or without timeline (uses fallback reference date when timeline is null)
     function navigateToToday() {
-        if (!timeline) {
-            console.log("[navigateToToday] No timeline");
-            return;
-        }
+        // Check for uninitialized or invalid range
+        if (dateRangeStart === dateRangeEnd && dateRangeStart === 0) return;
+        if (dateRangeEnd <= dateRangeStart) return;
         
-        const refDate = timeline.getReferenceDate();
+        const refDate = timeline ? timeline.getReferenceDate() : getFallbackReferenceDate();
         const today = new Date();
         const todayDay = getCalendarDayDiff(today, refDate);
         
@@ -3200,28 +3504,12 @@
         const todayMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
         const todayMonthStartDay = getCalendarDayDiff(todayMonthStart, refDate);
         
-        console.log("[navigateToToday] Navigating to:", {
-            today: formatDateString(today),
-            todayDay,
-            todayMonthStart: formatDateString(todayMonthStart),
-            todayMonthStartDay,
-            dateRangeStart,
-            dateRangeEnd
-        });
-        
         // Ensure we stay within the date range
         const targetDay = Math.max(dateRangeStart, Math.min(todayMonthStartDay, dateRangeEnd));
         const daysThatFit = calculateVisibleDays();
         
         visibleStartDay = targetDay;
         visibleEndDay = Math.min(targetDay + daysThatFit - 1, dateRangeEnd);
-        
-        console.log("[navigateToToday] After:", {
-            visibleStartDay,
-            visibleEndDay,
-            startDate: getDateFromDay(visibleStartDay).toISOString().split('T')[0],
-            endDate: getDateFromDay(visibleEndDay).toISOString().split('T')[0]
-        });
     }
 
     // Patient/staff navigation - tied together
@@ -3241,8 +3529,9 @@
     }
 
     // Get range slider value (0 to number of months - 1) - based on month positions
+    // Works with or without timeline (uses date range from database schedules)
     let rangeSliderValue = $derived.by(() => {
-        if (!timeline || dateRangeEnd === dateRangeStart) return 0;
+        if (dateRangeEnd === dateRangeStart) return 0;
         
         const monthStarts = getAllMonthStarts();
         if (monthStarts.length === 0) return 0;
@@ -3269,14 +3558,17 @@
     });
 
     // Get start/end month labels for range
+    // Works with or without timeline (uses date range from database schedules)
     let startMonthLabel = $derived.by(() => {
-        if (!timeline || dateRangeStart === dateRangeEnd) return "";
+        if (dateRangeStart === dateRangeEnd && dateRangeStart === 0) return "";
+        if (dateRangeEnd <= dateRangeStart) return "";
         const date = getDateFromDay(dateRangeStart);
         return `${getMonthAbbr(date)} ${date.getFullYear()}`;
     });
 
     let endMonthLabel = $derived.by(() => {
-        if (!timeline || dateRangeStart === dateRangeEnd) return "";
+        if (dateRangeStart === dateRangeEnd && dateRangeStart === 0) return "";
+        if (dateRangeEnd <= dateRangeStart) return "";
         const date = getDateFromDay(dateRangeEnd);
         return `${getMonthAbbr(date)} ${date.getFullYear()}`;
     });
@@ -3337,6 +3629,55 @@
         }
     });
     
+    // Check model validity when tab becomes active (e.g., after switching from Study Design tab)
+    // This allows the model error state to be refreshed after the user fixes or introduces design issues
+    async function checkModelValidity() {
+        if (!studyId || isLoading) return;
+        
+        try {
+            // Try to get the study configuration from the model manager
+            const unit = ModelManager.getInstance().getCurrentUnit();
+            if (unit && unit.freLanguageConcept?.() === 'StudyConfiguration') {
+                const loadedStudyConfig = unit as StudyConfiguration;
+                
+                // Try to create a timeline - this validates the model
+                const testTimeline = getTimelineAsOfADate(loadedStudyConfig, new Date(), undefined);
+                
+                // If we get here, the model is valid - clear any error
+                if (modelError) {
+                    console.log('[checkModelValidity] Model is now valid, clearing error');
+                }
+                modelError = null;
+                timeline = testTimeline;
+                studyConfig = loadedStudyConfig;
+            } else {
+                // No valid study configuration found
+                if (!modelError) {
+                    console.log('[checkModelValidity] No valid study configuration found');
+                    modelError = "config_not_found";
+                }
+            }
+        } catch (err) {
+            // Model has errors - set error state
+            const errMsg = err instanceof Error ? err.message : String(err);
+            console.log('[checkModelValidity] Model has errors:', errMsg);
+            modelError = "timeline_error";
+            timeline = null;
+        }
+    }
+    
+    // Track previous active state to detect tab switch
+    let wasActive = $state(false);
+    
+    // Check model validity when tab becomes active
+    $effect(() => {
+        if (active && !wasActive) {
+            // Tab just became active - check if model is now valid
+            console.log('[StudyPatients] Tab became active, checking model validity');
+            checkModelValidity();
+        }
+        wasActive = active;
+    });
     
     // Watch for drawer close to reload patients if needed
     // Using a derived value from the store to track open state
@@ -3358,8 +3699,48 @@
         previousDrawerOpen = drawerOpen;
     });
     
-    // Note: updateDateRangeFromSiteStart is kept for future use when staff timeline
-    // is moved to the facility view. For the patient timeline, we use studyReference date.
+    // Track whether we've already applied the site start date
+    let siteStartDateApplied = $state(false);
+    
+    // Update date range to use site start date when there are no patients
+    // This effect runs ONCE after loadStaffData sets the siteStartDate
+    $effect(() => {
+        if (siteStartDate && patients.length === 0 && !isLoading && !siteStartDateApplied) {
+            
+            // Mark as applied so this effect doesn't run again
+            siteStartDateApplied = true;
+            
+            // Parse site start date
+            const [year, month, day] = siteStartDate.split('-').map(Number);
+            const siteStart = new Date(year, month - 1, day);
+            siteStart.setHours(0, 0, 0, 0);
+            
+            // Calculate 1 year from today (upper limit)
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const oneYearFromToday = new Date(today);
+            oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() + 1);
+            
+            // Calculate date range using today as reference (since we don't have patients)
+            const refDate = today;
+            
+            // Start range at the first day of the month containing site start
+            const firstMonthStart = new Date(siteStart.getFullYear(), siteStart.getMonth(), 1);
+            const firstMonthStartDay = getCalendarDayDiff(firstMonthStart, refDate);
+            
+            // End range at the last day of the month containing one year from today
+            const lastMonthEnd = new Date(oneYearFromToday.getFullYear(), oneYearFromToday.getMonth() + 1, 0);
+            const lastMonthEndDay = getCalendarDayDiff(lastMonthEnd, refDate);
+            
+            dateRangeStart = firstMonthStartDay;
+            dateRangeEnd = lastMonthEndDay;
+            
+            // Update visible window
+            const daysThatFit = containerRef ? calculateVisibleDays() : 31;
+            visibleStartDay = firstMonthStartDay;
+            visibleEndDay = Math.min(visibleStartDay + daysThatFit - 1, dateRangeEnd);
+        }
+    });
 </script>
 
 <div class="timeline-chart-wrapper">
@@ -3374,7 +3755,13 @@
             <div class="error-container">
                 <p class="error-message">{error}</p>
             </div>
-        {:else if timeline}
+        {:else}
+            <!-- Model Error Warning Banner - shown when study design has issues but patients can still be displayed -->
+            {#if modelError}
+                <div class="timeline-error-toast">
+                    There is a study design issue, so the timelines are based on a previous stable model, please correct the design to see updates for patients.
+                </div>
+            {/if}
             <!-- Controls -->
             <div class="timeline-controls">
                 <div class="control-group">
@@ -3542,8 +3929,8 @@
                 onJumpToFirstVisit={handleJumpToFirstVisit}
                 onNavigatePrevious={navigatePrevious}
                 onNavigateNext={navigateNext}
-                canNavigatePrevious={visibleStartDay > dateRangeStart}
-                canNavigateNext={visibleEndDay < dateRangeEnd}
+                {canNavigatePrevious}
+                {canNavigateNext}
                 bind:quickFilter={patientQuickFilter}
                 onQuickFilterChange={handlePatientQuickFilterChange}
                 bind:hoveredPatientId
@@ -3604,6 +3991,7 @@
             unscheduledEvents={unscheduledEvents}
             scheduledEvents={popupScheduledEvents}
             anchorElement={popupAnchorElement}
+            modelError={popupModelError}
             on:apply={(e) => handlePopupApply(e.detail)}
             on:cancel={handlePopupCancel}
             on:availabilityChange={(e) => handleAvailabilityChange(e.detail)}
@@ -3631,8 +4019,8 @@
                 onDeleteStaff={handleDeleteStaff}
                 onNavigatePrevious={navigatePrevious}
                 onNavigateNext={navigateNext}
-                canNavigatePrevious={visibleStartDay > dateRangeStart}
-                canNavigateNext={visibleEndDay < dateRangeEnd}
+                {canNavigatePrevious}
+                {canNavigateNext}
                 bind:quickFilter={staffQuickFilter}
                 onQuickFilterChange={handleStaffQuickFilterChange}
                 bind:hoveredStaffId
@@ -3663,6 +4051,7 @@
             }}
             on:cancel={handleDeleteCancel}
         />
+        
     {/if}
     </div>
 

@@ -154,7 +154,7 @@
                     {#snippet content()}
                         <Tabs.Panel value="patients">
                             <div class="tab-panel-content">
-                                <StudyPatients studyId={study.id} />
+                                <StudyPatients studyId={study.id} active={activeTab === 'patients'} />
                             </div>
                         </Tabs.Panel>
                         <Tabs.Panel value="design">

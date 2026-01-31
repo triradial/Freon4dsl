@@ -2556,6 +2556,7 @@
         justify-content: center;
         height: 100%;
         gap: 16px;
+        color: var(--loading-text);
     }
 
     .spinner {
@@ -3991,6 +3992,80 @@
         color: var(--red-400);
     }
 
+    /* Timeline Error Toast - matches checklist-error-toast styling */
+    .timeline-error-toast {
+        width: fit-content;
+        flex-shrink: 0;
+        padding: 0.5rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 1rem;
+        font-size: var(--standard-font-size);
+        background-color: var(--checklist-error-bg);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--checklist-error-indicator);
+        color: var(--checklist-error-text);
+    }
+
+    /* Model Error Dialog - modal dialog shown when operations require the study design */
+    .model-error-dialog-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .model-error-dialog {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+        h3 {
+            margin: 0 0 0.75rem 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--amber-800);
+        }
+    }
+
+    .model-error-dialog-message {
+        margin: 0;
+        font-size: 0.9375rem;
+        color: var(--gray-700);
+        line-height: 1.5;
+    }
+
+    .model-error-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1.25rem;
+    }
+
+    .model-error-dialog-btn {
+        padding: 0.5rem 1.25rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        border: none;
+        transition: background-color 0.2s;
+
+        &.primary {
+            background-color: var(--amber-500);
+            color: white;
+
+            &:hover {
+                background-color: var(--amber-600);
+            }
+        }
+    }
+
     .timeline-controls {
         display: flex;
         gap: 1rem;
@@ -4654,10 +4729,15 @@
     
     // Disabled state for navigation buttons in timeline
     .nav-buttons-row .grid-button:disabled,
-    .nav-buttons-row .grid-button.general-button:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-        color: #888888;
+    .nav-buttons-row .grid-button.general-button:disabled,
+    .month-nav-buttons .grid-button:disabled,
+    .month-nav-buttons .grid-button.general-button:disabled,
+    .grid-button.nav-disabled,
+    .grid-button.general-button.nav-disabled {
+        opacity: 0.35 !important;
+        cursor: not-allowed !important;
+        color: #888888 !important;
+        pointer-events: none !important;
         
         &:hover {
             background-color: transparent !important;
@@ -5284,6 +5364,20 @@
       font-weight: 400;
       color: var(--popup-patient-id-text);
       white-space: nowrap;
+    }
+    
+    // Error message - shown when there's a study design issue
+    // Styled to match the timeline-error-toast banner
+    .popup-error-message {
+        margin-top: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        background-color: var(--checklist-error-bg);
+        border: 1px solid var(--checklist-error-indicator);
+        border-radius: 1rem;
+        color: var(--checklist-error-text);
+        font-size: var(--standard-font-size);
+        line-height: 1.4;
+        text-align: center;
     }
        
     // Separator line

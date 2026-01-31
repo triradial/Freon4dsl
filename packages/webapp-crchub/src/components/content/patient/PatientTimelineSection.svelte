@@ -206,10 +206,22 @@
             <!-- Month headers with navigation buttons -->
             <div class="month-headers-row with-nav">
                 <div class="month-nav-buttons">
-                    <button class="grid-button general-button" onclick={onNavigatePrevious} disabled={!canNavigatePrevious} aria-label="Previous month">
+                    <button 
+                        class="grid-button general-button" 
+                        class:nav-disabled={!canNavigatePrevious}
+                        onclick={onNavigatePrevious} 
+                        disabled={!canNavigatePrevious} 
+                        aria-label="Previous month"
+                    >
                         <IconChevronCircleLeft size={20} />
                     </button>
-                    <button class="grid-button general-button" onclick={onNavigateNext} disabled={!canNavigateNext} aria-label="Next month">
+                    <button 
+                        class="grid-button general-button" 
+                        class:nav-disabled={!canNavigateNext}
+                        onclick={onNavigateNext} 
+                        disabled={!canNavigateNext} 
+                        aria-label="Next month"
+                    >
                         <IconChevronCircleRight size={20} />
                     </button>
                 </div>
