@@ -38,7 +38,7 @@ class SimulationService {
         // Check cache first if not forcing refresh
 
         // During dev always want to force refresh MV 1/30/2026
-        //forceRefresh = true;
+        forceRefresh = true;
 
         if (!forceRefresh && this.cache.has(studyId)) {
             const cached = this.cache.get(studyId)!;

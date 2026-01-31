@@ -108,13 +108,13 @@ SystemAccessReference {
 
 AccessedAtURL {
     [
-        ${url wrap=UrlInputComponent}
+        ${url replace=UrlInputComponent}
     ] trigger = "Website Address"
 }
 
 AccessedAPhoneNumber {
     [
-        ${phoneNumber wrap=PhoneInputComponent}
+        ${phoneNumber replace=PhoneInputComponent}
     ] trigger = "Phone Number"
 }
 
@@ -124,7 +124,7 @@ AccessedAPhoneNumber {
 //     ] trigger = "Person"
 //     fragment personDetails [
 //         ${name}
-//         In role: ${role replace=CustomSelectComponent placeholder="role"} at ${email wrap=EmailInputComponent} or ${phoneNumber wrap=PhoneInputComponent}
+//         In role: ${role replace=CustomSelectComponent placeholder="role"} at ${email replace=EmailInputComponent} or ${phoneNumber replace=PhoneInputComponent}
 //         Notes: ${description}
 //     ]
 // }
@@ -132,7 +132,7 @@ AccessedAPhoneNumber {
 // Person {
 //     [
 //         ${name} in role: ${role replace=CustomSelectComponent placeholder="role"} 
-//         at ${email wrap=EmailInputComponent} or ${phoneNumber wrap=PhoneInputComponent} ${description}
+//         at ${email replace=EmailInputComponent} or ${phoneNumber replace=PhoneInputComponent} ${description}
 //     ] trigger = "Person"
 // }
 
@@ -143,7 +143,7 @@ Person {
     trigger = "Person"
     fragment personDetails [
         ${name} in role: ${role replace=CustomSelectComponent placeholder="role"}
-        at ${email wrap=EmailInputComponent} or ${phoneNumber wrap=PhoneInputComponent} ${description}
+        at ${email replace=EmailInputComponent} or ${phoneNumber replace=PhoneInputComponent} ${description}
     ]
 }
 
@@ -169,7 +169,7 @@ Reference {
     ]
     fragment referenceDetails [
         Reference: ${name}
-        Document is at: ${link wrap=UrlInputComponent}
+        Document is at: ${link replace=UrlInputComponent}
         ${description}
     ]
 }
@@ -194,8 +194,8 @@ WorkflowBranch {
 
 RobotMapping {
     [
-        From this Page: ${sourcePage wrap=UrlInputComponent}
-        To this Page    :   ${targetPage wrap=UrlInputComponent}        
+        From this Page: ${sourcePage replace=UrlInputComponent}
+        To this Page    :   ${targetPage replace=UrlInputComponent}        
         ${sourceToTargetMappings wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Map These fields"}
     ]
 

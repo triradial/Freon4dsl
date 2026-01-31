@@ -1,7 +1,11 @@
 <script lang="ts">
-    import { StringReplacerBox, AST } from "@freon4dsl/core";
+    import { AST, StringReplacerBox } from "@freon4dsl/core";
     import Envelope from "phosphor-svelte/lib/Envelope";
     import { onMount, tick } from "svelte";
+    import { debugStringPropertyLookup } from "../../services/dsl/string-property-lookup-debug.js";
+
+    /** Set to true to log when email is written to the model (for debugging checklist missing email). */
+    const DEBUG_EMAIL_INPUT = false;
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let theBox: StringReplacerBox | null = null;
@@ -24,6 +28,37 @@
     function normalizeForStorage(str: string): string {
         // Trim whitespace and convert to lowercase (standard email convention)
         return str.trim().toLowerCase();
+    }
+
+    /** Throws only when the box is bound to a known non-string type (number, boolean, etc.). Accepts "string", "unknown-type", and undefined (language may not expose type). */
+    function assertStringPropertyType(box: StringReplacerBox | null, componentName: string): void {
+        if (!box) return;
+        const b = box as { getPropertyType?(): string; propertyName?: string };
+        const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
+        const knownNonString = ["number", "boolean", "identifier"];
+        const isKnownNonString =
+            propType != null && (knownNonString.includes(propType) || /^[A-Z]/.test(propType));
+        if (isKnownNonString) {
+            throw new Error(
+                `${componentName}: binding type mismatch — property "${b.propertyName ?? "unknown"}" has type "${propType}" but this component expects "string". Check that the component is bound to a string property in the editor configuration.`,
+            );
+        }
+    }
+
+    /** Writes stored string to the box; uses setPropertyValue when type is "string", otherwise direct write so value persists when language reports unknown-type. */
+    function setStringValue(box: StringReplacerBox | null, stored: string): void {
+        if (!box) return;
+        const b = box as { getPropertyType?(): string; node?: unknown; propertyName?: string };
+        const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
+        // Always run debug when flag is on (so we see lookup/concept even when type is "string")
+        debugStringPropertyLookup("EmailInputComponent", b);
+        if (propType === "string") {
+            box.setPropertyValue(stored);
+        } else {
+            if (b.node != null && typeof b.propertyName === "string") {
+                (b.node as Record<string, string>)[b.propertyName] = stored;
+            }
+        }
     }
 
     function getValue() {
@@ -61,11 +96,13 @@
         // Only save if different from current value
         const currentBoxValue = theBox?.getPropertyValue();
         if (stored !== currentBoxValue) {
+            assertStringPropertyType(theBox, "EmailInputComponent");
+            if (DEBUG_EMAIL_INPUT && theBox) {
+                const node = (theBox as any).node;
+                console.log("[EmailInputComponent] endEditing: setting", (theBox as any).propertyName, "to", stored, "node:", node?.freId?.() ?? node);
+            }
             AST.changeNamed(`EmailInputComponent: Set ${theBox?.propertyName || 'property'} to ${stored}`, () => {
-                const setter: any = theBox as any;
-                if (setter && typeof setter.setPropertyValue === "function") {
-                    setter.setPropertyValue(stored);
-                }
+                setStringValue(theBox, stored);
             });
         }
 
@@ -114,11 +151,13 @@
         const stored = normalizeForStorage(raw);
 
         // Update property in real-time during editing
+        assertStringPropertyType(theBox, "EmailInputComponent");
+        if (DEBUG_EMAIL_INPUT && theBox) {
+            const node = (theBox as any).node;
+            console.log("[EmailInputComponent] onInputChange: setting", (theBox as any).propertyName, "to", stored, "node:", node?.freId?.() ?? node);
+        }
         AST.changeNamed(`EmailInputComponent: Update ${theBox?.propertyName || 'property'}`, () => {
-            const setter: any = theBox as any;
-            if (setter && typeof setter.setPropertyValue === "function") {
-                setter.setPropertyValue(stored);
-            }
+            setStringValue(theBox, stored);
         });
 
         if (isTouched && isValidEmail(stored)) {
@@ -221,11 +260,9 @@
                         // Keep it as-is during editing
                         value = raw;
                         const stored = normalizeForStorage(raw);
+                        assertStringPropertyType(theBox, "EmailInputComponent");
                         AST.changeNamed(`EmailInputComponent: Paste ${theBox?.propertyName || 'property'}`, () => {
-                            const setter: any = theBox as any;
-                            if (setter && typeof setter.setPropertyValue === "function") {
-                                setter.setPropertyValue(stored);
-                            }
+                            setStringValue(theBox, stored);
                         });
                     }, 0);
                 }}

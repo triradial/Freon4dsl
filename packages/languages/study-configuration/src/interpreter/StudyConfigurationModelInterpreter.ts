@@ -12,6 +12,15 @@ import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfiguration
 
 let main: IMainInterpreter;
 
+/** Set to true to enable interpreter debug logging. */
+const INTERPRETER_DEBUG_ENABLED = false;
+
+function interpreterLog(...args: unknown[]): void {
+  if (INTERPRETER_DEBUG_ENABLED) {
+    console.log(...args);
+  }
+}
+
 function calcTimeAmount(value: number, unit: string): RtObject {
     let unitAmount: number;
     // console.log("entered calcTimeAmount");
@@ -117,20 +126,20 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
     let owningEvent = ownerOfType(node, "Event") as language.Event;
     if (referencedEvent == undefined || referencedEvent == null) {
-        console.log("evalEventReference: referencedEvent is null/undefined for owningEvent");
+        interpreterLog("evalEventReference: referencedEvent is null/undefined for owningEvent");
         return undefined;
     }
     const referencedEventName = (referencedEvent as { name?: string; referred?: { name?: string } })?.name ?? (referencedEvent as { referred?: { name?: string } })?.referred?.name;
     const eventStateName = (eventState as { name?: string })?.name ?? (eventState as { referred?: { name?: string } })?.referred?.name;
-    console.log("evalEventReference: referencedEvent: " + referencedEventName);
-    console.log("evalEventReference: referencedEvent: eventState: " + eventStateName);
+    interpreterLog("evalEventReference: referencedEvent: " + referencedEventName);
+    interpreterLog("evalEventReference: referencedEvent: eventState: " + eventStateName);
     let lastInstanceOfReferencedEvent =
       timeline.getLastScheduledEventInstanceForThisEventsName(referencedEvent);
     if (
       lastInstanceOfReferencedEvent === null ||
       lastInstanceOfReferencedEvent === undefined
     ) {
-      console.log(
+      interpreterLog(
           "The event '" +
               "owningEvent.name" +
               "' reference to: '" +
@@ -158,7 +167,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
               numberOfReferencedEventCompleted >=
               owningScheduledEvent.numberOfRepeats(timeline) + 1
             ) {
-              console.log(
+              interpreterLog(
                 "The event '" +
                   (owningEvent as { name?: string })?.name +
                   "' has a each-completed reference to:'" +
@@ -166,7 +175,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
                   "' and the parallel repeating event hasn't completed yet so the expression containing it cannot yet be evaluated"
               );
             } else {
-              console.log(
+              interpreterLog(
                 "The event '" +
                   (owningEvent as { name?: string })?.name +
                   "' has a each-completed reference to:'" +
@@ -182,7 +191,7 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
               .getScheduledEvent()
               .anyRepeatsNotCompleted(timeline)
           ) {
-            console.log(
+            interpreterLog(
               "The event '" +
                 (owningEvent as { name?: string })?.name +
                 "' has a reference to:'" +
@@ -211,13 +220,13 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     const timeline = ctx.find("timeline") as unknown as Timeline;
     const lastCompletedEvent =
       timeline.getLastCompletedScheduledEventInstance();
-    console.log("evalPrevious: lastCompletedEvent: " + lastCompletedEvent?.startDay);
+    interpreterLog("evalPrevious: lastCompletedEvent: " + lastCompletedEvent?.startDay);
     if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
       const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
-      console.log("evalPrevious: timeAmount: " + timeAmount.value);
+      interpreterLog("evalPrevious: timeAmount: " + timeAmount.value);
       return new RtNumber(lastCompletedEvent.startDay + timeAmount.value);
     } else {
-      console.log("evalPrevious without time amount: lastCompletedEvent.startDay: " + lastCompletedEvent?.startDay);
+      interpreterLog("evalPrevious without time amount: lastCompletedEvent.startDay: " + lastCompletedEvent?.startDay);
       return new RtNumber(lastCompletedEvent?.startDay);
     }
   }

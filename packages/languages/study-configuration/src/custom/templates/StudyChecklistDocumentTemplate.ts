@@ -1,5 +1,5 @@
 import { Timeline } from "@freon4dsl/study-configuration/src/custom/timeline/Timeline.js";
-import { Period, StudyConfiguration, Task, TaskReference } from "@freon4dsl/study-configuration/src/language/gen/index.js";
+import { Period, Person, PersonReference, StudyConfiguration, Task, TaskReference } from "@freon4dsl/study-configuration/src/language/gen/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "@freon4dsl/study-configuration/src/writer/gen/StudyConfigurationModelModelUnitWriter.js";
 
 class MarkdownBuilder {
@@ -140,29 +140,89 @@ export class StudyChecklistDocumentTemplate {
     }
 
     static getReferencesAsMarkdown(references) {
-        console.log('references', references);
         if (!references || references.length === 0) return '';
         
         const builder = new MarkdownBuilder();
-        const items = references.map(reference => `${reference.title} ${reference.link}`);
+        const items = references.map(reference => {
+            const name = reference.name ?? '';
+            const link = typeof reference.link === 'string' ? reference.link : '';
+            const desc = typeof reference.description === 'string'
+                ? reference.description
+                : (reference.description?.text ?? reference.description?.rawText ?? '');
+            const parts = [name];
+            if (link) parts.push(`Document is at: ${link}`);
+            if (desc) parts.push(desc);
+            return parts.join(' — ');
+        });
         return builder.addList(items).build();
     }
 
     static getPeopleAsMarkdown(people) {
-        console.log('people', people);
         if (!people || people.length === 0) return '';
         
+        const DEBUG_PEOPLE = false; // set to true to log people data used for checklist (email, phone, description)
+        if (DEBUG_PEOPLE) {
+            console.log('[StudyChecklist getPeopleAsMarkdown] people count:', people?.length);
+        }
+
         const builder = new MarkdownBuilder();
-        const items = people.map(person => `${person.name} (${person.role}) ${person.email} ${person.phoneNumber}`);
+        const items = people
+            .map((person, index) => {
+                const actualPerson: Person | undefined = person instanceof PersonReference
+                    ? (person as PersonReference).person?.referred
+                    : (person as Person);
+                if (!actualPerson) {
+                    if (DEBUG_PEOPLE) console.log('[StudyChecklist getPeopleAsMarkdown] person', index, '— no actualPerson', { personKeys: person != null ? Object.keys(person as object) : null });
+                    return null;
+                }
+                const personName = actualPerson.name ?? '';
+                const role = actualPerson.role;
+                const roleName = role?.referred?.name ?? role?.name ?? '';
+                const email = actualPerson.email ?? '';
+                const phone = actualPerson.phoneNumber ?? '';
+                const descSource = actualPerson.description;
+                const desc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
+                const parts: string[] = [personName];
+                if (roleName) parts.push(`in role: ${roleName}`);
+                if (email || phone) parts.push('at ' + [email, phone].filter(Boolean).join(' or '));
+                if (desc) parts.push(desc);
+
+                if (DEBUG_PEOPLE) {
+                    const descObj = actualPerson.description as { text?: string; rawText?: string } | undefined;
+                    console.log('[StudyChecklist getPeopleAsMarkdown] person', index, 'actualPerson:', {
+                        name: actualPerson.name,
+                        email: actualPerson.email,
+                        phoneNumber: actualPerson.phoneNumber,
+                        description: actualPerson.description,
+                        descriptionType: typeof actualPerson.description,
+                        descText: descObj?.text,
+                        descRawText: descObj?.rawText,
+                        roleName: role?.referred?.name ?? (role as { name?: string })?.name,
+                        computed: { personName, email, phone, desc, roleName },
+                        output: parts.join(' — ')
+                    });
+                }
+                return parts.join(' — ');
+            })
+            .filter((item): item is string => item != null);
         return builder.addList(items).build();
     }
 
     static getSystemsAsMarkdown(systems) {
-        console.log('systems', systems);
         if (!systems || systems.length === 0) return '';
         
         const builder = new MarkdownBuilder();
-        const items = systems.map(system => `${system.name} (${system.accessedAt}) ${system.description}`);
+        const items = systems.map(system => {
+            const s = (system as any).system?.referred ?? (system as any).referred ?? system;
+            const name = s?.name ?? '';
+            const accessedAt = s?.accessedAt;
+            const accessedAtStr = typeof accessedAt === 'string' ? accessedAt : (accessedAt?.url ?? accessedAt?.phoneNumber ?? '');
+            const desc = typeof s?.description === 'string' ? s.description : (s?.description?.text ?? s?.description?.rawText ?? '');
+            const parts = [name];
+            if (accessedAtStr) parts.push(accessedAtStr);
+            if (desc) parts.push(desc);
+            return parts.join(' — ');
+        });
         return builder.addList(items).build();
     }
 
@@ -174,14 +234,13 @@ export class StudyChecklistDocumentTemplate {
      */
     private static renderStepAsMarkdown(builder: MarkdownBuilder, step: any, stepCounter: number): void {
         // Step heading with spacing and visual indicator
-        console.log('renderStepAsMarkdown step', step);
         builder.addHeading(4, `Step ${stepCounter + 1}: ${step.name}`);
-        if (step.description?.text) {
-            builder.addParagraph(step.description.text, true);
+        const stepDesc = step.description?.text ?? step.description?.rawText;
+        if (stepDesc) {
+            builder.addParagraph(stepDesc, true);
         }
 
-        console.log('step.references length', step.references.length, " references:", step.references);
-        if (step.references.length > 0) {
+        if (step.references?.length > 0) {
             builder.addParagraph("**REFERENCES**");
             const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
             if (referencesMarkdown) {
@@ -189,16 +248,14 @@ export class StudyChecklistDocumentTemplate {
             }
         }
 
-        console.log('step.people length', step.people.length, " people:", step.people);
-        if (step.people.length > 0) {
+        if (step.people?.length > 0) {
             builder.addParagraph("**PEOPLE**");
             const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
             if (peopleMarkdown) {
                 builder.addRaw(peopleMarkdown);
             }
         }
-        console.log('step.systems length', step.systems.length, " systems:", step.systems);
-        if (step.systems.length > 0) {
+        if (step.systems?.length > 0) {
             builder.addParagraph("**SYSTEMS**");
             const systemsMarkdown = StudyChecklistDocumentTemplate.getSystemsAsMarkdown(step.systems);
             if (systemsMarkdown) {
@@ -215,14 +272,14 @@ export class StudyChecklistDocumentTemplate {
      * @param taskPrefix Optional prefix for the task heading (e.g., emoji)
      */
     private static renderTaskAsMarkdown(builder: MarkdownBuilder, task: Task | TaskReference, taskCounter: number, taskPrefix: string = ""): void {
-        console.log('renderTaskAsMarkdown task', task);
         const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
         
         // Task heading with spacing and visual indicator
         builder.addHeading(3, `${taskPrefix}Task: ${t.name}`);
         
-        if (t.description?.text) {
-            builder.addParagraph(t.description.text, true);
+        const taskDesc = t.description?.text ?? t.description?.rawText;
+        if (taskDesc) {
+            builder.addParagraph(taskDesc, true);
         }
 
         t.steps.forEach((step, stepCounter) => {
@@ -256,8 +313,9 @@ export class StudyChecklistDocumentTemplate {
         // Event heading with spacing and visual indicator
         builder.addHeading(2, `${headingPrefix}${event.name}`);
         
-        if (event.description?.text) {
-            builder.addParagraph(event.description.text, true);
+        const eventDesc = event.description?.text ?? event.description?.rawText;
+        if (eventDesc) {
+            builder.addParagraph(eventDesc, true);
         }
 
         const schedulingInfo = [
@@ -270,9 +328,7 @@ export class StudyChecklistDocumentTemplate {
         
         builder.addParagraph(schedulingInfo.join(' '), true);
 
-        console.log('renderEventAsMarkdown event.tasks', event.tasks);
         event.tasks.forEach((task, taskCounter) => {
-            console.log('renderEventAsMarkdown event.tasks task', task);
             StudyChecklistDocumentTemplate.renderTaskAsMarkdown(builder, task, taskCounter, taskPrefix);
         });
     }

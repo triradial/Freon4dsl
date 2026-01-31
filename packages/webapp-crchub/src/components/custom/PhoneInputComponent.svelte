@@ -1,7 +1,11 @@
 <script lang="ts">
-    import { StringReplacerBox, AST } from "@freon4dsl/core";
+    import { AST, StringReplacerBox } from "@freon4dsl/core";
     import Phone from "phosphor-svelte/lib/Phone";
     import { onMount, tick } from "svelte";
+    import { debugStringPropertyLookup } from "../../services/dsl/string-property-lookup-debug.js";
+
+    /** Set to true to log when phone is written to the model (for debugging checklist missing phone). */
+    const DEBUG_PHONE_INPUT = false;
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let theBox: StringReplacerBox | null = null;
@@ -33,6 +37,36 @@
             digits = digits.slice(0, MAX_DIGITS);
         }
         return (hasPlus ? "+" : "") + digits;
+    }
+
+    /** Throws only when the box is bound to a known non-string type (number, boolean, etc.). Accepts "string", "unknown-type", and undefined (language may not expose type). */
+    function assertStringPropertyType(box: StringReplacerBox | null, componentName: string): void {
+        if (!box) return;
+        const b = box as { getPropertyType?(): string; propertyName?: string };
+        const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
+        const knownNonString = ["number", "boolean", "identifier"];
+        const isKnownNonString =
+            propType != null && (knownNonString.includes(propType) || /^[A-Z]/.test(propType));
+        if (isKnownNonString) {
+            throw new Error(
+                `${componentName}: binding type mismatch — property "${b.propertyName ?? "unknown"}" has type "${propType}" but this component expects "string". Check that the component is bound to a string property in the editor configuration.`,
+            );
+        }
+    }
+
+    /** Writes stored string to the box; uses setPropertyValue when type is "string", otherwise direct write so value persists when language reports unknown-type. */
+    function setStringValue(box: StringReplacerBox | null, stored: string): void {
+        if (!box) return;
+        const b = box as { getPropertyType?(): string; node?: unknown; propertyName?: string };
+        const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
+        if (propType === "string") {
+            box.setPropertyValue(stored);
+        } else {
+            debugStringPropertyLookup("PhoneInputComponent", b);
+            if (b.node != null && typeof b.propertyName === "string") {
+                (b.node as Record<string, string>)[b.propertyName] = stored;
+            }
+        }
     }
 
     // Minimal country code list for auto-detection; user can always confirm with a space
@@ -140,11 +174,13 @@
         // Only save if different from current value
         const currentBoxValue = theBox?.getPropertyValue();
         if (stored !== currentBoxValue) {
+            assertStringPropertyType(theBox, "PhoneInputComponent");
+            if (DEBUG_PHONE_INPUT && theBox) {
+                const node = (theBox as any).node;
+                console.log("[PhoneInputComponent] endEditing: setting", (theBox as any).propertyName, "to", stored, "node:", node?.freId?.() ?? node);
+            }
             AST.changeNamed(`PhoneInputComponent: Set ${theBox?.propertyName || 'property'} to ${stored}`, () => {
-                const setter: any = theBox as any;
-                if (setter && typeof setter.setPropertyValue === "function") {
-                    setter.setPropertyValue(stored);
-                }
+                setStringValue(theBox, stored);
             });
         }
 
@@ -195,11 +231,13 @@
         const stored = normalizeForStorage(raw);
 
         // Update property in real-time during editing
+        assertStringPropertyType(theBox, "PhoneInputComponent");
+        if (DEBUG_PHONE_INPUT && theBox) {
+            const node = (theBox as any).node;
+            console.log("[PhoneInputComponent] onInputChange: setting", (theBox as any).propertyName, "to", stored, "node:", node?.freId?.() ?? node);
+        }
         AST.changeNamed(`PhoneInputComponent: Update ${theBox?.propertyName || 'property'}`, () => {
-            const setter: any = theBox as any;
-            if (setter && typeof setter.setPropertyValue === "function") {
-                setter.setPropertyValue(stored);
-            }
+            setStringValue(theBox, stored);
         });
 
         if (isTouched && isValidPhone(stored)) {
@@ -303,11 +341,9 @@
                         // Keep it raw (unformatted) during editing
                         value = raw;
                         const stored = normalizeForStorage(raw);
+                        assertStringPropertyType(theBox, "PhoneInputComponent");
                         AST.changeNamed(`PhoneInputComponent: Paste ${theBox?.propertyName || 'property'}`, () => {
-                            const setter: any = theBox as any;
-                            if (setter && typeof setter.setPropertyValue === "function") {
-                                setter.setPropertyValue(stored);
-                            }
+                            setStringValue(theBox, stored);
                         });
                     }, 0);
                 }}
