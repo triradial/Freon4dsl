@@ -473,8 +473,17 @@ function createDataStore() {
         console.error(`getStudyPatientsWithSchedules failed: ${response.status} ${response.statusText}`, { url, studyId });
         throw new Error(`Failed to get study patients with schedules: ${response.status}`);
       }
-      const patients = await response.json();
-      return patients || [];
+      const patients: Patient[] = (await response.json()) || [];
+      // Order newest to oldest (creation date desc) for timeline display
+      patients.sort((a, b) => {
+        const da = typeof a.createdAt === "string" ? a.createdAt : "";
+        const db = typeof b.createdAt === "string" ? b.createdAt : "";
+        if (!da && !db) return 0;
+        if (!da) return 1;
+        if (!db) return -1;
+        return db.localeCompare(da);
+      });
+      return patients;
     } catch (error) {
       console.error('Error getting study patients with schedules:', error, { url, studyId });
       return [];

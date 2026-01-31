@@ -477,7 +477,65 @@ export class ModelManager {
     }
 
     selectElement(item: FreNode, propertyName?: string) {
+        console.group('[ModelManager] selectElement');
+        console.log('Input:', {
+            nodeType: item?.freLanguageConcept?.(),
+            nodeId: item?.freId?.(),
+            propertyName: propertyName
+        });
+        
+        // Check if editor exists
+        if (!this.langEnv?.editor) {
+            console.error('Editor not available');
+            console.groupEnd();
+            return;
+        }
+        
+        // Check if the editor has a rootElement
+        const rootElement = this.langEnv.editor.rootElement;
+        console.log('Editor state:', {
+            hasRootElement: !!rootElement,
+            rootElementType: rootElement?.freLanguageConcept?.(),
+            rootElementId: rootElement?.freId?.()
+        });
+        
+        // Check if projection exists
+        const projection = (this.langEnv.editor as any).projection;
+        console.log('Projection exists:', !!projection);
+        
+        // Try to get box for the node before selection
+        if (projection) {
+            const existingBox = projection.getBox?.(item);
+            console.log('Pre-selection box check:', {
+                boxExists: !!existingBox,
+                boxId: existingBox?.id,
+                boxRole: existingBox?.role
+            });
+        }
+        
+        // Try findBoxForNode
+        const foundBox = this.langEnv.editor.findBoxForNode?.(item, propertyName);
+        console.log('findBoxForNode result:', {
+            found: !!foundBox,
+            boxId: foundBox?.id,
+            boxRole: foundBox?.role,
+            boxKind: foundBox?.kind
+        });
+        
+        console.log('Calling editor.selectElement...');
         this.langEnv.editor.selectElement(item, propertyName);
+        
+        // Check what got selected
+        const selectedBox = (this.langEnv.editor as any)._selectedBox;
+        const selectedElement = (this.langEnv.editor as any)._selectedElement;
+        console.log('After selection:', {
+            selectedBoxId: selectedBox?.id,
+            selectedBoxRole: selectedBox?.role,
+            selectedElementType: selectedElement?.freLanguageConcept?.(),
+            selectedElementId: selectedElement?.freId?.()
+        });
+        
+        console.groupEnd();
     }
 
     runValidator(): FreError[] {

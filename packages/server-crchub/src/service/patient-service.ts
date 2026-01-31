@@ -509,13 +509,14 @@ export async function getStudyPatientsWithSchedules(studyId: string): Promise<Ar
             p.patient_attributes as attributes,
             p.availability as availability,
             p.schedule as schedule,
+            p.created_at as "createdAt",
             st.study_id as "studyId",
             st.name as study
          FROM patient p
          JOIN site s ON p.site_id = s.site_id
          JOIN study st ON s.study_id = st.study_id
          WHERE st.study_id = $1
-         ORDER BY p.created_at DESC`,
+         ORDER BY p.created_at DESC NULLS LAST, p.patient_id DESC`,
         [studyId]
     );
 
@@ -534,7 +535,8 @@ export async function getStudyPatientsWithSchedules(studyId: string): Promise<Ar
             study: row.study,
             schedule: row.schedule || null,
             unavailableDates: availability.unavailable || [],
-            ...cleanAttributes
+            ...cleanAttributes,
+            createdAt: row.createdAt != null ? (row.createdAt instanceof Date ? row.createdAt.toISOString() : String(row.createdAt)) : undefined
         };
     });
 }
