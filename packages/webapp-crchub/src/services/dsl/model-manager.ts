@@ -1,7 +1,7 @@
 // This file contains all methods to connect the webapp to the Freon generated language editorEnvironment and to the server that stores the models
 import type { FreEnvironment, FreModel, FreModelUnit, FreNode, FreOwnerDescriptor, InMemoryError, IServerCommunication } from "@freon4dsl/core";
 import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMemoryModel } from "@freon4dsl/core";
-import { Event, Period, StudyConfiguration, Task } from "@freon4dsl/study-configuration";
+import { Day, Event, EventSchedule, Period, StudyConfiguration, Task } from "@freon4dsl/study-configuration";
 import { runInAction } from "mobx";
 import { editorProgressShown, setCurrentModelName, setCurrentUnitName, unitNames, units, updateEditorState, updateModelState, updateUnitLists } from "./model-store.js";
 import { setUserMessage } from "./usermessage-store.js";
@@ -418,7 +418,9 @@ export class ModelManager {
             await this.createModelUnit("StudyConfiguration", "StudyConfiguration");
             const studyConfigUnit: StudyConfiguration = this.modelStore.getUnitByName("StudyConfiguration") as StudyConfiguration;
             studyConfigUnit.periods.push(Period.create(Period.create({ name: "Screening" })));
-            studyConfigUnit.periods[0].events.push(Event.create({ name: "Screen" }));
+            const screeningEvent = Event.create({ name: "Screen" });
+            screeningEvent.schedule = EventSchedule.create({ eventStart: Day.create({ startDay: 0 })});
+            studyConfigUnit.periods[0].events.push(screeningEvent);
             studyConfigUnit.periods[0].events[0].tasks.push(Task.create({ name: "Task 1" }));
             await this.saveCurrentUnit();
 

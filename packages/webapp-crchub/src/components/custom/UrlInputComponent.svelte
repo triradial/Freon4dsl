@@ -5,6 +5,7 @@
 // @ts-ignore
     import { ExternalLink } from "@lucide/svelte";
     import { onMount, tick } from "svelte";
+    import { debugStringPropertyLookup } from "../../services/dsl/string-property-lookup-debug.js";
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let theBox: StringReplacerBox | null = null;
@@ -31,6 +32,36 @@
     function normalizeForStorage(str: string): string {
         // Trim whitespace for URLs
         return str.trim();
+    }
+
+    /** Throws only when the box is bound to a known non-string type (number, boolean, etc.). Accepts "string", "unknown-type", and undefined (language may not expose type). */
+    function assertStringPropertyType(box: StringReplacerBox | null, componentName: string): void {
+        if (!box) return;
+        const b = box as { getPropertyType?(): string; propertyName?: string };
+        const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
+        const knownNonString = ["number", "boolean", "identifier"];
+        const isKnownNonString =
+            propType != null && (knownNonString.includes(propType) || /^[A-Z]/.test(propType));
+        if (isKnownNonString) {
+            throw new Error(
+                `${componentName}: binding type mismatch — property "${b.propertyName ?? "unknown"}" has type "${propType}" but this component expects "string". Check that the component is bound to a string property in the editor configuration.`,
+            );
+        }
+    }
+
+    /** Writes stored string to the box; uses setPropertyValue when type is "string", otherwise direct write so value persists when language reports unknown-type. */
+    function setStringValue(box: StringReplacerBox | null, stored: string): void {
+        if (!box) return;
+        const b = box as { getPropertyType?(): string; node?: unknown; propertyName?: string };
+        const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
+        if (propType === "string") {
+            box.setPropertyValue(stored);
+        } else {
+            debugStringPropertyLookup("UrlInputComponent", b);
+            if (b.node != null && typeof b.propertyName === "string") {
+                (b.node as Record<string, string>)[b.propertyName] = stored;
+            }
+        }
     }
 
     function getValue() {
@@ -68,11 +99,9 @@
         // Only save if different from current value
         const currentBoxValue = theBox?.getPropertyValue();
         if (stored !== currentBoxValue) {
+            assertStringPropertyType(theBox, "UrlInputComponent");
             AST.changeNamed(`UrlInputComponent: Set ${theBox?.propertyName || 'property'} to ${stored}`, () => {
-                const setter: any = theBox as any;
-                if (setter && typeof setter.setPropertyValue === "function") {
-                    setter.setPropertyValue(stored);
-                }
+                setStringValue(theBox, stored);
             });
         }
 
@@ -121,11 +150,9 @@
         const stored = normalizeForStorage(raw);
 
         // Update property in real-time during editing
+        assertStringPropertyType(theBox, "UrlInputComponent");
         AST.changeNamed(`UrlInputComponent: Update ${theBox?.propertyName || 'property'}`, () => {
-            const setter: any = theBox as any;
-            if (setter && typeof setter.setPropertyValue === "function") {
-                setter.setPropertyValue(stored);
-            }
+            setStringValue(theBox, stored);
         });
 
         if (isTouched && isValidUrl(stored)) {
@@ -334,11 +361,9 @@
                         // Keep it as-is during editing
                         value = raw;
                         const stored = normalizeForStorage(raw);
+                        assertStringPropertyType(theBox, "UrlInputComponent");
                         AST.changeNamed(`UrlInputComponent: Paste ${theBox?.propertyName || 'property'}`, () => {
-                            const setter: any = theBox as any;
-                            if (setter && typeof setter.setPropertyValue === "function") {
-                                setter.setPropertyValue(stored);
-                            }
+                            setStringValue(theBox, stored);
                         });
                     }, 0);
                 }}
