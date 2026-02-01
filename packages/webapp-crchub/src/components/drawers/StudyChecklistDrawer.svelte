@@ -336,6 +336,12 @@
         font-family: var(--font-family-sans);
         line-height: 1.6;
     }
+
+    .study-checklist-content :global(li),
+    .study-checklist-content :global(li p) {
+        font-size: var(--standard-font-size);
+        color: var(--checklist-text);
+    }
     
     /* .study-checklist-content h1,
     .study-checklist-content h2,

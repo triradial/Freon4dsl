@@ -211,4 +211,9 @@
         margin-bottom: 0.75rem;
         padding-left: 1.5rem;
     }
+    .study-checklist-content :global(li),
+    .study-checklist-content :global(li p) {
+        font-size: var(--standard-font-size);
+        color: var(--checklist-text);
+    }
 </style>

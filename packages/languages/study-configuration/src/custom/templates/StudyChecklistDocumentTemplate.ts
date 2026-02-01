@@ -104,6 +104,20 @@ class MarkdownBuilder {
 }
 
 export class StudyChecklistDocumentTemplate {
+    private static indentMultilineHtml(html: string): string {
+        return html.replace(/\r?\n/g, '\n  ');
+    }
+
+    private static formatPhoneNumber(raw: string): string {
+        const digits = raw.replace(/\D/g, '');
+        if (digits.length === 10) {
+            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+        }
+        if (digits.length === 11 && digits.startsWith('1')) {
+            return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
+        }
+        return raw;
+    }
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
         const builder = new MarkdownBuilder();
         
@@ -149,13 +163,15 @@ export class StudyChecklistDocumentTemplate {
             const desc = typeof reference.description === 'string'
                 ? reference.description
                 : (reference.description?.text ?? reference.description?.rawText ?? '');
-            const linkPart = link ? ` (link: [${link}](${link}))` : '';
-            const title = name ? `${name}${linkPart}` : linkPart.replace(/^ \(/, '(');
-            if (title) {
-                lines.push(`- ${title}`);
+            const linkPart = link ? ` ([${link}](${link}))` : '';
+            if (name) {
+                lines.push(`- **${name}**${linkPart}`);
+            } else if (linkPart) {
+                lines.push(`- ${linkPart.replace(/^ \(/, '(')}`);
             }
             if (desc) {
-                lines.push(`  ${desc}`);
+                const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
+                lines.push(`  <div class="checklist-subtext">${indentedDesc}</div>`);
             }
         });
         return lines.length ? `${lines.join('\n')}\n` : '';
@@ -186,9 +202,9 @@ export class StudyChecklistDocumentTemplate {
             const descSource = actualPerson.description;
             const desc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
             const metaParts: string[] = [];
-            if (roleName) metaParts.push(`Role: ${roleName}`);
-            if (email) metaParts.push(`Email: ${email}`);
-            if (phone) metaParts.push(`Phone: ${phone}`);
+            // Role displayed in name line
+            if (email) metaParts.push(`${email}`);
+            if (phone) metaParts.push(`${StudyChecklistDocumentTemplate.formatPhoneNumber(phone)}`);
 
             if (DEBUG_PEOPLE) {
                 const descObj = actualPerson.description as { text?: string; rawText?: string } | undefined;
@@ -206,15 +222,18 @@ export class StudyChecklistDocumentTemplate {
                 });
             }
             if (personName) {
-                lines.push(`- ${personName}`);
+                const nameWithRole = roleName ? `${personName} (${roleName})` : personName;
+                lines.push(`- **${nameWithRole}**`);
             } else if (metaParts.length > 0) {
-                lines.push(`- ${metaParts.join('; ')}`);
+                lines.push(`- **${metaParts[0]}**`);
+                metaParts.shift();
             }
-            if (metaParts.length > 0) {
-                lines.push(`  ${metaParts.join('; ')}`);
-            }
+            metaParts.forEach(part => {
+                lines.push(`  - ${part}`);
+            });
             if (desc) {
-                lines.push(`  ${desc}`);
+                const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
+                lines.push(`  <div class="checklist-subtext">${indentedDesc}</div>`);
             }
         });
         return lines.length ? `${lines.join('\n')}\n` : '';
@@ -228,19 +247,21 @@ export class StudyChecklistDocumentTemplate {
             const s = (system as any).system?.referred ?? (system as any).referred ?? system;
             const name = s?.name ?? '';
             const accessedAt = s?.accessedAt;
-            const accessedAtStr = typeof accessedAt === 'string' ? accessedAt : (accessedAt?.url ?? accessedAt?.phoneNumber ?? '');
+            const accessedUrl = typeof accessedAt === 'string' ? accessedAt : accessedAt?.url ?? '';
+            const accessedPhone = typeof accessedAt === 'string' ? '' : (accessedAt?.phoneNumber ?? '');
             const desc = typeof s?.description === 'string' ? s.description : (s?.description?.text ?? s?.description?.rawText ?? '');
-            const accessPart = accessedAtStr ? `Access: ${accessedAtStr}` : '';
+            const urlPart = accessedUrl ? `([${accessedUrl}](${accessedUrl}))` : '';
+            const phonePart = accessedPhone ? `${StudyChecklistDocumentTemplate.formatPhoneNumber(accessedPhone)}` : '';
+            const accessParts = [urlPart, phonePart].filter(Boolean);
+            const accessPart = accessParts.length > 0 ? ` ${accessParts.join(' ')}` : '';
             if (name) {
-                lines.push(`- ${name}`);
+                lines.push(`- **${name}**${accessPart}`);
             } else if (accessPart) {
-                lines.push(`- ${accessPart}`);
-            }
-            if (accessPart) {
-                lines.push(`  ${accessPart}`);
+                lines.push(`- ${accessPart.trim()}`);
             }
             if (desc) {
-                lines.push(`  ${desc}`);
+                const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
+                lines.push(`  <div class="checklist-subtext">${indentedDesc}</div>`);
             }
         });
         return lines.length ? `${lines.join('\n')}\n` : '';
@@ -261,7 +282,8 @@ export class StudyChecklistDocumentTemplate {
         }
 
         if (step.references?.length > 0) {
-            builder.addParagraph("**REFERENCES**");
+            builder.addRaw('<p class="checklist-group-label">REFERENCES</p>');
+            builder.addEmptyLine();
             const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
             if (referencesMarkdown) {
                 builder.addRaw(referencesMarkdown);
@@ -269,14 +291,16 @@ export class StudyChecklistDocumentTemplate {
         }
 
         if (step.people?.length > 0) {
-            builder.addParagraph("**PEOPLE**");
+            builder.addRaw('<p class="checklist-group-label">PEOPLE</p>');
+            builder.addEmptyLine();
             const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
             if (peopleMarkdown) {
                 builder.addRaw(peopleMarkdown);
             }
         }
         if (step.systems?.length > 0) {
-            builder.addParagraph("**SYSTEMS**");
+            builder.addRaw('<p class="checklist-group-label">SYSTEMS</p>');
+            builder.addEmptyLine();
             const systemsMarkdown = StudyChecklistDocumentTemplate.getSystemsAsMarkdown(step.systems);
             if (systemsMarkdown) {
                 builder.addRaw(systemsMarkdown);
@@ -435,7 +459,7 @@ export class StudyChecklistDocumentTemplate {
             const level = headingMatch[1].length;
             const title = headingMatch[2];
             const id = StudyChecklistDocumentTemplate.slugifyHeading(title);
-            const indent = '  '.repeat(Math.max(0, level - 1));
+            const indent = '    '.repeat(Math.max(0, level - 1));
             tocLines.push(`${indent}1. [${title}](#${id})`);
         }
 

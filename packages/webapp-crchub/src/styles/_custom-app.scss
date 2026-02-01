@@ -3843,6 +3843,23 @@
     }
     li {
       margin-bottom: 0.5rem;
+      font-size: var(--standard-font-size);
+      color: var(--checklist-text);
+    }
+    li p {
+      margin: 0;
+      font-size: var(--standard-font-size);
+      color: var(--checklist-text);
+    }
+    .checklist-subtext {
+      margin-left: 1rem;
+    }
+    .checklist-group-label {
+      font-size: var(--large-font-size);
+      font-weight: 600;
+      color: var(--checklist-text);
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
     }
   }
 
