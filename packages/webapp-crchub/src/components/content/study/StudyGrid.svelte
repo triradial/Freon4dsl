@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { dataStore } from "../../../services/data/data-store.js";
+    import { dataStore, type Study } from "../../../services/data/data-store.js";
     import { editObject, addObject } from "../../../services/stores/object-drawer-store.js";
     import { onMount, onDestroy, tick } from "svelte";
     import { mount, unmount } from "svelte";
@@ -10,19 +10,16 @@
     import { theme } from "../../../services/stores/theme-store.js";
     import GridHeader from "../../common/GridHeader.svelte";
     import { getSVGIcon } from "../../../services/utils.js";
-    import DeleteObjectDialog from "../../dialogs/DeleteObjectDialog.svelte";
     import SaveViewDialog from "../../dialogs/SaveViewDialog.svelte";
     import { userStore } from "../../../services/stores/users-store.js";
     import { adminModeStore } from "../../../services/stores/admin-mode-store.js";
     import { untrack } from "svelte";
     // @ts-ignore
-    import { Plus as IconPlus, RefreshCcw as IconRefresh, EllipsisVertical as IconEllipsisVertical } from '@lucide/svelte';
+    import { Plus as IconPlus, RefreshCcw as IconRefresh } from '@lucide/svelte';
     import type { SelectOption } from '@freon4dsl/core';
     import ConfirmUnsavedDialog from '../../dialogs/ConfirmUnsavedDialog.svelte';
     import StudyNameCell from "./StudyNameCell.svelte";
 
-    let deleteDialogOpen = $state(false);
-    let objectToDelete = $state<any>(null);
 
     let gridOptions: GridOptions;
     let gridApi: GridApi;
@@ -95,6 +92,12 @@
     
     // Quick filter state
     let filterValue = $state("");
+    
+    // Delete confirmation popover state
+    let deleteConfirmInstance: any = null;
+    let deleteConfirmContainer: HTMLDivElement | null = null;
+    let deleteConfirmTriggerElement: HTMLElement | null = null;
+    let deleteConfirmStudyData: Study | null = null;
 
     $effect(() => {
         // keep the gridApi and studiesData in scope
@@ -632,14 +635,6 @@
         navigateTo("study", studyId);
     }
 
-    function onDeleteClick(studyData: any) {
-        console.log("Delete clicked for study:", studyData);
-        objectToDelete = studyData;
-        if (objectToDelete) {
-            deleteDialogOpen = true;
-        }
-    }
-
     function onEditClick(studyData: any) {
         editObject("study", studyData);
         fetchStudies();
@@ -647,6 +642,71 @@
 
     function onStudyChanged() {
         fetchStudies();
+    }
+
+    // Delete study confirmation handlers
+    async function handleDeleteStudy(studyData: Study, triggerElement: HTMLElement) {
+        if (!studyData?.id) return;
+        // Close any existing delete confirm popover
+        handleDeleteStudyCancel();
+        
+        // Store study data and trigger element
+        deleteConfirmStudyData = studyData;
+        deleteConfirmTriggerElement = triggerElement;
+        
+        // Create container and mount component
+        deleteConfirmContainer = document.createElement('div');
+        document.body.appendChild(deleteConfirmContainer);
+        
+        // Dynamic import to avoid module loading issues
+        const { default: DeleteConfirmPopover } = await import("../../popovers/DeleteConfirmPopover.svelte");
+        
+        deleteConfirmInstance = mount(DeleteConfirmPopover, {
+            target: deleteConfirmContainer,
+            props: {
+                open: true,
+                triggerElement: deleteConfirmTriggerElement,
+                itemName: studyData.name || '',
+                itemType: 'study',
+                onClose: handleDeleteStudyCancel,
+                onConfirm: handleDeleteStudyConfirm
+            }
+        });
+    }
+    
+    function handleDeleteStudyCancel() {
+        if (deleteConfirmInstance) {
+            try {
+                unmount(deleteConfirmInstance);
+            } catch (e) {
+                console.warn('[StudyGrid] Error unmounting delete confirm popover:', e);
+            }
+            deleteConfirmInstance = null;
+        }
+        if (deleteConfirmContainer && deleteConfirmContainer.parentNode) {
+            deleteConfirmContainer.parentNode.removeChild(deleteConfirmContainer);
+            deleteConfirmContainer = null;
+        }
+        deleteConfirmStudyData = null;
+        deleteConfirmTriggerElement = null;
+    }
+    
+    async function handleDeleteStudyConfirm() {
+        if (!deleteConfirmStudyData?.id) {
+            handleDeleteStudyCancel();
+            return;
+        }
+        
+        try {
+            const success = await dataStore.deleteStudy(deleteConfirmStudyData.id);
+            handleDeleteStudyCancel();
+            if (success) {
+                await fetchStudies(); // Reload data after deletion
+            }
+        } catch (error) {
+            console.error('[StudyGrid] Error deleting study:', error);
+            handleDeleteStudyCancel();
+        }
     }
 
     // Store component instances for cleanup
@@ -662,7 +722,7 @@
             props: {
                 params: params,
                 onEdit: onEditClick,
-                onDelete: onDeleteClick
+                onDelete: (studyData: Study, triggerElement: HTMLElement) => handleDeleteStudy(studyData, triggerElement)
             }
         });
         
@@ -775,44 +835,9 @@
         <IconRefresh size={16} />
     </button>
   </div>
-  <div class="right-side">
-    <div class="view-controls" style="position: relative; display: inline-block;">
-      <select id="view-select" bind:value={selectedView} onchange={onViewSelect} class="view-select">
-        {#each viewOptions as option}
-          <option value={option.id}>{option.label}</option>
-        {/each}
-      </select>
-      <button type="button" class="icon-button save-view-button" onclick={openMenu} disabled={selectedView === 'default' && !hasUnsavedChanges} title="View options">
-        <IconEllipsisVertical size={18} />
-      </button>
-    </div>
-    {#if showMenu}
-      <div bind:this={menuRef} class="menu-popup-dropdown">
-        {#if selectedView !== 'default'}
-          <button class="menu-item" onclick={handleSave}>Save</button>
-          <button class="menu-item" onclick={handleSaveAs}>Save As</button>
-          <button class="menu-item" onclick={handleDelete}>Delete</button>
-        {:else if hasUnsavedChanges}
-          <button class="menu-item" onclick={handleSaveAs}>Save As</button>
-        {/if}
-      </div>
-    {/if}
-  </div>
 </div>
 
 <div id="studyGrid" class="{gridTheme} ag-grid"></div>
-
-<DeleteObjectDialog open={deleteDialogOpen} objectType="study" object={objectToDelete}
-    on:delete={() => {
-        onStudyChanged();
-        deleteDialogOpen = false;
-        objectToDelete = null;
-    }}
-    on:cancel={() => {
-        deleteDialogOpen = false;
-        objectToDelete = null;
-    }}
-/>
 <SaveViewDialog
     open={saveDialogOpen}
     onsave={handleSaveView}
@@ -825,51 +850,5 @@
 />
 
 <style>
-.menu-popup-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 10px;
-    margin-right: 4px;
-    background: var(--dropdown-bg, #23272f);
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    padding: 8px 0;
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-    transform: translateY(4px);
-}
-.menu-item {
-    background: none;
-    border: none;
-    color: var(--dropdown-fg, #fff);
-    text-align: left;
-    padding: 10px 20px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.15s;
-}
-.menu-item:hover {
-    background: var(--dropdown-hover, #2a2e38);
-}
-.save-view-button {
-    background: var(--button-bg, #2a2e38);
-    color: var(--button-fg, #fff);
-    border: 1px solid var(--button-border, #3a3f4b);
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-weight: 500;
-    transition: background 0.15s, color 0.15s, border 0.15s;
-}
-.save-view-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-.save-view-button:hover:not(:disabled), .save-view-button:focus:not(:disabled) {
-    background: var(--button-hover-bg, #3a3f4b);
-    color: var(--button-hover-fg, #fff);
-    border-color: var(--button-hover-border, #4a4f5b);
-}
 </style>
 

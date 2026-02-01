@@ -37,10 +37,6 @@
         staffLabelsScrollRef = $bindable<HTMLElement | null>(null),
         staffRowsScrollRef = $bindable<HTMLElement | null>(null),
         onStaffScroll,
-        deletePopupStaffId = null,
-        deletePopupRowIndex = -1,
-        onConfirmDelete,
-        onCancelDelete,
         quickFilter = $bindable(''),
         onQuickFilterChange
     } = $props<{
@@ -59,7 +55,7 @@
         onAddStaff: () => void;
         onRefreshStaff: () => void;
         onEditStaff: (staffId: string) => void;
-        onDeleteStaff: (staffId: string) => void;
+        onDeleteStaff: (staffId: string, triggerElement: HTMLElement) => void;
         onNavigatePrevious: () => void;
         onNavigateNext: () => void;
         canNavigatePrevious: boolean;
@@ -68,10 +64,6 @@
         staffLabelsScrollRef?: HTMLElement | null;
         staffRowsScrollRef?: HTMLElement | null;
         onStaffScroll?: (source: 'labels' | 'rows') => void;
-        deletePopupStaffId?: string | null;
-        deletePopupRowIndex?: number;
-        onConfirmDelete?: (staffId: string) => void;
-        onCancelDelete?: () => void;
         quickFilter?: string;
         onQuickFilterChange?: (value: string) => void;
     }>();
@@ -176,15 +168,15 @@
                 <div class="staff-labels-column">
                     {#each visibleStaff as staffMember}
                         <!-- svelte-ignore a11y_no_static_element_interactions -->
-                        <div class="row-label-container" onmouseenter={() => { if (deletePopupStaffId !== staffMember.id) hoveredStaffId = staffMember.id; }} onmouseleave={() => { if (deletePopupStaffId !== staffMember.id) hoveredStaffId = null; }}>
+                        <div class="row-label-container" onmouseenter={() => hoveredStaffId = staffMember.id} onmouseleave={() => hoveredStaffId = null}>
                             <div class="row-left-content">
                                 <span class="row-label-text">{staffMember.name}</span>
-                                {#if hoveredStaffId === staffMember.id && deletePopupStaffId !== staffMember.id}
+                                {#if hoveredStaffId === staffMember.id}
                                     <div class="row-actions">
                                         <button class="grid-button general-button" onclick={() => onEditStaff(staffMember.id)} title="Edit Staff" aria-label="Edit Staff">
                                             <IconPencil size={14} />
                                         </button>
-                                        <button class="grid-button delete-button"  onclick={() => onDeleteStaff(staffMember.id)} title="Delete Staff" aria-label="Delete Staff">
+                                        <button class="grid-button delete-button" onclick={(e) => onDeleteStaff(staffMember.id, e.currentTarget as HTMLElement)} title="Delete Staff" aria-label="Delete Staff">
                                             <IconTrash size={14} />
                                         </button>
                                     </div>
@@ -280,22 +272,6 @@
                 {/each}
             </div>
         </div>
-        
-        <!-- Delete confirmation popup overlay -->
-        {#if deletePopupStaffId && deletePopupRowIndex !== undefined && deletePopupRowIndex >= 0}
-            {@const staffMember = visibleStaff.find(s => s.id === deletePopupStaffId)}
-            {@const scrollOffset = staffLabelsScrollRef?.scrollTop || 0}
-            {@const rowTop = deletePopupRowIndex * 40 - scrollOffset}
-            <div class="delete-popup-overlay" style="top: calc(5rem + {rowTop}px);">
-                <div class="inline-delete-popup">
-                    <span class="delete-popup-patient">{staffMember?.name || ''}</span>
-                    <span class="delete-popup-separator">|</span>
-                    <span class="delete-popup-text">Delete staff member?</span>
-                    <button class="delete-popup-btn keep" onclick={() => onCancelDelete?.()}>No, keep</button>
-                    <button class="delete-popup-btn delete" onclick={() => onConfirmDelete?.(deletePopupStaffId!)}>Yes, delete</button>
-                </div>
-            </div>
-        {/if}
     </div>
 </div>
 

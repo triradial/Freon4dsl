@@ -48,10 +48,16 @@ import TimelineLogger from "./TimelineLogger.js";
 
     // Find all the events with First-Scheduled on just a specific day and schedule them.
     scheduleEventsOnSpecificDays() {
+      console.log("[Scheduler] scheduleEventsOnSpecificDays called");
       let eventsScheduledOnASpecificDay = this.getScheduledStudyConfiguration().getEventsScheduledOnASpecificDay();
+      console.log("[Scheduler] Events scheduled on specific days:", eventsScheduledOnASpecificDay.length, 
+        eventsScheduledOnASpecificDay.map(e => e.getName()));
+      
       for (let scheduledEvent of eventsScheduledOnASpecificDay) {
+        console.log("[Scheduler] Processing event:", scheduledEvent.getName());
         let timeline = this.getTimeline();
         let daysToWait = scheduledEvent.day(timeline, this.time());
+        console.log("[Scheduler] daysToWait for", scheduledEvent.getName(), "=", daysToWait);
         timeline.setCurrentDay(this.time())
         let scheduledEventInstance = timeline.newScheduledEventInstance(scheduledEvent, this.time() + daysToWait);
         this.#scheduleEvent('Scheduling Specific Day Event', scheduledEventInstance, timeline, daysToWait);
@@ -73,14 +79,20 @@ import TimelineLogger from "./TimelineLogger.js";
     eventCompleted(completedEvent) {
       // Complete the event
       TimelineLogger.log("Completed Event:'" + completedEvent.getName() + "' at time: " + this.time());
+      console.log("[Scheduler] eventCompleted:", completedEvent.getName(), "at time:", this.time());
       let timeline = this.getTimeline();
       completedEvent.endDay = this.time();
       timeline.setCompleted(completedEvent);
       timeline.setCurrentDay(this.time())
       timeline.addEvent(completedEvent); // This should not be needed because it was added in eventStarted()
+      
+      // Debug: Check what's on the timeline now
+      console.log("[Scheduler] Timeline now has", timeline.getDays().length, "days. Events on timeline:", 
+        timeline.getDays().flatMap(d => d.events.map(e => e.getName())));
 
       // Schedule events that are ready as a result of the completion of the event.
       let readyScheduledEvents = this.getScheduledStudyConfiguration().getEventsReadyToBeScheduled(completedEvent, this.time(), timeline);
+      console.log("[Scheduler] Found", readyScheduledEvents.length, "events ready to be scheduled");
       if (readyScheduledEvents.length === 0) {
           TimelineLogger.log('No Events to Schedule');
           if (this.getScheduledStudyConfiguration().allEventsCompleted()) {

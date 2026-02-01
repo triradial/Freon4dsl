@@ -4,6 +4,7 @@ import { BoxFactory, FreError, FreErrorSeverity, FreLogger, FreUndoManager, InMe
 import { Day, Event, EventSchedule, Period, StudyConfiguration, Task } from "@freon4dsl/study-configuration";
 import { runInAction } from "mobx";
 import { editorProgressShown, setCurrentModelName, setCurrentUnitName, unitNames, units, updateEditorState, updateModelState, updateUnitLists } from "./model-store.js";
+import { schemaMismatchTracker } from "./schema-mismatch-tracker.js";
 import { setUserMessage } from "./usermessage-store.js";
 import { WebappConfigurator } from "./webapp-configurator.js";
 
@@ -263,6 +264,9 @@ export class ModelManager {
         this.resetGlobalVariables();
         // await this.saveCurrentUnit();
         
+        // Start capturing schema mismatches during model loading
+        schemaMismatchTracker.startCapturing(modelName, unitName);
+        
         console.log(`[ModelManager] Calling modelStore.openModel(${modelName})`);
         const openModelResult = await this.openModelWithTracking(modelName);
         console.log(`[ModelManager] modelStore.openModel returned:`, {
@@ -270,6 +274,18 @@ export class ModelManager {
             isError: openModelResult?.constructor?.name === 'InMemoryError',
             modelUnitsCount: openModelResult?.constructor?.name === 'InMemoryError' ? 0 : (openModelResult as any)?.units?.length || 0
         });
+        
+        // Check if another component switched the model while we were loading
+        // This can happen when StudyPatients or other components load a different model concurrently
+        if (this.modelStore.model?.name !== modelName) {
+            console.warn(`[ModelManager] ⚠️ Model was switched during load! Expected: ${modelName}, Current: ${this.modelStore.model?.name}`);
+            console.log(`[ModelManager] Re-opening model ${modelName} to restore context...`);
+            await this.openModelWithTracking(modelName);
+            console.log(`[ModelManager] Model re-opened, current model is now: ${this.modelStore.model?.name}`);
+        }
+        
+        // Stop capturing but DON'T show popup yet - we need to finish setting up the editor first
+        const loadReport = schemaMismatchTracker.stopCapturing(false); // pass false to not show popup yet
         
         console.log(`[ModelManager] Getting unit by name: ${unitName}`);
         const unit = this.modelStore.getUnitByName(unitName);
@@ -285,6 +301,15 @@ export class ModelManager {
             BoxFactory.clearCaches();
             this.langEnv.projectionHandler.clear();
             this.showModelUnit(unit);
+            
+            // NOW that the editor is set up, handle any schema mismatches
+            if (loadReport.mismatches.length > 0) {
+                console.log(`[ModelManager] 📋 Schema mismatches detected during load:`, loadReport.mismatches.length);
+                // Mark the unit as dirty so it will be saved when user dismisses the popup
+                this.modelStore.dirtyUnits.add(unit);
+                // Now show the popup
+                schemaMismatchTracker.showReport(loadReport);
+            }
         } else {
             console.warn(`[ModelManager] ⚠️ Unit NOT found for ${unitName} in model ${modelName}`);
         }
@@ -401,6 +426,40 @@ export class ModelManager {
             }
         } else {
             console.warn('💾 ModelManager: saveCurrentUnit - no current unit');
+            LOGGER.log("No current model unit");
+        }
+    }
+
+    /**
+     * Force save the current unit, even if it's not marked as dirty.
+     * This is used after loading models with schema mismatches to persist
+     * the cleaned data (without the obsolete properties).
+     */
+    async forceSaveCurrentUnit() {
+        console.log('💾 ModelManager: forceSaveCurrentUnit called');
+        const unit: FreModelUnit = this.langEnv.editor.rootElement as FreModelUnit;
+        if (!!unit) {
+            if (!!this.currentModel?.name && this.currentModel?.name?.length) {
+                if (!!unit.name && unit.name.length > 0) {
+                    console.log('💾 ModelManager: forceSaveCurrentUnit - marking unit as dirty and saving', {
+                        unitName: unit.name,
+                        modelName: this.currentModel.name
+                    });
+                    // Mark the unit as dirty so saveUnit will actually save it
+                    this.modelStore.dirtyUnits.add(unit);
+                    await this.saveModelUnit(unit);
+                    setCurrentUnitName(unit.name);
+                    console.log('💾 ModelManager: forceSaveCurrentUnit completed');
+                } else {
+                    console.warn('💾 ModelManager: forceSaveCurrentUnit - unit has no name');
+                    setUserMessage(`Unit without name cannot be saved. Please, name it and try again.`);
+                }
+            } else {
+                console.warn('💾 ModelManager: forceSaveCurrentUnit - no current model');
+                LOGGER.log("Internal error: cannot save unit because current model is unknown.");
+            }
+        } else {
+            console.warn('💾 ModelManager: forceSaveCurrentUnit - no current unit');
             LOGGER.log("No current model unit");
         }
     }

@@ -159,11 +159,20 @@ export class Timeline extends RtObject {
 
     getLastScheduledEventInstanceForThisEventsName(eventToMatch: Event): ScheduledEventInstance {
         if (!eventToMatch) return null;
-        const matchName = (eventToMatch as { name?: string; referred?: { name?: string } })?.name ?? (eventToMatch as { referred?: { name?: string } })?.referred?.name;
-        if (matchName == null) return null;
-        // Filter the events to match the given event name
-        let eventInstances = this.getAllScheduledEventInstancesWithDays()
-            .filter(({ event }) => matchName === event.getName());
+        const rawMatchName = (eventToMatch as { name?: string; referred?: { name?: string } })?.name ?? (eventToMatch as { referred?: { name?: string } })?.referred?.name;
+        if (rawMatchName == null) return null;
+        
+        // Trim whitespace from the name to handle data inconsistencies
+        const matchName = rawMatchName.trim();
+        
+        // Debug: Log what we're searching for
+        const allInstances = this.getAllScheduledEventInstancesWithDays();
+        console.log("[Timeline] getLastScheduledEventInstanceForThisEventsName: looking for:", JSON.stringify(matchName), "(trimmed from:", JSON.stringify(rawMatchName) + ")");
+        console.log("[Timeline] All events on timeline:", allInstances.map(({ event, day }) => `${event.getName()} (day ${day})`));
+        
+        // Filter the events to match the given event name (with trimming for consistency)
+        let eventInstances = allInstances
+            .filter(({ event }) => matchName === event.getName()?.trim());
 
         // Sort the events by the day value
         eventInstances.sort((a, b) => (a?.day ?? 0) - (b?.day ?? 0));
@@ -355,7 +364,7 @@ export class Timeline extends RtObject {
         }
         const lowestDayItem = this.days.reduce((minItem, currentItem) => {
             return currentItem.day < minItem.day ? currentItem : minItem;
-        }, validDays[0]);
+        }, this.days[0]);
         if (lowestDayItem.day >= 0) {
             return 0;
         }
@@ -370,7 +379,7 @@ export class Timeline extends RtObject {
         }
         const highestDayItem = this.days.reduce((maxItem, currentItem) => {
             return currentItem.day > maxItem.day ? currentItem : maxItem;
-        }, validDays[0]);
+        }, this.days[0]);
         return highestDayItem.day;
     }
 

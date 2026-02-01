@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, onDestroy } from "svelte";
+    import { mount, unmount } from "svelte";
     import { browser } from '$app/environment';
     import { simulationService } from "../services/simulation/simulation-service.js";
     import { dataStore } from "../services/data/data-store.js";
@@ -277,13 +278,12 @@
     let objectToDelete = $state<any>(null);
     let objectTypeToDelete = $state<'patient' | 'person'>('patient');
     
-    // Inline delete popup state for patients
-    let deletePopupPatientId = $state<string | null>(null);
-    let deletePopupRowIndex = $state<number>(-1);
-    
-    // Inline delete popup state for staff
-    let deletePopupStaffId = $state<string | null>(null);
-    let deletePopupStaffRowIndex = $state<number>(-1);
+    // Delete confirmation popover state
+    let deleteConfirmInstance: any = null;
+    let deleteConfirmContainer: HTMLDivElement | null = null;
+    let deleteConfirmTriggerElement: HTMLElement | null = null;
+    let deleteConfirmItemId: string | null = null;
+    let deleteConfirmItemType: 'patient' | 'staff' | null = null;
     
     // Hover state for row labels
     let hoveredPatientId = $state<string | null>(null);
@@ -3127,34 +3127,91 @@
         }
     }
     
-    function handleDeletePatient(patientId: string) {
-        // Show inline delete popup for this patient
-        deletePopupPatientId = patientId;
-        deletePopupRowIndex = visiblePatientIds.indexOf(patientId);
+    async function handleDeletePatient(patientId: string, triggerElement: HTMLElement) {
+        // Close any existing delete confirm popover
+        handleDeleteConfirmCancel();
+        
+        // Store item info
+        deleteConfirmItemId = patientId;
+        deleteConfirmItemType = 'patient';
+        deleteConfirmTriggerElement = triggerElement;
+        
+        // Create container and mount component
+        deleteConfirmContainer = document.createElement('div');
+        document.body.appendChild(deleteConfirmContainer);
+        
+        // Find patient name for display
+        const patientData = patients.find(p => p.patientNumber === patientId || p.id === patientId);
+        const patientName = patientData?.patientNumber || patientId;
+        
+        // Dynamic import to avoid module loading issues
+        const { default: DeleteConfirmPopover } = await import("../components/popovers/DeleteConfirmPopover.svelte");
+        
+        deleteConfirmInstance = mount(DeleteConfirmPopover, {
+            target: deleteConfirmContainer,
+            props: {
+                open: true,
+                triggerElement: deleteConfirmTriggerElement,
+                itemName: patientName,
+                itemType: 'patient',
+                onClose: handleDeleteConfirmCancel,
+                onConfirm: handleDeleteConfirmConfirm
+            }
+        });
     }
     
-    async function confirmDeletePatient(patientId: string) {
-        // Find patient data from the patients array
-        const patientData = patients.find(p => p.patientNumber === patientId || p.id === patientId);
-        if (patientData) {
+    function handleDeleteConfirmCancel() {
+        if (deleteConfirmInstance) {
             try {
-                await dataStore.deletePatient(patientData.id);
-                // Remove patient from local arrays (surgical update, no full reload)
-                patients = patients.filter(p => p.id !== patientData.id);
-                patientSchedulesFromDB.delete(patientData.id);
-                // Force reactivity by reassigning the Map
-                patientSchedulesFromDB = new Map(patientSchedulesFromDB);
+                unmount(deleteConfirmInstance);
+            } catch (e) {
+                console.warn('[StudyPatients] Error unmounting delete confirm popover:', e);
+            }
+            deleteConfirmInstance = null;
+        }
+        if (deleteConfirmContainer && deleteConfirmContainer.parentNode) {
+            deleteConfirmContainer.parentNode.removeChild(deleteConfirmContainer);
+            deleteConfirmContainer = null;
+        }
+        deleteConfirmItemId = null;
+        deleteConfirmItemType = null;
+        deleteConfirmTriggerElement = null;
+    }
+    
+    async function handleDeleteConfirmConfirm() {
+        if (!deleteConfirmItemId || !deleteConfirmItemType) {
+            handleDeleteConfirmCancel();
+            return;
+        }
+        
+        const itemId = deleteConfirmItemId;
+        const itemType = deleteConfirmItemType;
+        handleDeleteConfirmCancel();
+        
+        if (itemType === 'patient') {
+            // Find patient data from the patients array
+            const patientData = patients.find(p => p.patientNumber === itemId || p.id === itemId);
+            if (patientData) {
+                try {
+                    await dataStore.deletePatient(patientData.id);
+                    // Remove patient from local arrays (surgical update, no full reload)
+                    patients = patients.filter(p => p.id !== patientData.id);
+                    patientSchedulesFromDB.delete(patientData.id);
+                    // Force reactivity by reassigning the Map
+                    patientSchedulesFromDB = new Map(patientSchedulesFromDB);
+                } catch (error) {
+                    console.error('Error deleting patient:', error);
+                }
+            }
+        } else if (itemType === 'staff') {
+            try {
+                await dataStore.deletePerson(itemId);
+                // Refresh staff list
+                await refreshStaff();
             } catch (error) {
-                console.error('Error deleting patient:', error);
+                console.error('Error deleting staff:', error);
             }
         }
-        deletePopupPatientId = null;
-        deletePopupRowIndex = -1;
-    }
-    
-    function cancelDeletePatient() {
-        deletePopupPatientId = null;
-        deletePopupRowIndex = -1;
     }
     
     function handlePatientDeleted() {
@@ -3221,27 +3278,37 @@
         }
     }
     
-    function handleDeleteStaff(staffId: string) {
-        // Show inline delete popup for this staff member
-        deletePopupStaffId = staffId;
-        deletePopupStaffRowIndex = staffMembers.findIndex(s => s.id === staffId);
-    }
-    
-    async function confirmDeleteStaff(staffId: string) {
-        try {
-            await dataStore.deletePerson(staffId);
-            // Remove staff from local array (surgical update, no full reload)
-            staffMembers = staffMembers.filter(s => s.id !== staffId);
-        } catch (error) {
-            console.error('Error deleting staff:', error);
-        }
-        deletePopupStaffId = null;
-        deletePopupStaffRowIndex = -1;
-    }
-    
-    function cancelDeleteStaff() {
-        deletePopupStaffId = null;
-        deletePopupStaffRowIndex = -1;
+    async function handleDeleteStaff(staffId: string, triggerElement: HTMLElement) {
+        // Close any existing delete confirm popover
+        handleDeleteConfirmCancel();
+        
+        // Store item info
+        deleteConfirmItemId = staffId;
+        deleteConfirmItemType = 'staff';
+        deleteConfirmTriggerElement = triggerElement;
+        
+        // Create container and mount component
+        deleteConfirmContainer = document.createElement('div');
+        document.body.appendChild(deleteConfirmContainer);
+        
+        // Find staff name for display
+        const staffMember = staffMembers.find(s => s.id === staffId);
+        const staffName = staffMember?.name || staffId;
+        
+        // Dynamic import to avoid module loading issues
+        const { default: DeleteConfirmPopover } = await import("../components/popovers/DeleteConfirmPopover.svelte");
+        
+        deleteConfirmInstance = mount(DeleteConfirmPopover, {
+            target: deleteConfirmContainer,
+            props: {
+                open: true,
+                triggerElement: deleteConfirmTriggerElement,
+                itemName: staffName,
+                itemType: 'staff member',
+                onClose: handleDeleteConfirmCancel,
+                onConfirm: handleDeleteConfirmConfirm
+            }
+        });
     }
     
     function handleStaffDeleted() {
@@ -3937,10 +4004,6 @@
                 bind:patientLabelsScrollRef
                 bind:patientRowsScrollRef
                 onPatientScroll={syncPatientScroll}
-                deletePopupPatientId={deletePopupPatientId}
-                deletePopupRowIndex={deletePopupRowIndex}
-                onConfirmDelete={confirmDeletePatient}
-                onCancelDelete={cancelDeletePatient}
             />
         </div>
 
@@ -4027,10 +4090,6 @@
                 bind:staffLabelsScrollRef
                 bind:staffRowsScrollRef
                 onStaffScroll={syncStaffScroll}
-                deletePopupStaffId={deletePopupStaffId}
-                deletePopupRowIndex={deletePopupStaffRowIndex}
-                onConfirmDelete={confirmDeleteStaff}
-                onCancelDelete={cancelDeleteStaff}
             />
         </div>
         {/if}
