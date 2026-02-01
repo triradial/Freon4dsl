@@ -59,8 +59,9 @@ Event {
 
 Task {
     [
-        Task:${name} ${description}
-        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Steps"}
+        Task:${name} 
+        ${description}
+        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Steps"}
     ] trigger = "Checklist Task"
 }
 
@@ -75,7 +76,7 @@ TaskReference {
 
 Step {
     [
-        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="false" label="Step"]
     ]
     fragment stepDetails [
         ${name}
@@ -143,7 +144,8 @@ Person {
     trigger = "Person"
     fragment personDetails [
         ${name} in role: ${role replace=CustomSelectComponent placeholder="role"}
-        at ${email replace=EmailInputComponent} or ${phoneNumber replace=PhoneInputComponent} ${description}
+        at ${email replace=EmailInputComponent} or ${phoneNumber replace=PhoneInputComponent}
+         ${description}
     ]
 }
 

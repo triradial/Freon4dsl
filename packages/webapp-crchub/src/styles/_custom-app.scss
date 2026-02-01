@@ -3853,6 +3853,31 @@
     }
     .checklist-subtext {
       margin-left: 1rem;
+      display: block;
+    }
+    .checklist-subtext p {
+      margin: 0;
+    }
+    .checklist-subtext p + p {
+      margin-top: 0.25rem;
+    }
+    .checklist-subtext ul,
+    .checklist-subtext ol {
+      margin: 0.25rem 0 0.5rem 1.25rem;
+      padding-left: 1.25rem;
+      list-style-position: outside;
+    }
+    .checklist-subtext ul {
+      list-style: disc;
+    }
+    .checklist-subtext ol {
+      list-style: decimal;
+    }
+    .checklist-subtext li {
+      margin-bottom: 0.25rem;
+    }
+    .checklist-subtext li:last-child {
+      margin-bottom: 0;
     }
     .checklist-group-label {
       font-size: var(--large-font-size);
