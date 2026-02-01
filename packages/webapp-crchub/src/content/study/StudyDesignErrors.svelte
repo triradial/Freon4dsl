@@ -1,8 +1,7 @@
 <script lang="ts">
     import { ModelManager } from "../../services/dsl/model-manager.js";
     import { onMount, onDestroy } from "svelte";
-    import type { FreError, FreNode } from "@freon4dsl/core";
-    import { FreLogger } from "@freon4dsl/core";
+    import type { FreError } from "@freon4dsl/core";
     // @ts-ignore
     import { Locate as IconLocate } from '@lucide/svelte';
 
@@ -12,8 +11,6 @@
     let refreshTimeout: ReturnType<typeof setTimeout> | null = null;
     let refreshIdleCallback: number | null = null;
     let isRefreshing = $state(false);
-
-    const LOGGER = new FreLogger("StudyDesignErrors");
 
     /**
      * Convert camelCase or PascalCase to readable format.
@@ -136,72 +133,19 @@
     });
 
     const handleClick = (index: number) => {
-        console.group(`[StudyDesignErrors] Navigation Debug - Error #${index + 1}`);
-        
         if (!modelErrors || modelErrors.length === 0) {
-            console.error('No errors available');
-            console.groupEnd();
             return;
         }
         
         const item: FreError = modelErrors[index];
         const node = Array.isArray(item.reportedOn) ? item.reportedOn[0] : item.reportedOn;
         
-        console.log('Error details:', {
-            message: item.message,
-            propertyName: item.propertyName,
-            propertyIndex: item.propertyIndex,
-            locationdescription: item.locationdescription,
-            severity: item.severity,
-            reportedOnIsArray: Array.isArray(item.reportedOn)
-        });
-        
         if (!node) {
-            console.error('Cannot navigate: error has no reportedOn node');
-            console.groupEnd();
             return;
         }
         
-        console.log('Node details:', {
-            conceptType: node.freLanguageConcept?.(),
-            nodeId: node.freId?.(),
-            nodeName: (node as any).name,
-            hasOwner: !!node.freOwner?.(),
-            ownerType: node.freOwner?.()?.freLanguageConcept?.(),
-            ownerId: node.freOwner?.()?.freId?.()
-        });
-        
-        // Check if the node is part of the current unit
         const modelManager = ModelManager.getInstance();
-        const currentUnit = modelManager.getCurrentUnit();
-        console.log('Current unit:', {
-            unitName: currentUnit?.name,
-            unitType: currentUnit?.freLanguageConcept?.(),
-            unitId: currentUnit?.freId?.()
-        });
-        
-        // Try to trace the node's path to root
-        let current = node;
-        const path: string[] = [];
-        let depth = 0;
-        while (current && depth < 20) {
-            path.push(`${current.freLanguageConcept?.() || 'unknown'}[${current.freId?.() || '?'}]`);
-            const owner = current.freOwner?.();
-            if (!owner) break;
-            current = owner;
-            depth++;
-        }
-        console.log('Node path to root:', path.join(' → '));
-        
-        try {
-            console.log(`Calling selectElement with node ${node.freId?.()} and property "${item.propertyName}"`);
-            modelManager.selectElement(node, item.propertyName);
-            console.log('selectElement completed without error');
-        } catch (e) {
-            console.error('selectElement threw an error:', e);
-        }
-        
-        console.groupEnd();
+        modelManager.selectElement(node, item.propertyName);
     };
 </script>
 

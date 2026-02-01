@@ -92,7 +92,8 @@
         day0Events = [],
         unscheduledEvents = [],
         scheduledEvents = [],
-        anchorElement = null
+        anchorElement = null,
+        modelError = null
     } = $props<{
         open?: boolean;
         date: Date;
@@ -104,6 +105,7 @@
         unscheduledEvents: EventOption[];
         scheduledEvents: DayEvent[];
         anchorElement?: HTMLElement | null;
+        modelError?: string | null; // When set, shows error message instead of normal popup content
     }>();
 
     const dispatch = createEventDispatcher<{
@@ -437,6 +439,14 @@
                 eventName: selectedInitialEvent,
                 status: initialEventStatus,
             };
+            // Also include unscheduled event if enabled
+            if (unscheduledEventEnabled) {
+                result.unscheduledEvent = {
+                    enabled: true,
+                    eventName: selectedUnscheduledEvent,
+                    status: unscheduledEventStatus,
+                };
+            }
         }
         
         if (popupType === 'event-day') {
@@ -560,9 +570,10 @@
     >
         <div class="day-cell-popup-content">
             <!-- Header with day number and date -->
+            <!-- Don't show day number for 'initial' popup type (patient has no reference date yet) -->
             <header class="popup-header">
                 <div class="popup-header-info">
-                    {#if dayData?.day !== undefined}
+                    {#if dayData?.day !== undefined && popupType !== 'initial'}
                         <span class="popup-day-number">Day {dayData.day}</span>
                     {/if}
                     <span class="popup-date">{formatDate(date)}</span>
@@ -580,151 +591,234 @@
             <!-- Patient ID -->
             <div class="popup-patient-id">{patientId}</div>
             
-            <!-- Separator -->
-            <div class="popup-separator"></div>
-            
-            <!-- ==================== POPUP 1: Initial Event ==================== -->
-            {#if popupType === 'initial'}
-                <div class="popup-section">
-                    <div class="section-label">Initial Event</div>
-                    <div class="event-row">
-                        <select 
-                            class="popup-select"
-                            bind:value={selectedInitialEvent}
-                        >
-                            {#each day0Events as event}
-                                <option value={event.name}>{event.name}</option>
-                            {/each}
-                        </select>
-                        
-                        <select 
-                            class="popup-select event-status-select"
-                            bind:value={initialEventStatus}
-                        >
-                            <option value="planned">Planned</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
+            <!-- Model Error Message - shown when there's a study design issue -->
+            {#if modelError}
+                <div class="popup-error-message">
+                    There is a study design issue, so you cannot perform any scheduling actions at this time.
                 </div>
-            {/if}
-            
-            <!-- ==================== POPUP 2: Event Day ==================== -->
-            {#if popupType === 'event-day'}
-                <div class="popup-section">
-                    <div class="section-label">Scheduled Events</div>
-                    
-                    {#each scheduledEvents as event (event.id)}
-                        {@const actionState = eventActions.get(event.id)}
-                        {@const actionOptions = getActionOptions(event)}
-                        <div class="scheduled-event-row">
-                            <span class="popup-event-name">{event.name}</span>
+            {:else}
+                <!-- Separator -->
+                <div class="popup-separator"></div>
+                
+                <!-- ==================== POPUP 1: Initial Event ==================== -->
+                {#if popupType === 'initial'}
+                    <div class="popup-section">
+                        <div class="section-label">Initial Event</div>
+                        <div class="event-row">
                             <select 
-                                class="popup-select action-select"
-                                value={actionState?.action || 'do-nothing'}
-                                onchange={(e) => updateEventAction(event.id, e.currentTarget.value as EventAction)}
+                                class="popup-select"
+                                bind:value={selectedInitialEvent}
                             >
-                                {#each actionOptions as opt}
-                                    <option value={opt.value}>{opt.label}</option>
+                                {#each day0Events as event}
+                                    <option value={event.name}>{event.name}</option>
                                 {/each}
                             </select>
                             
-                            <div class="action-data">
-                                {#if actionState?.action === 'reschedule' || actionState?.action === 'move'}
-                                    {@const datePickerValue = parseDateString(actionState.rescheduleDate)}
-                                    {@const datePickerOpen = isDatePickerOpen(event.id)}
-                                    <DatePicker.Root 
-                                        open={datePickerOpen}
-                                        onOpenChange={(isOpen) => setDatePickerOpen(event.id, isOpen)}
-                                        value={datePickerValue}
-                                        minValue={todayCalendarDate}
-                                        onValueChange={(newValue) => {
-                                            if (newValue) {
-                                                const dateStr = `${newValue.year}-${String(newValue.month).padStart(2, '0')}-${String(newValue.day).padStart(2, '0')}`;
-                                                updateEventRescheduleDate(event.id, dateStr);
-                                            }
-                                        }}
-                                        weekdayFormat="short"
-                                        fixedWeeks={false}
-                                    >
-                                        <div class="reschedule-datepicker">
-                                            <DatePicker.Input class="popup-date-input">
-                                                {#snippet children({ segments })}
-                                                    {#each segments as { part, value }, i (part + i)}
-                                                        <span class="date-segment">
-                                                            {#if part === "literal"}
-                                                                <DatePicker.Segment {part} class="date-literal">{value}</DatePicker.Segment>
-                                                            {:else}
-                                                                <DatePicker.Segment {part} class="date-part">{value}</DatePicker.Segment>
-                                                            {/if}
-                                                        </span>
-                                                    {/each}
-                                                    <DatePicker.Trigger class="date-trigger">
-                                                        <IconCalendar size={14} />
-                                                    </DatePicker.Trigger>
-                                                {/snippet}
-                                            </DatePicker.Input>
-                                            <DatePicker.Content sideOffset={6} class="datepicker-popup z-50">
-                                                <DatePicker.Calendar class="datepicker-calendar">
-                                                    {#snippet children({ months, weekdays })}
-                                                        <DatePicker.Header class="datepicker-header">
-                                                            <DatePicker.PrevButton class="datepicker-nav-btn">
-                                                                <IconChevronLeft size={16} />
-                                                            </DatePicker.PrevButton>
-                                                            <DatePicker.Heading class="datepicker-heading" />
-                                                            <DatePicker.NextButton class="datepicker-nav-btn">
-                                                                <IconChevronRight size={16} />
-                                                            </DatePicker.NextButton>
-                                                        </DatePicker.Header>
-                                                        <div class="datepicker-months">
-                                                            {#each months as month (month.value)}
-                                                                <DatePicker.Grid class="datepicker-grid">
-                                                                    <DatePicker.GridHead>
-                                                                        <DatePicker.GridRow class="datepicker-weekdays">
-                                                                            {#each weekdays as day (day)}
-                                                                                <DatePicker.HeadCell class="datepicker-weekday">
-                                                                                    {day.slice(0, 2)}
-                                                                                </DatePicker.HeadCell>
-                                                                            {/each}
-                                                                        </DatePicker.GridRow>
-                                                                    </DatePicker.GridHead>
-                                                                    <DatePicker.GridBody>
-                                                                        {#each month.weeks as weekDates (weekDates)}
-                                                                            <DatePicker.GridRow class="datepicker-week">
-                                                                                {#each weekDates as dateCell (dateCell)}
-                                                                                    {@const inWindow = isDateInWindow(dateCell, event)}
-                                                                                    {@const isScheduled = isScheduledDate(dateCell, event)}
-                                                                                    <DatePicker.Cell 
-                                                                                        date={dateCell} 
-                                                                                        month={month.value} 
-                                                                                        class="datepicker-cell {isScheduled ? 'scheduled-date' : ''} {inWindow ? 'window-date' : ''}"
-                                                                                    >
-                                                                                        <DatePicker.Day class="datepicker-day">
-                                                                                            {dateCell.day}
-                                                                                        </DatePicker.Day>
-                                                                                    </DatePicker.Cell>
+                            <select 
+                                class="popup-select event-status-select"
+                                bind:value={initialEventStatus}
+                            >
+                                <option value="planned">Planned</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Unscheduled Event section for initial popup - can add unscheduled events when starting patient -->
+                    {#if unscheduledEvents.length > 0}
+                        <!-- Separator -->
+                        <div class="popup-separator"></div>
+                        
+                        <div class="popup-section">
+                            <div class="section-header-row">
+                                <span class="section-label">Unscheduled Event</span>
+                                <button 
+                                    type="button" 
+                                    class="toggle-section-btn"
+                                    onclick={(e) => toggleUnscheduledEvent(e)}
+                                    aria-label={unscheduledEventEnabled ? 'Remove unscheduled event' : 'Add unscheduled event'}
+                                >
+                                    {#if unscheduledEventEnabled}
+                                        <IconX size={16} />
+                                    {:else}
+                                        <IconPlus size={16} />
+                                    {/if}
+                                </button>
+                            </div>
+                            
+                            {#if unscheduledEventEnabled}
+                                <div class="event-row">
+                                    <select class="popup-select" bind:value={selectedUnscheduledEvent}>
+                                        {#each unscheduledEvents as event}
+                                            <option value={event.name}>{event.name}</option>
+                                        {/each}
+                                    </select>
+                                    
+                                    <select class="popup-select event-status-select" bind:value={unscheduledEventStatus}>
+                                        <option value="planned">Planned</option>
+                                        <option value="completed">Completed</option>
+                                    </select>
+                                </div>
+                            {/if}
+                        </div>
+                    {/if}
+                {/if}
+                
+                <!-- ==================== POPUP 2: Event Day ==================== -->
+                {#if popupType === 'event-day'}
+                    <div class="popup-section">
+                        <div class="section-label">Scheduled Events</div>
+                        
+                        {#each scheduledEvents as event (event.id)}
+                            {@const actionState = eventActions.get(event.id)}
+                            {@const actionOptions = getActionOptions(event)}
+                            <div class="scheduled-event-row">
+                                <span class="popup-event-name">{event.name}</span>
+                                <select 
+                                    class="popup-select action-select"
+                                    value={actionState?.action || 'do-nothing'}
+                                    onchange={(e) => updateEventAction(event.id, e.currentTarget.value as EventAction)}
+                                >
+                                    {#each actionOptions as opt}
+                                        <option value={opt.value}>{opt.label}</option>
+                                    {/each}
+                                </select>
+                                
+                                <div class="action-data">
+                                    {#if actionState?.action === 'reschedule' || actionState?.action === 'move'}
+                                        {@const datePickerValue = parseDateString(actionState.rescheduleDate)}
+                                        {@const datePickerOpen = isDatePickerOpen(event.id)}
+                                        <DatePicker.Root 
+                                            open={datePickerOpen}
+                                            onOpenChange={(isOpen) => setDatePickerOpen(event.id, isOpen)}
+                                            value={datePickerValue}
+                                            minValue={todayCalendarDate}
+                                            onValueChange={(newValue) => {
+                                                if (newValue) {
+                                                    const dateStr = `${newValue.year}-${String(newValue.month).padStart(2, '0')}-${String(newValue.day).padStart(2, '0')}`;
+                                                    updateEventRescheduleDate(event.id, dateStr);
+                                                }
+                                            }}
+                                            weekdayFormat="short"
+                                            fixedWeeks={false}
+                                        >
+                                            <div class="reschedule-datepicker">
+                                                <DatePicker.Input class="popup-date-input">
+                                                    {#snippet children({ segments })}
+                                                        {#each segments as { part, value }, i (part + i)}
+                                                            <span class="date-segment">
+                                                                {#if part === "literal"}
+                                                                    <DatePicker.Segment {part} class="date-literal">{value}</DatePicker.Segment>
+                                                                {:else}
+                                                                    <DatePicker.Segment {part} class="date-part">{value}</DatePicker.Segment>
+                                                                {/if}
+                                                            </span>
+                                                        {/each}
+                                                        <DatePicker.Trigger class="date-trigger">
+                                                            <IconCalendar size={14} />
+                                                        </DatePicker.Trigger>
+                                                    {/snippet}
+                                                </DatePicker.Input>
+                                                <DatePicker.Content sideOffset={6} class="datepicker-popup z-50">
+                                                    <DatePicker.Calendar class="datepicker-calendar">
+                                                        {#snippet children({ months, weekdays })}
+                                                            <DatePicker.Header class="datepicker-header">
+                                                                <DatePicker.PrevButton class="datepicker-nav-btn">
+                                                                    <IconChevronLeft size={16} />
+                                                                </DatePicker.PrevButton>
+                                                                <DatePicker.Heading class="datepicker-heading" />
+                                                                <DatePicker.NextButton class="datepicker-nav-btn">
+                                                                    <IconChevronRight size={16} />
+                                                                </DatePicker.NextButton>
+                                                            </DatePicker.Header>
+                                                            <div class="datepicker-months">
+                                                                {#each months as month (month.value)}
+                                                                    <DatePicker.Grid class="datepicker-grid">
+                                                                        <DatePicker.GridHead>
+                                                                            <DatePicker.GridRow class="datepicker-weekdays">
+                                                                                {#each weekdays as day (day)}
+                                                                                    <DatePicker.HeadCell class="datepicker-weekday">
+                                                                                        {day.slice(0, 2)}
+                                                                                    </DatePicker.HeadCell>
                                                                                 {/each}
                                                                             </DatePicker.GridRow>
-                                                                        {/each}
-                                                                    </DatePicker.GridBody>
-                                                                </DatePicker.Grid>
-                                                            {/each}
-                                                        </div>
-                                                    {/snippet}
-                                                </DatePicker.Calendar>
-                                            </DatePicker.Content>
-                                        </div>
-                                    </DatePicker.Root>
-                                {/if}
+                                                                        </DatePicker.GridHead>
+                                                                        <DatePicker.GridBody>
+                                                                            {#each month.weeks as weekDates (weekDates)}
+                                                                                <DatePicker.GridRow class="datepicker-week">
+                                                                                    {#each weekDates as dateCell (dateCell)}
+                                                                                        {@const inWindow = isDateInWindow(dateCell, event)}
+                                                                                        {@const isScheduled = isScheduledDate(dateCell, event)}
+                                                                                        <DatePicker.Cell 
+                                                                                            date={dateCell} 
+                                                                                            month={month.value} 
+                                                                                            class="datepicker-cell {isScheduled ? 'scheduled-date' : ''} {inWindow ? 'window-date' : ''}"
+                                                                                        >
+                                                                                            <DatePicker.Day class="datepicker-day">
+                                                                                                {dateCell.day}
+                                                                                            </DatePicker.Day>
+                                                                                        </DatePicker.Cell>
+                                                                                    {/each}
+                                                                                </DatePicker.GridRow>
+                                                                            {/each}
+                                                                        </DatePicker.GridBody>
+                                                                    </DatePicker.Grid>
+                                                                {/each}
+                                                            </div>
+                                                        {/snippet}
+                                                    </DatePicker.Calendar>
+                                                </DatePicker.Content>
+                                            </div>
+                                        </DatePicker.Root>
+                                    {/if}
+                                </div>
                             </div>
-                        </div>
-                    {/each}
-                </div>
-                
-                <!-- Unscheduled Event section - only show if unscheduled events are defined in the model AND day >= 0 -->
-                {#if unscheduledEvents.length > 0 && canAddUnscheduledEvent}
-                    <!-- Separator -->
-                    <div class="popup-separator"></div>
+                        {/each}
+                    </div>
                     
+                    <!-- Unscheduled Event section - only show if unscheduled events are defined in the model AND day >= 0 -->
+                    {#if unscheduledEvents.length > 0 && canAddUnscheduledEvent}
+                        <!-- Separator -->
+                        <div class="popup-separator"></div>
+                        
+                        <div class="popup-section">
+                            <div class="section-header-row">
+                                <span class="section-label">Unscheduled Event</span>
+                                <button 
+                                    type="button" 
+                                    class="toggle-section-btn"
+                                    onclick={(e) => toggleUnscheduledEvent(e)}
+                                    aria-label={unscheduledEventEnabled ? 'Remove unscheduled event' : 'Add unscheduled event'}
+                                >
+                                    {#if unscheduledEventEnabled}
+                                        <IconX size={16} />
+                                    {:else}
+                                        <IconPlus size={16} />
+                                    {/if}
+                                </button>
+                            </div>
+                            
+                            {#if unscheduledEventEnabled}
+                                <div class="event-row">
+                                    <select class="popup-select" bind:value={selectedUnscheduledEvent}>
+                                        {#each unscheduledEvents as event}
+                                            <option value={event.name}>{event.name}</option>
+                                        {/each}
+                                    </select>
+                                    
+                                    <select class="popup-select event-status-select" bind:value={unscheduledEventStatus}>
+                                        <option value="planned">Planned</option>
+                                        <option value="completed">Completed</option>
+                                    </select>
+                                </div>
+                            {/if}
+                        </div>
+                    {/if}
+                {/if}
+                
+                <!-- ==================== POPUP 3: No Event Day ==================== -->
+                <!-- Only show this popup type if there are unscheduled events defined in the model AND day >= 0 -->
+                {#if popupType === 'no-event' && unscheduledEvents.length > 0 && canAddUnscheduledEvent}
                     <div class="popup-section">
                         <div class="section-header-row">
                             <span class="section-label">Unscheduled Event</span>
@@ -744,13 +838,19 @@
                         
                         {#if unscheduledEventEnabled}
                             <div class="event-row">
-                                <select class="popup-select" bind:value={selectedUnscheduledEvent}>
+                                <select 
+                                    class="popup-select"
+                                    bind:value={selectedUnscheduledEvent}
+                                >
                                     {#each unscheduledEvents as event}
                                         <option value={event.name}>{event.name}</option>
                                     {/each}
                                 </select>
                                 
-                                <select class="popup-select event-status-select" bind:value={unscheduledEventStatus}>
+                                <select 
+                                    class="popup-select event-status-select"
+                                    bind:value={unscheduledEventStatus}
+                                >
                                     <option value="planned">Planned</option>
                                     <option value="completed">Completed</option>
                                 </select>
@@ -758,58 +858,15 @@
                         {/if}
                     </div>
                 {/if}
-            {/if}
-            
-            <!-- ==================== POPUP 3: No Event Day ==================== -->
-            <!-- Only show this popup type if there are unscheduled events defined in the model AND day >= 0 -->
-            {#if popupType === 'no-event' && unscheduledEvents.length > 0 && canAddUnscheduledEvent}
-                <div class="popup-section">
-                    <div class="section-header-row">
-                        <span class="section-label">Unscheduled Event</span>
-                        <button 
-                            type="button" 
-                            class="toggle-section-btn"
-                            onclick={(e) => toggleUnscheduledEvent(e)}
-                            aria-label={unscheduledEventEnabled ? 'Remove unscheduled event' : 'Add unscheduled event'}
-                        >
-                            {#if unscheduledEventEnabled}
-                                <IconX size={16} />
-                            {:else}
-                                <IconPlus size={16} />
-                            {/if}
-                        </button>
-                    </div>
-                    
-                    {#if unscheduledEventEnabled}
-                        <div class="event-row">
-                            <select 
-                                class="popup-select"
-                                bind:value={selectedUnscheduledEvent}
-                            >
-                                {#each unscheduledEvents as event}
-                                    <option value={event.name}>{event.name}</option>
-                                {/each}
-                            </select>
-                            
-                            <select 
-                                class="popup-select event-status-select"
-                                bind:value={unscheduledEventStatus}
-                            >
-                                <option value="planned">Planned</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                        </div>
-                    {/if}
-                </div>
-            {/if}
-            
-            <!-- Footer with buttons -->
-            {#if hasChanges}
-                <div class="popup-separator"></div>
-                <footer class="popup-footer">
-                    <button class="standard-button primary inverted" onclick={handleApply}>Apply</button>
-                    <button class="standard-button gray inverted" onclick={handleCancel}>Cancel</button>
-                </footer>
+                
+                <!-- Footer with buttons -->
+                {#if hasChanges}
+                    <div class="popup-separator"></div>
+                    <footer class="popup-footer">
+                        <button class="standard-button primary inverted" onclick={handleApply}>Apply</button>
+                        <button class="standard-button gray inverted" onclick={handleCancel}>Cancel</button>
+                    </footer>
+                {/if}
             {/if}
         </div>
     </div>

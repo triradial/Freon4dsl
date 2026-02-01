@@ -477,65 +477,124 @@ export class ModelManager {
     }
 
     selectElement(item: FreNode, propertyName?: string) {
-        console.group('[ModelManager] selectElement');
-        console.log('Input:', {
-            nodeType: item?.freLanguageConcept?.(),
-            nodeId: item?.freId?.(),
-            propertyName: propertyName
-        });
-        
-        // Check if editor exists
         if (!this.langEnv?.editor) {
-            console.error('Editor not available');
-            console.groupEnd();
             return;
         }
         
-        // Check if the editor has a rootElement
-        const rootElement = this.langEnv.editor.rootElement;
-        console.log('Editor state:', {
-            hasRootElement: !!rootElement,
-            rootElementType: rootElement?.freLanguageConcept?.(),
-            rootElementId: rootElement?.freId?.()
-        });
-        
-        // Check if projection exists
+        // Get the box for the node from projection (before selection may walk up to parent)
         const projection = (this.langEnv.editor as any).projection;
-        console.log('Projection exists:', !!projection);
+        const existingBox = projection?.getBox?.(item);
         
-        // Try to get box for the node before selection
-        if (projection) {
-            const existingBox = projection.getBox?.(item);
-            console.log('Pre-selection box check:', {
-                boxExists: !!existingBox,
-                boxId: existingBox?.id,
-                boxRole: existingBox?.role
-            });
-        }
-        
-        // Try findBoxForNode
-        const foundBox = this.langEnv.editor.findBoxForNode?.(item, propertyName);
-        console.log('findBoxForNode result:', {
-            found: !!foundBox,
-            boxId: foundBox?.id,
-            boxRole: foundBox?.role,
-            boxKind: foundBox?.kind
-        });
-        
-        console.log('Calling editor.selectElement...');
+        // Select the element in the editor
         this.langEnv.editor.selectElement(item, propertyName);
         
-        // Check what got selected
+        // Get the selected box (may be different from existingBox if findBoxForNode walked up)
         const selectedBox = (this.langEnv.editor as any)._selectedBox;
-        const selectedElement = (this.langEnv.editor as any)._selectedElement;
-        console.log('After selection:', {
-            selectedBoxId: selectedBox?.id,
-            selectedBoxRole: selectedBox?.role,
-            selectedElementType: selectedElement?.freLanguageConcept?.(),
-            selectedElementId: selectedElement?.freId?.()
-        });
         
-        console.groupEnd();
+        // Scroll the element into view after selection
+        // Use requestAnimationFrame to ensure DOM has updated
+        requestAnimationFrame(() => {
+            this.scrollSelectedElementIntoView(item, existingBox, selectedBox);
+        });
+    }
+    
+    /**
+     * Scroll the selected element into view.
+     * Tries multiple strategies to find the DOM element:
+     * 1. Use the target node's box ID (most specific)
+     * 2. Search by node ID pattern in any attribute
+     * 3. Use the selected box ID (fallback if findBoxForNode walked up)
+     */
+    private scrollSelectedElementIntoView(targetNode: FreNode, existingBox: any, selectedBox: any): void {
+        const nodeId = targetNode?.freId?.();
+        
+        // Strategy 1: Try to find element by the existing box ID (the actual target)
+        if (existingBox?.id) {
+            const targetComponentId = `${nodeId}-${existingBox.role}`;
+            let element = document.getElementById(targetComponentId);
+            if (!element) {
+                element = document.getElementById(`render-${targetComponentId}`);
+            }
+            if (element) {
+                this.scrollElementIntoViewWithinContainer(element);
+                return;
+            }
+        }
+        
+        // Strategy 2: Search for any element with ID containing the node ID
+        if (nodeId) {
+            let element = document.querySelector(`[id^="${nodeId}-"]`) as HTMLElement;
+            if (!element) {
+                element = document.querySelector(`[id^="render-${nodeId}-"]`) as HTMLElement;
+            }
+            if (!element) {
+                element = document.querySelector(`[id*="${nodeId}"]`) as HTMLElement;
+            }
+            if (element) {
+                this.scrollElementIntoViewWithinContainer(element);
+                return;
+            }
+        }
+        
+        // Strategy 3: Try to find element by the selected box ID (fallback - scrolls to parent)
+        if (selectedBox?.id) {
+            const selectedComponentId = `${selectedBox.node?.freId?.()}-${selectedBox.role}`;
+            let element = document.getElementById(selectedComponentId);
+            if (!element) {
+                element = document.getElementById(`render-${selectedComponentId}`);
+            }
+            if (element) {
+                this.scrollElementIntoViewWithinContainer(element);
+                return;
+            }
+        }
+    }
+    
+    /**
+     * Scroll an element into view, handling nested scrollable containers.
+     * First scrolls within any scrollable parent container, then scrolls the viewport.
+     */
+    private scrollElementIntoViewWithinContainer(element: HTMLElement): void {
+        const scrollableContainer = this.findScrollableParent(element);
+        
+        if (scrollableContainer && scrollableContainer !== document.documentElement && scrollableContainer !== document.body) {
+            // Calculate the element's position relative to the scrollable container
+            const containerRect = scrollableContainer.getBoundingClientRect();
+            const elementRect = element.getBoundingClientRect();
+            
+            // Calculate scroll position to center the element in the container
+            const scrollTop = scrollableContainer.scrollTop + (elementRect.top - containerRect.top) - (containerRect.height / 2) + (elementRect.height / 2);
+            
+            scrollableContainer.scrollTo({
+                top: scrollTop,
+                behavior: 'smooth'
+            });
+        } else {
+            // Fallback to standard scrollIntoView
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+    
+    /**
+     * Find the first scrollable parent element.
+     */
+    private findScrollableParent(element: HTMLElement): HTMLElement | null {
+        let parent = element.parentElement;
+        
+        while (parent) {
+            const style = window.getComputedStyle(parent);
+            const overflowY = style.overflowY;
+            const overflowX = style.overflowX;
+            
+            if ((overflowY === 'auto' || overflowY === 'scroll' || overflowX === 'auto' || overflowX === 'scroll') &&
+                (parent.scrollHeight > parent.clientHeight || parent.scrollWidth > parent.clientWidth)) {
+                return parent;
+            }
+            
+            parent = parent.parentElement;
+        }
+        
+        return document.documentElement;
     }
 
     runValidator(): FreError[] {
