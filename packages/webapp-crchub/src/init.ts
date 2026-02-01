@@ -52,7 +52,7 @@ FreLogger.unmute("EditorState");  // Enable ModelManager logs
 // FreLogger.unmute("ListComponent");
 
 /* Timeline Logger */
-TimelineLogger.enable();  // Uncomment to enable TimelineLogger
+// TimelineLogger.enable();  // Uncomment to enable TimelineLogger
 // TimelineLogger.disable(); // Uncomment to explicitly disable TimelineLogger
 
 LOGGER.log('--- START ---');

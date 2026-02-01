@@ -87,16 +87,8 @@ export class ScheduledStudyConfiguration {
     getEventsScheduledOnASpecificDay(): ScheduledEvent[] {
         //TODO: sort in order of day so scheduling happens in order.
         const allEvents = this.getAllEventsInSchedule();
-        console.log("[ScheduledStudyConfiguration] getEventsScheduledOnASpecificDay: checking", allEvents.length, "events");
-        allEvents.forEach(e => {
-            const eventStart = e.configuredEvent?.schedule?.eventStart;
-            console.log("[ScheduledStudyConfiguration] Event:", e.getName(), 
-                "eventStart type:", eventStart?.constructor?.name || eventStart?.freLanguageConcept?.() || typeof eventStart,
-                "isScheduledOnASpecificDay:", e.isScheduledOnASpecificDay());
-        });
         let eventsOnASpecificDayInAnyPeriod = allEvents.filter((scheduledEvent) => scheduledEvent.isScheduledOnASpecificDay());
         TimelineLogger.log("There are: " + eventsOnASpecificDayInAnyPeriod.length + " events on a Specific Day across all the periods");
-        console.log("[ScheduledStudyConfiguration] Found", eventsOnASpecificDayInAnyPeriod.length, "events scheduled on specific days");
         return eventsOnASpecificDayInAnyPeriod;
     }
 

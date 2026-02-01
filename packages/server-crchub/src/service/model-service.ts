@@ -3,6 +3,9 @@ import { getDbPool } from './db-connection.js';
 /**
  * Get StudyConfiguration for a study
  * StudyConfiguration is stored in site_protocol_versions.study_configuration
+ * 
+ * IMPORTANT: The site is joined directly to the study (s.study_id = $1) to ensure
+ * we read from the same row that saveStudyConfiguration writes to.
  */
 export async function getStudyConfiguration(studyId: string): Promise<any | null> {
     const pool = getDbPool();
@@ -10,13 +13,12 @@ export async function getStudyConfiguration(studyId: string): Promise<any | null
     console.log(`[model-service] getStudyConfiguration: studyId=${studyId}`);
     
     const result = await pool.query(
-        `SELECT spv.study_configuration
+        `SELECT spv.study_configuration, spv.site_id, spv.protocol_version_id
          FROM site_protocol_versions spv
-         JOIN site s ON spv.site_id = s.site_id
+         JOIN site s ON spv.site_id = s.site_id AND s.study_id = $1
          JOIN protocol_version pv ON spv.protocol_version_id = pv.protocol_version_id
          JOIN protocol pr ON pv.protocol_id = pr.protocol_id
-         JOIN study st ON pr.study_id = st.study_id
-         WHERE st.study_id = $1
+         WHERE pr.study_id = $1
          LIMIT 1`,
         [studyId]
     );
@@ -27,7 +29,7 @@ export async function getStudyConfiguration(studyId: string): Promise<any | null
     }
 
     const configPreview = JSON.stringify(result.rows[0].study_configuration).substring(0, 100);
-    console.log(`[model-service] getStudyConfiguration: FOUND DATA for studyId=${studyId}, preview=${configPreview}...`);
+    console.log(`[model-service] getStudyConfiguration: FOUND DATA for studyId=${studyId}, siteId=${result.rows[0].site_id}, pvId=${result.rows[0].protocol_version_id}, preview=${configPreview}...`);
     return result.rows[0].study_configuration;
 }
 
@@ -36,6 +38,8 @@ export async function getStudyConfiguration(studyId: string): Promise<any | null
  */
 export async function saveStudyConfiguration(studyId: string, configuration: any): Promise<boolean> {
     const pool = getDbPool();
+    
+    console.log(`[model-service] saveStudyConfiguration: studyId=${studyId}`);
     
     // Get or create site_protocol_version for this study
     const siteResult = await pool.query(
@@ -50,26 +54,45 @@ export async function saveStudyConfiguration(studyId: string, configuration: any
     );
 
     if (siteResult.rows.length === 0) {
+        console.log(`[model-service] saveStudyConfiguration: Study not found: ${studyId}`);
         throw new Error(`Study not found: ${studyId}`);
     }
 
     const siteId = siteResult.rows[0].site_id;
     const protocolVersionId = siteResult.rows[0].protocol_version_id;
 
+    console.log(`[model-service] saveStudyConfiguration: siteId=${siteId}, protocolVersionId=${protocolVersionId}`);
+
     if (!siteId) {
+        console.log(`[model-service] saveStudyConfiguration: Site not found for study: ${studyId}`);
         throw new Error(`Site not found for study: ${studyId}`);
     }
 
     // Update or insert study_configuration and set study_simulations_sync = false
-    const updateResult = await pool.query(
-        `UPDATE site_protocol_versions
-         SET study_configuration = $1, study_simulations_sync = false
-         WHERE site_id = $2 AND protocol_version_id = $3`,
-        [JSON.stringify(configuration), siteId, protocolVersionId]
-    );
+    // Handle NULL protocol_version_id correctly (NULL = NULL is not true in SQL, must use IS NULL)
+    let updateResult;
+    if (protocolVersionId === null || protocolVersionId === undefined) {
+        console.log(`[model-service] saveStudyConfiguration: Using IS NULL query for protocol_version_id`);
+        updateResult = await pool.query(
+            `UPDATE site_protocol_versions
+             SET study_configuration = $1, study_simulations_sync = false
+             WHERE site_id = $2 AND protocol_version_id IS NULL`,
+            [JSON.stringify(configuration), siteId]
+        );
+    } else {
+        updateResult = await pool.query(
+            `UPDATE site_protocol_versions
+             SET study_configuration = $1, study_simulations_sync = false
+             WHERE site_id = $2 AND protocol_version_id = $3`,
+            [JSON.stringify(configuration), siteId, protocolVersionId]
+        );
+    }
+
+    console.log(`[model-service] saveStudyConfiguration: UPDATE rowCount=${updateResult.rowCount}`);
 
     if (updateResult.rowCount === 0) {
         // Insert if doesn't exist
+        console.log(`[model-service] saveStudyConfiguration: UPDATE matched 0 rows, trying INSERT`);
         await pool.query(
             `INSERT INTO site_protocol_versions (site_id, protocol_version_id, study_configuration, study_simulations_sync)
              VALUES ($1, $2, $3, false)
@@ -78,8 +101,10 @@ export async function saveStudyConfiguration(studyId: string, configuration: any
                  study_simulations_sync = false`,
             [siteId, protocolVersionId, JSON.stringify(configuration)]
         );
+        console.log(`[model-service] saveStudyConfiguration: INSERT completed`);
     }
 
+    console.log(`[model-service] saveStudyConfiguration: SUCCESS for studyId=${studyId}`);
     return true;
 }
 

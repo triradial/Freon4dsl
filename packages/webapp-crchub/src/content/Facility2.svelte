@@ -569,12 +569,14 @@
             <FacilityCard />
         </div>
         
-        <!-- Splitter -->
+        <!-- Splitter - used as drag handle for resizing panels -->
+        <!-- svelte-ignore a11y_no_interactive_element_to_noninteractive_role -->
         <button type="button"
             bind:this={splitterHandle}
             class="splitter-handle"
             onmousedown={handleSplitterMouseDown}
-            role="slider"
+            role="separator"
+            aria-orientation="vertical"
             aria-label="Resize facility card panel"
         ></button>
         

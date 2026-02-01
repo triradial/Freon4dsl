@@ -165,10 +165,7 @@ export class Timeline extends RtObject {
         // Trim whitespace from the name to handle data inconsistencies
         const matchName = rawMatchName.trim();
         
-        // Debug: Log what we're searching for
         const allInstances = this.getAllScheduledEventInstancesWithDays();
-        console.log("[Timeline] getLastScheduledEventInstanceForThisEventsName: looking for:", JSON.stringify(matchName), "(trimmed from:", JSON.stringify(rawMatchName) + ")");
-        console.log("[Timeline] All events on timeline:", allInstances.map(({ event, day }) => `${event.getName()} (day ${day})`));
         
         // Filter the events to match the given event name (with trimming for consistency)
         let eventInstances = allInstances
@@ -432,7 +429,6 @@ export class Timeline extends RtObject {
             const actualVisitDateAsDate = this.dateStringsToDate(avd.day, monthName, avd.year);
             const dayOnTimeline = this.getDayOnTimeline(actualVisitDateAsDate);
             this.addEvent(new PatientVisitEventInstance(visitName, patientVisit.visitInstanceNumber, dayOnTimeline, undefined, patientIdentifier || patientHistory.patient_id, patientVisit.status));
-            console.log("Added patient visit event: " + visitName + " on day: " + dayOnTimeline + (patientIdentifier ? " for patient: " + patientIdentifier : ""));
         });
         patientHistory.patientNotAvailableDates.forEach((patientNotAvailableDate) => {
             const startDate = patientNotAvailableDate.startDate;
@@ -454,7 +450,6 @@ export class Timeline extends RtObject {
             this.addEvent(
                 new PatientUnAvailableEventInstance("Patient Not Available", this.getDayOnTimeline(startDateAsDate), this.getDayOnTimeline(endDateAsDate), patientIdentifier || patientHistory.patient_id),
             );
-            console.log("Added patient not available event: " + "Patient Not Available" + " on day: " + startDateAsDate + " to day: " + endDateAsDate + (patientIdentifier ? " for patient: " + patientIdentifier : ""));
         });
     }
 
@@ -636,11 +631,7 @@ export class Timeline extends RtObject {
     
     // The DateConcept is updated inline hence no return value.
     public static fillDateConceptFromAsString(dateConcept: DateConcept) {
-        console.log("fillDateConceptFromAsString other fields: " + dateConcept.day + " " + dateConcept.month + " " + dateConcept.year);
         TimelineLogger.log(
-          "fillDateConceptFromAsString: " + dateConcept.dateAsString
-        );
-        console.log(
           "fillDateConceptFromAsString: " + dateConcept.dateAsString
         );
         // Add "T00:00:00" to ensure the date is interpreted at midnight local time

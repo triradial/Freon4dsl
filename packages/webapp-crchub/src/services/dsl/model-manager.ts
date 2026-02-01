@@ -399,8 +399,30 @@ export class ModelManager {
             });
         }
         
-        await this.modelStore.saveUnit(unit);
-        console.log('💾 ModelManager: saveModelUnit completed');
+        // Check if unit is in dirtyUnits before calling save
+        const isInDirtyUnits = this.modelStore.dirtyUnits.has(unit);
+        const dirtyUnitNames = Array.from(this.modelStore.dirtyUnits).map(u => u.name);
+        console.log('💾 ModelManager: saveModelUnit - about to call modelStore.saveUnit', {
+            unitName: unit.name,
+            unitId: unit.freId(),
+            isInDirtyUnits,
+            dirtyUnitsSize: this.modelStore.dirtyUnits.size,
+            dirtyUnitNames
+        });
+        
+        // If unit is NOT in dirty units, add it to ensure save happens
+        if (!isInDirtyUnits) {
+            console.log('💾 ModelManager: saveModelUnit - unit NOT in dirtyUnits, adding it now');
+            this.modelStore.dirtyUnits.add(unit);
+        }
+        
+        const result = await this.modelStore.saveUnit(unit);
+        
+        const isError = result !== undefined && result !== null;
+        console.log('💾 ModelManager: saveModelUnit completed', {
+            result: isError ? (result as any).message || 'error' : 'success',
+            isError
+        });
     }
 
     async saveCurrentUnit() {
@@ -461,6 +483,61 @@ export class ModelManager {
         } else {
             console.warn('💾 ModelManager: forceSaveCurrentUnit - no current unit');
             LOGGER.log("No current model unit");
+        }
+    }
+
+    /**
+     * Save directly to server, bypassing the InMemoryModel dirty check.
+     * This is a fallback for when the dirty check fails due to object reference issues.
+     */
+    async directServerSave(unit: FreModelUnit): Promise<void> {
+        console.log('💾 ModelManager: directServerSave called', {
+            unitName: unit.name,
+            modelName: this.currentModel?.name
+        });
+        
+        if (!this.currentModel?.name) {
+            console.error('💾 ModelManager: directServerSave - no current model');
+            return;
+        }
+        
+        try {
+            // Try direct fetch to bypass any potential issues with ServerCommunication
+            const serverUrl = 'http://localhost:8080';
+            const url = `${serverUrl}/saveModelUnit?model=${encodeURIComponent(this.currentModel.name)}&unit=${encodeURIComponent(unit.name)}`;
+            
+            // Serialize the unit using the Freon serializer
+            const { FreLionwebSerializer, collectUsedLanguages } = await import('@freon4dsl/core');
+            const serializer = new FreLionwebSerializer();
+            const nodes = serializer.convertToJSON(unit);
+            const body = {
+                serializationFormatVersion: "2023.1",
+                languages: collectUsedLanguages(nodes),
+                nodes: nodes
+            };
+            
+            console.log('💾 ModelManager: directServerSave - sending request to:', url);
+            console.log('💾 ModelManager: directServerSave - body size:', JSON.stringify(body).length, 'bytes');
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body)
+            });
+            
+            console.log('💾 ModelManager: directServerSave - response status:', response.status, response.statusText);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('💾 ModelManager: directServerSave - server error:', errorText);
+            } else {
+                const responseData = await response.json();
+                console.log('💾 ModelManager: directServerSave - success, response:', responseData);
+            }
+        } catch (e) {
+            console.error('💾 ModelManager: directServerSave - exception:', e);
         }
     }
 

@@ -302,7 +302,11 @@ export class InMemoryModel {
      */
     async saveUnit(unit: FreModelUnit): Promise<void | InMemoryError> {
         LOGGER.log(`saveModelUnit`)
-        if (this.dirtyUnits.has(unit)) {
+        const unitInDirty = this.dirtyUnits.has(unit)
+        console.log(`[InMemoryModel] saveUnit called for "${unit?.name}", isDirty=${unitInDirty}, dirtyUnitsCount=${this.dirtyUnits.size}`)
+        
+        if (unitInDirty) {
+            console.log(`[InMemoryModel] saveUnit - calling server.saveModelUnit for "${unit.name}"`)
             const serverResponse = await this.server.saveModelUnit(
                 this.model.name,
                 {
@@ -313,11 +317,15 @@ export class InMemoryModel {
                 unit,
             )
             if (serverResponse.errors.length === 0) {
+                console.log(`[InMemoryModel] ✅ saveUnit - server save successful for "${unit.name}"`)
                 this.dirtyUnits.delete(unit)
             } else {
+                console.error(`[InMemoryModel] ❌ saveUnit - server save failed for "${unit.name}":`, serverResponse.errors[0])
                 this.onInMemoryError(serverResponse.errors[0])
                 return new InMemoryError(`${serverResponse.errors[0]})`)
             }
+        } else {
+            console.log(`[InMemoryModel] saveUnit - skipping save for "${unit?.name}" (not in dirtyUnits)`)
         }
     }
 

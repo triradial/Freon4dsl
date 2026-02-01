@@ -1,5 +1,6 @@
 <script lang="ts">
     import { LAYOUT_LOGGER } from './ComponentLoggers.js';
+    import { untrack, tick } from 'svelte';
 
     /**
      * This component shows a list of various boxes (no 'true' list). It can be shown
@@ -35,10 +36,17 @@
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
         // Evaluated and re-evaluated when the box changes.
-        refresh('Refresh Layout box changed ' + box?.id);
+        // Use untrack to avoid triggering state_unsafe_mutation error in Svelte 5
+        untrack(() => {
+            refreshInternal('Refresh Layout box changed ' + box?.id);
+        });
     });
 
-    const refresh = (why?: string): void => {
+    /**
+     * Internal refresh function that updates state.
+     * Should be wrapped in untrack() when called from effects.
+     */
+    const refreshInternal = (why?: string): void => {
         LOGGER.log('REFRESH LayoutComponent (' + why + ')' + box?.node?.freLanguageConcept());
         id = notNullOrUndefined(box) ? componentId(box) : 'layout-for-unknown-box';
         children = [...box.children];
@@ -52,6 +60,18 @@
             errorCls = '';
             errMess = [];
         }
+    };
+
+    /**
+     * External refresh function exposed to box.refreshComponent.
+     * Defers state mutations to avoid Svelte 5 state_unsafe_mutation errors
+     * when called during reactive cycles.
+     */
+    const refresh = (why?: string): void => {
+        // Use tick() to defer state mutations to after the current reactive cycle
+        tick().then(() => {
+            refreshInternal(why);
+        });
     };
 </script>
 

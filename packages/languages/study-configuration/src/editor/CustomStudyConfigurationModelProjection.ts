@@ -2,6 +2,9 @@
 import { Box, BoxFactory, BoxUtil, createDefaultExpressionBox, FreNode, FreProjection, FreProjectionHandler, FreTableDefinition, NumberDisplay, TableRowBox, TextBox } from "@freon4dsl/core"
 import { Description, NumberLiteralExpression, PatientHistory, PatientInfo } from "../language/gen/index.js"
 
+// Type alias for projection box methods - allows specific node types while satisfying FreProjection interface
+type BoxMethod = (node: FreNode) => Box;
+
 /**
  * Class CustomStudyConfigurationModelProjection provides an entry point for the language engineer to
  * define custom build additions to the editor.
@@ -28,9 +31,9 @@ export class CustomStudyConfigurationModelProjection implements FreProjection {
         // ["Step", this.projectStep],
         // ["Reference", this.projectReference],
         // ["SystemAccess", this.projectSystem],
-        ["PatientInfo", this.projectPatientInfo],
-        ["PatientHistory", this.projectPatientHistory],
-        ["NumberLiteralExpression", this.createNumberLiteralBox],
+        ["PatientInfo", this.projectPatientInfo as unknown as BoxMethod],
+        ["PatientHistory", this.projectPatientHistory as unknown as BoxMethod],
+        ["NumberLiteralExpression", this.createNumberLiteralBox as unknown as BoxMethod],
     ])
 
     nodeTypeToTableDefinition: Map<string, () => FreTableDefinition> = new Map<string, () => FreTableDefinition>([

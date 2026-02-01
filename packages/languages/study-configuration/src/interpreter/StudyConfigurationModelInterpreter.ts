@@ -13,7 +13,7 @@ import { StudyConfigurationModelInterpreterBase } from "./gen/StudyConfiguration
 let main: IMainInterpreter;
 
 /** Set to true to enable interpreter debug logging. */
-const INTERPRETER_DEBUG_ENABLED = true; // TEMP: Enable for debugging
+const INTERPRETER_DEBUG_ENABLED = false;
 
 function interpreterLog(...args: unknown[]): void {
   if (INTERPRETER_DEBUG_ENABLED) {
@@ -123,45 +123,28 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     const timeline = ctx.find("timeline") as unknown as Timeline;
     const eventState = node.eventState; //TODO: need to check for the correct state.
     
-    // Debug: Log the entire EventReference node to understand its structure
-    console.log("[Interpreter] evalEventReference node:", {
-        $typename: (node as any).$typename,
-        $id: (node as any).$id,
-        event: node.event,
-        eventRaw: (node as any).event,
-        $event: node.$event,
-        eventState: node.eventState,
-        keys: Object.keys(node)
-    });
+    // Debug logging removed - was causing excessive console output
     
     // Try both the resolved reference ($event) and the raw reference (event)
     let referencedEvent = node.$event;
     if (!referencedEvent && node.event) {
         // If $event is null but event exists, try to get the referred object
         const eventRef = node.event as any;
-        console.log("[Interpreter] evalEventReference: $event is null, checking event ref:", {
-            eventRef,
-            referred: eventRef?.referred,
-            name: eventRef?.name
-        });
         referencedEvent = eventRef?.referred ?? eventRef;
     }
 
     let owningEvent = ownerOfType(node, "Event") as language.Event;
     if (referencedEvent == undefined || referencedEvent == null) {
         interpreterLog("evalEventReference: referencedEvent is null/undefined for owningEvent");
-        console.log("[Interpreter] evalEventReference: referencedEvent is null/undefined after all attempts");
         return undefined;
     }
     const referencedEventName = (referencedEvent as { name?: string; referred?: { name?: string } })?.name ?? (referencedEvent as { referred?: { name?: string } })?.referred?.name;
     const eventStateName = (eventState as { name?: string })?.name ?? (eventState as { referred?: { name?: string } })?.referred?.name;
     interpreterLog("evalEventReference: referencedEvent: " + referencedEventName);
     interpreterLog("evalEventReference: referencedEvent: eventState: " + eventStateName);
-    console.log("[Interpreter] evalEventReference: looking for event:", referencedEventName, "with state:", eventStateName);
     
     let lastInstanceOfReferencedEvent =
       timeline.getLastScheduledEventInstanceForThisEventsName(referencedEvent);
-    console.log("[Interpreter] evalEventReference: found on timeline:", lastInstanceOfReferencedEvent?.getName(), "startDay:", lastInstanceOfReferencedEvent?.startDay);
     
     if (
       lastInstanceOfReferencedEvent === null ||
@@ -174,7 +157,6 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
               "referencedEvent.name" +
               "' cannot be evaluated because the referenced event is not on the timeline",
       );
-      console.log("[Interpreter] evalEventReference: RETURNING UNDEFINED - event not on timeline. Timeline has:", timeline.getDays().length, "days");
       return undefined; // Can't determine the time of the event because it's dependency hasn't reached the right status yet.
     } else {
       if (
