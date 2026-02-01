@@ -336,6 +336,12 @@
         font-family: var(--font-family-sans);
         line-height: 1.6;
     }
+
+    .study-checklist-content :global(li),
+    .study-checklist-content :global(li p) {
+        font-size: var(--standard-font-size);
+        color: var(--checklist-text);
+    }
     
     /* .study-checklist-content h1,
     .study-checklist-content h2,
@@ -360,7 +366,19 @@
     }
     
     .study-checklist-content h3 {
+        font-size: 1.25rem;
+    }
+    
+    .study-checklist-content h4 {
         font-size: 1.1rem;
+    }
+    
+    .study-checklist-content h5 {
+        font-size: 1rem;
+    }
+    
+    .study-checklist-content h6 {
+        font-size: 0.95rem;
     }
     
     .study-checklist-content p {

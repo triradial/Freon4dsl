@@ -104,6 +104,20 @@ class MarkdownBuilder {
 }
 
 export class StudyChecklistDocumentTemplate {
+    private static indentMultilineHtml(html: string): string {
+        return html.replace(/\r?\n/g, '\n  ');
+    }
+
+    private static formatPhoneNumber(raw: string): string {
+        const digits = raw.replace(/\D/g, '');
+        if (digits.length === 10) {
+            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+        }
+        if (digits.length === 11 && digits.startsWith('1')) {
+            return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
+        }
+        return raw;
+    }
     static getTimelineTablAsMarkdown(timeline: Timeline): string {
         const builder = new MarkdownBuilder();
         
@@ -141,20 +155,26 @@ export class StudyChecklistDocumentTemplate {
 
     static getReferencesAsMarkdown(references) {
         if (!references || references.length === 0) return '';
-        
-        const builder = new MarkdownBuilder();
-        const items = references.map(reference => {
+
+        const lines: string[] = [];
+        references.forEach(reference => {
             const name = reference.name ?? '';
             const link = typeof reference.link === 'string' ? reference.link : '';
             const desc = typeof reference.description === 'string'
                 ? reference.description
                 : (reference.description?.text ?? reference.description?.rawText ?? '');
-            const parts = [name];
-            if (link) parts.push(`Document is at: ${link}`);
-            if (desc) parts.push(desc);
-            return parts.join(' — ');
+            const linkPart = link ? ` ([${link}](${link}))` : '';
+            if (name) {
+                lines.push(`- **${name}**${linkPart}`);
+            } else if (linkPart) {
+                lines.push(`- ${linkPart.replace(/^ \(/, '(')}`);
+            }
+            if (desc) {
+                const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
+                lines.push(`  <div class="checklist-subtext">${indentedDesc}</div>`);
+            }
         });
-        return builder.addList(items).build();
+        return lines.length ? `${lines.join('\n')}\n` : '';
     }
 
     static getPeopleAsMarkdown(people) {
@@ -165,65 +185,86 @@ export class StudyChecklistDocumentTemplate {
             console.log('[StudyChecklist getPeopleAsMarkdown] people count:', people?.length);
         }
 
-        const builder = new MarkdownBuilder();
-        const items = people
-            .map((person, index) => {
-                const actualPerson: Person | undefined = person instanceof PersonReference
-                    ? (person as PersonReference).person?.referred
-                    : (person as Person);
-                if (!actualPerson) {
-                    if (DEBUG_PEOPLE) console.log('[StudyChecklist getPeopleAsMarkdown] person', index, '— no actualPerson', { personKeys: person != null ? Object.keys(person as object) : null });
-                    return null;
-                }
-                const personName = actualPerson.name ?? '';
-                const role = actualPerson.role;
-                const roleName = role?.referred?.name ?? role?.name ?? '';
-                const email = actualPerson.email ?? '';
-                const phone = actualPerson.phoneNumber ?? '';
-                const descSource = actualPerson.description;
-                const desc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
-                const parts: string[] = [personName];
-                if (roleName) parts.push(`in role: ${roleName}`);
-                if (email || phone) parts.push('at ' + [email, phone].filter(Boolean).join(' or '));
-                if (desc) parts.push(desc);
+        const lines: string[] = [];
+        people.forEach((person, index) => {
+            const actualPerson: Person | undefined = person instanceof PersonReference
+                ? (person as PersonReference).person?.referred
+                : (person as Person);
+            if (!actualPerson) {
+                if (DEBUG_PEOPLE) console.log('[StudyChecklist getPeopleAsMarkdown] person', index, '— no actualPerson', { personKeys: person != null ? Object.keys(person as object) : null });
+                return;
+            }
+            const personName = actualPerson.name ?? '';
+            const role = actualPerson.role;
+            const roleName = role?.referred?.name ?? role?.name ?? '';
+            const email = actualPerson.email ?? '';
+            const phone = actualPerson.phoneNumber ?? '';
+            const descSource = actualPerson.description;
+            const desc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
+            const metaParts: string[] = [];
+            // Role displayed in name line
+            if (email) metaParts.push(`${email}`);
+            if (phone) metaParts.push(`${StudyChecklistDocumentTemplate.formatPhoneNumber(phone)}`);
 
-                if (DEBUG_PEOPLE) {
-                    const descObj = actualPerson.description as { text?: string; rawText?: string } | undefined;
-                    console.log('[StudyChecklist getPeopleAsMarkdown] person', index, 'actualPerson:', {
-                        name: actualPerson.name,
-                        email: actualPerson.email,
-                        phoneNumber: actualPerson.phoneNumber,
-                        description: actualPerson.description,
-                        descriptionType: typeof actualPerson.description,
-                        descText: descObj?.text,
-                        descRawText: descObj?.rawText,
-                        roleName: role?.referred?.name ?? (role as { name?: string })?.name,
-                        computed: { personName, email, phone, desc, roleName },
-                        output: parts.join(' — ')
-                    });
-                }
-                return parts.join(' — ');
-            })
-            .filter((item): item is string => item != null);
-        return builder.addList(items).build();
+            if (DEBUG_PEOPLE) {
+                const descObj = actualPerson.description as { text?: string; rawText?: string } | undefined;
+                console.log('[StudyChecklist getPeopleAsMarkdown] person', index, 'actualPerson:', {
+                    name: actualPerson.name,
+                    email: actualPerson.email,
+                    phoneNumber: actualPerson.phoneNumber,
+                    description: actualPerson.description,
+                    descriptionType: typeof actualPerson.description,
+                    descText: descObj?.text,
+                    descRawText: descObj?.rawText,
+                    roleName: role?.referred?.name ?? (role as { name?: string })?.name,
+                    computed: { personName, email, phone, desc, roleName },
+                    output: { personName, metaParts, desc }
+                });
+            }
+            if (personName) {
+                const nameWithRole = roleName ? `${personName} (${roleName})` : personName;
+                lines.push(`- **${nameWithRole}**`);
+            } else if (metaParts.length > 0) {
+                lines.push(`- **${metaParts[0]}**`);
+                metaParts.shift();
+            }
+            metaParts.forEach(part => {
+                lines.push(`  - ${part}`);
+            });
+            if (desc) {
+                const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
+                lines.push(`  <div class="checklist-subtext">${indentedDesc}</div>`);
+            }
+        });
+        return lines.length ? `${lines.join('\n')}\n` : '';
     }
 
     static getSystemsAsMarkdown(systems) {
         if (!systems || systems.length === 0) return '';
         
-        const builder = new MarkdownBuilder();
-        const items = systems.map(system => {
+        const lines: string[] = [];
+        systems.forEach(system => {
             const s = (system as any).system?.referred ?? (system as any).referred ?? system;
             const name = s?.name ?? '';
             const accessedAt = s?.accessedAt;
-            const accessedAtStr = typeof accessedAt === 'string' ? accessedAt : (accessedAt?.url ?? accessedAt?.phoneNumber ?? '');
+            const accessedUrl = typeof accessedAt === 'string' ? accessedAt : accessedAt?.url ?? '';
+            const accessedPhone = typeof accessedAt === 'string' ? '' : (accessedAt?.phoneNumber ?? '');
             const desc = typeof s?.description === 'string' ? s.description : (s?.description?.text ?? s?.description?.rawText ?? '');
-            const parts = [name];
-            if (accessedAtStr) parts.push(accessedAtStr);
-            if (desc) parts.push(desc);
-            return parts.join(' — ');
+            const urlPart = accessedUrl ? `([${accessedUrl}](${accessedUrl}))` : '';
+            const phonePart = accessedPhone ? `${StudyChecklistDocumentTemplate.formatPhoneNumber(accessedPhone)}` : '';
+            const accessParts = [urlPart, phonePart].filter(Boolean);
+            const accessPart = accessParts.length > 0 ? ` ${accessParts.join(' ')}` : '';
+            if (name) {
+                lines.push(`- **${name}**${accessPart}`);
+            } else if (accessPart) {
+                lines.push(`- ${accessPart.trim()}`);
+            }
+            if (desc) {
+                const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
+                lines.push(`  <div class="checklist-subtext">${indentedDesc}</div>`);
+            }
         });
-        return builder.addList(items).build();
+        return lines.length ? `${lines.join('\n')}\n` : '';
     }
 
     /**
@@ -241,7 +282,8 @@ export class StudyChecklistDocumentTemplate {
         }
 
         if (step.references?.length > 0) {
-            builder.addParagraph("**REFERENCES**");
+            builder.addRaw('<p class="checklist-group-label">REFERENCES</p>');
+            builder.addEmptyLine();
             const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
             if (referencesMarkdown) {
                 builder.addRaw(referencesMarkdown);
@@ -249,14 +291,16 @@ export class StudyChecklistDocumentTemplate {
         }
 
         if (step.people?.length > 0) {
-            builder.addParagraph("**PEOPLE**");
+            builder.addRaw('<p class="checklist-group-label">PEOPLE</p>');
+            builder.addEmptyLine();
             const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
             if (peopleMarkdown) {
                 builder.addRaw(peopleMarkdown);
             }
         }
         if (step.systems?.length > 0) {
-            builder.addParagraph("**SYSTEMS**");
+            builder.addRaw('<p class="checklist-group-label">SYSTEMS</p>');
+            builder.addEmptyLine();
             const systemsMarkdown = StudyChecklistDocumentTemplate.getSystemsAsMarkdown(step.systems);
             if (systemsMarkdown) {
                 builder.addRaw(systemsMarkdown);
@@ -384,12 +428,43 @@ export class StudyChecklistDocumentTemplate {
                 // Increment counter for current level
                 headingCounters[level - 1]++;
                 
-                // Build the hierarchical number
+                // Build the hierarchical number (no period after the last digit)
                 const number = headingCounters.slice(0, level).join('.');
-                return `${headingMatch[1]} ${number}. ${title}`;
+                return `${headingMatch[1]} ${number}: ${title}`;
             }
             return line;
         }).join('\n');
+    }
+
+    /**
+     * Generate a slug for a heading that matches the UI's markdown-it ID generation.
+     */
+    static slugifyHeading(text: string): string {
+        return text.toLowerCase()
+            .replace(/[^\w\- ]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
+    /**
+     * Build a numbered TOC with links for all headings in the markdown.
+     */
+    static getTableOfContentsAsMarkdown(markdown: string): string {
+        const lines = markdown.split('\n');
+        const tocLines: string[] = [];
+        for (const line of lines) {
+            const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+            if (!headingMatch) continue;
+            const level = headingMatch[1].length;
+            const title = headingMatch[2];
+            const id = StudyChecklistDocumentTemplate.slugifyHeading(title);
+            const indent = '    '.repeat(Math.max(0, level - 1));
+            tocLines.push(`${indent}1. [${title}](#${id})`);
+        }
+
+        if (tocLines.length === 0) return '';
+        return ['## Table of Contents', '', ...tocLines, ''].join('\n');
     }
 
     /**
@@ -479,6 +554,11 @@ export class StudyChecklistDocumentTemplate {
         // Apply heading numbers if requested
         if (showHeadingNumbers) {
             markdown = StudyChecklistDocumentTemplate.addHeadingNumbers(markdown);
+        }
+
+        const tocMarkdown = StudyChecklistDocumentTemplate.getTableOfContentsAsMarkdown(markdown);
+        if (tocMarkdown) {
+            markdown = `${tocMarkdown}\n${markdown}`;
         }
 
         return markdown;
