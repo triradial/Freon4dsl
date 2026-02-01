@@ -141,20 +141,24 @@ export class StudyChecklistDocumentTemplate {
 
     static getReferencesAsMarkdown(references) {
         if (!references || references.length === 0) return '';
-        
-        const builder = new MarkdownBuilder();
-        const items = references.map(reference => {
+
+        const lines: string[] = [];
+        references.forEach(reference => {
             const name = reference.name ?? '';
             const link = typeof reference.link === 'string' ? reference.link : '';
             const desc = typeof reference.description === 'string'
                 ? reference.description
                 : (reference.description?.text ?? reference.description?.rawText ?? '');
-            const parts = [name];
-            if (link) parts.push(`Document is at: ${link}`);
-            if (desc) parts.push(desc);
-            return parts.join(' — ');
+            const linkPart = link ? ` (link: [${link}](${link}))` : '';
+            const title = name ? `${name}${linkPart}` : linkPart.replace(/^ \(/, '(');
+            if (title) {
+                lines.push(`- ${title}`);
+            }
+            if (desc) {
+                lines.push(`  ${desc}`);
+            }
         });
-        return builder.addList(items).build();
+        return lines.length ? `${lines.join('\n')}\n` : '';
     }
 
     static getPeopleAsMarkdown(people) {
@@ -165,65 +169,81 @@ export class StudyChecklistDocumentTemplate {
             console.log('[StudyChecklist getPeopleAsMarkdown] people count:', people?.length);
         }
 
-        const builder = new MarkdownBuilder();
-        const items = people
-            .map((person, index) => {
-                const actualPerson: Person | undefined = person instanceof PersonReference
-                    ? (person as PersonReference).person?.referred
-                    : (person as Person);
-                if (!actualPerson) {
-                    if (DEBUG_PEOPLE) console.log('[StudyChecklist getPeopleAsMarkdown] person', index, '— no actualPerson', { personKeys: person != null ? Object.keys(person as object) : null });
-                    return null;
-                }
-                const personName = actualPerson.name ?? '';
-                const role = actualPerson.role;
-                const roleName = role?.referred?.name ?? role?.name ?? '';
-                const email = actualPerson.email ?? '';
-                const phone = actualPerson.phoneNumber ?? '';
-                const descSource = actualPerson.description;
-                const desc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
-                const parts: string[] = [personName];
-                if (roleName) parts.push(`in role: ${roleName}`);
-                if (email || phone) parts.push('at ' + [email, phone].filter(Boolean).join(' or '));
-                if (desc) parts.push(desc);
+        const lines: string[] = [];
+        people.forEach((person, index) => {
+            const actualPerson: Person | undefined = person instanceof PersonReference
+                ? (person as PersonReference).person?.referred
+                : (person as Person);
+            if (!actualPerson) {
+                if (DEBUG_PEOPLE) console.log('[StudyChecklist getPeopleAsMarkdown] person', index, '— no actualPerson', { personKeys: person != null ? Object.keys(person as object) : null });
+                return;
+            }
+            const personName = actualPerson.name ?? '';
+            const role = actualPerson.role;
+            const roleName = role?.referred?.name ?? role?.name ?? '';
+            const email = actualPerson.email ?? '';
+            const phone = actualPerson.phoneNumber ?? '';
+            const descSource = actualPerson.description;
+            const desc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
+            const metaParts: string[] = [];
+            if (roleName) metaParts.push(`Role: ${roleName}`);
+            if (email) metaParts.push(`Email: ${email}`);
+            if (phone) metaParts.push(`Phone: ${phone}`);
 
-                if (DEBUG_PEOPLE) {
-                    const descObj = actualPerson.description as { text?: string; rawText?: string } | undefined;
-                    console.log('[StudyChecklist getPeopleAsMarkdown] person', index, 'actualPerson:', {
-                        name: actualPerson.name,
-                        email: actualPerson.email,
-                        phoneNumber: actualPerson.phoneNumber,
-                        description: actualPerson.description,
-                        descriptionType: typeof actualPerson.description,
-                        descText: descObj?.text,
-                        descRawText: descObj?.rawText,
-                        roleName: role?.referred?.name ?? (role as { name?: string })?.name,
-                        computed: { personName, email, phone, desc, roleName },
-                        output: parts.join(' — ')
-                    });
-                }
-                return parts.join(' — ');
-            })
-            .filter((item): item is string => item != null);
-        return builder.addList(items).build();
+            if (DEBUG_PEOPLE) {
+                const descObj = actualPerson.description as { text?: string; rawText?: string } | undefined;
+                console.log('[StudyChecklist getPeopleAsMarkdown] person', index, 'actualPerson:', {
+                    name: actualPerson.name,
+                    email: actualPerson.email,
+                    phoneNumber: actualPerson.phoneNumber,
+                    description: actualPerson.description,
+                    descriptionType: typeof actualPerson.description,
+                    descText: descObj?.text,
+                    descRawText: descObj?.rawText,
+                    roleName: role?.referred?.name ?? (role as { name?: string })?.name,
+                    computed: { personName, email, phone, desc, roleName },
+                    output: { personName, metaParts, desc }
+                });
+            }
+            if (personName) {
+                lines.push(`- ${personName}`);
+            } else if (metaParts.length > 0) {
+                lines.push(`- ${metaParts.join('; ')}`);
+            }
+            if (metaParts.length > 0) {
+                lines.push(`  ${metaParts.join('; ')}`);
+            }
+            if (desc) {
+                lines.push(`  ${desc}`);
+            }
+        });
+        return lines.length ? `${lines.join('\n')}\n` : '';
     }
 
     static getSystemsAsMarkdown(systems) {
         if (!systems || systems.length === 0) return '';
         
-        const builder = new MarkdownBuilder();
-        const items = systems.map(system => {
+        const lines: string[] = [];
+        systems.forEach(system => {
             const s = (system as any).system?.referred ?? (system as any).referred ?? system;
             const name = s?.name ?? '';
             const accessedAt = s?.accessedAt;
             const accessedAtStr = typeof accessedAt === 'string' ? accessedAt : (accessedAt?.url ?? accessedAt?.phoneNumber ?? '');
             const desc = typeof s?.description === 'string' ? s.description : (s?.description?.text ?? s?.description?.rawText ?? '');
-            const parts = [name];
-            if (accessedAtStr) parts.push(accessedAtStr);
-            if (desc) parts.push(desc);
-            return parts.join(' — ');
+            const accessPart = accessedAtStr ? `Access: ${accessedAtStr}` : '';
+            if (name) {
+                lines.push(`- ${name}`);
+            } else if (accessPart) {
+                lines.push(`- ${accessPart}`);
+            }
+            if (accessPart) {
+                lines.push(`  ${accessPart}`);
+            }
+            if (desc) {
+                lines.push(`  ${desc}`);
+            }
         });
-        return builder.addList(items).build();
+        return lines.length ? `${lines.join('\n')}\n` : '';
     }
 
     /**
@@ -384,12 +404,43 @@ export class StudyChecklistDocumentTemplate {
                 // Increment counter for current level
                 headingCounters[level - 1]++;
                 
-                // Build the hierarchical number
+                // Build the hierarchical number (no period after the last digit)
                 const number = headingCounters.slice(0, level).join('.');
-                return `${headingMatch[1]} ${number}. ${title}`;
+                return `${headingMatch[1]} ${number}: ${title}`;
             }
             return line;
         }).join('\n');
+    }
+
+    /**
+     * Generate a slug for a heading that matches the UI's markdown-it ID generation.
+     */
+    static slugifyHeading(text: string): string {
+        return text.toLowerCase()
+            .replace(/[^\w\- ]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
+    /**
+     * Build a numbered TOC with links for all headings in the markdown.
+     */
+    static getTableOfContentsAsMarkdown(markdown: string): string {
+        const lines = markdown.split('\n');
+        const tocLines: string[] = [];
+        for (const line of lines) {
+            const headingMatch = line.match(/^(#{1,6})\s+(.+)$/);
+            if (!headingMatch) continue;
+            const level = headingMatch[1].length;
+            const title = headingMatch[2];
+            const id = StudyChecklistDocumentTemplate.slugifyHeading(title);
+            const indent = '  '.repeat(Math.max(0, level - 1));
+            tocLines.push(`${indent}1. [${title}](#${id})`);
+        }
+
+        if (tocLines.length === 0) return '';
+        return ['## Table of Contents', '', ...tocLines, ''].join('\n');
     }
 
     /**
@@ -479,6 +530,11 @@ export class StudyChecklistDocumentTemplate {
         // Apply heading numbers if requested
         if (showHeadingNumbers) {
             markdown = StudyChecklistDocumentTemplate.addHeadingNumbers(markdown);
+        }
+
+        const tocMarkdown = StudyChecklistDocumentTemplate.getTableOfContentsAsMarkdown(markdown);
+        if (tocMarkdown) {
+            markdown = `${tocMarkdown}\n${markdown}`;
         }
 
         return markdown;

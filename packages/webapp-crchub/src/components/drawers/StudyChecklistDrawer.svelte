@@ -360,7 +360,19 @@
     }
     
     .study-checklist-content h3 {
+        font-size: 1.25rem;
+    }
+    
+    .study-checklist-content h4 {
         font-size: 1.1rem;
+    }
+    
+    .study-checklist-content h5 {
+        font-size: 1rem;
+    }
+    
+    .study-checklist-content h6 {
+        font-size: 0.95rem;
     }
     
     .study-checklist-content p {

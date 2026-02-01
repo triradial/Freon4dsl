@@ -5,7 +5,6 @@
 // @ts-ignore
     import { ExternalLink } from "@lucide/svelte";
     import { onMount, tick } from "svelte";
-    import { debugStringPropertyLookup } from "../../services/dsl/string-property-lookup-debug.js";
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let theBox: StringReplacerBox | null = null;
@@ -57,7 +56,6 @@
         if (propType === "string") {
             box.setPropertyValue(stored);
         } else {
-            debugStringPropertyLookup("UrlInputComponent", b);
             if (b.node != null && typeof b.propertyName === "string") {
                 (b.node as Record<string, string>)[b.propertyName] = stored;
             }

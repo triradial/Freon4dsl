@@ -3791,7 +3791,6 @@
 
   /* #region Study Checklist */
   .study-checklist-content {
-    
     h1 {
       font-size: var(--large-font-size);
       font-weight: 600;
@@ -3818,6 +3817,17 @@
     h4 {
       font-size: var(--x-small-font-size);
       font-weight: 600;
+      color: var(--checklist-h3);
+    }
+    h5 {
+      font-size: var(--x-small-font-size);
+      font-weight: 600;
+      color: var(--checklist-h3);
+    }
+    h6 {
+      font-size: var(--x-small-font-size);
+      font-weight: 600;
+      color: var(--checklist-h3);
     }
 
     p { 

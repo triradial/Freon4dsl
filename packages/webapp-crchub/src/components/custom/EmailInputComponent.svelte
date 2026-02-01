@@ -2,10 +2,6 @@
     import { AST, StringReplacerBox } from "@freon4dsl/core";
     import Envelope from "phosphor-svelte/lib/Envelope";
     import { onMount, tick } from "svelte";
-    import { debugStringPropertyLookup } from "../../services/dsl/string-property-lookup-debug.js";
-
-    /** Set to true to log when email is written to the model (for debugging checklist missing email). */
-    const DEBUG_EMAIL_INPUT = false;
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let theBox: StringReplacerBox | null = null;
@@ -50,8 +46,6 @@
         if (!box) return;
         const b = box as { getPropertyType?(): string; node?: unknown; propertyName?: string };
         const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
-        // Always run debug when flag is on (so we see lookup/concept even when type is "string")
-        debugStringPropertyLookup("EmailInputComponent", b);
         if (propType === "string") {
             box.setPropertyValue(stored);
         } else {
@@ -97,10 +91,6 @@
         const currentBoxValue = theBox?.getPropertyValue();
         if (stored !== currentBoxValue) {
             assertStringPropertyType(theBox, "EmailInputComponent");
-            if (DEBUG_EMAIL_INPUT && theBox) {
-                const node = (theBox as any).node;
-                console.log("[EmailInputComponent] endEditing: setting", (theBox as any).propertyName, "to", stored, "node:", node?.freId?.() ?? node);
-            }
             AST.changeNamed(`EmailInputComponent: Set ${theBox?.propertyName || 'property'} to ${stored}`, () => {
                 setStringValue(theBox, stored);
             });
@@ -152,10 +142,6 @@
 
         // Update property in real-time during editing
         assertStringPropertyType(theBox, "EmailInputComponent");
-        if (DEBUG_EMAIL_INPUT && theBox) {
-            const node = (theBox as any).node;
-            console.log("[EmailInputComponent] onInputChange: setting", (theBox as any).propertyName, "to", stored, "node:", node?.freId?.() ?? node);
-        }
         AST.changeNamed(`EmailInputComponent: Update ${theBox?.propertyName || 'property'}`, () => {
             setStringValue(theBox, stored);
         });

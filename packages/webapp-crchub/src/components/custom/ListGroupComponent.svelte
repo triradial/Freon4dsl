@@ -4,7 +4,6 @@
     import { onMount } from "svelte";
 // ts-ignore
     import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, EllipsisVertical as IconEllipsisVertical, Plus as IconPlus } from '@lucide/svelte';
-    import { debugListPropertyLookup } from "../../services/dsl/string-property-lookup-debug.js";
 
     const LOGGER = new FreLogger("ListGroupComponent");
     FreLogger.unmute("ListGroupComponent");
@@ -72,7 +71,6 @@
             const propertyName = box.propertyName;
             const node = box.node;
             const typeName = node.freLanguageConcept();
-            debugListPropertyLookup("ListGroupComponent", typeName, propertyName, node);
             const property = language.classifierProperty(typeName, propertyName);
             let newConceptName = "";
             if (property.type) {

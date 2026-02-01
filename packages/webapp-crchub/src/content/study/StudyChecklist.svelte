@@ -2,7 +2,6 @@
     import MarkdownIt from "markdown-it";
     import ContentLoader from "../../components/drawers/ContentLoader.svelte";
     import { simulationService } from "../../services/simulation/simulation-service.js";
-    import StudyTimelineTableContent from "./StudyTimelineTableContent.svelte";
 
     const md = new MarkdownIt({ html: true });
 
@@ -158,3 +157,58 @@
         {/if}
     </div>
 </div>
+
+<style>
+    /* Heading hierarchy: h1 > h2 > h3 > h4 > h5 > h6 so nested sections are visually smaller (content is injected via {@html}) */
+    .study-checklist-content :global(h1) {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        padding-bottom: 0.3em;
+        border-bottom: 1px solid var(--borderColor-muted, currentColor);
+    }
+    .study-checklist-content :global(h2) {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.3em;
+        border-bottom: 1px solid var(--borderColor-muted, currentColor);
+    }
+    .study-checklist-content :global(h3) {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-top: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+    .study-checklist-content :global(h4) {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .study-checklist-content :global(h5) {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    .study-checklist-content :global(h6) {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--fgColor-muted, inherit);
+    }
+    .study-checklist-content :global(p) {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+    }
+    .study-checklist-content :global(ul),
+    .study-checklist-content :global(ol) {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        padding-left: 1.5rem;
+    }
+</style>

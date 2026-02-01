@@ -2,10 +2,6 @@
     import { AST, StringReplacerBox } from "@freon4dsl/core";
     import Phone from "phosphor-svelte/lib/Phone";
     import { onMount, tick } from "svelte";
-    import { debugStringPropertyLookup } from "../../services/dsl/string-property-lookup-debug.js";
-
-    /** Set to true to log when phone is written to the model (for debugging checklist missing phone). */
-    const DEBUG_PHONE_INPUT = false;
 
     const { box } = $props<{ box: StringReplacerBox }>();
     let theBox: StringReplacerBox | null = null;
@@ -62,7 +58,6 @@
         if (propType === "string") {
             box.setPropertyValue(stored);
         } else {
-            debugStringPropertyLookup("PhoneInputComponent", b);
             if (b.node != null && typeof b.propertyName === "string") {
                 (b.node as Record<string, string>)[b.propertyName] = stored;
             }
@@ -175,10 +170,6 @@
         const currentBoxValue = theBox?.getPropertyValue();
         if (stored !== currentBoxValue) {
             assertStringPropertyType(theBox, "PhoneInputComponent");
-            if (DEBUG_PHONE_INPUT && theBox) {
-                const node = (theBox as any).node;
-                console.log("[PhoneInputComponent] endEditing: setting", (theBox as any).propertyName, "to", stored, "node:", node?.freId?.() ?? node);
-            }
             AST.changeNamed(`PhoneInputComponent: Set ${theBox?.propertyName || 'property'} to ${stored}`, () => {
                 setStringValue(theBox, stored);
             });
@@ -232,10 +223,6 @@
 
         // Update property in real-time during editing
         assertStringPropertyType(theBox, "PhoneInputComponent");
-        if (DEBUG_PHONE_INPUT && theBox) {
-            const node = (theBox as any).node;
-            console.log("[PhoneInputComponent] onInputChange: setting", (theBox as any).propertyName, "to", stored, "node:", node?.freId?.() ?? node);
-        }
         AST.changeNamed(`PhoneInputComponent: Update ${theBox?.propertyName || 'property'}`, () => {
             setStringValue(theBox, stored);
         });
