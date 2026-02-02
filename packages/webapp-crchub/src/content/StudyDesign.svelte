@@ -1,6 +1,6 @@
 <script lang="ts">
     import { browser } from '$app/environment';
-    import { AST, FreChangeManager, FreEditor, FrePartDelta, FrePartListDelta, FrePrimDelta, FrePrimListDelta } from "@freon4dsl/core";
+    import { AST, FreChangeManager, FreEditor, FreEditorUtil, FrePartDelta, FrePartListDelta, FrePrimDelta, FrePrimListDelta, FreUndoManager } from "@freon4dsl/core";
     import { FreonComponent } from "@freon4dsl/core-svelte";
     import { type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { Tabs } from "@skeletonlabs/skeleton-svelte";
@@ -34,6 +34,8 @@
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
     let unsubscribeChangeManager: (() => void) | undefined;
     let isSaving = $state(false);
+    // Flag to track when undo/redo is in progress (to skip redundant change callbacks)
+    let isUndoRedoInProgress = false;
 
     // Splitter state for editor/tabs panels
     let isDraggingSplitter = $state(false);
@@ -52,6 +54,27 @@
     let timelineChartComponent: StudyTimelineChart | undefined = $state();
     let checklistComponent: StudyChecklist | undefined = $state();
     let errorCountRefreshTimeout: ReturnType<typeof setTimeout> | null = null;
+    
+    // Undo/redo button state
+    let canUndo = $state(false);
+    let canRedo = $state(false);
+    
+    // Update undo/redo button states based on stack availability
+    function updateUndoRedoState() {
+        if (!unit) {
+            canUndo = false;
+            canRedo = false;
+            return;
+        }
+        const undoManager = FreUndoManager.getInstance();
+        const undoText = undoManager.nextUndoAsText(unit);
+        const redoText = undoManager.nextRedoAsText(unit);
+        // Enable buttons if there's anything in the stack
+        // When clicking, we'll skip PartDeltas to find the actual user change (PrimDelta)
+        canUndo = undoText !== "nothing left to undo";
+        canRedo = redoText !== "nothing left to redo";
+        console.log('🔄 updateUndoRedoState:', { canUndo, canRedo, undoText, redoText });
+    }
 
     // Load splitter setting from localStorage
     function loadSplitterSetting() {
@@ -170,6 +193,8 @@
             updateVisibleProjections(unit);
             // Update error count
             errorCount = ModelManager.getInstance().runValidator().length;
+            // Initialize undo/redo button states
+            updateUndoRedoState();
         } else {
             noModelAvailable = true;
             console.warn(`[StudyDesign.svelte] ⚠️ Study ${study.id} (${study.name}) has no StudyConfiguration model available`);
@@ -189,6 +214,15 @@
                 return;
             }
             
+            // Skip changes triggered by undo/redo operations - those are handled separately
+            if (isUndoRedoInProgress) {
+                console.log("⏭️ StudyDesign.svelte: Change during undo/redo - skipping", {
+                    propertyName: delta.propertyName,
+                    deltaType: delta.constructor.name
+                });
+                return;
+            }
+            
             // Only save if the change is from the unit we're editing
             // This prevents infinite loops: when model.addUnit() is called during openModel,
             // those changes have delta.unit !== unit, so they're ignored here
@@ -204,22 +238,30 @@
                         newValue: delta.newValue
                     });
                     debouncedSave();
+                    // Update undo/redo button states after data change (with small delay for stack update)
+                    setTimeout(updateUndoRedoState, 10);
                 }
             } else if (delta instanceof FrePrimListDelta) {
                 console.log("💾 StudyDesign.svelte: FrePrimListDelta change detected", {
                     propertyName: delta.propertyName
                 });
                 debouncedSave();
+                // Update undo/redo button states after data change
+                setTimeout(updateUndoRedoState, 10);
             } else if (delta instanceof FrePartListDelta) {
                 console.log("💾 StudyDesign.svelte: FrePartListDelta change detected", {
                     propertyName: delta.propertyName
                 });
                 debouncedSave();
+                // Update undo/redo button states after data change
+                setTimeout(updateUndoRedoState, 10);
             } else if (delta instanceof FrePartDelta) {
                 console.log("💾 StudyDesign.svelte: FrePartDelta change detected", {
                     propertyName: delta.propertyName
                 });
                 debouncedSave();
+                // Update undo/redo button states after data change
+                setTimeout(updateUndoRedoState, 10);
             } else {
                 console.warn("⚠️ Unknown change from FreChangeManager:", delta);
             }
@@ -391,14 +433,148 @@
         }
     }
 
+    /**
+     * Extract property name from delta text like "FreTransactionDelta<PartDelta: set TimeAmount.unit to days>"
+     * Returns the property name (e.g., "unit") or null if not found.
+     */
+    function extractPropertyFromDeltaText(deltaText: string): string | null {
+        // Match pattern like "set TypeName.propertyName to" or "set TypeName.propertyName old"
+        const match = deltaText.match(/set \w+\.(\w+) (?:to|old)/);
+        return match ? match[1] : null;
+    }
+    
     function handleUndoAction() {
-        EditorRequestsHandler.getInstance().undo();
+        if (!dslEditor || !canUndo) return;
+        
+        const undoManager = FreUndoManager.getInstance();
+        const MAX_SKIP = 50; // Safety limit
+        let skipCount = 0;
+        
+        // Set flag to skip change callbacks during undo
+        isUndoRedoInProgress = true;
+        let lastDelta: any = undefined;
+        
+        try {
+            while (skipCount < MAX_SKIP) {
+                const nextUndoText = unit ? undoManager.nextUndoAsText(unit) : 'nothing left to undo';
+                
+                if (nextUndoText === 'nothing left to undo') {
+                    console.log('🔙 UNDO: Nothing left to undo (after skipping', skipCount, 'entries)');
+                    break;
+                }
+                
+                const isPrimDelta = nextUndoText.includes('PrimDelta');
+                
+                // Do the undo
+                const delta = EditorRequestsHandler.getInstance().undoWithDelta();
+                lastDelta = delta;
+                
+                if (isPrimDelta) {
+                    // Found a PrimDelta - this is a user change, stop here
+                    console.log('🔙 UNDO: Undid PrimDelta:', { nextUndoText, skippedEntries: skipCount });
+                    break;
+                } else {
+                    // It's a PartDelta - check if we should skip (validator duplication) or stop (user change)
+                    const currentProp = extractPropertyFromDeltaText(nextUndoText);
+                    const peekNext = unit ? undoManager.nextUndoAsText(unit) : 'nothing left to undo';
+                    const nextProp = extractPropertyFromDeltaText(peekNext);
+                    const nextIsPrimDelta = peekNext.includes('PrimDelta');
+                    
+                    // Only skip if the NEXT entry is also a PartDelta for the SAME property
+                    // This indicates validator duplication, not a user change
+                    if (!nextIsPrimDelta && peekNext !== 'nothing left to undo' && currentProp && currentProp === nextProp) {
+                        console.log('🔙 UNDO: Skipped duplicate PartDelta:', { property: currentProp, nextUndoText, skipCount });
+                        skipCount++;
+                        // Continue loop to skip duplicates
+                    } else {
+                        // Next is different (PrimDelta, different property, or empty) - this PartDelta might be meaningful, stop
+                        console.log('🔙 UNDO: Undid PartDelta:', { property: currentProp, nextUndoText, skippedEntries: skipCount });
+                        break;
+                    }
+                }
+            }
+            
+            // Handle selection updates if the previously selected box is no longer in the tree
+            if (lastDelta !== undefined && !dslEditor.isBoxInTree(dslEditor.selectedBox)) {
+                FreEditorUtil.selectAfterUndo(dslEditor, lastDelta);
+            }
+            // Trigger component refresh via selectionChanged
+            dslEditor.selectionChanged();
+        } finally {
+            isUndoRedoInProgress = false;
+        }
+        // Update undo/redo button states
+        updateUndoRedoState();
+        // Save the model after undo (model has changed)
+        debouncedSave();
         // Update error count and refresh timeline components asynchronously
         updateErrorCountAsync();
     }
 
     function handleRedoAction() {
-        EditorRequestsHandler.getInstance().redo();
+        if (!dslEditor || !canRedo) return;
+        
+        const undoManager = FreUndoManager.getInstance();
+        const MAX_SKIP = 50; // Safety limit
+        let skipCount = 0;
+        
+        // Set flag to skip change callbacks during redo
+        isUndoRedoInProgress = true;
+        let lastDelta: any = undefined;
+        
+        try {
+            while (skipCount < MAX_SKIP) {
+                const nextRedoText = unit ? undoManager.nextRedoAsText(unit) : 'nothing left to redo';
+                
+                if (nextRedoText === 'nothing left to redo') {
+                    console.log('🔜 REDO: Nothing left to redo (after skipping', skipCount, 'entries)');
+                    break;
+                }
+                
+                const isPrimDelta = nextRedoText.includes('PrimDelta');
+                
+                // Do the redo
+                const delta = EditorRequestsHandler.getInstance().redoWithDelta();
+                lastDelta = delta;
+                
+                if (isPrimDelta) {
+                    // Found a PrimDelta - this is a user change, stop here
+                    console.log('🔜 REDO: Redid PrimDelta:', { nextRedoText, skippedEntries: skipCount });
+                    break;
+                } else {
+                    // It's a PartDelta - check if we should skip (validator duplication) or stop (user change)
+                    const currentProp = extractPropertyFromDeltaText(nextRedoText);
+                    const peekNext = unit ? undoManager.nextRedoAsText(unit) : 'nothing left to redo';
+                    const nextProp = extractPropertyFromDeltaText(peekNext);
+                    const nextIsPrimDelta = peekNext.includes('PrimDelta');
+                    
+                    // Only skip if the NEXT entry is also a PartDelta for the SAME property
+                    // This indicates validator duplication, not a user change
+                    if (!nextIsPrimDelta && peekNext !== 'nothing left to redo' && currentProp && currentProp === nextProp) {
+                        console.log('🔜 REDO: Skipped duplicate PartDelta:', { property: currentProp, nextRedoText, skipCount });
+                        skipCount++;
+                        // Continue loop to skip duplicates
+                    } else {
+                        // Next is different (PrimDelta, different property, or empty) - this PartDelta might be meaningful, stop
+                        console.log('🔜 REDO: Redid PartDelta:', { property: currentProp, nextRedoText, skippedEntries: skipCount });
+                        break;
+                    }
+                }
+            }
+            
+            // Handle selection updates if the previously selected box is no longer in the tree
+            if (lastDelta !== undefined && !dslEditor.isBoxInTree(dslEditor.selectedBox)) {
+                FreEditorUtil.selectAfterUndo(dslEditor, lastDelta);
+            }
+            // Trigger component refresh via selectionChanged
+            dslEditor.selectionChanged();
+        } finally {
+            isUndoRedoInProgress = false;
+        }
+        // Update undo/redo button states
+        updateUndoRedoState();
+        // Save the model after redo (model has changed)
+        debouncedSave();
         // Update error count and refresh timeline components asynchronously
         updateErrorCountAsync();
     }
@@ -429,8 +605,8 @@
         <div class="splitter-panel" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
             {#if editorLoaded}
                 <div class="flex gap-2 mb-2" style="padding: 0 1rem;">
-                    <button type="button" class="icon-button primary inverted" onclick={handleUndoAction} tabindex="-1"><IconUndo /></button>
-                    <button type="button" class="icon-button primary inverted" onclick={handleRedoAction} tabindex="-1"><IconRedo /></button>
+                    <button type="button" class="icon-button primary inverted" onclick={handleUndoAction} tabindex="-1" disabled={!canUndo} title={canUndo ? 'Undo' : 'Nothing to undo'}><IconUndo /></button>
+                    <button type="button" class="icon-button primary inverted" onclick={handleRedoAction} tabindex="-1" disabled={!canRedo} title={canRedo ? 'Redo' : 'Nothing to redo'}><IconRedo /></button>
                     <DSLFooter items={footerItems()} onCheckboxChange={handleCheckboxChange} />
                 </div>
                 <div class="crc-editor crc-content-width" style="flex: 1; overflow: auto;">
