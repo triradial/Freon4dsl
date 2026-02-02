@@ -8,6 +8,7 @@
     import NavBar from '../components/common/NavBar.svelte';
     import ObjectDrawerSystem from "../components/common/ObjectDrawerSystem.svelte";
     import SideDrawerSystem from "../components/common/SideDrawerSystem.svelte";
+    import SchemaMismatchDialog from "../components/dialogs/SchemaMismatchDialog.svelte";
     import DSLErrorsDrawer from "../components/drawers/DSLErrorsDrawer.svelte";
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
@@ -113,6 +114,8 @@
     {#if isAnyDrawerOpen}
         <div class="drawer-overlay"></div>
     {/if}
+    <!-- Schema mismatch popup for when models with older schema are loaded -->
+    <SchemaMismatchDialog />
 {:else}
     <div class="login-page">
         <div class="login-container">

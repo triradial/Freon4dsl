@@ -33,6 +33,7 @@
 
     let saveTimeout: ReturnType<typeof setTimeout> | null = null;
     let unsubscribeChangeManager: (() => void) | undefined;
+    let isSaving = $state(false);
 
     // Splitter state for editor/tabs panels
     let isDraggingSplitter = $state(false);
@@ -183,6 +184,18 @@
 
         // Subscribe to FreChangeManager changes
         const changeCallback = (delta) => {
+            // Prevent infinite loops: ignore changes while saving
+            if (isSaving) {
+                return;
+            }
+            
+            // Only save if the change is from the unit we're editing
+            // This prevents infinite loops: when model.addUnit() is called during openModel,
+            // those changes have delta.unit !== unit, so they're ignored here
+            if (!unit || delta.unit !== unit) {
+                return;
+            }
+            
             if (delta instanceof FrePrimDelta) {
                 if (delta.oldValue != delta.newValue) {
                     console.log("💾 StudyDesign.svelte: FrePrimDelta change detected", {
@@ -361,13 +374,21 @@
         }, 300); // 300ms debounce
     }
 
-    function handleSaveStudy() {
+    async function handleSaveStudy() {
         console.log('💾 StudyDesign.svelte: handleSaveStudy called');
-        ModelManager.getInstance().saveCurrentUnit();
-        // Clear simulation cache since model has changed
-        simulationService.clearCache(id);
-        // Update error count and refresh active timeline tab asynchronously after save
-        updateErrorCountAsync();
+        isSaving = true;
+        try {
+            // Use forceSaveCurrentUnit to ensure the unit is marked as dirty and actually saved
+            // This is necessary because Freon's change detection (FrePartDelta etc.) triggers
+            // debouncedSave, but doesn't automatically add the unit to InMemoryModel.dirtyUnits
+            await ModelManager.getInstance().forceSaveCurrentUnit();
+            // Clear simulation cache since model has changed
+            simulationService.clearCache(id);
+            // Update error count and refresh active timeline tab asynchronously after save
+            updateErrorCountAsync();
+        } finally {
+            isSaving = false;
+        }
     }
 
     function handleUndoAction() {

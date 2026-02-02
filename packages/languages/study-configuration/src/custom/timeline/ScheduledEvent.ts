@@ -270,11 +270,17 @@ export class ScheduledEvent {
     }
 
     isScheduledOnASpecificDay() {
-        const eventStart = this.configuredEvent.schedule.eventStart as EventStart;
+        const eventStart = this.configuredEvent?.schedule?.eventStart as EventStart;
+        console.log("[ScheduledEvent] isScheduledOnASpecificDay for:", this.getName(), 
+            "eventStart:", eventStart, 
+            "constructor:", eventStart?.constructor?.name,
+            "freLanguageConcept:", typeof eventStart?.freLanguageConcept === 'function' ? eventStart.freLanguageConcept() : 'N/A');
         if (eventStart == null) {
             TimelineLogger.log("isScheduledOnASpecificDay: eventStart is null for: " + this.getName());
+            console.log("[ScheduledEvent] eventStart is null/undefined for:", this.getName());
             return false;
         } else if (this.isInstanceOfAny(eventStart, [Day, StudyStart, FirstDayOfStudy, Baseline])) {
+            console.log("[ScheduledEvent] " + this.getName() + " IS scheduled on a specific day (Day/StudyStart/FirstDayOfStudy/Baseline)");
             return true;
         } // } else if (eventStart.freIsExpression()) { THIS IS NO LONGER NEEDED BECAUSE EVENTSTART IS NEVER AN EXPRESSION
         //     //TODO: Make this more general search of StudyStart anywhere in the expression
@@ -284,6 +290,7 @@ export class ScheduledEvent {
         //         return true;
         //     }
         // }
+        console.log("[ScheduledEvent] " + this.getName() + " is NOT scheduled on a specific day");
         return false;
     }
 
@@ -300,7 +307,9 @@ export class ScheduledEvent {
         }
         let repeatingEvent = this.isRepeatingEvent();
         TimelineLogger.log("ScheduledEvent.getInstanceIfEventIsReadyToSchedule() for: " + this.getName());
+        console.log("[ScheduledEvent] getInstanceIfEventIsReadyToSchedule for:", this.getName(), "after completed:", completedEvent?.getName(), "at time:", time);
         let scheduledDay = this.day(timeline);
+        console.log("[ScheduledEvent] scheduledDay for", this.getName(), "=", scheduledDay);
         if (this.isScheduledOnASpecificDay() && !repeatingEvent) {
             if (timeline.scheduledLogging)
                 TimelineLogger.log(

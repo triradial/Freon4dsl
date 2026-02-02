@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
+    import { mount, unmount } from "svelte";
     import { browser } from '$app/environment';
     import { get } from "svelte/store";
     import dayjs from "dayjs";
@@ -37,8 +38,11 @@
     let hoveredStaffId = $state<string | null>(null);
     let staffLabelsScrollRef = $state<HTMLElement | null>(null);
     let staffRowsScrollRef = $state<HTMLElement | null>(null);
-    let deletePopupStaffId = $state<string | null>(null);
-    let deletePopupStaffRowIndex = $state(-1);
+    // Delete confirmation popover state
+    let deleteConfirmInstance: any = null;
+    let deleteConfirmContainer: HTMLDivElement | null = null;
+    let deleteConfirmTriggerElement: HTMLElement | null = null;
+    let deleteConfirmStaffId: string | null = null;
     
     // Quick filter for staff
     let staffQuickFilter = $state('');
@@ -465,25 +469,70 @@
         }
     }
     
-    function handleDeleteStaff(staffId: string) {
-        deletePopupStaffId = staffId;
-        deletePopupStaffRowIndex = staffMembers.findIndex(s => s.id === staffId);
+    async function handleDeleteStaff(staffId: string, triggerElement: HTMLElement) {
+        // Close any existing delete confirm popover
+        handleDeleteConfirmCancel();
+        
+        // Store staff info
+        deleteConfirmStaffId = staffId;
+        deleteConfirmTriggerElement = triggerElement;
+        
+        // Create container and mount component
+        deleteConfirmContainer = document.createElement('div');
+        document.body.appendChild(deleteConfirmContainer);
+        
+        // Find staff name for display
+        const staffMember = staffMembers.find(s => s.id === staffId);
+        const staffName = staffMember?.name || staffId;
+        
+        // Dynamic import to avoid module loading issues
+        const { default: DeleteConfirmPopover } = await import("../components/popovers/DeleteConfirmPopover.svelte");
+        
+        deleteConfirmInstance = mount(DeleteConfirmPopover, {
+            target: deleteConfirmContainer,
+            props: {
+                open: true,
+                triggerElement: deleteConfirmTriggerElement,
+                itemName: staffName,
+                itemType: 'staff member',
+                onClose: handleDeleteConfirmCancel,
+                onConfirm: handleDeleteConfirmConfirm
+            }
+        });
     }
     
-    async function confirmDeleteStaff(staffId: string) {
+    function handleDeleteConfirmCancel() {
+        if (deleteConfirmInstance) {
+            try {
+                unmount(deleteConfirmInstance);
+            } catch (e) {
+                console.warn('[Facility2] Error unmounting delete confirm popover:', e);
+            }
+            deleteConfirmInstance = null;
+        }
+        if (deleteConfirmContainer && deleteConfirmContainer.parentNode) {
+            deleteConfirmContainer.parentNode.removeChild(deleteConfirmContainer);
+            deleteConfirmContainer = null;
+        }
+        deleteConfirmStaffId = null;
+        deleteConfirmTriggerElement = null;
+    }
+    
+    async function handleDeleteConfirmConfirm() {
+        if (!deleteConfirmStaffId) {
+            handleDeleteConfirmCancel();
+            return;
+        }
+        
+        const staffId = deleteConfirmStaffId;
+        handleDeleteConfirmCancel();
+        
         try {
             await dataStore.deletePerson(staffId);
             staffMembers = staffMembers.filter(s => s.id !== staffId);
         } catch (error) {
             console.error('[Facility2] Error deleting staff:', error);
         }
-        deletePopupStaffId = null;
-        deletePopupStaffRowIndex = -1;
-    }
-    
-    function cancelDeleteStaff() {
-        deletePopupStaffId = null;
-        deletePopupStaffRowIndex = -1;
     }
 
     // Sync scroll between labels and rows
@@ -565,10 +614,6 @@
                         bind:staffLabelsScrollRef
                         bind:staffRowsScrollRef
                         onStaffScroll={syncStaffScroll}
-                        deletePopupStaffId={deletePopupStaffId}
-                        deletePopupRowIndex={deletePopupStaffRowIndex}
-                        onConfirmDelete={confirmDeleteStaff}
-                        onCancelDelete={cancelDeleteStaff}
                     />
                 </div>
             {/if}

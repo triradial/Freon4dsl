@@ -90,8 +90,15 @@ export class Simulator {
         });
         this.sim.addEntity(Scheduler, "Scheduler", this);
         // Run the simulation for the appropriate number of days
+        TimelineLogger.enable(); // TEMP: Enable logging for debugging
         TimelineLogger.log("running simulation...");
+        console.log("[Simulator.run] Starting simulation with scheduled study config:", {
+            periodsCount: this.scheduledStudyConfiguration.scheduledPeriods.length,
+            allEventsCount: this.scheduledStudyConfiguration.getAllEventsInSchedule().length,
+            eventNames: this.scheduledStudyConfiguration.getAllEventsInSchedule().map(e => e.getName())
+        });
         let results = this.sim.simulate(500);
+        console.log("[Simulator.run] Simulation complete, timeline days:", this.timeline.getDays().length);
         return results;
     }
 }

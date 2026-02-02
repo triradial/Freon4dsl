@@ -64,10 +64,6 @@
         patientLabelsScrollRef = $bindable<HTMLElement | null>(null),
         patientRowsScrollRef = $bindable<HTMLElement | null>(null),
         onPatientScroll,
-        deletePopupPatientId = null,
-        deletePopupRowIndex = -1,
-        onConfirmDelete,
-        onCancelDelete,
         quickFilter = $bindable(''),
         onQuickFilterChange
     } = $props<{
@@ -98,7 +94,7 @@
         onAddPatient: () => void;
         onRefreshPatients: () => void;
         onEditPatient: (patientId: string) => void;
-        onDeletePatient: (patientId: string) => void;
+        onDeletePatient: (patientId: string, triggerElement: HTMLElement) => void;
         onJumpToFirstVisit: (patientId: string) => void;
         onNavigatePrevious: () => void;
         onNavigateNext: () => void;
@@ -108,10 +104,6 @@
         patientLabelsScrollRef?: HTMLElement | null;
         patientRowsScrollRef?: HTMLElement | null;
         onPatientScroll?: (source: 'labels' | 'rows') => void;
-        deletePopupPatientId?: string | null;
-        deletePopupRowIndex?: number;
-        onConfirmDelete?: (patientId: string) => void;
-        onCancelDelete?: () => void;
         quickFilter?: string;
         onQuickFilterChange?: (value: string) => void;
     }>();
@@ -174,17 +166,17 @@
                         {@const patientRecord = getPatientRecord(patientId)}
                         {@const hasFirstVisit = patientHasFirstVisit(patientId)}
                         <!-- svelte-ignore a11y_no_static_element_interactions -->
-                        <div class="row-label-container" onmouseenter={() => { if (deletePopupPatientId !== patientId) hoveredPatientId = patientId; }} onmouseleave={() => { if (deletePopupPatientId !== patientId) hoveredPatientId = null; }}>    
+                        <div class="row-label-container" onmouseenter={() => hoveredPatientId = patientId} onmouseleave={() => hoveredPatientId = null}>    
                             <div class="row-left-content">
                                 <span class="row-label-text">
                                     <a href="/patient?id={patientRecord?.id || ''}&studyId={studyId}" class="name-link-text">{patientId}</a>{patientRecord?.initials ? ` • ${patientRecord.initials}` : ''}
                                 </span>
-                                {#if hoveredPatientId === patientId && deletePopupPatientId !== patientId}
+                                {#if hoveredPatientId === patientId}
                                     <div class="row-actions">
                                         <button class="grid-button general-button" onclick={() => onEditPatient(patientId)} title="Edit Patient" aria-label="Edit Patient">
                                             <IconPencil size={14} />
                                         </button>
-                                        <button class="grid-button delete-button" onclick={() => onDeletePatient(patientId)} title="Delete Patient" aria-label="Delete Patient">
+                                        <button class="grid-button delete-button" onclick={(e) => onDeletePatient(patientId, e.currentTarget as HTMLElement)} title="Delete Patient" aria-label="Delete Patient">
                                             <IconTrash size={14} />
                                         </button>
                                     </div>
@@ -318,21 +310,5 @@
                 {/each}
             </div>
         </div>
-        
-        <!-- Delete confirmation popup overlay -->
-        {#if deletePopupPatientId && deletePopupRowIndex !== undefined && deletePopupRowIndex >= 0}
-            {@const patientRecord = getPatientRecord(deletePopupPatientId)}
-            {@const scrollOffset = patientLabelsScrollRef?.scrollTop || 0}
-            {@const rowTop = deletePopupRowIndex * 40 - scrollOffset}
-            <div class="delete-popup-overlay" style="top: calc(5rem + {rowTop}px);">
-                <div class="inline-delete-popup">
-                    <span class="delete-popup-patient">{deletePopupPatientId}{patientRecord?.initials ? ` • ${patientRecord.initials}` : ''}</span>
-                    <span class="delete-popup-separator">|</span>
-                    <span class="delete-popup-text">Delete patient?</span>
-                    <button class="delete-popup-btn keep" onclick={() => onCancelDelete?.()}>No, keep</button>
-                    <button class="delete-popup-btn delete" onclick={() => onConfirmDelete?.(deletePopupPatientId!)}>Yes, delete</button>
-                </div>
-            </div>
-        {/if}
     </div>
 </div>
