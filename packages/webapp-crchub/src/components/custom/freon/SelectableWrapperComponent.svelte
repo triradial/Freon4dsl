@@ -2,8 +2,23 @@
     import { AST } from "@freon4dsl/core";
     import type { FreComponentProps } from "@freon4dsl/core-svelte";
     import { isPartReplacerBox, type Box } from "@freon4dsl/core";
-    import { tick } from "svelte";
+    import { tick, getContext, setContext } from "svelte";
     import type { Snippet } from "svelte";
+
+    // Context key for tracking nested wrappers
+    const WRAPPER_CONTEXT_KEY = Symbol('selectable-wrapper-context');
+    
+    // Context type for tracking active wrapper in nested scenarios
+    interface WrapperContext {
+        // Register a child wrapper
+        registerChild: (id: string) => void;
+        // Unregister a child wrapper
+        unregisterChild: (id: string) => void;
+        // Check if any child is currently active (hovered/focused)
+        hasActiveChild: () => boolean;
+        // Set if this wrapper is active
+        setChildActive: (id: string, active: boolean) => void;
+    }
 
     interface Props {
         box: Box;
@@ -13,11 +28,72 @@
 
     let { box, editor, children, onDelete }: FreComponentProps<Box> & { children: Snippet, onDelete?: () => void } = $props();
     
+    // Generate unique ID for this wrapper instance
+    const wrapperId = `wrapper-${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Get parent wrapper context (if nested inside another wrapper)
+    const parentContext = getContext<WrapperContext | undefined>(WRAPPER_CONTEXT_KEY);
+    
+    // Track child wrappers and their active state
+    let childWrappers = $state<Map<string, boolean>>(new Map());
+    
+    // Create context for child wrappers
+    const selfContext: WrapperContext = {
+        registerChild: (id: string) => {
+            childWrappers.set(id, false);
+            childWrappers = new Map(childWrappers); // Trigger reactivity
+        },
+        unregisterChild: (id: string) => {
+            childWrappers.delete(id);
+            childWrappers = new Map(childWrappers); // Trigger reactivity
+        },
+        hasActiveChild: () => {
+            for (const [_, active] of childWrappers) {
+                if (active) return true;
+            }
+            return false;
+        },
+        setChildActive: (id: string, active: boolean) => {
+            childWrappers.set(id, active);
+            childWrappers = new Map(childWrappers); // Trigger reactivity
+        }
+    };
+    
+    // Provide context to children
+    setContext(WRAPPER_CONTEXT_KEY, selfContext);
+    
+    // Register with parent on mount
+    $effect(() => {
+        if (parentContext) {
+            parentContext.registerChild(wrapperId);
+            return () => {
+                parentContext.unregisterChild(wrapperId);
+            };
+        }
+        return () => {}; // No-op cleanup when no parent context
+    });
+    
     // Track hover state
     let isHovered = $state(false);
     
     // Track focus state
     let isFocused = $state(false);
+    
+    // Notify parent when this wrapper becomes active/inactive
+    $effect(() => {
+        const isActive = isHovered || isFocused;
+        if (parentContext) {
+            parentContext.setChildActive(wrapperId, isActive);
+        }
+    });
+    
+    // Check if any child wrapper is currently active
+    let hasActiveChild = $derived.by(() => {
+        for (const [_, active] of childWrappers) {
+            if (active) return true;
+        }
+        return false;
+    });
     
     // Track if this box is selected
     // Note: We check if the box or its children match editor.selectedBox
@@ -37,8 +113,17 @@
         return false;
     }
     
+    // Check if selection is on a nested child (should hide this wrapper's styling)
+    let hasSelectedChild = $derived.by(() => {
+        const selectedBox = editor?.selectedBox;
+        if (!selectedBox || selectedBox === box) return false;
+        // If selected box is a descendant of this box (but not this box itself), hide styling
+        return checkIfSelected(selectedBox, box) && selectedBox !== box;
+    });
+    
     // Combined state for showing blue border and delete button
-    let showWrapper = $derived(isSelected || isHovered || isFocused);
+    // Hide styling if a child wrapper is active (hovered/focused) or has selection
+    let showWrapper = $derived((isSelected || isHovered || isFocused) && !hasActiveChild && !hasSelectedChild);
 
     // Only show delete button if the box is actually deletable (PartReplacerBox) OR custom delete handler provided
     let canDelete = $derived(isPartReplacerBox(box) || !!onDelete);
