@@ -6,7 +6,7 @@ Step {
     ]
     fragment stepDetailsWithPeople [
         ${name}
-        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" canDelete="true" isExpanded="false" selectable="false" label="People"}
+        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" canDelete="true" isExpanded="true" selectable="false" label="People"}
         ${description}
     ]
 }

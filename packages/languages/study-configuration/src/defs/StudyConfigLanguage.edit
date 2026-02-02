@@ -59,10 +59,13 @@ Event {
 
 Task {
     [
-        Task:${name} 
-        ${description}
-        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Steps"}
+        [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="false" label="Task"]
     ] trigger = "Checklist Task"
+    fragment taskDetails [
+        ${name} 
+        ${description}
+        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canDelete="true" canExpand="true" isExpanded="true" selectable="false" label="Steps"}
+    ] 
 }
 
 TaskReference {
