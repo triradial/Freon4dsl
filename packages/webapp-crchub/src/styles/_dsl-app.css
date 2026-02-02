@@ -752,6 +752,24 @@ span:has(> .tinymce-inline) {
   position: relative;
 }
 
+/* Constrain TinyMCE inline toolbar width to prevent overflow */
+.tox-tinymce-inline {
+  max-width: 500px !important;
+}
+
+.tox-tinymce-inline .tox-editor-header {
+  max-width: 500px !important;
+}
+
+.tox-tinymce-inline .tox-toolbar-overlord {
+  max-width: 500px !important;
+}
+
+.tox-tinymce-inline .tox-toolbar__primary {
+  flex-wrap: wrap !important;
+  max-width: 500px !important;
+}
+
 .multiline2-component-placeholder {
   font-style: italic;
 }

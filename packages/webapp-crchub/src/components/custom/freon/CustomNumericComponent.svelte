@@ -3,7 +3,7 @@
     import { onMount, onDestroy, tick } from "svelte";
 
     /** Set to true to log when numeric value is written to the model (for debugging). */
-    const DEBUG_NUMERIC_INPUT = true;
+    const DEBUG_NUMERIC_INPUT = false;
 
     function logInfo(...args: unknown[]): void {
         if (DEBUG_NUMERIC_INPUT) console.log("[CustomNumericComponent]", ...args);

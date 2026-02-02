@@ -338,7 +338,8 @@
             // Fallback: use the earliest patient reference date from database
             refDate = getFallbackReferenceDate();
         }
-        return dayjs(refDate).add(day, 'day').toDate();
+        // Normalize to start of day for consistent date calculations
+        return dayjs(refDate).startOf('day').add(day, 'day').toDate();
     }
 
     // Check if date is weekend
@@ -3379,7 +3380,9 @@
         if (dateRangeEnd <= dateRangeStart) return [];
         const monthStarts: number[] = [];
         const refDate = timeline ? timeline.getReferenceDate() : getFallbackReferenceDate();
-        const refDateDayjs = dayjs(refDate);
+        // Normalize to start of day to ensure consistent day calculations
+        // This matches how getCalendarDayDiff() calculates day differences
+        const refDateDayjs = dayjs(refDate).startOf('day');
         
         // Use the actual date range (from patient events, not all timeline days)
         const firstDataDate = getDateFromDay(dateRangeStart);

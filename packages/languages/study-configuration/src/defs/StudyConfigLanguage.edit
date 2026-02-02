@@ -7,7 +7,6 @@ global {
         DatePickerComponent,
         DateRangePickerComponent,
         MultilineTextComponent,
-        AbbreviationComponent,
         DisplayNothingComponent,
         ReferenceComponent,
         UrlInputComponent,
@@ -210,5 +209,5 @@ SourceToTargetMapping {
 }
 
 Description {
-    [ ${rawText wrap=AbbreviationComponent} ]
+    [ ${text wrap=MultilineTextComponent} ]
 }

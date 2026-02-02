@@ -364,6 +364,23 @@
   background: inherit !important;
 }
 
+.multiline2-component .view-mode {
+  color: var(--gray-800) !important;
+  background: inherit !important;
+}
+
+.multiline2-component .view-mode:hover {
+  color: var(--green) !important;
+  background-color: var(--green-10t) !important;
+}
+
+.multiline2-component .view-mode:focus {
+  color: var(--green) !important;
+  background-color: var(--green-10t) !important;
+  outline: 2px solid var(--green) !important;
+  outline-offset: 2px !important;
+}
+
 .multiline2-editor {
   outline: 1px solid transparent !important;
   outline-offset: 1px !important;

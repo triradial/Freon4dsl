@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-    import { AST, PartWrapperBox, FreEditor, FreLogger } from "@freon4dsl/core";
+    import { AST, type StringWrapperBox, FreEditor, FreLogger } from "@freon4dsl/core";
     import { componentId, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { theme } from "../../services/stores/theme-store.js";
 
@@ -11,7 +11,7 @@
     const LOGGER = new FreLogger("MultilineTextComponent");
     FreLogger.unmute("MultilineTextComponent");
 
-    const { editor, box }: FreComponentProps<PartWrapperBox> = $props();
+    const { editor, box }: FreComponentProps<StringWrapperBox> = $props();
     
     let cssClass = box && box.findParam("cssClass") || "";
     let textPropertyName = box && box.findParam("textPropertyName") || "text";
@@ -29,12 +29,11 @@
 
     let conf = {
         plugins: "lists searchreplace",
-        toolbar:
-            "undo redo | bold italic underline \
-		| fontfamily fontsize \
-		| forecolor backcolor \
-		| alignleft aligncenter alignright \
-		| bullist numlist outdent indent | searchreplace",
+        // Use array format for multiple toolbar rows
+        toolbar: [
+            "undo redo | bold italic underline | fontfamily fontsize",
+            "forecolor backcolor | alignleft aligncenter alignright | bullist numlist outdent indent | searchreplace"
+        ],
         toolbar_mode: "wrap",
         skin: "oxide-dark",
         menubar: false,
@@ -62,10 +61,19 @@
 
     // Expose setFocus and refreshComponent on the box
     function setFocus() {
-        isEditing = true;
-        setTimeout(() => {
-            if (editorInstance) editorInstance.focus();
-        }, 0);
+        // If already editing, focus the TinyMCE editor
+        if (isEditing && editorInstance) {
+            setTimeout(() => {
+                editorInstance.focus();
+            }, 0);
+        } else {
+            // Otherwise, focus the span element (view mode)
+            setTimeout(() => {
+                if (spanRef) {
+                    spanRef.focus();
+                }
+            }, 0);
+        }
     }
 
     const refresh = (why?: string): void => {
@@ -107,7 +115,8 @@
             toolbar_mode: conf.toolbar_mode,
             menubar: conf.menubar,
             skin: isDark ? "oxide-dark" : "oxide",
-            content_css: isDark ? "dark" : "default",
+            skin_url: isDark ? "/tinymce/skins/ui/oxide-dark" : "/tinymce/skins/ui/oxide",
+            content_css: false, // Using content_style instead
             inline: true,
             license_key: "gpl",
             content_style: isDark
@@ -115,10 +124,48 @@
                 : "body { color: #000; background: #cfd6e0; }",
             setup: (editor) => {
                 editorInstance = editor;
-                // Prevent Backspace/Delete from bubbling
+                // Key handling for TinyMCE editor
                 editor.on("keydown", (e) => {
+                    // Backspace/Delete: prevent bubbling (would delete the element in Freon)
                     if (e.key === "Backspace" || e.key === "Delete") {
                         e.stopPropagation();
+                    }
+                    
+                    // Arrow keys: stay in TinyMCE for text navigation
+                    if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight") {
+                        e.stopPropagation();
+                    }
+                    
+                    // Tab/Shift+Tab: stay in TinyMCE (for list indentation, etc.)
+                    if (e.key === "Tab") {
+                        e.stopPropagation();
+                        // Don't preventDefault - let TinyMCE handle tab for indentation
+                    }
+                    
+                    // Enter key handling:
+                    // - Shift+Enter: add newline (stay in TinyMCE)
+                    // - Enter alone: save and exit, move to next component
+                    if (e.key === "Enter") {
+                        e.stopPropagation();
+                        if (!e.shiftKey) {
+                            // Plain Enter: save and exit editing
+                            e.preventDefault();
+                            const val = editor.getContent();
+                            const rawVal = editor.getContent({ format: "text" });
+                            setText(val, rawVal);
+                            endEditing();
+                        }
+                        // Shift+Enter: let TinyMCE handle it (adds newline)
+                    }
+                    
+                    // Escape: exit editing mode
+                    if (e.key === "Escape") {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const val = editor.getContent();
+                        const rawVal = editor.getContent({ format: "text" });
+                        setText(val, rawVal);
+                        endEditing();
                     }
                 });
                 editor.on("blur", () => {
@@ -147,10 +194,20 @@
         }
     }
 
+    // Initialize TinyMCE when entering edit mode
+    $effect(() => {
+        if (isEditing) {
+            // Small delay to ensure the DOM element is rendered
+            setTimeout(() => {
+                initTinyMCE();
+            }, 0);
+        }
+    });
+
     // Re-initialize TinyMCE on theme change
     $effect(() => {
         currentTheme = $theme;
-        if (isEditing) {
+        if (isEditing && editorInstance) {
             destroyTinyMCE();
             setTimeout(() => {
                 initTinyMCE();
@@ -203,6 +260,13 @@
             startEditing(event);
         }
     }
+
+    function onSpanFocus() {
+        LOGGER.log("MultilineTextComponent span received focus: " + id);
+        console.log("MultilineTextComponent span received focus: " + id);
+        // Automatically start editing when the span receives focus (e.g., via Tab)
+        startEditing();
+    }
 </script>
 
 <div class={`multiline2-component ${cssClass}`}>
@@ -219,6 +283,7 @@
             tabindex="0"
             onclick={startEditing}
             onkeydown={onSpanKeydown}
+            onfocus={onSpanFocus}
             role="button"
             style="cursor: pointer;"
         >
