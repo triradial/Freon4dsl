@@ -1442,6 +1442,21 @@ select:focus {
   background: var(--custom-wrapper-hover-bg);
 }
 
+/* Hide parent wrapper styling when a nested wrapper is also selected/hovered */
+/* This ensures only the innermost wrapper shows its visual styling */
+.custom-selectable-wrapper.selected:has(.custom-selectable-wrapper.selected) {
+  outline: none;
+}
+
+.custom-selectable-wrapper.selected:has(.custom-selectable-wrapper.selected) > .custom-selectable-wrapper-delete {
+  display: none;
+}
+
+/* Also hide the dotted underline on parent when child is selected */
+.custom-selectable-wrapper.selected:has(.custom-selectable-wrapper.selected) > .custom-selectable-wrapper-content {
+  text-decoration: none;
+}
+
 /* #endregion */
 
 /* #region Custom Timepicker */
