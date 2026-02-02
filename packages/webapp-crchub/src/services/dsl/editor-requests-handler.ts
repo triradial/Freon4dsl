@@ -1,4 +1,4 @@
-import { FreProjectionHandler, FreLogger, type FreEnvironment, AstActionExecutor } from "@freon4dsl/core";
+import { FreProjectionHandler, FreLogger, type FreEnvironment, AstActionExecutor, type FreDelta } from "@freon4dsl/core";
 import { runInAction } from "mobx";
 import { WebappConfigurator } from "./webapp-configurator.js";
 
@@ -34,8 +34,24 @@ export class EditorRequestsHandler {
         AstActionExecutor.getInstance(this.environment.editor).redo();
     }
 
+    /**
+     * Performs redo and returns the delta for selection handling after undo/redo.
+     * Use this when you need to update selection after the operation.
+     */
+    redoWithDelta = (): FreDelta | undefined => {
+        return AstActionExecutor.getInstance(this.environment.editor).redo();
+    }
+
     undo = (): void => {
         AstActionExecutor.getInstance(this.environment.editor).undo();
+    }
+
+    /**
+     * Performs undo and returns the delta for selection handling after undo/redo.
+     * Use this when you need to update selection after the operation.
+     */
+    undoWithDelta = (): FreDelta | undefined => {
+        return AstActionExecutor.getInstance(this.environment.editor).undo();
     }
 
     cut = (): void => {

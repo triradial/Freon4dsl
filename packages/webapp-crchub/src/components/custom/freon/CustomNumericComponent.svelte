@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { AST, isNumberReplacerBox, isPartReplacerBox, type Box } from "@freon4dsl/core";
-    import { onMount, tick } from "svelte";
+    import { AST, FreChangeManager, isNumberReplacerBox, isPartReplacerBox, type Box, type FrePrimDelta } from "@freon4dsl/core";
+    import { onMount, onDestroy, tick } from "svelte";
 
     /** Set to true to log when numeric value is written to the model (for debugging). */
     const DEBUG_NUMERIC_INPUT = false;
@@ -19,6 +19,8 @@
 
     let { box, isEditing = $bindable(false) } = $props<{ box: Box; isEditing?: boolean }>();
     let value = $state<string>("");
+    // Cleanup function for FreChangeManager subscription
+    let unsubscribeChangeManager: (() => void) | undefined;
     // svelte-ignore non_reactive_update
     let inputElement: HTMLInputElement | null = null;
     // svelte-ignore non_reactive_update
@@ -179,7 +181,7 @@
     }
 
     function endEditing() {
-        logInfo(' endEditing called', { isEditing, hasBox: !!box, boxKind: box?.kind });
+        console.log('🏁 endEditing called', { isEditing, hasBox: !!box, boxKind: box?.kind, currentValue: value });
         if (isEditing) {
             isEditing = false;
             // Normalize and validate on blur
@@ -197,41 +199,55 @@
                         const isZeroValid = (minVal === undefined || numValue >= minVal) && 
                                            (maxVal === undefined || numValue <= maxVal);
                         if (isZeroValid) {
-                            value = "0";
-                            if (isNumberReplacerBox(box)) {
-                                logInfo(' Setting property to 0 (endEditing) - NumberReplacerBox', {
-                                    propertyName: box.propertyName,
-                                    numValue,
-                                    boxKind: box.kind
-                                });
-                                AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
-                                    box.setPropertyValue(numValue);
-                                });
-                                logInfo(' AST.changeNamed completed for 0');
-                            } else if (isPartReplacerBox(box)) {
-                                // Try getPropertyValue first, but also check node property directly
-                                let partNode = box.getPropertyValue();
-                                if (!partNode && box.propertyName) {
-                                    // Fallback: try direct access from node
-                                    partNode = (box.node as any)[box.propertyName];
-                                }
-                                if (partNode) {
-                                    logInfo(' Setting count to 0 (endEditing) - PartReplacerBox', {
+                            // Check if model already has this value
+                            const currentModelValue = isNumberReplacerBox(box) 
+                                ? box.getPropertyValue() 
+                                : isPartReplacerBox(box) 
+                                    ? (box.getPropertyValue() as any)?.count ?? (box.node as any)[box.propertyName]?.count
+                                    : undefined;
+                            
+                            console.log('🏁 endEditing (empty->0): comparing', { numValue, currentModelValue, isDifferent: currentModelValue !== numValue });
+                            
+                            if (currentModelValue !== numValue) {
+                                value = "0";
+                                if (isNumberReplacerBox(box)) {
+                                    console.log('🏁 WRITING TO MODEL (endEditing empty->0) - NumberReplacerBox', {
                                         propertyName: box.propertyName,
                                         numValue,
-                                        boxKind: box.kind,
-                                        nodeConcept: (partNode as any).freLanguageConcept?.()
-                                    });
-                                    AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
-                                        (partNode as any).count = numValue;
-                                    });
-                                    logInfo(' AST.changeNamed completed for 0 - PartReplacerBox');
-                                } else {
-                                    logWarn(' Could not find partNode for PartReplacerBox (setting 0)', {
-                                        propertyName: box.propertyName,
                                         boxKind: box.kind
                                     });
+                                    AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
+                                        box.setPropertyValue(numValue);
+                                    });
+                                    console.log('🏁 AST.changeNamed completed for 0');
+                                } else if (isPartReplacerBox(box)) {
+                                    // Try getPropertyValue first, but also check node property directly
+                                    let partNode = box.getPropertyValue();
+                                    if (!partNode && box.propertyName) {
+                                        // Fallback: try direct access from node
+                                        partNode = (box.node as any)[box.propertyName];
+                                    }
+                                    if (partNode) {
+                                        console.log('🏁 WRITING TO MODEL (endEditing empty->0) - PartReplacerBox', {
+                                            propertyName: box.propertyName,
+                                            numValue,
+                                            boxKind: box.kind,
+                                            nodeConcept: (partNode as any).freLanguageConcept?.()
+                                        });
+                                        AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
+                                            (partNode as any).count = numValue;
+                                        });
+                                        console.log('🏁 AST.changeNamed completed for 0 - PartReplacerBox');
+                                    } else {
+                                        logWarn(' Could not find partNode for PartReplacerBox (setting 0)', {
+                                            propertyName: box.propertyName,
+                                            boxKind: box.kind
+                                        });
+                                    }
                                 }
+                            } else {
+                                console.log('🏁 SKIPPED write (empty->0) - value unchanged', { numValue, currentModelValue });
+                                value = "0"; // Still update the display
                             }
                         } else {
                             // 0 is outside range, keep current value or leave undefined
@@ -245,6 +261,7 @@
                 const num = parseFloat(trimmed);
                 if (isNaN(num) || !isFinite(num)) {
                     // Invalid number - don't update model, keep current value
+                    console.log('🏁 endEditing: invalid number, skipping', { trimmed });
                     return;
                 }
                 
@@ -253,52 +270,67 @@
                 const maxVal = getMax();
                 if (minVal !== undefined && num < minVal) {
                     // Out of range - don't update model
+                    console.log('🏁 endEditing: below min, skipping', { num, minVal });
                     return;
                 } else if (maxVal !== undefined && num > maxVal) {
                     // Out of range - don't update model
+                    console.log('🏁 endEditing: above max, skipping', { num, maxVal });
                     return;
                 } else {
-                    // Valid value - update model (convert string to number)
+                    // Valid value - update model (convert string to number) only if changed
                     value = trimmed;
                     const numValue = parseFloat(trimmed);
                     // Ensure it's a valid finite number before setting
                     if (isFinite(numValue)) {
-                        if (isNumberReplacerBox(box)) {
-                            logInfo(' Setting property value (endEditing) - NumberReplacerBox', {
-                                propertyName: box.propertyName,
-                                numValue,
-                                trimmed,
-                                boxKind: box.kind
-                            });
-                            AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
-                                box.setPropertyValue(numValue);
-                            });
-                            logInfo(' AST.changeNamed completed (endEditing)');
-                        } else if (isPartReplacerBox(box)) {
-                            // Try getPropertyValue first, but also check node property directly
-                            let partNode = box.getPropertyValue();
-                            if (!partNode && box.propertyName) {
-                                // Fallback: try direct access from node
-                                partNode = (box.node as any)[box.propertyName];
-                            }
-                            if (partNode) {
-                                logInfo(' Setting count property (endEditing) - PartReplacerBox', {
+                        // Check if model already has this value
+                        const currentModelValue = isNumberReplacerBox(box) 
+                            ? box.getPropertyValue() 
+                            : isPartReplacerBox(box) 
+                                ? (box.getPropertyValue() as any)?.count ?? (box.node as any)[box.propertyName]?.count
+                                : undefined;
+                        
+                        console.log('🏁 endEditing: comparing values', { numValue, currentModelValue, isDifferent: currentModelValue !== numValue });
+                        
+                        if (currentModelValue !== numValue) {
+                            if (isNumberReplacerBox(box)) {
+                                console.log('🏁 WRITING TO MODEL (endEditing) - NumberReplacerBox', {
                                     propertyName: box.propertyName,
                                     numValue,
                                     trimmed,
-                                    boxKind: box.kind,
-                                    nodeConcept: (partNode as any).freLanguageConcept?.()
-                                });
-                                AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
-                                    (partNode as any).count = numValue;
-                                });
-                                logInfo(' AST.changeNamed completed (endEditing) - PartReplacerBox');
-                            } else {
-                                logWarn(' Could not find partNode for PartReplacerBox (endEditing)', {
-                                    propertyName: box.propertyName,
                                     boxKind: box.kind
                                 });
+                                AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
+                                    box.setPropertyValue(numValue);
+                                });
+                                console.log('🏁 AST.changeNamed completed (endEditing)');
+                            } else if (isPartReplacerBox(box)) {
+                                // Try getPropertyValue first, but also check node property directly
+                                let partNode = box.getPropertyValue();
+                                if (!partNode && box.propertyName) {
+                                    // Fallback: try direct access from node
+                                    partNode = (box.node as any)[box.propertyName];
+                                }
+                                if (partNode) {
+                                    console.log('🏁 WRITING TO MODEL (endEditing) - PartReplacerBox', {
+                                        propertyName: box.propertyName,
+                                        numValue,
+                                        trimmed,
+                                        boxKind: box.kind,
+                                        nodeConcept: (partNode as any).freLanguageConcept?.()
+                                    });
+                                    AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
+                                        (partNode as any).count = numValue;
+                                    });
+                                    console.log('🏁 AST.changeNamed completed (endEditing) - PartReplacerBox');
+                                } else {
+                                    logWarn(' Could not find partNode for PartReplacerBox (endEditing)', {
+                                        propertyName: box.propertyName,
+                                        boxKind: box.kind
+                                    });
+                                }
                             }
+                        } else {
+                            console.log('🏁 SKIPPED write (endEditing) - value unchanged', { numValue, currentModelValue });
                         }
                     }
                 }
@@ -329,6 +361,57 @@
         getValue();
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
+        
+        // Subscribe to FreChangeManager to react to model changes (including undo/redo)
+        // This ensures the component stays in sync with the model when changes are made
+        // externally (e.g., via undo/redo buttons or keyboard shortcuts)
+        const changeCallback = (delta: FrePrimDelta) => {
+            // Check if this change affects our property on our node
+            // For NumberReplacerBox: owner is box.node, propertyName matches box.propertyName
+            // For PartReplacerBox: we need to check if it's the count property of a child node
+            if (isNumberReplacerBox(box)) {
+                if (delta.owner === box.node && delta.propertyName === box.propertyName) {
+                    logInfo(' Model change detected (FreChangeManager), refreshing', {
+                        propertyName: delta.propertyName,
+                        oldValue: delta.oldValue,
+                        newValue: delta.newValue
+                    });
+                    refresh('model change from FreChangeManager');
+                }
+            } else if (isPartReplacerBox(box)) {
+                // For PartReplacerBox, check if the change is on the count property of our part node
+                let partNode = box.getPropertyValue();
+                if (!partNode && box.propertyName) {
+                    partNode = (box.node as any)[box.propertyName];
+                }
+                if (partNode && delta.owner === partNode && delta.propertyName === 'count') {
+                    logInfo(' Model change detected (FreChangeManager) for PartReplacerBox, refreshing', {
+                        propertyName: delta.propertyName,
+                        oldValue: delta.oldValue,
+                        newValue: delta.newValue
+                    });
+                    refresh('model change from FreChangeManager (PartReplacerBox)');
+                }
+            }
+        };
+        
+        FreChangeManager.getInstance().subscribeToPrimitive(changeCallback);
+        
+        // Store unsubscribe function for cleanup
+        unsubscribeChangeManager = () => {
+            const manager = FreChangeManager.getInstance();
+            const idx = manager.changePrimCallbacks.indexOf(changeCallback);
+            if (idx !== -1) {
+                manager.changePrimCallbacks.splice(idx, 1);
+            }
+        };
+    });
+    
+    onDestroy(() => {
+        // Clean up FreChangeManager subscription
+        if (unsubscribeChangeManager) {
+            unsubscribeChangeManager();
+        }
     });
 
     $effect(() => {
@@ -338,7 +421,7 @@
 
     function onInputChange(e: Event) {
         const newVal = (e.target as HTMLInputElement).value;
-        logInfo(' onInputChange called', { newVal, hasBox: !!box, boxKind: box?.kind, propertyName: (box as any)?.propertyName });
+        console.log('📝 onInputChange called', { newVal, hasBox: !!box, boxKind: box?.kind, propertyName: (box as any)?.propertyName });
         
         // Only allow numeric input
         if (isNumeric(newVal)) {
@@ -348,43 +431,61 @@
                 const numValue = parseFloat(newVal);
                 // Ensure it's a valid finite number before setting
                 if (isFinite(numValue)) {
-                    if (isNumberReplacerBox(box)) {
-                        logInfo(' Setting property value (onInputChange) - NumberReplacerBox', {
-                            propertyName: box.propertyName,
-                            numValue,
-                            newVal,
-                            boxKind: box.kind
-                        });
-                        AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
-                            box.setPropertyValue(numValue);
-                        });
-                        logInfo(' AST.changeNamed completed (onInputChange)');
-                    } else if (isPartReplacerBox(box)) {
-                        // For PartReplacerBox (e.g., Days concept), set the count property on the node
-                        // Try getPropertyValue first, but also check node property directly
-                        let partNode = box.getPropertyValue();
-                        if (!partNode && box.propertyName) {
-                            // Fallback: try direct access from node
-                            partNode = (box.node as any)[box.propertyName];
-                        }
-                        if (partNode) {
-                            logInfo(' Setting count property (onInputChange) - PartReplacerBox', {
+                    // Check if the model value is actually different before creating an undo entry
+                    const currentModelValue = isNumberReplacerBox(box) 
+                        ? box.getPropertyValue() 
+                        : isPartReplacerBox(box) 
+                            ? (box.getPropertyValue() as any)?.count ?? (box.node as any)[box.propertyName]?.count
+                            : undefined;
+                    
+                    console.log('📝 onInputChange: comparing values', {
+                        numValue,
+                        currentModelValue,
+                        isDifferent: currentModelValue !== numValue
+                    });
+                    
+                    // Only write to model if the value is actually different
+                    if (currentModelValue !== numValue) {
+                        if (isNumberReplacerBox(box)) {
+                            console.log('📝 WRITING TO MODEL (onInputChange) - NumberReplacerBox', {
                                 propertyName: box.propertyName,
                                 numValue,
                                 newVal,
-                                boxKind: box.kind,
-                                nodeConcept: (partNode as any).freLanguageConcept?.()
-                            });
-                            AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
-                                (partNode as any).count = numValue;
-                            });
-                            logInfo(' AST.changeNamed completed (onInputChange) - PartReplacerBox');
-                        } else {
-                            logWarn(' Could not find partNode for PartReplacerBox', {
-                                propertyName: box.propertyName,
                                 boxKind: box.kind
                             });
+                            AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
+                                box.setPropertyValue(numValue);
+                            });
+                            console.log('📝 AST.changeNamed completed (onInputChange)');
+                        } else if (isPartReplacerBox(box)) {
+                            // For PartReplacerBox (e.g., Days concept), set the count property on the node
+                            // Try getPropertyValue first, but also check node property directly
+                            let partNode = box.getPropertyValue();
+                            if (!partNode && box.propertyName) {
+                                // Fallback: try direct access from node
+                                partNode = (box.node as any)[box.propertyName];
+                            }
+                            if (partNode) {
+                                console.log('📝 WRITING TO MODEL (onInputChange) - PartReplacerBox', {
+                                    propertyName: box.propertyName,
+                                    numValue,
+                                    newVal,
+                                    boxKind: box.kind,
+                                    nodeConcept: (partNode as any).freLanguageConcept?.()
+                                });
+                                AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
+                                    (partNode as any).count = numValue;
+                                });
+                                console.log('📝 AST.changeNamed completed (onInputChange) - PartReplacerBox');
+                            } else {
+                                logWarn(' Could not find partNode for PartReplacerBox', {
+                                    propertyName: box.propertyName,
+                                    boxKind: box.kind
+                                });
+                            }
                         }
+                    } else {
+                        console.log('📝 SKIPPED write - value unchanged', { numValue, currentModelValue });
                     }
                 }
             }
@@ -554,47 +655,61 @@
         const clipboardData = e.clipboardData || (e as any).originalEvent?.clipboardData;
         if (clipboardData) {
             const pastedText = clipboardData.getData('text');
+            console.log('📋 onPaste called', { pastedText });
             if (pastedText && isNumeric(pastedText) && isValidNumericValue(pastedText)) {
                 value = pastedText;
                 const numValue = parseFloat(pastedText);
                 // Ensure it's a valid finite number before setting
                 if (isFinite(numValue)) {
-                    if (isNumberReplacerBox(box)) {
-                        logInfo(' Setting property value (onPaste) - NumberReplacerBox', {
-                            propertyName: box.propertyName,
-                            numValue,
-                            pastedText,
-                            boxKind: box.kind
-                        });
-                        AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
-                            box.setPropertyValue(numValue);
-                        });
-                        logInfo(' AST.changeNamed completed (onPaste)');
-                    } else if (isPartReplacerBox(box)) {
-                        // Try getPropertyValue first, but also check node property directly
-                        let partNode = box.getPropertyValue();
-                        if (!partNode && box.propertyName) {
-                            // Fallback: try direct access from node
-                            partNode = (box.node as any)[box.propertyName];
-                        }
-                        if (partNode) {
-                            logInfo(' Setting count property (onPaste) - PartReplacerBox', {
+                    // Check if the model value is actually different before creating an undo entry
+                    const currentModelValue = isNumberReplacerBox(box) 
+                        ? box.getPropertyValue() 
+                        : isPartReplacerBox(box) 
+                            ? (box.getPropertyValue() as any)?.count ?? (box.node as any)[box.propertyName]?.count
+                            : undefined;
+                    
+                    console.log('📋 onPaste: comparing values', { numValue, currentModelValue, isDifferent: currentModelValue !== numValue });
+                    
+                    if (currentModelValue !== numValue) {
+                        if (isNumberReplacerBox(box)) {
+                            console.log('📋 WRITING TO MODEL (onPaste) - NumberReplacerBox', {
                                 propertyName: box.propertyName,
                                 numValue,
                                 pastedText,
-                                boxKind: box.kind,
-                                nodeConcept: (partNode as any).freLanguageConcept?.()
-                            });
-                            AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
-                                (partNode as any).count = numValue;
-                            });
-                            logInfo(' AST.changeNamed completed (onPaste) - PartReplacerBox');
-                        } else {
-                            logWarn(' Could not find partNode for PartReplacerBox (onPaste)', {
-                                propertyName: box.propertyName,
                                 boxKind: box.kind
                             });
+                            AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'} to ${numValue}`, () => {
+                                box.setPropertyValue(numValue);
+                            });
+                            console.log('📋 AST.changeNamed completed (onPaste)');
+                        } else if (isPartReplacerBox(box)) {
+                            // Try getPropertyValue first, but also check node property directly
+                            let partNode = box.getPropertyValue();
+                            if (!partNode && box.propertyName) {
+                                // Fallback: try direct access from node
+                                partNode = (box.node as any)[box.propertyName];
+                            }
+                            if (partNode) {
+                                console.log('📋 WRITING TO MODEL (onPaste) - PartReplacerBox', {
+                                    propertyName: box.propertyName,
+                                    numValue,
+                                    pastedText,
+                                    boxKind: box.kind,
+                                    nodeConcept: (partNode as any).freLanguageConcept?.()
+                                });
+                                AST.changeNamed(`CustomNumericComponent: Set ${box.propertyName || 'property'}.count to ${numValue}`, () => {
+                                    (partNode as any).count = numValue;
+                                });
+                                console.log('📋 AST.changeNamed completed (onPaste) - PartReplacerBox');
+                            } else {
+                                logWarn(' Could not find partNode for PartReplacerBox (onPaste)', {
+                                    propertyName: box.propertyName,
+                                    boxKind: box.kind
+                                });
+                            }
                         }
+                    } else {
+                        console.log('📋 SKIPPED write (onPaste) - value unchanged', { numValue, currentModelValue });
                     }
                 }
                 // Update input width

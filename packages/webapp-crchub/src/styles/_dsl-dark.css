@@ -365,6 +365,13 @@
   background-color: var(--green-30t) !important;
 }
 
+.multiline2-component .view-mode:focus {
+  color: var(--green-90t) !important;
+  background-color: var(--green-30t) !important;
+  outline: 2px solid var(--green-90t) !important;
+  outline-offset: 2px !important;
+}
+
 .multiline2-component .edit-mode {
   outline: 1px solid transparent !important;
   outline-offset: 1px !important;

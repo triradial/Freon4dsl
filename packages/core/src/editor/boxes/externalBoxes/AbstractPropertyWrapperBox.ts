@@ -31,4 +31,33 @@ export abstract class AbstractPropertyWrapperBox extends AbstractExternalBox {
     get children(): ReadonlyArray<Box> {
         return [this._childBox] as ReadonlyArray<Box>;
     }
+
+    /**
+     * Override firstLeaf to return this wrapper box itself when selectable,
+     * allowing external components to receive focus via keyboard navigation.
+     */
+    get firstLeaf(): Box | null {
+        if (!this.isVisible) {
+            return null;
+        }
+        if (this.selectable) {
+            return this;
+        }
+        // Fall back to child if not selectable
+        return this._childBox?.firstLeaf ?? null;
+    }
+
+    /**
+     * Override lastLeaf to return this wrapper box itself when selectable.
+     */
+    get lastLeaf(): Box | null {
+        if (!this.isVisible) {
+            return null;
+        }
+        if (this.selectable) {
+            return this;
+        }
+        // Fall back to child if not selectable
+        return this._childBox?.lastLeaf ?? null;
+    }
 }

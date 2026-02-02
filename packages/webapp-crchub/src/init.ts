@@ -6,7 +6,6 @@ import TimelineLogger from "@freon4dsl/study-configuration/src/custom/timeline/T
 import { env } from "./config/env.js";
 import { WebappConfigurator } from "./services/dsl/webapp-configurator.js";
 
-import AbbreviationComponent from "./components/custom/AbbreviationComponent.svelte";
 import DatePickerComponent from "./components/custom/DatePickerComponent.svelte";
 import DateRangePickerComponent from "./components/custom/DateRangePickerComponent.svelte";
 import DisplayNothingComponent from "./components/custom/DisplayNothingComponent.svelte";
@@ -88,7 +87,6 @@ setCustomComponents([
     { component: ItemGroupComponent2, knownAs: "ItemGroupComponent2" },
     { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
     { component: DisplayNothingComponent, knownAs: "DisplayNothingComponent" },
-    { component: AbbreviationComponent, knownAs: "AbbreviationComponent" },
     { component: ReferenceComponent, knownAs: "ReferenceComponent" },
     { component: UrlInputComponent, knownAs: "UrlInputComponent" },
     { component: EmailInputComponent, knownAs: "EmailInputComponent" },

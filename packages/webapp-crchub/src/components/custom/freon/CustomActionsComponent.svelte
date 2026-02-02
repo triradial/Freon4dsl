@@ -103,6 +103,52 @@
         return has;
     });
     
+    // Compute the node value to use for rendering (combined from multiple sources)
+    // This consolidates the value lookup to avoid calling getBox() in the template
+    let nodeValueForRendering = $derived.by(() => {
+        propertyValueVersion; // Force reactivity
+        return directNodeValue || currentPropertyValue;
+    });
+    
+    // Pre-compute the projection box for nodeValueForRendering
+    // IMPORTANT: This must be in $derived, not in the template, to avoid state_unsafe_mutation errors
+    // getBox() internally calls refreshComponent() which mutates state
+    let projectionBox = $state<any>(null);
+    let projectionBoxProvider = $state<any>(null);
+    
+    // Use $effect to compute projection box outside of reactive derivation context
+    $effect(() => {
+        propertyValueVersion; // Force reactivity
+        if (nodeValueForRendering && editor?.projection) {
+            // Use untrack to prevent this from being treated as a reactive dependency
+            // that could cause infinite loops
+            try {
+                const newPropBox = editor.projection.getBox(nodeValueForRendering);
+                projectionBox = newPropBox;
+                
+                if (!newPropBox) {
+                    const newBoxProvider = editor.projection.getBoxProvider(nodeValueForRendering);
+                    projectionBoxProvider = newBoxProvider;
+                } else {
+                    projectionBoxProvider = null;
+                }
+                
+                logInfo('🔵 CustomActionsComponent: Computed projectionBox in $effect', {
+                    nodeValueType: nodeValueForRendering?.freLanguageConcept?.(),
+                    hasPropBox: !!newPropBox,
+                    propBoxKind: newPropBox?.kind
+                });
+            } catch (e) {
+                logError('🔵 CustomActionsComponent: Error computing projectionBox', e);
+                projectionBox = null;
+                projectionBoxProvider = null;
+            }
+        } else {
+            projectionBox = null;
+            projectionBoxProvider = null;
+        }
+    });
+    
     // svelte-ignore non_reactive_update
     let spanElement: HTMLSpanElement | null = null;
     // svelte-ignore non_reactive_update
@@ -466,7 +512,11 @@
             if (actionBox) {
                 // Use executeOption which will call the action's execute method
                 // This will create the part and set it on the property
-                const result = actionBox.executeOption(editor, item.option);
+                // Wrap in AST.changeNamed() to ensure it's properly captured for undo/redo
+                let result: any;
+                AST.changeNamed(`CustomActionsComponent: Create ${item.label}`, () => {
+                    result = actionBox.executeOption(editor, item.option);
+                });
                 logInfo('🔵 CustomActionsComponent: executeOption result', result);
                 
                 // After executing, the property should now have a value
@@ -512,7 +562,11 @@
             } else if (item.option.action) {
                 // Fallback: execute action directly if we don't have a box
                 // Use the original box (PartReplacerBox) so the action sets the value on the correct node
-                const result = item.option.action.execute(box, item.option.label, editor);
+                // Wrap in AST.changeNamed() to ensure it's properly captured for undo/redo
+                let result: any;
+                AST.changeNamed(`CustomActionsComponent: Create ${item.label}`, () => {
+                    result = item.option.action.execute(box, item.option.label, editor);
+                });
                 logInfo('🔵 CustomActionsComponent: action.execute result', result);
                 
                 dropdownOpen = false;
@@ -1069,58 +1123,38 @@
                     {/each}
                 </SelectableWrapperComponent>
             {:else if nodeValueToUse && editor?.projection}
-                <!-- Second: Get box from projection using the node value -->
-                {@const propBox = editor.projection.getBox(nodeValueToUse)}
-                {(() => {
-                    logInfo('🔵 CustomActionsComponent: projection.getBox result', {
-                        nodeValueType: nodeValueToUse?.freLanguageConcept?.(),
-                        propBox: propBox ? 'found' : 'null',
-                        propBoxKind: propBox?.kind
-                    });
-                    return '';
-                })()}
-                {#if propBox}
+                <!-- Second: Use pre-computed projectionBox (computed in $effect to avoid state_unsafe_mutation) -->
+                {#if projectionBox}
                     <SelectableWrapperComponent {box} {editor}>
-                        <RenderComponentRecursive box={propBox} {editor} />
+                        <RenderComponentRecursive box={projectionBox} {editor} />
+                    </SelectableWrapperComponent>
+                {:else if projectionBoxProvider && projectionBoxProvider.box}
+                    <!-- Third: Use pre-computed boxProvider -->
+                    <SelectableWrapperComponent {box} {editor}>
+                        <RenderComponentRecursive box={projectionBoxProvider.box} {editor} />
                     </SelectableWrapperComponent>
                 {:else}
-                    <!-- Third: Try to get box using getBoxProvider -->
-                    {@const boxProvider = editor.projection.getBoxProvider(nodeValueToUse)}
+                    <!-- Last resort: show concept name -->
                     {(() => {
-                        logInfo('🔵 CustomActionsComponent: getBoxProvider result', {
-                            nodeValueType: nodeValueToUse?.freLanguageConcept?.(),
-                            boxProvider: boxProvider ? 'found' : 'null',
-                            providerBox: boxProvider?.box ? 'found' : 'null'
+                        logInfo('🔵 CustomActionsComponent: Falling back to concept name', {
+                            nodeValueType: nodeValueToUse?.freLanguageConcept?.()
                         });
                         return '';
                     })()}
-                    {#if boxProvider && boxProvider.box}
-                        <SelectableWrapperComponent {box} {editor}>
-                            <RenderComponentRecursive box={boxProvider.box} {editor} />
-                        </SelectableWrapperComponent>
-                    {:else}
-                        <!-- Last resort: show concept name -->
-                        {(() => {
-                            logInfo('🔵 CustomActionsComponent: Falling back to concept name', {
-                                nodeValueType: nodeValueToUse?.freLanguageConcept?.()
-                            });
-                            return '';
-                        })()}
-                        <SelectableWrapperComponent {box} {editor}>
-                            <span
-                                bind:this={spanElement}
-                                class="custom-select-text cursor-pointer"
-                                tabindex="0"
-                                role="textbox"
-                                onmousedown={onMouseDown}
-                                onkeydown={onSpanKeyDown}
-                                onfocusin={onSpanFocusIn}
-                                title="Click to change or remove"
-                            >
-                                {nodeValueToUse?.freLanguageConcept?.() || 'Unknown'}
-                            </span>
-                        </SelectableWrapperComponent>
-                    {/if}
+                    <SelectableWrapperComponent {box} {editor}>
+                        <span
+                            bind:this={spanElement}
+                            class="custom-select-text cursor-pointer"
+                            tabindex="0"
+                            role="textbox"
+                            onmousedown={onMouseDown}
+                            onkeydown={onSpanKeyDown}
+                            onfocusin={onSpanFocusIn}
+                            title="Click to change or remove"
+                        >
+                            {nodeValueToUse?.freLanguageConcept?.() || 'Unknown'}
+                        </span>
+                    </SelectableWrapperComponent>
                 {/if}
             {:else if nodeValueToUse}
                 <!-- No projectionHandler: show concept name -->
