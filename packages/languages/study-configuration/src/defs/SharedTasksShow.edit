@@ -2,6 +2,7 @@ editor sharedTasksShow precedence 102
 
 StudyConfiguration {
     [
+    Study Notes: ${description}
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
     ${tasks wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Shared Tasks"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}

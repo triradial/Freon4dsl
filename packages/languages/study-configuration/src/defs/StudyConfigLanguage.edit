@@ -25,6 +25,7 @@ global {
 
 StudyConfiguration {
     [
+    Study Notes: ${description}
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
@@ -212,5 +213,5 @@ SourceToTargetMapping {
 }
 
 Description {
-    [ ${text wrap=MultilineTextComponent} ]
+    [ ${text replace=MultilineTextComponent} ]
 }

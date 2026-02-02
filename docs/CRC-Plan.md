@@ -38,15 +38,11 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Determine whether optional from Freon is needed and where 
 - [ ] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
 - [ ] Repeating Visits with occurrence on the schedule 
+- [ ] Test, update, and add buttons for things like duplicate and smart duplicate
 - [ ] Remove choice of the visit you are on when 'start when' is a reference. Needs custom scope added. 
-- [ ] make default study have 'day 0' as start when to avoid the error.
-- [ ] Not needed for user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
+- [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
-- [ ] Discuss with Graham: 
-  - How can we make creating the checklist more like writing in Word?
-  - when do we use the selector-box-with-X for items in a list vs. the delete icon for a list item?
-  - Should things like people, systems, be placeholders when the list is empty and then become expand-collapse so they read more like text and they take a bit less screen space vs. not displaying them?
 - [ ] Finish Checklist display and printing as HTML: 
   - [x] Add Schedule and Checklist details
   - [x] Make links to systems be real html links
@@ -58,7 +54,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ### Done
 - [x] Get rid of the 'Notes' stuff, have only description and explore always having descriptions displayed. 
 - [x] Review single event patient checklist that Jon created to determine if Graham can use it. -> It should be useable after the rest of the checklist display is cleaned-up 
-- [x] Make default study have a start event
+- [x] make default study have 'day 0' as start when to avoid the error.
 
 
 ## Jon
