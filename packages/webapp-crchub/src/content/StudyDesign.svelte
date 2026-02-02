@@ -449,8 +449,9 @@
             {/if}
         </div>
             
-        <!-- Splitter -->
-        <button type="button" bind:this={splitterHandle} class="splitter-handle" onmousedown={handleSplitterMouseDown} role="slider" aria-label="Resize tabs panel"></button>
+        <!-- Splitter - used as drag handle for resizing panels -->
+        <!-- svelte-ignore a11y_no_interactive_element_to_noninteractive_role -->
+        <button type="button" bind:this={splitterHandle} class="splitter-handle" onmousedown={handleSplitterMouseDown} role="separator" aria-orientation="vertical" aria-label="Resize tabs panel"></button>
             
         <!-- Right Panel: Tabs -->
         <div class="splitter-panel" style="width: {tabsPanelWidth}rem; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden;">
@@ -510,10 +511,6 @@
     .crc-editor {
         height: calc(100% - 3rem);
         overflow: auto;
-    }
-    
-    .crc-editor-footer {
-        height: 2rem;
     }
     
     .splitter-panel {

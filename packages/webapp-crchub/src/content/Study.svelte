@@ -136,8 +136,9 @@
                 <StudyCard studyId={study.id} />
             </div>
             
-            <!-- Splitter -->
-            <button type="button" bind:this={splitterHandle} class="splitter-handle" onmousedown={handleSplitterMouseDown} role="slider" aria-label="Resize study card panel"></button>
+            <!-- Splitter - used as drag handle for resizing panels -->
+            <!-- svelte-ignore a11y_no_interactive_element_to_noninteractive_role -->
+            <button type="button" bind:this={splitterHandle} class="splitter-handle" onmousedown={handleSplitterMouseDown} role="separator" aria-orientation="vertical" aria-label="Resize study card panel"></button>
             
             <!-- Right Panel: Tab Content -->
             <div class="splitter-panel right" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">

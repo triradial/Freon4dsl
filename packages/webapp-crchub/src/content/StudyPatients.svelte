@@ -4032,12 +4032,14 @@
         {/if}
 
         {#if showStaffTimeline}
-        <!-- Horizontal Splitter between Patients and Staff -->
+        <!-- Horizontal Splitter between Patients and Staff - used as drag handle for resizing sections -->
+        <!-- svelte-ignore a11y_no_interactive_element_to_noninteractive_role -->
         <button 
             type="button"
             class="timeline-splitter-handle horizontal"
             onmousedown={handleSplitterMouseDown}
-            role="slider"
+            role="separator"
+            aria-orientation="horizontal"
             aria-label="Resize patient and staff sections"
         ></button>
         {/if}

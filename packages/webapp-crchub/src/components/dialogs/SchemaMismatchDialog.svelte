@@ -9,20 +9,43 @@
     let report = $derived($lastLoadReport);
     let isOpen = $derived($showMismatchPopup);
     let isSaving = $state(false);
+    let hasSaved = $state(false); // Track if we've already saved to prevent duplicate saves
 
     async function handleClose() {
+        // Guard against multiple clicks/calls
+        if (isSaving || hasSaved) {
+            console.log('[SchemaMismatchDialog] Save already in progress or completed, ignoring duplicate call');
+            return;
+        }
+        
         // Save the model to persist the cleaned data (without the unknown properties)
         // The unit was already marked as "dirty" in model-manager when mismatches were detected
         isSaving = true;
         console.log('[SchemaMismatchDialog] Saving model to remove obsolete data...');
         try {
-            await ModelManager.getInstance().saveCurrentUnit();
-            console.log('[SchemaMismatchDialog] ✅ Model saved successfully - obsolete data removed');
+            const modelManager = ModelManager.getInstance();
+            const unit = modelManager.getCurrentUnit();
+            
+            if (unit) {
+                // Use direct server save to bypass the dirty check entirely
+                console.log('[SchemaMismatchDialog] Using direct server save for unit:', unit.name);
+                await modelManager.directServerSave(unit);
+                console.log('[SchemaMismatchDialog] ✅ Model saved successfully - obsolete data removed');
+                hasSaved = true;
+            } else {
+                console.error('[SchemaMismatchDialog] ❌ No current unit to save');
+            }
         } catch (e) {
             console.error('[SchemaMismatchDialog] ❌ Failed to save model:', e);
+            // Even on error, clear the report so user isn't stuck
         } finally {
             isSaving = false;
-            schemaMismatchTracker.clearReport();
+            // Clear the report after a brief delay to allow UI to update
+            setTimeout(() => {
+                schemaMismatchTracker.clearReport();
+                // Reset hasSaved after the dialog closes for potential future uses
+                hasSaved = false;
+            }, 100);
         }
     }
 

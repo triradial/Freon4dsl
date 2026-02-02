@@ -53,17 +53,6 @@ export class PatientVisitEventInstance extends PatientEventInstance {
         // Compare by name - try both the reference name and the referred object's name
         const statusName = this.patientVisitStatus?.name || this.patientVisitStatus?.referred?.name;
         
-        // Debug: log statusName for verification
-        console.log("PatientVisitEventInstance.getClassForDisplay:", {
-            eventName: this.eventName,
-            visitInstanceNumber: this.visitInstanceNumber,
-            hasStatusReference: !!this.patientVisitStatus,
-            referenceName: this.patientVisitStatus?.name,
-            referredName: this.patientVisitStatus?.referred?.name,
-            statusName: statusName,
-            referredObject: this.patientVisitStatus?.referred
-        });
-        
         // Check for explicit status values first
         if (statusName === "missed") {
             return "missed-visit";

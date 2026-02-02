@@ -247,8 +247,6 @@ export function getTimelineChartHtml(timeline: Timeline): RtString {
     const isMultiPatient = timeline.getUniquePatientIdentifiers().length > 1;
     const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
     const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline, isMultiPatient);
-    console.log("anyPatientEventInstances: " + timeline.anyPatientEventInstances());
-    console.log("anyStaffAvailabilityEventInstances: " + timeline.anyStaffAvailabilityEventInstances());
     const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, timeline.anyPatientEventInstances(), timeline.anyStaffAvailabilityEventInstances(), isMultiPatient);
     const html = `<div class="limited-width-container">${chartHTML}</div>`;
     return new RtString(html);
