@@ -93,6 +93,16 @@
                 tables.forEach(table => {
                     table.classList.add('table_component');
                 });
+
+                // Open external links in a new tab
+                const links = tempDiv.querySelectorAll('a[href]');
+                links.forEach(link => {
+                    const href = link.getAttribute('href')?.trim() ?? "";
+                    if (href.startsWith("http://") || href.startsWith("https://")) {
+                        link.setAttribute("target", "_blank");
+                        link.setAttribute("rel", "noopener noreferrer");
+                    }
+                });
                 
                 toc.forEach(item => {
                     const headings = tempDiv.querySelectorAll(`h${item.level}`);
