@@ -7,7 +7,6 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Graham
 
 ### To-Do 
-- Get undo-redo working again
 - Add patient page with visits / checklist, add note taking place
   - Add existing single patient full schedule chart to a draw / panel in the new UI
 - HTML editor:
@@ -22,6 +21,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - Create a repeatable demo script (whoever is done first will do this)
 
 ### In-Progress
+- Get undo-redo working again
 
 
 ### Done

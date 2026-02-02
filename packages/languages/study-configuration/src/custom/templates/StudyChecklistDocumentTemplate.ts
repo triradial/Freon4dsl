@@ -164,14 +164,13 @@ export class StudyChecklistDocumentTemplate {
                 ? reference.description
                 : (reference.description?.text ?? reference.description?.rawText ?? '');
             const linkPart = link ? ` ([${link}](${link}))` : '';
-            if (name) {
-                lines.push(`- **${name}**${linkPart}`);
-            } else if (linkPart) {
-                lines.push(`- ${linkPart.replace(/^ \(/, '(')}`);
-            }
-            if (desc) {
-                const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
-                lines.push(`  <div class="checklist-subtext">${indentedDesc}</div>`);
+            const title = name ? `**${name}**${linkPart}` : linkPart.replace(/^ \(/, '(');
+            if (title) {
+                lines.push(`- ${title}`);
+                if (desc) {
+                    const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
+                    lines.push(`  <div class="checklist-subtext">${indentedDesc}</div>`);
+                }
             }
         });
         return lines.length ? `${lines.join('\n')}\n` : '';
@@ -222,14 +221,14 @@ export class StudyChecklistDocumentTemplate {
                 });
             }
             if (personName) {
-                const nameWithRole = roleName ? `${personName} (${roleName})` : personName;
-                lines.push(`- **${nameWithRole}**`);
+                const roleSuffix = roleName ? ` (${roleName})` : '';
+                lines.push(`- **${personName}**${roleSuffix}`);
             } else if (metaParts.length > 0) {
                 lines.push(`- **${metaParts[0]}**`);
                 metaParts.shift();
             }
             metaParts.forEach(part => {
-                lines.push(`  - ${part}`);
+                lines.push(`  <div class="checklist-subtext">${part}</div>`);
             });
             if (desc) {
                 const indentedDesc = StudyChecklistDocumentTemplate.indentMultilineHtml(desc);
