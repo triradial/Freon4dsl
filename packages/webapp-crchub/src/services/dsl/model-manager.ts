@@ -7,6 +7,7 @@ import { editorProgressShown, setCurrentModelName, setCurrentUnitName, unitNames
 import { schemaMismatchTracker } from "./schema-mismatch-tracker.js";
 import { setUserMessage } from "./usermessage-store.js";
 import { WebappConfigurator } from "./webapp-configurator.js";
+import { perfLogger } from "../performance-logger.js";
 
 const LOGGER = new FreLogger("EditorState").mute();
 
@@ -367,6 +368,8 @@ export class ModelManager {
     }
 
     async saveModelUnit(unit: FreModelUnit) {
+        perfLogger.start('model-manager-save-unit', { unitName: unit.name });
+        
         console.log('💾 ModelManager: saveModelUnit called', {
             unitName: unit.name,
             unitType: unit.freLanguageConcept?.(),
@@ -416,13 +419,17 @@ export class ModelManager {
             this.modelStore.dirtyUnits.add(unit);
         }
         
+        perfLogger.start('model-store-save-unit');
         const result = await this.modelStore.saveUnit(unit);
+        perfLogger.end('model-store-save-unit');
         
         const isError = result !== undefined && result !== null;
         console.log('💾 ModelManager: saveModelUnit completed', {
             result: isError ? (result as any).message || 'error' : 'success',
             isError
         });
+        
+        perfLogger.end('model-manager-save-unit', { success: !isError });
     }
 
     async saveCurrentUnit() {
@@ -734,17 +741,26 @@ export class ModelManager {
     }
 
     runValidator(): FreError[] {
+        perfLogger.start('model-manager-run-validator');
+        
         const currentUnit = this.getCurrentUnit();
         let list: FreError[] = [];
         if (!!currentUnit) {
             LOGGER.log("EditorState.runValidator - for " + currentUnit.name);
             try {
+                perfLogger.start('validator-validate');
                 list = this.langEnv.validator.validate(currentUnit);
+                perfLogger.end('validator-validate', { errorCount: list.length });
+                
+                perfLogger.start('set-editor-errors');
                 WebappConfigurator.getInstance().editorEnvironment.editor.setErrors(list);
+                perfLogger.end('set-editor-errors');
+                
                 this.modelErrors = {list: list};
             } catch (e: unknown) {
                 if (e instanceof Error) {
                     console.log(e.message + e.stack);
+                    perfLogger.mark('validator-error', { error: e.message });
                     this.modelErrors = {list: [
                         new FreError("EditorState.runValidator - problem validating model unit: '" + e.message + "'", currentUnit, currentUnit.name, FreErrorSeverity.Error),
                     ]};
@@ -753,6 +769,8 @@ export class ModelManager {
         } else {
             LOGGER.log("EditorState.runValidator - No current unit to validate");
         }
+        
+        perfLogger.end('model-manager-run-validator', { errorCount: list.length });
         return list;
     }
 

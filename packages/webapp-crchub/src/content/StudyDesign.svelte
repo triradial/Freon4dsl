@@ -12,9 +12,10 @@
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
 // @ts-ignore
-    import { Redo as IconRedo, Undo as IconUndo, Eye as IconEye, ChevronsDownUp as IconCollapseAll, ChevronsUpDown as IconExpandAll } from '@lucide/svelte';
+    import { Redo as IconRedo, Undo as IconUndo, Eye as IconEye, ChevronsDownUp as IconCollapseAll, ChevronsUpDown as IconExpandAll, ChevronsLeftRight as IconResetDefaults } from '@lucide/svelte';
     import { simulationService } from "../services/simulation/simulation-service.js";
     import { expandCollapseStore } from "../services/stores/expand-collapse-store.js";
+    import { perfLogger } from "../services/performance-logger.js";
     import StudyChecklist from "./study/StudyChecklist.svelte";
     import StudyDesignErrors from "./study/StudyDesignErrors.svelte";
     import StudyTimelineChart from "./study/StudyTimelineChart.svelte";
@@ -104,10 +105,12 @@
     }
 
     function debouncedSave() {
+        perfLogger.mark('debounced-save-triggered');
         console.log('💾 StudyDesign.svelte: debouncedSave called');
         if (saveTimeout) clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
             console.log('💾 StudyDesign.svelte: debouncedSave timeout fired, calling handleSaveStudy');
+            perfLogger.mark('debounced-save-timeout-fired');
             handleSaveStudy();
         }, 1000); // 1 second debounce
     }
@@ -208,14 +211,24 @@
     }
 
     async function initializeStudy() {
+        perfLogger.start('initialize-study');
+        
+        // Reset the expand/collapse store so this study uses the language-defined isExpanded defaults
+        // This ensures expand/collapse commands from a previously viewed study don't affect this study
+        expandCollapseStore.reset();
+        
         // get the study data
+        perfLogger.start('fetch-study-data');
         study = await dataStore.getStudy(id);
         if (!study) {
             await dataStore.getStudies();
             study = await dataStore.getStudy(id);
         }
+        perfLogger.end('fetch-study-data');
+        
         if (!study) {
             console.error(`Study with id ${id} not found`);
+            perfLogger.end('initialize-study', { error: 'study not found' });
             return;
         }
         
@@ -223,7 +236,9 @@
         console.log(`[StudyDesign.svelte] initializeStudy: Starting to load model for study ${study.id} (${study.name})`);
         console.log(`[StudyDesign.svelte] Calling ModelManager.openModelUnit(${study.id}, "StudyConfiguration")`);
         
+        perfLogger.start('open-model-unit');
         const result = await ModelManager.getInstance().openModelUnit(study.id, "StudyConfiguration") as StudyConfiguration;
+        perfLogger.end('open-model-unit');
         
         console.log(`[StudyDesign.svelte] ModelManager.openModelUnit returned:`, {
             resultType: typeof result,
@@ -236,9 +251,16 @@
             unit = result;
             editorLoaded = true;
             console.log(`[StudyDesign.svelte] ✅ Model loaded successfully for study ${study.id}`);
+            
+            perfLogger.start('update-visible-projections');
             updateVisibleProjections(unit);
+            perfLogger.end('update-visible-projections');
+            
             // Update error count
+            perfLogger.start('initial-validator-run');
             errorCount = ModelManager.getInstance().runValidator().length;
+            perfLogger.end('initial-validator-run', { errorCount });
+            
             // Initialize undo/redo button states
             updateUndoRedoState();
         } else {
@@ -246,6 +268,8 @@
             console.warn(`[StudyDesign.svelte] ⚠️ Study ${study.id} (${study.name}) has no StudyConfiguration model available`);
             console.warn(`[StudyDesign.svelte] Result was ${result === undefined ? 'undefined' : 'null'}`);
         }
+        
+        perfLogger.end('initialize-study');
     }
 
     onMount(async () => {
@@ -255,8 +279,14 @@
 
         // Subscribe to FreChangeManager changes
         const changeCallback = (delta) => {
+            perfLogger.start('change-callback', { 
+                deltaType: delta.constructor.name,
+                propertyName: delta.propertyName 
+            });
+            
             // Prevent infinite loops: ignore changes while saving
             if (isSaving) {
+                perfLogger.end('change-callback', { skipped: 'isSaving' });
                 return;
             }
             
@@ -266,6 +296,7 @@
                     propertyName: delta.propertyName,
                     deltaType: delta.constructor.name
                 });
+                perfLogger.end('change-callback', { skipped: 'undoRedoInProgress' });
                 return;
             }
             
@@ -273,6 +304,7 @@
             // This prevents infinite loops: when model.addUnit() is called during openModel,
             // those changes have delta.unit !== unit, so they're ignored here
             if (!unit || delta.unit !== unit) {
+                perfLogger.end('change-callback', { skipped: 'differentUnit' });
                 return;
             }
             
@@ -319,6 +351,8 @@
             } else {
                 console.warn("⚠️ Unknown change from FreChangeManager:", delta);
             }
+            
+            perfLogger.end('change-callback');
         };
         FreChangeManager.getInstance().subscribeToPrimitive(changeCallback);
         FreChangeManager.getInstance().subscribeToPart(changeCallback);
@@ -358,6 +392,8 @@
 
     // Show the projections that are enabled in the study configuration.
     function updateVisibleProjections(studyConfiguration: StudyConfiguration) {
+        perfLogger.start('update-projections-internal');
+        
         let names = [];
 
         const showScheduling = studyConfiguration.showScheduling;
@@ -418,14 +454,20 @@
         
         const proj = dslEditor.projection;
     
+        perfLogger.start('ast-change-projections');
         AST.change(() => {
             proj.enableProjections(names);
 
             // Let the editor know that the projections have changed.
+            perfLogger.start('run-in-action-projection');
             runInAction( () => {
                 dslEditor.forceRecalculateProjection++;
             });
+            perfLogger.end('run-in-action-projection');
         });
+        perfLogger.end('ast-change-projections');
+        
+        perfLogger.end('update-projections-internal', { projectionCount: names.length, projections: names });
     }
 
     function handleCheckboxChange(id: string, visible: boolean) {
@@ -438,6 +480,8 @@
 
     // Async function to update error count without blocking UI
     function updateErrorCountAsync() {
+        perfLogger.mark('error-count-async-triggered');
+        
         if (errorCountRefreshTimeout) {
             clearTimeout(errorCountRefreshTimeout);
         }
@@ -445,34 +489,56 @@
         errorCountRefreshTimeout = setTimeout(() => {
             if (typeof requestIdleCallback !== 'undefined') {
                 requestIdleCallback(() => {
+                    perfLogger.start('validator-run');
                     errorCount = ModelManager.getInstance().runValidator().length;
+                    perfLogger.end('validator-run', { errorCount });
+                    
                     // Refresh the errors component
                     if (errorsComponent) {
+                        perfLogger.start('errors-component-refresh');
                         errorsComponent.refresh();
+                        perfLogger.end('errors-component-refresh');
                     }
                     // Only refresh the currently active timeline tab (not all tabs)
                     if (activeTab === 'timeline-table' && timelineTableComponent) {
+                        perfLogger.start('timeline-table-refresh');
                         timelineTableComponent.refresh(true); // force refresh
+                        perfLogger.end('timeline-table-refresh');
                     } else if (activeTab === 'timeline-chart' && timelineChartComponent) {
+                        perfLogger.start('timeline-chart-refresh');
                         timelineChartComponent.refresh(true); // force refresh
+                        perfLogger.end('timeline-chart-refresh');
                     } else if (activeTab === 'checklist' && checklistComponent) {
+                        perfLogger.start('checklist-refresh');
                         checklistComponent.refresh(true); // force refresh
+                        perfLogger.end('checklist-refresh');
                     }
                 }, { timeout: 1000 });
             } else {
                 setTimeout(() => {
+                    perfLogger.start('validator-run');
                     errorCount = ModelManager.getInstance().runValidator().length;
+                    perfLogger.end('validator-run', { errorCount });
+                    
                     // Refresh the errors component
                     if (errorsComponent) {
+                        perfLogger.start('errors-component-refresh');
                         errorsComponent.refresh();
+                        perfLogger.end('errors-component-refresh');
                     }
                     // Only refresh the currently active timeline tab (not all tabs)
                     if (activeTab === 'timeline-table' && timelineTableComponent) {
+                        perfLogger.start('timeline-table-refresh');
                         timelineTableComponent.refresh(true); // force refresh
+                        perfLogger.end('timeline-table-refresh');
                     } else if (activeTab === 'timeline-chart' && timelineChartComponent) {
+                        perfLogger.start('timeline-chart-refresh');
                         timelineChartComponent.refresh(true); // force refresh
+                        perfLogger.end('timeline-chart-refresh');
                     } else if (activeTab === 'checklist' && checklistComponent) {
+                        perfLogger.start('checklist-refresh');
                         checklistComponent.refresh(true); // force refresh
+                        perfLogger.end('checklist-refresh');
                     }
                 }, 0);
             }
@@ -480,19 +546,30 @@
     }
 
     async function handleSaveStudy() {
+        perfLogger.start('handle-save-study');
         console.log('💾 StudyDesign.svelte: handleSaveStudy called');
         isSaving = true;
         try {
             // Use forceSaveCurrentUnit to ensure the unit is marked as dirty and actually saved
             // This is necessary because Freon's change detection (FrePartDelta etc.) triggers
             // debouncedSave, but doesn't automatically add the unit to InMemoryModel.dirtyUnits
+            perfLogger.start('force-save-current-unit');
             await ModelManager.getInstance().forceSaveCurrentUnit();
+            perfLogger.end('force-save-current-unit');
+            
             // Clear simulation cache since model has changed
+            perfLogger.start('clear-simulation-cache');
             simulationService.clearCache(id);
+            perfLogger.end('clear-simulation-cache');
+            
             // Update error count and refresh active timeline tab asynchronously after save
             updateErrorCountAsync();
+        } catch (error) {
+            perfLogger.end('handle-save-study', { error: String(error) });
+            throw error;
         } finally {
             isSaving = false;
+            perfLogger.end('handle-save-study');
         }
     }
 
@@ -508,6 +585,8 @@
     
     function handleUndoAction() {
         if (!dslEditor || !canUndo) return;
+        
+        perfLogger.start('undo-action');
         
         const undoManager = FreUndoManager.getInstance();
         const MAX_SKIP = 50; // Safety limit
@@ -529,7 +608,9 @@
                 const isPrimDelta = nextUndoText.includes('PrimDelta');
                 
                 // Do the undo
+                perfLogger.start('undo-single-step');
                 const delta = EditorRequestsHandler.getInstance().undoWithDelta();
+                perfLogger.end('undo-single-step');
                 lastDelta = delta;
                 
                 if (isPrimDelta) {
@@ -559,10 +640,14 @@
             
             // Handle selection updates if the previously selected box is no longer in the tree
             if (lastDelta !== undefined && !dslEditor.isBoxInTree(dslEditor.selectedBox)) {
+                perfLogger.start('select-after-undo');
                 FreEditorUtil.selectAfterUndo(dslEditor, lastDelta);
+                perfLogger.end('select-after-undo');
             }
             // Trigger component refresh via selectionChanged
+            perfLogger.start('selection-changed-after-undo');
             dslEditor.selectionChanged();
+            perfLogger.end('selection-changed-after-undo');
         } finally {
             isUndoRedoInProgress = false;
         }
@@ -574,10 +659,14 @@
         updateErrorCountAsync();
         // Update display options counts
         mobxVersion++;
+        
+        perfLogger.end('undo-action', { skippedEntries: skipCount });
     }
 
     function handleRedoAction() {
         if (!dslEditor || !canRedo) return;
+        
+        perfLogger.start('redo-action');
         
         const undoManager = FreUndoManager.getInstance();
         const MAX_SKIP = 50; // Safety limit
@@ -599,7 +688,9 @@
                 const isPrimDelta = nextRedoText.includes('PrimDelta');
                 
                 // Do the redo
+                perfLogger.start('redo-single-step');
                 const delta = EditorRequestsHandler.getInstance().redoWithDelta();
+                perfLogger.end('redo-single-step');
                 lastDelta = delta;
                 
                 if (isPrimDelta) {
@@ -629,10 +720,14 @@
             
             // Handle selection updates if the previously selected box is no longer in the tree
             if (lastDelta !== undefined && !dslEditor.isBoxInTree(dslEditor.selectedBox)) {
+                perfLogger.start('select-after-redo');
                 FreEditorUtil.selectAfterUndo(dslEditor, lastDelta);
+                perfLogger.end('select-after-redo');
             }
             // Trigger component refresh via selectionChanged
+            perfLogger.start('selection-changed-after-redo');
             dslEditor.selectionChanged();
+            perfLogger.end('selection-changed-after-redo');
         } finally {
             isUndoRedoInProgress = false;
         }
@@ -644,6 +739,8 @@
         updateErrorCountAsync();
         // Update display options counts
         mobxVersion++;
+        
+        perfLogger.end('redo-action', { skippedEntries: skipCount });
     }
 
     // Update error count when tab changes to errors
@@ -671,11 +768,14 @@
         <!-- Left Panel: Study Designer -->
         <div class="splitter-panel" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
             {#if editorLoaded}
-                <div class="flex gap-2 mb-2">
+                <div class="flex gap-2 mb-2 items-center">
                     <button type="button" class="standard2-button primary inverted" onclick={handleUndoAction} tabindex="-1" disabled={!canUndo} title={canUndo ? 'Undo' : 'Nothing to undo'}><IconUndo size="16" /></button>
                     <button type="button" class="standard2-button primary inverted" onclick={handleRedoAction} tabindex="-1" disabled={!canRedo} title={canRedo ? 'Redo' : 'Nothing to redo'}><IconRedo size="16" /></button>
-                    <button type="button" class="standard2-button primary inverted" onclick={() => expandCollapseStore.expandAll()} tabindex="-1" title="Expand All"><IconExpandAll size="16" /></button>
-                    <button type="button" class="standard2-button primary inverted" onclick={() => expandCollapseStore.collapseAll()} tabindex="-1" title="Collapse All"><IconCollapseAll size="16" /></button>
+                    <span class="toolbar-separator"></span>
+                    <button type="button" class="standard2-button primary inverted" onclick={() => { expandCollapseStore.expandAll(); dslEditor?.selectionChanged(); }} tabindex="-1" title="Expand All"><IconExpandAll size="16" /></button>
+                    <button type="button" class="standard2-button primary inverted" onclick={() => { expandCollapseStore.resetToDefaults(); dslEditor?.selectionChanged(); }} tabindex="-1" title="Reset to Defaults"><IconResetDefaults size="16" /></button>
+                    <button type="button" class="standard2-button primary inverted" onclick={() => { expandCollapseStore.collapseAll(); dslEditor?.selectionChanged(); }} tabindex="-1" title="Collapse All"><IconCollapseAll size="16" /></button>
+                    <span class="toolbar-separator"></span>
                     <StudyDesignDisplayOptions items={footerItems()} onCheckboxChange={handleCheckboxChange} />              
                 </div>
                 <div class="crc-editor crc-content-width" style="flex: 1; overflow: auto;">
@@ -761,7 +861,7 @@
     .splitter-panel {
         height: 100%;
     }
-    
+        
     :global(.tab-content-wrapper) {
         height: calc(100vh - 12.5rem);
         overflow: auto;
