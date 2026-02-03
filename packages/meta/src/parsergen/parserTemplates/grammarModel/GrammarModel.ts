@@ -1,7 +1,5 @@
 import type { FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
-import { Imports, Names } from "../../../utils/on-lang/index.js"
-import { refRuleName } from "./GrammarUtils.js";
-import type { GrammarPart } from "./GrammarPart.js";
+import { Imports, Names } from "../../../utils/on-lang/index.js";
 import {
     internalTransformLimitedList,
     internalTransformPartList,
@@ -9,6 +7,8 @@ import {
     internalTransformPrimValue,
     internalTransformRefList, internalTransformTempRef
 } from '../ParserGenUtil.js';
+import type { GrammarPart } from "./GrammarPart.js";
+import { refRuleName } from "./GrammarUtils.js";
 
 const tempReferenceClassName: string = "ParsedNodeReference";
 

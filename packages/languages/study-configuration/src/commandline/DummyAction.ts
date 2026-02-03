@@ -2,7 +2,7 @@
 import { CommandLineAction, CommandLineStringParameter } from "@rushstack/ts-command-line";
 
 export class DummyAction extends CommandLineAction {
-    dummyParameter: CommandLineStringParameter;
+    dummyParameter!: CommandLineStringParameter;
 
     constructor() {
         super({
@@ -10,9 +10,7 @@ export class DummyAction extends CommandLineAction {
             summary: "My description",
             documentation: "More description",
         });
-    }
 
-    protected onDefineParameters(): void {
         this.dummyParameter = this.defineStringParameter({
             argumentName: "DUMMY_PARAMETER",
             defaultValue: "dummy.value",

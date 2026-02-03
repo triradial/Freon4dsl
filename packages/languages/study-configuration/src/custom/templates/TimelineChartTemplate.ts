@@ -1,4 +1,4 @@
-import { StudyConfigurationModelModelUnitWriter } from "../../writer/gen/StudyConfigurationModelModelUnitWriter.js";
+import { StudyConfigurationModelModelUnitWriter } from "../../freon/writer/gen/StudyConfigurationModelModelUnitWriter.js";
 import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 import { Timeline } from "../timeline/Timeline.js";
 import { dedent } from "../utils/dedent.js";

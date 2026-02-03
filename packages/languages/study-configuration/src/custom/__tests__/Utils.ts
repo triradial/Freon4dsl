@@ -2,12 +2,12 @@ import { FreLionwebSerializer, FreLogger, FreModelUnit, FreNodeReference } from 
 import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
-import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
+import { StudyConfigurationModelEnvironment } from "../../freon/config/gen/StudyConfigurationModelEnvironment.js";
 
 // ESM-compatible __dirname for absolute path resolution
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { Availability, DateConcept, DateRange, Day, Days, Event, EventReference, EventSchedule, EventState, EventWindow, FirstDayOfStudy, PatientHistory, PatientInfo, PatientVisit, PatientVisitStatus, Period, RepeatCondition, SimpleOperators, StaffLevel, StudyConfiguration, StudyStart, TimeAmount, TimeAmountPart, TimeUnit, VisitDate, Weekly, When } from "../../language/gen/index.js";
+import { Availability, DateConcept, DateRange, Day, Days, Event, EventReference, EventSchedule, EventState, EventWindow, FirstDayOfStudy, PatientHistory, PatientInfo, PatientVisit, PatientVisitStatus, Period, RepeatCondition, SimpleOperators, StaffLevel, StudyConfiguration, StudyStart, TimeAmount, TimeAmountPart, TimeUnit, VisitDate, Weekly, When } from "../../freon/language/gen/index.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
 import { PeriodEventInstance } from "../timeline/PeriodEventInstance.js";

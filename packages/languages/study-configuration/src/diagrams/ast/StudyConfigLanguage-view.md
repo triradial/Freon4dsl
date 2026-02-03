@@ -1,0 +1,183 @@
+# Class diagram for file StudyConfigLanguage
+```mermaid
+    %%{init: {'theme': 'forest'} }%%
+    classDiagram
+    direction TD
+    %% other possibilites: LR RL DT TB (same as TD)
+    class Period {
+        
+        + identifier name
+    }
+    class TypeOfEvent {
+        <<enumeration>>
+        site
+		preparation
+		video
+		phone
+		other
+    }
+    class Event {
+        
+        + identifier name
+		+ string alternativeName
+		+ boolean showSequenced
+		+ number eventNumber
+    }
+    class AbstractTask {
+        <<abstract>>
+        
+    }
+    class EventTask {
+        <<abstract>>
+        
+    }
+    class Task {
+        
+        + identifier name
+		+ boolean numberedSteps
+		+ boolean showDetails
+    }
+    class SharedTask {
+        
+        + identifier name
+		+ boolean numberedSteps
+		+ boolean showDetails
+    }
+    class TaskReference {
+        
+        
+    }
+    class Step {
+        
+        + identifier name
+    }
+    class WorkflowDescription {
+        
+        
+    }
+    class WorkflowBranch {
+        
+        
+    }
+    class Description {
+        
+        + string text
+		+ string rawText
+    }
+    class AbstractSystemAccess {
+        <<abstract>>
+        
+    }
+    class SystemAccess {
+        
+        + identifier name
+		+ boolean isShared
+		+ string functionName
+    }
+    class SystemAccessReference {
+        
+        
+    }
+    class AccessedAtURL {
+        
+        + string url
+    }
+    class AccessedAPhoneNumber {
+        
+        + string phoneNumber
+    }
+    class StaffRole {
+        
+        + identifier name
+    }
+    class AbstractPerson {
+        <<abstract>>
+        
+    }
+    class PersonReference {
+        
+        
+    }
+    class Person {
+        
+        + identifier name
+		+ string email
+		+ string phoneNumber
+    }
+    class Reference {
+        
+        + string name
+		+ string link
+    }
+    class RobotMapping {
+        
+        + identifier name
+		+ string sourcePage
+		+ string targetPage
+		+ boolean closeSource
+    }
+    class SourceToTargetMapping {
+        
+        + string sourceField
+		+ string targetField
+    }
+    class WorkflowDecision {
+        <<interface>>
+        
+    }
+    class AccessedAt {
+        <<interface>>
+        
+    }
+    AbstractTask <|-- EventTask
+EventTask <|-- Task
+AbstractTask <|-- SharedTask
+EventTask <|-- TaskReference
+AbstractSystemAccess <|-- SystemAccess
+AbstractSystemAccess <|-- SystemAccessReference
+AbstractPerson <|-- PersonReference
+AbstractPerson <|-- Person
+
+        Period *-- "1" Description : description
+
+		Period *-- "0..*" Event : events
+Event *-- "0..*" EventTask : tasks
+
+		Event *-- "1" Description : description
+
+		Event *-- "1" EventSchedule : schedule
+Task *-- "1" Description : description
+
+		Task *-- "0..*" Step : steps
+SharedTask *-- "1" Description : description
+
+		SharedTask *-- "0..*" Step : steps
+Step *-- "1" Description : description
+
+		Step *-- "0..*" Reference : references
+
+		Step *-- "0..*" AbstractPerson : people
+
+		Step *-- "0..*" AbstractSystemAccess : systems
+WorkflowDescription *-- "1" Description : text
+WorkflowBranch *-- "1" ScheduleExpression : branch
+SystemAccess *-- "1" Description : description
+
+		SystemAccess *-- "1" AccessedAt : accessedAt
+StaffRole *-- "1" Description : description
+Person *-- "1" Description : description
+Reference *-- "1" Description : description
+RobotMapping *-- "0..*" SourceToTargetMapping : sourceToTargetMappings
+
+        Event --> "1" TypeOfEvent : typeOfEvent
+TaskReference --> "1" SharedTask : task
+SystemAccessReference --> "1" SystemAccess : system
+PersonReference --> "1" Person : person
+Person --> "1" StaffRole : role
+
+        WorkflowDescription ..|> WorkflowDecision
+WorkflowBranch ..|> WorkflowDecision
+AccessedAtURL ..|> AccessedAt
+AccessedAPhoneNumber ..|> AccessedAt
+
+```

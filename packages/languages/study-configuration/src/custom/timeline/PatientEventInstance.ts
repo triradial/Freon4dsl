@@ -1,5 +1,5 @@
 import { FreNodeReference } from "@freon4dsl/core";
-import { PatientVisitStatus } from "../../language/gen/index.js";
+import { PatientVisitStatus } from "../../freon/language/gen/index.js";
 import { Timeline } from "./Timeline.js";
 import { TimelineEventInstance, TimelineInstanceState } from "./TimelineEventInstance.js";
 

@@ -1,0 +1,194 @@
+# Inheritance diagram for language StudyConfigurationModel
+```mermaid
+    %%{init: {'theme': 'forest'} }%%
+    classDiagram
+    direction TD
+    %% other possibilites: LR RL DT TB (same as TD)
+    class EventReferenceExpression {
+        
+        
+    }
+    class ScheduleExpression {
+        <<abstract>>
+        
+    }
+    class PeriodReferenceExpression {
+        
+        
+    }
+    class Time {
+        
+        + string value
+    }
+    class PreviousVisit {
+        
+        
+    }
+    class StartDay {
+        
+        
+    }
+    class CountExpression {
+        
+        
+    }
+    class LiteralExpression {
+        <<abstract>>
+        
+    }
+    class NumberLiteralExpression {
+        
+        + number value
+    }
+    class BinaryExpression {
+        <<abstract>>
+        
+    }
+    class MultiplyExpression {
+        
+        
+    }
+    class PlusExpression {
+        
+        
+    }
+    class MinusExpression {
+        
+        
+    }
+    class DivideExpression {
+        
+        
+    }
+    class AndExpression {
+        
+        
+    }
+    class OrExpression {
+        
+        
+    }
+    class ComparisonExpression {
+        <<abstract>>
+        
+    }
+    class LessThenExpression {
+        
+        
+    }
+    class GreaterThenExpression {
+        
+        
+    }
+    class EqualsExpression {
+        
+        
+    }
+    class Baseline {
+        
+        
+    }
+    class FirstDayOfStudy {
+        
+        
+    }
+    class AnyDay {
+        
+        
+    }
+    class Unscheduled {
+        
+        
+    }
+    class ComplianceWindowOf {
+        
+        
+    }
+    class ComplianceWindow {
+        <<abstract>>
+        
+    }
+    class EventTask {
+        <<abstract>>
+        
+    }
+    class AbstractTask {
+        <<abstract>>
+        
+    }
+    class Task {
+        
+        + identifier name
+		+ boolean numberedSteps
+		+ boolean showDetails
+    }
+    class SharedTask {
+        
+        + identifier name
+		+ boolean numberedSteps
+		+ boolean showDetails
+    }
+    class TaskReference {
+        
+        
+    }
+    class SystemAccess {
+        
+        + identifier name
+		+ boolean isShared
+		+ string functionName
+    }
+    class AbstractSystemAccess {
+        <<abstract>>
+        
+    }
+    class SystemAccessReference {
+        
+        
+    }
+    class PersonReference {
+        
+        
+    }
+    class AbstractPerson {
+        <<abstract>>
+        
+    }
+    class Person {
+        
+        + identifier name
+		+ string email
+		+ string phoneNumber
+    }
+    ScheduleExpression <|-- EventReferenceExpression
+ScheduleExpression <|-- PeriodReferenceExpression
+ScheduleExpression <|-- Time
+ScheduleExpression <|-- PreviousVisit
+ScheduleExpression <|-- StartDay
+ScheduleExpression <|-- CountExpression
+ScheduleExpression <|-- LiteralExpression
+LiteralExpression <|-- NumberLiteralExpression
+ScheduleExpression <|-- BinaryExpression
+BinaryExpression <|-- MultiplyExpression
+BinaryExpression <|-- PlusExpression
+BinaryExpression <|-- MinusExpression
+BinaryExpression <|-- DivideExpression
+BinaryExpression <|-- AndExpression
+BinaryExpression <|-- OrExpression
+BinaryExpression <|-- ComparisonExpression
+ComparisonExpression <|-- LessThenExpression
+ComparisonExpression <|-- GreaterThenExpression
+ComparisonExpression <|-- EqualsExpression
+FirstDayOfStudy <|-- Baseline
+Unscheduled <|-- AnyDay
+ComplianceWindow <|-- ComplianceWindowOf
+AbstractTask <|-- EventTask
+EventTask <|-- Task
+AbstractTask <|-- SharedTask
+EventTask <|-- TaskReference
+AbstractSystemAccess <|-- SystemAccess
+AbstractSystemAccess <|-- SystemAccessReference
+AbstractPerson <|-- PersonReference
+AbstractPerson <|-- Person
+
+```

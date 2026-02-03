@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { StudyConfiguration, WorkflowDescription, Event, Task, Description } from "../../language/gen/index.js";
+import { StudyConfiguration, WorkflowDescription, Event, Task, Description } from "../../freon/language/gen/index.js";
 // import * as path from 'path';
 
 export class WebformTemplate {

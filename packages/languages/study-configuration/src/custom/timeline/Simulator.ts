@@ -1,4 +1,4 @@
-import { Availability, Event, PatientHistory, StudyConfiguration } from "../../language/gen/index.js";
+import { Availability, Event, PatientHistory, StudyConfiguration } from "../../freon/language/gen/index.js";
 import * as Sim from "../simjs/sim.js";
 import log from "../utils/SimpleLogger.js";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration.js";

@@ -1,4 +1,4 @@
-import { StudyConfiguration } from "../../language/gen/index.js";
+import { StudyConfiguration } from "../../freon/language/gen/index.js";
 import { WebformTemplate } from "../templates/WebFormTemplate.js";
 import * as utils from "./Utils.js";
 

@@ -67,7 +67,7 @@ export class InterpreterBaseTemplate {
         const interpreter = Names.interpreterClassname(language);
         return `
         // TEMPLATE: InterpreterBaseTemplate.interpreterInit(...)
-        import { type IMainInterpreter } from "@freon4dsl/core";
+        import { type IMainInterpreter, type EvaluateFunction } from "@freon4dsl/core";
         import { ${interpreter} } from "${relativePath}/${customsFolder}/${interpreter}.js";
 
         /**
@@ -77,10 +77,10 @@ export class InterpreterBaseTemplate {
             const interpreter = new ${interpreter}(main);
 
             ${interpreterDef.conceptsToEvaluate
-                .map((c) => {
-                    return `main.registerFunction("${Names.classifier(c)}", interpreter.eval${Names.classifier(c)});`;
-                })
-                .join("\n")} // DONE
+              .map((c) => {
+                return `main.registerFunction("${Names.classifier(c)}", interpreter.eval${Names.classifier(c)} as EvaluateFunction);`;
+              })
+              .join("\n")}
 
         }`;
     }

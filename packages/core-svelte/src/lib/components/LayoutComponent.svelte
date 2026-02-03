@@ -1,15 +1,15 @@
 <script lang="ts">
+    import { tick, untrack } from 'svelte';
     import { LAYOUT_LOGGER } from './ComponentLoggers.js';
-
-    /**
+/**
      * This component shows a list of various boxes (no 'true' list). It can be shown
      * horizontally or vertically. In the latter case, the elements are each separated by
      * a break ('<br>').
      */
-    import RenderComponent from './RenderComponent.svelte';
-    import { type Box, FreLogger, ListDirection, type LayoutBox, notNullOrUndefined } from '@freon4dsl/core';
+    import { type Box, FreLogger, type LayoutBox, ListDirection, notNullOrUndefined } from '@freon4dsl/core';
     import { componentId } from '../index.js';
     import ErrorMarker from './ErrorMarker.svelte';
+    import RenderComponent from './RenderComponent.svelte';
     import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
 
     // Props
@@ -35,10 +35,21 @@
         box.setFocus = setFocus;
         box.refreshComponent = refresh;
         // Evaluated and re-evaluated when the box changes.
-        refresh('Refresh Layout box changed ' + box?.id);
+        // Use untrack to avoid triggering state_unsafe_mutation error in Svelte 5
+        untrack(() => {
+            refreshInternal('Refresh Layout box changed ' + box?.id);
+        });
     });
 
+    /** External refresh function exposed to box.refreshComponent.
+     *  Defers state mutations to after the current reactive cycle. */
     const refresh = (why?: string): void => {
+        tick().then(() => {
+            refreshInternal(why);
+        });
+    };
+    
+    const refreshInternal = (why?: string): void => {
         LOGGER.log('REFRESH LayoutComponent (' + why + ')' + box?.node?.freLanguageConcept());
         id = notNullOrUndefined(box) ? componentId(box) : 'layout-for-unknown-box';
         children = [...box.children];

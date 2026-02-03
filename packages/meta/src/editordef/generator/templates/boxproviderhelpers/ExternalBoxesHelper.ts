@@ -1,4 +1,3 @@
-import type { FreEditExternalInfo, FreEditFragmentProjection, FreEditPropertyProjection, FreEditSimpleExternal } from "../../../metalanguage/index.js"
 import type {
     FreMetaConceptProperty,
     FreMetaLanguage,
@@ -6,6 +5,7 @@ import type {
     FreMetaProperty,
 } from "../../../../languagedef/metalanguage/index.js";
 import { Names } from '../../../../utils/on-lang/index.js';
+import type { FreEditExternalInfo, FreEditFragmentProjection, FreEditPropertyProjection, FreEditSimpleExternal } from "../../../metalanguage/index.js";
 import type { BoxProviderTemplate } from "../BoxProviderTemplate.js";
 
 export class ExternalBoxesHelper {
@@ -114,7 +114,7 @@ export class ExternalBoxesHelper {
                     )`;
     }
 
-    private replaceSingleByExternal(
+    public replaceSingleByExternal(
         item: FreEditPropertyProjection,
         property: FreMetaConceptProperty,
         elementVarName: string,

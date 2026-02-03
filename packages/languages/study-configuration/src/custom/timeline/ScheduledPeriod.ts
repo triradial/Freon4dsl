@@ -1,4 +1,4 @@
-import { Event, Period } from "../../language/gen/index.js";
+import { Event, Period } from "../../freon/language/gen/index.js";
 import { ScheduledEvent } from "./ScheduledEvent.js";
 
 export class ScheduledPeriod {

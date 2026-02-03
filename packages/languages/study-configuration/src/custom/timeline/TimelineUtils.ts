@@ -1,5 +1,5 @@
 import { AST, RtString } from "@freon4dsl/core";
-import { PatientHistory, PatientInfo, StudyConfiguration } from "../../language/gen/index.js";
+import { PatientHistory, PatientInfo, StudyConfiguration } from "../../freon/language/gen/index.js";
 import * as Sim from "../simjs/sim.js";
 import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate.js";
 import { TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";

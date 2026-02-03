@@ -402,12 +402,16 @@ Before:
 async saveUnit(unit: FreModelUnit): Promise<void | InMemoryError> {
     LOGGER.log(`saveModelUnit`)
     if (this.dirtyUnits.has(unit)) {
-        const serverResponse = await this.server.saveModelUnit(...)
+        const serverResponse = await this.server.saveModelUnit(
+            this.model.name,
+            { name: unit.name, id: unit.freId(), type: unit.freLanguageConcept() },
+            unit,
+        )
         if (serverResponse.errors.length === 0) {
             this.dirtyUnits.delete(unit)
         } else {
             this.onInMemoryError(serverResponse.errors[0])
-            return new InMemoryError(...)
+            return new InMemoryError(`${serverResponse.errors[0]})`)
         }
     }
 }
@@ -422,14 +426,18 @@ async saveUnit(unit: FreModelUnit): Promise<void | InMemoryError> {
 
     if (unitInDirty) {
         console.log(`[InMemoryModel] saveUnit - calling server.saveModelUnit for "${unit.name}"`)
-        const serverResponse = await this.server.saveModelUnit(...)
+        const serverResponse = await this.server.saveModelUnit(
+            this.model.name,
+            { name: unit.name, id: unit.freId(), type: unit.freLanguageConcept() },
+            unit,
+        )
         if (serverResponse.errors.length === 0) {
             console.log(`[InMemoryModel] saveUnit - server save successful for "${unit.name}"`)
             this.dirtyUnits.delete(unit)
         } else {
             console.error(`[InMemoryModel] saveUnit - server save failed for "${unit.name}"`)
             this.onInMemoryError(serverResponse.errors[0])
-            return new InMemoryError(...)
+            return new InMemoryError(`${serverResponse.errors[0]})`)
         }
     } else {
         console.log(`[InMemoryModel] saveUnit - skipping save for "${unit?.name}" (not dirty)`)
@@ -466,7 +474,7 @@ public replaceSingleByExternal(
 Before:
 ```ts
 if (property.type instanceof FreMetaLimitedConcept) {
-    result += this._myLimitedHelper.generateLimited(property, elementVarName, language, ...);
+    result += this._myLimitedHelper.generateLimited(property, elementVarName, language, item.listInfo, item.displayType);
 }
 ```
 
@@ -478,7 +486,7 @@ if (property.type instanceof FreMetaLimitedConcept) {
         result += this._myExternalHelper.replaceSingleByExternal(item, property, elementVarName);
     } else {
         // Use standard limited concept box
-        result += this._myLimitedHelper.generateLimited(property, elementVarName, language, ...);
+        result += this._myLimitedHelper.generateLimited(property, elementVarName, language, item.listInfo, item.displayType);
     }
 }
 ```
@@ -489,7 +497,7 @@ Before:
 ```ts
 // single element
 this._myTemplate.imports.core.add("BoxUtil");
-let innerResult = `BoxUtil.getBoxOrAction(...)`;
+let innerResult: string = `BoxUtil.getBoxOrAction(${elementVarName}, "${property.name}", "${property.type.name}", this.mainHandler) `;
 if (item.externalInfo) {
     result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
 } else {
@@ -505,7 +513,7 @@ if (property.type instanceof FreMetaLimitedConcept && item.externalInfo?.replace
     result += this._myExternalHelper.replaceSingleByExternal(item, property, elementVarName);
 } else {
     this._myTemplate.imports.core.add("BoxUtil");
-    let innerResult = `BoxUtil.getBoxOrAction(...)`;
+    let innerResult: string = `BoxUtil.getBoxOrAction(${elementVarName}, "${property.name}", "${property.type.name}", this.mainHandler) `;
     if (item.externalInfo) {
         result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
     } else {
@@ -560,6 +568,8 @@ After:
 
 ## `packages/meta/src/parsergen/parserTemplates/grammarModel/GrammarModel.ts`
 
+We kept the new regex under the assumption that Freon fixed the issue with spaces in IDs
+
 **Parser grammar fix — allow spaces in identifiers.** Adds a space character to the allowed character set in backtick-delimited identifiers. This means identifiers like `` `My Identifier` `` are now valid in the DSL.
 
 ### Change — Space added to identifier character class
@@ -578,6 +588,8 @@ leaf identifier = "`[a-zA-Z0-9-_~!@#$%^&*...?/ ][a-zA-Z0-9-_~!@#$%^&*...?/ ]*`"
 ---
 
 ## `packages/meta/src/utils/file-utils/FileUtil.ts`
+
+We didn't do this one because the file is gone.
 
 **Bug fix — empty folder deletion.** `fs.rmSync(folder)` without `{ recursive: true }` can fail on some platforms/Node versions when removing directories. Adding the flag ensures reliable cleanup.
 

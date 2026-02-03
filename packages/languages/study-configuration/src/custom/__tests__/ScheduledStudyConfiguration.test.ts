@@ -6,7 +6,7 @@ import { TimelineInstanceState } from "../timeline/TimelineEventInstance.js";
 import { Timeline } from "../timeline/Timeline.js";
 import * as utils from "./Utils";
 import { ScheduledEvent } from "../timeline/ScheduledEvent.js";
-import { StudyConfigurationModelEnvironment } from "../../config/gen/StudyConfigurationModelEnvironment.js";
+import { StudyConfigurationModelEnvironment } from "../../freon/config/gen/StudyConfigurationModelEnvironment.js";
 import { ScheduledEventInstance } from "../timeline/ScheduledEventInstance.js";
 
 // #TODO: These tests may or may not be working. They are not currently being run. They were just updated to remove compliler errors m.v. 8/30

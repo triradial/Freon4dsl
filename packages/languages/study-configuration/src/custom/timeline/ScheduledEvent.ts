@@ -1,5 +1,5 @@
 import { InterpreterContext, isRtError, ownerOfType, RtBoolean, RtNumber, RtObject } from "@freon4dsl/core";
-import { MainStudyConfigurationModelInterpreter } from "../../interpreter/MainStudyConfigurationModelInterpreter.js";
+import { MainStudyConfigurationModelInterpreter } from "../../freon/interpreter/MainStudyConfigurationModelInterpreter.js";
 import {
     Baseline,
     Day,
@@ -12,7 +12,7 @@ import {
     StudyConfiguration,
     StudyStart,
     When
-} from "../../language/gen/index.js";
+} from "../../freon/language/gen/index.js";
 import { PeriodEventInstance } from "./PeriodEventInstance.js";
 import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration.js";
