@@ -1,0 +1,153 @@
+diff --git a/packages/meta/src/editordef/generator/templates/boxproviderhelpers/ExternalBoxesHelper.ts b/packages/meta/src/editordef/generator/templates/boxproviderhelpers/ExternalBoxesHelper.ts
+index e464f2203..dcd9c2dcb 100644
+--- a/packages/meta/src/editordef/generator/templates/boxproviderhelpers/ExternalBoxesHelper.ts
++++ b/packages/meta/src/editordef/generator/templates/boxproviderhelpers/ExternalBoxesHelper.ts
+@@ -114,7 +114,7 @@ export class ExternalBoxesHelper {
+                     )`;
+     }
+ 
+-    private replaceSingleByExternal(
++    public replaceSingleByExternal(
+         item: FreEditPropertyProjection,
+         property: FreMetaConceptProperty,
+         elementVarName: string,
+diff --git a/packages/meta/src/editordef/generator/templates/boxproviderhelpers/ItemBoxHelper.ts b/packages/meta/src/editordef/generator/templates/boxproviderhelpers/ItemBoxHelper.ts
+index a256ceb02..ec8ec1938 100644
+--- a/packages/meta/src/editordef/generator/templates/boxproviderhelpers/ItemBoxHelper.ts
++++ b/packages/meta/src/editordef/generator/templates/boxproviderhelpers/ItemBoxHelper.ts
+@@ -182,13 +182,20 @@ export class ItemBoxHelper {
+     ): string {
+         let result: string = "";
+         if (property.type instanceof FreMetaLimitedConcept) {
+-            result += this._myLimitedHelper.generateLimited(
+-                property,
+-                elementVarName,
+-                language,
+-                item.listInfo,
+-                item.displayType,
+-            );
++            // Check if external component should replace the limited concept box
++            if (!!item.externalInfo && !!item.externalInfo.replaceBy && item.externalInfo.replaceBy.length > 0) {
++                // Use external component to replace the limited concept box
++                result += this._myExternalHelper.replaceSingleByExternal(item, property, elementVarName);
++            } else {
++                // Use standard limited concept box
++                result += this._myLimitedHelper.generateLimited(
++                    property,
++                    elementVarName,
++                    language,
++                    item.listInfo,
++                    item.displayType,
++                );
++            }
+         } else if (property.isList) {
+             let innerResult: string = "";
+             if (!!item.listInfo && item.listInfo.isTable) {
+@@ -273,13 +280,19 @@ export class ItemBoxHelper {
+             }
+         } else {
+             // single element
+-            this._myTemplate.imports.core.add("BoxUtil");
+-            let innerResult: string = `BoxUtil.getBoxOrAction(${elementVarName}, "${property.name}", "${property.type.name}", this.mainHandler) `;
+-            if (!!item.externalInfo) {
+-                // there is information on how to project the property as an external component, wrap the result in an ExternalBox
+-                result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
++            // Check if external component should replace the limited concept box
++            if (property.type instanceof FreMetaLimitedConcept && !!item.externalInfo && !!item.externalInfo.replaceBy && item.externalInfo.replaceBy.length > 0) {
++                // Use external component to replace the limited concept box directly
++                result += this._myExternalHelper.replaceSingleByExternal(item, property, elementVarName);
+             } else {
+-                result += innerResult;
++                this._myTemplate.imports.core.add("BoxUtil");
++                let innerResult: string = `BoxUtil.getBoxOrAction(${elementVarName}, "${property.name}", "${property.type.name}", this.mainHandler) `;
++                if (!!item.externalInfo) {
++                    // there is information on how to project the property as an external component, wrap the result in an ExternalBox
++                    result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
++                } else {
++                    result += innerResult;
++                }
+             }
+         }
+         return result;
+diff --git a/packages/meta/src/interpretergen/generator/templates/InterpreterBaseTemplate.ts b/packages/meta/src/interpretergen/generator/templates/InterpreterBaseTemplate.ts
+index 07087e0b3..391ac3e00 100644
+--- a/packages/meta/src/interpretergen/generator/templates/InterpreterBaseTemplate.ts
++++ b/packages/meta/src/interpretergen/generator/templates/InterpreterBaseTemplate.ts
+@@ -67,7 +67,7 @@ export class InterpreterBaseTemplate {
+         const interpreter = Names.interpreterClassname(language);
+         return `
+         // TEMPLATE: InterpreterBaseTemplate.interpreterInit(...)
+-        import { type IMainInterpreter } from "@freon4dsl/core";
++        import { type IMainInterpreter, type EvaluateFunction } from "@freon4dsl/core";
+         import { ${interpreter} } from "../${interpreter}.js";
+ 
+         /**
+@@ -78,9 +78,9 @@ export class InterpreterBaseTemplate {
+ 
+             ${interpreterDef.conceptsToEvaluate
+                 .map((c) => {
+-                    return `main.registerFunction("${Names.classifier(c)}", interpreter.eval${Names.classifier(c)});`;
++                    return `main.registerFunction("${Names.classifier(c)}", interpreter.eval${Names.classifier(c)} as EvaluateFunction);`;
+                 })
+-                .join("\n")} // DONE
++                .join("\n")}
+ 
+         }`;
+     }
+diff --git a/packages/meta/src/parsergen/parserTemplates/grammarModel/GrammarModel.ts b/packages/meta/src/parsergen/parserTemplates/grammarModel/GrammarModel.ts
+index a65980cd7..6082d31d2 100644
+--- a/packages/meta/src/parsergen/parserTemplates/grammarModel/GrammarModel.ts
++++ b/packages/meta/src/parsergen/parserTemplates/grammarModel/GrammarModel.ts
+@@ -1,7 +1,5 @@
+ import { FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
+-import { Imports, Names } from "../../../utils/on-lang/index.js"
+-import { refRuleName } from "./GrammarUtils.js";
+-import { GrammarPart } from "./GrammarPart.js";
++import { Imports, Names } from "../../../utils/on-lang/index.js";
+ import {
+     internalTransformLimitedList,
+     internalTransformPartList,
+@@ -9,6 +7,8 @@ import {
+     internalTransformPrimValue,
+     internalTransformRefList, internalTransformTempRef
+ } from '../ParserGenUtil.js';
++import { GrammarPart } from "./GrammarPart.js";
++import { refRuleName } from "./GrammarUtils.js";
+ 
+ const tempReferenceClassName: string = "ParsedNodeReference";
+ 
+@@ -48,7 +48,8 @@ skip SINGLE_LINE_COMMENT = "//[^\\\\r\\\\n]*" ;
+ skip MULTI_LINE_COMMENT = "/\\\\*[^*]*\\\\*+(?:[^*/][^*]*\\\\*+)*/" ;
+ 
+ // the predefined basic types
+-leaf identifier        = "\\\`[a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/][a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/]*\\\`" ;
++// leaf identifier        = "\\\`[a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/][a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/]*\\\`" ;
++leaf identifier        = "\\\`[a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/ ][a-zA-Z0-9-_~!@#$%^&*()+={\\\\[}\\\\]|\\\:;\\\\"'<>,.?/ ]*\\\`" ;
+ /* see https://stackoverflow.com/questions/37032620/regex-for-matching-a-string-literal-in-java */
+ leaf optStringLiteral  = "<no-value>" | stringLiteral ;
+ leaf stringLiteral     = '"' "[^\\\\"\\\\\\\\]*(\\\\\\\\.[^\\\\"\\\\\\\\]*)*" '"' ;
+diff --git a/packages/meta/src/utils/file-utils/FileUtil.ts b/packages/meta/src/utils/file-utils/FileUtil.ts
+index b083d4dd1..574639be4 100644
+--- a/packages/meta/src/utils/file-utils/FileUtil.ts
++++ b/packages/meta/src/utils/file-utils/FileUtil.ts
+@@ -1,9 +1,9 @@
+-import * as fs from "fs";
+ import synchronizedPrettier from "@prettier/sync";
++import * as fs from "fs";
++import * as path from "path";
+ import { MetaLogger } from "../no-dependencies/MetaLogger.js";
+ 
+ const LOGGER = new MetaLogger("FileUtil").mute();
+-import * as path from "path";
+ 
+ export class GenerationStatus {
+     numberOfErrors: number = 0;
+@@ -135,7 +135,7 @@ export class FileUtil {
+         const folder = "./" + dir;
+         if (FileUtil.exists(folder)) {
+             if (fs.readdirSync(folder).length === 0) {
+-                fs.rmSync(folder);
++                fs.rmSync(folder, { recursive: true });
+             } else {
+                 LOGGER.info("Folder has content: [" + folder + "]");
+             }

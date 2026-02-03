@@ -1,0 +1,268 @@
+diff --git a/packages/core/package.json b/packages/core/package.json
+index 162c55e1a..6252d72ba 100644
+--- a/packages/core/package.json
++++ b/packages/core/package.json
+@@ -15,6 +15,7 @@
+   },
+   "files": [
+     "dist",
++    "src",
+     "!dist/**/*.test.*",
+     "!dist/**/*.spec.*"
+   ],
+diff --git a/packages/core/src/ast/index.ts b/packages/core/src/ast/index.ts
+old mode 100755
+new mode 100644
+diff --git a/packages/core/src/editor/actions/index.ts b/packages/core/src/editor/actions/index.ts
+old mode 100755
+new mode 100644
+diff --git a/packages/core/src/editor/boxes/Box.ts b/packages/core/src/editor/boxes/Box.ts
+index 9e84831fb..9d180ee44 100644
+--- a/packages/core/src/editor/boxes/Box.ts
++++ b/packages/core/src/editor/boxes/Box.ts
+@@ -34,6 +34,8 @@ export abstract class Box {
+     selectable: boolean = true; // todo because most boxes are not selectable the default could be set to false
+     // Is this box currently not shown in the editor?
+     isVisible: boolean = true;
++    // Should the drag handle be hidden for this box in a list?
++    hideDragHandle: boolean = false;
+     parent: Box = null;
+ 
+     // Indication whether the 'node' which this box projects has any validation errors. Adds a CSS class
+diff --git a/packages/core/src/editor/boxes/externalBoxes/AbstractPropertyWrapperBox.ts b/packages/core/src/editor/boxes/externalBoxes/AbstractPropertyWrapperBox.ts
+index c08bbd6f0..8c0f0b18f 100644
+--- a/packages/core/src/editor/boxes/externalBoxes/AbstractPropertyWrapperBox.ts
++++ b/packages/core/src/editor/boxes/externalBoxes/AbstractPropertyWrapperBox.ts
+@@ -31,4 +31,33 @@ export abstract class AbstractPropertyWrapperBox extends AbstractExternalBox {
+     get children(): ReadonlyArray<Box> {
+         return [this._childBox] as ReadonlyArray<Box>;
+     }
++
++    /**
++     * Override firstLeaf to return this wrapper box itself when selectable,
++     * allowing external components to receive focus via keyboard navigation.
++     */
++    get firstLeaf(): Box | null {
++        if (!this.isVisible) {
++            return null;
++        }
++        if (this.selectable) {
++            return this;
++        }
++        // Fall back to child if not selectable
++        return this._childBox?.firstLeaf ?? null;
++    }
++
++    /**
++     * Override lastLeaf to return this wrapper box itself when selectable.
++     */
++    get lastLeaf(): Box | null {
++        if (!this.isVisible) {
++            return null;
++        }
++        if (this.selectable) {
++            return this;
++        }
++        // Fall back to child if not selectable
++        return this._childBox?.lastLeaf ?? null;
++    }
+ }
+diff --git a/packages/core/src/editor/boxes/externalBoxes/StringReplacerBox.ts b/packages/core/src/editor/boxes/externalBoxes/StringReplacerBox.ts
+index 50fd48cf0..0a98f374d 100644
+--- a/packages/core/src/editor/boxes/externalBoxes/StringReplacerBox.ts
++++ b/packages/core/src/editor/boxes/externalBoxes/StringReplacerBox.ts
+@@ -1,7 +1,7 @@
+-import { AST } from "../../../change-manager/index.js";
+-import { Box } from "../Box.js";
+ import type { FreNode } from "../../../ast/index.js";
++import { AST } from "../../../change-manager/index.js";
+ import { FreUtils } from "../../../util/index.js";
++import { Box } from "../Box.js";
+ import { AbstractExternalPropertyBox } from "./AbstractExternalPropertyBox.js";
+ 
+ /**
+@@ -35,11 +35,12 @@ export class StringReplacerBox extends AbstractExternalPropertyBox {
+                 this.node[this.propertyName] = newValue;
+             });
+         } else {
+-            console.log(
+-                "StringReplacerBox.setPropertyValue type error: trying to set property of type " +
++            throw new Error(
++                "StringReplacerBox.setPropertyValue: type mismatch — property type is '" +
+                     this.getPropertyType() +
+-                    " to a value of type " +
+-                    typeof newValue,
++                    "' but value type is '" +
++                    typeof newValue +
++                    "'. Check that the box is bound to a string property (e.g. correct node and propertyName).",
+             );
+         }
+     }
+diff --git a/packages/core/src/editor/index.ts b/packages/core/src/editor/index.ts
+old mode 100755
+new mode 100644
+diff --git a/packages/core/src/editor/projections/FreProjectionHandler.ts b/packages/core/src/editor/projections/FreProjectionHandler.ts
+index e0ba86119..777520fad 100644
+--- a/packages/core/src/editor/projections/FreProjectionHandler.ts
++++ b/packages/core/src/editor/projections/FreProjectionHandler.ts
+@@ -1,14 +1,14 @@
++import { action, makeObservable, observable, runInAction } from "mobx";
++import type { FreNode } from "../../ast/index.js";
+ import { FreLogger } from "../../logging/index.js";
++import { ArrayUtil } from "../../util/ArrayUtil.js";
++import { isNullOrUndefined } from "../../util/index.js";
+ import type { Box, ElementBox } from "../boxes/index.js";
+ import { BoxFactory } from "../boxes/index.js";
+-import { isNullOrUndefined } from "../../util/index.js";
+-import type { FreNode } from "../../ast/index.js";
+ import type { FreBoxProvider } from "./FreBoxProvider.js";
++import { FreHeaderProvider } from "./FreHeaderProvider.js";
+ import type { FreProjection } from "./FreProjection.js";
+-import { action, makeObservable, observable, runInAction } from "mobx";
+-import { ArrayUtil } from "../../util/ArrayUtil.js";
+ import type { FreTableHeaderInfo } from "./FreTableHeaderInfo.js";
+-import { FreHeaderProvider } from "./FreHeaderProvider.js";
+ 
+ const LOGGER = new FreLogger("FreProjectionHandler");
+ /**
+@@ -251,7 +251,11 @@ export class FreProjectionHandler {
+ 
+     getKnownTableProjectionsFor(conceptName: string): string[] {
+         LOGGER.log("getKnownTableProjectionsFor: " + conceptName);
+-        const providerConstructor = this.conceptNameToProviderConstructor.get(conceptName)(this);
++        const constructorFunction = this.conceptNameToProviderConstructor.get(conceptName);
++        if (!constructorFunction) {
++            return [];
++        }
++        const providerConstructor = constructorFunction(this);
+         if (!!providerConstructor) {
+             return providerConstructor.knownTableProjections;
+         } else {
+diff --git a/packages/core/src/index.ts b/packages/core/src/index.ts
+old mode 100755
+new mode 100644
+diff --git a/packages/core/src/interpreter/index.ts b/packages/core/src/interpreter/index.ts
+old mode 100755
+new mode 100644
+diff --git a/packages/core/src/language/index.ts b/packages/core/src/language/index.ts
+old mode 100755
+new mode 100644
+diff --git a/packages/core/src/logging/FreLogger.ts b/packages/core/src/logging/FreLogger.ts
+index fa2c5df61..0d7a484a7 100644
+--- a/packages/core/src/logging/FreLogger.ts
++++ b/packages/core/src/logging/FreLogger.ts
+@@ -73,7 +73,7 @@ export class FreLogger {
+         if (!FreLogger.muteAll && this.active) {
+             this.logToConsole(FreLogger.FG_BLACK, this.category + ": " + this.message(msg));
+         } else if (tagOrTags !== undefined && tagOrTags !== null) {
+-            const tags: string[] = typeof tagOrTags === "string" ? [tagOrTags] : (tagOrTags as string[]);
++            const tags: string[] = typeof tagOrTags === "string" ? [tagOrTags] : (Array.isArray(tagOrTags) ? tagOrTags : []);
+             for (const tag of tags) {
+                 if (!FreLogger.mutedLogs.includes(tag)) {
+                     this.logToConsole(FreLogger.FG_BLACK, this.category + "." + tag + ": " + this.message(msg));
+diff --git a/packages/core/src/storage/InMemoryModel.ts b/packages/core/src/storage/InMemoryModel.ts
+index ba746d357..c79cd5ce0 100644
+--- a/packages/core/src/storage/InMemoryModel.ts
++++ b/packages/core/src/storage/InMemoryModel.ts
+@@ -100,22 +100,40 @@ export class InMemoryModel {
+      * * @param name
+      */
+     async openModel(name: string): Promise<FreModel | InMemoryError> {
++        console.log(`[InMemoryModel] openModel: name=${name}`)
+         LOGGER.log("openModel(" + name + ")")
+         AST.change(() => {
+             this.model = this.languageEnvironment.newModel(name)
+         })
++        
++        console.log(`[InMemoryModel] Loading unit list for model: ${name}`)
+         const response = await this.server.loadUnitList(name)
+         if  (response.errors.length > 0) {
++            console.error(`[InMemoryModel] ❌ Error loading unit list:`, response.errors[0])
+             this.onInMemoryError(response.errors[0])
+             return new InMemoryError(response.errors[0])
+         }
++        
++        console.log(`[InMemoryModel] Unit list loaded, found ${response.result.length} units:`, response.result.map(u => u.name))
++        
+         for (const unitId of response.result) {
++            console.log(`[InMemoryModel] Loading model unit: ${unitId.name}`)
+             LOGGER.log("openModel: load model-unit: " + unitId.name)
+             const unit = await this.server.loadModelUnit(this.model.name, unitId)
+-            AST.change(() => {
+-                this.model.addUnit(unit.result as FreModelUnit)
+-            })
++            
++            if (unit.errors.length > 0) {
++                console.error(`[InMemoryModel] ❌ Error loading unit ${unitId.name}:`, unit.errors)
++            } else if (unit.result) {
++                console.log(`[InMemoryModel] ✅ Unit ${unitId.name} loaded successfully, adding to model`)
++                AST.change(() => {
++                    this.model.addUnit(unit.result as FreModelUnit)
++                })
++            } else {
++                console.warn(`[InMemoryModel] ⚠️ Unit ${unitId.name} loaded but result is null/undefined`)
++            }
+         }
++        
++        console.log(`[InMemoryModel] openModel complete for ${name}, model has ${this.model.getUnits().length} units`)
+         FreUndoManager.getInstance().cleanAllStacks()
+         return this.model
+     }
+@@ -284,7 +302,11 @@ export class InMemoryModel {
+      */
+     async saveUnit(unit: FreModelUnit): Promise<void | InMemoryError> {
+         LOGGER.log(`saveModelUnit`)
+-        if (this.dirtyUnits.has(unit)) {
++        const unitInDirty = this.dirtyUnits.has(unit)
++        console.log(`[InMemoryModel] saveUnit called for "${unit?.name}", isDirty=${unitInDirty}, dirtyUnitsCount=${this.dirtyUnits.size}`)
++        
++        if (unitInDirty) {
++            console.log(`[InMemoryModel] saveUnit - calling server.saveModelUnit for "${unit.name}"`)
+             const serverResponse = await this.server.saveModelUnit(
+                 this.model.name,
+                 {
+@@ -295,11 +317,15 @@ export class InMemoryModel {
+                 unit,
+             )
+             if (serverResponse.errors.length === 0) {
++                console.log(`[InMemoryModel] ✅ saveUnit - server save successful for "${unit.name}"`)
+                 this.dirtyUnits.delete(unit)
+             } else {
++                console.error(`[InMemoryModel] ❌ saveUnit - server save failed for "${unit.name}":`, serverResponse.errors[0])
+                 this.onInMemoryError(serverResponse.errors[0])
+                 return new InMemoryError(`${serverResponse.errors[0]})`)
+             }
++        } else {
++            console.log(`[InMemoryModel] saveUnit - skipping save for "${unit?.name}" (not in dirtyUnits)`)
+         }
+     }
+ 
+diff --git a/packages/core/src/util/index.ts b/packages/core/src/util/index.ts
+old mode 100755
+new mode 100644
+diff --git a/packages/core/tsconfig.json b/packages/core/tsconfig.json
+index 1f4224fb2..7ca859877 100644
+--- a/packages/core/tsconfig.json
++++ b/packages/core/tsconfig.json
+@@ -20,7 +20,7 @@
+     // "outFile": "./",                             /* Concatenate and emit output to single file. */
+     "outDir": "./dist",                             /* Redirect output structure to the directory. NB: this works for rollup.,  for tsc it should be "./dist" !!! */
+     "rootDir": "./src",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+-    // "composite": true,                           /* Enable project compilation */
++    "composite": true,                              /* Enable project compilation */
+     // "tsBuildInfoFile": "./",                     /* Specify file to store incremental compilation information */
+     "removeComments": true,                         /* Do not emit comments to output. */
+     // "noEmit": true,                              /* Do not emit outputs. */
+@@ -62,10 +62,10 @@
+     // "allowUmdGlobalAccess": true,                /* Allow accessing UMD globals from modules. */
+ 
+     /* Source Map Options */
+-//     "sourceRoot": "../../src/",                            /* Specify the location where debugger should locate TypeScript files instead of source locations. */
++    "sourceRoot": "",                               /* Empty sourceRoot means paths are relative to sourcemap file */
+     // "mapRoot": "",                               /* Specify the location where debugger should locate map files instead of generated locations. */
+     // "inlineSourceMap": true,                     /* Emit a single file with source maps instead of having a separate file. */
+-    // "inlineSources": true,                       /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
++    "inlineSources": true,                         /* Embed source content in sourcemaps so debugging works even if source files aren't accessible */
+ 
+     /* Experimental Options */
+     "experimentalDecorators": true,              /* Enables experimental support for ES7 decorators. */
