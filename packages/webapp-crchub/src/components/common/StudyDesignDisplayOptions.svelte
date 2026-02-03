@@ -84,7 +84,7 @@
     <Popover
         open={openState}
         onOpenChange={(e) => (openState = e.open)}
-        positioning={{ placement: 'top' }}
+        positioning={{ placement: 'bottom-start', offset: 4 }}
         contentBase="card p-4 space-y-2 max-w-[320px] editor-display-options-popover w-44"
         arrow
         arrowBackground="editor-display-options-popover"
