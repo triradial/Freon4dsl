@@ -1,8 +1,9 @@
 <script lang="ts">
     import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, TextBox, VerticalLayoutBox } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { Event, SharedTask, Step, StudyConfiguration, TaskReference, type Task } from "@freon4dsl/study-configuration";
+    import { expandCollapseStore } from "../../../services/stores/expand-collapse-store.js";
 // ts-ignore
     import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, Trash2 as IconDelete, Copy as IconDuplicate, EllipsisVertical as IconEllipsisVertical, Share2 as IconShare2 } from '@lucide/svelte';
 
@@ -73,6 +74,23 @@
     onMount(() => {
         box.refreshComponent = refresh;   
         box.setFocus = setFocus;
+    });
+
+    // Subscribe to expand/collapse all commands
+    const unsubscribe = expandCollapseStore.subscribe((cmd) => {
+        if (cmd && canExpandParam) {
+            if (cmd.command === 'expand') {
+                isExpanded = true;
+                box.isExpanded = true;
+            } else if (cmd.command === 'collapse') {
+                isExpanded = false;
+                box.isExpanded = false;
+            }
+        }
+    });
+
+    onDestroy(() => {
+        unsubscribe();
     });
 
     $effect(() => {

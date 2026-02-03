@@ -6,14 +6,15 @@
     import { Tabs } from "@skeletonlabs/skeleton-svelte";
     import { runInAction } from "mobx";
     import { onDestroy, onMount } from "svelte";
-    import DSLFooter from "../components/common/DSLFooter.svelte";
+    import StudyDesignDisplayOptions from "../components/common/StudyDesignDisplayOptions.svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
     import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
 // @ts-ignore
-    import { Redo as IconRedo, Undo as IconUndo, Eye as IconEye } from '@lucide/svelte';
+    import { Redo as IconRedo, Undo as IconUndo, Eye as IconEye, ChevronsDownUp as IconCollapseAll, ChevronsUpDown as IconExpandAll } from '@lucide/svelte';
     import { simulationService } from "../services/simulation/simulation-service.js";
+    import { expandCollapseStore } from "../services/stores/expand-collapse-store.js";
     import StudyChecklist from "./study/StudyChecklist.svelte";
     import StudyDesignErrors from "./study/StudyDesignErrors.svelte";
     import StudyTimelineChart from "./study/StudyTimelineChart.svelte";
@@ -112,7 +113,7 @@
     }
 
     const footerConfig = [
-        { id: "showScheduling", label: "Scheduling" },
+        { id: "showScheduling", label: "Schedules" },
         { id: "showChecklists", label: "Checklists" },
         { id: "showSteps", label: "Steps", parent: "showChecklists" },
         { id: "showReferences", label: "References", parent: "showSteps" },
@@ -121,15 +122,59 @@
         // { id: "showDescriptions", label: "Descriptions" },
         { id: "showSharedTasks", label: "Shared Tasks" },
     ];
+    
+    // Calculate counts for display options
+    function calculateCounts(studyConfig: StudyConfiguration | undefined): Record<string, number> {
+        const counts: Record<string, number> = {};
+        if (!studyConfig) return counts;
+        
+        let totalSteps = 0;
+        let totalReferences = 0;
+        let totalSystems = 0;
+        let totalPeople = 0;
+        
+        // Iterate through all periods, events, and tasks to count
+        for (const period of studyConfig.periods ?? []) {
+            for (const event of period.events ?? []) {
+                for (const eventTask of event.tasks ?? []) {
+                    // Get steps from Task or SharedTask (via TaskReference)
+                    let steps: any[] = [];
+                    if ('steps' in eventTask && Array.isArray(eventTask.steps)) {
+                        steps = eventTask.steps;
+                    } else if ('task' in eventTask && eventTask.task && 'steps' in eventTask.task) {
+                        // TaskReference - get steps from the referenced SharedTask
+                        steps = eventTask.task.steps ?? [];
+                    }
+                    
+                    totalSteps += steps.length;
+                    
+                    for (const step of steps) {
+                        totalReferences += (step.references ?? []).length;
+                        totalSystems += (step.systems ?? []).length;
+                        totalPeople += (step.people ?? []).length;
+                    }
+                }
+            }
+        }
+        
+        counts.showSteps = totalSteps;
+        counts.showReferences = totalReferences;
+        counts.showSystems = totalSystems;
+        counts.showPeople = totalPeople;
+        
+        return counts;
+    }
 
     let footerItems = $derived(() => {
         mobxVersion;
         if (!unit) {
-            return footerConfig.map(cfg => ({ ...cfg, visible: false }));
+            return footerConfig.map(cfg => ({ ...cfg, visible: false, count: undefined as number | undefined }));
         } else {
+            const counts = calculateCounts(unit);
             return footerConfig.map(cfg => ({
                 ...cfg,
                 visible: !!unit[cfg.id as keyof StudyConfiguration],
+                count: counts[cfg.id] as number | undefined,
             }));
         }
     });
@@ -241,6 +286,8 @@
                     debouncedSave();
                     // Update undo/redo button states after data change (with small delay for stack update)
                     setTimeout(updateUndoRedoState, 10);
+                    // Update display options counts
+                    mobxVersion++;
                 }
             } else if (delta instanceof FrePrimListDelta) {
                 console.log("💾 StudyDesign.svelte: FrePrimListDelta change detected", {
@@ -249,6 +296,8 @@
                 debouncedSave();
                 // Update undo/redo button states after data change
                 setTimeout(updateUndoRedoState, 10);
+                // Update display options counts
+                mobxVersion++;
             } else if (delta instanceof FrePartListDelta) {
                 console.log("💾 StudyDesign.svelte: FrePartListDelta change detected", {
                     propertyName: delta.propertyName
@@ -256,6 +305,8 @@
                 debouncedSave();
                 // Update undo/redo button states after data change
                 setTimeout(updateUndoRedoState, 10);
+                // Update display options counts
+                mobxVersion++;
             } else if (delta instanceof FrePartDelta) {
                 console.log("💾 StudyDesign.svelte: FrePartDelta change detected", {
                     propertyName: delta.propertyName
@@ -263,6 +314,8 @@
                 debouncedSave();
                 // Update undo/redo button states after data change
                 setTimeout(updateUndoRedoState, 10);
+                // Update display options counts
+                mobxVersion++;
             } else {
                 console.warn("⚠️ Unknown change from FreChangeManager:", delta);
             }
@@ -519,6 +572,8 @@
         debouncedSave();
         // Update error count and refresh timeline components asynchronously
         updateErrorCountAsync();
+        // Update display options counts
+        mobxVersion++;
     }
 
     function handleRedoAction() {
@@ -587,6 +642,8 @@
         debouncedSave();
         // Update error count and refresh timeline components asynchronously
         updateErrorCountAsync();
+        // Update display options counts
+        mobxVersion++;
     }
 
     // Update error count when tab changes to errors
@@ -614,10 +671,12 @@
         <!-- Left Panel: Study Designer -->
         <div class="splitter-panel" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
             {#if editorLoaded}
-                <div class="flex gap-2 mb-2" style="padding: 0 1rem;">
-                    <button type="button" class="standard-button primary inverted" onclick={handleUndoAction} tabindex="-1" disabled={!canUndo} title={canUndo ? 'Undo' : 'Nothing to undo'}><IconUndo size="16" /></button>
-                    <button type="button" class="standard-button primary inverted" onclick={handleRedoAction} tabindex="-1" disabled={!canRedo} title={canRedo ? 'Redo' : 'Nothing to redo'}><IconRedo size="16" /></button>
-                    <DSLFooter items={footerItems()} onCheckboxChange={handleCheckboxChange} />
+                <div class="flex gap-2 mb-2">
+                    <button type="button" class="standard2-button primary inverted" onclick={handleUndoAction} tabindex="-1" disabled={!canUndo} title={canUndo ? 'Undo' : 'Nothing to undo'}><IconUndo size="16" /></button>
+                    <button type="button" class="standard2-button primary inverted" onclick={handleRedoAction} tabindex="-1" disabled={!canRedo} title={canRedo ? 'Redo' : 'Nothing to redo'}><IconRedo size="16" /></button>
+                    <button type="button" class="standard2-button primary inverted" onclick={() => expandCollapseStore.expandAll()} tabindex="-1" title="Expand All"><IconExpandAll size="16" /></button>
+                    <button type="button" class="standard2-button primary inverted" onclick={() => expandCollapseStore.collapseAll()} tabindex="-1" title="Collapse All"><IconCollapseAll size="16" /></button>
+                    <StudyDesignDisplayOptions items={footerItems()} onCheckboxChange={handleCheckboxChange} />              
                 </div>
                 <div class="crc-editor crc-content-width" style="flex: 1; overflow: auto;">
                     <FreonComponent editor={dslEditor} />

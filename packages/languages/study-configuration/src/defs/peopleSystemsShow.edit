@@ -7,9 +7,7 @@ Step {
     fragment stepDetailsWithPeopleSystems [
         ${name}
         ${description}
-        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="People"}
-        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Systems Used"}
+        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" canDragAndDrop="false" label="People"}
+        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" canDragAndDrop="false" label="Systems Used"}
     ]
 }
-        // ${people table rows}
-

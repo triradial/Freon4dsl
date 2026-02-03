@@ -57,25 +57,15 @@
     // this speeds up the check whether an element may be dropped here
     let myMetaType: DragAndDropType;
     
-    // Concept types that should not have drag handles
-    const HIDE_DRAG_HANDLE_CONCEPTS = new Set([
-        'Reference',
-        'Person',
-        'PersonReference', 
-        'SystemAccess',
-        'SystemAccessReference'
-    ]);
-    
-    // Helper function to check if drag handle should be hidden for a box
+    // Helper function to check if drag handle should be hidden for a specific box item.
+    // This respects the list-level canDragAndDrop setting and the individual box's hideDragHandle property.
     function shouldHideDragHandle(b: Box): boolean {
-        // Check the box's hideDragHandle property
-        if (b.hideDragHandle) {
+        // Check if the list has drag-and-drop disabled entirely
+        if (!box.canDragAndDrop) {
             return true;
         }
-        // Check if the concept type should hide drag handles
-        const conceptType = b.node?.freLanguageConcept();
-        console.log(`shouldHideDragHandle: box.kind=${b.kind}, conceptType=${conceptType}, in set=${HIDE_DRAG_HANDLE_CONCEPTS.has(conceptType || '')}`);
-        if (conceptType && HIDE_DRAG_HANDLE_CONCEPTS.has(conceptType)) {
+        // Check the individual box's hideDragHandle property
+        if (b.hideDragHandle) {
             return true;
         }
         // Check if the box has findParam method (external box) and hideDragHandle param is set

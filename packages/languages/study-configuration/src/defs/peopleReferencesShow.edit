@@ -7,8 +7,8 @@ Step {
     fragment stepDetailsWithPeopleReferences [
         ${name}
         ${description}
-        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" canDelete="true" isExpanded="false" selectable="false" label="People"}
-        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" canDelete="true" isExpanded="false" selectable="false" label="References"}
+        ${people wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" canDelete="true" isExpanded="false" selectable="false" canDragAndDrop="false" label="People"}
+        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" canDelete="true" isExpanded="false" selectable="false" canDragAndDrop="false" label="References"}
     ]
 }
         // ${people table rows}

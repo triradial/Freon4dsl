@@ -18,7 +18,9 @@ import TableComponent from './TableComponent.svelte';
 import TableCellComponent from './TableCellComponent.svelte';
 import TextComponent from './TextComponent.svelte';
 import TextDropdownComponent from './TextDropdownComponent.svelte';
+import ErrorMarker from './ErrorMarker.svelte';
 import SvgComponent from './SvgComponent.svelte';
+import ErrorMarker from './ErrorMarker.svelte';
 
 export {
     BooleanCheckboxComponent,
@@ -41,7 +43,8 @@ export {
     TableCellComponent,
     TextComponent,
     TextDropdownComponent,
-    SvgComponent
+    SvgComponent,
+    ErrorMarker
 };
 
 export * from './svelte-utils/index.js';

@@ -6,12 +6,12 @@
 
     const { onCheckboxChange, items } = $props<{
         onCheckboxChange: (key: string, value: boolean) => void;
-        items: Array<{ id: string; label: string; visible: boolean; parent?: string }>;
+        items: Array<{ id: string; label: string; visible: boolean; parent?: string; count?: number }>;
     }>();
 
     // Local state for items that can be mutated
-    let localItems = $state<Array<{ id: string; label: string; visible: boolean; parent?: string }>>([]);
-    let hiddenItems = $state<Array<{ id: string; label: string; visible: boolean; parent?: string }>>([]);  
+    let localItems = $state<Array<{ id: string; label: string; visible: boolean; parent?: string; count?: number }>>([]);
+    let hiddenItems = $state<Array<{ id: string; label: string; visible: boolean; parent?: string; count?: number }>>([]);  
     
     // Update local items when props change
     $effect(() => {
@@ -118,6 +118,6 @@
     </Popover>
     {#if hiddenItems.length > 0}
         <span class="editor-footer-label">Hidden Items: </span>
-        <span class="editor-footer-text flex-grow">{hiddenItems.map((item) => item.label).join(", ")}</span>
+        <span class="editor-footer-text flex-grow">{hiddenItems.map((item) => item.count !== undefined ? `${item.label} (${item.count})` : item.label).join(", ")}</span>
     {/if}
 </div>

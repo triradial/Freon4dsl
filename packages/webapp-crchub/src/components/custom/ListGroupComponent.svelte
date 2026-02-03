@@ -1,7 +1,8 @@
 <script lang="ts">
     import { AST, FreLanguage, FreLogger, PartWrapperBox, type FreNode } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
+    import { expandCollapseStore } from "../../services/stores/expand-collapse-store.js";
 // ts-ignore
     import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, EllipsisVertical as IconEllipsisVertical, Plus as IconPlus } from '@lucide/svelte';
 
@@ -60,6 +61,23 @@
         if (childBox) {
             childBox.cssClass = cssClass;
         }
+    });
+
+    // Subscribe to expand/collapse all commands
+    const unsubscribe = expandCollapseStore.subscribe((cmd) => {
+        if (cmd && canExpand) {
+            if (cmd.command === 'expand') {
+                isExpanded = true;
+                box.isExpanded = true;
+            } else if (cmd.command === 'collapse') {
+                isExpanded = false;
+                box.isExpanded = false;
+            }
+        }
+    });
+
+    onDestroy(() => {
+        unsubscribe();
     });
 
     // Replaces afterUpdate()

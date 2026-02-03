@@ -7,6 +7,6 @@ Step {
     fragment stepDetailsReferences [
         ${name}
         ${description}
-        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="References"}
+        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" canDragAndDrop="false" label="References"}
     ]
 }

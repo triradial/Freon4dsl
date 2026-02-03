@@ -7,7 +7,7 @@ Step {
     fragment stepDetailsWithSystemsReferences [
         ${name}
         ${description}
-        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Systems Used"}
-        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="References"}
+        ${systems wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" canDragAndDrop="false" label="Systems Used"}
+        ${references wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="true" selectable="false" canDragAndDrop="false" label="References"}
     ]
 }
