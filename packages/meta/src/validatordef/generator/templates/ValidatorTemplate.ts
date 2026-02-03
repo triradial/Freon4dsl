@@ -1,16 +1,15 @@
 import {
-    CONFIGURATION_FOLDER,
     Names,
-    Imports
-} from "../../../utils/on-lang/index.js"
-import { FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
-import { ValidatorDef } from "../../metalanguage/index.js";
+    Imports,
+    VALIDATOR_FOLDER
+} from '../../../utils/on-lang/index.js';
+import type { FreMetaLanguage } from "../../../languagedef/metalanguage/index.js";
+import type { ValidatorDef } from "../../metalanguage/index.js";
 
 export class ValidatorTemplate {
     errorClassName: string = Names.FreError;
-    validatorInterfaceName: string = Names.FreValidator;
 
-    generateValidator(language: FreMetaLanguage, validdef: ValidatorDef | undefined, relativePath: string): string {
+    generateValidator(language: FreMetaLanguage, validdef: ValidatorDef | undefined, customsFolder: string, relativePath: string): string {
         const doValidDef: boolean = validdef !== null && validdef !== undefined;
 
         const generatedClassName: string = Names.validator(language);
@@ -32,7 +31,7 @@ export class ValidatorTemplate {
         import { ${namespaceChecker} } from "./${namespaceChecker}.js";
         ${doValidDef ? `import { ${rulesChecker} } from "./${rulesChecker}.js";` : ``}
         import { ${referenceChecker} } from "./${referenceChecker}.js";
-        import { freonConfiguration } from "${relativePath}${CONFIGURATION_FOLDER}/${Names.configuration}.js";
+        import { freonConfiguration } from "${relativePath}/${customsFolder}/${Names.configuration}.js";
 
         /**
          * Interface '${Names.checkerInterface(language)}' represents any object that traverses the model tree and checks
@@ -61,27 +60,27 @@ export class ValidatorTemplate {
              * The default for 'includeChildren' is true.
              */
             public validate(node: ${Names.FreNode}, includeChildren: boolean = true) : ${this.errorClassName}[]{
-                // initialize the errorlist
-                const errorlist : ${this.errorClassName}[] = [];
+                // initialize the errorList
+                const errorList : ${this.errorClassName}[] = [];
 
                 // create the walker over the model tree
                 const myWalker = new ${Names.walker(language)}();
 
                 // create the checker on non-optional parts
                 let myChecker = new ${nonOptionalsChecker}();
-                myChecker.errorList = errorlist;
+                myChecker.errorList = errorList;
                 // and add the checker to the walker
                 myWalker.myWorkers.push( myChecker );
 
                 // create the checker on references
                 myChecker = new ${referenceChecker}();
-                myChecker.errorList = errorlist;
+                myChecker.errorList = errorList;
                 // and add the checker to the walker
                 myWalker.myWorkers.push( myChecker );
                 
                 // create the checker on (double names in) namespaces
                 myChecker = new ${namespaceChecker}();
-                myChecker.errorList = errorlist;
+                myChecker.errorList = errorList;
                 // and add the checker to the walker
                 myWalker.myWorkers.push( myChecker );
                 ${
@@ -89,7 +88,7 @@ export class ValidatorTemplate {
                         ? `
                     // create the checker based on the rules in the validation definition (.valid file)
                     myChecker = new ${rulesChecker}();
-                    myChecker.errorList = errorlist;
+                    myChecker.errorList = errorList;
                     // and add the checker to the walker
                     myWalker.myWorkers.push( myChecker );`
                         : ``
@@ -97,7 +96,7 @@ export class ValidatorTemplate {
 
                 // add any custom validations
                 for (let checker of freonConfiguration.customValidations) {
-                    checker.errorList = errorlist;
+                    checker.errorList = errorList;
                     myWalker.myWorkers.push(checker);
                 }
 
@@ -105,7 +104,7 @@ export class ValidatorTemplate {
                 myWalker.walk(node, ()=> { return includeChildren; } );
 
                 // return any errors
-                return errorlist;
+                return errorList;
             }
         }`;
     }
@@ -130,16 +129,16 @@ export class ValidatorTemplate {
         return `
         // TEMPLATE: ValidatorTemplate.generateCustomValidator
         ${imports.makeImports(language)}
-        import { type ${interfaceName} } from "./gen/${validatorName}.js";
+        import { type ${interfaceName} } from "${relativePath}/${VALIDATOR_FOLDER}/${validatorName}.js";
 
         export class ${className} extends ${defaultWorkerName} implements ${interfaceName} {
             errorList: ${Names.FreError}[] = [];
         }`;
     }
 
-    generateIndex(language: FreMetaLanguage) {
+    generateIndex() {
         return `
-        export * from "./${Names.customValidator(language)}.js";
+        export * from "./index.js";
         `;
     }
 }

@@ -12,7 +12,6 @@
         type Box,
         dropListElement,
         isActionBox,
-        isExternalBox,
         isNullOrUndefined,
         FreLanguage,
         type ListBox,
@@ -56,37 +55,6 @@
     // determine the type of the elements in the list
     // this speeds up the check whether an element may be dropped here
     let myMetaType: DragAndDropType;
-    
-    // Concept types that should not have drag handles
-    const HIDE_DRAG_HANDLE_CONCEPTS = new Set([
-        'Reference',
-        'Person',
-        'PersonReference', 
-        'SystemAccess',
-        'SystemAccessReference'
-    ]);
-    
-    // Helper function to check if drag handle should be hidden for a box
-    function shouldHideDragHandle(b: Box): boolean {
-        // Check the box's hideDragHandle property
-        if (b.hideDragHandle) {
-            return true;
-        }
-        // Check if the concept type should hide drag handles
-        const conceptType = b.node?.freLanguageConcept();
-        console.log(`shouldHideDragHandle: box.kind=${b.kind}, conceptType=${conceptType}, in set=${HIDE_DRAG_HANDLE_CONCEPTS.has(conceptType || '')}`);
-        if (conceptType && HIDE_DRAG_HANDLE_CONCEPTS.has(conceptType)) {
-            return true;
-        }
-        // Check if the box has findParam method (external box) and hideDragHandle param is set
-        if ('findParam' in b && typeof (b as any).findParam === 'function') {
-            const hideDragParam = (b as any).findParam("hideDragHandle");
-            if (hideDragParam === "true") {
-                return true;
-            }
-        }
-        return false;
-    }
     
     $effect(() => {
         // console.log(`EFFECT ${box.conceptName} : ${box.node.freLanguageConcept()}`)
@@ -279,7 +247,7 @@
             oncontextmenu={(event) => showContextMenu(event, index)}
             role="none"
         >
-            {#if !isActionBox(box) && !shouldHideDragHandle(box)}
+            {#if !isActionBox(box)}
             <span class="drag-handle"
                   draggable="true"
                   ondragstart={(event) => dragstart(event, id, index)}

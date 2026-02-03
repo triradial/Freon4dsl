@@ -1,4 +1,4 @@
-import {
+import type {
     FreMetaClassifier,
     FreMetaConcept,
     FreMetaInstance,
@@ -197,8 +197,8 @@ export class Names {
         return this.startWithUpperCase(language?.name) + "ScoperUtils";
     }
 
-    static namesCollector(language: FreMetaLanguage): string {
-        return this.startWithUpperCase(language?.name) + "NamesCollector";
+    static locationDescription(): string {
+        return "CustomLocationDescription";
     }
 
     static validator(language: FreMetaLanguage): string {

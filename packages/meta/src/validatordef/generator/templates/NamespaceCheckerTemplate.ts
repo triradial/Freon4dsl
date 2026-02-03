@@ -1,10 +1,10 @@
 import { Names, Imports } from "../../../utils/on-lang/index.js"
-import { FreMetaLanguage, FreMetaClassifier } from "../../../languagedef/metalanguage/index.js";
+import type { FreMetaLanguage, FreMetaClassifier } from "../../../languagedef/metalanguage/index.js";
 
 const paramName: string = "node";
 const commentBefore = `/**
                         * Checks '${paramName}' before checking its children.
-                        * Found errors are pushed onto 'errorlist'.
+                        * Found errors are pushed onto 'errorList'.
                         * If an error is found, it is NOT considered 'fatal', which means that other checks on
                         * '${paramName}' are performed.
                         *
@@ -57,7 +57,7 @@ export class NamespaceCheckerTemplate {
             });
             if (doubleNames.length > 0) {
                 const namespaceName: string = 'name' in node ? (node as FreNamedNode).name : '<unnamed>';
-                this.errorList.push(new FreError(\`Namespace \${namespaceName} has multiple nodes with the same name [\${doubleNames.map(n => n).join(', ')}].\`, node, namespaceName, 'name', FreErrorSeverity.Error));
+                this.errorList.push(new FreError(\`Namespace \${namespaceName} has multiple nodes with the same name [\${doubleNames.map(n => n).join(', ')}].\`, node, 'name', FreErrorSeverity.Error));
             }
         }
         }`;

@@ -2,7 +2,13 @@ import type { FreModelUnit, FreNamedNode, FreNode } from "../../ast/index.js";
 import { FreLanguage } from "../../language/index.js";
 import { FreLogger } from "../../logging/index.js";
 import { isIdentifier } from "../../util/index.js"
-import { collectUsedLanguages, FreLionwebSerializer, FreModelSerializer, type ServerResponse, type VoidServerResponse } from "../index.js"
+import {
+    collectUsedLanguages,
+    FreLionwebSerializer,
+    FreModelSerializer,
+    type ServerResponse,
+    type VoidServerResponse
+} from "../index.js"
 import { FreErrorSeverity } from "../../validator/index.js";
 import type { IServerCommunication, FreUnitIdentifier } from "./IServerCommunication.js";
 
@@ -12,7 +18,9 @@ export type ParameterType = {
     model?: string,
     unit?: string,
     language?: string,
-    version?: string
+    version?: string,
+    newName?: string,
+    oldName?: string
 }
 
 export class ServerCommunication implements IServerCommunication {
@@ -68,6 +76,14 @@ export class ServerCommunication implements IServerCommunication {
         }
         if (params.version !== undefined) {
             result += `${(first?"":"&")}version=${encodeURIComponent(params.version)}`
+            first = false
+        }
+        if (params.newName !== undefined) {
+            result += `${(first?"":"&")}newName=${encodeURIComponent(params.newName)}`
+            first = false
+        }
+        if (params.oldName !== undefined) {
+            result += `${(first?"":"&")}oldName=${encodeURIComponent(params.oldName)}`
             first = false
         }
         if (result.length > 0) {
@@ -314,6 +330,11 @@ export class ServerCommunication implements IServerCommunication {
 
     async renameModelUnit(modelName: string, oldName: string, newName: string, unit: FreNamedNode): Promise<VoidServerResponse> {
         LOGGER.log(`ServerCommunication.renameModelUnit ${modelName}/${oldName} to ${modelName}/${newName}`);
+        // If oldName and newName are the same, no rename is needed
+        if (oldName === newName) {
+            LOGGER.log(`ServerCommunication.renameModelUnit skipped: oldName and newName are the same (${oldName})`);
+            return { errors: [] };
+        }
         // put the unit under the new name
         await this.saveModelUnit(modelName, { name: newName, id: unit.freId(), type: unit.freLanguageConcept() }, unit);
         // remove the old unit
@@ -339,6 +360,15 @@ export class ServerCommunication implements IServerCommunication {
         const response = await this.saveModelUnit(modelName, { id: unit.freId(), name: unit.name, type: unit.freLanguageConcept() }, unit)
         if (response.errors.length > 0) {
             response.errors[0] = `Server cannot create model unit'${unit.name}' (${response.errors[0]})`
+        }
+        return response
+    }
+
+    async renameModel(oldName: string, newName: string): Promise<VoidServerResponse> {
+        LOGGER.log(`ServerCommunication.renameModel ${oldName}::${newName}`)
+        const response = await this.saveWithTimeout(`renameModel`, {}, { oldName: oldName, newName: newName });
+        if (response.errors.length > 0) {
+            response.errors[0] = `Server cannot rename model '${oldName}' to '${newName} (${response.errors[0]})`
         }
         return response
     }

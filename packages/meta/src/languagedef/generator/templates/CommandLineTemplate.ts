@@ -1,4 +1,4 @@
-import { FreMetaLanguage } from "../../metalanguage/index.js";
+import type { FreMetaLanguage } from "../../metalanguage/index.js";
 import { Imports, Names } from "../../../utils/on-lang/index.js"
 
 export class CommandLineTemplate {
@@ -72,15 +72,15 @@ export class CommandLineTemplate {
     }
 
     // @ts-ignore
-    generateCommandLineRunner(language: FreMetaLanguage): string {
-        const imports = new Imports("../")
+    generateCommandLineRunner(language: FreMetaLanguage, relativePath: string): string {
+        const imports = new Imports(relativePath)
         imports.root.add(Names.LanguageEnvironment);
 
         return `// TEMPLATE: CommandLineTemplate.generateCommandLineRunner()
             // Run this as the main program.
             ${imports.makeImports(language)}
-            import { FreonCommandLine } from "./gen/FreonCommandLine.js";
-            import { DummyAction } from "./gen/DummyAction.js";
+            import { FreonCommandLine } from "${relativePath}/commandline/FreonCommandLine.js";
+            import { DummyAction } from "${relativePath}/commandline/DummyAction.js";
             
             // ensure language is initialized
             const tmp = ${Names.LanguageEnvironment}.getInstance();

@@ -1,9 +1,9 @@
-import {
+import type {
     FreMetaLanguage,
     FreMetaClassifier
 } from '../../../languagedef/metalanguage/index.js';
 import { Names, Imports } from '../../../utils/on-lang/index.js';
-import { ScopeDef, FreMetaNamespaceInfo } from '../../metalanguage/index.js';
+import type { ScopeDef, FreMetaNamespaceInfo } from '../../metalanguage/index.js';
 import { ExpressionGenerationUtil } from '../../../langexpressions/generator/ExpressionGenerationUtil.js';
 import { isNullOrUndefined } from '../../../utils/file-utils/index.js';
 
@@ -18,9 +18,9 @@ export class ScoperTemplate {
         `;
     }
 
-    generateIndex(language: FreMetaLanguage): string {
+    generateIndex(): string {
         return `
-        export * from "./${Names.customScoper(language)}.js";
+        export * from "./index.js";
         `;
     }
 

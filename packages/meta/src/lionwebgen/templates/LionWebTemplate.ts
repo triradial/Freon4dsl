@@ -1,12 +1,15 @@
-import { LanguageRegistry, LionWebJsonChunk, LionWebJsonNode, LionWebValidator, MetaPointers } from "@lionweb/validation";
-import {
+import type { LionWebJsonChunk, LionWebJsonNode} from "@lionweb/validation";
+import { LanguageRegistry, LionWebValidator, MetaPointers } from "@lionweb/validation";
+import type {
     FreMetaClassifier,
     FreMetaConcept,
     FreMetaConceptProperty, FreMetaInstance,
     FreMetaInterface,
-    FreMetaLanguage, FreMetaLimitedConcept,
+    FreMetaLanguage,
     FreMetaProperty,
     FreMetaUnitDescription, MetaElementReference
+} from "../../languagedef/metalanguage/index.js";
+import { FreMetaLimitedConcept
 } from "../../languagedef/metalanguage/index.js";
 
 export class LionWebTemplate {
@@ -324,7 +327,7 @@ export class LionWebTemplate {
                     reference: MetaPointers.PropertyType,
                     targets: [
                         {
-                            resolveInfo: prop.type.name,
+                            resolveInfo: this.toLionWebPropertyType(prop),
                             // @ts-ignore
                             reference: (prop.type.id === "" ? null : prop.type.id)
                         }
@@ -541,6 +544,29 @@ export class LionWebTemplate {
             parent: parent.id
         };
         return result;
+    }
+
+    /**
+     * Primitive property type conversion
+     * @param prop
+     */
+    toLionWebPropertyType(prop: FreMetaProperty): string {
+        switch (prop.type.name) {
+            case "number":
+                return "Integer"
+                break
+            case "string":
+                return "String"
+                break
+            case "boolean":
+                return "Boolean"
+                break
+            case "identifier":
+                return "String"
+                break
+            default:
+                return prop.type.name
+        }
     }
 }
 

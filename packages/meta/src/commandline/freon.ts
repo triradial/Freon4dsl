@@ -1,4 +1,5 @@
-import { CommandLineParser, CommandLineFlagParameter } from "@rushstack/ts-command-line";
+import type { CommandLineFlagParameter } from "@rushstack/ts-command-line";
+import { CommandLineParser } from "@rushstack/ts-command-line";
 import { FreonGenerateInterpreter } from "./FreonGenerateInterpreter.js";
 import { FreonGenerateLanguage } from "./FreonGenerateLanguage.js";
 import { FreonGenerateAllAction } from "./FreonGenerateAllAction.js";
@@ -10,11 +11,11 @@ import { FreonGenerateTyper } from "./FreonGenerateTyper.js";
 import { MetaLogger } from "../utils/no-dependencies/index.js";
 import { FreonGenerateParser } from "./FreonGenerateParser.js";
 import { FreonGenerateDiagrams } from "./FreonGenerateDiagrams.js";
-import { FreonCleanAction } from "./FreonCleanAction.js";
 
 // require('source-map-support').install();
 // import sm_support from 'source-map-support';
 // sm_support.install();
+// eslint-disable-next-line n/no-missing-import
 import "source-map-support/register.js";
 
 const LOGGER = new MetaLogger("Freon").mute();
@@ -31,7 +32,6 @@ export class Freon extends CommandLineParser {
     private readonly validatorAction: FreonGenerateValidator;
     private readonly typerAction: FreonGenerateTyper;
     private readonly interpreterAction: FreonGenerateInterpreter;
-    private readonly cleanAction: FreonCleanAction;
     private verboseArg: CommandLineFlagParameter;
     private watchArg: CommandLineFlagParameter;
 
@@ -51,18 +51,16 @@ export class Freon extends CommandLineParser {
         this.validatorAction = new FreonGenerateValidator();
         this.typerAction = new FreonGenerateTyper();
         this.interpreterAction = new FreonGenerateInterpreter();
-        this.cleanAction = new FreonCleanAction();
         this.addAction(this.allAction);
         this.addAction(this.languageAction);
-        this.addAction(this.lionwebAction)
         this.addAction(this.editorAction);
         this.addAction(this.parserAction);
-        this.addAction(this.diagramAction);
+        this.addAction(this.interpreterAction);
         this.addAction(this.scoperAction);
         this.addAction(this.validatorAction);
         this.addAction(this.typerAction);
-        this.addAction(this.interpreterAction);
-        this.addAction(this.cleanAction);
+        this.addAction(this.diagramAction);
+        this.addAction(this.lionwebAction)
 
         this.verboseArg = this.defineFlagParameter({
             parameterLongName: "--verbose",
@@ -75,19 +73,6 @@ export class Freon extends CommandLineParser {
             description: "Start generator in watch mode (only in combination with 'all')",
         });
     }
-
-    // protected onDefineParameters(): void {
-    //     this.verboseArg = this.defineFlagParameter({
-    //         parameterLongName: "--verbose",
-    //         parameterShortName: "-v",
-    //         description: "Show extra logging detail"
-    //     });
-    //     this.watchArg = this.defineFlagParameter({
-    //         parameterLongName: "--watch",
-    //         parameterShortName: "-w",
-    //         description: "Start generator in watch mode (only in combination with 'all')"
-    //     });
-    // }
 
     protected onExecute(): Promise<void> {
         if (!this.verboseArg.value) {
@@ -109,7 +94,3 @@ export class Freon extends CommandLineParser {
         return Promise.resolve();
     }
 }
-//
-// // Run this as the main program.
-// const freon: Freon = new Freon();
-// freon.executeAsync();

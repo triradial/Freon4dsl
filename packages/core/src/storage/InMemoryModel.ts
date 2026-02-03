@@ -8,6 +8,7 @@ import {
     type FrePrimDelta,
     type FrePrimListDelta,
     FreUndoManager,
+    ReferenceUpdateManager,
 } from "../change-manager/index.js"
 import type { FreEnvironment } from "../environment/index.js"
 import { FreLogger } from "../logging/index.js"
@@ -43,6 +44,7 @@ export class InMemoryModel {
         this.languageEnvironment = languageEnvironment
         this.server = server
         makeObservable(this, { model: observable })
+        ReferenceUpdateManager.getInstance() // initialize it
         autorun(() => {
             if (notNullOrUndefined(this.model)) {
                 this.model.getUnits()
@@ -100,40 +102,22 @@ export class InMemoryModel {
      * * @param name
      */
     async openModel(name: string): Promise<FreModel | InMemoryError> {
-        console.log(`[InMemoryModel] openModel: name=${name}`)
         LOGGER.log("openModel(" + name + ")")
         AST.change(() => {
             this.model = this.languageEnvironment.newModel(name)
         })
-        
-        console.log(`[InMemoryModel] Loading unit list for model: ${name}`)
         const response = await this.server.loadUnitList(name)
         if  (response.errors.length > 0) {
-            console.error(`[InMemoryModel] ❌ Error loading unit list:`, response.errors[0])
             this.onInMemoryError(response.errors[0])
             return new InMemoryError(response.errors[0])
         }
-        
-        console.log(`[InMemoryModel] Unit list loaded, found ${response.result.length} units:`, response.result.map(u => u.name))
-        
         for (const unitId of response.result) {
-            console.log(`[InMemoryModel] Loading model unit: ${unitId.name}`)
             LOGGER.log("openModel: load model-unit: " + unitId.name)
             const unit = await this.server.loadModelUnit(this.model.name, unitId)
-            
-            if (unit.errors.length > 0) {
-                console.error(`[InMemoryModel] ❌ Error loading unit ${unitId.name}:`, unit.errors)
-            } else if (unit.result) {
-                console.log(`[InMemoryModel] ✅ Unit ${unitId.name} loaded successfully, adding to model`)
-                AST.change(() => {
-                    this.model.addUnit(unit.result as FreModelUnit)
-                })
-            } else {
-                console.warn(`[InMemoryModel] ⚠️ Unit ${unitId.name} loaded but result is null/undefined`)
-            }
+            AST.change(() => {
+                this.model.addUnit(unit.result as FreModelUnit)
+            })
         }
-        
-        console.log(`[InMemoryModel] openModel complete for ${name}, model has ${this.model.getUnits().length} units`)
         FreUndoManager.getInstance().cleanAllStacks()
         return this.model
     }
@@ -154,6 +138,13 @@ export class InMemoryModel {
         }
         // when done, clean 'dirtyUnits' prop
         this.dirtyUnits.clear()
+    }
+
+    async renameModel(newName: string) {
+        LOGGER.log(`renameModel to ${newName}`)
+        await this.server.renameModel(this.model.name, newName);
+        this.model.name = newName;
+        this.currentModelChanged();
     }
 
     /**
@@ -224,11 +215,17 @@ export class InMemoryModel {
     }
 
     /**
-     * Delete _unit_ from the model.
+     *
      * @param oldName
+     * @param newName
      * @param unit
      */
     async renameUnit(oldName: string, newName: string, unit: FreModelUnit): Promise<void | InMemoryError> {
+        // If oldName and newName are the same, no rename is needed
+        if (oldName === newName) {
+            LOGGER.log(`renameUnit skipped: oldName and newName are the same (${oldName})`)
+            return
+        }
         LOGGER.log(`renameUnit from ${oldName} to ${newName}`)
         const response = await this.server.renameModelUnit(this.model.name, oldName, newName, unit)
         if (response.errors.length > 0) {
@@ -302,11 +299,7 @@ export class InMemoryModel {
      */
     async saveUnit(unit: FreModelUnit): Promise<void | InMemoryError> {
         LOGGER.log(`saveModelUnit`)
-        const unitInDirty = this.dirtyUnits.has(unit)
-        console.log(`[InMemoryModel] saveUnit called for "${unit?.name}", isDirty=${unitInDirty}, dirtyUnitsCount=${this.dirtyUnits.size}`)
-        
-        if (unitInDirty) {
-            console.log(`[InMemoryModel] saveUnit - calling server.saveModelUnit for "${unit.name}"`)
+        if (this.dirtyUnits.has(unit)) {
             const serverResponse = await this.server.saveModelUnit(
                 this.model.name,
                 {
@@ -317,15 +310,11 @@ export class InMemoryModel {
                 unit,
             )
             if (serverResponse.errors.length === 0) {
-                console.log(`[InMemoryModel] ✅ saveUnit - server save successful for "${unit.name}"`)
                 this.dirtyUnits.delete(unit)
             } else {
-                console.error(`[InMemoryModel] ❌ saveUnit - server save failed for "${unit.name}":`, serverResponse.errors[0])
                 this.onInMemoryError(serverResponse.errors[0])
                 return new InMemoryError(`${serverResponse.errors[0]})`)
             }
-        } else {
-            console.log(`[InMemoryModel] saveUnit - skipping save for "${unit?.name}" (not in dirtyUnits)`)
         }
     }
 
@@ -377,7 +366,7 @@ export class InMemoryModel {
      ***********************************************************/
 
     /**
-     * Callbacks to inform listeners that the currentmodel/currentunit has changed.
+     * Callbacks to inform listeners that the current model/current unit has changed.
      */
     private currentModelListeners: ModelChangedCallbackFunction[] = []
     addCurrentModelListener(l: ModelChangedCallbackFunction): void {
