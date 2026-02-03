@@ -2,7 +2,7 @@ editor peopleSystemsReferencesShow precedence 207
 
 Step {
     [
-        [fragment stepDetailsWithPeopleSystemsReferences wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+        [fragment stepDetailsWithPeopleSystemsReferences wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="false" label="Step"]
     ]
     fragment stepDetailsWithPeopleSystemsReferences [
         ${name}

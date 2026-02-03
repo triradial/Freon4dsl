@@ -24,12 +24,12 @@ modelunit StudyConfiguration {
     systemAccesses: SystemAccess[];
     staffing: Person[];
     roles: StaffRole[];
-    notes?: Description;
+    description: Description;
 }
 
 concept Period {
     name: identifier;
-    description?: Description;
+    description: Description;
     events: Event[];
 }
 
@@ -44,7 +44,7 @@ concept Event {
     showSequenced: boolean;
     eventNumber: number;
     tasks: EventTask[];
-    description?: Description;
+    description: Description;
     schedule: EventSchedule;
 }
 

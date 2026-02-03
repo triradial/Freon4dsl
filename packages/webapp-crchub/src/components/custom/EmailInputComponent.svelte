@@ -26,35 +26,6 @@
         return str.trim().toLowerCase();
     }
 
-    /** Throws only when the box is bound to a known non-string type (number, boolean, etc.). Accepts "string", "unknown-type", and undefined (language may not expose type). */
-    function assertStringPropertyType(box: StringReplacerBox | null, componentName: string): void {
-        if (!box) return;
-        const b = box as { getPropertyType?(): string; propertyName?: string };
-        const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
-        const knownNonString = ["number", "boolean", "identifier"];
-        const isKnownNonString =
-            propType != null && (knownNonString.includes(propType) || /^[A-Z]/.test(propType));
-        if (isKnownNonString) {
-            throw new Error(
-                `${componentName}: binding type mismatch — property "${b.propertyName ?? "unknown"}" has type "${propType}" but this component expects "string". Check that the component is bound to a string property in the editor configuration.`,
-            );
-        }
-    }
-
-    /** Writes stored string to the box; uses setPropertyValue when type is "string", otherwise direct write so value persists when language reports unknown-type. */
-    function setStringValue(box: StringReplacerBox | null, stored: string): void {
-        if (!box) return;
-        const b = box as { getPropertyType?(): string; node?: unknown; propertyName?: string };
-        const propType = typeof b.getPropertyType === "function" ? b.getPropertyType() : undefined;
-        if (propType === "string") {
-            box.setPropertyValue(stored);
-        } else {
-            if (b.node != null && typeof b.propertyName === "string") {
-                (b.node as Record<string, string>)[b.propertyName] = stored;
-            }
-        }
-    }
-
     function getValue() {
         const startStr: string | undefined = theBox?.getPropertyValue();
         if (typeof startStr === "string") {
@@ -90,9 +61,11 @@
         // Only save if different from current value
         const currentBoxValue = theBox?.getPropertyValue();
         if (stored !== currentBoxValue) {
-            assertStringPropertyType(theBox, "EmailInputComponent");
             AST.changeNamed(`EmailInputComponent: Set ${theBox?.propertyName || 'property'} to ${stored}`, () => {
-                setStringValue(theBox, stored);
+                const setter: any = theBox as any;
+                if (setter && typeof setter.setPropertyValue === "function") {
+                    setter.setPropertyValue(stored);
+                }
             });
         }
 
@@ -141,9 +114,11 @@
         const stored = normalizeForStorage(raw);
 
         // Update property in real-time during editing
-        assertStringPropertyType(theBox, "EmailInputComponent");
         AST.changeNamed(`EmailInputComponent: Update ${theBox?.propertyName || 'property'}`, () => {
-            setStringValue(theBox, stored);
+            const setter: any = theBox as any;
+            if (setter && typeof setter.setPropertyValue === "function") {
+                setter.setPropertyValue(stored);
+            }
         });
 
         if (isTouched && isValidEmail(stored)) {
@@ -246,9 +221,11 @@
                         // Keep it as-is during editing
                         value = raw;
                         const stored = normalizeForStorage(raw);
-                        assertStringPropertyType(theBox, "EmailInputComponent");
                         AST.changeNamed(`EmailInputComponent: Paste ${theBox?.propertyName || 'property'}`, () => {
-                            setStringValue(theBox, stored);
+                            const setter: any = theBox as any;
+                            if (setter && typeof setter.setPropertyValue === "function") {
+                                setter.setPropertyValue(stored);
+                            }
                         });
                     }, 0);
                 }}
