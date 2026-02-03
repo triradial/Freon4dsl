@@ -13,6 +13,12 @@
     let cssClass = box?.findParam("cssClass") || "";
     let canDelete = box?.findParam("canDelete") === "true";
     let inlineDisplay = box?.findParam("inlineDisplay") === "true";
+    let hideDragHandle = box?.findParam("hideDragHandle") === "true";
+    
+    // Set hideDragHandle on the box so ListComponent can check it
+    if (box && hideDragHandle) {
+        box.hideDragHandle = true;
+    }
 
     // State
     let id = componentId(box);

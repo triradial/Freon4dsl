@@ -13,6 +13,7 @@ modelunit StudyConfiguration {
     showScheduling: boolean = true;
     showSchedulingDetails: boolean = false;
     showChecklists: boolean = false;
+    showSteps: boolean = true;
     showReferences: boolean = false;
     showSystems: boolean = false;
     showPeople: boolean = false;

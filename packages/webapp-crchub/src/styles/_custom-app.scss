@@ -1020,11 +1020,9 @@
   }
 
   .footer-container {
-    height: 2rem;
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 0 0.5rem;
   }
 
   .footer-header-text { 
@@ -1033,15 +1031,21 @@
   }
 
   .editor-display-options {
-    background-color: transparent;
-  }
-
-  .editor-display-options label {
-    font-size: 0.75rem;
-  }
-
-  .editor-display-options input {
-    margin-top:0.25rem;
+    .btn {
+      background: transparent;
+      border: none !important;
+      padding: 0.25rem !important;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.25rem;
+      transition: color 0.15s ease-in-out;
+      margin-right: 0.5rem !important
+    }
+    .hidden-item:disabled {
+      pointer-events: none;
+    }
   }
 
   .editor-display-options-popover {
@@ -1050,6 +1054,36 @@
 
   .editor-display-options-popover h3 {
     font-size: 0.75rem;
+  }
+
+  .visibility-toggle-btn {
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+    color: var(--color-surface-400);
+    transition: color 0.15s ease-in-out;
+  }
+
+  .visibility-toggle-btn:hover:not(:disabled) {
+      color: var(--color-surface-50);
+  }
+
+  .visibility-toggle-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+  }
+
+  .display-option-label {
+      user-select: none;
+  }
+
+  .display-option-label.disabled {
+      opacity: 0.4;
   }
 
   .editor-footer-button {
@@ -3236,6 +3270,33 @@
     background-color: var(--tooltip-text);
     opacity: 0.3;
     margin: 4px 0;
+  }
+
+
+  .toolbar-checkbox {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-color: var(--checkbox-bg) !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    border-radius: 0.25rem !important;
+    border: 1px solid var(--checkbox-bg) !important;
+    outline: none !important;
+  }
+
+  .toolbar-checkbox:checked {
+    outline: none !important;
+  }
+
+  .toolbar-checkbox:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .toolbar-checkbox:active {
+    background-color: var(--checkbox-selected-bg) !important;
+    outline: none !important;
   }
 
   // Today button styles - matches the today header background color (#005dff)

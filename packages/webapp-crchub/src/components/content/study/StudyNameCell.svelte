@@ -71,8 +71,3 @@
 		{/if}
 	</div>
 </div>
-
-<style>
-	/* No inline popup styles needed - popover is managed by parent */
-</style>
-

@@ -63,7 +63,6 @@ Task {
     fragment taskDetails [
         ${name} 
         ${description}
-        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canDelete="true" canExpand="true" isExpanded="true" selectable="false" label="Steps"}
     ] 
 }
 
@@ -88,7 +87,7 @@ Step {
 
 SystemAccess {
     [
-        [fragment systemAccessDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true"]
+        [fragment systemAccessDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true" hideDragHandle="true"]
     ]
     trigger = "System Access"
     fragment systemAccessDetails [
@@ -102,7 +101,7 @@ SystemAccess {
 
 SystemAccessReference {
     [
-        [fragment systemAccessReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="System"]
+        [fragment systemAccessReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="System" hideDragHandle="true"]
     ] trigger = "Shared System Access"
     fragment systemAccessReferenceDetails [
         ${system}
@@ -141,7 +140,7 @@ AccessedAPhoneNumber {
 
 Person {
     [
-        [fragment personDetails wrap = SelectableListItemComponent cssClass="type4" canDelete="true" showDeleteOnHover="true"]
+        [fragment personDetails wrap = SelectableListItemComponent cssClass="type4" canDelete="true" showDeleteOnHover="true" hideDragHandle="true"]
     ]
     trigger = "Person"
     fragment personDetails [
@@ -160,7 +159,7 @@ Person {
 
 PersonReference {
     [
-        [fragment personReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="Person"]
+        [fragment personReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="Person" hideDragHandle="true"]
     ] trigger = "Staff"
     fragment personReferenceDetails [
         ${person}
@@ -169,7 +168,7 @@ PersonReference {
 
 Reference {
     [
-        [fragment referenceDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true"]
+        [fragment referenceDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true" hideDragHandle="true"]
     ]
     fragment referenceDetails [
         Reference: ${name}

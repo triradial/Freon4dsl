@@ -3855,32 +3855,21 @@
                 </div>
                 <div class="control-group">
                     <span class="control-label">Mode</span>
-                    <button 
-                        class="mode-toggle-btn {viewMode}"
-                        onclick={() => viewMode = viewMode === 'scheduling' ? 'availability' : 'scheduling'}
-                    >
+                    <button  class="mode-toggle-btn {viewMode}" onclick={() => viewMode = viewMode === 'scheduling' ? 'availability' : 'scheduling'}>
                         {viewMode === 'scheduling' ? 'Scheduling' : 'Availability'}
                     </button>
                 </div>
                 {#if viewMode === 'scheduling'}
                     <div class="control-group">
                         <label class="checkbox-control">
-                            <input 
-                                type="checkbox" 
-                                bind:checked={showAvailability}
-                                onchange={saveShowAvailabilitySetting}
-                            />
+                            <input class="toolbar-checkbox" type="checkbox" bind:checked={showAvailability} onchange={saveShowAvailabilitySetting} />
                             <span class="control-label">Show Availability</span>
                         </label>
                     </div>
                 {/if}
                 <div class="control-group">
                     <label class="checkbox-control">
-                        <input 
-                            type="checkbox" 
-                            bind:checked={showWindows}
-                            onchange={saveShowWindowsSetting}
-                        />
+                        <input class="toolbar-checkbox" type="checkbox"  bind:checked={showWindows} onchange={saveShowWindowsSetting} />
                         <span class="control-label">Show Windows</span>
                     </label>
                 </div>

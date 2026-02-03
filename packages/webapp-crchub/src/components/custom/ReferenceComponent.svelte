@@ -20,6 +20,12 @@
     let canDuplicate = box && box.findParam("canDuplicate") === "true";
     let canShare = box && box.findParam("canShare") === "true";
     let canExpand = box && box.findParam("canExpand") === "true";
+    let hideDragHandle = box && box.findParam("hideDragHandle") === "true";
+    
+    // Set hideDragHandle on the box so ListComponent can check it
+    if (box && hideDragHandle) {
+        box.hideDragHandle = true;
+    }
     let isExpanded = $state(box && box.findParam("isExpanded") === "true");
     let label = $derived(() => box ? box.findParam("label") || "" : "");
     let referenceBox: ReferenceBox | undefined = $state()

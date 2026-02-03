@@ -130,7 +130,8 @@ main {
 }
 
 .text-dropdown-component .text-component-text {
-  border-radius: 0.125rem;
+  border-radius: 0.25rem !important;
+  padding: 0.125rem 0.5rem !important;
 }
 
 .text-dropdown-component .text-component-input::placeholder {
@@ -497,6 +498,11 @@ main {
 
 .list-group-content.type5 {
   margin-left: 1.5rem !important;
+}
+
+/* Reduced indentation when expand/collapse is hidden */
+.list-group-content.no-expand-indent {
+  margin-left: 0.25rem !important;
 }
 
 .list-item {

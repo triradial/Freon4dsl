@@ -91,8 +91,13 @@
 
   /* #endregion */
 
-  // #region Controls
+  // #region Checkbox
   --checkbox-bg: #4C5C96;
+  --checkbox-selected-bg: transparent;
+  --checkbox-color: #ffffff;
+  // #endregion
+
+  // #region Badge
   --badge-bg: #94354a;
   --badge-text: #ffffff;
   // #endregion
@@ -492,11 +497,6 @@ input:disabled {
   background-color: black;
 }
 
-.footer-container {
-  background-color: var(--drawer-header-background);
-  border-top: 1px solid var(--drawer-handle);
-}
-
 .footer-header-text {
   color: var(--drawer-header-text);
 }
@@ -517,13 +517,32 @@ input:disabled {
   color: var(--drawer-header-text);
 }
 
+.editor-display-options {
+  .btn {
+    color: var(--white) !important;
+  }
+  .btn:hover {
+    color: var(--primary-400) !important;
+  }
+  .btn.hidden-item:hover {
+    color: var(--primary-400) !important;
+  }
+  .hidden-item {
+    color: var(--gray-500) !important;
+  }
+  .hidden-item:hover:disabled {
+    color: var(--gray-700) !important;
+  }
+  .hidden-item:disabled {
+    color: var(--gray-700) !important;
+  }
+
+}
+
 .editor-display-options-popover {
   background-color: var(--drawer-content-background);
 }
 
-.editor-display-options label {
-  color: var(--white-90t);
-}
 
 .editor-message {
   color: var(--white-90t);

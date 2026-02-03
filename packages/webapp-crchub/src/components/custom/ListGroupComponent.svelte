@@ -23,6 +23,19 @@
     let toggleButton: HTMLButtonElement | undefined = $state();
     let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
 
+    // Get the count of items in the list
+    let itemCount = $derived(() => {
+        try {
+            const items = box?.getPropertyValue();
+            if (Array.isArray(items)) {
+                return items.length;
+            }
+            return 0;
+        } catch (e) {
+            return 0;
+        }
+    });
+
     // The following four functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.
 
@@ -104,7 +117,7 @@
     {:else}
         <span class="w-5"></span>   
     {/if}
-    <span class="list-group-label">{label()}</span>
+    <span class="list-group-label">{label()} {#if canAdd}({itemCount()}){/if}</span>
     {#if canAdd}
         <button class="circle-button action-button" onclick={addItem} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addItem(e))} title="Add" tabindex="0">
             <IconPlus size={14} />

@@ -145,13 +145,13 @@
 }
 
 .text-dropdown-component .text-component-text {
-  color: var(--blue-90t);
-  background-color: inherit;
+  color: var(--primary-button-background) !important;
+  border: 1px solid var(--primary-button-background) !important;
 }
 
 .text-dropdown-component .text-component-text:hover {
-  color: var(--blue-90t) !important;
-  background-color: var(--blue-40t) !important;
+  color: var(--white) !important;
+  background-color: var(--primary-button-background) !important;
 }
 
 .text-dropdown-component .text-component-input::placeholder {

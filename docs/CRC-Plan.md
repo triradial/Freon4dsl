@@ -21,13 +21,14 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
   - [ ] Add existing single patient full schedule chart to a draw / panel in the new UI
 - [ ] HTML editor:
   - [ ] return and tab need to not jump out of editor
-- [ ] Get undo-redo working again
-
 
 ### Done
 - [x] Show Patients page when no patients to allow getting started on study
 - [x] Make error messages jump to concept with error; also improved the message with context
-
+- [x] Get undo-redo working again
+- [x] Delete study from study page behavior
+- [x] Error locator working (unless the content is hidden), with improved message
+- [x] Custom action selector only shows a single outline with there are multiple in the hierarchy
 
 ## Mike
 

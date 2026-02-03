@@ -2,7 +2,7 @@
     import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, TextBox, VerticalLayoutBox } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onMount } from "svelte";
-    import { Event, SharedTask, TaskReference, type StudyConfiguration, type Task } from "@freon4dsl/study-configuration";
+    import { Event, SharedTask, Step, StudyConfiguration, TaskReference, type Task } from "@freon4dsl/study-configuration";
 // ts-ignore
     import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, Trash2 as IconDelete, Copy as IconDuplicate, EllipsisVertical as IconEllipsisVertical, Share2 as IconShare2 } from '@lucide/svelte';
 
@@ -19,8 +19,35 @@
     let canCRUD = box && box.findParam("canCRUD") === "true";
     let canDuplicate = box && box.findParam("canDuplicate") === "true";
     let canShare = box && box.findParam("canShare") === "true";
-    let canExpand = box && box.findParam("canExpand") === "true";
+    let canExpandParam = box && box.findParam("canExpand") === "true";
     let isExpanded = $state(box && box.findParam("isExpanded") === "true");
+    
+    // Determine if the node has children that are being displayed
+    // This is based on the display options in StudyConfiguration, not on actual children
+    let hasDisplayedChildren = $derived(() => {
+        if (!box || !box.node) return false;
+        const node = box.node;
+        
+        // Get the StudyConfiguration to check display settings
+        const studyConfig = ownerOfType(node, "StudyConfiguration") as StudyConfiguration | null;
+        if (!studyConfig) return true; // Default to true if we can't find config
+        
+        // Check if it's a Task (or SharedTask) - show expand if showSteps is enabled
+        if ('steps' in node && Array.isArray((node as any).steps)) {
+            return studyConfig.showSteps;
+        }
+        
+        // Check if it's a Step - show expand if any of references/systems/people are displayed
+        if (node instanceof Step) {
+            return studyConfig.showReferences || studyConfig.showSystems || studyConfig.showPeople;
+        }
+        
+        // For other types, default to true if canExpand is set
+        return true;
+    });
+    
+    // Only show expand/collapse if both canExpand param is true AND children are being displayed
+    let canExpand = $derived(() => canExpandParam && hasDisplayedChildren());
     let label = $derived(() => box ? box.findParam("label") || "" : "");
     let nameBox: TextBox | undefined = $state()
     let otherChildren: Box[] | undefined = $state()
@@ -174,7 +201,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div id="{id}" class="item-group {cssClass}">
-    {#if canExpand}
+    {#if canExpand()}
         <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), toggleExpanded(e))} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
             {#if isExpanded}
                 <IconChevronDown size={16} />
@@ -182,10 +209,12 @@
                 <IconChevronRight size={16} />
             {/if}
         </button>
-    {:else}
-        <span class="w-5"></span>   
+    {:else if !canExpandParam}
+        <!-- Spacer for items that are not configured to expand (original behavior) -->
+        <span class="w-5"></span>
     {/if}
-    <span class="item-group-label" tabindex="-1">{label()}:</span>
+    <!-- When canExpandParam is true but hasDisplayedChildren() is false, show nothing (no button, no indent) -->
+    <span class="item-group-label" tabindex="-1">{label()} </span>
     <RenderComponent box={nameBox} editor={editor} />
     {#if canDuplicate}
         <button class="circle-button action-button borderless" onclick={duplicateItem} onkeydown={(e) => e.key === 'Enter' && duplicateItem(e)} title="Duplicate" tabindex="0">
@@ -209,7 +238,7 @@
     {/if}
 </div>
 {#key contentStyle}
-    <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
+    <div class="list-group-content {cssClass} {canExpandParam && !hasDisplayedChildren() ? 'no-expand-indent' : ''}" bind:this={contentElement} style={contentStyle()}>
         {#each otherChildren as child}
             <RenderComponent box={child} editor={editor} />
         {/each}

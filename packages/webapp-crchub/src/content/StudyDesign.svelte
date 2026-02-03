@@ -12,7 +12,7 @@
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
 // @ts-ignore
-    import { Redo as IconRedo, Undo as IconUndo } from '@lucide/svelte';
+    import { Redo as IconRedo, Undo as IconUndo, Eye as IconEye } from '@lucide/svelte';
     import { simulationService } from "../services/simulation/simulation-service.js";
     import StudyChecklist from "./study/StudyChecklist.svelte";
     import StudyDesignErrors from "./study/StudyDesignErrors.svelte";
@@ -114,9 +114,10 @@
     const footerConfig = [
         { id: "showScheduling", label: "Scheduling" },
         { id: "showChecklists", label: "Checklists" },
-        { id: "showReferences", label: "References", parent: "showChecklists" },
-        { id: "showSystems", label: "Systems", parent: "showChecklists" },
-        { id: "showPeople", label: "People", parent: "showChecklists" },
+        { id: "showSteps", label: "Steps", parent: "showChecklists" },
+        { id: "showReferences", label: "References", parent: "showSteps" },
+        { id: "showSystems", label: "Systems", parent: "showSteps" },
+        { id: "showPeople", label: "People", parent: "showSteps" },
         // { id: "showDescriptions", label: "Descriptions" },
         { id: "showSharedTasks", label: "Shared Tasks" },
     ];
@@ -308,6 +309,8 @@
 
         const showScheduling = studyConfiguration.showScheduling;
         const showChecklists = studyConfiguration.showChecklists;
+        // @ts-ignore - showSteps may not exist on type until regenerated, default to true
+        const showSteps = studyConfiguration.showSteps ?? true;
         const showSharedTasks = studyConfiguration.showSharedTasks;
         const showPeople = studyConfiguration.showPeople;
         const showSystems = studyConfiguration.showSystems;
@@ -323,30 +326,37 @@
             names.push("checklistsShow");
         }
 
+        // Steps are shown inside Task when Steps checkbox is enabled
+        if (showSteps) {
+            names.push("stepsShow");
+        }
+
         // Shared tasks are part of AbstractTask so they need a separate projection.
         if (showSharedTasks) {
             names.push("sharedTasksShow");
         }
         
-        // Handle combinations of people, systems, and references  
-        if (showPeople && showSystems && showReferences) {
-            names.push("peopleSystemsReferencesShow");
-        } else if (showPeople && showSystems) {
-            names.push("peopleSystemsShow");
-        } else if (showPeople && showReferences) {
-            names.push("peopleReferencesShow");
-        } else if (showSystems && showReferences) {
-            names.push("systemsReferencesShow");
-        } else {
-            // Individual projections
-            if (showPeople) {
-                names.push("peopleShow");
-            }
-            if (showSystems) {
-                names.push("systemsShow");
-            }
-            if (showReferences) {
-                names.push("referencesShow");
+        // Handle combinations of people, systems, and references (only if steps are visible)
+        if (showSteps) {
+            if (showPeople && showSystems && showReferences) {
+                names.push("peopleSystemsReferencesShow");
+            } else if (showPeople && showSystems) {
+                names.push("peopleSystemsShow");
+            } else if (showPeople && showReferences) {
+                names.push("peopleReferencesShow");
+            } else if (showSystems && showReferences) {
+                names.push("systemsReferencesShow");
+            } else {
+                // Individual projections
+                if (showPeople) {
+                    names.push("peopleShow");
+                }
+                if (showSystems) {
+                    names.push("systemsShow");
+                }
+                if (showReferences) {
+                    names.push("referencesShow");
+                }
             }
         }
         if (studyConfiguration.showDescriptions) {
@@ -605,8 +615,8 @@
         <div class="splitter-panel" style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
             {#if editorLoaded}
                 <div class="flex gap-2 mb-2" style="padding: 0 1rem;">
-                    <button type="button" class="icon-button primary inverted" onclick={handleUndoAction} tabindex="-1" disabled={!canUndo} title={canUndo ? 'Undo' : 'Nothing to undo'}><IconUndo /></button>
-                    <button type="button" class="icon-button primary inverted" onclick={handleRedoAction} tabindex="-1" disabled={!canRedo} title={canRedo ? 'Redo' : 'Nothing to redo'}><IconRedo /></button>
+                    <button type="button" class="standard-button primary inverted" onclick={handleUndoAction} tabindex="-1" disabled={!canUndo} title={canUndo ? 'Undo' : 'Nothing to undo'}><IconUndo size="16" /></button>
+                    <button type="button" class="standard-button primary inverted" onclick={handleRedoAction} tabindex="-1" disabled={!canRedo} title={canRedo ? 'Redo' : 'Nothing to redo'}><IconRedo size="16" /></button>
                     <DSLFooter items={footerItems()} onCheckboxChange={handleCheckboxChange} />
                 </div>
                 <div class="crc-editor crc-content-width" style="flex: 1; overflow: auto;">
