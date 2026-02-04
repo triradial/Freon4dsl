@@ -11,8 +11,9 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
   - [ ] Write/generate a simple user guide with focus on how to create a study design
 - [ ] Document and test the steps to bring on a user
 - [ ] Create a repeatable demo script (whoever is done first will do this)
-- [ ] Setup approach to testing new charts and other parts of the UI
-- [ ] Add tests
+- Not needed for first user:
+  - [ ] Setup approach to testing new charts and other parts of the UI
+  - [ ] Add tests
 
 ### In-Progress
 - [ ] Deploy to Azure
