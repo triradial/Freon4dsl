@@ -45,6 +45,7 @@ yarn-error.log
 
 # generated files
 gen
+packages/languages/**/freon
 packages/meta/src/editordef/parser/FreEditGrammar.js
 packages/meta/src/editordef/parser/FreEditGrammar.pegjs
 packages/meta/src/langexpressions/parser/ExpressionGrammar.js
