@@ -169,7 +169,8 @@ function createDataStore() {
       // Transform snake_case to camelCase for frontend compatibility
       return {
         ...study,
-        therapeuticArea: study.therapeutic_area || study.therapeuticArea || ''
+        therapeuticArea: study.therapeutic_area || study.therapeuticArea || '',
+        siteNumber: study.site_number || study.siteNumber || ''
       };
     } catch (error) {
       console.error('Error fetching study:', error);
