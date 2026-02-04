@@ -69,6 +69,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## Jon
 - [ ] Add single event patient checklist to be displayed from the patient page and selected date. Use latest version of template somehow merged with template the Jon created.
+- [ ] Add choice of template studies when creating a study
 
 ### To-Do 
 - [ ]
