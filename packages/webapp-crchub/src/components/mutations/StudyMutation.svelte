@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { untrack } from "svelte";
     import { getStatusColor } from "../../services/utils.js";
     import { type Study } from "../../services/data/data-store.js";
     // @ts-ignore
@@ -23,10 +24,12 @@
     }
 
     // Update mutatedStudy when study prop changes
+    // Use untrack to prevent siteNumber from becoming a dependency
     $effect(() => {
         Object.assign(mutatedStudy, study);
         if (action !== "edit") {
-            siteNumber = (study as any)?.siteNumber || siteNumber || "";
+            const currentSiteNumber = untrack(() => siteNumber);
+            siteNumber = (study as any)?.siteNumber || currentSiteNumber || "";
         }
     });
 

@@ -143,6 +143,11 @@
             <div class="small-label-text">Current Protocol</div>
             <p class="standard-text">{study.currentProtocol || "-"}</p>
         </div>
+        <hr class="separator-divider" />
+        <div>
+            <div class="small-label-text">Site Number</div>
+            <p class="standard-text">{study.siteNumber || "-"}</p>
+        </div>
     </div>
 </div>
 {:else}
