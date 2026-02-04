@@ -13,6 +13,7 @@ modelunit StudyConfiguration {
     showScheduling: boolean = true;
     showSchedulingDetails: boolean = false;
     showChecklists: boolean = false;
+    showSteps: boolean = true;
     showReferences: boolean = false;
     showSystems: boolean = false;
     showPeople: boolean = false;
@@ -55,7 +56,7 @@ abstract concept EventTask base AbstractTask {
 
 concept Task base EventTask {
     name: identifier;
-    description?: Description;
+    description: Description;
     numberedSteps: boolean;
     showDetails: boolean;
     steps: Step[];
@@ -63,7 +64,7 @@ concept Task base EventTask {
 
 concept SharedTask base AbstractTask{
     name: identifier;
-    description?: Description;
+    description: Description;
     numberedSteps: boolean;
     showDetails: boolean;
     steps: Step[];
@@ -75,7 +76,7 @@ concept TaskReference base EventTask {
 
 concept Step {
     name: identifier;
-    description?: Description;
+    description: Description;
     // TODO: rename to something other than references: Reference to avoid confusion with Freon reference.
     references: Reference[];
     people: AbstractPerson[];
@@ -104,7 +105,7 @@ abstract concept AbstractSystemAccess {
 
 concept SystemAccess base AbstractSystemAccess {
     name: identifier;
-    description?: Description;
+    description: Description;
     isShared: boolean = false;
     functionName?: string;
     accessedAt: AccessedAt;
@@ -128,7 +129,7 @@ concept AccessedAPhoneNumber implements AccessedAt {
 
 concept StaffRole {
     name: identifier;
-    description?: Description;
+    description: Description;
 }
 abstract concept AbstractPerson {
 }
@@ -139,7 +140,7 @@ concept PersonReference base AbstractPerson {
 
 concept Person base AbstractPerson {
     name: identifier;
-    description?: Description;
+    description: Description;
     email?: string;
     phoneNumber?: string;
     reference role: StaffRole;
@@ -148,7 +149,7 @@ concept Person base AbstractPerson {
 concept Reference {
     name: string;
     link?: string;
-    description?: Description;
+    description: Description;
 }
 
 concept RobotMapping {

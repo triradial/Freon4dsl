@@ -1,7 +1,8 @@
 <script lang="ts">
     import { AST, FreLanguage, FreLogger, PartWrapperBox, type FreNode } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
+    import { expandCollapseStore } from "../../services/stores/expand-collapse-store.js";
 // ts-ignore
     import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, EllipsisVertical as IconEllipsisVertical, Plus as IconPlus } from '@lucide/svelte';
 
@@ -15,13 +16,16 @@
     let canAdd = box && box.findParam("canAdd") === "true";
     let canCRUD = box && box.findParam("canCRUD") === "true";
     let canExpand = box && box.findParam("canExpand") === "true";
-    let isExpanded = $state(box && box.findParam("isExpanded") === "true");
+    // Store the language-defined default so we can restore it later
+    const defaultIsExpanded = box && box.findParam("isExpanded") === "true";
+    let isExpanded = $state(defaultIsExpanded);
+    // Content display value - directly controlled $state for reliable reactivity
+    let contentDisplay = $state(defaultIsExpanded ? 'block' : 'none');
     let label = $derived(() => box ? box.findParam("label") || "" : "");
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
     let toggleButton: HTMLButtonElement | undefined = $state();
-    let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
 
     // Get the count of items in the list
     let itemCount = $derived(() => {
@@ -62,6 +66,34 @@
         }
     });
 
+    // Subscribe to expand/collapse all commands
+    const unsubscribe = expandCollapseStore.subscribe((cmd) => {
+        if (cmd && canExpand) {
+            let newExpandedState = isExpanded;
+            if (cmd.command === 'expand') {
+                newExpandedState = true;
+            } else if (cmd.command === 'collapse') {
+                newExpandedState = false;
+            } else if (cmd.command === 'default') {
+                // Restore to the language-defined default state
+                newExpandedState = defaultIsExpanded;
+            }
+            // Update state
+            isExpanded = newExpandedState;
+            box.isExpanded = newExpandedState;
+            contentDisplay = newExpandedState ? 'block' : 'none';
+            
+            // Direct DOM manipulation as fallback
+            if (contentElement) {
+                contentElement.style.display = newExpandedState ? 'block' : 'none';
+            }
+        }
+    });
+
+    onDestroy(() => {
+        unsubscribe();
+    });
+
     // Replaces afterUpdate()
     $effect(() => {
         box.refreshComponent = refresh;
@@ -70,6 +102,7 @@
     const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
         isExpanded = !isExpanded;
         box.isExpanded = isExpanded;
+        contentDisplay = isExpanded ? 'block' : 'none';
         event.stopPropagation();
         event.preventDefault();
     };
@@ -129,8 +162,6 @@
         </button> 
     {/if}
 </div>
-{#key contentStyle}
-    <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
-        <RenderComponent box={box.childBox} {editor} {cssClass} />
-    </div>
-{/key}
+<div class="list-group-content {cssClass}" bind:this={contentElement} style:display={contentDisplay}>
+    <RenderComponent box={box.childBox} {editor} {cssClass} />
+</div>

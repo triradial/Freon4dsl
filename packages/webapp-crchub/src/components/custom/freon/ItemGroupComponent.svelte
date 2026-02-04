@@ -1,8 +1,9 @@
 <script lang="ts">
     import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, TextBox, VerticalLayoutBox } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { Event, SharedTask, Step, StudyConfiguration, TaskReference, type Task } from "@freon4dsl/study-configuration";
+    import { expandCollapseStore } from "../../../services/stores/expand-collapse-store.js";
 // ts-ignore
     import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, Trash2 as IconDelete, Copy as IconDuplicate, EllipsisVertical as IconEllipsisVertical, Share2 as IconShare2 } from '@lucide/svelte';
 
@@ -20,7 +21,11 @@
     let canDuplicate = box && box.findParam("canDuplicate") === "true";
     let canShare = box && box.findParam("canShare") === "true";
     let canExpandParam = box && box.findParam("canExpand") === "true";
-    let isExpanded = $state(box && box.findParam("isExpanded") === "true");
+    // Store the language-defined default so we can restore it later
+    const defaultIsExpanded = box && box.findParam("isExpanded") === "true";
+    let isExpanded = $state(defaultIsExpanded);
+    // Content display value - directly controlled $state for reliable reactivity
+    let contentDisplay = $state(defaultIsExpanded ? 'block' : 'none');
     
     // Determine if the node has children that are being displayed
     // This is based on the display options in StudyConfiguration, not on actual children
@@ -54,7 +59,6 @@
 
     let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
-    let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
     let cssContainerClass = "h-20"
 
     // The following three functions need to be included for the editor to function properly.
@@ -66,13 +70,46 @@
 
     const refresh = (why?: string): void => {
         // console.log("REFRESH (" + why + ")");
-        box.childBox.refreshComponent(why);
+        // Check if childBox and refreshComponent exist before calling
+        // This prevents errors when the component has been orphaned during study switch
+        if (box?.childBox?.refreshComponent) {
+            box.childBox.refreshComponent(why);
+        }
         box.refreshComponent = refresh;
     };
 
     onMount(() => {
         box.refreshComponent = refresh;   
         box.setFocus = setFocus;
+    });
+
+    // Subscribe to expand/collapse all commands
+    // Use traditional store subscription with direct DOM manipulation as fallback
+    const unsubscribe = expandCollapseStore.subscribe((cmd) => {
+        if (cmd && canExpandParam) {
+            let newExpandedState = isExpanded;
+            if (cmd.command === 'expand') {
+                newExpandedState = true;
+            } else if (cmd.command === 'collapse') {
+                newExpandedState = false;
+            } else if (cmd.command === 'default') {
+                // Restore to the language-defined default state
+                newExpandedState = defaultIsExpanded;
+            }
+            // Update Svelte state
+            isExpanded = newExpandedState;
+            box.isExpanded = newExpandedState;
+            contentDisplay = newExpandedState ? 'block' : 'none';
+            
+            // Direct DOM manipulation as fallback since Svelte 5 reactivity isn't working from store callbacks
+            if (contentElement) {
+                contentElement.style.display = newExpandedState ? 'block' : 'none';
+            }
+        }
+    });
+
+    onDestroy(() => {
+        unsubscribe();
     });
 
     $effect(() => {
@@ -87,6 +124,7 @@
     const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
         isExpanded = !isExpanded;
         box.isExpanded = isExpanded;
+        contentDisplay = isExpanded ? 'block' : 'none';
         event.stopPropagation();
         event.preventDefault();
     };
@@ -237,10 +275,8 @@
         </button> 
     {/if}
 </div>
-{#key contentStyle}
-    <div class="list-group-content {cssClass} {canExpandParam && !hasDisplayedChildren() ? 'no-expand-indent' : ''}" bind:this={contentElement} style={contentStyle()}>
-        {#each otherChildren as child}
-            <RenderComponent box={child} editor={editor} />
-        {/each}
-    </div>
-{/key}
+<div class="list-group-content {cssClass} {canExpandParam && !hasDisplayedChildren() ? 'no-expand-indent' : ''}" bind:this={contentElement} style:display={contentDisplay}>
+    {#each otherChildren as child}
+        <RenderComponent box={child} editor={editor} />
+    {/each}
+</div>

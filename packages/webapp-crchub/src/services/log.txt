@@ -1,0 +1,842 @@
+client:733 [vite] connecting...
+client:827 [vite] connected.
+NavBar.svelte:20 [NavBar] User updated: null
+NavBar.svelte:21 [NavBar] isGlobalAdmin: undefined
+data-store.ts:170  Error fetching study: Error: User not authenticated or missing OID
+    at getCurrentUserOid (data-store.ts:114:13)
+    at Object.getStudy (data-store.ts:157:19)
+    at initializeStudy (Study.svelte:103:33)
+    at Study.svelte:116:15
+    at untrack (runtime.js:748:10)
+    at index-client.js:100:20
+    at update_reaction (runtime.js:297:16)
+    at update_effect (runtime.js:477:18)
+    at flush_queued_effects (batch.js:654:4)
+    at _Batch.process (batch.js:193:4)
+getStudy @ data-store.ts:170
+initializeStudy @ Study.svelte:103
+(anonymous) @ Study.svelte:116
+untrack @ runtime.js:748
+(anonymous) @ index-client.js:100
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+flush_queued_effects @ batch.js:654
+process @ batch.js:193
+flush_effects @ batch.js:609
+flush @ batch.js:313
+(anonymous) @ batch.js:489
+run_all @ utils.js:45
+run_micro_tasks @ task.js:10
+flush_tasks @ task.js:40
+flushSync @ batch.js:550
+Svelte4Component @ legacy-client.js:127
+(anonymous) @ legacy-client.js:54
+initialize @ client.js:585
+navigate @ client.js:1744
+await in navigate
+start @ client.js:363
+await in start
+(anonymous) @ study?id=b6950d1e-1c1d-40f9-9cff-f3f2cfffe766:24
+Promise.then
+(anonymous) @ study?id=b6950d1e-1c1d-40f9-9cff-f3f2cfffe766:23
+data-store.ts:170  Error fetching study: Error: User not authenticated or missing OID
+    at getCurrentUserOid (data-store.ts:114:13)
+    at Object.getStudy (data-store.ts:157:19)
+    at +page.svelte:14:35
+    at +page.svelte:27:6
+    at update_reaction (runtime.js:297:16)
+    at update_effect (runtime.js:477:18)
+    at flush_queued_effects (batch.js:654:4)
+    at _Batch.process (batch.js:193:4)
+    at flush_effects (batch.js:609:10)
+    at _Batch.flush (batch.js:313:4)
+getStudy @ data-store.ts:170
+(anonymous) @ +page.svelte:14
+(anonymous) @ +page.svelte:27
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+flush_queued_effects @ batch.js:654
+process @ batch.js:193
+flush_effects @ batch.js:609
+flush @ batch.js:313
+(anonymous) @ batch.js:489
+run_all @ utils.js:45
+run_micro_tasks @ task.js:10
+flush_tasks @ task.js:40
+flushSync @ batch.js:550
+Svelte4Component @ legacy-client.js:127
+(anonymous) @ legacy-client.js:54
+initialize @ client.js:585
+navigate @ client.js:1744
+await in navigate
+start @ client.js:363
+await in start
+(anonymous) @ study?id=b6950d1e-1c1d-40f9-9cff-f3f2cfffe766:24
+Promise.then
+(anonymous) @ study?id=b6950d1e-1c1d-40f9-9cff-f3f2cfffe766:23
+NavBar.svelte:20 [NavBar] User updated: {oid: '737dd1c3-0bf8-498f-8397-71302bdd5d9b', email: 'graham.mcgibbon@triradial.com', name: 'Graham McGibbon', facility: 'Kirrie Health', role: '', …}
+NavBar.svelte:21 [NavBar] isGlobalAdmin: true
+ [dataStore] getUserStudySite: studyId= b6950d1e-1c1d-40f9-9cff-f3f2cfffe766 uid= 737dd1c3-0bf8-498f-8397-71302bdd5d9b
+ [StudyPatients] Tab became active, checking model validity
+ ⏱️ START: initialize-study 
+ ⏱️ START: fetch-study-data 
+ ⏱️✅ END: fetch-study-data took 40.40ms 
+ [StudyDesign.svelte] initializeStudy: Starting to load model for study b6950d1e-1c1d-40f9-9cff-f3f2cfffe766 (Acadia)
+ [StudyDesign.svelte] Calling ModelManager.openModelUnit(b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, "StudyConfiguration")
+ ⏱️ START: open-model-unit 
+ [ModelManager] openModelUnit: modelName=b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, unitName=StudyConfiguration
+  EditorState: ModelHandler.openModelUnit modelName: b6950d1e-1c1d-40f9-9cff-f3f2cfffe766 unitName: StudyConfiguration [30m 
+ [ModelManager] Calling modelStore.openModel(b6950d1e-1c1d-40f9-9cff-f3f2cfffe766)
+ [InMemoryModel] openModel: name=b6950d1e-1c1d-40f9-9cff-f3f2cfffe766
+  EditorState: modelChanged [30m 
+ [InMemoryModel] Loading unit list for model: b6950d1e-1c1d-40f9-9cff-f3f2cfffe766
+ [StudyTimelineTable] Loading table for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, forceRefresh=false
+ [SimulationService] getSimulationData for study b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, forceRefresh=false
+ [SimulationService] Starting simulation generation for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766
+  EditorState: ModelManager.getModelUnitWithoutOpening modelName: b6950d1e-1c1d-40f9-9cff-f3f2cfffe766 unitName: StudyConfiguration [30m 
+  EditorState: Model already open, checking if openModel is in progress... [30m 
+  EditorState: openModel is still in progress for "b6950d1e-1c1d-40f9-9cff-f3f2cfffe766", waiting for it to complete... [30m 
+ [StudyTimelineChart] Loading chart for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, forceRefresh=false
+ [SimulationService] getSimulationData for study b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, forceRefresh=false
+ [SimulationService] Simulation already running for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, waiting...
+schema-mismatch-tracker.ts:61 [StudyChecklist] Loading checklist for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, forceRefresh=false
+schema-mismatch-tracker.ts:61 [SimulationService] getSimulationData for study b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, forceRefresh=false
+schema-mismatch-tracker.ts:61 [SimulationService] Simulation already running for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, waiting...
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+Tracking Prevention blocked access to storage for <URL>.
+schema-mismatch-tracker.ts:61 [InMemoryModel] Unit list loaded, found 3 units: (3) ['StudyConfiguration', 'Availability', 'PatientInfo']
+schema-mismatch-tracker.ts:61 [InMemoryModel] Loading model unit: StudyConfiguration
+schema-mismatch-tracker.ts:61 ⏱️ START: model-manager-run-validator 
+schema-mismatch-tracker.ts:61  EditorState: EditorState.runValidator - No current unit to validate [30m 
+schema-mismatch-tracker.ts:61 ⏱️✅ END: model-manager-run-validator took 0.30ms {errorCount: 0}
+schema-mismatch-tracker.ts:61 [loadPatientUnavailableDates] Patient ARCX-1005: 0 unavailable dates
+schema-mismatch-tracker.ts:61 [dataStore] getUserStudySite: response status= 200
+schema-mismatch-tracker.ts:61 [dataStore] getUserStudySite: Raw site from backend= {id: '624a281e-a34a-4c61-b688-75aa6fe71d76', org_id: 'fa6999fe-2989-4298-a557-add3a6dd3951', study_id: 'b6950d1e-1c1d-40f9-9cff-f3f2cfffe766', site_number: 'AC 101', patient_availability_and_history: {…}, …}
+schema-mismatch-tracker.ts:61 [dataStore] getUserStudySite: Transformed site= {id: '624a281e-a34a-4c61-b688-75aa6fe71d76', org_id: 'fa6999fe-2989-4298-a557-add3a6dd3951', study_id: 'b6950d1e-1c1d-40f9-9cff-f3f2cfffe766', site_number: 'AC 101', patient_availability_and_history: {…}, …}
+schema-mismatch-tracker.ts:61 [loadStaffData] Organization ID: fa6999fe-2989-4298-a557-add3a6dd3951
+schema-mismatch-tracker.ts:61 [loadStaffData] Site start date: 2025-11-26
+schema-mismatch-tracker.ts:61 [data-store] getPersons called
+schema-mismatch-tracker.ts:61 [data-store] getPersons - uid: 737dd1c3-0bf8-498f-8397-71302bdd5d9b
+schema-mismatch-tracker.ts:61 [data-store] getPersons - fetching from: http://localhost:8080/getPersons?uid=737dd1c3-0bf8-498f-8397-71302bdd5d9b
+schema-mismatch-tracker.ts:61 [loadPatientUnavailableDates] Patient ARCX-1004: 12 unavailable dates
+schema-mismatch-tracker.ts:61 [InMemoryModel] ✅ Unit StudyConfiguration loaded successfully, adding to model
+schema-mismatch-tracker.ts:61  EditorState: modelChanged [30m 
+schema-mismatch-tracker.ts:61 [InMemoryModel] Loading model unit: Availability
+schema-mismatch-tracker.ts:61 [loadPatientUnavailableDates] Patient ARCX-1003: 0 unavailable dates
+schema-mismatch-tracker.ts:61 [data-store] getPersons - response status: 200 ok: true
+schema-mismatch-tracker.ts:61 [data-store] getPersons - received data: 5 persons
+schema-mismatch-tracker.ts:61 [loadStaffData] Total persons loaded: 5
+schema-mismatch-tracker.ts:61 [loadStaffData] Found 4 staff members in organization
+schema-mismatch-tracker.ts:61 [loadPatientUnavailableDates] Patient ARCX-1002: 2 unavailable dates
+schema-mismatch-tracker.ts:61 [InMemoryModel] ✅ Unit Availability loaded successfully, adding to model
+schema-mismatch-tracker.ts:61  EditorState: modelChanged [30m 
+schema-mismatch-tracker.ts:61 [InMemoryModel] Loading model unit: PatientInfo
+schema-mismatch-tracker.ts:61 [loadStaffData] Staff Geoff Garabedian: 24 unavailable dates
+schema-mismatch-tracker.ts:61 [loadPatientUnavailableDates] Patient ARCX-1001: 21 unavailable dates
+schema-mismatch-tracker.ts:61 [loadPatientUnavailableDates] Loaded unavailable dates for 5 patients
+schema-mismatch-tracker.ts:61 [loadStaffData] Staff Graham McGibbon: 16 unavailable dates
+schema-mismatch-tracker.ts:61 [InMemoryModel] ✅ Unit PatientInfo loaded successfully, adding to model
+schema-mismatch-tracker.ts:61  EditorState: modelChanged [30m 
+schema-mismatch-tracker.ts:61 [InMemoryModel] openModel complete for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766, model has 3 units
+schema-mismatch-tracker.ts:61  EditorState: ModelManager.getModelUnitWithoutOpening: found unit "StudyConfiguration" (type: StudyConfiguration, id: ID-161) [30m 
+schema-mismatch-tracker.ts:61 [ModelManager] modelStore.openModel returned: {resultType: 'object', isError: false, modelUnitsCount: 0}
+model-manager.ts:291 [ModelManager] Getting unit by name: StudyConfiguration
+model-manager.ts:293 [ModelManager] getUnitByName returned: {found: true, unitType: 'object', unitName: 'StudyConfiguration'}
+model-manager.ts:300 [ModelManager] ✅ Unit found, setting up editor for StudyConfiguration
+FreLogger.ts:106  EditorState: ModelHandler.showUnitAndErrors called, unitName: StudyConfiguration [30m 
+simulation-service.ts:105 [SimulationService] ⚡ Timeline generated in 66.10ms (simulator ran once)
+simulation-service.ts:119 [SimulationService] Timeline has 16 days
+simulation-service.ts:127 [SimulationService] Table HTML generated in 0.40ms (from existing timeline)
+simulation-service.ts:135 [SimulationService] Chart HTML generated in 16.70ms (from existing timeline)
+simulation-service.ts:140 [SimulationService] Checklist markdown generated in 6.80ms (from existing timeline)
+simulation-service.ts:157 [SimulationService] Complete simulation generated for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766 in 403.40ms
+simulation-service.ts:60 [SimulationService] Generated simulation for b6950d1e-1c1d-40f9-9cff-f3f2cfffe766 (403.80ms)
+performance-logger.ts:148  ⏱️🟡 SLOW: open-model-unit took 421.70ms 
+end @ performance-logger.ts:148
+initializeStudy @ StudyDesign.svelte:241
+await in initializeStudy
+(anonymous) @ StudyDesign.svelte:278
+untrack @ runtime.js:748
+(anonymous) @ index-client.js:100
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+flush_queued_effects @ batch.js:654
+process @ batch.js:193
+flush_effects @ batch.js:609
+flush @ batch.js:313
+(anonymous) @ batch.js:489
+run_all @ utils.js:45
+run_micro_tasks @ task.js:10
+(anonymous) @ task.js:28
+StudyDesign.svelte:243 [StudyDesign.svelte] ModelManager.openModelUnit returned: {resultType: 'object', isUndefined: false, isNull: false, hasValue: true}
+StudyDesign.svelte:253 [StudyDesign.svelte] ✅ Model loaded successfully for study b6950d1e-1c1d-40f9-9cff-f3f2cfffe766
+performance-logger.ts:117 ⏱️ START: update-visible-projections 
+performance-logger.ts:117 ⏱️ START: update-projections-internal 
+performance-logger.ts:117 ⏱️ START: ast-change-projections 
+FreProjectionHandler.ts:165  ============== enabled projections: schedulingAndChecklistsShow,sharedTasksShow
+performance-logger.ts:117 ⏱️ START: run-in-action-projection 
+performance-logger.ts:150 ⏱️✅ END: run-in-action-projection took 0.00ms 
+performance-logger.ts:150 ⏱️✅ END: ast-change-projections took 5.40ms 
+performance-logger.ts:150 ⏱️✅ END: update-projections-internal took 5.80ms {projectionCount: 2, projections: Array(2)}
+performance-logger.ts:150 ⏱️✅ END: update-visible-projections took 6.30ms 
+performance-logger.ts:117 ⏱️ START: initial-validator-run 
+performance-logger.ts:117 ⏱️ START: model-manager-run-validator 
+FreLogger.ts:106  EditorState: EditorState.runValidator - for StudyConfiguration [30m 
+performance-logger.ts:117 ⏱️ START: validator-validate 
+CustomStudyConfigurationModelValidator.ts:17 execBeforeEvent removing alternativeName error
+performance-logger.ts:150 ⏱️✅ END: validator-validate took 10.70ms {errorCount: 5}
+performance-logger.ts:117 ⏱️ START: set-editor-errors 
+performance-logger.ts:150 ⏱️✅ END: set-editor-errors took 16.40ms 
+performance-logger.ts:150 ⏱️✅ END: model-manager-run-validator took 27.90ms {errorCount: 5}
+performance-logger.ts:150 ⏱️✅ END: initial-validator-run took 28.20ms {errorCount: 5}
+StudyDesign.svelte:78 🔄 updateUndoRedoState: {canUndo: false, canRedo: false, undoText: 'nothing left to undo', redoText: 'nothing left to redo'}
+performance-logger.ts:148  ⏱️🟡 SLOW: initialize-study took 498.60ms 
+end @ performance-logger.ts:148
+initializeStudy @ StudyDesign.svelte:272
+await in initializeStudy
+(anonymous) @ StudyDesign.svelte:278
+untrack @ runtime.js:748
+(anonymous) @ index-client.js:100
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+flush_queued_effects @ batch.js:654
+process @ batch.js:193
+flush_effects @ batch.js:609
+flush @ batch.js:313
+(anonymous) @ batch.js:489
+run_all @ utils.js:45
+run_micro_tasks @ task.js:10
+(anonymous) @ task.js:28
+performance-logger.ts:171 ⏱️📍 MARK: error-count-async-triggered 
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Period, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Period, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Period, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=SystemAccess, in set=true
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=StaffRole, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=StaffRole, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Event, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Task, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Task, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Task, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Task, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Task, in set=false
+ListComponent.svelte:77 shouldHideDragHandle: box.kind=ElementBox, conceptType=Task, in set=false
+StudyTimelineTable.svelte:42 [StudyTimelineTable] Table loaded in 840.60ms
+StudyTimelineChart.svelte:50 [StudyTimelineChart] Chart loaded in 839.00ms
+StudyChecklist.svelte:125 [StudyChecklist] Checklist loaded in 851.50ms
+Box.ts:390 TextBox:setFocus not implemented for ID-220-Period-name-textbox id BOX-8
+template.js:357   GET http://localhost:5173/assets/styles/bundle-dark.css net::ERR_ABORTED 404 (Not Found)
+append @ template.js:357
+alternate @ StudyTimelineChart.svelte:110
+(anonymous) @ branches.js:166
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+create_effect @ effects.js:126
+branch @ effects.js:393
+ensure @ branches.js:166
+update_branch @ if.js:55
+(anonymous) @ if.js:63
+(anonymous) @ StudyTimelineChart.svelte:108
+(anonymous) @ if.js:61
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+#traverse_effect_tree @ batch.js:240
+process @ batch.js:175
+flush_effects @ batch.js:609
+flush @ batch.js:313
+(anonymous) @ batch.js:489
+run_all @ utils.js:45
+run_micro_tasks @ task.js:10
+flush_tasks @ task.js:40
+flushSync @ batch.js:550
+tick @ runtime.js:521
+await in tick
+refreshSelection @ FreonComponent.svelte:295
+FreonComponent @ FreonComponent.svelte:332
+(anonymous) @ hmr.js:47
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+create_effect @ effects.js:126
+branch @ effects.js:393
+(anonymous) @ hmr.js:38
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+create_effect @ effects.js:126
+block @ effects.js:381
+wrapper @ hmr.js:28
+$.add_svelte_meta.componentTag @ StudyDesign.svelte:779
+add_svelte_meta @ context.js:49
+consequent @ StudyDesign.svelte:779
+(anonymous) @ branches.js:166
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+create_effect @ effects.js:126
+branch @ effects.js:393
+ensure @ branches.js:166
+update_branch @ if.js:55
+(anonymous) @ if.js:63
+(anonymous) @ StudyDesign.svelte:770
+(anonymous) @ if.js:61
+update_reaction @ runtime.js:297
+update_effect @ runtime.js:477
+#traverse_effect_tree @ batch.js:240
+process @ batch.js:175
+flush_effects @ batch.js:609
+flush @ batch.js:313
+(anonymous) @ batch.js:489
+run_all @ utils.js:45
+run_micro_tasks @ task.js:10
+(anonymous) @ task.js:28
+StudyPatients.svelte:889 [loadPatientSchedules] Patient ARCX-1005: loaded schedule with 1 days
+StudyPatients.svelte:698 [loadStaffData] Staff Jon Diehl: 13 unavailable dates
+StudyPatients.svelte:889 [loadPatientSchedules] Patient ARCX-1004: loaded schedule with 1 days
+performance-logger.ts:117 ⏱️ START: model-manager-run-validator 
+FreLogger.ts:106  EditorState: EditorState.runValidator - for StudyConfiguration [30m 
+performance-logger.ts:117 ⏱️ START: validator-validate 
+CustomStudyConfigurationModelValidator.ts:17 execBeforeEvent removing alternativeName error
+performance-logger.ts:150 ⏱️✅ END: validator-validate took 2.20ms {errorCount: 5}
+performance-logger.ts:117 ⏱️ START: set-editor-errors 
+performance-logger.ts:150 ⏱️✅ END: set-editor-errors took 0.40ms 
+performance-logger.ts:150 ⏱️✅ END: model-manager-run-validator took 3.50ms {errorCount: 5}
+performance-logger.ts:117 ⏱️ START: validator-run 
+performance-logger.ts:117 ⏱️ START: model-manager-run-validator 
+FreLogger.ts:106  EditorState: EditorState.runValidator - for StudyConfiguration [30m 
+performance-logger.ts:117 ⏱️ START: validator-validate 
+CustomStudyConfigurationModelValidator.ts:17 execBeforeEvent removing alternativeName error
+performance-logger.ts:150 ⏱️✅ END: validator-validate took 1.80ms {errorCount: 5}
+performance-logger.ts:117 ⏱️ START: set-editor-errors 
+performance-logger.ts:150 ⏱️✅ END: set-editor-errors took 0.20ms 
+performance-logger.ts:150 ⏱️✅ END: model-manager-run-validator took 2.60ms {errorCount: 5}
+performance-logger.ts:150 ⏱️✅ END: validator-run took 2.90ms {errorCount: 5}
+performance-logger.ts:117 ⏱️ START: errors-component-refresh 
+performance-logger.ts:150 ⏱️✅ END: errors-component-refresh took 0.20ms 
+StudyPatients.svelte:698 [loadStaffData] Staff Mike Vogel: 14 unavailable dates
+StudyPatients.svelte:710 [loadStaffData] Loaded staff members: (4) ['Geoff Garabedian', 'Graham McGibbon', 'Jon Diehl', 'Mike Vogel']
+StudyPatients.svelte:889 [loadPatientSchedules] Patient ARCX-1003: loaded schedule with 17 days
+StudyPatients.svelte:889 [loadPatientSchedules] Patient ARCX-1002: loaded schedule with 18 days
+StudyPatients.svelte:889 [loadPatientSchedules] Patient ARCX-1001: loaded schedule with 18 days
+StudyPatients.svelte:899 [loadPatientSchedules] Loaded schedules for 5 patients
+FreLogger.ts:106  EditorState: ModelManager.getModelUnitWithoutOpening modelName: b6950d1e-1c1d-40f9-9cff-f3f2cfffe766 unitName: StudyConfiguration [30m 
+FreLogger.ts:106  EditorState: Model already open, checking if openModel is in progress... [30m 
+FreLogger.ts:106  EditorState: ModelManager.getModelUnitWithoutOpening: found unit "StudyConfiguration" (type: StudyConfiguration, id: ID-161) [30m 
+StudyPatients.svelte:439 [loadTimeline] Reference date from database schedules: 2026-01-14
+StudyPatients.svelte:449 [loadTimeline] Model loaded successfully, timeline created
+StudyPatients.svelte:507 [loadTimeline] Calculated studyReferenceDate from database: 2026-01-14
+StudyPatients.svelte:527 === TIMELINE EVENTS DEBUG (Database-driven) ===
+StudyPatients.svelte:532 Day 0 (2026-01-14):
+StudyPatients.svelte:534   Scheduled: Prescreen - 
+StudyPatients.svelte:534   Scheduled: Screen - 
+StudyPatients.svelte:532 Day 7 (2026-01-21):
+StudyPatients.svelte:534   Scheduled: Post Screen - 
+StudyPatients.svelte:532 Day 28 (2026-02-11):
+StudyPatients.svelte:534   Scheduled: Visit 1 - 
+StudyPatients.svelte:532 Day 35 (2026-02-18):
+StudyPatients.svelte:534   Scheduled: Visit 2 - 
+StudyPatients.svelte:532 Day 42 (2026-02-25):
+StudyPatients.svelte:534   Scheduled: Visit 2 - 
+StudyPatients.svelte:532 Day 49 (2026-03-04):
+StudyPatients.svelte:534   Scheduled: Visit 2 - 
+StudyPatients.svelte:532 Day 56 (2026-03-11):
+StudyPatients.svelte:534   Scheduled: Visit 2 - 
+StudyPatients.svelte:532 Day 63 (2026-03-18):
+StudyPatients.svelte:534   Scheduled: Visit 3 - 
+StudyPatients.svelte:532 Day 70 (2026-03-25):
+StudyPatients.svelte:534   Scheduled: Visit 3 - 
+StudyPatients.svelte:532 Day 77 (2026-04-01):
+StudyPatients.svelte:534   Scheduled: Visit 3 - 
+StudyPatients.svelte:532 Day 84 (2026-04-08):
+StudyPatients.svelte:534   Scheduled: Visit 3 - 
+StudyPatients.svelte:532 Day 91 (2026-04-15):
+StudyPatients.svelte:534   Scheduled: Visit 3 - 
+StudyPatients.svelte:532 Day 98 (2026-04-22):
+StudyPatients.svelte:534   Scheduled: Visit 4 - 
+StudyPatients.svelte:532 Day 105 (2026-04-29):
+StudyPatients.svelte:534   Scheduled: Visit 4 - 
+StudyPatients.svelte:532 Day 112 (2026-05-06):
+StudyPatients.svelte:534   Scheduled: Visit 4 - 
+StudyPatients.svelte:532 Day 119 (2026-05-13):
+StudyPatients.svelte:534   Scheduled: Follow-up - 
+StudyPatients.svelte:538 === END TIMELINE EVENTS DEBUG ===
+StudyPatients.svelte:581 Date range calculated: {timelineRefDate: '2026-01-14', studyRefDate: '2026-01-14', firstDataDate: '2026-01-14', lastDataDate: '2026-05-13', firstMonthStart: '2026-01-01', …}
+StudyPatients.svelte:599 Initial visible window: {visibleStartDay: -13, visibleEndDay: 41, daysThatFit: 55, firstDate: '2026-01-01', lastDate: '2026-02-24'}
+StudyPatients.svelte:1595 [patientCentricData] Merging database schedule with projected events for patient ARCX-1001
+StudyPatients.svelte:1666 [patientCentricData] Skipping projected event visit-1-1 on day 28 - already exists in database
+StudyPatients.svelte:1666 [patientCentricData] Skipping projected event visit-2-1 on day 35 - already exists in database
+StudyPatients.svelte:1595 [patientCentricData] Merging database schedule with projected events for patient ARCX-1002
+StudyPatients.svelte:1666 [patientCentricData] Skipping projected event post-screen-1 on day 7 - already exists in database
+StudyPatients.svelte:1666 [patientCentricData] Skipping projected event visit-1-1 on day 28 - already exists in database
+StudyPatients.svelte:1666 [patientCentricData] Skipping projected event visit-2-1 on day 35 - already exists in database
+StudyPatients.svelte:1595 [patientCentricData] Merging database schedule with projected events for patient ARCX-1003
+StudyPatients.svelte:1666 [patientCentricData] Skipping projected event post-screen-1 on day 7 - already exists in database
+StudyPatients.svelte:1666 [patientCentricData] Skipping projected event visit-1-1 on day 28 - already exists in database
+StudyPatients.svelte:1595 [patientCentricData] Merging database schedule with projected events for patient ARCX-1004
+StudyPatients.svelte:1595 [patientCentricData] Merging database schedule with projected events for patient ARCX-1005
+StudyPatients.svelte:2949 [updateDateRangeFromPatientData] Extending date range end: {oldEnd: 137, oldEndDate: '2026-05-31', newEnd: 167, newEndDate: '2026-06-30', latestDayNumber: 154, …}
+StudyPatients.svelte:1836 [getPatientDayData] ARCX-1001 day 0 (2026-01-14): found 1 events
+StudyPatients.svelte:1837 [getPatientDayData] ARCX-1001 has 58 days, ref: 2026-01-14
+StudyPatients.svelte:1836 [getPatientDayData] ARCX-1001 day 0 (2026-01-14): found 1 events
+StudyPatients.svelte:1837 [getPatientDayData] ARCX-1001 has 58 days, ref: 2026-01-14
+StudyPatients.svelte:1836 [getPatientDayData] ARCX-1001 day 0 (2026-01-14): found 1 events
+StudyPatients.svelte:1837 [getPatientDayData] ARCX-1001 has 58 days, ref: 2026-01-14
+StudyPatients.svelte:1836 [getPatientDayData] ARCX-1001 day 0 (2026-01-14): found 1 events
+StudyPatients.svelte:1837 [getPatientDayData] ARCX-1001 has 58 days, ref: 2026-01-14
+StudyPatients.svelte:622 [loadTimeline] Post-render check: {actualDaysThatFit: 55, currentVisibleDays: 55, containerWidth: 1230}
+performance-logger.ts:117 ⏱️ START: model-manager-run-validator 
+FreLogger.ts:106  EditorState: EditorState.runValidator - for StudyConfiguration [30m 
+performance-logger.ts:117 ⏱️ START: validator-validate 
+CustomStudyConfigurationModelValidator.ts:17 execBeforeEvent removing alternativeName error
+performance-logger.ts:150 ⏱️✅ END: validator-validate took 1.10ms {errorCount: 5}
+performance-logger.ts:117 ⏱️ START: set-editor-errors 
+performance-logger.ts:150 ⏱️✅ END: set-editor-errors took 0.10ms 
+performance-logger.ts:150 ⏱️✅ END: model-manager-run-validator took 1.80ms {errorCount: 5}
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+Box.ts:390 TextBox:setFocus not implemented for ID-220-Period-name-textbox id BOX-8
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+Box.ts:390 TextBox:setFocus not implemented for ID-220-Period-name-textbox id BOX-8
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=true, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+Box.ts:390 TextBox:setFocus not implemented for ID-220-Period-name-textbox id BOX-8
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Period: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Period: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Period: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'collapse', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Event: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Task: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Task: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Task: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Task: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Task: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'collapse', current isExpanded=true, defaultIsExpanded=true
+ItemGroupComponent.svelte:98 [ItemGroupComponent] Task: collapsing
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=false, contentDisplay=none
+Box.ts:390 TextBox:setFocus not implemented for ID-220-Period-name-textbox id BOX-8
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Period: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Period: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Period: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Period: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Event: received command 'default', current isExpanded=false, defaultIsExpanded=false
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Event: resetting to default=false
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Event: DOM updated, set=none, computed=none, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Event: after update isExpanded=false, contentDisplay=none
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+ItemGroupComponent.svelte:91 [ItemGroupComponent] Task: received command 'default', current isExpanded=false, defaultIsExpanded=true
+ItemGroupComponent.svelte:102 [ItemGroupComponent] Task: resetting to default=true
+ItemGroupComponent.svelte:115 [ItemGroupComponent] Task: DOM updated, set=block, computed=block, match=true
+ItemGroupComponent.svelte:119 [ItemGroupComponent] Task: after update isExpanded=true, contentDisplay=block
+Box.ts:390 TextBox:setFocus not implemented for ID-220-Period-name-textbox id BOX-8

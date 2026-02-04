@@ -47,8 +47,7 @@ TimeAmount {
 }
 
 TimeAmountPart {
-    [${operator}${timeAmount}]
-    
+    [${operator}${timeAmount}]  
 } 
 
 Days {
@@ -80,7 +79,7 @@ Day {
 }
 
 When {
-    [ when ${startWhen} [? ${timeAmountPart}]]
+    [ when ${startWhen replace=CustomActionsComponent placeholder="event reference"} ${timeAmountPart replace=CustomActionsComponent placeholder="time amount part"}]
     
 }  
 

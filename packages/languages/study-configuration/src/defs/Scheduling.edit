@@ -15,7 +15,7 @@ EventSchedule {
 } 
 
 EventReference {
-    [${event}${eventState replace=CustomSelectComponent placeholder="event state"} ]
+    [${event replace=CustomSelectComponent placeholder="event reference"} ${eventState replace=CustomSelectComponent placeholder="event state"} ]
     referenceShortcut = ${event}
     }
 
