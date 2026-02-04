@@ -7,6 +7,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Graham
 
 ### To-Do 
+- [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
 - [ ] Update what is displayed on Info / Help panel
   - [ ] Write/generate a simple user guide with focus on how to create a study design
 - [ ] Make staff shared/optionally-shared across studies (not essential for first user)
@@ -26,6 +27,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
   - [ ] return and tab need to not jump out of editor
 
 ### Done
+- [x] Improve validation error messages
 - [x] Show Patients page when no patients to allow getting started on study
 - [x] Make error messages jump to concept with error; also improved the message with context
 - [x] Get undo-redo working again
@@ -37,6 +39,8 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ### To-Do 
 - [ ] Model unscheduled and other special events in the language in a better way. 
+- [ ] Add back pdf/print behavior to checklist (discuss with Graham, e.g., where does button go)
+- [ ] Add additional validation checks if/as needed so reliably get charts, etc. Need to setup tests of incomplete studies.
 - [ ] Determine whether optional from Freon is needed and where 
 - [ ] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
 - [ ] Repeating Visits with occurrence on the schedule 
@@ -45,7 +49,6 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
-- [ ] Improve validation error messages
 - [ ] Update to current Freon version.
 - [ ] Finish Checklist display and printing as HTML: 
   - [x] Add Schedule and Checklist details
