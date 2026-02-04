@@ -178,6 +178,28 @@ function createDataStore() {
     }
   }
 
+  async function checkStudyNameExists(
+    studyName: string,
+    excludeStudyId?: string,
+    adminMode: boolean = false
+  ): Promise<boolean> {
+    try {
+      const uid = getCurrentUserOid();
+      const params = new URLSearchParams({ uid, name: studyName });
+      if (excludeStudyId) params.set('excludeId', excludeStudyId);
+      if (adminMode) params.set('all', 'true');
+      const response = await fetch(`${env.serverUrl}/checkStudyNameExists?${params}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return !!data.exists;
+    } catch (error) {
+      console.error('Error checking study name:', error);
+      return false; // On error, allow submission (fail-open to avoid blocking users)
+    }
+  }
+
   async function addStudy(newStudy: Study): Promise<boolean> {
     try {
       const uid = getCurrentUserOid();
@@ -267,7 +289,9 @@ function createDataStore() {
         ...copiedStudy,
         therapeuticArea: copiedStudy.therapeutic_area || copiedStudy.therapeuticArea || ''
       };
-      await ModelManager.getInstance().createModel(copiedStudy.id);
+      // Open the copied model to load the duplicated study design from the server.
+      // Do NOT use createModel - it would overwrite the copied config with default structure.
+      await ModelManager.getInstance().openModel(copiedStudy.id);
       await getStudies();
       return transformedStudy;
     } catch (error) {
@@ -1201,6 +1225,7 @@ function createDataStore() {
     initializeDatastore,
     getStudies,
     getStudy,
+    checkStudyNameExists,
     addStudy,
     addStudyWithSite,
     copyStudy,

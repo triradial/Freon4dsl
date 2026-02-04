@@ -2,7 +2,7 @@ import { consoleLogInfo } from '../server/logging.js';
 import { getDbPool } from './db-connection.js';
 import * as modelService from './model-service.js';
 import * as siteService from './site-service.js';
-import { cloneJson, ensureUniqueCopyLabel } from './copy-study-utils.js';
+import { cloneJson, ensureUniqueCopyLabel, validateName } from './copy-study-utils.js';
 
 export interface Study {
     id: string;
@@ -287,6 +287,26 @@ export async function getStudy(oid: string, studyId: string): Promise<Study | nu
     study.id = dbStudyId;
     
     return study;
+}
+
+/**
+ * Check whether a study name already exists (duplicate).
+ * @param oid - User's Azure OID
+ * @param studyName - The name to check
+ * @param excludeStudyId - Optional study ID to exclude (e.g. when editing, exclude the current study)
+ * @param all - If true, check against all studies (admin scope); otherwise user's studies only
+ * @returns true if the name already exists, false if it is unique
+ */
+export async function checkStudyNameExists(
+    oid: string,
+    studyName: string,
+    excludeStudyId?: string,
+    all: boolean = false
+): Promise<boolean> {
+    const studies = await getStudies(oid, all);
+    const existing = studies.map((s) => ({ id: s.id, name: s.name }));
+    const isUnique = validateName(studyName, existing, excludeStudyId);
+    return !isUnique;
 }
 
 /**

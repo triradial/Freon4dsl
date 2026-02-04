@@ -8,8 +8,10 @@
     import IconX from '@lucide/svelte/icons/x';
     import { dataStore } from '../../services/data/data-store.js';
     import { navigateTo } from '../../services/routing/route-action.js';
+    import { adminModeStore } from '../../services/stores/admin-mode-store.js';
 
     let openState = $derived($objectDrawerStore.open);
+    let adminMode = $derived($adminModeStore);
     let type = $derived($objectDrawerStore.type);
     let action = $derived($objectDrawerStore.action);
     let data = $derived($objectDrawerStore.data);
@@ -53,7 +55,8 @@
             {#if type === 'study'}
                 <StudyMutation 
                     study={data} 
-                    {action} 
+                    {action}
+                    adminMode={adminMode}
                     onsave={async (study) => {
                         if (action === 'add') {
                             await dataStore.addStudyWithSite(study as any);
