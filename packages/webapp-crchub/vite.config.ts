@@ -26,7 +26,15 @@ export default defineConfig({
   },
   resolve: {
     conditions: ['svelte', 'import', 'module', 'browser', 'default'],
-    mainFields: ['svelte', 'browser', 'module', 'main']
+    mainFields: ['svelte', 'browser', 'module', 'main'],
+    // Dedupe packages to ensure singleton instances work correctly across the monorepo
+    dedupe: [
+      '@freon4dsl/core',
+      '@freon4dsl/core-svelte',
+      '@freon4dsl/study-configuration',
+      'mobx',
+      'svelte'
+    ]
   },
   build: {
     sourcemap: false, // Disable source maps in production build

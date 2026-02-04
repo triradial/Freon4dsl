@@ -1,6 +1,6 @@
 {
   "name": "@freon4dsl/server-crchub",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "publishConfig": {
     "access": "public"
   },
@@ -46,8 +46,8 @@
     "@azure/msal-node": "^2.16.2",
     "@azure/storage-blob": "^12.25.0",
     "@azure/storage-file-share": "^12.25.0",
-    "@freon4dsl/core": "2.0.0",
-    "@freon4dsl/study-configuration": "2.0.0",
+    "@freon4dsl/core": "2.1.0",
+    "@freon4dsl/study-configuration": "2.1.0",
     "@lionweb/validation": "^0.6.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.7",

@@ -187,6 +187,37 @@ router.get("/getUnitList", async (ctx: Router.IRouterContext) => {
     }
 });
 
+// saveModel endpoint - called when creating a new model
+// In the database-centric approach, this is a no-op since studies are created through /addStudyWithSite
+// The model units are saved individually through saveModelUnit
+router.put("/saveModel", async (ctx: Router.IRouterContext) => {
+    try {
+        const model = ctx.query["model"];
+        const language = ctx.query["language"];
+        const version = ctx.query["version"];
+        
+        consoleLogInfo(moduleName, `saveModel (PUT): model=${model} language=${language} version=${version}`);
+        
+        if (!model) {
+            ctx.status = 412; // Precondition failed
+            ctx.response.type = 'application/json';
+            ctx.response.body = { error: "Missing required parameter: model" };
+            return;
+        }
+        
+        // In the database-centric approach, the study is already created in the database
+        // through the /addStudyWithSite endpoint, so this is essentially a no-op
+        ctx.status = 200;
+        ctx.response.type = 'application/json';
+        ctx.response.body = { message: "Model initialized successfully", model, language, version };
+    } catch (error) {
+        consoleLogError(moduleName, `saveModel (PUT) error: ${String(error)}`);
+        ctx.status = 500;
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: 'Failed to save model', details: String(error) };
+    }
+});
+
 router.put("/saveModelUnit", async (ctx: Router.IRouterContext) => {
     try {
         const body: any = (ctx.request as any).body;
