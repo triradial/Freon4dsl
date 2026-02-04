@@ -61,6 +61,11 @@ export interface Study {
   organizationName?: string;
 }
 
+export interface CopyStudyRequest extends Study {
+  sourceStudyId: string;
+  siteNumber: string;
+}
+
 export interface Site {
   id: string;
   orgId: string;
@@ -233,6 +238,40 @@ function createDataStore() {
     } catch (error) {
       console.error('Error adding study with site:', error);
       return false;
+    }
+  }
+
+  async function copyStudy(copyRequest: CopyStudyRequest): Promise<Study | null> {
+    try {
+      const uid = getCurrentUserOid();
+      const { sourceStudyId, siteNumber, ...studyData } = copyRequest;
+      if (!sourceStudyId) {
+        throw new Error("sourceStudyId is required for copy");
+      }
+      const studyToSend = {
+        ...studyData,
+        siteNumber,
+        therapeutic_area: copyRequest.therapeuticArea || (copyRequest as any).therapeutic_area
+      };
+      delete (studyToSend as any).therapeuticArea;
+      const response = await fetch(`${env.serverUrl}/copyStudy?uid=${uid}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sourceStudyId, studyData: studyToSend })
+      });
+      if (!response.ok) throw new Error('Failed to copy study');
+      const text = await response.text();
+      const copiedStudy = JSON.parse(text);
+      const transformedStudy = {
+        ...copiedStudy,
+        therapeuticArea: copiedStudy.therapeutic_area || copiedStudy.therapeuticArea || ''
+      };
+      await ModelManager.getInstance().createModel(copiedStudy.id);
+      await getStudies();
+      return transformedStudy;
+    } catch (error) {
+      console.error('Error copying study:', error);
+      return null;
     }
   }
 
@@ -1163,6 +1202,7 @@ function createDataStore() {
     getStudy,
     addStudy,
     addStudyWithSite,
+    copyStudy,
     updateStudy,
     deleteStudy,
     getPatients,

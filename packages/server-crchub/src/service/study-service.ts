@@ -1,5 +1,8 @@
 import { consoleLogInfo } from '../server/logging.js';
 import { getDbPool } from './db-connection.js';
+import * as modelService from './model-service.js';
+import * as siteService from './site-service.js';
+import { cloneJson, ensureUniqueCopyLabel } from './copy-study-utils.js';
 
 export interface Study {
     id: string;
@@ -17,6 +20,23 @@ export interface Study {
         description: string;
     }>;
     attributes?: any;
+}
+
+async function getUserOrgId(oid: string): Promise<string> {
+    const pool = getDbPool();
+    const orgResult = await pool.query(
+        `SELECT op.org_id
+         FROM person p
+         JOIN org_persons op ON p.person_id = op.person_id
+         WHERE p.oid = $1
+         LIMIT 1`,
+        [oid]
+    );
+    const orgId = orgResult.rows[0]?.org_id;
+    if (!orgId) {
+        throw new Error('User has no associated organization.');
+    }
+    return orgId;
 }
 
 /**
@@ -718,5 +738,56 @@ export async function deleteStudy(oid: string, studyId: string): Promise<boolean
         // Re-throw other errors
         throw error;
     }
+}
+
+/**
+ * Copy a study and its StudyConfiguration (but exclude patient data)
+ */
+export async function copyStudy(
+    oid: string,
+    sourceStudyId: string,
+    overrides: Partial<Study> & { siteNumber?: string },
+): Promise<Study> {
+    const pool = getDbPool();
+    const sourceStudy = await getStudy(oid, sourceStudyId);
+    if (!sourceStudy) {
+        throw new Error(`Source study not found: ${sourceStudyId}`);
+    }
+
+    const orgId = await getUserOrgId(oid);
+    const existingResult = await pool.query(
+        `SELECT s.name, st.site_number
+         FROM study s
+         JOIN site st ON st.study_id = s.study_id
+         WHERE st.org_id = $1`,
+        [orgId]
+    );
+    const existingNames = existingResult.rows.map((row) => row.name).filter(Boolean);
+    const existingSiteNumbers = existingResult.rows.map((row) => row.site_number).filter(Boolean);
+
+    const sourceSite = await siteService.getUserStudySite(oid, sourceStudyId);
+    const sourceSiteNumber = (sourceSite as any)?.site_number || (sourceSite as any)?.siteNumber || "";
+
+    const desiredName = overrides.name?.trim() || sourceStudy.name;
+    const desiredSiteNumber = overrides.siteNumber?.trim() || sourceSiteNumber;
+
+    const uniqueName = ensureUniqueCopyLabel(desiredName, existingNames);
+    const uniqueSiteNumber = ensureUniqueCopyLabel(desiredSiteNumber, existingSiteNumbers);
+
+    const copyData: Omit<Study, "id"> & { siteNumber: string } = {
+        ...sourceStudy,
+        ...overrides,
+        name: uniqueName,
+        siteNumber: uniqueSiteNumber,
+    };
+
+    const newStudy = await createStudyWithSite(oid, copyData);
+
+    const configuration = await modelService.getStudyConfiguration(sourceStudyId);
+    if (configuration) {
+        await modelService.saveStudyConfiguration(newStudy.id, cloneJson(configuration));
+    }
+
+    return newStudy;
 }
 

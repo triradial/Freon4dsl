@@ -76,6 +76,32 @@ export class DataHandler {
         }
     }
 
+    public static async copyStudy(oid: string, ctx: IRouterContext) {
+        try {
+            ctx.response.type = 'application/json';
+            const body: any = (ctx.request as any).body;
+            const sourceStudyId = body?.sourceStudyId;
+            const studyData = body?.studyData || {};
+            if (!sourceStudyId || typeof sourceStudyId !== "string") {
+                ctx.status = 412;
+                ctx.response.body = { error: "Missing required field 'sourceStudyId'" };
+                return;
+            }
+            const copyOverrides = {
+                ...studyData,
+                therapeutic_area: studyData.therapeutic_area || studyData.therapeuticArea
+            };
+            delete (copyOverrides as any).therapeuticArea;
+            const study = await studyService.copyStudy(oid, sourceStudyId, copyOverrides);
+            ctx.status = 201;
+            ctx.response.body = study;
+        } catch (e) {
+            consoleLogError(moduleName, `Error copying study: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error copying study", details: String(e) };
+        }
+    }
+
     public static async updateStudy(oid: string, id: string, ctx: IRouterContext) {
         try {
             ctx.response.type = 'application/json';

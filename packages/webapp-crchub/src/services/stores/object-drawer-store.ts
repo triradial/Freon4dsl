@@ -6,11 +6,11 @@ import type { Study } from '../data/data-store.js';
 export const objectDrawerStore = writable({
     open: false,
     type: null, // 'study' | 'patient' | 'organization' | 'person'
-    action: null, // 'add' | 'edit'
+    action: null, // 'add' | 'edit' | 'copy'
     data: null
 });
 
-export function openObjectDrawer(type: 'study' | 'patient' | 'organization' | 'person', action: 'add' | 'edit', data: any) {
+export function openObjectDrawer(type: 'study' | 'patient' | 'organization' | 'person', action: 'add' | 'edit' | 'copy', data: any) {
     objectDrawerStore.set({ open: true, type, action, data });
 }
 

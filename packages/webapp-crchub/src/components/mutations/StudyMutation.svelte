@@ -6,7 +6,7 @@
 
     const { study, action, onsave, onclose } = $props<{
         study: Study;
-        action: "add" | "edit";
+        action: "add" | "edit" | "copy";
         onsave?: (study: Study) => void;
         onclose?: () => void;
     }>();
@@ -25,6 +25,9 @@
     // Update mutatedStudy when study prop changes
     $effect(() => {
         Object.assign(mutatedStudy, study);
+        if (action !== "edit") {
+            siteNumber = (study as any)?.siteNumber || siteNumber || "";
+        }
     });
 
     // Track initialization
@@ -45,8 +48,12 @@
                     console.log("[StudyMutation] Validation complete - errors:", errors);
                 });
             } else {
-                // For add mode, set default status to Planning and run validation immediately
-                console.log("[StudyMutation] Add mode - setting default status to Planning");
+                // For add/copy mode, set default status if missing and run validation immediately
+                if (action === "add") {
+                    console.log("[StudyMutation] Add mode - setting default status to Planning");
+                } else if (action === "copy") {
+                    console.log("[StudyMutation] Copy mode - preparing defaults");
+                }
                 if (!mutatedStudy.status) {
                     mutatedStudy.status = "Planning";
                 }
@@ -84,9 +91,9 @@
         validateAllFields();
         if (Object.values(errorState).every((error) => error === "")) {
             console.log("[StudyMutation] calling onsave prop", mutatedStudy);
-            if (action === "add") {
+            if (action === "add" || action === "copy") {
                 // For add action, include the site number
-                onsave?.({ ...mutatedStudy, siteNumber } as any);
+                onsave?.({ ...mutatedStudy, siteNumber, sourceStudyId: (study as any)?.sourceStudyId } as any);
             } else {
                 // For edit action, save the study and update the site number
                 onsave?.(mutatedStudy);

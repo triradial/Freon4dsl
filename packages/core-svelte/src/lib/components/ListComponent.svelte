@@ -7,31 +7,32 @@
      * row or column, respectively.
      * This component supports drag and drop.
      */
+    import { flip } from 'svelte/animate';
     import {
-        AST,
         type Box,
-        type DragAndDropType,
         dropListElement,
-        ENTER,
-        FreCreatePartAction,
-        FreLanguage,
-        FreLogger,
         isActionBox,
-        isFreNode,
-        isFreNodeReference,
+        isExternalBox,
         isNullOrUndefined,
+        FreLanguage,
         type ListBox,
         ListDirection,
         ListElementInfo,
-        MenuItem,
         MenuOptionsType,
-        MetaKey,
         moveListElement,
-        notNullOrUndefined
+        MenuItem,
+        type DragAndDropType,
+        isFreNodeReference,
+        isFreNode,
+        FreLogger,
+        FreCreatePartAction,
+        MetaKey,
+        AST,
+        ENTER, notNullOrUndefined
     } from '@freon4dsl/core';
-    import { componentId, rememberDraggedNode } from '../index.js';
-    import DragHandle from "./images/DragHandle.svelte";
     import RenderComponent from './RenderComponent.svelte';
+    import { componentId, rememberDraggedNode } from '../index.js';
+    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
     import {
         activeElem,
         activeIn,
@@ -40,7 +41,7 @@
         draggedElem,
         draggedFrom
     } from './stores/AllStores.svelte.js';
-    import type { FreComponentProps } from './svelte-utils/FreComponentProps.js';
+    import DragHandle from "./images/DragHandle.svelte";
 
     // Props
     let { editor, box }: FreComponentProps<ListBox> = $props();
@@ -56,26 +57,27 @@
     // this speeds up the check whether an element may be dropped here
     let myMetaType: DragAndDropType;
     
-    const HIDE_DRAG_HANDLE_CONCEPTS = new Set([
-        'Reference',
-        'Person',
-        'PersonReference',
-        'SystemAccess',
-        'SystemAccessReference'
-    ]);
-
+    // Helper function to check if drag handle should be hidden for a specific box item.
+    // This respects the list-level canDragAndDrop setting and the individual box's hideDragHandle property.
     function shouldHideDragHandle(b: Box): boolean {
-        if (b.hideDragHandle) return true;
-
-        const conceptType = b.node?.freLanguageConcept();
-        if (conceptType && HIDE_DRAG_HANDLE_CONCEPTS.has(conceptType)) return true;
-
+        // Check if the list has drag-and-drop disabled entirely
+        if (!box.canDragAndDrop) {
+            return true;
+        }
+        // Check the individual box's hideDragHandle property
+        if (b.hideDragHandle) {
+            return true;
+        }
+        // Check if the box has findParam method (external box) and hideDragHandle param is set
         if ('findParam' in b && typeof (b as any).findParam === 'function') {
-            if ((b as any).findParam("hideDragHandle") === "true") return true;
+            const hideDragParam = (b as any).findParam("hideDragHandle");
+            if (hideDragParam === "true") {
+                return true;
+            }
         }
         return false;
     }
-
+    
     $effect(() => {
         // console.log(`EFFECT ${box.conceptName} : ${box.node.freLanguageConcept()}`)
         myMetaType = {
@@ -267,7 +269,7 @@
             oncontextmenu={(event) => showContextMenu(event, index)}
             role="none"
         >
-        {#if !isActionBox(box) && !shouldHideDragHandle(box)}
+            {#if !isActionBox(box) && !shouldHideDragHandle(box)}
             <span class="drag-handle"
                   draggable="true"
                   ondragstart={(event) => dragstart(event, id, index)}

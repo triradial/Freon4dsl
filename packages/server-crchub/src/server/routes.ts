@@ -282,6 +282,18 @@ router.post("/addStudyWithSite", async (ctx: Router.IRouterContext) => {
     }
 });
 
+router.post("/copyStudy", async (ctx: Router.IRouterContext) => {
+    const uid = ctx.query["uid"];
+    consoleLogInfo(moduleName, `copyStudy: uid=${uid}`);
+    if (!!uid && typeof uid === "string") {
+        await DataHandler.copyStudy(uid, ctx);
+    } else {
+        ctx.status = 412; // Precondition failed
+        ctx.response.type = 'application/json';
+        ctx.response.body = { error: "Missing query parameter 'uid'" };
+    }
+});
+
 router.put("/updateStudy", async (ctx: Router.IRouterContext) => {
     const id = ctx.query["id"];
     const uid = ctx.query["uid"];
