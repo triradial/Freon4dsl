@@ -20,7 +20,6 @@ import TextComponent from './TextComponent.svelte';
 import TextDropdownComponent from './TextDropdownComponent.svelte';
 import ErrorMarker from './ErrorMarker.svelte';
 import SvgComponent from './SvgComponent.svelte';
-import ErrorMarker from './ErrorMarker.svelte';
 
 export {
     BooleanCheckboxComponent,
