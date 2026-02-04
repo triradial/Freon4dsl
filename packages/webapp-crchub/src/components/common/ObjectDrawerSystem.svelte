@@ -7,6 +7,7 @@
     import PersonMutation from '../mutations/PersonMutation.svelte';
     import IconX from '@lucide/svelte/icons/x';
     import { dataStore } from '../../services/data/data-store.js';
+    import { navigateTo } from '../../services/routing/route-action.js';
 
     let openState = $derived($objectDrawerStore.open);
     let type = $derived($objectDrawerStore.type);
@@ -43,7 +44,7 @@
         <header class="drawer-header">
             <div class="drawer-title-container">
             <h2>
-                {action === 'add' ? 'Add' : 'Edit'} {type === 'study' ? 'Study' : type === 'patient' ? 'Patient' : type === 'organization' ? 'Organization' : type === 'person' ? 'Person' : ''}
+                {action === 'add' ? 'Add' : action === 'edit' ? 'Edit' : 'Copy'} {type === 'study' ? 'Study' : type === 'patient' ? 'Patient' : type === 'organization' ? 'Organization' : type === 'person' ? 'Person' : ''}
             </h2>         
             </div>
             <button class="icon-button drawer-header-button" onclick={handleClose}><IconX size="16" /></button>
@@ -58,6 +59,13 @@
                             await dataStore.addStudyWithSite(study as any);
                         } else if (action === 'edit') {
                             await dataStore.updateStudy(study);
+                        } else if (action === 'copy') {
+                            const copiedStudy = await dataStore.copyStudy(study as any);
+                            if (copiedStudy?.id) {
+                                handleClose();
+                                navigateTo('study', copiedStudy.id);
+                                return;
+                            }
                         }
                         handleClose();
                     }} 

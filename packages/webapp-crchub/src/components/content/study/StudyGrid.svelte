@@ -1,6 +1,6 @@
 <script lang="ts">
     import { dataStore, type Study } from "../../../services/data/data-store.js";
-    import { editObject, addObject } from "../../../services/stores/object-drawer-store.js";
+    import { editObject, addObject, openObjectDrawer } from "../../../services/stores/object-drawer-store.js";
     import { onMount, onDestroy, tick } from "svelte";
     import { mount, unmount } from "svelte";
     import { createGrid } from "ag-grid-community";
@@ -9,7 +9,7 @@
     import { navigateTo } from "../../../services/routing/route-action.js";
     import { theme } from "../../../services/stores/theme-store.js";
     import GridHeader from "../../common/GridHeader.svelte";
-    import { getSVGIcon } from "../../../services/utils.js";
+    import { ensureUniqueCopyLabel, getSVGIcon } from "../../../services/utils.js";
     import SaveViewDialog from "../../dialogs/SaveViewDialog.svelte";
     import { userStore } from "../../../services/stores/users-store.js";
     import { adminModeStore } from "../../../services/stores/admin-mode-store.js";
@@ -640,6 +640,24 @@
         fetchStudies();
     }
 
+    function onCopyClick(studyData: Study) {
+        if (!studyData?.id) return;
+        const existingNames = studiesData.map((study) => study.name).filter(Boolean);
+        const existingSiteNumbers = studiesData
+            .map((study) => study.siteNumber || "")
+            .filter((value) => value.trim() !== "");
+        const copiedName = ensureUniqueCopyLabel(studyData.name || "Study", existingNames);
+        const copiedSiteNumber = ensureUniqueCopyLabel(studyData.siteNumber || "", existingSiteNumbers);
+        const copyPayload = {
+            ...studyData,
+            id: "",
+            name: copiedName,
+            siteNumber: copiedSiteNumber,
+            sourceStudyId: studyData.id
+        };
+        openObjectDrawer("study", "copy", copyPayload);
+    }
+
     function onStudyChanged() {
         fetchStudies();
     }
@@ -722,6 +740,7 @@
             props: {
                 params: params,
                 onEdit: onEditClick,
+                onCopy: onCopyClick,
                 onDelete: (studyData: Study, triggerElement: HTMLElement) => handleDeleteStudy(studyData, triggerElement)
             }
         });
