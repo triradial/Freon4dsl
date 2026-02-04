@@ -40,24 +40,26 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
-- [ ] Unscheduled and other special events
-  - [ ] Model unscheduled and other special events in the language in a better way.
-  - [ ] Add unscheduled event support to checklist
+- [ ] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
+- [ ] Test, update, and add buttons for things like duplicate and smart duplicate
+- [ ] Create complex and realistic examples of checklists
+- [ ] Rebuild some or all of the studies to test behavior and useability
 - [ ] Add back pdf/print behavior to checklist (discuss with Graham, e.g., where does button go)
 - [ ] Make tasks be clickable checkboxes
-- [ ] Add additional validation checks if/as needed so reliably get charts, etc. Need to setup tests of incomplete studies.
+- [ ] Setup tests of incomplete studies and add additional validation checks if/as needed so reliably get charts, etc.
 - [ ] Determine whether optional from Freon is needed and where 
-- [ ] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
-- [ ] Repeating Visits with occurrence on the schedule 
-- [ ] Test, update, and add buttons for things like duplicate and smart duplicate
 - [ ] Remove choice of the visit you are on when 'start when' is a reference. Needs custom scope added. 
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
+- [ ] Unscheduled and other special events
+  - [ ] Model unscheduled and other special events in the language in a better way.
+  - [ ] Add unscheduled event support to checklist
 - [ ] remove duplicate first scheduled choices 
 
 
 ### Done
+- [x] Repeating Visits with occurrence on the schedule 
 - [x] Finish Checklist display and printing as HTML: 
   - [x] Add Schedule and Checklist details
   - [x] Make links to systems be real html links
