@@ -4,7 +4,7 @@ StudyConfiguration {
     [
     Study Notes: ${description}
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
-    ${unscheduledEvents wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Unscheduled Events"}
+    ${unscheduledEvents wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Unscheduled Events"}
     ${tasks wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Shared Tasks"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
