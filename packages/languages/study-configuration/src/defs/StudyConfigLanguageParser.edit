@@ -4,6 +4,8 @@ StudyConfiguration {
     [
     Periods:
       ${periods}
+    Unscheduled Events:
+      ${unscheduledEvents}
     Tasks:
       ${tasks}
     System Accesses:

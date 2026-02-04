@@ -40,9 +40,11 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
-- [ ] Model unscheduled and other special events in the language in a better way.
-- [ ] remove duplicate first scheduled choices 
+- [ ] Unscheduled and other special events
+  - [ ] Model unscheduled and other special events in the language in a better way.
+  - [ ] Add unscheduled event support to checklist
 - [ ] Add back pdf/print behavior to checklist (discuss with Graham, e.g., where does button go)
+- [ ] Make tasks be clickable checkboxes
 - [ ] Add additional validation checks if/as needed so reliably get charts, etc. Need to setup tests of incomplete studies.
 - [ ] Determine whether optional from Freon is needed and where 
 - [ ] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
@@ -52,16 +54,15 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
-- [ ] Update to current Freon version.
-- [ ] Finish Checklist display and printing as HTML: 
-  - [x] Add Schedule and Checklist details
-  - [x] Make links to systems be real html links
-  - [x] Improve formatting overall
-  - [ ] Add unscheduled event support to checklist
-  - [ ] Make tasks be clickable checkboxes
+- [ ] remove duplicate first scheduled choices 
 
 
 ### Done
+- [x] Finish Checklist display and printing as HTML: 
+  - [x] Add Schedule and Checklist details
+  - [x] Make links to systems be real html links
+  - [x] Improve formatting overall
+- [x] Update to current Freon version.
 - [x] Get rid of the 'Notes' stuff, have only description and explore always having descriptions displayed. 
 - [x] Review single event patient checklist that Jon created to determine if Graham can use it. -> It should be useable after the rest of the checklist display is cleaned-up 
 - [x] make default study have 'day 0' as start when to avoid the error.

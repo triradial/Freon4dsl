@@ -20,6 +20,7 @@ modelunit StudyConfiguration {
     showDescriptions: boolean = true;
     studyStartDayNumber: number = 0;
     periods: Period[];
+    unscheduledEvents: UnscheduledEvent[];
     tasks: SharedTask[];
     systemAccesses: SystemAccess[];
     staffing: Person[];
@@ -46,6 +47,16 @@ concept Event {
     tasks: EventTask[];
     description: Description;
     schedule: EventSchedule;
+}
+
+concept UnscheduledEvent {
+    name: identifier;
+    alternativeName: string; // Optional, see validator where errors about it are removed.
+    typeOfEvent:TypeOfEvent = TypeOfEvent:site;
+    showSequenced: boolean;
+    eventNumber: number;
+    tasks: EventTask[];
+    description: Description;
 }
 
 abstract concept AbstractTask {

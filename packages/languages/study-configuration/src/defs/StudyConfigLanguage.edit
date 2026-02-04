@@ -27,6 +27,7 @@ StudyConfiguration {
     [
     Study Notes: ${description}
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
+    ${unscheduledEvents wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Unscheduled Events"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
     ${roles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"}
@@ -57,6 +58,17 @@ Event {
     ]
 }
 
+UnscheduledEvent {
+    [
+        [fragment unscheduledEventDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Unscheduled EventY"]
+    ]
+    fragment unscheduledEventDetails [
+        ${name}
+        This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
+        ${description}
+        ${tasks wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Checklist"}
+    ]
+}
 Task {
     [
         [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="false" label="Task"]

@@ -5,7 +5,7 @@ import { FreError } from "@freon4dsl/core";
 
 import { StudyConfigurationModelDefaultWorker } from "../freon/utils/index.js";
 import { type StudyConfigurationModelCheckerInterface } from "../freon/validator/StudyConfigurationModelValidator.js";
-import { Event, Step, Task, Reference, StaffRole, SystemAccess } from "../freon/language/index.js";
+import { Event, Step, Task, Reference, StaffRole, SystemAccess, Period } from "../freon/language/index.js";
 
 export class CustomStudyConfigurationModelValidator
   extends StudyConfigurationModelDefaultWorker
@@ -81,6 +81,16 @@ export class CustomStudyConfigurationModelValidator
   public override execAfterSystemAccess(_modelelement: SystemAccess): boolean {
     super.execAfterSystemAccess(_modelelement);
     // Remove description errors for SystemAccess
+    this.removeErrorsMatching(
+      /property 'description' of .* must have a value/i,
+      "Removing description error:"
+    );
+    return false;
+  }
+
+  public override execAfterPeriod(_modelelement: Period): boolean {
+    super.execAfterPeriod(_modelelement);
+    // Remove description errors for Period
     this.removeErrorsMatching(
       /property 'description' of .* must have a value/i,
       "Removing description error:"
