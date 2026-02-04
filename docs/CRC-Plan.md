@@ -7,14 +7,17 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Graham
 
 ### To-Do 
+- [ ] '+' should expand if collapsed
+- [ ] change the 'Errors' tab to something friendlier, e.g., 'Issues', 'To-Do', 'Incomplete'
+- [ ] Investigate how Freon shows error under field to see if we can use it, e.g., box
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
-- [ ] Update what is displayed on Info / Help panel
-  - [ ] Write/generate a simple user guide with focus on how to create a study design
-- [ ] Make staff shared/optionally-shared across studies (not essential for first user)
-- [ ] Make roles shared/optionally-shared across studies (not essential for first user)
 - [ ] Document and test the steps to bring on a user
 - [ ] Create a repeatable demo script (whoever is done first will do this)
 - Not needed for first user:
+  - [ ] Make staff shared/optionally-shared across studies (not essential for first user)
+  - [ ] Make roles shared/optionally-shared across studies (not essential for first user)
+  - [ ] Update what is displayed on Info / Help panel
+  - [ ] Write/generate a simple user guide with focus on how to create a study design
   - [ ] Setup approach to testing new charts and other parts of the UI
   - [ ] Add tests
 
@@ -23,8 +26,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Create a dev/test instance on Azure
 - [ ] Add patient page with visits / checklist, add note taking place
   - [ ] Add existing single patient full schedule chart to a draw / panel in the new UI
-- [ ] HTML editor:
-  - [ ] return and tab need to not jump out of editor
+- [ ] HTML editor: return and tab need to not jump out of editor
 
 ### Done
 - [x] Improve validation error messages
@@ -38,7 +40,8 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
-- [ ] Model unscheduled and other special events in the language in a better way. 
+- [ ] Model unscheduled and other special events in the language in a better way.
+- [ ] remove duplicate first scheduled choices 
 - [ ] Add back pdf/print behavior to checklist (discuss with Graham, e.g., where does button go)
 - [ ] Add additional validation checks if/as needed so reliably get charts, etc. Need to setup tests of incomplete studies.
 - [ ] Determine whether optional from Freon is needed and where 
@@ -71,7 +74,8 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ]
 
 ### In-Progress
-- [ ] Add multi-patient full schedule chart
+- [ ] Add multi-patient full schedule chart as an alternative view
+- [ ] add back view of availability to chart
 
 ### Done
 - [x] Copy a study feature
