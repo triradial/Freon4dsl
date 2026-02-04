@@ -42,3 +42,29 @@ export function ensureUniqueCopyLabel(desiredLabel: string, existingLabels: stri
 export function cloneJson<T>(value: T): T {
     return value === undefined ? value : (JSON.parse(JSON.stringify(value)) as T);
 }
+
+/**
+ * Validates that a study name is unique among existing studies.
+ * @param studyName - The name to validate
+ * @param existingStudies - Array of existing studies with id and name
+ * @param excludeStudyId - Optional study ID to exclude (e.g. when editing, exclude the current study)
+ * @returns true if the name is valid (unique), false if it already exists
+ */
+export function validateName(
+    studyName: string,
+    existingStudies: Array<{ id: string; name: string }>,
+    excludeStudyId?: string
+): boolean {
+    const normalized = studyName.trim();
+    if (!normalized) {
+        return true; // Empty is handled by required-field validation
+    }
+    const lowerNew = normalized.toLowerCase();
+    for (const s of existingStudies) {
+        if (excludeStudyId && s.id === excludeStudyId) continue;
+        if (s.name?.trim().toLowerCase() === lowerNew) {
+            return false; // Duplicate found
+        }
+    }
+    return true;
+}
