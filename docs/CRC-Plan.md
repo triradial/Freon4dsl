@@ -40,7 +40,6 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
-- [ ] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
 - [ ] Test, update, and add buttons for things like duplicate and smart duplicate
 - [ ] Create complex and realistic examples of checklists
 - [ ] Rebuild some or all of the studies to test behavior and useability
@@ -52,13 +51,14 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
-- [ ] Unscheduled and other special events
-  - [ ] Model unscheduled and other special events in the language in a better way.
-  - [ ] Add unscheduled event support to checklist
-- [ ] remove duplicate first scheduled choices 
+- [ ] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
 
 
 ### Done
+- [x] Unscheduled and other special events
+  - [x] Model unscheduled and other special events in the language in a better way.
+  - [x] Add unscheduled event support to checklist
+- [x] remove duplicate first scheduled choices 
 - [x] Repeating Visits with occurrence on the schedule 
 - [x] Finish Checklist display and printing as HTML: 
   - [x] Add Schedule and Checklist details
