@@ -68,10 +68,10 @@ FirstDayOfStudy {
     
 }
 
-Baseline {
-    [ on the baseline/start day of the study ${timeAmountPart} ]
-    
-}
+// Baseline {
+//     [ on the baseline/start day of the study ${timeAmountPart} ]
+//     trigger = "baseline: alternate name for the first day of the study"
+// }
 
 Day {
     [ day ${startDay} ]
@@ -83,20 +83,20 @@ When {
     
 }  
 
-Previous {
-    [ when the previous event ${eventState} ${timeAmountPart} ]
-    
-}
+// Previous {
+//     [ when the previous event ${eventState} ${timeAmountPart} ]
+//
+// }
 
-Unscheduled {
-    [ on any day (an unscheduled event) ]
-    
-}
+// Unscheduled {
+//     [ on any day (an unscheduled event) ]
+//
+// }
 
-AnyDay {
-    [ on any day (an unscheduled event) ]
+// AnyDay {
+//     [ on any day (an unscheduled event) ]
     
-} 
+// } 
 
 //----------------------------------------------------------
 // WINDOWS

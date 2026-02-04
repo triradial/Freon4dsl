@@ -1,14 +1,14 @@
 // Generated my Freon once, will NEVER be overwritten.
 import { IMainInterpreter, InterpreterContext, RtBoolean, RtError, RtNumber, RtObject, RtString, ownerOfType } from "@freon4dsl/core";
+import { StudyConfigurationModelInterpreterBase } from "../freon/interpreter/StudyConfigurationModelInterpreterBase.js";
+import * as language from "../freon/language/index.js";
+import { StudyConfiguration, StudyConfigurationModel } from "../freon/language/index.js";
 import * as Sim from "./simjs/sim.js";
 import { TimelineChartTemplate } from "./templates/TimelineChartTemplate.js";
 import { TimelineTableTemplate } from "./templates/TimelineTableTemplate.js";
 import { RtObjectScheduledEventWrapper } from "./timeline/ScheduledEvent.js";
 import { Simulator } from "./timeline/Simulator.js";
 import { Timeline } from "./timeline/Timeline.js";
-import * as language from "../freon/language/index.js";
-import { StudyConfiguration, StudyConfigurationModel } from "../freon/language/index.js";
-import { StudyConfigurationModelInterpreterBase } from "../freon/interpreter/StudyConfigurationModelInterpreterBase.js";
 
 let main: IMainInterpreter;
 
@@ -227,20 +227,20 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
   }
 
-  evalPrevious(node: language.Previous, ctx: InterpreterContext): RtObject {
-    const timeline = ctx.find("timeline") as unknown as Timeline;
-    const lastCompletedEvent =
-      timeline.getLastCompletedScheduledEventInstance();
-    interpreterLog("evalPrevious: lastCompletedEvent: " + lastCompletedEvent?.startDay);
-    if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
-      const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
-      interpreterLog("evalPrevious: timeAmount: " + timeAmount.value);
-      return new RtNumber(lastCompletedEvent.startDay + timeAmount.value);
-    } else {
-      interpreterLog("evalPrevious without time amount: lastCompletedEvent.startDay: " + lastCompletedEvent?.startDay);
-      return new RtNumber(lastCompletedEvent?.startDay);
-    }
-  }
+  // evalPrevious(node: language.Previous, ctx: InterpreterContext): RtObject {
+  //   const timeline = ctx.find("timeline") as unknown as Timeline;
+  //   const lastCompletedEvent =
+  //     timeline.getLastCompletedScheduledEventInstance();
+  //   interpreterLog("evalPrevious: lastCompletedEvent: " + lastCompletedEvent?.startDay);
+  //   if (node.timeAmountPart !== undefined && node.timeAmountPart !== null) {
+  //     const timeAmount = main.evaluate(node.timeAmountPart, ctx) as RtNumber;
+  //     interpreterLog("evalPrevious: timeAmount: " + timeAmount.value);
+  //     return new RtNumber(lastCompletedEvent.startDay + timeAmount.value);
+  //   } else {
+  //     interpreterLog("evalPrevious without time amount: lastCompletedEvent.startDay: " + lastCompletedEvent?.startDay);
+  //     return new RtNumber(lastCompletedEvent?.startDay);
+  //   }
+  // }
 
   evalGreaterThenExpression(
     node: language.GreaterThenExpression,
@@ -344,9 +344,9 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
     }
   }
 
-  evalBaseline(node: language.Baseline, ctx: InterpreterContext): RtObject {
-    return this.evalFirstDayOfStudy(node, ctx);
-  }
+  // evalBaseline(node: language.Baseline, ctx: InterpreterContext): RtObject {
+  //   return this.evalFirstDayOfStudy(node, ctx);
+  // }
 
   evalTimeAmountPart(
     node: language.TimeAmountPart,
@@ -399,14 +399,14 @@ export class StudyConfigurationModelInterpreter extends StudyConfigurationModelI
 
   // Unscheduled events don't have a predetermined schedule day - they are only
   // added to a patient's schedule when explicitly triggered (e.g., termination,
-  // adverse event, protocol deviation). Return undefined so the simulator 
+  // adverse event, protocol deviation). Return undefined so the simulator
   // skips scheduling them automatically.
-  evalUnscheduled(node: language.Unscheduled, ctx: InterpreterContext): RtObject {
-    return undefined;
-  }
+  // evalUnscheduled(node: language.Unscheduled, ctx: InterpreterContext): RtObject {
+  //   return undefined;
+  // }
 
-  // AnyDay extends Unscheduled - same behavior
-  evalAnyDay(node: language.AnyDay, ctx: InterpreterContext): RtObject {
-    return undefined;
-  }
+  // // AnyDay extends Unscheduled - same behavior
+  // evalAnyDay(node: language.AnyDay, ctx: InterpreterContext): RtObject {
+  //   return undefined;
+  // }
 }
