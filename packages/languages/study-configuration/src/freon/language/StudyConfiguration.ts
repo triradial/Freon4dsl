@@ -44,6 +44,9 @@ export class StudyConfiguration extends MobxModelElementImpl implements FreModel
         if (notNullOrUndefined(data.showChecklists)) {
             result.showChecklists = data.showChecklists;
         }
+        if (notNullOrUndefined(data.showSteps)) {
+            result.showSteps = data.showSteps;
+        }
         if (notNullOrUndefined(data.showReferences)) {
             result.showReferences = data.showReferences;
         }
@@ -94,6 +97,7 @@ export class StudyConfiguration extends MobxModelElementImpl implements FreModel
     showScheduling!: boolean; // implementation of showScheduling
     showSchedulingDetails!: boolean; // implementation of showSchedulingDetails
     showChecklists!: boolean; // implementation of showChecklists
+    showSteps!: boolean; // implementation of showSteps
     showReferences!: boolean; // implementation of showReferences
     showSystems!: boolean; // implementation of showSystems
     showPeople!: boolean; // implementation of showPeople
@@ -125,6 +129,8 @@ export class StudyConfiguration extends MobxModelElementImpl implements FreModel
         this.showSchedulingDetails = false;
         observableprim(this, "showChecklists");
         this.showChecklists = false;
+        observableprim(this, "showSteps");
+        this.showSteps = true;
         observableprim(this, "showReferences");
         this.showReferences = false;
         observableprim(this, "showSystems");
@@ -213,6 +219,9 @@ export class StudyConfiguration extends MobxModelElementImpl implements FreModel
         if (notNullOrUndefined(this.showChecklists)) {
             result.showChecklists = this.showChecklists;
         }
+        if (notNullOrUndefined(this.showSteps)) {
+            result.showSteps = this.showSteps;
+        }
         if (notNullOrUndefined(this.showReferences)) {
             result.showReferences = this.showReferences;
         }
@@ -269,6 +278,9 @@ export class StudyConfiguration extends MobxModelElementImpl implements FreModel
         }
         if (result && toBeMatched.showChecklists !== null && toBeMatched.showChecklists !== undefined) {
             result = result && this.showChecklists === toBeMatched.showChecklists;
+        }
+        if (result && toBeMatched.showSteps !== null && toBeMatched.showSteps !== undefined) {
+            result = result && this.showSteps === toBeMatched.showSteps;
         }
         if (result && toBeMatched.showReferences !== null && toBeMatched.showReferences !== undefined) {
             result = result && this.showReferences === toBeMatched.showReferences;

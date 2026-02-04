@@ -913,12 +913,20 @@ const map = new Map([
                 new Map([
                     ["name", ""], // special projection
                     ["description", ""], // special projection
-                    ["steps", ""], // special projection
                 ]),
             ],
             [
                 // Projection has special projection for some part
                 "parser",
+                new Map([
+                    ["name", ""], // special projection
+                    ["description", ""], // special projection
+                    ["steps", ""], // special projection
+                ]),
+            ],
+            [
+                // Projection has special projection for some part
+                "stepsShow",
                 new Map([
                     ["name", ""], // special projection
                     ["description", ""], // special projection
@@ -1502,6 +1510,7 @@ export function initializeProjections(handler: FreProjectionHandler) {
     handler.addProjection("descriptionsShow");
     handler.addProjection("checklistsShow");
     handler.addProjection("parser");
+    handler.addProjection("stepsShow");
     handler.addProjection("peopleShow");
     handler.addProjection("referencesShow");
     handler.addProjection("systemsShow");

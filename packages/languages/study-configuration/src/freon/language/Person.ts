@@ -30,6 +30,8 @@ export class Person extends AbstractPerson implements FreNamedNode {
         }
         if (notNullOrUndefined(data.description)) {
             result.description = data.description;
+        } else {
+            result.description = Description.create({});
         }
         if (notNullOrUndefined(data.role)) {
             result.role = data.role;
@@ -46,7 +48,7 @@ export class Person extends AbstractPerson implements FreNamedNode {
     name!: string; // implementation of name
     email: string | undefined; // implementation of email
     phoneNumber: string | undefined; // implementation of phoneNumber
-    description: Description | undefined; // implementation of part 'description'
+    description!: Description; // implementation of part 'description'
     role!: FreNodeReference<StaffRole>; // implementation of reference 'role'
 
     constructor(id?: string) {
@@ -141,9 +143,7 @@ export class Person extends AbstractPerson implements FreNamedNode {
             result = result && this.phoneNumber === toBeMatched.phoneNumber;
         }
         if (result && notNullOrUndefined(toBeMatched.description)) {
-            if (this.description) {
-                result = result && this.description.match(toBeMatched.description);
-            }
+            result = result && this.description.match(toBeMatched.description);
         }
         if (result && notNullOrUndefined(toBeMatched.role)) {
             result = result && this.role.match(toBeMatched.role);

@@ -50,6 +50,7 @@ export class SystemAccessBoxProvider extends FreBoxProvider {
                 params: [
                     { key: "cssClass", value: "type3" },
                     { key: "canDelete", value: "true" },
+                    { key: "hideDragHandle", value: "true" },
                 ],
             },
         );

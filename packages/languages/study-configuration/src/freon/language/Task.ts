@@ -38,6 +38,8 @@ export class Task extends EventTask implements FreNamedNode {
         }
         if (notNullOrUndefined(data.description)) {
             result.description = data.description;
+        } else {
+            result.description = Description.create({});
         }
         if (notNullOrUndefined(data.steps)) {
             data.steps.forEach((x) => result.steps.push(x));
@@ -54,7 +56,7 @@ export class Task extends EventTask implements FreNamedNode {
     name!: string; // implementation of name
     numberedSteps!: boolean; // implementation of numberedSteps
     showDetails!: boolean; // implementation of showDetails
-    description: Description | undefined; // implementation of part 'description'
+    description!: Description; // implementation of part 'description'
     steps!: Step[]; // implementation of part 'steps'
 
     constructor(id?: string) {
@@ -149,9 +151,7 @@ export class Task extends EventTask implements FreNamedNode {
             result = result && this.showDetails === toBeMatched.showDetails;
         }
         if (result && notNullOrUndefined(toBeMatched.description)) {
-            if (this.description) {
-                result = result && this.description.match(toBeMatched.description);
-            }
+            result = result && this.description.match(toBeMatched.description);
         }
         if (result && notNullOrUndefined(toBeMatched.steps)) {
             result = result && matchElementList(this.steps, toBeMatched.steps);

@@ -67,8 +67,13 @@ export class WhenBoxProvider extends FreBoxProvider {
             "",
             [
                 BoxUtil.labelBox(this._node as When, "when", "top-1-line-0-item-0"),
-                BoxUtil.getBoxOrAction(this._node as When, "startWhen", "EventReference", this.mainHandler),
-                BoxUtil.getBoxOrAction(this._node as When, "timeAmountPart", "TimeAmountPart", this.mainHandler),
+                BoxUtil.partReplacerBox(this._node as When, "startWhen", "CustomActionsComponent", {
+                    params: [{ key: "placeholder", value: "event reference" }],
+                }),
+                ,
+                BoxUtil.partReplacerBox(this._node as When, "timeAmountPart", "CustomActionsComponent", {
+                    params: [{ key: "placeholder", value: "time amount part" }],
+                }),
             ],
             { selectable: false },
         );

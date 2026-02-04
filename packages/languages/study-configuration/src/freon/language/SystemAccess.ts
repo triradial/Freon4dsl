@@ -30,6 +30,8 @@ export class SystemAccess extends AbstractSystemAccess implements FreNamedNode {
         }
         if (notNullOrUndefined(data.description)) {
             result.description = data.description;
+        } else {
+            result.description = Description.create({});
         }
         if (notNullOrUndefined(data.accessedAt)) {
             result.accessedAt = data.accessedAt;
@@ -46,7 +48,7 @@ export class SystemAccess extends AbstractSystemAccess implements FreNamedNode {
     name!: string; // implementation of name
     isShared!: boolean; // implementation of isShared
     functionName: string | undefined; // implementation of functionName
-    description: Description | undefined; // implementation of part 'description'
+    description!: Description; // implementation of part 'description'
     accessedAt!: AccessedAt; // implementation of part 'accessedAt'
 
     constructor(id?: string) {
@@ -141,9 +143,7 @@ export class SystemAccess extends AbstractSystemAccess implements FreNamedNode {
             result = result && this.functionName === toBeMatched.functionName;
         }
         if (result && notNullOrUndefined(toBeMatched.description)) {
-            if (this.description) {
-                result = result && this.description.match(toBeMatched.description);
-            }
+            result = result && this.description.match(toBeMatched.description);
         }
         if (result && notNullOrUndefined(toBeMatched.accessedAt)) {
             result = result && this.accessedAt.match(toBeMatched.accessedAt);

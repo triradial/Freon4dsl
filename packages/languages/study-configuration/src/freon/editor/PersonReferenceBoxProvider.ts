@@ -66,6 +66,7 @@ export class PersonReferenceBoxProvider extends FreBoxProvider {
                     { key: "isExpanded", value: "false" },
                     { key: "selectable", value: "true" },
                     { key: "label", value: "Person" },
+                    { key: "hideDragHandle", value: "true" },
                 ],
             },
         );

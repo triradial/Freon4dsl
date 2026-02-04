@@ -50,12 +50,12 @@ Event = 'Event:' identifier
 	 EventTask* ;
 
 Task = 'Task:' identifier
-	 Description?
+	 Description
 	 'Steps:'
 	 Step* ;
 
 Step = 'Step:' identifier
-	 Description?
+	 Description
 	 'People:'
 	 AbstractPerson*
 	 'Systems' 'Used:'
@@ -65,7 +65,7 @@ Step = 'Step:' identifier
 
 Reference = 'Reference:' stringLiteral
 	 'Document' 'is' 'at:' optStringLiteral
-	 Description? ;
+	 Description ;
 
 PersonReference = 'PersonReference:' __fre_reference ;
 
@@ -73,11 +73,11 @@ Person = 'Name:' identifier
 	 'Email:' optStringLiteral
 	 'Phone:' optStringLiteral
 	 'Role:' __fre_reference
-	 'Notes:' Description? ;
+	 'Notes:' Description ;
 
 SystemAccess = 'System' 'Name:' identifier
 	 'Accessed' 'At:' AccessedAt
-	 Description? ;
+	 Description ;
 
 AccessedAtURL = 'URL:' optStringLiteral ;
 
@@ -157,12 +157,12 @@ EndingBy = 'ending' 'by' stringLiteral ;
 BetweenTimes = 'starting' 'by' stringLiteral 'and' 'ending' 'by' stringLiteral ;
 
 SharedTask = 'Shared' 'Task:' identifier
-	 Description?
+	 Description
 	 'Steps:'
 	 Step* ;
 
 StaffRole = 'Role:' identifier
-	 Description? ;
+	 Description ;
 
 EventTask = TaskReference 
     | Task  ;

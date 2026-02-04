@@ -278,6 +278,16 @@ export class StudyConfigurationModelNonOptionalsChecker
                 ),
             );
         }
+        if (isNullOrUndefined(node.showSteps)) {
+            this.errorList.push(
+                new FreError(
+                    `Property 'showSteps' of ${locationDescription(node)} must have a value`,
+                    node,
+                    "showSteps",
+                    FreErrorSeverity.Error,
+                ),
+            );
+        }
         if (isNullOrUndefined(node.showReferences)) {
             this.errorList.push(
                 new FreError(
@@ -1720,6 +1730,16 @@ export class StudyConfigurationModelNonOptionalsChecker
                 ),
             );
         }
+        if (isNullOrUndefined(node.description)) {
+            this.errorList.push(
+                new FreError(
+                    `Property 'description' of ${locationDescription(node)} must have a value`,
+                    node,
+                    "description",
+                    FreErrorSeverity.Error,
+                ),
+            );
+        }
 
         return false;
     }
@@ -1758,6 +1778,16 @@ export class StudyConfigurationModelNonOptionalsChecker
                 ),
             );
         }
+        if (isNullOrUndefined(node.description)) {
+            this.errorList.push(
+                new FreError(
+                    `Property 'description' of ${locationDescription(node)} must have a value`,
+                    node,
+                    "description",
+                    FreErrorSeverity.Error,
+                ),
+            );
+        }
 
         return false;
     }
@@ -1792,6 +1822,16 @@ export class StudyConfigurationModelNonOptionalsChecker
         if (isNullOrUndefined(node.name) || node.name?.length === 0) {
             this.errorList.push(
                 new FreError(`Property 'name' of ${locationDescription(node)} must have a value`, node, "name", FreErrorSeverity.Error),
+            );
+        }
+        if (isNullOrUndefined(node.description)) {
+            this.errorList.push(
+                new FreError(
+                    `Property 'description' of ${locationDescription(node)} must have a value`,
+                    node,
+                    "description",
+                    FreErrorSeverity.Error,
+                ),
             );
         }
 
@@ -1858,6 +1898,16 @@ export class StudyConfigurationModelNonOptionalsChecker
                 ),
             );
         }
+        if (isNullOrUndefined(node.description)) {
+            this.errorList.push(
+                new FreError(
+                    `Property 'description' of ${locationDescription(node)} must have a value`,
+                    node,
+                    "description",
+                    FreErrorSeverity.Error,
+                ),
+            );
+        }
         if (isNullOrUndefined(node.accessedAt)) {
             this.errorList.push(
                 new FreError(
@@ -1904,6 +1954,16 @@ export class StudyConfigurationModelNonOptionalsChecker
                 new FreError(`Property 'name' of ${locationDescription(node)} must have a value`, node, "name", FreErrorSeverity.Error),
             );
         }
+        if (isNullOrUndefined(node.description)) {
+            this.errorList.push(
+                new FreError(
+                    `Property 'description' of ${locationDescription(node)} must have a value`,
+                    node,
+                    "description",
+                    FreErrorSeverity.Error,
+                ),
+            );
+        }
 
         return false;
     }
@@ -1940,6 +2000,16 @@ export class StudyConfigurationModelNonOptionalsChecker
                 new FreError(`Property 'name' of ${locationDescription(node)} must have a value`, node, "name", FreErrorSeverity.Error),
             );
         }
+        if (isNullOrUndefined(node.description)) {
+            this.errorList.push(
+                new FreError(
+                    `Property 'description' of ${locationDescription(node)} must have a value`,
+                    node,
+                    "description",
+                    FreErrorSeverity.Error,
+                ),
+            );
+        }
         if (isNullOrUndefined(node.role)) {
             this.errorList.push(
                 new FreError(`Property 'role' of ${locationDescription(node)} must have a value`, node, "role", FreErrorSeverity.Error),
@@ -1961,6 +2031,16 @@ export class StudyConfigurationModelNonOptionalsChecker
         if (isNullOrUndefined(node.name) || node.name?.length === 0) {
             this.errorList.push(
                 new FreError(`Property 'name' of ${locationDescription(node)} must have a value`, node, "name", FreErrorSeverity.Error),
+            );
+        }
+        if (isNullOrUndefined(node.description)) {
+            this.errorList.push(
+                new FreError(
+                    `Property 'description' of ${locationDescription(node)} must have a value`,
+                    node,
+                    "description",
+                    FreErrorSeverity.Error,
+                ),
             );
         }
 

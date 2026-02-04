@@ -424,6 +424,7 @@
 		+ boolean showScheduling
 		+ boolean showSchedulingDetails
 		+ boolean showChecklists
+		+ boolean showSteps
 		+ boolean showReferences
 		+ boolean showSystems
 		+ boolean showPeople

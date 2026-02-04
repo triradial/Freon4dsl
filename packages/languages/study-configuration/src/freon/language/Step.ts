@@ -35,6 +35,8 @@ export class Step extends MobxModelElementImpl implements FreNamedNode {
         }
         if (notNullOrUndefined(data.description)) {
             result.description = data.description;
+        } else {
+            result.description = Description.create({});
         }
         if (notNullOrUndefined(data.references)) {
             data.references.forEach((x) => result.references.push(x));
@@ -55,7 +57,7 @@ export class Step extends MobxModelElementImpl implements FreNamedNode {
     $id: string = ""; // a unique identifier
     parseLocation: FreParseLocation | undefined; // if relevant, the location of this element within the source from which it is parsed
     name!: string; // implementation of name
-    description: Description | undefined; // implementation of part 'description'
+    description!: Description; // implementation of part 'description'
     references!: Reference[]; // implementation of part 'references'
     people!: AbstractPerson[]; // implementation of part 'people'
     systems!: AbstractSystemAccess[]; // implementation of part 'systems'
@@ -161,9 +163,7 @@ export class Step extends MobxModelElementImpl implements FreNamedNode {
             result = result && this.name === toBeMatched.name;
         }
         if (result && notNullOrUndefined(toBeMatched.description)) {
-            if (this.description) {
-                result = result && this.description.match(toBeMatched.description);
-            }
+            result = result && this.description.match(toBeMatched.description);
         }
         if (result && notNullOrUndefined(toBeMatched.references)) {
             result = result && matchElementList(this.references, toBeMatched.references);

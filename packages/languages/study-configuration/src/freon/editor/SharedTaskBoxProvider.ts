@@ -100,27 +100,20 @@ export class SharedTaskBoxProvider extends FreBoxProvider {
                         { selectable: false },
                     ),
                 ),
-                BoxFactory.optional(
+                BoxUtil.indentBox(
                     this._node as SharedTask,
-                    "optional-description",
-                    () => !!(this._node as SharedTask).description,
-                    BoxUtil.indentBox(
+                    4,
+                    "3",
+                    BoxFactory.horizontalLayout(
                         this._node as SharedTask,
-                        4,
-                        "0",
-                        BoxFactory.horizontalLayout(
-                            this._node as SharedTask,
-                            "SharedTask-optional-description-hlist-line-0",
-                            "",
-                            [
-                                BoxUtil.labelBox(this._node as SharedTask, "description", "top-2-line-0-item-0"),
-                                BoxUtil.getBoxOrAction(this._node as SharedTask, "description", "Description", this.mainHandler),
-                            ],
-                            { selectable: false },
-                        ),
+                        "SharedTask-hlist-line-3",
+                        "",
+                        [
+                            BoxUtil.labelBox(this._node as SharedTask, "description", "top-1-line-3-item-0"),
+                            BoxUtil.getBoxOrAction(this._node as SharedTask, "description", "Description", this.mainHandler),
+                        ],
+                        { selectable: false },
                     ),
-                    false,
-                    BoxFactory.action(this._node, "optional-description", "description"),
                 ),
                 BoxUtil.indentBox(
                     this._node as SharedTask,

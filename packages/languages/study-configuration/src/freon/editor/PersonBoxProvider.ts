@@ -58,6 +58,7 @@ export class PersonBoxProvider extends FreBoxProvider {
                 { key: "cssClass", value: "type4" },
                 { key: "canDelete", value: "true" },
                 { key: "showDeleteOnHover", value: "true" },
+                { key: "hideDragHandle", value: "true" },
             ],
         });
     }

@@ -36,6 +36,8 @@ export class Reference extends MobxModelElementImpl implements FreNamedNode {
         }
         if (notNullOrUndefined(data.description)) {
             result.description = data.description;
+        } else {
+            result.description = Description.create({});
         }
         if (notNullOrUndefined(data.parseLocation)) {
             result.parseLocation = data.parseLocation;
@@ -48,7 +50,7 @@ export class Reference extends MobxModelElementImpl implements FreNamedNode {
     parseLocation: FreParseLocation | undefined; // if relevant, the location of this element within the source from which it is parsed
     name!: string; // implementation of name
     link: string | undefined; // implementation of link
-    description: Description | undefined; // implementation of part 'description'
+    description!: Description; // implementation of part 'description'
 
     constructor(id?: string) {
         super();
@@ -146,9 +148,7 @@ export class Reference extends MobxModelElementImpl implements FreNamedNode {
             result = result && this.link === toBeMatched.link;
         }
         if (result && notNullOrUndefined(toBeMatched.description)) {
-            if (this.description) {
-                result = result && this.description.match(toBeMatched.description);
-            }
+            result = result && this.description.match(toBeMatched.description);
         }
         return result;
     }

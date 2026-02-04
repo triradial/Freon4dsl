@@ -810,7 +810,6 @@ export class StudyConfigurationModelModelUnitWriter implements FreWriter {
      * Unparsing of 'When' according to projection 'parser'.
      */
     private unparseWhen(node: When, short: boolean) {
-        const blockIndent = this.output[this.currentLine].length;
         this.output[this.currentLine] += `when `;
         this.unparse(node.startWhen, short);
         if (notNullOrUndefined(node.timeAmountPart)) {
@@ -1054,9 +1053,7 @@ export class StudyConfigurationModelModelUnitWriter implements FreWriter {
         if (!short) {
             // do the rest of the lines as well
             this.newlineAndIndentation(blockIndent + 0);
-            if (notNullOrUndefined(node.description)) {
-                this.unparse(node.description, short);
-            }
+            this.unparse(node.description, short);
             this.newlineAndIndentation(blockIndent + 0);
             this.output[this.currentLine] += `Steps: `;
             this.newlineAndIndentation(blockIndent + 2);
@@ -1078,9 +1075,7 @@ export class StudyConfigurationModelModelUnitWriter implements FreWriter {
         if (!short) {
             // do the rest of the lines as well
             this.newlineAndIndentation(blockIndent + 0);
-            if (notNullOrUndefined(node.description)) {
-                this.unparse(node.description, short);
-            }
+            this.unparse(node.description, short);
             this.newlineAndIndentation(blockIndent + 0);
             this.output[this.currentLine] += `Steps: `;
             this.newlineAndIndentation(blockIndent + 2);
@@ -1110,9 +1105,7 @@ export class StudyConfigurationModelModelUnitWriter implements FreWriter {
         if (!short) {
             // do the rest of the lines as well
             this.newlineAndIndentation(blockIndent + 0);
-            if (notNullOrUndefined(node.description)) {
-                this.unparse(node.description, short);
-            }
+            this.unparse(node.description, short);
             this.newlineAndIndentation(blockIndent + 0);
             this.output[this.currentLine] += `People: `;
             this.newlineAndIndentation(blockIndent + 4);
@@ -1155,9 +1148,7 @@ export class StudyConfigurationModelModelUnitWriter implements FreWriter {
             this.output[this.currentLine] += `Accessed At: `;
             this.unparse(node.accessedAt, short);
             this.newlineAndIndentation(blockIndent + 0);
-            if (notNullOrUndefined(node.description)) {
-                this.unparse(node.description, short);
-            }
+            this.unparse(node.description, short);
         }
     }
 
@@ -1207,9 +1198,7 @@ export class StudyConfigurationModelModelUnitWriter implements FreWriter {
             this._unparseReference(node.role, short);
             this.newlineAndIndentation(blockIndent + 0);
             this.output[this.currentLine] += `Notes: `;
-            if (notNullOrUndefined(node.description)) {
-                this.unparse(node.description, short);
-            }
+            this.unparse(node.description, short);
         }
     }
 
@@ -1236,9 +1225,7 @@ export class StudyConfigurationModelModelUnitWriter implements FreWriter {
             this.output[this.currentLine] += `Document is at: `;
             this.output[this.currentLine] += notNullOrUndefined(node.link) ? `"${node.link}" ` : `""` /* 5 */;
             this.newlineAndIndentation(blockIndent + 0);
-            if (notNullOrUndefined(node.description)) {
-                this.unparse(node.description, short);
-            }
+            this.unparse(node.description, short);
         }
     }
 
@@ -1254,9 +1241,7 @@ export class StudyConfigurationModelModelUnitWriter implements FreWriter {
         if (!short) {
             // do the rest of the lines as well
             this.newlineAndIndentation(blockIndent + 0);
-            if (notNullOrUndefined(node.description)) {
-                this.unparse(node.description, short);
-            }
+            this.unparse(node.description, short);
         }
     }
 

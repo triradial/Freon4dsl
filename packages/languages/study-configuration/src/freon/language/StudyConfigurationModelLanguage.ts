@@ -434,6 +434,17 @@ function describeStudyConfiguration(): FreLanguageModelUnit {
         language: "-key-StudyConfigurationModel",
         propertyKind: "primitive",
     });
+    modelunit.properties.set("showSteps", {
+        name: "showSteps",
+        id: "-id-StudyConfiguration-showSteps",
+        key: "-key-StudyConfiguration-showSteps",
+        type: "boolean",
+        isList: false,
+        isPublic: true,
+        isOptional: false,
+        language: "-key-StudyConfigurationModel",
+        propertyKind: "primitive",
+    });
     modelunit.properties.set("showReferences", {
         name: "showReferences",
         id: "-id-StudyConfiguration-showReferences",
@@ -4045,7 +4056,7 @@ function describeTask(): FreLanguageConcept {
         type: "Description",
         isList: false,
         isPublic: true,
-        isOptional: true,
+        isOptional: false,
         language: "-key-StudyConfigurationModel",
         propertyKind: "part",
     });
@@ -4131,7 +4142,7 @@ function describeSharedTask(): FreLanguageConcept {
         type: "Description",
         isList: false,
         isPublic: true,
-        isOptional: true,
+        isOptional: false,
         language: "-key-StudyConfigurationModel",
         propertyKind: "part",
     });
@@ -4237,7 +4248,7 @@ function describeStep(): FreLanguageConcept {
         type: "Description",
         isList: false,
         isPublic: true,
-        isOptional: true,
+        isOptional: false,
         language: "-key-StudyConfigurationModel",
         propertyKind: "part",
     });
@@ -4515,7 +4526,7 @@ function describeSystemAccess(): FreLanguageConcept {
         type: "Description",
         isList: false,
         isPublic: true,
-        isOptional: true,
+        isOptional: false,
         language: "-key-StudyConfigurationModel",
         propertyKind: "part",
     });
@@ -4705,7 +4716,7 @@ function describeStaffRole(): FreLanguageConcept {
         type: "Description",
         isList: false,
         isPublic: true,
-        isOptional: true,
+        isOptional: false,
         language: "-key-StudyConfigurationModel",
         propertyKind: "part",
     });
@@ -4853,7 +4864,7 @@ function describePerson(): FreLanguageConcept {
         type: "Description",
         isList: false,
         isPublic: true,
-        isOptional: true,
+        isOptional: false,
         language: "-key-StudyConfigurationModel",
         propertyKind: "part",
     });
@@ -4927,7 +4938,7 @@ function describeReference(): FreLanguageConcept {
         type: "Description",
         isList: false,
         isPublic: true,
-        isOptional: true,
+        isOptional: false,
         language: "-key-StudyConfigurationModel",
         propertyKind: "part",
     });

@@ -58,18 +58,10 @@ export class EventReferenceBoxProvider extends FreBoxProvider {
             "EventReference-hlist-line-0",
             "",
             [
-                BoxUtil.referenceBox(
-                    this._node as EventReference,
-                    "event",
-                    (selected: string | FreNamedNode) => {
-                        const ref =
-                            typeof selected === "string"
-                                ? FreNodeReference.create<Event>(selected, "Event")
-                                : FreNodeReference.create<Event>(selected as Event, "Event");
-                        (this._node as EventReference).event = ref;
-                    },
-                    LanguageEnvironment.getInstance().scoper,
-                ),
+                BoxUtil.refReplacerBox(this._node as EventReference, "event", "CustomSelectComponent", {
+                    params: [{ key: "placeholder", value: "event reference" }],
+                }),
+                ,
                 BoxUtil.refReplacerBox(this._node as EventReference, "eventState", "CustomSelectComponent", {
                     params: [{ key: "placeholder", value: "event state" }],
                 }),

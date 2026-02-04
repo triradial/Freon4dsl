@@ -236,7 +236,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
     /**
      * Method to transform branches that match the following rule:
      * Task = 'Task:' identifier
-     *	 Description?
+     *	 Description
      *	 'Steps:'
      *	 Step* ;
      * @param nodeInfo
@@ -252,10 +252,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
             children.asJsReadonlyArrayView()[1] as unknown as string,
             PrimValueType.identifier,
         ); // RHSPrimEntry
-        // RHSPartOptionalEntry
-        if (!!children.asJsReadonlyArrayView()[2]) {
-            __description = children.asJsReadonlyArrayView()[2];
-        }
+        __description = children.asJsReadonlyArrayView()[2] as Description; // RHSPartEntry
         __steps = (children.asJsReadonlyArrayView()[4] as KtList<any>).asJsReadonlyArrayView() as Step[]; // RHSPartListEntry
 
         return Task.create({
@@ -269,7 +266,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
     /**
      * Method to transform branches that match the following rule:
      * Step = 'Step:' identifier
-     *	 Description?
+     *	 Description
      *	 'People:'
      *	 AbstractPerson*
      *	 'Systems' 'Used:'
@@ -291,10 +288,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
             children.asJsReadonlyArrayView()[1] as unknown as string,
             PrimValueType.identifier,
         ); // RHSPrimEntry
-        // RHSPartOptionalEntry
-        if (!!children.asJsReadonlyArrayView()[2]) {
-            __description = children.asJsReadonlyArrayView()[2];
-        }
+        __description = children.asJsReadonlyArrayView()[2] as Description; // RHSPartEntry
         __people = (children.asJsReadonlyArrayView()[4] as KtList<any>).asJsReadonlyArrayView() as AbstractPerson[]; // RHSPartListEntry
         __systems = (children.asJsReadonlyArrayView()[7] as KtList<any>).asJsReadonlyArrayView() as AbstractSystemAccess[]; // RHSPartListEntry
         __references = (children.asJsReadonlyArrayView()[9] as KtList<any>).asJsReadonlyArrayView() as Reference[]; // RHSPartListEntry
@@ -313,7 +307,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
      * Method to transform branches that match the following rule:
      * Reference = 'Reference:' stringLiteral
      *	 'Document' 'is' 'at:' optStringLiteral
-     *	 Description? ;
+     *	 Description ;
      * @param nodeInfo
      * @param children
      * @param sentence
@@ -338,10 +332,8 @@ export class StudyConfigurationSyntaxAnalyserPart {
                 );
             }
         } // end RHSPrimOptionalEntry
-        // RHSPartOptionalEntry
-        if (!!children.asJsReadonlyArrayView()[6]) {
-            __description = children.asJsReadonlyArrayView()[6];
-        }
+        __description = children.asJsReadonlyArrayView()[6] as Description; // RHSPartEntry
+
         return Reference.create({
             name: __name!,
             link: __link!,
@@ -374,7 +366,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
      *	 'Email:' optStringLiteral
      *	 'Phone:' optStringLiteral
      *	 'Role:' __fre_reference
-     *	 'Notes:' Description? ;
+     *	 'Notes:' Description ;
      * @param nodeInfo
      * @param children
      * @param sentence
@@ -413,10 +405,8 @@ export class StudyConfigurationSyntaxAnalyserPart {
             }
         } // end RHSPrimOptionalEntry
         __role = this.mainAnalyser.makeFreNodeRef<StaffRole>(children.asJsReadonlyArrayView()[7] as ParsedNodeReference, "StaffRole"); // RHSRefEntry
-        // RHSPartOptionalEntry
-        if (!!children.asJsReadonlyArrayView()[9]) {
-            __description = children.asJsReadonlyArrayView()[9];
-        }
+        __description = children.asJsReadonlyArrayView()[9] as Description; // RHSPartEntry
+
         return Person.create({
             name: __name!,
             email: __email!,
@@ -431,7 +421,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
      * Method to transform branches that match the following rule:
      * SystemAccess = 'System' 'Name:' identifier
      *	 'Accessed' 'At:' AccessedAt
-     *	 Description? ;
+     *	 Description ;
      * @param nodeInfo
      * @param children
      * @param sentence
@@ -446,10 +436,8 @@ export class StudyConfigurationSyntaxAnalyserPart {
             PrimValueType.identifier,
         ); // RHSPrimEntry
         __accessedAt = children.asJsReadonlyArrayView()[5] as AccessedAt; // RHSPartEntry
-        // RHSPartOptionalEntry
-        if (!!children.asJsReadonlyArrayView()[6]) {
-            __description = children.asJsReadonlyArrayView()[6];
-        }
+        __description = children.asJsReadonlyArrayView()[6] as Description; // RHSPartEntry
+
         return SystemAccess.create({
             name: __name!,
             accessedAt: __accessedAt!,
@@ -681,14 +669,10 @@ export class StudyConfigurationSyntaxAnalyserPart {
         let __startWhen: EventReference;
         let __timeAmountPart: TimeAmountPart;
         __startWhen = children.asJsReadonlyArrayView()[1] as EventReference; // RHSPartEntry
-
-        // RHSOptionalGroup
-        // this one
+        // RHSPartOptionalEntry
         if (!!children.asJsReadonlyArrayView()[2]) {
-            __timeAmountPart = children.asJsReadonlyArrayView()[2] as TimeAmountPart; // RHSPartEntry
+            __timeAmountPart = children.asJsReadonlyArrayView()[2];
         }
-        // end RHSOptionalGroup
-
         return When.create({
             startWhen: __startWhen!,
             timeAmountPart: __timeAmountPart!,
@@ -1266,7 +1250,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
     /**
      * Method to transform branches that match the following rule:
      * SharedTask = 'Shared' 'Task:' identifier
-     *	 Description?
+     *	 Description
      *	 'Steps:'
      *	 Step* ;
      * @param nodeInfo
@@ -1282,10 +1266,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
             children.asJsReadonlyArrayView()[2] as unknown as string,
             PrimValueType.identifier,
         ); // RHSPrimEntry
-        // RHSPartOptionalEntry
-        if (!!children.asJsReadonlyArrayView()[3]) {
-            __description = children.asJsReadonlyArrayView()[3];
-        }
+        __description = children.asJsReadonlyArrayView()[3] as Description; // RHSPartEntry
         __steps = (children.asJsReadonlyArrayView()[5] as KtList<any>).asJsReadonlyArrayView() as Step[]; // RHSPartListEntry
 
         return SharedTask.create({
@@ -1299,7 +1280,7 @@ export class StudyConfigurationSyntaxAnalyserPart {
     /**
      * Method to transform branches that match the following rule:
      * StaffRole = 'Role:' identifier
-     *	 Description? ;
+     *	 Description ;
      * @param nodeInfo
      * @param children
      * @param sentence
@@ -1312,10 +1293,8 @@ export class StudyConfigurationSyntaxAnalyserPart {
             children.asJsReadonlyArrayView()[1] as unknown as string,
             PrimValueType.identifier,
         ); // RHSPrimEntry
-        // RHSPartOptionalEntry
-        if (!!children.asJsReadonlyArrayView()[2]) {
-            __description = children.asJsReadonlyArrayView()[2];
-        }
+        __description = children.asJsReadonlyArrayView()[2] as Description; // RHSPartEntry
+
         return StaffRole.create({
             name: __name!,
             description: __description!,

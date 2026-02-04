@@ -241,13 +241,4 @@ export const CUSTOM_ACTIONS: FreCustomAction[] = [
         },
         boxRoleToSelect: "RepeatCondition-until",
     }),
-    FreCustomAction.create({
-        trigger: "description",
-        activeInBoxRoles: ["optional-description"],
-        action: (box: Box, trigger: FreTriggerType, ed: FreEditor): FreNode | null => {
-            (box.parent as OptionalBox).mustShow = true;
-            return box.node;
-        },
-        boxRoleToSelect: "SharedTask-description",
-    }),
 ];

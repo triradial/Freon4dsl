@@ -66,6 +66,7 @@ export class SystemAccessReferenceBoxProvider extends FreBoxProvider {
                     { key: "isExpanded", value: "false" },
                     { key: "selectable", value: "true" },
                     { key: "label", value: "System" },
+                    { key: "hideDragHandle", value: "true" },
                 ],
             },
         );
