@@ -9,6 +9,8 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ### To-Do 
 - [ ] Update what is displayed on Info / Help panel
   - [ ] Write/generate a simple user guide with focus on how to create a study design
+- [ ] Make staff shared/optionally-shared across studies (not essential for first user)
+- [ ] Make roles shared/optionally-shared across studies (not essential for first user)
 - [ ] Document and test the steps to bring on a user
 - [ ] Create a repeatable demo script (whoever is done first will do this)
 - Not needed for first user:
