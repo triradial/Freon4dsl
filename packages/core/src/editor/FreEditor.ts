@@ -9,13 +9,12 @@ import type { FreOwnerDescriptor, FreNode } from "../ast/index.js";
 import { FreLanguage } from "../language/index.js";
 import type { FreLanguageClassifier, FreLanguageProperty } from "../language/index.js";
 import { FreLogger } from "../logging/index.js";
-import type { FreAction } from "./actions/index.js";
+import { FreAction } from "./actions/index.js";
 import type { FreCombinedActions } from "./FreCombinedActions.js";
-import type {
-    Box,
-    FreProjectionHandler} from './index.js';
 import {
+    Box,
     FreCaret,
+    FreProjectionHandler,
     ElementBox,
     RoleProvider,
     isElementBox,
@@ -24,7 +23,7 @@ import {
 } from './index.js';
 import type { ClientRectangle } from "./ClientRectangleTypes.js";
 import { UndefinedRectangle } from "./ClientRectangleTypes.js";
-import type { FreError, FreErrorSeverity } from "../validator/index.js";
+import { FreError, FreErrorSeverity } from "../validator/index.js";
 import { isExpressionPreOrPost, isNullOrUndefined, notNullOrUndefined, LEFT_MOST } from "../util/index.js";
 import { FreErrorDecorator } from "./FreErrorDecorator.js";
 
@@ -117,6 +116,8 @@ export class FreEditor {
         if (notNullOrUndefined(this.rootElement)) {
             this._rootBox = this.projection.getBox(this.rootElement);
             this.rootBoxChanged();
+            // Clear error decorator cache when projection changes since boxes may have changed
+            this._errorDecorator.clearCache();
         }
     };
 
@@ -134,6 +135,11 @@ export class FreEditor {
      * @param node
      */
     set rootElement(node: FreNode) {
+        // Clear error decorator state when switching to a new root element
+        // This prevents stale box references from causing errors
+        if (this._rootElement !== node) {
+            this._errorDecorator.clearAll();
+        }
         this._rootElement = node;
         if (notNullOrUndefined(node)) {
             // select first editable child

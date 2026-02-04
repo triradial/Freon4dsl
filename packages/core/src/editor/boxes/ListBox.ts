@@ -1,8 +1,7 @@
-import type { Box } from "./Box.js";
+import { Box } from "./Box.js";
 import type { FreNode } from "../../ast/index.js";
 import { FreLanguage } from "../../language/index.js";
-import type { MenuItem, MenuOptionsType } from "../util/index.js";
-import { getContextMenuOptions } from "../util/index.js";
+import { getContextMenuOptions, MenuItem, MenuOptionsType } from "../util/index.js";
 import { LayoutBox, ListDirection } from "./LayoutBox.js";
 
 // import { FreLogger } from "../../logging";
@@ -15,6 +14,10 @@ import { LayoutBox, ListDirection } from "./LayoutBox.js";
 export abstract class ListBox extends LayoutBox {
     readonly kind: string = "ListBox";
     conceptName: string = "unknown-type"; // the name of the type of the elements in the list
+    // Controls whether drag-and-drop reordering is enabled for this list.
+    // When false, drag handles are hidden and items cannot be reordered by dragging.
+    // Defaults to true. Can be set to false via initializer: { canDragAndDrop: false }
+    canDragAndDrop: boolean = true;
 
     protected constructor(
         node: FreNode,
