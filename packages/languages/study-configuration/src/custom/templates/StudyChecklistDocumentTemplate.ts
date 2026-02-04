@@ -1,6 +1,6 @@
 import { Timeline } from "../timeline/Timeline.js";
-import { Period, Person, PersonReference, StudyConfiguration, Task, TaskReference } from "../../freon/language/gen/index.js";
-import { StudyConfigurationModelModelUnitWriter } from "../../freon/writer/gen/StudyConfigurationModelModelUnitWriter.js";
+import { Period, Person, PersonReference, StudyConfiguration, Task, TaskReference } from "../../freon/language/index.js";
+import { StudyConfigurationModelModelUnitWriter } from "../../freon/writer/StudyConfigurationModelModelUnitWriter.js";
 
 class MarkdownBuilder {
     private sections: string[] = [];

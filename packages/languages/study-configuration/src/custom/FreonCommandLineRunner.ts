@@ -2,10 +2,10 @@
 // TEMPLATE: CommandLineTemplate.generateCommandLineRunner()
 // Run this as the main program.
 
-import { LanguageEnvironment } from "../src/index.js";
+import { LanguageEnvironment } from "../freon/index.js";
 
-import { FreonCommandLine } from "../src/commandline/FreonCommandLine.js";
-import { DummyAction } from "../src/commandline/DummyAction.js";
+import { FreonCommandLine } from "../freon/commandline/FreonCommandLine.js";
+import { DummyAction } from "../freon/commandline/DummyAction.js";
 
 // ensure language is initialized
 const tmp = LanguageEnvironment.getInstance();

@@ -1,7 +1,7 @@
 import * as path from "path";
 import { beforeEach, describe, expect, it } from "vitest";
-import { StudyConfigurationModelEnvironment } from "../../../freon/config/gen/StudyConfigurationModelEnvironment.js";
-import { StudyConfiguration, StudyConfigurationModel } from "../../freon/language/gen/index.js";
+import { StudyConfigurationModelEnvironment } from "../../freon/config/StudyConfigurationModelEnvironment.js";
+import { StudyConfiguration, StudyConfigurationModel } from "../../freon/language/index.js";
 import { Sim } from "../simjs/sim.js";
 import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";

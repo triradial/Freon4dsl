@@ -9,7 +9,7 @@ import { CustomStudyConfigurationModelScoper } from "./CustomStudyConfigurationM
 import { CustomStudyConfigurationModelTyperPart } from "./CustomStudyConfigurationModelTyperPart.js";
 import { CustomStudyConfigurationModelValidator } from "./CustomStudyConfigurationModelValidator.js";
 import { CustomStudyConfigurationModelStdlib } from "./CustomStudyConfigurationModelStdlib.js";
-import { type StudyConfigurationModelCheckerInterface } from "../src/validator/index.js";
+import { type StudyConfigurationModelCheckerInterface } from "../freon/validator/index.js";
 
 /**
  * Class FreonConfiguration is the place where you can add all your customizations.

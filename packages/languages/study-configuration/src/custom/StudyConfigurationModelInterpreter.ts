@@ -6,9 +6,9 @@ import { TimelineTableTemplate } from "./templates/TimelineTableTemplate.js";
 import { RtObjectScheduledEventWrapper } from "./timeline/ScheduledEvent.js";
 import { Simulator } from "./timeline/Simulator.js";
 import { Timeline } from "./timeline/Timeline.js";
-import * as language from "../freon/language/gen/index.js";
-import { StudyConfiguration, StudyConfigurationModel } from "../freon/language/gen/index.js";
-import { StudyConfigurationModelInterpreterBase } from "../freon/interpreter/gen/StudyConfigurationModelInterpreterBase.js";
+import * as language from "../freon/language/index.js";
+import { StudyConfiguration, StudyConfigurationModel } from "../freon/language/index.js";
+import { StudyConfigurationModelInterpreterBase } from "../freon/interpreter/StudyConfigurationModelInterpreterBase.js";
 
 let main: IMainInterpreter;
 

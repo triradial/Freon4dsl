@@ -1,5 +1,5 @@
 import { Timeline } from "../timeline/Timeline.js";
-import { Period } from "../../freon/language/gen/index.js";
+import { Period } from "../../freon/language/index.js";
 
 export class TimelineTableTemplate {
     static getTimelineTableHTMLStyles(external: boolean = false): string {

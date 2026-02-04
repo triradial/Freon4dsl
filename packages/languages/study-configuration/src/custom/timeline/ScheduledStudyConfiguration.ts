@@ -1,4 +1,4 @@
-import { Day, Period, StudyConfiguration } from "../../freon/language/gen/index.js";
+import { Day, Period, StudyConfiguration } from "../../freon/language/index.js";
 import { ScheduledEvent, ScheduledEventState } from "./ScheduledEvent.js";
 import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
 import { ScheduledPeriod } from "./ScheduledPeriod.js";

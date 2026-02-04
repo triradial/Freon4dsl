@@ -1,1 +1,0 @@
-{"version":3,"file":"CustomStudyConfigurationModelScoper.js","sourceRoot":"","sources":["CustomStudyConfigurationModelScoper.ts"],"names":[],"mappings":"AAOA,MAAM,OAAO,mCAAmC;IAa5C,eAAe,CAAC,KAA+C,EAAE,SAAkB;QAC/E,OAAO,EAAE,CAAC;IACd,CAAC;IAQD,kBAAkB,CAAC,KAAc;QAC7B,OAAO,EAAE,CAAC;IACd,CAAC;IAQD,qBAAqB,CAAC,KAAc;QAChC,OAAO,EAAE,CAAC;IACd,CAAC;CACJ"}

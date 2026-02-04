@@ -15,7 +15,7 @@ import {
     RtError,
 } from "@freon4dsl/core";
 
-import { StudyConfigurationModelInterpreterInit } from "./gen/StudyConfigurationModelInterpreterInit.js";
+import { StudyConfigurationModelInterpreterInit } from "../freon/interpreter/StudyConfigurationModelInterpreterInit.js";
 
 const getPropertyFunction: OwningPropertyFunction = (node: Object) => {
     const index = (node as FreNode).freOwnerDescriptor().propertyIndex;

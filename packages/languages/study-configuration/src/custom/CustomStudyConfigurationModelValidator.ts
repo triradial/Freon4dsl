@@ -3,8 +3,8 @@
 
 import { FreError, FreErrorSeverity } from "@freon4dsl/core";
 
-import { StudyConfigurationModelDefaultWorker } from "../src/utils/index.js";
-import { type StudyConfigurationModelCheckerInterface } from "../src/validator/StudyConfigurationModelValidator.js";
+import { StudyConfigurationModelDefaultWorker } from "../freon/utils/index.js";
+import { type StudyConfigurationModelCheckerInterface } from "../freon/validator/StudyConfigurationModelValidator.js";
 
 export class CustomStudyConfigurationModelValidator
     extends StudyConfigurationModelDefaultWorker

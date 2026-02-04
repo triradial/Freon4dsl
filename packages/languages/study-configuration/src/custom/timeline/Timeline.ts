@@ -1,5 +1,5 @@
 import { FreNodeReference, RtBoolean, RtObject, RtString } from "@freon4dsl/core";
-import { Availability, DateConcept, Event, Month, PatientHistory } from "../../freon/language/gen/index.js";
+import { Availability, DateConcept, Event, Month, PatientHistory } from "../../freon/language/index.js";
 import { TimelineTableTemplate } from "../templates/TimelineTableTemplate.js";
 import { PatientEventInstance, PatientUnAvailableEventInstance, PatientVisitEventInstance } from "./PatientEventInstance.js";
 import { PeriodEventInstance } from "./PeriodEventInstance.js";
