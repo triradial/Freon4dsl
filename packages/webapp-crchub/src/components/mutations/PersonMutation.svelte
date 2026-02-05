@@ -11,7 +11,9 @@
         onclose?: () => void;
     }>();
 
-    let mutatedPerson = $state({ ...person });
+    let mutatedPerson = $state<any>({});
+    
+    // Initialize mutatedPerson from person prop (this will be updated later by an $effect that also handles organizations)
     
     // Initialize organization and role data
     $effect(() => {

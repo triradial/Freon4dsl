@@ -22,14 +22,18 @@
 
     let { editor, box }: FreComponentProps<BooleanControlBox> = $props();
 
-    let id: string = box.id;
+    let id = $derived(box?.id);
     let trueElement: HTMLInputElement;
     let falseElement: HTMLInputElement;
     let undefinedElement: HTMLInputElement | undefined = $state(undefined);
-    let currentValue: boolean | undefined = $state(box.getBoolean());
-    let ariaLabel = box.propertyName;
-    let isHorizontal: boolean = box.horizontal;
+    let currentValue: boolean | undefined = $state(undefined);
+    let ariaLabel = $derived(box?.propertyName);
+    let isHorizontal = $derived(box?.horizontal);
     let isOptional: boolean = $state(false); // is set in $effect to optionality from box
+
+    $effect(() => {
+        currentValue = box?.getBoolean();
+    });
 
     /**
      * This function sets the focus on this element programmatically.

@@ -13,12 +13,13 @@
 
     const { editor, box }: FreComponentProps<StringWrapperBox> = $props();
     
-    let cssClass = box && box.findParam("cssClass") || "";
-    let textPropertyName = box && box.findParam("textPropertyName") || "text";
-    let rawTextPropertyName = box && box.findParam("rawTextPropertyName") || "rawText";
+    // Props - use $derived to properly react to box changes
+    let cssClass = $derived(box?.findParam("cssClass") || "");
+    let textPropertyName = $derived(box?.findParam("textPropertyName") || "text");
+    let rawTextPropertyName = $derived(box?.findParam("rawTextPropertyName") || "rawText");
 
-    let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
-    let placeholder = $state(box ? box.findParam("placeholder") || "<description>" : "<description>");
+    let id = $derived(box ? componentId(box) : 'group-for-unknown-box');
+    let placeholder = $derived(box?.findParam("placeholder") || "<description>");
 
     let isEditing = $state(false);
     let spanRef = $state<HTMLSpanElement | null>(null);
@@ -85,7 +86,7 @@
         box.refreshComponent = refresh;
     });
 
-    let editorDivId = `${id}-tinymce`;
+    let editorDivId = $derived(`${id}-tinymce`);
     let tinymceScriptLoaded = false;
 
     // Helper to load TinyMCE script from local static folder if not already loaded

@@ -2149,26 +2149,30 @@
     }
 
     // Get unscheduled events from study configuration
+    // Collects from both study-level and period-level unscheduledEvents arrays
     function getUnscheduledEvents(): EventOption[] {
         if (!studyConfig) return [];
         
         const events: EventOption[] = [];
         
-        // Iterate through all periods and their events
+        // Get study-level unscheduled events
+        for (const unscheduledEvent of studyConfig.unscheduledEvents || []) {
+            events.push({
+                name: unscheduledEvent.name,
+                id: unscheduledEvent.name.toLowerCase().replace(/\s+/g, '-')
+            });
+        }
+        
+        // Get period-level unscheduled events
         for (const period of studyConfig.periods || []) {
-            for (const event of period.events || []) {
-                const eventStart = event.schedule?.eventStart;
-                // Check if event is unscheduled - Unscheduled and AnyDay EventStart concepts removed
-                // if (eventStart && eventStart instanceof Unscheduled) {
-                //     events.push({
-                //         name: event.name,
-                //         id: event.name.toLowerCase().replace(/\s+/g, '-')
-                //     });
-                // }
+            for (const unscheduledEvent of period.unscheduledEvents || []) {
+                events.push({
+                    name: unscheduledEvent.name,
+                    id: unscheduledEvent.name.toLowerCase().replace(/\s+/g, '-')
+                });
             }
         }
         
-        // Return the events from the model (empty array if none defined)
         return events;
     }
 
@@ -3200,6 +3204,8 @@
                     patientSchedulesFromDB.delete(patientData.id);
                     // Force reactivity by reassigning the Map
                     patientSchedulesFromDB = new Map(patientSchedulesFromDB);
+                    // Update the patient count in the study data so the study grid stays in sync
+                    dataStore.updateStudyPatientCount(studyId, patients.length);
                 } catch (error) {
                     console.error('Error deleting patient:', error);
                 }
@@ -3765,6 +3771,9 @@
             const updatedPatients = storeState.studyPatients.filter(p => p.studyId === studyId);
             console.log('[PatientRefresh] Loaded', updatedPatients.length, 'patients from store');
             patients = updatedPatients;
+            
+            // Update the patient count in the study data so the study grid stays in sync
+            dataStore.updateStudyPatientCount(studyId, updatedPatients.length);
         }
         previousDrawerOpen = drawerOpen;
     });
@@ -4109,7 +4118,7 @@
     </div>
 
     <!-- Right Sidebar: JSON Data (Schedule Only - Availability is stored separately) -->
-    <!-- {#if rawSimulationData && patientCentricData}
+    {#if rawSimulationData && patientCentricData}
         {@const scheduleData = {
             ...patientCentricData,
             note: "Schedule data only. Availability is stored separately in patient.availability column."
@@ -4127,5 +4136,5 @@
             </div>
             <pre>{JSON.stringify(scheduleData, null, 2)}</pre>
         </div>
-    {/if} -->
+    {/if}
 </div>

@@ -263,13 +263,22 @@ export class TimelineChartTemplate {
         return dedent`<!DOCTYPE HTML>
           <html>
           <head>
-          ${TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript)}
+          ${TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript, false, false, false, false)}
           </body>
           </html>
               `;
     }
 
-    static getTimelineAsHTMLBlock(timelineDataAsScript: string, hasPatientKey: boolean = false, hasStaffKey: boolean = false, isMultiPatient: boolean = false): string {
+    /**
+     * Generate timeline HTML block.
+     * @param timelineDataAsScript - The timeline data as a script
+     * @param hasPatientKey - Whether to show patient key
+     * @param hasStaffKey - Whether to show staff key  
+     * @param isMultiPatient - Whether this is a multi-patient timeline
+     * @param embedded - If true (default), the HTML will be embedded in the main page and theme stylesheet is not included.
+     *                   If false, a theme stylesheet link is included for standalone pages.
+     */
+    static getTimelineAsHTMLBlock(timelineDataAsScript: string, hasPatientKey: boolean = false, hasStaffKey: boolean = false, isMultiPatient: boolean = false, embedded: boolean = true): string {
         let patientKey = hasPatientKey
           ? dedent`
             <div class="key-item"><div class="square on-scheduled-date"></div><span>Date patient visit occurred on the scheduled date</span></div>
@@ -342,10 +351,28 @@ export class TimelineChartTemplate {
           margin-bottom: 1px !important;
         }`;
         
+        // Only include theme stylesheet for standalone pages (not embedded)
+        const themeStylesheet = embedded ? '' : dedent`
+      <link id="theme-stylesheet" rel='stylesheet' href='/styles/bundle-dark.css'>
+      <script>
+        // Dynamically switch theme based on localStorage
+        (function() {
+          var theme = 'dark';
+          try {
+            theme = localStorage.getItem('theme') || 'dark';
+          } catch (e) {}
+          if (theme !== 'dark' && theme !== 'light') theme = 'dark';
+          var link = document.getElementById('theme-stylesheet');
+          if (link) {
+            link.href = '/styles/bundle-' + theme + '.css';
+          }
+        })();
+      </script>`;
+        
         return dedent`
       <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
       <link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
-      <link id="theme-stylesheet" rel='stylesheet' href='/assets/styles/bundle-dark.css'>
+      ${themeStylesheet}
       <style>
         ${compactStyles}
       </style>

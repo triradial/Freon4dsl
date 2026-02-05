@@ -9,19 +9,21 @@
 
     let { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
 
-    // Extract props from box params
-    let cssClass = box?.findParam("cssClass") || "";
-    let canDelete = box?.findParam("canDelete") === "true";
-    let inlineDisplay = box?.findParam("inlineDisplay") === "true";
-    let hideDragHandle = box?.findParam("hideDragHandle") === "true";
+    // Extract props from box params - use $derived to properly react to box changes
+    let cssClass = $derived(box?.findParam("cssClass") || "");
+    let canDelete = $derived(box?.findParam("canDelete") === "true");
+    let inlineDisplay = $derived(box?.findParam("inlineDisplay") === "true");
+    let hideDragHandle = $derived(box?.findParam("hideDragHandle") === "true");
     
     // Set hideDragHandle on the box so ListComponent can check it
-    if (box && hideDragHandle) {
-        box.hideDragHandle = true;
-    }
+    $effect(() => {
+        if (box && hideDragHandle) {
+            box.hideDragHandle = true;
+        }
+    });
 
     // State
-    let id = componentId(box);
+    let id = $derived(box ? componentId(box) : 'selectable-list-item-unknown');
     let wrapperElement: HTMLDivElement | HTMLSpanElement | undefined = $state();
 
     const refresh = (why?: string): void => {

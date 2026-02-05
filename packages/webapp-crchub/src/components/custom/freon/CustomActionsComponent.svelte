@@ -160,7 +160,8 @@
     // svelte-ignore non_reactive_update
     let componentWrapper: HTMLElement | null = null;
     
-    const id = componentId(box);
+    // Use $derived to properly react to box changes
+    const id = $derived(box ? componentId(box) : 'custom-actions-unknown');
     
     // Extract placeholder from box params if available
     let placeholderText = $derived(isExternalBox(box) ? (box.findParam("placeholder") || undefined) : undefined);

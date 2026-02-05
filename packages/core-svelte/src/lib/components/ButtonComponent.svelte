@@ -8,7 +8,7 @@
     const LOGGER = BUTTON_LOGGER;
     LOGGER.show();
 
-    let id: string = box.id;
+    let id = $derived(box?.id);
     let thisButton: HTMLButtonElement;
 
     /**

@@ -269,6 +269,41 @@
   --tooltip-text: #000000;
   --tooltip-date: var(--primary-500);
 
+  // Day cell popup styling (light theme)
+  --day-cell-popup-bg: #ffffff;
+  --popup-separator-bg: #d1d5db;
+  --popup-close-btn-hover-bg: #e5e7eb;
+  --popup-close-btn-hover-color: #374151;
+  --popup-toggle-btn-border: #d1d5db;
+  --popup-toggle-btn-color: #6b7280;
+  --popup-toggle-btn-hover-bg: #e5e7eb;
+  --popup-toggle-btn-hover-border: #9ca3af;
+  --popup-toggle-btn-hover-color: #374151;
+  --popup-checkbox-bg: #e5e7eb;
+
+  // Dropdown/menu styling (used by PatientGrid and other components)
+  --dropdown-bg: #ffffff;
+  --dropdown-fg: #1f2937;
+  --dropdown-hover: #f3f4f6;
+  --button-dropdown-bg: #ffffff;
+  --button-dropdown-fg: #1f2937;
+  --button-dropdown-hover-bg: #f3f4f6;
+  --button-dropdown-border: #d1d5db;
+  --button-dropdown-hover-border: #9ca3af;
+  // Aliases for PatientGrid component
+  --button-bg: #ffffff;
+  --button-fg: #1f2937;
+  --button-hover-bg: #f3f4f6;
+  --button-hover-fg: #1f2937;
+  --button-border: #d1d5db;
+  --button-hover-border: #9ca3af;
+
+  // Popup text colors for light theme
+  --popup-day-number-text: #1f2937;
+  --popup-patient-id-text: #374151;
+  --popup-date-text: #4C5C96;
+  --popup-event-name-text: #1f2937;
+
 /* #endregion */
   --content-background: #cfd6e0;
 

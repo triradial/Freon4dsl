@@ -28,13 +28,9 @@
 
     let openState = $state(false);
     let searchQuery = $state("");
-    let selectedItem = $state<Item | null>(currentItem);
+    // Use $derived to properly track currentItem prop changes
+    let selectedItem = $derived(currentItem);
     let searchInput: HTMLInputElement;
-
-    // Update selectedItem when currentItem prop changes
-    $effect(() => {
-        selectedItem = currentItem;
-    });
 
     // Filter items based on search query
     const filteredItems = $derived(

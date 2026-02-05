@@ -10,7 +10,12 @@
         onclose?: () => void;
     }>();
 
-    let mutatedPatient = { ...patient };
+    let mutatedPatient = $state<Patient>({} as Patient);
+    
+    // Initialize mutatedPatient from patient prop
+    $effect(() => {
+        mutatedPatient = { ...patient };
+    });
 
     function getErrorState(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";

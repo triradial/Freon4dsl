@@ -12,9 +12,9 @@
     let { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
     let inputElement: HTMLInputElement;
 
-    // Props
-    let cssClass = box && box.findParam("cssClass") || "";
-    let canDelete = box && box.findParam("canDelete") === "true";
+    // Props - use $derived to properly react to box changes
+    let cssClass = $derived(box?.findParam("cssClass") || "");
+    let canDelete = $derived(box?.findParam("canDelete") === "true");
     let label = $derived(() => {
         if (box) {
             // First try to get label from parameters
@@ -32,7 +32,7 @@
     });
     let children: Box[] | undefined = $state()
 
-    let id: string = $state(!!box ? componentId(box) : 'single-line-for-unknown-box');
+    let id = $derived(box ? componentId(box) : 'single-line-for-unknown-box');
 
     // The following three functions need to be included for the editor to function properly.
     // Please, set the focus to the first editable/selectable element in this component.

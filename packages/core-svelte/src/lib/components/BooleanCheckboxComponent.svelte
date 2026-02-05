@@ -13,11 +13,15 @@
 
     const LOGGER = CHECKBOX_LOGGER;
 
-    let id: string = notNullOrUndefined(box) ? componentId(box) : 'checkbox-for-unknown-box';
+    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'checkbox-for-unknown-box');
     let inputElement: HTMLInputElement;
-    let value = $state((box as BooleanControlBox).getBoolean());
+    let value = $state(false);
+    let indeterminate = $state(false);
 
-    let indeterminate = $state((box as BooleanControlBox).getBoolean() === null || (box as BooleanControlBox).getBoolean() === undefined);
+    $effect(() => {
+        value = (box as BooleanControlBox).getBoolean();
+        indeterminate = (box as BooleanControlBox).getBoolean() === null || (box as BooleanControlBox).getBoolean() === undefined;
+    });
     let isOptional: boolean = false
     /**
      * This function sets the focus on this element programmatically.

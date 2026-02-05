@@ -14,8 +14,7 @@
     let { editor, box }: FreComponentProps<OptionalBox> = $props();
 
     const LOGGER = OPTIONAL_LOGGER;
-    let id: string = $state(''); // an id for the html element showing the optional
-    id = notNullOrUndefined(box) ? componentId(box) : 'optional2-for-unknown-box';
+    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'optional2-for-unknown-box');
     let childBox: Box = $state()!;
     let optionalBox: Box = $state()!;
     let mustShow = $state(false);

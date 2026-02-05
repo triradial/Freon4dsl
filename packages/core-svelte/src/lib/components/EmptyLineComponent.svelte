@@ -9,7 +9,7 @@
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let { editor, box }: FreComponentProps<EmptyLineBox> = $props();
-    let id: string = isNullOrUndefined(box) ? componentId(box) : 'empty-line-for-unknown-box';
+    let id = $derived(isNullOrUndefined(box) ? 'empty-line-for-unknown-box' : componentId(box));
 </script>
 
 <span {id} class="{box.cssClass}">

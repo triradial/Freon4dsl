@@ -12,13 +12,20 @@
 
     // Variables set from the box.
     // box.displayInfo is completely set, it is done in NumberControlBox constructor
-    let id: string = box.id;
-    let value: number = $state(box.getNumber());
-    let min: number = $state(box.displayInfo!.min)!;
-    let max: number = $state(box.displayInfo!.max)!;
-    let step: number = $state(box.displayInfo!.step)!;
+    let id = $derived(box?.id);
+    let value: number = $state(0);
+    let min: number = $state(0);
+    let max: number = $state(100);
+    let step: number = $state(1);
 
     let inputElement: HTMLInputElement;
+
+    $effect(() => {
+        value = box?.getNumber();
+        min = box?.displayInfo?.min ?? 0;
+        max = box?.displayInfo?.max ?? 100;
+        step = box?.displayInfo?.step ?? 1;
+    });
     let tooltip: HTMLSpanElement;
     let trackWrapper: HTMLSpanElement;
 

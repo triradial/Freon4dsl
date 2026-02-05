@@ -180,6 +180,7 @@
     --red-200: #FBCBCB;
     --red-100: #FDECEC;
     --red-50: #FEF3F3;
+    --red-5t: #992d2d6d;
 
     --orange-900: #603A1B;
     --orange-800: #7F4D1F;
@@ -5505,7 +5506,7 @@
 /* #region Day Cell Popup */
 .day-cell-popup {
     position: fixed;
-    background-color: #000000;
+    background-color: var(--day-cell-popup-bg);
     border: none;
     border-radius: 0;
     min-width: 220px;
@@ -5562,8 +5563,8 @@
             transition: all 0.15s ease;
             
             &:hover {
-                background-color: #3f3f46;
-                color: #e4e4e7;
+                background-color: var(--popup-close-btn-hover-bg);
+                color: var(--popup-close-btn-hover-color);
             }
         }
     }
@@ -5592,7 +5593,7 @@
     // Separator line
     .popup-separator {
         height: 1px;
-        background-color: #3f3f46;
+        background-color: var(--popup-separator-bg);
         margin: 0.625rem 0;
     }
     
@@ -5630,16 +5631,16 @@
         height: 24px;
         padding: 0;
         background-color: transparent;
-        border: 1px solid #52525b;
+        border: 1px solid var(--popup-toggle-btn-border);
         border-radius: 50%;
-        color: #a1a1aa;
+        color: var(--popup-toggle-btn-color);
         cursor: pointer;
         transition: all 0.15s ease;
         
         &:hover {
-            background-color: #3f3f46;
-            border-color: #71717a;
-            color: #e4e4e7;
+            background-color: var(--popup-toggle-btn-hover-bg);
+            border-color: var(--popup-toggle-btn-hover-border);
+            color: var(--popup-toggle-btn-hover-color);
         }
         
         svg {
@@ -5686,7 +5687,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: #3f3f46;
+        background-color: var(--popup-checkbox-bg);
         border: none;
         border-radius: 3px;
         flex-shrink: 0;

@@ -70,8 +70,7 @@
 
     let { editor, box }: FreComponentProps<Box> = $props();
 
-    let id: string = $state('');
-    id = notNullOrUndefined(box) ? `render-${componentId(box)}` : 'render-for-unknown-box';
+    let id = $derived(notNullOrUndefined(box) ? `render-${componentId(box)}` : 'render-for-unknown-box');
     let element: HTMLElement | undefined = $state(undefined);
 
     // css class name for when the node is selected
@@ -219,7 +218,7 @@
         {:else if isTableBox(box)}
             <TableComponent {box} {editor} />
         {:else if isTextBox(box)}
-            <TextComponent {box} {editor} partOfDropdown={false} text="" isEditing={false} toParent={() => {} } />
+            <TextComponent {box} {editor} errorCls={errorCls} partOfDropdown={false} text="" isEditing={false} toParent={() => {} } />
         {:else if isMultiLineTextBox(box)}
             <MultiLineTextComponent {box} {editor} />
         {:else if isActionBox(box) || isSelectBox(box) || isReferenceBox(box)}

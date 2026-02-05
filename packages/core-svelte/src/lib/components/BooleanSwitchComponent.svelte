@@ -18,9 +18,13 @@
     // Props
     let { editor, box }: FreComponentProps<BooleanControlBox> = $props();
 
-    let id: string = notNullOrUndefined(box) ? componentId(box) : 'switch-for-unknown-box';
-    let value = $state(box.getBoolean());
+    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'switch-for-unknown-box');
+    let value = $state(false);
     let switchElement: HTMLButtonElement;
+
+    $effect(() => {
+        value = box?.getBoolean();
+    });
 
     /**
      * This function sets the focus on this element programmatically.

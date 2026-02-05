@@ -6,20 +6,20 @@
     import { Tabs } from "@skeletonlabs/skeleton-svelte";
     import { runInAction } from "mobx";
     import { onDestroy, onMount } from "svelte";
-    import StudyDesignDisplayOptions from "../components/common/StudyDesignDisplayOptions.svelte";
-    import { dataStore, type Study } from "../services/data/data-store.js";
-    import { EditorRequestsHandler } from "../services/dsl/editor-requests-handler.js";
-    import { ModelManager } from "../services/dsl/model-manager.js";
-    import { WebappConfigurator } from "../services/dsl/webapp-configurator.js";
+    import StudyDesignDisplayOptions from "./StudyDesignDisplayOptions.svelte";
+    import { dataStore, type Study } from "../../services/data/data-store.js";
+    import { EditorRequestsHandler } from "../../services/dsl/editor-requests-handler.js";
+    import { ModelManager } from "../../services/dsl/model-manager.js";
+    import { WebappConfigurator } from "../../services/dsl/webapp-configurator.js";
 // @ts-ignore
     import { Redo as IconRedo, Undo as IconUndo, Eye as IconEye, ChevronsDownUp as IconCollapseAll, ChevronsUpDown as IconExpandAll, ChevronsLeftRight as IconResetDefaults } from '@lucide/svelte';
-    import { simulationService } from "../services/simulation/simulation-service.js";
-    import { expandCollapseStore } from "../services/stores/expand-collapse-store.js";
-    import { perfLogger } from "../services/performance-logger.js";
-    import StudyChecklist from "./study/StudyChecklist.svelte";
-    import StudyDesignErrors from "./study/StudyDesignErrors.svelte";
-    import StudyTimelineChart from "./study/StudyTimelineChart.svelte";
-    import StudyTimelineTable from "./study/StudyTimelineTable.svelte";
+    import { simulationService } from "../../services/simulation/simulation-service.js";
+    import { expandCollapseStore } from "../../services/stores/expand-collapse-store.js";
+    import { perfLogger } from "../../services/performance-logger.js";
+    import StudyChecklist from "./StudyChecklist.svelte";
+    import StudyDesignErrors from "./StudyDesignErrors.svelte";
+    import StudyTimelineChart from "./StudyTimelineChart.svelte";
+    import StudyTimelineTable from "./StudyTimelineTable.svelte";
 
     let { id } = $props<{ id: string }>();
 
@@ -804,7 +804,7 @@
                 {#snippet list()}
                     <Tabs.Control stateActive="tab-active" value="errors">
                         <div class="tab-item tab-item-with-badge">
-                            <span>Errors</span>
+                            <span>Issues</span>
                             {#if errorCount > 0}
                                 <span class="badge tab-badge">{errorCount}</span>
                             {/if}
