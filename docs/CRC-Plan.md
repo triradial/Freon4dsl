@@ -54,13 +54,13 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Rebuild some or all of the studies to test behavior and useability
 - [ ] Make tasks be clickable checkboxes
 - [ ] Setup tests of incomplete studies and add additional validation checks if/as needed so reliably get charts, etc.
-- [ ] Determine whether optional from Freon is needed and where 
 - [ ] Remove choice of the visit you are on when 'start when' is a reference. Needs custom scope added. 
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
+- [ ] Determine whether optional from Freon is needed and where 
 - [ ] Create complex and realistic examples of checklists
-
+- [ ] fix checklist hide/show for unscheduled event at study level
 
 ### Done
 - [x] Add back pdf/print behavior to checklist
