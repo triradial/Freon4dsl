@@ -21,6 +21,9 @@ target
 bin
 .docz
 
+# build sentinel
+.build-complete
+
 # misc
 .DS_Store
 .env.local
