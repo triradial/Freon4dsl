@@ -233,6 +233,60 @@ export async function updateSiteNumber(oid: string, siteId: string, siteNumber: 
 }
 
 /**
+ * Check if a site number already exists
+ * @param oid - User's OID
+ * @param siteNumber - The site number to check
+ * @param excludeSiteId - Optional site ID to exclude (e.g. when editing, exclude the current site)
+ * @param all - If true, check against all sites (admin scope); otherwise user's organization sites only
+ * @returns true if the site number already exists, false if it is unique
+ */
+export async function checkSiteNumberExists(
+    oid: string,
+    siteNumber: string,
+    excludeSiteId?: string,
+    all: boolean = false
+): Promise<boolean> {
+    const pool = getDbPool();
+    
+    try {
+        let query: string;
+        let params: any[];
+        
+        if (all || isGlobalAdmin(oid)) {
+            // Check against all sites (admin scope)
+            query = `
+                SELECT site_id 
+                FROM site 
+                WHERE LOWER(site_number) = LOWER($1)
+                ${excludeSiteId ? 'AND site_id != $2' : ''}
+                LIMIT 1
+            `;
+            params = excludeSiteId ? [siteNumber, excludeSiteId] : [siteNumber];
+        } else {
+            // Check against user's organization sites only
+            query = `
+                SELECT s.site_id 
+                FROM site s
+                INNER JOIN organization o ON s.org_id = o.org_id
+                INNER JOIN org_persons op ON o.org_id = op.org_id
+                INNER JOIN person per ON op.person_id = per.person_id
+                WHERE per.oid = $1 
+                AND LOWER(s.site_number) = LOWER($2)
+                ${excludeSiteId ? 'AND s.site_id != $3' : ''}
+                LIMIT 1
+            `;
+            params = excludeSiteId ? [oid, siteNumber, excludeSiteId] : [oid, siteNumber];
+        }
+        
+        const result = await pool.query(query, params);
+        return result.rows.length > 0;
+    } catch (error) {
+        console.error('Error checking site number exists:', error);
+        throw error;
+    }
+}
+
+/**
  * Get sites for a specific study
  */
 export async function getStudySites(oid: string, studyId: string): Promise<Site[]> {

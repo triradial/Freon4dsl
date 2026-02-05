@@ -200,6 +200,28 @@ function createDataStore() {
     }
   }
 
+  async function checkSiteNumberExists(
+    siteNumber: string,
+    excludeSiteId?: string,
+    adminMode: boolean = false
+  ): Promise<boolean> {
+    try {
+      const uid = getCurrentUserOid();
+      const params = new URLSearchParams({ uid, siteNumber });
+      if (excludeSiteId) params.set('excludeSiteId', excludeSiteId);
+      if (adminMode) params.set('all', 'true');
+      const response = await fetch(`${env.serverUrl}/checkSiteNumberExists?${params}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return !!data.exists;
+    } catch (error) {
+      console.error('Error checking site number:', error);
+      return false; // On error, allow submission (fail-open to avoid blocking users)
+    }
+  }
+
   async function addStudy(newStudy: Study): Promise<boolean> {
     try {
       const uid = getCurrentUserOid();
@@ -1239,6 +1261,7 @@ function createDataStore() {
     getStudies,
     getStudy,
     checkStudyNameExists,
+    checkSiteNumberExists,
     addStudy,
     addStudyWithSite,
     copyStudy,

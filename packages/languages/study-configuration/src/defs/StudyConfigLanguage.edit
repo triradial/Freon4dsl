@@ -61,7 +61,7 @@ Event {
 
 UnscheduledEvent {
     [
-        [fragment unscheduledEventDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Unscheduled Event"]
+        [fragment unscheduledEventDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
     ]
     fragment unscheduledEventDetails [
         ${name}
@@ -72,7 +72,7 @@ UnscheduledEvent {
 }
 Task {
     [
-        [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="false" label="Task"]
+        [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]
     ] trigger = "Checklist Task"
     fragment taskDetails [
         ${name} 
@@ -91,7 +91,7 @@ TaskReference {
 
 Step {
     [
-        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="false" label="Step"]
+        [fragment stepDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
     ]
     fragment stepDetails [
         ${name}

@@ -21,7 +21,7 @@ Period {
     [ 
         Period:${name}
         ${description}
-        Events:
+        Scheduled Events:
           ${events}
         Unscheduled Events:
           ${unscheduledEvents}

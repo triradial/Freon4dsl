@@ -22,11 +22,21 @@
 
     let nameValidationTimeout: ReturnType<typeof setTimeout> | null = null;
     let nameValidationId = 0;
+    let siteNumberValidationTimeout: ReturnType<typeof setTimeout> | null = null;
+    let siteNumberValidationId = 0;
 
     let statusColor = $derived(getStatusColor(mutatedStudy.status));
     
     function getErrorState(field: keyof typeof errors) {
         return errorState[field] ? "error" : "";
+    }
+
+    function getErrorTooltip(field: keyof typeof errors): string {
+        const error = errors[field];
+        if (!error) return "";
+        if (error.toLowerCase().includes("required")) return "Required";
+        if (error.toLowerCase().includes("exists") || error.toLowerCase().includes("duplicate")) return "Duplicate";
+        return "";
     }
 
     // Update mutatedStudy when study prop changes
@@ -96,14 +106,26 @@
     let hasErrors = $derived(Object.values(errorState).some((error) => error !== ""));
 
     async function handleSave() {
+        // Clear pending validation timeouts
         if (nameValidationTimeout) {
             clearTimeout(nameValidationTimeout);
             nameValidationTimeout = null;
         }
+        if (siteNumberValidationTimeout) {
+            clearTimeout(siteNumberValidationTimeout);
+            siteNumberValidationTimeout = null;
+        }
+        
+        // Run final duplicate checks before save
         if (mutatedStudy.name?.trim()) {
             const excludeId = action === "edit" && study?.id ? study.id : undefined;
             await validateNameDuplicate(excludeId);
         }
+        if (siteNumber?.trim()) {
+            const excludeSiteId = action === "edit" && siteId ? siteId : undefined;
+            await validateSiteNumberDuplicate(excludeSiteId);
+        }
+        
         validateAllFields();
         if (Object.values(errorState).every((error) => error === "")) {
             console.log("[StudyMutation] calling onsave prop", mutatedStudy);
@@ -139,6 +161,19 @@
         errorState.name = errors.name;
     }
 
+    async function validateSiteNumberDuplicate(excludeSiteId?: string) {
+        const id = ++siteNumberValidationId;
+        const currentValue = siteNumber?.trim() ?? "";
+        const exists = await dataStore.checkSiteNumberExists(currentValue, excludeSiteId, adminMode);
+        if (id !== siteNumberValidationId) return;
+        if (exists && currentValue) {
+            errors.siteNumber = "Site number already exists";
+        } else {
+            errors.siteNumber = currentValue ? "" : "Site number is required";
+        }
+        errorState.siteNumber = errors.siteNumber;
+    }
+
     function handleInput(field: keyof typeof errors) {
         return (event: Event) => {
             const target = event.target as HTMLInputElement;
@@ -168,10 +203,15 @@
         } else if (field === "siteNumber") {
             if (!strValue.trim()) {
                 errors.siteNumber = "Site number is required";
+                errorState.siteNumber = errors.siteNumber;
             } else {
+                // Clear error immediately for responsive UX, then validate async
                 errors.siteNumber = "";
+                errorState.siteNumber = "";
+                if (siteNumberValidationTimeout) clearTimeout(siteNumberValidationTimeout);
+                const excludeSiteId = action === "edit" && siteId ? siteId : undefined;
+                siteNumberValidationTimeout = setTimeout(() => validateSiteNumberDuplicate(excludeSiteId), 300);
             }
-            errorState.siteNumber = errors.siteNumber;
         }
     }
 </script>
@@ -179,8 +219,8 @@
 <div class="mutation-area max-w-sm">
     <div class="flex flex-col gap-4">
         <div>
-            <div class="small-label-text">Study Name{#if errors.name}<span class="name-error-indicator"><IconAsterisk size="12" color="red" /></span>{/if}</div>        
-            <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} />
+            <div class="small-label-text">Study Name{#if errors.name}<span class="error-indicator"><IconAsterisk size="12" color="red" /></span>{/if}</div>        
+            <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} title={getErrorTooltip('name')} />
         </div>
         <div>
             <div class="small-label-text">Title</div>
@@ -210,8 +250,8 @@
         </div>
         <hr class="separator-divider" />
         <div>
-            <div class="small-label-text">Site Number{#if errors.siteNumber}<IconAsterisk size="12" color="red" />{/if}</div>
-            <input class="input-field {getErrorState('siteNumber')}" type="text" bind:value={siteNumber} oninput={handleInput("siteNumber")} />
+            <div class="small-label-text">Site Number{#if errors.siteNumber}<span class="error-indicator"><IconAsterisk size="12" color="red" /></span>{/if}</div>
+            <input class="input-field {getErrorState('siteNumber')}" type="text" bind:value={siteNumber} oninput={handleInput("siteNumber")} title={getErrorTooltip('siteNumber')} />
         </div>
     </div>
     <div class="mutation-buttons">
@@ -221,9 +261,8 @@
 </div>
 
 <style>
-    .name-error-indicator {
+    .error-indicator {
         display: inline-flex;
-        outline: 1px solid var(--error-background, #fae4e7);
-        border-radius: 2px;
+        margin-left: 4px;
     }
 </style>

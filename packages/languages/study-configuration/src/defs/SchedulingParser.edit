@@ -6,7 +6,7 @@ editor parser
 
 EventSchedule {
     [
-        First scheduled ${eventStart} 
+        First scheduled ${eventStart replace=CustomActionsComponent placeholder="event start"}
         [? ${eventWindow} ]
         [? and then repeats ${eventRepeat} ]
         [? limited to ${eventTimeOfDay} ]

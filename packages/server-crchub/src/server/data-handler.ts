@@ -733,6 +733,28 @@ export class DataHandler {
         }
     }
 
+    public static async checkSiteNumberExists(oid: string, ctx: IRouterContext) {
+        try {
+            const siteNumber = ctx.query["siteNumber"] as string | undefined;
+            const excludeSiteId = (ctx.query["excludeSiteId"] as string | undefined) || undefined;
+            const all = ctx.query["all"] === "true";
+            if (!siteNumber || typeof siteNumber !== "string") {
+                ctx.status = 412;
+                ctx.response.type = "application/json";
+                ctx.response.body = { error: "Missing or invalid query parameter 'siteNumber'" };
+                return;
+            }
+            const exists = await siteService.checkSiteNumberExists(oid, siteNumber, excludeSiteId, all);
+            ctx.response.type = "application/json";
+            ctx.status = 200;
+            ctx.response.body = { exists };
+        } catch (e) {
+            consoleLogError(moduleName, `Error checking site number: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error checking site number", details: String(e) };
+        }
+    }
+
     public static async addSite(oid: string, ctx: IRouterContext) {
         try {
             const body: any = (ctx.request as any).body;

@@ -821,6 +821,17 @@ router.put("/updateSiteNumber", async (ctx: Router.IRouterContext) => {
     }
 });
 
+router.get("/checkSiteNumberExists", async (ctx: Router.IRouterContext) => {
+    const uid = ctx.query["uid"];
+    if (!!uid && typeof uid === "string") {
+        await DataHandler.checkSiteNumberExists(uid, ctx);
+    } else {
+        ctx.status = 412;
+        ctx.response.type = "application/json";
+        ctx.response.body = { error: "Missing query parameter 'uid'" };
+    }
+});
+
 router.post("/addSite", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
     consoleLogInfo(moduleName, `addSite: uid=${uid}`);
