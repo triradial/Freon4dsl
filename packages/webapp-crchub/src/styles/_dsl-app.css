@@ -431,6 +431,7 @@ main {
 .list-group.type2 {
   height: 2rem !important;
   margin-left: 0 !important;
+  margin-top: 0.5rem !important;
 }
 
 .list-group.type3 {
@@ -511,7 +512,8 @@ main {
 }
 
 .list-item:last-child {
-  margin-top: 0.5rem !important;
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
 }
 
 .list-item.type1 {
@@ -756,6 +758,7 @@ span:has(> .tinymce-inline) {
 .multiline2-component .edit-mode {
   width: 100%;
   position: relative;
+  margin: 2px 4px 4px 4px !important;
 }
 
 /* Constrain TinyMCE inline toolbar width to prevent overflow */

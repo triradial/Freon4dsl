@@ -12,7 +12,7 @@ import DisplayNothingComponent from "./components/custom/DisplayNothingComponent
 
 import EmailInputComponent from "./components/custom/EmailInputComponent.svelte";
 import ListGroupComponent from "./components/custom/ListGroupComponent.svelte";
-import MultilineTextComponent from "./components/custom/MultilineTextComponent.svelte";
+import MultilineTextComponent from "./components/custom/freon/MultilineTextComponent.svelte";
 import PhoneInputComponent from "./components/custom/PhoneInputComponent.svelte";
 import ReferenceComponent from "./components/custom/ReferenceComponent.svelte";
 import SingleLineItemComponent from "./components/custom/SingleLineItemComponent.svelte";

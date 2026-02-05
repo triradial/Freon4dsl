@@ -1,7 +1,7 @@
 <script lang="ts">
     import { authenticate, isAuthenticated, redirectUrl } from "../../services/security/auth.js";
     import { goto } from '$app/navigation';
-    import version from '../../../static/version.txt?raw';
+    import version from '../../version.txt?raw';
     import { CircleX as ErrorIcon } from '@lucide/svelte';
 
     let username = $state("");
