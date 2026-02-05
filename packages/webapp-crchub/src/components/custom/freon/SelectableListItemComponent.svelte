@@ -29,7 +29,7 @@
     let id = $derived(box ? componentId(box) : 'selectable-list-item-unknown');
     let wrapperElement: HTMLDivElement | HTMLSpanElement | undefined = $state();
 
-    // Determine if this node can be shared (is a SystemAccess that is not already shared)
+    // Determine if this node can be shared (is a SystemAccess that is not already at study level)
     let canBeShared = $derived.by(() => {
         if (!canShare) return false;
         const node = box?.node;
@@ -37,7 +37,15 @@
         const concept = node.freLanguageConcept();
         // Only show share for SystemAccess that is not already shared
         if (concept === "SystemAccess") {
-            return !(node as SystemAccess).isShared;
+            const systemAccess = node as SystemAccess;
+            // Check if already marked as shared
+            if (systemAccess.isShared) return false;
+            // Also check if it's directly owned by StudyConfiguration (already in shared list)
+            const ownerDesc = node.freOwnerDescriptor();
+            if (ownerDesc?.owner?.freLanguageConcept?.() === "StudyConfiguration") {
+                return false;
+            }
+            return true;
         }
         return false;
     });

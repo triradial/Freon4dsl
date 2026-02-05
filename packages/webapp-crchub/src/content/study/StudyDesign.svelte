@@ -272,10 +272,35 @@
         perfLogger.end('initialize-study');
     }
 
+    // Reference button click handler for scroll-to-element functionality
+    // This uses event delegation to catch clicks on .reference-button elements
+    // After the click handler in TextDropdownComponent selects the referred element,
+    // we scroll it into view (same behavior as error list navigation)
+    let referenceButtonClickHandler: ((event: MouseEvent) => void) | undefined;
+
     onMount(async () => {
         loadSplitterSetting();
         dslEditor = WebappConfigurator.getInstance().editorEnvironment.editor;
         await initializeStudy();
+
+        // Set up event delegation for reference button clicks
+        referenceButtonClickHandler = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            // Check if the click was on a reference button or its child (the arrow icon)
+            const referenceButton = target.closest('.reference-button');
+            if (referenceButton) {
+                // Wait for the selection to happen (TextDropdownComponent handles the click first)
+                // Then scroll the selected element into view
+                requestAnimationFrame(() => {
+                    const selectedElement = dslEditor?.selectedElement;
+                    if (selectedElement) {
+                        ModelManager.getInstance().selectElement(selectedElement);
+                    }
+                });
+            }
+        };
+        // Use capture phase to ensure we see the click even if it's stopped
+        document.addEventListener('click', referenceButtonClickHandler, true);
 
         // Subscribe to FreChangeManager changes
         const changeCallback = (delta) => {
@@ -387,6 +412,10 @@
         if (unsubscribeChangeManager) unsubscribeChangeManager();
         if (errorCountRefreshTimeout) {
             clearTimeout(errorCountRefreshTimeout);
+        }
+        // Clean up reference button click handler
+        if (referenceButtonClickHandler) {
+            document.removeEventListener('click', referenceButtonClickHandler, true);
         }
     });
 

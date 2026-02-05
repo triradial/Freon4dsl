@@ -12,12 +12,8 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Graham
 
 ### To-Do 
-- [ ] Fix ReferenceComponent:
-  - [ ] To display like SelectableListItemComponent
-  - [ ] Fix Jump to reference button to work again
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
 - [ ] Document and test the steps to bring on a user
-- [ ] Create a repeatable demo script (whoever is done first will do this)
 - Not needed for first user:
   - [ ] Add a way to search the content of the study design better than just cntl-f in the browser?
   - [ ] Make staff shared/optionally-shared across studies (not essential for first user)
@@ -50,6 +46,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
+- [ ] Create a repeatable demo script (whoever is done first will do this)
 - [ ] review and update tests
 - [ ] Rebuild some or all of the studies to test behavior and useability
 - [ ] Make tasks be clickable checkboxes
@@ -63,6 +60,9 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] fix checklist hide/show for unscheduled event at study level
 
 ### Done
+- [x] Fix ReferenceComponent:
+  - [x] To display like SelectableListItemComponent
+  - [x] Fix Jump to reference button to work again
 - [x] Add back pdf/print behavior to checklist
 - [x] - Get control-x, control-c, control-v working
 - [x] Test, update, and add buttons for things like duplicate and smart duplicate, 
