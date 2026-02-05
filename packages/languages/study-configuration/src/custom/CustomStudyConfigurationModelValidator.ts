@@ -5,7 +5,7 @@ import { FreError } from "@freon4dsl/core";
 
 import { StudyConfigurationModelDefaultWorker } from "../freon/utils/index.js";
 import { type StudyConfigurationModelCheckerInterface } from "../freon/validator/StudyConfigurationModelValidator.js";
-import { Event, Step, Task, Reference, StaffRole, SystemAccess, Period } from "../freon/language/index.js";
+import { Event, UnscheduledEvent, Step, Task, Reference, StaffRole, SystemAccess, Period } from "../freon/language/index.js";
 
 export class CustomStudyConfigurationModelValidator
   extends StudyConfigurationModelDefaultWorker
@@ -31,6 +31,21 @@ export class CustomStudyConfigurationModelValidator
       "Removing alternativeName error:"
     );
     // Remove description errors for Events
+    this.removeErrorsMatching(
+      /property 'description' of .* must have a value/i,
+      "Removing description error:"
+    );
+    return false;
+  }
+
+  public override execAfterUnscheduledEvent(_modelelement: UnscheduledEvent): boolean {
+    super.execAfterUnscheduledEvent(_modelelement);
+    // Remove alternativeName errors for UnscheduledEvents
+    this.removeErrorsMatching(
+      /Property 'alternativeName' of .* must have a value/,
+      "Removing alternativeName error:"
+    );
+    // Remove description errors for UnscheduledEvents
     this.removeErrorsMatching(
       /property 'description' of .* must have a value/i,
       "Removing description error:"

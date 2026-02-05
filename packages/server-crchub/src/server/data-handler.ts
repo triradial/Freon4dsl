@@ -48,6 +48,28 @@ export class DataHandler {
         }
     }
 
+    public static async checkStudyNameExists(oid: string, ctx: IRouterContext) {
+        try {
+            const name = ctx.query["name"] as string | undefined;
+            const excludeId = (ctx.query["excludeId"] as string | undefined) || undefined;
+            const all = ctx.query["all"] === "true";
+            if (!name || typeof name !== "string") {
+                ctx.status = 412;
+                ctx.response.type = "application/json";
+                ctx.response.body = { error: "Missing or invalid query parameter 'name'" };
+                return;
+            }
+            const exists = await studyService.checkStudyNameExists(oid, name, excludeId, all);
+            ctx.response.type = "application/json";
+            ctx.status = 200;
+            ctx.response.body = { exists };
+        } catch (e) {
+            consoleLogError(moduleName, `Error checking study name: ${String(e)}`);
+            ctx.status = 500;
+            ctx.response.body = { error: "Error checking study name", details: String(e) };
+        }
+    }
+
     public static async addStudy(oid: string, ctx: IRouterContext) {
         try {
             ctx.response.type = 'application/json';

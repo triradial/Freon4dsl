@@ -4,7 +4,7 @@
     import { browser } from '$app/environment';
     import { simulationService } from "../services/simulation/simulation-service.js";
     import { dataStore } from "../services/data/data-store.js";
-    import { Timeline, getTimelineAsOfADate, type StudyConfiguration, Day, Unscheduled, AnyDay } from "@freon4dsl/study-configuration";
+    import { Timeline, getTimelineAsOfADate, type StudyConfiguration, Day } from "@freon4dsl/study-configuration"; // Unscheduled, AnyDay removed - EventStart concepts commented out
     import { ModelManager } from "../services/dsl/model-manager.js";
     import { get } from "svelte/store";
     import dayjs from "dayjs";
@@ -2158,13 +2158,13 @@
         for (const period of studyConfig.periods || []) {
             for (const event of period.events || []) {
                 const eventStart = event.schedule?.eventStart;
-                // Check if event is unscheduled (Unscheduled or AnyDay)
-                if (eventStart && (eventStart instanceof Unscheduled || eventStart instanceof AnyDay)) {
-                    events.push({
-                        name: event.name,
-                        id: event.name.toLowerCase().replace(/\s+/g, '-')
-                    });
-                }
+                // Check if event is unscheduled - Unscheduled and AnyDay EventStart concepts removed
+                // if (eventStart && eventStart instanceof Unscheduled) {
+                //     events.push({
+                //         name: event.name,
+                //         id: event.name.toLowerCase().replace(/\s+/g, '-')
+                //     });
+                // }
             }
         }
         

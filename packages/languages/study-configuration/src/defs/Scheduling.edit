@@ -81,10 +81,10 @@ FirstDayOfStudy {
     trigger = "start day: depends on the first day of the study +/- some amount of time"
 }
 
-Baseline {
-    [ on the baseline/start day of the study ${timeAmountPart} ]
-    trigger = "baseline: alternate name for the first day of the study"
-}
+// Baseline {
+//     [ on the baseline/start day of the study ${timeAmountPart} ]
+//     trigger = "baseline: alternate name for the first day of the study"
+// }
 
 Day {
     [ day ${startDay replace=CustomNumericComponent min="0" max="999"} ]
@@ -92,24 +92,24 @@ Day {
 }
 
 When {
-    [ when ${startWhen replace=CustomActionsComponent placeholder="event reference"} ${timeAmountPart replace=CustomActionsComponent placeholder="time amount part"}]
+    [ when ${startWhen replace=CustomActionsComponent placeholder="event reference"} ${timeAmountPart replace=CustomActionsComponent placeholder="+/- time"}]
     trigger = "when: depends on when another event occurs"
 }  
 
-Previous {
-    [ when the previous event is ${eventState replace=CustomSelectComponent placeholder="state"} ${timeAmountPart replace=CustomActionsComponent placeholder="time amount part"} ]
-    trigger = "previous: depends on the previous event"
-}
+// Previous {
+//     [ when the previous event is ${eventState replace=CustomSelectComponent placeholder="state"} ${timeAmountPart replace=CustomActionsComponent placeholder="time amount part"} ]
+//     trigger = "previous: depends on the previous event"
+// }
 
-Unscheduled {
-    [ on any day (an unscheduled event) ]
-    trigger = "unscheduled: an unscheduled event"
-}
+// Unscheduled {
+//     [ on any day (an unscheduled event) ]
+//     trigger = "unscheduled: an unscheduled event"
+// }
 
-AnyDay {
-    [ on any day (an unscheduled event) ]
-    trigger = "any day: alternative name for an unscheduled event"
-} 
+// AnyDay {
+//     [ on any day (an unscheduled event) ]
+//     trigger = "any day: alternative name for an unscheduled event"
+// } 
 
 
 //----------------------------------------------------------

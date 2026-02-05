@@ -1,5 +1,5 @@
 import { Timeline } from "../timeline/Timeline.js";
-import { Period, Person, PersonReference, StudyConfiguration, Task, TaskReference } from "../../freon/language/index.js";
+import { Period, Person, PersonReference, StudyConfiguration, Task, TaskReference, UnscheduledEvent } from "../../freon/language/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../freon/writer/StudyConfigurationModelModelUnitWriter.js";
 
 class MarkdownBuilder {
@@ -272,9 +272,9 @@ export class StudyChecklistDocumentTemplate {
      * @param step The step to render
      * @param stepCounter The step index (0-based)
      */
-    private static renderStepAsMarkdown(builder: MarkdownBuilder, step: any, stepCounter: number): void {
+    private static renderStepAsMarkdown(builder: MarkdownBuilder, step: any, stepCounter: number, headingLevel: number = 4): void {
         // Step heading with spacing and visual indicator
-        builder.addHeading(4, `Step ${stepCounter + 1}: ${step.name}`);
+        builder.addHeading(headingLevel, `Step ${stepCounter + 1}: ${step.name}`);
         const stepDesc = step.description?.text ?? step.description?.rawText;
         if (stepDesc) {
             builder.addParagraph(stepDesc, true);
@@ -314,19 +314,19 @@ export class StudyChecklistDocumentTemplate {
      * @param taskCounter The task index (0-based)
      * @param taskPrefix Optional prefix for the task heading (e.g., emoji)
      */
-    private static renderTaskAsMarkdown(builder: MarkdownBuilder, task: Task | TaskReference, taskCounter: number, taskPrefix: string = ""): void {
+    private static renderTaskAsMarkdown(builder: MarkdownBuilder, task: Task | TaskReference, taskCounter: number, taskPrefix: string = "", headingLevel: number = 3): void {
         const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
-        
+
         // Task heading with spacing and visual indicator
-        builder.addHeading(3, `${taskPrefix}Task: ${t.name}`);
-        
+        builder.addHeading(headingLevel, `${taskPrefix}Task: ${t.name}`);
+
         const taskDesc = t.description?.text ?? t.description?.rawText;
         if (taskDesc) {
             builder.addParagraph(taskDesc, true);
         }
 
         t.steps.forEach((step, stepCounter) => {
-            StudyChecklistDocumentTemplate.renderStepAsMarkdown(builder, step, stepCounter);
+            StudyChecklistDocumentTemplate.renderStepAsMarkdown(builder, step, stepCounter, headingLevel + 1);
         });
     }
 
@@ -377,6 +377,30 @@ export class StudyChecklistDocumentTemplate {
     }
 
     /**
+     * Helper method to render an unscheduled event as markdown.
+     * Similar to renderEventAsMarkdown but without scheduling information.
+     * @param builder The markdown builder
+     * @param event The unscheduled event to render
+     * @param eventCounter The event index (0-based)
+     * @param headingPrefix Optional prefix for the event heading
+     * @param taskPrefix Optional prefix for task headings
+     */
+    private static renderUnscheduledEventAsMarkdown(builder: MarkdownBuilder, event: UnscheduledEvent, _eventCounter: number, headingPrefix: string = "", taskPrefix: string = "", headingLevel: number = 3): void {
+        builder.addHeading(headingLevel, `${headingPrefix}${event.name}`);
+
+        const eventDesc = event.description?.text ?? event.description?.rawText;
+        if (eventDesc) {
+            builder.addParagraph(eventDesc, true);
+        }
+
+        builder.addParagraph('This is an unscheduled event that is triggered as needed.', true);
+
+        event.tasks.forEach((task, taskCounter) => {
+            StudyChecklistDocumentTemplate.renderTaskAsMarkdown(builder, task as Task | TaskReference, taskCounter, taskPrefix, headingLevel + 1);
+        });
+    }
+
+    /**
      * Build a markdown string of the form
      *
      * @param studyConfiguration
@@ -393,6 +417,15 @@ export class StudyChecklistDocumentTemplate {
             period.events.forEach((event, eventCounter) => {
                 StudyChecklistDocumentTemplate.renderEventAsMarkdown(builder, writer, event, eventCounter);
             });
+
+            // Add unscheduled events for this period
+            if (period.unscheduledEvents?.length > 0) {
+                builder.addSectionBreak();
+                builder.addHeading(2, "Unscheduled Events");
+                period.unscheduledEvents.forEach((event, eventCounter) => {
+                    StudyChecklistDocumentTemplate.renderUnscheduledEventAsMarkdown(builder, event, eventCounter);
+                });
+            }
 
             // Add visual separator between periods (except after the last one)
             if (periodCounter < studyConfiguration.periods.length - 1) {
@@ -547,6 +580,15 @@ export class StudyChecklistDocumentTemplate {
         // Add visits by period section with enhanced visual spacing
         const visitsMarkdown = StudyChecklistDocumentTemplate.getVisitsByPeriodAsMarkdown(studyConfiguration);
         builder.addRaw(visitsMarkdown);
+
+        // Add study-level unscheduled events
+        if (studyConfiguration.unscheduledEvents?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Study Unscheduled Events");
+            studyConfiguration.unscheduledEvents.forEach((event, eventCounter) => {
+                StudyChecklistDocumentTemplate.renderUnscheduledEventAsMarkdown(builder, event, eventCounter, "", "", 2);
+            });
+        }
 
         let markdown = builder.build();
 

@@ -1,7 +1,6 @@
 import { InterpreterContext, isRtError, ownerOfType, RtBoolean, RtNumber, RtObject } from "@freon4dsl/core";
-import { MainStudyConfigurationModelInterpreter } from "../MainStudyConfigurationModelInterpreter.js";
 import {
-    Baseline,
+    // Baseline,
     Day,
     Event,
     EventStart,
@@ -13,6 +12,7 @@ import {
     StudyStart,
     When
 } from "../../freon/language/index.js";
+import { MainStudyConfigurationModelInterpreter } from "../MainStudyConfigurationModelInterpreter.js";
 import { PeriodEventInstance } from "./PeriodEventInstance.js";
 import { ScheduledEventInstance } from "./ScheduledEventInstance.js";
 import { ScheduledStudyConfiguration } from "./ScheduledStudyConfiguration.js";
@@ -274,7 +274,7 @@ export class ScheduledEvent {
         if (eventStart == null) {
             TimelineLogger.log("isScheduledOnASpecificDay: eventStart is null for: " + this.getName());
             return false;
-        } else if (this.isInstanceOfAny(eventStart, [Day, StudyStart, FirstDayOfStudy, Baseline])) {
+        } else if (this.isInstanceOfAny(eventStart, [Day, StudyStart, FirstDayOfStudy])) { //, Baseline
             return true;
         }
         return false;

@@ -22,7 +22,14 @@ export default defineConfig({
     }
   ],
   server: {
-    port: 5173
+    port: 5173,
+    watch: {
+      // Ignore study-configuration dist and freon generated files to prevent HMR storm when rebuilding the language
+      ignored: [
+        '/Users/mikevogel/projects/Freon4dsl/packages/languages/study-configuration/dist/**',
+        '/Users/mikevogel/projects/Freon4dsl/packages/languages/study-configuration/src/freon/**'
+      ]
+    }
   },
   resolve: {
     conditions: ['svelte', 'import', 'module', 'browser', 'default'],

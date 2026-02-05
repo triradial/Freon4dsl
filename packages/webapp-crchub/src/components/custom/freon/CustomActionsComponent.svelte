@@ -315,12 +315,12 @@
             const eventStartOrder: Record<string, number> = {
                 'StudyStart': 1,
                 'FirstDayOfStudy': 2,
-                'Baseline': 3,
+                // 'Baseline': 3, // removed - was sub-concept of FirstDayOfStudy
                 'Day': 4,
                 'When': 5,
-                'Previous': 6,
-                'Unscheduled': 7,
-                'AnyDay': 8
+                // 'Previous': 6, // removed - concept commented out
+                // 'Unscheduled': 7, // removed - concept commented out
+                // 'AnyDay': 8 // removed - was sub-concept of Unscheduled
             };
             return eventStartOrder[conceptName] ?? 999; // Unknown concepts go to end
         }

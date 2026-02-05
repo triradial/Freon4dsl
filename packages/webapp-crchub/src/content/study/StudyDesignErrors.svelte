@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { ModelManager } from "../../services/dsl/model-manager.js";
-    import { onMount, onDestroy } from "svelte";
     import type { FreError } from "@freon4dsl/core";
-    // @ts-ignore
+    import { onDestroy, onMount } from "svelte";
+    import { ModelManager } from "../../services/dsl/model-manager.js";
+// @ts-ignore
     import { Locate as IconLocate } from '@lucide/svelte';
 
     let { studyId } = $props<{ studyId: string }>();
@@ -58,7 +58,10 @@
         if (conceptType) {
             // Capitalize first letter of concept type
             const capitalizedType = conceptType.charAt(0).toUpperCase() + conceptType.slice(1);
-            return `${capitalizedType} ${message.charAt(0).toLowerCase()}${message.slice(1)}`;
+            // Remove the first instance of 'property ' since the concept type already provides context
+            let trimmedMessage = message.charAt(0).toLowerCase() + message.slice(1);
+            trimmedMessage = trimmedMessage.replace(/property /, '');
+            return `${capitalizedType} ${trimmedMessage}`;
         }
         
         return message;

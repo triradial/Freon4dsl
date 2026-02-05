@@ -1,13 +1,15 @@
 <script lang="ts">
     import { untrack } from "svelte";
     import { getStatusColor } from "../../services/utils.js";
-    import { type Study } from "../../services/data/data-store.js";
+    import { dataStore, type Study } from "../../services/data/data-store.js";
     // @ts-ignore
     import { Save as IconSave, X as IconX, Asterisk as IconAsterisk } from '@lucide/svelte';
 
-    const { study, action, onsave, onclose } = $props<{
+    // svelte-ignore state_referenced_locally - study/action are read at call time in event handlers
+    const { study, action, adminMode = false, onsave, onclose } = $props<{
         study: Study;
         action: "add" | "edit" | "copy";
+        adminMode?: boolean;
         onsave?: (study: Study) => void;
         onclose?: () => void;
     }>();
@@ -17,6 +19,9 @@
     let siteNumber = $state('');
     let siteId = $state<string | undefined>(undefined);
     let rows: number = 6;
+
+    let nameValidationTimeout: ReturnType<typeof setTimeout> | null = null;
+    let nameValidationId = 0;
 
     let statusColor = $derived(getStatusColor(mutatedStudy.status));
     
@@ -70,7 +75,6 @@
     async function fetchSiteInfo() {
         if (!study.id) return;
         console.log("[StudyMutation] fetchSiteInfo: Fetching site for study ID:", study.id);
-        const { dataStore } = await import("../../services/data/data-store.js");
         const site = await dataStore.getUserStudySite(study.id);
         console.log("[StudyMutation] fetchSiteInfo: Site received:", site);
         if (site) {
@@ -92,6 +96,14 @@
     let hasErrors = $derived(Object.values(errorState).some((error) => error !== ""));
 
     async function handleSave() {
+        if (nameValidationTimeout) {
+            clearTimeout(nameValidationTimeout);
+            nameValidationTimeout = null;
+        }
+        if (mutatedStudy.name?.trim()) {
+            const excludeId = action === "edit" && study?.id ? study.id : undefined;
+            await validateNameDuplicate(excludeId);
+        }
         validateAllFields();
         if (Object.values(errorState).every((error) => error === "")) {
             console.log("[StudyMutation] calling onsave prop", mutatedStudy);
@@ -103,7 +115,6 @@
                 onsave?.(mutatedStudy);
                 // Update the site number if it changed
                 if (siteId) {
-                    const { dataStore } = await import("../../services/data/data-store.js");
                     await dataStore.updateSiteNumber(siteId, siteNumber);
                 }
             }
@@ -115,6 +126,19 @@
         onclose?.();
     }
 
+    async function validateNameDuplicate(excludeId?: string) {
+        const id = ++nameValidationId;
+        const currentValue = mutatedStudy.name?.trim() ?? "";
+        const exists = await dataStore.checkStudyNameExists(currentValue, excludeId, adminMode);
+        if (id !== nameValidationId) return;
+        if (exists && currentValue) {
+            errors.name = "Study name already exists";
+        } else {
+            errors.name = currentValue ? "" : "Study name is required";
+        }
+        errorState.name = errors.name;
+    }
+
     function handleInput(field: keyof typeof errors) {
         return (event: Event) => {
             const target = event.target as HTMLInputElement;
@@ -124,34 +148,38 @@
 
     function validateAllFields() {
         console.log("[StudyMutation] validateAllFields called - mutatedStudy.name:", mutatedStudy.name, "siteNumber:", siteNumber);
-        // Validate study name
         validateField("name", mutatedStudy.name);
-        // Validate site number
         validateField("siteNumber", siteNumber);
     }
 
     function validateField(field: keyof typeof errors, value: string | undefined) {
-        const strValue = value || '';
-        console.log(`[StudyMutation] Validating ${field}: value="${strValue}"`);
-        if (field === "name" && !strValue.trim()) {
-            errors[field] = "Study name is required";
-            console.log(`[StudyMutation] ${field} validation failed - required`);
-        } else if (field === "siteNumber" && !strValue.trim()) {
-            errors[field] = "Site number is required";
-            console.log(`[StudyMutation] ${field} validation failed - required`);
-        } else {
-            errors[field] = "";
-            console.log(`[StudyMutation] ${field} validation passed`);
+        const strValue = value || "";
+        if (field === "name") {
+            if (!strValue.trim()) {
+                errors.name = "Study name is required";
+                errorState.name = errors.name;
+            } else {
+                errors.name = "";
+                errorState.name = "";
+                if (nameValidationTimeout) clearTimeout(nameValidationTimeout);
+                const excludeId = action === "edit" && study?.id ? study.id : undefined;
+                nameValidationTimeout = setTimeout(() => validateNameDuplicate(excludeId), 300);
+            }
+        } else if (field === "siteNumber") {
+            if (!strValue.trim()) {
+                errors.siteNumber = "Site number is required";
+            } else {
+                errors.siteNumber = "";
+            }
+            errorState.siteNumber = errors.siteNumber;
         }
-        errorState[field] = errors[field];
-        console.log(`[StudyMutation] After validation - errors.${field}="${errors[field]}", errorState.${field}="${errorState[field]}"`);
     }
 </script>
 
 <div class="mutation-area max-w-sm">
     <div class="flex flex-col gap-4">
         <div>
-            <div class="small-label-text">Study Name{#if errors.name}<IconAsterisk size="12" color="red" />{/if}</div>        
+            <div class="small-label-text">Study Name{#if errors.name}<span class="name-error-indicator"><IconAsterisk size="12" color="red" /></span>{/if}</div>        
             <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} />
         </div>
         <div>
@@ -191,3 +219,11 @@
         <button class="standard-button gray inverted" onclick={handleClose}><IconX size="16" />Cancel</button>
     </div>
 </div>
+
+<style>
+    .name-error-indicator {
+        display: inline-flex;
+        outline: 1px solid var(--error-background, #fae4e7);
+        border-radius: 2px;
+    }
+</style>

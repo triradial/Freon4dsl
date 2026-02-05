@@ -289,6 +289,17 @@ router.get("/getStudy", async (ctx: Router.IRouterContext) => {
     }
 });
 
+router.get("/checkStudyNameExists", async (ctx: Router.IRouterContext) => {
+    const uid = ctx.query["uid"];
+    if (!!uid && typeof uid === "string") {
+        await DataHandler.checkStudyNameExists(uid, ctx);
+    } else {
+        ctx.status = 412;
+        ctx.response.type = "application/json";
+        ctx.response.body = { error: "Missing query parameter 'uid'" };
+    }
+});
+
 router.post("/addStudy", async (ctx: Router.IRouterContext) => {
     const uid = ctx.query["uid"];
     consoleLogInfo(moduleName, `addStudy: uid=${uid}`);

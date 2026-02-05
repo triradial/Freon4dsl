@@ -2,7 +2,7 @@ import { consoleLogInfo } from '../server/logging.js';
 import { getDbPool } from './db-connection.js';
 import * as modelService from './model-service.js';
 import * as siteService from './site-service.js';
-import { cloneJson, ensureUniqueCopyLabel } from './copy-study-utils.js';
+import { cloneJson, ensureUniqueCopyLabel, validateName } from './copy-study-utils.js';
 
 export interface Study {
     id: string;
@@ -221,7 +221,19 @@ export async function getStudies(oid: string, all: boolean = false): Promise<Stu
  */
 export async function getStudy(oid: string, studyId: string): Promise<Study | null> {
     const pool = getDbPool();
-    
+
+    const orgResult = await pool.query(
+        `SELECT DISTINCT o.org_id 
+         FROM person p
+         JOIN site_persons sp ON p.person_id = sp.person_id
+         JOIN site s ON sp.site_id = s.site_id
+         JOIN organization o ON s.org_id = o.org_id
+         WHERE p.oid = $1
+         LIMIT 1`,
+        [oid]
+    );
+    const userOrgId = orgResult.rows[0]?.org_id ?? null;
+
     const result = await pool.query(
         `SELECT 
             s.study_id as id,
@@ -230,10 +242,12 @@ export async function getStudy(oid: string, studyId: string): Promise<Study | nu
             s.phase,
             s.status,
             s.therapeutic_area,
-            s.attributes
+            s.attributes,
+            user_site.site_number
          FROM study s
+         LEFT JOIN site user_site ON user_site.study_id = s.study_id AND user_site.org_id = $2
          WHERE s.study_id = $1`,
-        [studyId]
+        [studyId, userOrgId]
     );
 
     if (result.rows.length === 0) {
@@ -265,6 +279,7 @@ export async function getStudy(oid: string, studyId: string): Promise<Study | nu
         phase: row.phase,
         status: row.status,
         therapeutic_area: row.therapeutic_area,
+        site_number: row.site_number || null,
         ...cleanDbAttributes
     };
     
@@ -272,6 +287,26 @@ export async function getStudy(oid: string, studyId: string): Promise<Study | nu
     study.id = dbStudyId;
     
     return study;
+}
+
+/**
+ * Check whether a study name already exists (duplicate).
+ * @param oid - User's Azure OID
+ * @param studyName - The name to check
+ * @param excludeStudyId - Optional study ID to exclude (e.g. when editing, exclude the current study)
+ * @param all - If true, check against all studies (admin scope); otherwise user's studies only
+ * @returns true if the name already exists, false if it is unique
+ */
+export async function checkStudyNameExists(
+    oid: string,
+    studyName: string,
+    excludeStudyId?: string,
+    all: boolean = false
+): Promise<boolean> {
+    const studies = await getStudies(oid, all);
+    const existing = studies.map((s) => ({ id: s.id, name: s.name }));
+    const isUnique = validateName(studyName, existing, excludeStudyId);
+    return !isUnique;
 }
 
 /**

@@ -27,7 +27,7 @@ StudyConfiguration {
     [
     Study Notes: ${description}
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
-    ${unscheduledEvents wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Unscheduled Events"}
+    ${unscheduledEvents wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Unscheduled Events"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
     ${roles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"}
@@ -43,7 +43,7 @@ Period {
     fragment periodDetails [
         ${name}
         ${description}
-        ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Events"}
+        ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Scheduled Events"}
         ${unscheduledEvents wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Unscheduled Events"}
     ]   
 }

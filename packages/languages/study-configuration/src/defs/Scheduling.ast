@@ -79,18 +79,18 @@ concept StudyStart implements EventStart {
 concept FirstDayOfStudy implements EventStart {
 }
 
-concept Baseline base FirstDayOfStudy {
-}
+// concept Baseline base FirstDayOfStudy {
+// }
 
-concept Previous implements EventStart {
-    eventState: EventState;
-}
+// concept Previous implements EventStart {
+//     eventState: EventState;
+// }
 
-concept Unscheduled implements EventStart {
-}
+// concept Unscheduled implements EventStart {
+// }
 
-concept AnyDay base Unscheduled {
-}
+// concept AnyDay base Unscheduled {
+// }
 
 
 //----------------------------------------------------------
