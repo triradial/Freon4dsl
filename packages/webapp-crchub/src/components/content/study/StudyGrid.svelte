@@ -1,6 +1,8 @@
 <script lang="ts">
     import { dataStore, type Study } from "../../../services/data/data-store.js";
+    import { getStudyTemplates } from "../../../services/data/study-templates.js";
     import { editObject, addObject, openObjectDrawer } from "../../../services/stores/object-drawer-store.js";
+    import { Popover } from "@skeletonlabs/skeleton-svelte";
     import { onMount, onDestroy, tick } from "svelte";
     import { mount, unmount } from "svelte";
     import { createGrid } from "ag-grid-community";
@@ -15,7 +17,7 @@
     import { adminModeStore } from "../../../services/stores/admin-mode-store.js";
     import { untrack } from "svelte";
     // @ts-ignore
-    import { Plus as IconPlus, RefreshCcw as IconRefresh } from '@lucide/svelte';
+    import { Plus as IconPlus, RefreshCcw as IconRefresh, ChevronDown as IconChevronDown } from '@lucide/svelte';
     import type { SelectOption } from '@freon4dsl/core';
     import ConfirmUnsavedDialog from '../../dialogs/ConfirmUnsavedDialog.svelte';
     import StudyNameCell from "./StudyNameCell.svelte";
@@ -98,6 +100,10 @@
     let deleteConfirmContainer: HTMLDivElement | null = null;
     let deleteConfirmTriggerElement: HTMLElement | null = null;
     let deleteConfirmStudyData: Study | null = null;
+
+    // Add Study dropdown (New Study vs Create from Template)
+    let addMenuOpen = $state(false);
+    const studyTemplates = getStudyTemplates();
 
     $effect(() => {
         // keep the gridApi and studiesData in scope
@@ -658,6 +664,32 @@
         openObjectDrawer("study", "copy", copyPayload);
     }
 
+    function handleNewStudy() {
+        addMenuOpen = false;
+        addObject("study");
+    }
+
+    function handleTemplateClick(template: { id: string; label: string; sourceStudyId: string }) {
+        addMenuOpen = false;
+        const sourceStudyId = template.sourceStudyId || studiesData[0]?.id;
+        if (!sourceStudyId) {
+            console.warn("[StudyGrid] No template source study and no studies available");
+            return;
+        }
+        const copyPayload = {
+            id: "",
+            name: "",
+            title: "",
+            status: "Planning",
+            phase: "",
+            therapeuticArea: "",
+            currentProtocol: "",
+            siteNumber: "",
+            sourceStudyId
+        };
+        openObjectDrawer("study", "copy", copyPayload);
+    }
+
     function onStudyChanged() {
         fetchStudies();
     }
@@ -841,9 +873,33 @@
 
 <div class="grid-toolbar">
   <div class="left-side">
-    <button type="button" class="standard-button primary inverted" onclick={() => addObject("study")} aria-label="Add Study">
-      <IconPlus size="16" />Add Study
-    </button>
+    <Popover
+      open={addMenuOpen}
+      onOpenChange={(e) => (addMenuOpen = e.open)}
+      positioning={{ placement: "bottom-start" }}
+      triggerBase="p-0"
+      contentBase="add-study-menu popover-content card p-2 min-w-[200px]"
+    >
+      {#snippet trigger()}
+        <button type="button" class="standard-button primary inverted" aria-label="Add Study" aria-haspopup="menu" aria-expanded={addMenuOpen}>
+          <IconPlus size="16" />Add Study <IconChevronDown size="14" class="add-study-chevron" />
+        </button>
+      {/snippet}
+      {#snippet content()}
+        <div class="add-study-menu-items">
+          <button type="button" class="add-study-menu-item" onclick={handleNewStudy}>
+            New Study
+          </button>
+          <div class="add-study-menu-separator" role="separator"></div>
+          <div class="add-study-menu-header">Templates:</div>
+          {#each studyTemplates as template}
+            <button type="button" class="add-study-menu-item" onclick={() => handleTemplateClick(template)}>
+              {template.label}
+            </button>
+          {/each}
+        </div>
+      {/snippet}
+    </Popover>
     <div class="search-container">
         <input type="text" placeholder="Quick filter..." class="quick-input-field" value={filterValue} oninput={onGlobalFilter} />
         {#if filterValue}
@@ -869,5 +925,44 @@
 />
 
 <style>
+    :global(.add-study-menu) {
+        background: var(--dropdown-bg, #23272f) !important;
+    }
+    .add-study-chevron {
+        margin-left: 2px;
+        vertical-align: middle;
+        opacity: 0.9;
+    }
+    .add-study-menu-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .add-study-menu-item {
+        text-align: left;
+        padding: 8px 16px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        font-size: inherit;
+        color: var(--dropdown-fg, #fff);
+    }
+    .add-study-menu-item:hover {
+        background: var(--dropdown-hover, #2a2e38);
+    }
+    .add-study-menu-separator {
+        height: 1px;
+        background: var(--dropdown-hover, #2a2e38);
+        margin: 4px 0;
+    }
+    .add-study-menu-header {
+        padding: 6px 16px 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--dropdown-fg, #fff);
+    }
 </style>
 
