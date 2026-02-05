@@ -13,7 +13,6 @@ global {
         PhoneInputComponent,
         EmailInputComponent,
         ItemGroupComponent,
-        ItemGroupComponent2,
         CustomNumericComponent,
         CustomSelectComponent,
         CustomActionsComponent,

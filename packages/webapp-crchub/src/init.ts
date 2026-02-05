@@ -21,7 +21,7 @@ import UrlInputComponent from "./components/custom/UrlInputComponent.svelte";
 import CustomActionsComponent from "./components/custom/freon/CustomActionsComponent.svelte";
 import CustomNumericComponent from "./components/custom/freon/CustomNumericComponent.svelte";
 import CustomSelectComponent from "./components/custom/freon/CustomSelectComponent.svelte";
-import { default as CustomTimePickerComponent, default as ItemGroupComponent2 } from "./components/custom/freon/CustomTimePickerComponent.svelte";
+import CustomTimePickerComponent from "./components/custom/freon/CustomTimePickerComponent.svelte";
 import ItemGroupComponent from "./components/custom/freon/ItemGroupComponent.svelte";
 import SelectableListItemComponent from "./components/custom/freon/SelectableListItemComponent.svelte";
 import SelectableWrapperComponent from "./components/custom/freon/SelectableWrapperComponent.svelte";
@@ -84,7 +84,6 @@ setCustomComponents([
     { component: CustomTimePickerComponent, knownAs: "CustomTimePickerComponent" },
     { component: ListGroupComponent, knownAs: "ListGroupComponent" },
     { component: ItemGroupComponent, knownAs: "ItemGroupComponent" },
-    { component: ItemGroupComponent2, knownAs: "ItemGroupComponent2" },
     { component: MultilineTextComponent, knownAs: "MultilineTextComponent" },
     { component: DisplayNothingComponent, knownAs: "DisplayNothingComponent" },
     { component: ReferenceComponent, knownAs: "ReferenceComponent" },
