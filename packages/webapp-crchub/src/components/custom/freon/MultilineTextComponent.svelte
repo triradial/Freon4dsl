@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from "svelte";
     import { AST, type StringWrapperBox, FreEditor, FreLogger } from "@freon4dsl/core";
     import { componentId, type FreComponentProps } from "@freon4dsl/core-svelte";
-    import { theme } from "../../services/stores/theme-store.js";
+    import { theme } from "../../../services/stores/theme-store.js";
 
     interface Window {
         tinymce: any;
@@ -265,7 +265,8 @@
     {#if isEditing}
         <div class="edit-mode">
             <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-            <div id={editorDivId} contenteditable="true"></div>
+            <!-- Pre-populate with text to avoid empty flash while TinyMCE initializes -->
+            <div id={editorDivId} contenteditable="true">{@html text || ""}</div>
         </div>
     {:else}
         <span
@@ -287,4 +288,3 @@
         </span>
     {/if}
 </div>
-
