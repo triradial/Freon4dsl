@@ -113,10 +113,20 @@
         return html;
     };
 
+    /** Derive initials from full name (e.g. "Jane Smith" -> "JS"). */
+    function getInitialsFromName(name: string): string {
+        if (!name || !name.trim()) return "";
+        const parts = name.trim().split(/\s+/).filter(Boolean);
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        return name.slice(0, 2).toUpperCase();
+    }
+
     /**
      * All Patients Timeline: pull patient schedule data from the database, render with study
-     * schedule (same simulated data, no re-simulation). Chart matches patient-event-overlay-test.html
-     * (phases, scheduled events, windows, on-scheduled-date, in-window, out-of-window, not-available).
+     * schedule (same simulated data, no re-simulation). Also loads staff for the study's org
+     * and passes them to the chart builder for a Staff section below patients.
      */
     const getChartForAllPatients = async (_referenceDate: Date | undefined) => {
         if (!studyId) {
@@ -133,7 +143,32 @@
             return `<div class="limited-width-container"><div class='text-red-500'>Study configuration not found</div></div>`;
         }
 
-        return buildAllPatientsTimelineChartHtml(patientsWithSchedules, studyConfig);
+        // Load staff for the study's organization (same pattern as StudyPatients / DayView)
+        let staffForTimeline: Array<{ id: string; name: string; initials: string; unavailableDates: string[] }> = [];
+        try {
+            const site = await dataStore.getUserStudySite(studyId);
+            if (site?.orgId) {
+                await dataStore.getPersons();
+                const storeState = get(dataStore);
+                const allPersons = storeState.persons || [];
+                const orgPersons = allPersons.filter((p: any) =>
+                    p.organizations?.some((org: any) => org.org_id === site.orgId)
+                );
+                for (const person of orgPersons) {
+                    const unavailableDates = await dataStore.getPersonUnavailableDates(person.id, site.orgId);
+                    staffForTimeline.push({
+                        id: person.id,
+                        name: person.name || "",
+                        initials: getInitialsFromName(person.name || ""),
+                        unavailableDates: Array.isArray(unavailableDates) ? unavailableDates : []
+                    });
+                }
+            }
+        } catch (e) {
+            console.warn("[AllPatientsTimeline] Failed to load staff for timeline:", e);
+        }
+
+        return buildAllPatientsTimelineChartHtml(patientsWithSchedules, studyConfig, staffForTimeline);
     };
 
     /**
