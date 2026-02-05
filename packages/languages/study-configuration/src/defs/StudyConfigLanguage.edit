@@ -71,8 +71,8 @@ UnscheduledEvent {
 }
 Task {
     [
-        [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]
-    ] trigger = "Checklist Task"
+        [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canShare="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]
+    ] trigger = "Task in this Checklist"
     fragment taskDetails [
         ${name} 
         ${description}
@@ -82,7 +82,7 @@ Task {
 TaskReference {
     [
         [fragment taskReferenceDetails wrap =  ReferenceComponent cssClass="type3" canDelete="true" canExpand="false" isExpanded="false" selectable="true" label="Task"]
-    ] trigger = "Task Reference"
+    ] trigger = "Reference to Shared Task"
     fragment taskReferenceDetails [
         ${task}
     ]
@@ -100,7 +100,7 @@ Step {
 
 SystemAccess {
     [
-        [fragment systemAccessDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true" hideDragHandle="true"]
+        [fragment systemAccessDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true" canShare="true" hideDragHandle="true"]
     ]
     trigger = "System Access"
     fragment systemAccessDetails [

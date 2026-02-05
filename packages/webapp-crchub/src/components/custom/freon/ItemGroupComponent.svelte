@@ -1,7 +1,7 @@
 <script lang="ts">
     import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, TextBox, VerticalLayoutBox } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
-    import { Event, SharedTask, Step, StudyConfiguration, TaskReference, type Task } from "@freon4dsl/study-configuration";
+    import { Event, SharedTask, Step, StudyConfiguration, TaskReference, UnscheduledEvent, type Task } from "@freon4dsl/study-configuration";
     import { onDestroy, onMount } from "svelte";
     import { expandCollapseStore } from "../../../services/stores/expand-collapse-store.js";
 // ts-ignore
@@ -225,31 +225,50 @@
         if (event) {
             event.stopPropagation();
         }
-        // LOGGER.log("Sharing item")
-        // console.log("Sharing ItemGroupComponent2: box.node", box.node)
         // Get the study config context
-        const task = box.node as Task
-        const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration
-        const eventObj: Event = ownerOfType(task, "Event") as unknown as Event
+        const task = box.node as Task;
+        const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration;
+
+        // Tasks can be in Event.tasks or UnscheduledEvent.tasks - try both
+        let eventObj: Event | UnscheduledEvent | null = ownerOfType(task, "Event") as Event | null;
+        if (!eventObj) {
+            eventObj = ownerOfType(task, "UnscheduledEvent") as UnscheduledEvent | null;
+        }
+
+        if (!studyConfig || !eventObj) {
+            LOGGER.error("Could not find StudyConfiguration or Event/UnscheduledEvent for task");
+            return;
+        }
+
         AST.change(() => {
-            // Create the shard task and wire together
-            let newSharedTask = SharedTask.create({
+            // Create the shared task with copied data
+            const newSharedTask = SharedTask.create({
                 name: task.name,
                 description: task.description,
                 numberedSteps: task.numberedSteps,
                 showDetails: task.showDetails,
                 steps: task.steps.map((step) => step.copy()),
-            })
-            let refToTask = FreNodeReference.create(task.name, "SharedTask") as FreNodeReference<SharedTask>
-            refToTask.referred = newSharedTask
-            let newTaskReference = TaskReference.create({
+            });
+
+            // Create reference to the new shared task
+            const refToTask = FreNodeReference.create(task.name, "SharedTask") as FreNodeReference<SharedTask>;
+            refToTask.referred = newSharedTask;
+
+            const newTaskReference = TaskReference.create({
                 task: refToTask
-            })
+            });
+
             // Replace the original task in the event with the new task reference
-            eventObj.tasks[eventObj.tasks.indexOf(task)] = newTaskReference
-            // Add the new shared task to the shared tasks list
-            studyConfig.tasks.push(newSharedTask)
-        })
+            const taskIndex = eventObj.tasks.indexOf(task);
+            if (taskIndex >= 0) {
+                eventObj.tasks[taskIndex] = newTaskReference;
+            }
+
+            // Add the new shared task to the study's shared tasks list
+            studyConfig.tasks.push(newSharedTask);
+
+            LOGGER.log(`Converted Task "${task.name}" to SharedTask`);
+        });
     }
 
     // function duplicateItem(originalElement: FreNode, duplicatedElement: FreNode) {

@@ -1,90 +1,61 @@
 <script lang="ts">
-    import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, ReferenceBox, VerticalLayoutBox } from "@freon4dsl/core";
+    import { AST, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
-    import { Event, SharedTask, TaskReference, type StudyConfiguration, type Task } from "@freon4dsl/study-configuration";
+    import { Event, SharedTask, TaskReference, Task, SystemAccess, SystemAccessReference, UnscheduledEvent, type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { onMount } from "svelte";
-// ts-ignore
-    import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, Trash2 as IconDelete, Copy as IconDuplicate, EllipsisVertical as IconEllipsisVertical, Share2 as IconShare2 } from '@lucide/svelte';
+    import { Share2 as IconShare } from '@lucide/svelte';
+    import SelectableWrapperComponent from "./freon/SelectableWrapperComponent.svelte";
 
-    const LOGGER = new FreLogger("ItemGroupComponent");
-    FreLogger.unmute("ItemGroupComponent");
-    
-    // const { box, editor } = $props<{ box: FragmentWrapperBox, editor: FreEditor }>();
+    const LOGGER = new FreLogger("ReferenceComponent");
+
     let { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
-    let inputElement: HTMLInputElement;
 
-    // Props - using $derived for reactivity
+    // Extract props from box params - use $derived to properly react to box changes
     let cssClass = $derived(box?.findParam("cssClass") || "");
     let canDelete = $derived(box?.findParam("canDelete") === "true");
-    let canCRUD = $derived(box?.findParam("canCRUD") === "true");
-    let canDuplicate = $derived(box?.findParam("canDuplicate") === "true");
     let canShare = $derived(box?.findParam("canShare") === "true");
-    let canExpand = $derived(box?.findParam("canExpand") === "true");
+    let inlineDisplay = $derived(box?.findParam("inlineDisplay") === "true");
     let hideDragHandle = $derived(box?.findParam("hideDragHandle") === "true");
-    
+
     // Set hideDragHandle on the box so ListComponent can check it
     $effect(() => {
         if (box && hideDragHandle) {
             box.hideDragHandle = true;
         }
     });
-    let isExpanded = $state(false);
-    let labelValue = $derived(box?.findParam("label") || "");
-    let referenceBox: ReferenceBox | undefined = $state()
-    let otherChildren: Box[] | undefined = $state()
 
-    let id = $derived(box ? componentId(box) : 'group-for-unknown-box');
+    // State
+    let id = $derived(box ? componentId(box) : 'reference-unknown');
+    let wrapperElement: HTMLDivElement | HTMLSpanElement | undefined = $state();
 
-    // Initialize isExpanded from box param
-    $effect(() => {
-        isExpanded = box?.findParam("isExpanded") === "true";
+    // Determine if this node can be shared (is a Task or SystemAccess)
+    let canBeShared = $derived.by(() => {
+        if (!canShare) return false;
+        const node = box?.node;
+        if (!node) return false;
+        const concept = node.freLanguageConcept();
+        return concept === "Task" || concept === "SystemAccess";
     });
-    let contentElement: HTMLDivElement | undefined = $state();
-    let contentStyle = $derived(isExpanded ? 'display:block;' : 'display:none;');
-    let cssContainerClass = "h-20"
-
-    // The following three functions need to be included for the editor to function properly.
-    // Please, set the focus to the first editable/selectable element in this component.
-    async function setFocus(): Promise<void> {
-        // console.log("setFocus nameBox: ", nameBox);
-        referenceBox?.setFocus();
-    }
 
     const refresh = (why?: string): void => {
-        // console.log("REFRESH (" + why + ")");
-        box.childBox.refreshComponent(why);
-        box.refreshComponent = refresh;
+        LOGGER.log("REFRESH (" + why + ")");
+        box.childBox?.refreshComponent?.(why);
     };
 
     onMount(() => {
-        box.refreshComponent = refresh;   
-        box.setFocus = setFocus;
+        if (box) {
+            box.refreshComponent = refresh;
+        }
     });
 
     $effect(() => {
-        box.refreshComponent = refresh;
-        const fragmentBox = box.childBox as FragmentBox;
-        if (fragmentBox.childBox.kind === "VerticalLayoutBox") {
-            const verticalLayoutBox = fragmentBox.childBox as VerticalLayoutBox;
-            const children = verticalLayoutBox.children;
-            otherChildren = children.slice(1);
-            referenceBox = children[0] as ReferenceBox;
-        } else {
-            referenceBox = fragmentBox.childBox as ReferenceBox;
+        if (box) {
+            box.refreshComponent = refresh;
         }
-    })
+    });
 
-    const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
-        isExpanded = !isExpanded;
-        box.isExpanded = isExpanded;
-        event.stopPropagation();
-        event.preventDefault();
-    };
-
-    const deleteItem = (event?: MouseEvent | KeyboardEvent) => {
-        if (event) {
-            event.stopPropagation();
-        }
+    // Delete handler to pass to SelectableWrapperComponent
+    const handleDelete = () => {
         AST.change(() => {
             const ownerDescriptor = box.node.freOwnerDescriptor();
             const parent = ownerDescriptor.owner;
@@ -93,141 +64,220 @@
 
             if (parent && propertyName && typeof index === "number" && index >= 0) {
                 parent[propertyName].splice(index, 1);
+                LOGGER.log(`Deleted item at index ${index} from ${propertyName}`);
             } else {
-                LOGGER.log("Could not determine parent, property name, or index for deletion");
+                LOGGER.error("Could not determine parent, property name, or index for deletion");
             }
         });
-    }
+    };
 
-    const duplicateItem = (event?: MouseEvent | KeyboardEvent) => {
-        if (event) {
-            event.stopPropagation();
+    // Share handler - converts Task to SharedTask or SystemAccess to SystemAccessReference
+    const handleShare = (event: MouseEvent | KeyboardEvent) => {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const node = box.node;
+        const concept = node.freLanguageConcept();
+
+        if (concept === "Task") {
+            shareTask(node as Task);
+        } else if (concept === "SystemAccess") {
+            shareSystemAccess(node as SystemAccess);
         }
-        // AST.change(() => {
-        //     const propertyName = box.propertyName;
-        //     const currentElement = box.node;
-        //     const typeName = currentElement.freLanguageConcept();
+    };
 
-        //     const ownerDescriptor = box.node.freOwnerDescriptor();
-        //     const parent = ownerDescriptor.owner;
-        //     const propertyName = ownerDescriptor.propertyName;
-        //     const index = ownerDescriptor.propertyIndex;
+    // Convert a Task to a SharedTask and replace with TaskReference
+    function shareTask(task: Task) {
+        const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration;
 
-        //     const property = FreLanguage.getInstance().classifierProperty(typeName, propertyName);
-        //     if (property.type) {
-        //         let newConceptName = property.type;
-        //         if (newConceptName.startsWith('Abstract')) {
-        //             newConceptName = newConceptName.slice(8);
-        //         }
-        //         const newElement = FreLanguage.getInstance().createConceptOrUnit(newConceptName);
-        //         smartDuplicate(currentElement, newElement);
-        //         const currentIndex = box.getPropertyValue().indexOf(currentElement); 
-        //         box.getPropertyValue().splice(currentIndex + 1, 0, newElement);
-        //         LOGGER.log("custom action duplicate, splicing in copyOfEvent: " + newElement.name + " at index: " + currentIndex);
-        //     } else {
-        //         LOGGER.log("No property type");
-        //     }
-        // });
-    }
-
-    const shareItem = (event?: MouseEvent | KeyboardEvent) => {
-        if (event) {
-            event.stopPropagation();
+        // Tasks can be in Event.tasks or UnscheduledEvent.tasks - try both
+        let eventObj: Event | UnscheduledEvent | null = ownerOfType(task, "Event") as Event | null;
+        if (!eventObj) {
+            eventObj = ownerOfType(task, "UnscheduledEvent") as UnscheduledEvent | null;
         }
-        // LOGGER.log("Sharing item")
-        // console.log("Sharing ItemGroupComponent2: box.node", box.node)
-        // Get the study config context
-        const task = box.node as Task
-        const studyConfig: StudyConfiguration = ownerOfType(task, "StudyConfiguration") as StudyConfiguration
-        const eventObj: Event = ownerOfType(task, "Event") as unknown as Event
+
+        if (!studyConfig || !eventObj) {
+            LOGGER.error("Could not find StudyConfiguration or Event/UnscheduledEvent for task");
+            return;
+        }
+
         AST.change(() => {
-            // Create the shard task and wire together
-            let newSharedTask = SharedTask.create({
+            // Create the shared task with copied data
+            const newSharedTask = SharedTask.create({
                 name: task.name,
                 description: task.description,
                 numberedSteps: task.numberedSteps,
                 showDetails: task.showDetails,
                 steps: task.steps.map((step) => step.copy()),
-            })
-            let refToTask = FreNodeReference.create(task.name, "SharedTask") as FreNodeReference<SharedTask>
-            refToTask.referred = newSharedTask
-            let newTaskReference = TaskReference.create({
+            });
+
+            // Create reference to the new shared task
+            const refToTask = FreNodeReference.create(task.name, "SharedTask") as FreNodeReference<SharedTask>;
+            refToTask.referred = newSharedTask;
+
+            const newTaskReference = TaskReference.create({
                 task: refToTask
-            })
+            });
+
             // Replace the original task in the event with the new task reference
-            eventObj.tasks[eventObj.tasks.indexOf(task)] = newTaskReference
-            // Add the new shared task to the shared tasks list
-            studyConfig.tasks.push(newSharedTask)
-        })
+            const taskIndex = eventObj.tasks.indexOf(task);
+            if (taskIndex >= 0) {
+                eventObj.tasks[taskIndex] = newTaskReference;
+            }
+
+            // Add the new shared task to the study's shared tasks list
+            studyConfig.tasks.push(newSharedTask);
+
+            LOGGER.log(`Converted Task "${task.name}" to SharedTask`);
+        });
     }
 
-    // function smartDuplicate(originalElement: any, duplicatedElement: any) {
-    //     const methodName = "smartUpdate";
-    //     const args = [originalElement, duplicatedElement];
-    //     // Call methodName if it exists on the element
-    //     if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
-    //         console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
-    //         return (duplicatedElement as any)[methodName](...args);
-    //     } else {
-    //         console.log(`Method ${methodName} does not exist on the instance.`);
-    //     }
-    // }
+    // Convert a SystemAccess to a shared SystemAccess and replace with SystemAccessReference
+    function shareSystemAccess(systemAccess: SystemAccess) {
+        const studyConfig: StudyConfiguration = ownerOfType(systemAccess, "StudyConfiguration") as StudyConfiguration;
+        const ownerDescriptor = systemAccess.freOwnerDescriptor();
+        const parent = ownerDescriptor.owner;
+        const propertyName = ownerDescriptor.propertyName;
+        const index = ownerDescriptor.propertyIndex;
 
-    // function duplicateItem(originalElement: FreNode, duplicatedElement: FreNode) {
-    //     const event: Event = box.node as Event
-    //         const period: Period = ownerOfType(event, "Period") as Period 
-    //         const copyOfEvent = event.copy();
-    //         extension(ExtendedEvent, Event);
-    //         smartDuplicate(event, copyOfEvent);
-    //         const index = period.events.indexOf(event);
-    //         console.log("custom action duplicate, splicing in copyOfEvent: " + copyOfEvent.name + " at index: " + index)
-    //         period.events.splice(index + 1, 0, copyOfEvent)
-    // }
+        if (!studyConfig || !parent || !propertyName) {
+            LOGGER.error("Could not find StudyConfiguration or parent for SystemAccess");
+            return;
+        }
 
+        AST.change(() => {
+            // Mark the system access as shared and move it to the study level
+            const sharedSystemAccess = SystemAccess.create({
+                name: systemAccess.name,
+                description: systemAccess.description,
+                isShared: true,
+                functionName: systemAccess.functionName,
+                accessedAt: systemAccess.accessedAt,
+            });
+
+            // Create reference to the shared system access
+            const refToSystem = FreNodeReference.create(systemAccess.name, "SystemAccess") as FreNodeReference<SystemAccess>;
+            refToSystem.referred = sharedSystemAccess;
+
+            const newSystemAccessReference = SystemAccessReference.create({
+                system: refToSystem
+            });
+
+            // Replace the original system access with the reference
+            if (typeof index === "number" && index >= 0) {
+                (parent as any)[propertyName][index] = newSystemAccessReference;
+            }
+
+            // Add the shared system access to the study's systemAccesses list
+            studyConfig.systemAccesses.push(sharedSystemAccess);
+
+            LOGGER.log(`Converted SystemAccess "${systemAccess.name}" to shared SystemAccess`);
+        });
+    }
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div id="{id}" class="item-group {cssClass}">
-    {#if canExpand}
-        <button class="btn-icon p-0 ml-1 mr-1 toggle-button" onclick={toggleExpanded} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), toggleExpanded(e))} title={isExpanded ? "Collapse" : "Expand"} tabindex="0">
-            {#if isExpanded}
-                <IconChevronDown size={16} />
-            {:else}
-                <IconChevronRight size={16} />
-            {/if}
-        </button>
-    {:else}
-        <span class="w-5"></span>   
-    {/if}
-    <span class="item-group-label" tabindex="-1">{labelValue}:</span>
-    <RenderComponent box={referenceBox} editor={editor} />
-    {#if canDuplicate}
-        <button class="circle-button action-button" onclick={duplicateItem} onkeydown={(e) => e.key === 'Enter' && duplicateItem(e)} title="Duplicate" tabindex="0">
-            <IconDuplicate size={14} />
-        </button>
-    {/if}
-    {#if canDelete}
-        <button class="circle-button action-button" onclick={deleteItem} onkeydown={(e) => e.key === 'Enter' && deleteItem(e)} title="Delete" tabindex="0">
-            <IconDelete size={14} />
-        </button>
-    {/if}
-    {#if canShare}
-        <button class="circle-button action-button" onclick={shareItem} onkeydown={(e) => e.key === 'Enter' && shareItem(e)} title="Share" tabindex="0">
-            <IconShare2 size={14} />
-        </button>
-    {/if}
-    {#if canCRUD}
-        <button class="circle-button action-button" title="More..." tabindex="0">
-            <IconEllipsisVertical size={14} />
-        </button> 
-    {/if}
-</div>
-{#if otherChildren}
-    {#key contentStyle}
-        <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle}>
-            {#each otherChildren as child}
-                <RenderComponent box={child} editor={editor} />
-            {/each}
-        </div>
-    {/key}
+{#if inlineDisplay}
+    <!-- Inline span display for truly inline text -->
+    <span
+        bind:this={wrapperElement}
+        {id}
+        class="inline-reference {cssClass}"
+        role="group"
+    >
+        <SelectableWrapperComponent {box} {editor} onDelete={canDelete ? handleDelete : undefined}>
+            <span class="reference-content-inline">
+                <RenderComponent box={box.childBox} {editor} />
+                {#if canBeShared}
+                    <button
+                        class="share-button-inline"
+                        onclick={handleShare}
+                        onkeydown={(e) => e.key === 'Enter' && handleShare(e)}
+                        title="Convert to shared"
+                        tabindex="0"
+                    >
+                        <IconShare size={12} />
+                    </button>
+                {/if}
+            </span>
+        </SelectableWrapperComponent>
+    </span>
+{:else}
+    <!-- Block display with selection box from SelectableWrapperComponent -->
+    <div
+        bind:this={wrapperElement}
+        {id}
+        class="reference-item {cssClass}"
+        role="group"
+    >
+        <SelectableWrapperComponent {box} {editor} onDelete={canDelete ? handleDelete : undefined}>
+            <div class="reference-item-content">
+                <RenderComponent box={box.childBox} {editor} />
+                {#if canBeShared}
+                    <button
+                        class="share-button"
+                        onclick={handleShare}
+                        onkeydown={(e) => e.key === 'Enter' && handleShare(e)}
+                        title="Convert to shared"
+                        tabindex="0"
+                    >
+                        <IconShare size={14} />
+                    </button>
+                {/if}
+            </div>
+        </SelectableWrapperComponent>
+    </div>
 {/if}
+
+<style>
+    /* Block display style */
+    .reference-item {
+        position: relative;
+        display: block;
+    }
+
+    .reference-item-content {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Inline display style */
+    .inline-reference {
+        display: inline;
+        position: relative;
+    }
+
+    .reference-content-inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Share button styles */
+    .share-button,
+    .share-button-inline {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.125rem;
+        border: none;
+        background: transparent;
+        color: var(--fgColor-muted, #666);
+        cursor: pointer;
+        border-radius: 0.25rem;
+        opacity: 0.6;
+        transition: opacity 0.15s, color 0.15s;
+    }
+
+    .share-button:hover,
+    .share-button-inline:hover {
+        opacity: 1;
+        color: var(--primary-color, #3b82f6);
+    }
+
+    .share-button:focus,
+    .share-button-inline:focus {
+        outline: 2px solid var(--primary-color, #3b82f6);
+        outline-offset: 1px;
+    }
+</style>
