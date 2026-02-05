@@ -5,11 +5,7 @@ The following are the roughly priority ordered required updates before we can ha
 Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## TBD
-- [ ] Fix ReferenceComponent:
-  - [ ] To display like SelectableListItemComponent
-  - [ ] Fix Jump to reference button to work again
 - [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. The the only choice for '+ SystemAccesses' is a SystemAccess concept. I see the drop down when I click it rather than it just being created. I added a discussion on it to Freon. Is this something we'll fix ourselves?
-- [ ] When I create a Role and don't fill the name and mouse over the name field the error message is dynamically displayed. Did you add this or is it the Freon behavior happening? It seems sort of nice and not as disruptive as the error we saw at the top for Study notes.
 
 
 ## Graham
@@ -18,6 +14,9 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
 - [ ] Document and test the steps to bring on a user
 - [ ] Create a repeatable demo script (whoever is done first will do this)
+- [ ] Fix ReferenceComponent:
+  - [ ] To display like SelectableListItemComponent
+  - [ ] Fix Jump to reference button to work again
 - Not needed for first user:
   - [ ] Add a way to search the content of the study design better than just cntl-f in the browser?
   - [ ] Make staff shared/optionally-shared across studies (not essential for first user)
@@ -32,9 +31,9 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Create a dev/test instance on Azure
 - [ ] Add patient page with visits / checklist, add note taking place
   - [ ] Add existing single patient full schedule chart to a draw / panel in the new UI
-- [ ] HTML editor: return and tab need to not jump out of editor
 
 ### Done
+- [x] HTML editor: return and tab need to not jump out of editor
 - [x] Improve validation error messages
 - [x] Show Patients page when no patients to allow getting started on study
 - [x] Make error messages jump to concept with error; also improved the message with context
@@ -50,10 +49,9 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
-- [ ] Test, update, and add buttons for things like duplicate and smart duplicate
+- [ ] Add back pdf/print behavior to checklist (discuss with Graham, e.g., where does button go)
 - [ ] Create complex and realistic examples of checklists
 - [ ] Rebuild some or all of the studies to test behavior and useability
-- [ ] Add back pdf/print behavior to checklist (discuss with Graham, e.g., where does button go)
 - [ ] Make tasks be clickable checkboxes
 - [ ] Setup tests of incomplete studies and add additional validation checks if/as needed so reliably get charts, etc.
 - [ ] Determine whether optional from Freon is needed and where 
@@ -61,10 +59,11 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
-- [ ] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
+- [ ] Test, update, and add buttons for things like duplicate and smart duplicate
 
 
 ### Done
+- [x] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
 - [x] Unscheduled and other special events
   - [x] Model unscheduled and other special events in the language in a better way.
   - [x] Add unscheduled event support to checklist
