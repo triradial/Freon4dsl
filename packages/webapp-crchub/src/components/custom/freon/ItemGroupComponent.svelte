@@ -1,8 +1,8 @@
 <script lang="ts">
     import { AST, Box, FragmentBox, FragmentWrapperBox, FreLogger, FreNodeReference, ownerOfType, TextBox, VerticalLayoutBox } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
-    import { onDestroy, onMount } from "svelte";
     import { Event, SharedTask, Step, StudyConfiguration, TaskReference, type Task } from "@freon4dsl/study-configuration";
+    import { onDestroy, onMount } from "svelte";
     import { expandCollapseStore } from "../../../services/stores/expand-collapse-store.js";
 // ts-ignore
     import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, Trash2 as IconDelete, Copy as IconDuplicate, EllipsisVertical as IconEllipsisVertical, Share2 as IconShare2 } from '@lucide/svelte';
@@ -185,35 +185,40 @@
         });
     }
 
+    function smartDuplicate(originalElement: any, duplicatedElement: any) {
+        const methodName = "smartUpdate";
+        const args = [originalElement, duplicatedElement];
+        // Call methodName if it exists on the element
+        if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
+            console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
+            return (duplicatedElement as any)[methodName](...args);
+        } else {
+            console.log(`Method ${methodName} does not exist on the instance.`);
+        }
+    }
+
     const duplicateItem = (event?: MouseEvent | KeyboardEvent) => {
         if (event) {
             event.stopPropagation();
         }
-        // AST.change(() => {
-        //     const propertyName = box.propertyName;
-        //     const currentElement = box.node;
-        //     const typeName = currentElement.freLanguageConcept();
+        AST.change(() => {
+            const currentElement = box.node;
 
-        //     const ownerDescriptor = box.node.freOwnerDescriptor();
-        //     const parent = ownerDescriptor.owner;
-        //     const propertyName = ownerDescriptor.propertyName;
-        //     const index = ownerDescriptor.propertyIndex;
+            const ownerDescriptor = currentElement.freOwnerDescriptor();
+            const parent = ownerDescriptor.owner;
+            const propertyName = ownerDescriptor.propertyName;
+            const index = ownerDescriptor.propertyIndex;
 
-        //     const property = FreLanguage.getInstance().classifierProperty(typeName, propertyName);
-        //     if (property.type) {
-        //         let newConceptName = property.type;
-        //         if (newConceptName.startsWith('Abstract')) {
-        //             newConceptName = newConceptName.slice(8);
-        //         }
-        //         const newElement = FreLanguage.getInstance().createConceptOrUnit(newConceptName);
-        //         smartDuplicate(currentElement, newElement);
-        //         const currentIndex = box.getPropertyValue().indexOf(currentElement); 
-        //         box.getPropertyValue().splice(currentIndex + 1, 0, newElement);
-        //         LOGGER.log("custom action duplicate, splicing in copyOfEvent: " + newElement.name + " at index: " + currentIndex);
-        //     } else {
-        //         LOGGER.log("No property type");
-        //     }
-        // });
+            if (!parent || !propertyName || typeof index !== "number") {
+                LOGGER.log("Could not determine parent, property name, or index for duplication");
+                return;
+            }
+
+            const newElement = currentElement.copy();
+            smartDuplicate(currentElement, newElement);
+            parent[propertyName].splice(index + 1, 0, newElement);
+            LOGGER.log("custom action duplicate, splicing in at index: " + (index + 1));
+        });
     }
 
     const shareItem = (event?: MouseEvent | KeyboardEvent) => {
@@ -246,18 +251,6 @@
             studyConfig.tasks.push(newSharedTask)
         })
     }
-
-    // function smartDuplicate(originalElement: any, duplicatedElement: any) {
-    //     const methodName = "smartUpdate";
-    //     const args = [originalElement, duplicatedElement];
-    //     // Call methodName if it exists on the element
-    //     if (methodName in duplicatedElement && typeof (duplicatedElement as any)[methodName] === "function") {
-    //         console.log(`smartDuplicate: Calling ${methodName} on the instance.`);
-    //         return (duplicatedElement as any)[methodName](...args);
-    //     } else {
-    //         console.log(`Method ${methodName} does not exist on the instance.`);
-    //     }
-    // }
 
     // function duplicateItem(originalElement: FreNode, duplicatedElement: FreNode) {
     //     const event: Event = box.node as Event

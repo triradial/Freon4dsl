@@ -34,16 +34,22 @@ export class ExtendedEvent {
     }
 
     private incrementSequences(input: string): string {
-        // Regular expressions to match patterns like V1, V2, V3 and 4A, 4B, 4C
-        const patterns = [
-            /V(\d+)/g, // Matches V1, V2, V3, etc.
-            /(\d+)([A-Z])/g, // Matches 4A, 4B, 4C, etc.
-        ];
-
-        // Replace all matches with incremented sequences
         let result = input;
-        result = result.replace(patterns[0], this.incrementNumericSequence);
-        result = result.replace(patterns[1], this.incrementAlphaNumericSequence);
+
+        // Pattern 1: V + number (V1, V2, V19, etc.)
+        result = result.replace(/V(\d+)/g, this.incrementNumericSequence);
+
+        // Pattern 2: number + uppercase letter (4A, 4B, etc.)
+        result = result.replace(/(\d+)([A-Z])/g, this.incrementAlphaNumericSequence);
+
+        // Pattern 3: trailing number (Visit 1, Week 12, Day 30, etc.)
+        if (result === input) {
+            result = result.replace(/(\d+)\s*$/, (_match, p1) => {
+                return (parseInt(p1, 10) + 1).toString();
+            });
+        }
+
+        // Fallback: append " copy" if nothing matched
         if (result === input) {
             result = input + " copy";
         }
@@ -51,6 +57,9 @@ export class ExtendedEvent {
     }
 
     updateSchedule(originalEvent: Event, duplicatedElement: Event): void {
+        if (!duplicatedElement.schedule) {
+            return;
+        }
         let eventStart = duplicatedElement.schedule.eventStart;
         if (eventStart instanceof When) {
             let newRef = FreNodeReference.create(originalEvent.name, "Event") as FreNodeReference<Event>;

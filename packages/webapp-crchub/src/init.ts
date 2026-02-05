@@ -1,6 +1,6 @@
 import { FreLogger, ServerCommunication } from "@freon4dsl/core";
 import { setCustomComponents } from "@freon4dsl/core-svelte";
-import { LanguageEnvironment } from "@freon4dsl/study-configuration";
+import { LanguageEnvironment, extendToSupportSmartDuplication } from "@freon4dsl/study-configuration";
 // @ts-ignore - TimelineLogger is not exported from package index, using direct path
 import TimelineLogger from "@freon4dsl/study-configuration/src/custom/timeline/TimelineLogger.js";
 import { env } from "./config/env.js";
@@ -77,6 +77,9 @@ LOGGER.log('Editor environment created');
 webappConfigurator.setEditorEnvironment(editorEnvironment);
 webappConfigurator.setServerCommunication(serverComm);
 LOGGER.log('Editor environment configured');
+
+// Mix smartUpdate into Event.prototype so duplicateItem can increment names and copy scheduling
+extendToSupportSmartDuplication();
 
 setCustomComponents([
     { component: DatePickerComponent, knownAs: "DatePickerComponent" },
