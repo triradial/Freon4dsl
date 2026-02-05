@@ -152,7 +152,7 @@
                 dragPreview.style.position = 'fixed';
                 dragPreview.style.top = '-500px';
                 dragPreview.style.left = '0px';
-                dragPreview.style.padding = '6px 12px';
+                dragPreview.style.padding = '6px 12px 6px 20px';
                 dragPreview.style.background = '#2a2a3e';
                 dragPreview.style.color = '#ffffff';
                 dragPreview.style.border = '1px solid #4a4a6a';
@@ -166,8 +166,8 @@
                 
                 document.body.appendChild(dragPreview);
                 
-                // Set the custom drag image
-                event.dataTransfer.setDragImage(dragPreview, 10, 10);
+                // Set the custom drag image (cursor at left edge so text isn't obscured)
+                event.dataTransfer.setDragImage(dragPreview, 0, 12);
                 
                 // Remove the temporary element after the browser captures it
                 requestAnimationFrame(() => {

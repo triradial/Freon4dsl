@@ -10,7 +10,7 @@
     import { staffAvailabilityStore } from "../../services/stores/staff-availability-store.js";
     // @ts-ignore
     import { Sun as IconSun, Moon as IconMoon } from '@lucide/svelte';
-    import version from '../../../static/version.txt?raw';
+    import version from '../../version.txt?raw';
 
     let user = $derived($userStore);
     let adminMode = $derived($adminModeStore);
