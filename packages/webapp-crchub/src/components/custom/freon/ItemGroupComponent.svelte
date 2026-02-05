@@ -14,18 +14,26 @@
     let { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
     let inputElement: HTMLInputElement;
 
-    // Props
-    let cssClass = box && box.findParam("cssClass") || "";
-    let canDelete = box && box.findParam("canDelete") === "true";
-    let canCRUD = box && box.findParam("canCRUD") === "true";
-    let canDuplicate = box && box.findParam("canDuplicate") === "true";
-    let canShare = box && box.findParam("canShare") === "true";
-    let canExpandParam = box && box.findParam("canExpand") === "true";
+    // Props - use $derived to properly react to box changes
+    let cssClass = $derived(box?.findParam("cssClass") || "");
+    let canDelete = $derived(box?.findParam("canDelete") === "true");
+    let canCRUD = $derived(box?.findParam("canCRUD") === "true");
+    let canDuplicate = $derived(box?.findParam("canDuplicate") === "true");
+    let canShare = $derived(box?.findParam("canShare") === "true");
+    let canExpandParam = $derived(box?.findParam("canExpand") === "true");
     // Store the language-defined default so we can restore it later
-    const defaultIsExpanded = box && box.findParam("isExpanded") === "true";
-    let isExpanded = $state(defaultIsExpanded);
+    let defaultIsExpanded = $derived(box?.findParam("isExpanded") === "true");
+    let isExpanded = $state(false);
     // Content display value - directly controlled $state for reliable reactivity
-    let contentDisplay = $state(defaultIsExpanded ? 'block' : 'none');
+    let contentDisplay = $state('none');
+    
+    // Initialize isExpanded and contentDisplay from defaultIsExpanded
+    $effect(() => {
+        if (defaultIsExpanded !== undefined) {
+            isExpanded = defaultIsExpanded;
+            contentDisplay = defaultIsExpanded ? 'block' : 'none';
+        }
+    });
     
     // Determine if the node has children that are being displayed
     // This is based on the display options in StudyConfiguration, not on actual children
@@ -53,11 +61,11 @@
     
     // Only show expand/collapse if both canExpand param is true AND children are being displayed
     let canExpand = $derived(() => canExpandParam && hasDisplayedChildren());
-    let label = $derived(() => box ? box.findParam("label") || "" : "");
+    let label = $derived(box?.findParam("label") || "");
     let nameBox: TextBox | undefined = $state()
     let otherChildren: Box[] | undefined = $state()
 
-    let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
+    let id = $derived(box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
     let cssContainerClass = "h-20"
 
@@ -76,7 +84,22 @@
             box.childBox.refreshComponent(why);
         }
         box.refreshComponent = refresh;
+        
+        // Update error state for nameBox validation
+        updateNameBoxError();
     };
+    
+    // Check if nameBox is empty and set error state accordingly
+    function updateNameBoxError(): void {
+        if (nameBox) {
+            const text = nameBox.getText()?.trim();
+            const shouldHaveError = !text;
+            // Only update if the error state actually changed to avoid infinite loops
+            if (nameBox.hasError !== shouldHaveError) {
+                nameBox.hasError = shouldHaveError;
+            }
+        }
+    }
 
     onMount(() => {
         box.refreshComponent = refresh;   
@@ -119,6 +142,18 @@
         const children = verticalLayoutBox.children;
         otherChildren = children.slice(1);
         nameBox = children[0] as TextBox;
+        
+        // Set initial error state for nameBox
+        updateNameBoxError();
+        
+        // Wrap nameBox's refreshComponent to also validate on text changes
+        if (nameBox) {
+            const originalRefresh = nameBox.refreshComponent;
+            nameBox.refreshComponent = (why?: string) => {
+                originalRefresh?.(why);
+                updateNameBoxError();
+            };
+        }
     })
 
     const toggleExpanded = (event: MouseEvent | KeyboardEvent) => {
@@ -248,11 +283,9 @@
             {/if}
         </button>
     {:else if !canExpandParam}
-        <!-- Spacer for items that are not configured to expand (original behavior) -->
         <span class="w-5"></span>
     {/if}
-    <!-- When canExpandParam is true but hasDisplayedChildren() is false, show nothing (no button, no indent) -->
-    <span class="item-group-label" tabindex="-1">{label()} </span>
+    <span class="item-group-label" tabindex="-1">{label} </span>
     <RenderComponent box={nameBox} editor={editor} />
     {#if canDuplicate}
         <button class="circle-button action-button borderless" onclick={duplicateItem} onkeydown={(e) => e.key === 'Enter' && duplicateItem(e)} title="Duplicate" tabindex="0">

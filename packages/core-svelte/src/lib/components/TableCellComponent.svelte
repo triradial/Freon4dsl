@@ -59,9 +59,9 @@
 
     // local variables
     const LOGGER = TABLECELL_LOGGER;
-    let id: string = notNullOrUndefined(box)
+    let id = $derived(notNullOrUndefined(box)
         ? `cell-${componentId(box)}`
-        : 'table-cell-for-unknown-box';
+        : 'table-cell-for-unknown-box');
 
     let row: number = $state(0);
     let column: number = $state(0);

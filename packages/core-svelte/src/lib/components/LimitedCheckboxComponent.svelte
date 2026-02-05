@@ -19,12 +19,16 @@
 
     const LOGGER = LIMITEDCHECKBOX_LOGGER;
 
-    let id: string = box.id;
-    let currentNames: string[] = $state(box.getNames());
-    let myEnum: string[] = box.getPossibleNames();
+    let id = $derived(box?.id);
+    let currentNames: string[] = $state([]);
+    let myEnum = $derived(box?.getPossibleNames() ?? []);
     let allElements: HTMLInputElement[] = $state([]);
-    let ariaLabel: string = box.propertyName;
-    let isHorizontal: boolean = box.horizontal;
+    let ariaLabel = $derived(box?.propertyName);
+    let isHorizontal = $derived(box?.horizontal);
+
+    $effect(() => {
+        currentNames = box?.getNames() ?? [];
+    });
 
     const onClick = (event: MouseEvent) => {
         // console.log("onClick")

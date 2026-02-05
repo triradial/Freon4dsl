@@ -19,12 +19,16 @@
 
     const LOGGER = LIMITEDRADIO_LOGGER;
 
-    let id: string = box.id;
-    let myEnum = box.getPossibleNames();
-    let currentValue: string = $state(box.getNames()[0]);
+    let id = $derived(box?.id);
+    let myEnum = $derived(box?.getPossibleNames() ?? []);
+    let currentValue: string = $state('');
     let allElements: HTMLInputElement[] = $state([]);
-    let ariaLabel: string = box.propertyName;
-    let isHorizontal: boolean = box.horizontal;
+    let ariaLabel = $derived(box?.propertyName);
+    let isHorizontal = $derived(box?.horizontal);
+
+    $effect(() => {
+        currentValue = box?.getNames()?.[0] ?? '';
+    });
 
     function findSelectedElement(): HTMLInputElement | undefined {
         let selected: HTMLInputElement | undefined = undefined;

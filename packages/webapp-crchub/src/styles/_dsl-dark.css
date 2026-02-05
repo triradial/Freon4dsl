@@ -136,6 +136,13 @@
 .text-component-input:focus {
   --tw-ring-color: var(--green-90t) !important;
 }
+
+.text-component-text.text-component-text-error {
+  background-color: #fee2e2 !important;
+}
+.text-component-placeholder.text-component-text-error {
+  color: var(--red-800) !important;
+}
 /* #endregion */
 
 /* #region Text Dropdown Component */ 

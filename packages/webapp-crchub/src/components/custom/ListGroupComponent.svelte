@@ -11,19 +11,27 @@
     
     const { editor, box }: FreComponentProps<PartWrapperBox> = $props();
 
-    // Props
-    let cssClass = box && box.findParam("cssClass") || "";
-    let canAdd = box && box.findParam("canAdd") === "true";
-    let canCRUD = box && box.findParam("canCRUD") === "true";
-    let canExpand = box && box.findParam("canExpand") === "true";
+    // Props - use $derived to properly react to box changes
+    let cssClass = $derived(box?.findParam("cssClass") || "");
+    let canAdd = $derived(box?.findParam("canAdd") === "true");
+    let canCRUD = $derived(box?.findParam("canCRUD") === "true");
+    let canExpand = $derived(box?.findParam("canExpand") === "true");
     // Store the language-defined default so we can restore it later
-    const defaultIsExpanded = box && box.findParam("isExpanded") === "true";
-    let isExpanded = $state(defaultIsExpanded);
+    let defaultIsExpanded = $derived(box?.findParam("isExpanded") === "true");
+    let isExpanded = $state(false);
     // Content display value - directly controlled $state for reliable reactivity
-    let contentDisplay = $state(defaultIsExpanded ? 'block' : 'none');
-    let label = $derived(() => box ? box.findParam("label") || "" : "");
+    let contentDisplay = $state('none');
+    let label = $derived(box?.findParam("label") || "");
 
-    let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
+    let id = $derived(box ? componentId(box) : 'group-for-unknown-box');
+    
+    // Initialize isExpanded and contentDisplay from defaultIsExpanded
+    $effect(() => {
+        if (defaultIsExpanded !== undefined) {
+            isExpanded = defaultIsExpanded;
+            contentDisplay = defaultIsExpanded ? 'block' : 'none';
+        }
+    });
     let contentElement: HTMLDivElement | undefined = $state();
     let toggleButton: HTMLButtonElement | undefined = $state();
 
@@ -112,6 +120,12 @@
             event.stopPropagation();
             event.preventDefault();
         }
+        // Expand the component if it's collapsed
+        if (canExpand && !isExpanded) {
+            isExpanded = true;
+            box.isExpanded = true;
+            contentDisplay = 'block';
+        }
         AST.change(() => {
             const language = FreLanguage.getInstance();
             const propertyName = box.propertyName;
@@ -150,7 +164,7 @@
     {:else}
         <span class="w-5"></span>   
     {/if}
-    <span class="list-group-label">{label()} {#if canAdd}({itemCount()}){/if}</span>
+    <span class="list-group-label">{label} {#if canAdd}({itemCount()}){/if}</span>
     {#if canAdd}
         <button class="circle-button action-button" onclick={addItem} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addItem(e))} title="Add" tabindex="0">
             <IconPlus size={14} />

@@ -13,7 +13,7 @@
     //local variables
     const LOGGER = GRIDCELL_LOGGER;
     let contentBox: Box = $state(dummyBox);
-    let id: string = notNullOrUndefined(box) ? componentId(box) : 'gridcell-for-unknown-box';
+    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'gridcell-for-unknown-box');
 
     let row: string = $state('');
     let column: string = $state('');

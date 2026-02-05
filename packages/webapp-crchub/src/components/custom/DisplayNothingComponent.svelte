@@ -7,8 +7,8 @@
     
     const { editor, box }: FreComponentProps<PartWrapperBox> = $props();
 
-    // Props
-    let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
+    // Props - use $derived to properly react to box changes
+    let id = $derived(box ? componentId(box) : 'group-for-unknown-box');
     let contentElement: HTMLDivElement | undefined = $state();
     let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
 

@@ -12,7 +12,8 @@
         onclose?: () => void;
     }>();
 
-    let mutatedStudy = $state({ ...study });
+    // Use $state with initial empty object, then sync via $effect
+    let mutatedStudy = $state<Study>({} as Study);
     let siteNumber = $state('');
     let siteId = $state<string | undefined>(undefined);
     let rows: number = 6;

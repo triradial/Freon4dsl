@@ -29,7 +29,7 @@
     // Props
     let { editor, box }: FreComponentProps<TableBox> = $props();
 
-    let id = notNullOrUndefined(box) ? componentId(box) : 'table-for-unknown-box';
+    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'table-for-unknown-box');
     let cells: TableCellBox[] = $state([]);
     let templateColumns: string = $state('');
     let templateRows: string = $state('');

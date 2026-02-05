@@ -4,7 +4,7 @@
     import { browser } from '$app/environment';
     import StudyCard from "../components/cards/StudyCard.svelte";
     import StudyPatients from "./StudyPatients.svelte";
-    import StudyDesign from "./StudyDesign.svelte";
+    import StudyDesign from "./study/StudyDesign.svelte";
     import { dataStore, type Study } from "../services/data/data-store.js";
     import { setAllDrawersVisibility, setDrawerVisibility, setDrawerProps, getActiveDrawer, setActiveDrawer } from "../services/stores/side-drawer-store.js";
 

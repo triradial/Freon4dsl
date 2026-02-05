@@ -51,36 +51,43 @@
 
     // Variables dependent upon the box, the prop 'text' is one of these.
     // an id for the html element
-    let id: string = $state(notNullOrUndefined(box) ? componentId(box) : 'text-with-unknown-box');
+    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'text-with-unknown-box');
     // the placeholder when value of text component is not present
-    let placeholder: string = $state(notNullOrUndefined(box) ? box.placeHolder : '<..>');
+    let placeholder: string = $state('');
     // variable to remember the text that was in the box previously
-    let originalText: string = $state(notNullOrUndefined(box) ? box.getText() : '');
+    let originalText: string = $state('');
     // variable for styling
-    let placeHolderStyle: string = partOfDropdown
+    let placeHolderStyle = $derived(partOfDropdown
         ? 'text-component-action-placeholder'
-        : 'text-component-placeholder';
+        : 'text-component-placeholder');
     // indication how is this text component is used, determines styling
-    let boxType: BoxType = $state(
-        notNullOrUndefined(box?.parent)
-            ? isActionBox(box?.parent)
-                ? 'action'
-                : isSelectBox(box?.parent)
-                  ? 'select'
-                  : 'text'
-            : 'text'
-    );
+    let boxType: BoxType = $state('text');
 
     // Variables to alter the state of the component, the prop 'isEditing' is one of these.
     // indicates whether we are just starting to edit, so we need to set the cursor in the <input>
     let editStart = $state(false);
     // indicates whether the user can use the TAB key to enter this component
     // Tab skips spaces before and after operators, which have specific roles.
-    let tabindex: number = notNullOrUndefined(box?.role)
+    let tabindex = $derived(notNullOrUndefined(box?.role)
         ? box.role.startsWith('action-binary') || box.role.startsWith('action-exp')
             ? -1
             : 0
-        : 0;
+        : 0);
+
+    // Initialize values from box
+    $effect(() => {
+        if (notNullOrUndefined(box)) {
+            placeholder = box.placeHolder;
+            originalText = box.getText();
+            boxType = notNullOrUndefined(box?.parent)
+                ? isActionBox(box?.parent)
+                    ? 'action'
+                    : isSelectBox(box?.parent)
+                      ? 'select'
+                      : 'text'
+                : 'text';
+        }
+    });
 
     // Variables for showing errors
     let errorCls: string = $state(''); // css class name for when the node is erroneous
@@ -93,17 +100,20 @@
     let widthSpan: HTMLSpanElement = $state()!; // the width of the <span> element, used to set the width of the <input> element
 
     // We create an extra object that handles a number of the more complex functions for this component
-    let myHelper: TextComponentHelper = new TextComponentHelper(
-        box,
-        () => {
-            return text;
-        },
-        () => {
-            return originalText !== text;
-        },
-        endEditing,
-        toParent
-    );
+    let myHelper: TextComponentHelper;
+    $effect(() => {
+        myHelper = new TextComponentHelper(
+            box,
+            () => {
+                return text;
+            },
+            () => {
+                return originalText !== text;
+            },
+            endEditing,
+            toParent
+        );
+    });
 
     /* ========	The following functions are called from @freon4dsl/core =========== */
 

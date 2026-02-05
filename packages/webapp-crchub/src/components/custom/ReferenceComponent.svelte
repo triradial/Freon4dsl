@@ -13,27 +13,34 @@
     let { editor, box }: FreComponentProps<FragmentWrapperBox> = $props();
     let inputElement: HTMLInputElement;
 
-    // Props
-    let cssClass = box && box.findParam("cssClass") || "";
-    let canDelete = box && box.findParam("canDelete") === "true";
-    let canCRUD = box && box.findParam("canCRUD") === "true";
-    let canDuplicate = box && box.findParam("canDuplicate") === "true";
-    let canShare = box && box.findParam("canShare") === "true";
-    let canExpand = box && box.findParam("canExpand") === "true";
-    let hideDragHandle = box && box.findParam("hideDragHandle") === "true";
+    // Props - using $derived for reactivity
+    let cssClass = $derived(box?.findParam("cssClass") || "");
+    let canDelete = $derived(box?.findParam("canDelete") === "true");
+    let canCRUD = $derived(box?.findParam("canCRUD") === "true");
+    let canDuplicate = $derived(box?.findParam("canDuplicate") === "true");
+    let canShare = $derived(box?.findParam("canShare") === "true");
+    let canExpand = $derived(box?.findParam("canExpand") === "true");
+    let hideDragHandle = $derived(box?.findParam("hideDragHandle") === "true");
     
     // Set hideDragHandle on the box so ListComponent can check it
-    if (box && hideDragHandle) {
-        box.hideDragHandle = true;
-    }
-    let isExpanded = $state(box && box.findParam("isExpanded") === "true");
-    let label = $derived(() => box ? box.findParam("label") || "" : "");
+    $effect(() => {
+        if (box && hideDragHandle) {
+            box.hideDragHandle = true;
+        }
+    });
+    let isExpanded = $state(false);
+    let labelValue = $derived(box?.findParam("label") || "");
     let referenceBox: ReferenceBox | undefined = $state()
     let otherChildren: Box[] | undefined = $state()
 
-    let id: string = $state(!!box ? componentId(box) : 'group-for-unknown-box');
+    let id = $derived(box ? componentId(box) : 'group-for-unknown-box');
+
+    // Initialize isExpanded from box param
+    $effect(() => {
+        isExpanded = box?.findParam("isExpanded") === "true";
+    });
     let contentElement: HTMLDivElement | undefined = $state();
-    let contentStyle = $derived(() => isExpanded ? 'display:block;' : 'display:none;');
+    let contentStyle = $derived(isExpanded ? 'display:block;' : 'display:none;');
     let cssContainerClass = "h-20"
 
     // The following three functions need to be included for the editor to function properly.
@@ -192,7 +199,7 @@
     {:else}
         <span class="w-5"></span>   
     {/if}
-    <span class="item-group-label" tabindex="-1">{label()}:</span>
+    <span class="item-group-label" tabindex="-1">{labelValue}:</span>
     <RenderComponent box={referenceBox} editor={editor} />
     {#if canDuplicate}
         <button class="circle-button action-button" onclick={duplicateItem} onkeydown={(e) => e.key === 'Enter' && duplicateItem(e)} title="Duplicate" tabindex="0">
@@ -217,7 +224,7 @@
 </div>
 {#if otherChildren}
     {#key contentStyle}
-        <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle()}>
+        <div class="list-group-content {cssClass}" bind:this={contentElement} style={contentStyle}>
             {#each otherChildren as child}
                 <RenderComponent box={child} editor={editor} />
             {/each}
