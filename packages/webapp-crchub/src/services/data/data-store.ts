@@ -1220,6 +1220,19 @@ function createDataStore() {
     }
   }
 
+  // Update the patient count for a specific study in the local store
+  // This is used to keep the study grid in sync when patients are added/removed
+  function updateStudyPatientCount(studyId: string, count: number): void {
+    update(state => ({
+      ...state,
+      studies: state.studies.map(study => 
+        study.id === studyId 
+          ? { ...study, patientCount: count }
+          : study
+      )
+    }));
+  }
+
   return {
     subscribe,
     initializeDatastore,
@@ -1266,7 +1279,8 @@ function createDataStore() {
     getPersonUnavailableDates,
     setPersonUnavailableDates,
     getUserById,
-    getUserByEmail
+    getUserByEmail,
+    updateStudyPatientCount
   };
 }
 

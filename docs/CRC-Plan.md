@@ -7,9 +7,6 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Graham
 
 ### To-Do 
-- [ ] '+' should expand if collapsed
-- [ ] change the 'Errors' tab to something friendlier, e.g., 'Issues', 'To-Do', 'Incomplete'
-- [ ] Investigate how Freon shows error under field to see if we can use it, e.g., box
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
 - [ ] Document and test the steps to bring on a user
 - [ ] Create a repeatable demo script (whoever is done first will do this)
@@ -36,6 +33,10 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [x] Delete study from study page behavior
 - [x] Error locator working (unless the content is hidden), with improved message
 - [x] Custom action selector only shows a single outline with there are multiple in the hierarchy
+- [x] '+' should expand if collapsed
+- [x] change the 'Errors' tab to something friendlier, e.g., 'Issues', 'To-Do', 'Incomplete'
+- [x] Investigate how Freon shows error under field to see if we can use it, e.g., box added errors for the item group name
+
 
 ## Mike
 

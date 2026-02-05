@@ -292,6 +292,35 @@
   --popup-date-text: #8D99C5;
   --popup-event-name-text: #ffffff;
 
+  // Day cell popup styling
+  --day-cell-popup-bg: #000000;
+  --popup-separator-bg: #3f3f46;
+  --popup-close-btn-hover-bg: #3f3f46;
+  --popup-close-btn-hover-color: #e4e4e7;
+  --popup-toggle-btn-border: #52525b;
+  --popup-toggle-btn-color: #a1a1aa;
+  --popup-toggle-btn-hover-bg: #3f3f46;
+  --popup-toggle-btn-hover-border: #71717a;
+  --popup-toggle-btn-hover-color: #e4e4e7;
+  --popup-checkbox-bg: #3f3f46;
+
+  // Dropdown/menu styling (used by PatientGrid and other components)
+  --dropdown-bg: #23272f;
+  --dropdown-fg: #ffffff;
+  --dropdown-hover: #2a2e38;
+  --button-dropdown-bg: #2a2e38;
+  --button-dropdown-fg: #ffffff;
+  --button-dropdown-hover-bg: #3a3f4b;
+  --button-dropdown-border: #3a3f4b;
+  --button-dropdown-hover-border: #4a4f5b;
+  // Aliases for PatientGrid component
+  --button-bg: #2a2e38;
+  --button-fg: #ffffff;
+  --button-hover-bg: #3a3f4b;
+  --button-hover-fg: #ffffff;
+  --button-border: #3a3f4b;
+  --button-hover-border: #4a4f5b;
+
   --timeline-mode-toggle-text: #ffffff;
   --timeline-mode-toggle-bg: #50637e7e;
   --timeline-mode-toggle-border: #171a1f;
