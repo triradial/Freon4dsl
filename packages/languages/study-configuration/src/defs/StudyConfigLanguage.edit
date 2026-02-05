@@ -160,7 +160,7 @@ Person {
     fragment personDetails [
         ${name} in role: ${role replace=CustomSelectComponent placeholder="role"}
         at ${email replace=EmailInputComponent} or ${phoneNumber replace=PhoneInputComponent}
-         ${description}
+        ${description}
     ]
 }
 
@@ -193,7 +193,11 @@ Reference {
 
 StaffRole {
     [
-        ${name} 
+        [fragment roleDetails wrap = SelectableListItemComponent cssClass="type4" canDelete="true" showDeleteOnHover="true" hideDragHandle="true"]
+    ]
+    trigger = "Role"
+    fragment roleDetails [
+        ${name}
         ${description}
     ]
 }

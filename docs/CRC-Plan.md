@@ -4,6 +4,14 @@ The following are the roughly priority ordered required updates before we can ha
 
 Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
+## TBD
+- [ ] Fix ReferenceComponent:
+  - [ ] To display like SelectableListItemComponent
+  - [ ] Fix Jump to reference button to work again
+- [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. The the only choice for '+ SystemAccesses' is a SystemAccess concept. I see the drop down when I click it rather than it just being created. I added a discussion on it to Freon. Is this something we'll fix ourselves?
+- [ ] When I create a Role and don't fill the name and mouse over the name field the error message is dynamically displayed. Did you add this or is it the Freon behavior happening? It seems sort of nice and not as disruptive as the error we saw at the top for Study notes.
+
+
 ## Graham
 
 ### To-Do 
@@ -11,6 +19,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Document and test the steps to bring on a user
 - [ ] Create a repeatable demo script (whoever is done first will do this)
 - Not needed for first user:
+  - [ ] Add a way to search the content of the study design better than just cntl-f in the browser?
   - [ ] Make staff shared/optionally-shared across studies (not essential for first user)
   - [ ] Make roles shared/optionally-shared across studies (not essential for first user)
   - [ ] Update what is displayed on Info / Help panel
