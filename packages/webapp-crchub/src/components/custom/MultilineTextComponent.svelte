@@ -143,20 +143,11 @@
                         // Don't preventDefault - let TinyMCE handle tab for indentation
                     }
                     
-                    // Enter key handling:
-                    // - Shift+Enter: add newline (stay in TinyMCE)
-                    // - Enter alone: save and exit, move to next component
+                    // Enter key: stay in TinyMCE for multiline editing
+                    // Use Escape or click outside to exit editing mode
                     if (e.key === "Enter") {
                         e.stopPropagation();
-                        if (!e.shiftKey) {
-                            // Plain Enter: save and exit editing
-                            e.preventDefault();
-                            const val = editor.getContent();
-                            const rawVal = editor.getContent({ format: "text" });
-                            setText(val, rawVal);
-                            endEditing();
-                        }
-                        // Shift+Enter: let TinyMCE handle it (adds newline)
+                        // Let TinyMCE handle Enter normally (adds newline)
                     }
                     
                     // Escape: exit editing mode
