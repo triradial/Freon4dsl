@@ -133,6 +133,10 @@
             const typeName = node.freLanguageConcept();
             const property = language.classifierProperty(typeName, propertyName);
             let newConceptName = "";
+            if (!property) {
+                LOGGER.error(`Cannot find property '${propertyName}' on classifier '${typeName}'`);
+                return;
+            }
             if (property.type) {
                 newConceptName = property.type;
                 if (newConceptName.startsWith('Abstract')) {

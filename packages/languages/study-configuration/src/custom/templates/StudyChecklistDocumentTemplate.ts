@@ -1,5 +1,5 @@
 import { Timeline } from "../timeline/Timeline.js";
-import { Period, Person, PersonReference, StudyConfiguration, Task, TaskReference, UnscheduledEvent } from "../../freon/language/index.js";
+import { Period, Person, StudyConfiguration, Task, TaskReference, UnscheduledEvent } from "../../freon/language/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../freon/writer/StudyConfigurationModelModelUnitWriter.js";
 
 class MarkdownBuilder {
@@ -186,9 +186,7 @@ export class StudyChecklistDocumentTemplate {
 
         const lines: string[] = [];
         people.forEach((person, index) => {
-            const actualPerson: Person | undefined = person instanceof PersonReference
-                ? (person as PersonReference).person?.referred
-                : (person as Person);
+            const actualPerson: Person | undefined = (person as any).person?.referred ?? (person as any).referred ?? person;
             if (!actualPerson) {
                 if (DEBUG_PEOPLE) console.log('[StudyChecklist getPeopleAsMarkdown] person', index, '— no actualPerson', { personKeys: person != null ? Object.keys(person as object) : null });
                 return;
