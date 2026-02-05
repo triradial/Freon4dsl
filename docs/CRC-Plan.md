@@ -31,9 +31,9 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Create a dev/test instance on Azure
 - [ ] Add patient page with visits / checklist, add note taking place
   - [ ] Add existing single patient full schedule chart to a draw / panel in the new UI
-- [ ] HTML editor: return and tab need to not jump out of editor
 
 ### Done
+- [x] HTML editor: return and tab need to not jump out of editor
 - [x] Improve validation error messages
 - [x] Show Patients page when no patients to allow getting started on study
 - [x] Make error messages jump to concept with error; also improved the message with context
