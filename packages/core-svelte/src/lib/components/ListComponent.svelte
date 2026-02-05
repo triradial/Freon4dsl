@@ -135,6 +135,47 @@
         if (notNullOrUndefined(event.dataTransfer)) {
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.dropEffect = 'move';
+            
+            // Create a custom drag image that shows the item's type and name
+            const draggedBox = shownElements[listIndex];
+            const node = draggedBox?.node;
+            if (notNullOrUndefined(node)) {
+                const conceptName = node.freLanguageConcept();
+                // Try to get the name property if it exists (for FreNamedNode)
+                const itemName = (node as any).name;
+                
+                // Build the label text
+                const labelText = itemName ? `${conceptName}: ${itemName}` : conceptName;
+                
+                // Create a temporary element to use as the drag image
+                const dragPreview = document.createElement('div');
+                dragPreview.style.position = 'fixed';
+                dragPreview.style.top = '-500px';
+                dragPreview.style.left = '0px';
+                dragPreview.style.padding = '6px 12px';
+                dragPreview.style.background = '#2a2a3e';
+                dragPreview.style.color = '#ffffff';
+                dragPreview.style.border = '1px solid #4a4a6a';
+                dragPreview.style.borderRadius = '4px';
+                dragPreview.style.fontSize = '13px';
+                dragPreview.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+                dragPreview.style.whiteSpace = 'nowrap';
+                dragPreview.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.4)';
+                dragPreview.style.zIndex = '99999';
+                dragPreview.textContent = labelText;
+                
+                document.body.appendChild(dragPreview);
+                
+                // Set the custom drag image
+                event.dataTransfer.setDragImage(dragPreview, 10, 10);
+                
+                // Remove the temporary element after the browser captures it
+                requestAnimationFrame(() => {
+                    if (dragPreview.parentNode) {
+                        document.body.removeChild(dragPreview);
+                    }
+                });
+            }
         }
 
         // See https://stackoverflow.com/questions/11927309/html5-dnd-datatransfer-setdata-or-getdata-not-working-in-every-browser-except-fi,
