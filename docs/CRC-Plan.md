@@ -6,6 +6,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## TBD
 - [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. The the only choice for '+ SystemAccesses' is a SystemAccess concept. I see the drop down when I click it rather than it just being created. I added a discussion on it to Freon. Is this something we'll fix ourselves?
+- [ ] Copy and paste of language concepts only works on list elements. So you can't copy a schedule or checklist separately. Do we want to do something to support this vs. just copying the event? Need to discuss with Jos whether concepts should be selectable and then can be copied like in MPS. 
 
 
 ## Graham
@@ -59,10 +60,10 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
 ### In-Progress
-- [ ] Test, update, and add buttons for things like duplicate and smart duplicate
 
 
 ### Done
+- [x] Test, update, and add buttons for things like duplicate and smart duplicate, 
 - [x] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
 - [x] Unscheduled and other special events
   - [x] Model unscheduled and other special events in the language in a better way.

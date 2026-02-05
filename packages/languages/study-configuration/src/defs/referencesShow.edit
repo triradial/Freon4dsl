@@ -2,7 +2,7 @@ editor referencesShow precedence 202
 
 Step {
     [
-        [fragment stepDetailsReferences wrap = ItemGroupComponent cssClass="type4" canDelete="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
+        [fragment stepDetailsReferences wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Step"]
     ]
     fragment stepDetailsReferences [
         ${name}
