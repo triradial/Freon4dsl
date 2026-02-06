@@ -120,8 +120,8 @@ concept SystemAccess base AbstractSystemAccess {
     name: identifier;
     description: Description;
     isShared: boolean = false;
-    functionName?: string;
     accessedAt: AccessedAt;
+    //functionName?: string;
     // robotMappings?: RobotMapping;
 }
 
