@@ -905,7 +905,6 @@
           </button>
           <div class="add-study-menu-separator" role="separator"></div>
           <div class="add-study-menu-primary-label" id="add-study-templates-label">Templates</div>
-          <div class="add-study-menu-helper" aria-hidden="true">Copy from an existing study</div>
           <div
             class="add-study-templates-list"
             role="listbox"
@@ -995,12 +994,6 @@
         font-size: inherit;
         font-weight: 500;
         color: var(--dropdown-fg, #fff);
-    }
-    .add-study-menu-helper {
-        padding: 0 16px 6px;
-        font-size: 0.7rem;
-        color: var(--primary-inverted-button-text);
-        opacity: 0.9;
     }
     .add-study-menu-item-secondary {
         font-size: 0.875rem;
