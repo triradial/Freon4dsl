@@ -2,10 +2,12 @@
     import MarkdownIt from "markdown-it";
     import pdfMake from "pdfmake/build/pdfmake.js";
     import pdfFonts from "pdfmake/build/vfs_fonts.js";
-    import { FileText as IconPdf } from '@lucide/svelte';
+    import IconPdf from '@lucide/svelte/icons/file-text';
+    import IconWord from '@lucide/svelte/icons/file-spreadsheet';
     import ContentLoader from "../../components/drawers/ContentLoader.svelte";
     import { simulationService } from "../../services/simulation/simulation-service.js";
     import { dataStore } from "../../services/data/data-store.js";
+    import { generateWordChecklist } from "../../services/document/word-checklist-generator.js";
 
     pdfMake.vfs = pdfFonts as any;
     const md = new MarkdownIt({ html: true });
@@ -22,6 +24,7 @@
     let lastSuccessfulTableHtml = $state<string>("");
     let lastChecklistMarkdown = $state<string>("");
     let isGeneratingPdf = $state(false);
+    let isGeneratingWord = $state(false);
 
     export function refresh(forceRefresh: boolean = false) {
         loadChecklist(forceRefresh);
@@ -347,6 +350,43 @@
             isGeneratingPdf = false;
         }
     }
+
+    async function openWord() {
+        if (!lastChecklistMarkdown) {
+            error = "No checklist content available to generate Word document.";
+            return;
+        }
+
+        isGeneratingWord = true;
+        error = null;
+
+        try {
+            const study = await dataStore.getStudy(studyId);
+            const studyName = study?.name ?? "Study";
+
+            // Generate Word document from markdown (same source as HTML view)
+            const blob = await generateWordChecklist(
+                lastChecklistMarkdown,
+                studyName
+            );
+
+            // Download the file
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${studyName.replace(/[^a-zA-Z0-9]/g, '_')}_Checklist.docx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+        } catch (err: unknown) {
+            console.error('[StudyChecklist] Error generating Word document:', err);
+            error = err instanceof Error ? err.message : "An error occurred while generating Word document";
+        } finally {
+            isGeneratingWord = false;
+        }
+    }
 </script>
 
 <div class="checklist-container">
@@ -366,6 +406,20 @@
                 Generating...
             {:else}
                 PDF
+            {/if}
+        </button>
+        <button
+            type="button"
+            class="standard2-button primary inverted"
+            onclick={openWord}
+            disabled={isLoading || isGeneratingWord || !checklistHtml}
+            title={isGeneratingWord ? "Generating Word document..." : "Download checklist as Word document with checkboxes"}
+        >
+            <IconWord size="16" />
+            {#if isGeneratingWord}
+                Generating...
+            {:else}
+                Word
             {/if}
         </button>
     </div>

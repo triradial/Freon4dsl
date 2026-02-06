@@ -49,7 +49,6 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] Create a repeatable demo script (whoever is done first will do this)
 - [ ] review and update tests
 - [ ] Rebuild some or all of the studies to test behavior and useability
-- [ ] Make tasks be clickable checkboxes
 - [ ] Setup tests of incomplete studies and add additional validation checks if/as needed so reliably get charts, etc.
 - [ ] Remove choice of the visit you are on when 'start when' is a reference. Needs custom scope added. 
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
@@ -57,9 +56,10 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ### In-Progress
 - [ ] Determine whether optional from Freon is needed and where 
 - [ ] Create complex and realistic examples of checklists
-- [ ] fix checklist hide/show for unscheduled event at study level
 
 ### Done
+- [x] Make tasks be clickable checkboxes in a Word document
+- [x] fix checklist hide/show for unscheduled event at study level
 - [x] Fix ReferenceComponent:
   - [x] To display like SelectableListItemComponent
   - [x] Fix Jump to reference button to work again

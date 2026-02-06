@@ -60,15 +60,15 @@ Event {
 
 UnscheduledEvent {
     [
-        [fragment unscheduledEventDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
+        [fragment unscheduledEventNoDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
     ]
-    fragment unscheduledEventDetails [
+    fragment unscheduledEventNoDetails [
         ${name}
         This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
         ${description}
-        ${tasks wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Checklist"}
     ]
 }
+
 Task {
     [
         [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canShare="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]

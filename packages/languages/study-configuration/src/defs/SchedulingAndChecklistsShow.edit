@@ -13,3 +13,15 @@ Event {
     ]
 }
 
+UnscheduledEvent {
+    [
+        [fragment unscheduledEventDetailsWithChecklistAndSchedule wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
+    ]
+    fragment unscheduledEventDetailsWithChecklistAndSchedule [
+        ${name}
+        This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
+        ${description}
+        ${tasks wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Checklist"}
+    ]
+}
+
