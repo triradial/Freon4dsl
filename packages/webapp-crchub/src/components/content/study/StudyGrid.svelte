@@ -17,7 +17,7 @@
     import { adminModeStore } from "../../../services/stores/admin-mode-store.js";
     import { untrack } from "svelte";
     // @ts-ignore
-    import { Plus as IconPlus, RefreshCcw as IconRefresh, ChevronDown as IconChevronDown } from '@lucide/svelte';
+    import { RefreshCcw as IconRefresh, ChevronDown as IconChevronDown } from '@lucide/svelte';
     import type { SelectOption } from '@freon4dsl/core';
     import ConfirmUnsavedDialog from '../../dialogs/ConfirmUnsavedDialog.svelte';
     import StudyNameCell from "./StudyNameCell.svelte";
@@ -104,6 +104,17 @@
     // Add Study dropdown (New Study vs Create from Template)
     let addMenuOpen = $state(false);
     const studyTemplates = getStudyTemplates();
+
+    // Group templates by optional group property (for listbox display)
+    const groupedTemplates = $derived.by(() => {
+        const groups = new Map<string, typeof studyTemplates>();
+        studyTemplates.forEach((t) => {
+            const g = t.group || "Templates";
+            if (!groups.has(g)) groups.set(g, []);
+            groups.get(g)!.push(t);
+        });
+        return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    });
 
     $effect(() => {
         // keep the gridApi and studiesData in scope
@@ -669,7 +680,7 @@
         addObject("study");
     }
 
-    function handleTemplateClick(template: { id: string; label: string; sourceStudyId: string }) {
+    function handleTemplateClick(template: import("../../../services/data/study-templates.js").StudyTemplate) {
         addMenuOpen = false;
         const sourceStudyId = template.sourceStudyId || studiesData[0]?.id;
         if (!sourceStudyId) {
@@ -685,7 +696,9 @@
             therapeuticArea: "",
             currentProtocol: "",
             siteNumber: "",
-            sourceStudyId
+            sourceStudyId,
+            templates: studyTemplates,
+            selectedTemplate: template
         };
         openObjectDrawer("study", "copy", copyPayload);
     }
@@ -882,21 +895,41 @@
     >
       {#snippet trigger()}
         <button type="button" class="standard-button primary inverted" aria-label="Add Study" aria-haspopup="menu" aria-expanded={addMenuOpen}>
-          <IconPlus size="16" />Add Study <IconChevronDown size="14" class="add-study-chevron" />
+          Add Study <IconChevronDown size="14" class="add-study-chevron" />
         </button>
       {/snippet}
       {#snippet content()}
         <div class="add-study-menu-items">
           <button type="button" class="add-study-menu-item" onclick={handleNewStudy}>
-            New Study
+            New
           </button>
           <div class="add-study-menu-separator" role="separator"></div>
-          <div class="add-study-menu-header">Templates:</div>
-          {#each studyTemplates as template}
-            <button type="button" class="add-study-menu-item" onclick={() => handleTemplateClick(template)}>
-              {template.label}
-            </button>
-          {/each}
+          <div class="add-study-menu-primary-label" id="add-study-templates-label">Templates</div>
+          <div
+            class="add-study-templates-list"
+            role="listbox"
+            aria-labelledby="add-study-templates-label"
+            aria-label="Study templates"
+          >
+            {#each groupedTemplates as [groupName, groupItems] (groupName)}
+              <div class="add-study-template-group" role="group" aria-label={groupName}>
+                {#if groupItems.some((t) => t.group)}
+                  <div class="add-study-menu-secondary-header">{groupName}</div>
+                {/if}
+                {#each groupItems as template (template.id)}
+                  <button
+                    type="button"
+                    class="add-study-menu-item add-study-menu-item-secondary"
+                    role="option"
+                    aria-selected="false"
+                    onclick={() => handleTemplateClick(template)}
+                  >
+                    {template.label}
+                  </button>
+                {/each}
+              </div>
+            {/each}
+          </div>
         </div>
       {/snippet}
     </Popover>
@@ -956,13 +989,44 @@
         background: var(--dropdown-hover, #2a2e38);
         margin: 4px 0;
     }
-    .add-study-menu-header {
-        padding: 6px 16px 4px;
-        font-size: 0.75rem;
+    .add-study-menu-primary-label {
+        padding: 8px 16px 2px;
+        font-size: inherit;
+        font-weight: 500;
+        color: var(--dropdown-fg, #fff);
+    }
+    .add-study-menu-item-secondary {
+        font-size: 0.875rem;
+        padding-left: 24px;
+        color: var(--dropdown-fg, #fff);
+        opacity: 0.9;
+    }
+    .add-study-menu-item-secondary:hover {
+        opacity: 1;
+    }
+    .add-study-menu-secondary-header {
+        padding: 4px 16px 2px 24px;
+        font-size: 0.7rem;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--dropdown-fg, #fff);
+        letter-spacing: 0.03em;
+        color: var(--primary-inverted-button-text);
+        opacity: 0.85;
+    }
+    .add-study-templates-list {
+        max-height: 240px;
+        overflow-y: auto;
+        min-width: 200px;
+    }
+    .add-study-template-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+    .add-study-template-group:not(:first-child) .add-study-menu-secondary-header {
+        padding-top: 6px;
+        margin-top: 4px;
+        border-top: 1px solid var(--dropdown-hover, #2a2e38);
     }
 </style>
 
