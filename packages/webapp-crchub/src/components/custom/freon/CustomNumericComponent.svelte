@@ -154,7 +154,8 @@
 
     function setInputWidth() {
         if (widthSpan && inputElement) {
-            let displayValue = inputElement.value || value;
+            // Read directly from DOM
+            let displayValue = inputElement.value;
             if (!displayValue || displayValue.length === 0) {
                 const placeholder = getPlaceholder();
                 displayValue = placeholder || "0";
@@ -162,11 +163,15 @@
                     displayValue = " ";
                 }
             }
+            // Use textContent instead of innerHTML for more reliable width calculation
             widthSpan.textContent = displayValue;
-            const newWidth = widthSpan.offsetWidth + 'px';
-            if (inputElement.style.width !== newWidth) {
-                inputElement.style.width = newWidth;
-            }
+            // Force layout calculation by reading offsetWidth
+            // The void is to prevent the read from being optimized away
+            void widthSpan.offsetHeight;
+            const measuredWidth = widthSpan.offsetWidth;
+            // Add padding to account for cursor and prevent text from touching edges
+            const newWidth = Math.max(measuredWidth + 4, 20) + 'px';
+            inputElement.style.width = newWidth;
         }
     }
 
@@ -366,6 +371,13 @@
         // This ensures the component stays in sync with the model when changes are made
         // externally (e.g., via undo/redo buttons or keyboard shortcuts)
         const changeCallback = (delta: FrePrimDelta) => {
+            // Skip refresh if we're actively editing - we manage our own state during editing
+            // Only react to external changes (like undo/redo) when not editing
+            if (isEditing) {
+                logInfo(' Skipping refresh during editing', { isEditing });
+                return;
+            }
+
             // Check if this change affects our property on our node
             // For NumberReplacerBox: owner is box.node, propertyName matches box.propertyName
             // For PartReplacerBox: we need to check if it's the count property of a child node
@@ -490,10 +502,8 @@
                 }
             }
             
-            // Update input width to fit content
-            tick().then(() => {
-                setInputWidth();
-            });
+            // Update input width to fit content - call synchronously like TextboxHelper
+            setInputWidth();
         } else {
             // Prevent non-numeric input by reverting to previous value
             if (inputElement) {
@@ -658,6 +668,10 @@
             console.log('📋 onPaste called', { pastedText });
             if (pastedText && isNumeric(pastedText) && isValidNumericValue(pastedText)) {
                 value = pastedText;
+                // Also update DOM since we're using one-way binding
+                if (inputElement) {
+                    inputElement.value = pastedText;
+                }
                 const numValue = parseFloat(pastedText);
                 // Ensure it's a valid finite number before setting
                 if (isFinite(numValue)) {
@@ -712,10 +726,8 @@
                         console.log('📋 SKIPPED write (onPaste) - value unchanged', { numValue, currentModelValue });
                     }
                 }
-                // Update input width
-                tick().then(() => {
-                    setInputWidth();
-                });
+                // Update input width - call synchronously
+                setInputWidth();
                 // Trigger validation
                 setTimeout(() => {
                     if (inputElement) {
@@ -745,12 +757,16 @@
         isHovered = false;
     }
 
-    // Update input width when entering edit mode
+    // Sync input element value with state (for undo/redo, external changes)
+    // Also update width when value changes
     $effect(() => {
-        if (isEditing) {
-            tick().then(() => {
-                setInputWidth();
-            });
+        const currentValue = value;
+        if (isEditing && inputElement) {
+            // Sync DOM with state if they differ (happens on undo/redo)
+            if (inputElement.value !== currentValue) {
+                inputElement.value = currentValue;
+            }
+            setInputWidth();
         }
     });
 </script>
@@ -770,7 +786,7 @@
                 type="text"
                 inputmode="numeric"
                 placeholder={getPlaceholder()}
-                bind:value={value}
+                value={value}
                 tabindex="0"
                 oninput={onInputChange}
                 onkeydown={onKeyDown}

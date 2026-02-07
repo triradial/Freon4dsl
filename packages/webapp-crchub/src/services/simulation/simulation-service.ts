@@ -129,7 +129,7 @@ class SimulationService {
         const chartStartTime = performance.now();
         const timelineDataAsScript = TimelineChartTemplate.getTimelineDataHTML(timeline);
         const timelineVisualizationHTML = TimelineChartTemplate.getTimelineVisualizationHTML(timeline);
-        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, false, true);
+        const chartHTML = TimelineChartTemplate.getTimelineAsHTMLBlock(timelineDataAsScript + timelineVisualizationHTML, false, false);
         const chartHtml = `<div class="limited-width-container">${chartHTML}</div>`;
         const chartElapsed = performance.now() - chartStartTime;
         console.log(`[SimulationService] Chart HTML generated in ${chartElapsed.toFixed(2)}ms (from existing timeline)`);

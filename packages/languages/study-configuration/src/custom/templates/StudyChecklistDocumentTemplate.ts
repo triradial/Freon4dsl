@@ -440,6 +440,12 @@ export class StudyChecklistDocumentTemplate {
             // Add period heading with proper spacing
             builder.addHeading(1, period.name);
 
+            // Add period description if present
+            const periodDesc = period.description?.text ?? period.description?.rawText;
+            if (periodDesc) {
+                builder.addParagraph(periodDesc, true);
+            }
+
             period.events.forEach((event, eventCounter) => {
                 StudyChecklistDocumentTemplate.renderEventAsMarkdown(builder, writer, event, eventCounter);
             });

@@ -13,6 +13,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ### To-Do 
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
+- [ ] The position of the phases in the timeline chart causes it to be clipped at the bottom. It wasn't originally like this so I'm guessing some of our application styling has drifted into the chart. Maybe pass this off to Jon?
 - [ ] Document and test the steps to bring on a user
 - Not needed for first user:
   - [ ] Add a way to search the content of the study design better than just cntl-f in the browser?
@@ -86,12 +87,12 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## Jon
 - [ ] Add single event patient checklist to be displayed from the patient page and selected date. Use latest version of template somehow merged with template the Jon created.
-- [ ] Add choice of template studies when creating a study
 
 ### To-Do 
 - [ ]
 
 ### In-Progress
+- [ ] Add choice of template studies when creating a study
 - [ ] Add multi-patient full schedule chart as an alternative view
 - [ ] add back view of availability to chart
 
@@ -105,36 +106,19 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 - [ ] Ignore not-available-dates before first visit
 - [ ] Demo:
-- [ ] CRA Visit as a kind of event
-- [ ] Add a payment milestone to study and charts somehow
-- [ ] Need good examples of tasks and steps for demo
-- [ ] In multi-patient chart what is the start and end date to use
-- [ ] Review and fix smart created, e.g., 
-- [ ] Make the name of the first visit be created smartly, e.g., if previous is V3 then make it V4.
-- [ ] Make the name of the first event be ‘V#’ instead of copying the name of the period?
-- [ ] Need a better symbol for the smart duplicate. The two down symbols looks like it’s for expand. Can we make it easier to expand using keyboard return or tab?
+  - [ ] CRA Visit as a kind of event
+  - [ ] Add a payment milestone to study and charts somehow
 - [ ] Need a better way to allow something at study-start with a displacement time that doesn’t require to know what the ‘<choose>’ does and still reads well when you’ve added a displacement.  Does the trigger of = "plus or minus day/week/month/..." accomplish - [x] this?
 - [ ] eventState of a EventReference is required. Either find a way to show it as an error or auto create it as ‘completed’
-- [ ] Use the brackets view to show parens for an expression to highlight how the tree is interpreted.
-- [ ] elated is the optional projection option in an editor: https://www.freon4dsl.dev/030_Developing_a_Language/020_Definition_Level/010_Editor_Definition/020_Projections see Optional Projections examples:
-  - [ ] [?Helper functions:
+- [ ] Clean up wording of Repeats. Make ‘max’ be either ‘max’ or ‘exactly’ or some other way of expressing it.
+- [ ] Change wording of window so at-most reads better and it’s clear it’s an outer vs. the inner window. Get words from graham, e.g., compliant. Maybe have a way to hide the outer window.
+- [ ] Consider a +/- time so only need one number to enter
+- [ ] Mixing up ‘completed’ vs. ‘each completed’ is a good demo scenario.
+- [ ] Default Name of Period should not be ‘Period’. Maybe ‘Unnamed’ so clear that it isn’t named and easy to delete the word.
+- [ ] Try CRC on phone
+- [ ] Should we record who saw patient
+- [ ] Delete key in a number field deletes the concept instead of the digit unless you double click mouse to select the thing to be deleted Appears to be fixed
+- [ ] Use the brackets view to show parens for an expression to highlight how the tree is interpreted. Related is the optional projection option in an editor: https://www.freon4dsl.dev/030_Developing_a_Language/020_Definition_Level/010_Editor_Definition/020_Projections see Optional Projections examples:
+  [?Helper functions:
             ${helpers vertical}]
 
-- [ ] To emphasize the DSL style should we make it into a sentence like ‘this is a Site Visit that is also referred to as V1.”? Make the things that are choices styled differently so it’s clear you can tab into or click them to change. This makes it plus the schedule read like a textual description.
-- [x] Try DSL style in more places?
-- [x] If not DSL should they go on the same line?
-
-
-- [x] Clean up wording of Repeats. Make ‘max’ be either ‘max’ or ‘exactly’ or some other way of expressing it.
-- [x] Change wording of window so at-most reads better and it’s clear it’s an outer vs. the inner window. Get words from graham, e.g., compliant. Maybe have a way to hide the outer window.
- 
-
-- [x] Consider a +/- time so only need one number to enter
-- [x] Mixing up ‘completed’ vs. ‘each completed’ is a good demo scenario.
-- [x] Default Name of Period should not be ‘Period’. Maybe ‘Unnamed’ so clear that it isn’t named and easy to delete the word.
-- [x] Try CRC on phone
-- [x] Should we record who saw patient
-- [x] It is easy to accidentally delete your parent. Undo helps when you make this mistake. Need to look into making more things not delectable, e.g., the entire schedule element shouldn’t be delete-able.  Ask Jos if they are considering adding modifiers to the edit file for things like canDelete, what to do on return, etc.
-- [x] Enter a new Period/Event/etc., enter the name, it is not expanded, and you need to tab backwards to get to the expand/collapse. Could/should it be auto expanded when you create new?  I think you liked the idea of adding a bunch of elements and then going
-- [x] into the details. Maybe whether it is expanded when you create is a user option.  Maybe have a second expand/collapse at the end to make it easy to tab to it after creating—this introduces an extra tab needed to move along which isn’t ideal. Could we put it there dynamically when you exit from entering the name field? Only shows when you change the name and it isn’t already expanded. This appears to be fixed or a non-issue.
-- [x] Delete key in a number field deletes the concept instead of the digit unless you double click mouse to select the thing to be deleted Appears to be fixed

@@ -119,14 +119,14 @@ When {
 
 EventWindow {
     [
-        with a window of ${daysBefore replace=CustomNumericComponent min="0" max="30"} day(s) before and ${daysAfter replace=CustomNumericComponent min="0" max="30"} day(s) after
+        with a window of ${daysBefore} day(s) before and ${daysAfter replace=CustomNumericComponent} day(s) after
         ${complianceWindow replace=CustomActionsComponent placeholder="with no compliance window"} 
     ] trigger = "event window"
 }
 
 ComplianceWindowOf {
     [
-    and a compliance window of ${maxDaysBefore replace=CustomNumericComponent min="0" max="30"} additional day(s) before and ${maxDaysAfter replace=CustomNumericComponent min="0" max="30"} day(s) after
+    and a compliance window of ${maxDaysBefore replace=CustomNumericComponent} additional day(s) before and ${maxDaysAfter replace=CustomNumericComponent} day(s) after
     ] trigger = "time before/after to be compliant"
 }
 
