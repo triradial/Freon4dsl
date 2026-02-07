@@ -3,8 +3,9 @@
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
     import { onDestroy, onMount } from "svelte";
     import { expandCollapseStore } from "../../services/stores/expand-collapse-store.js";
+    import { showPasteDuplicatesReport, showPasteError } from "../../services/stores/paste-duplicates-store.js";
 // ts-ignore
-    import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, EllipsisVertical as IconEllipsisVertical, Plus as IconPlus } from '@lucide/svelte';
+    import { ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, EllipsisVertical as IconEllipsisVertical, Plus as IconPlus, ClipboardPaste as IconClipboardPaste } from '@lucide/svelte';
 
     const LOGGER = new FreLogger("ListGroupComponent");
     FreLogger.unmute("ListGroupComponent");
@@ -153,6 +154,131 @@
         });
     }
 
+    // Check if this list supports paste-to-create-multiple
+    // Controlled via canPasteMultiple="true" parameter in editor definition
+    let canPasteMultiple = $derived(box?.findParam("canPasteMultiple") === "true" && canAdd);
+
+    // Debug: log parameter values
+    $effect(() => {
+        const pasteParam = box?.findParam("canPasteMultiple");
+        if (box?.propertyName === "tasks") {
+            LOGGER.log(`canPasteMultiple check for ${box?.propertyName}: param="${pasteParam}", canAdd=${canAdd}, result=${canPasteMultiple}`);
+        }
+    });
+
+    const pasteItems = async (event?: MouseEvent | KeyboardEvent) => {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+
+        try {
+            // Read from clipboard
+            const clipboardText = await navigator.clipboard.readText();
+            if (!clipboardText || clipboardText.trim().length === 0) {
+                LOGGER.log("Clipboard is empty");
+                showPasteError("Clipboard Empty", "The clipboard is empty. Copy some text (one item per line) and try again.");
+                return;
+            }
+
+            // Split by various line break characters (handles PDF, Windows, Unix, old Mac, and Unicode separators)
+            // \r\n = Windows, \n = Unix, \r = old Mac, \v = vertical tab, \f = form feed
+            // \u2028 = line separator, \u2029 = paragraph separator
+            const lines = clipboardText.split(/\r\n|\n|\r|\v|\f|\u2028|\u2029/).map(line => line.trim()).filter(line => line.length > 0);
+            if (lines.length === 0) {
+                LOGGER.log("No valid lines to paste");
+                showPasteError("No Valid Content", "The clipboard doesn't contain any valid lines of text. Make sure you have text with one item per line.");
+                return;
+            }
+
+            // Expand the component if it's collapsed
+            if (canExpand && !isExpanded) {
+                isExpanded = true;
+                box.isExpanded = true;
+                contentDisplay = 'block';
+            }
+
+            AST.change(() => {
+                const language = FreLanguage.getInstance();
+                const propertyName = box.propertyName;
+                const node = box.node;
+                const typeName = node.freLanguageConcept();
+                const property = language.classifierProperty(typeName, propertyName);
+
+                if (!property) {
+                    LOGGER.error(`Cannot find property '${propertyName}' on classifier '${typeName}'`);
+                    return;
+                }
+
+                if (property.type) {
+                    let newConceptName = property.type;
+                    if (newConceptName.startsWith('Abstract')) {
+                        newConceptName = newConceptName.slice(8);
+                    } else if (newConceptName === "EventTask") {
+                        newConceptName = "Task";
+                    }
+
+                    const conceptInfo = language.concept(newConceptName);
+                    if (!conceptInfo) {
+                        LOGGER.error(`Cannot find concept '${newConceptName}'`);
+                        return;
+                    }
+
+                    const list = box.getPropertyValue() as unknown as FreNode[];
+
+                    // Get existing names to prevent duplicates
+                    const existingNames = new Set<string>();
+                    for (const item of list) {
+                        if ('name' in item && typeof (item as any).name === 'string') {
+                            existingNames.add((item as any).name.toLowerCase());
+                        }
+                    }
+
+                    let addedCount = 0;
+                    const skippedItems: string[] = [];
+
+                    // Create an item for each line, skipping duplicates
+                    for (const line of lines) {
+                        const lowerLine = line.toLowerCase();
+                        if (existingNames.has(lowerLine)) {
+                            LOGGER.log("Skipping duplicate: " + line);
+                            skippedItems.push(line);
+                            continue;
+                        }
+
+                        const newElement = conceptInfo.creator({});
+                        // Set the name property if it exists
+                        if ('name' in newElement) {
+                            (newElement as any).name = line;
+                        }
+                        list.push(newElement);
+                        existingNames.add(lowerLine); // Track newly added names too
+                        addedCount++;
+                        LOGGER.log("Added item from paste: " + line);
+                    }
+
+                    LOGGER.log(`Pasted ${addedCount} items, skipped ${skippedItems.length} duplicates`);
+
+                    // Show dialog if there were duplicates
+                    if (skippedItems.length > 0) {
+                        showPasteDuplicatesReport(addedCount, skippedItems);
+                    }
+                } else {
+                    LOGGER.error("Cannot add items - no type info");
+                }
+            });
+        } catch (err) {
+            LOGGER.error("Failed to read clipboard: " + err);
+            // Check if it's a permission error or unsupported content
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            if (errorMessage.includes("permission") || errorMessage.includes("denied")) {
+                showPasteError("Clipboard Access Denied", "Unable to access the clipboard. Please grant clipboard permissions to this application.");
+            } else {
+                showPasteError("Paste Failed", "Unable to read clipboard content. The clipboard may contain non-text content (like images or rich text) that cannot be pasted here.");
+            }
+        }
+    }
+
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -172,6 +298,11 @@
     {#if canAdd}
         <button class="circle-button action-button" onclick={addItem} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addItem(e))} title="Add" tabindex="0">
             <IconPlus size={14} />
+        </button>
+    {/if}
+    {#if canPasteMultiple}
+        <button class="circle-button action-button" onclick={pasteItems} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), pasteItems(e))} title="Paste multiple items from clipboard (one per line)" tabindex="0">
+            <IconClipboardPaste size={14} />
         </button>
     {/if}
     {#if canCRUD}

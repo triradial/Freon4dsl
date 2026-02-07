@@ -85,12 +85,14 @@
     // Parse min/max as numbers if provided
     function getMin(): number | undefined {
         const minVal = getMinValue();
-        return minVal ? parseFloat(minVal) : undefined;
+        // Use !== undefined to handle min="0" correctly (0 is falsy)
+        return minVal !== undefined ? parseFloat(minVal) : undefined;
     }
-    
+
     function getMax(): number | undefined {
         const maxVal = getMaxValue();
-        return maxVal ? parseFloat(maxVal) : undefined;
+        // Use !== undefined to handle max="0" correctly (0 is falsy)
+        return maxVal !== undefined ? parseFloat(maxVal) : undefined;
     }
 
     function isNumeric(str: string): boolean {

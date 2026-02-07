@@ -9,6 +9,7 @@
     import ObjectDrawerSystem from "../components/common/ObjectDrawerSystem.svelte";
     import SideDrawerSystem from "../components/common/SideDrawerSystem.svelte";
     import SchemaMismatchDialog from "../components/dialogs/SchemaMismatchDialog.svelte";
+    import PasteDuplicatesDialog from "../components/dialogs/PasteDuplicatesDialog.svelte";
     import DSLErrorsDrawer from "../components/drawers/DSLErrorsDrawer.svelte";
     import FavoritesDrawer from "../components/drawers/FavoritesDrawer.svelte";
     import HelpDrawer from "../components/drawers/HelpDrawer.svelte";
@@ -116,6 +117,8 @@
     {/if}
     <!-- Schema mismatch popup for when models with older schema are loaded -->
     <SchemaMismatchDialog />
+    <!-- Paste duplicates popup for when duplicate items are skipped during paste -->
+    <PasteDuplicatesDialog />
 {:else}
     <div class="login-page">
         <div class="login-container">
