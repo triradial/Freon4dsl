@@ -130,6 +130,12 @@
         max-height: calc(100vh - 150px);
     }
 
+    /* Vertically center phase names in timeline bars */
+    :global(.vis-item .vis-item-content) {
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+    }
+
     /* Consistent table styling for timeline content */
     :global(.table_component table) {
         border: 1px solid var(--white-30t);

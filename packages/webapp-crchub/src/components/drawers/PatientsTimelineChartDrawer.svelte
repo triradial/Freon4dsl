@@ -323,3 +323,11 @@
         </div>
     </div>
 {/if}
+
+<style>
+    /* Vertically center phase names in timeline bars */
+    :global(.vis-item .vis-item-content) {
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+    }
+</style>
