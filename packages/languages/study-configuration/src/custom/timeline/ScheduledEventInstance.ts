@@ -87,8 +87,11 @@ export class ScheduledEventInstance extends TimelineEventInstance {
 
     getNameWithInstanceNumber(timeline: Timeline) {
       const numberOfRepeats = this.getScheduledEvent().numberOfRepeats(timeline);
-      if(numberOfRepeats > 1) {
-        return this.getName() + " (" + this.getInstanceNumber() + " of " + numberOfRepeats + ")";
+      // numberOfRepeats is the count of repeats AFTER the first instance
+      // Total occurrences = 1 (first) + numberOfRepeats
+      const totalOccurrences = numberOfRepeats + 1;
+      if(totalOccurrences > 1) {
+        return this.getName() + " (" + this.getInstanceNumber() + " of " + totalOccurrences + ")";
       }
       return this.getName();
   }

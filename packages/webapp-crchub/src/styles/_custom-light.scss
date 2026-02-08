@@ -692,11 +692,13 @@ input:disabled {
 .vis-item.window,
 .key-item .window {
   background-color: #c3c3be;
+  z-index: 1 !important;
 }
 
 .vis-item.scheduled-event,
 .key-item .scheduled-event {
-  background-color: #485bc7
+  background-color: #485bc7;
+  z-index: 10 !important;
 }
 
 .vis-item.patient,

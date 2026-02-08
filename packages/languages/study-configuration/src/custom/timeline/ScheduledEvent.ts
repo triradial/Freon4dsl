@@ -189,8 +189,10 @@ export class ScheduledEvent {
         let numberCompletedInstances = timeline.numberCompletedInstancesOf(this);
         if (this.isRepeatingEvent) {
             const numberOfRepeats = this.numberOfRepeats(timeline);
+            // numberOfRepeats is the count of repeats AFTER the first instance
+            // So total occurrences = 1 (first) + numberOfRepeats
+            // We use <= because we need to create instances 0, 1, ..., numberOfRepeats (that's numberOfRepeats+1 total)
             if (numberCompletedInstances <= numberOfRepeats) {
-                // Less that or equal because the first instance is not counted as a repeat.
                 TimelineLogger.log(
                     "'" +
                         this.getName() +

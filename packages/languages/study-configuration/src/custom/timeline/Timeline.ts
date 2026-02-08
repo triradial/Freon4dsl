@@ -522,10 +522,11 @@ export class Timeline extends RtObject {
         // If showing for a specific patient or a specific start day then major and minor are actual dates
         let result = undefined;
         
-        // Common options for multi-patient compact view - enable stacking for better visualization
-        const multiPatientOptions = isMultiPatient ? `
+        // Enable stacking to show overlapping windows visually
+        // This makes it clear when event windows overlap with each other
+        const stackingOptions = `
                 stack: true,
-                stackSubgroups: true,` : '';
+                stackSubgroups: true,`;
         
         if (this.organizeByStudyDay) {
             result = `  var options = {
@@ -566,8 +567,9 @@ export class Timeline extends RtObject {
                 margin: {
                     item: {
                         horizontal: 0,
+                        vertical: 5,
                     },
-                },${multiPatientOptions}
+                },${stackingOptions}
             };`;
         } else {
             result = `          var options = {
@@ -606,8 +608,9 @@ export class Timeline extends RtObject {
                 margin: {
                     item: {
                         horizontal: 0,
+                        vertical: 5,
                     },
-                },${multiPatientOptions}
+                },${stackingOptions}
             };
             `;
         }

@@ -30,22 +30,48 @@
         }
     });
 
+    /**
+     * Saves the chart HTML to /tmp folder via server API.
+     * The chart HTML is already a complete HTML document, so we save it directly.
+     */
+    async function saveChartToFile(html: string, filename: string) {
+        try {
+            const response = await fetch('/api/save-chart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ html, filename })
+            });
+            const result = await response.json();
+            if (result.success) {
+                console.log(`[StudyTimelineChart] Chart saved to: ${result.filepath}`);
+            } else {
+                console.error(`[StudyTimelineChart] Failed to save chart: ${result.error}`);
+            }
+        } catch (err) {
+            console.error(`[StudyTimelineChart] Error saving chart:`, err);
+        }
+    }
+
     async function loadChart(forceRefresh: boolean = false) {
         const startTime = performance.now();
         console.log(`[StudyTimelineChart] Loading chart for ${studyId}, forceRefresh=${forceRefresh}`);
-        
+
         isLoading = true;
         error = null;
-        
+
         try {
             const simulationData = await simulationService.getSimulationData(studyId, forceRefresh);
-            
+
             if (simulationData) {
                 chartHtml = simulationData.chartHtml;
                 lastSuccessfulContent = chartHtml;
                 hasRenderedBefore = true;
                 error = null;
-                
+
+                // Save the raw chart HTML for debugging (overwrites each time)
+                const filename = `timeline-chart.html`;
+                saveChartToFile(chartHtml, filename);
+
                 const elapsed = performance.now() - startTime;
                 console.log(`[StudyTimelineChart] Chart loaded in ${elapsed.toFixed(2)}ms`);
             } else {
