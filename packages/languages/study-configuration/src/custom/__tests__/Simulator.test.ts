@@ -1196,6 +1196,50 @@ describe("Study Simulation", () => {
             // Then the generated timeline table has the expected data in it
             expect(normalizedTimelineDataAsScript).toEqual(normalizedExpectedTimelineDataAsScript);
         });
+
+        it("includes events scheduled 3 years (1095 days) in the future in timeline table", () => {
+            // GIVEN a study configuration with events spanning 3 years
+            // Event 1 on day 1, Event 2 on day 1095 (approximately 3 years)
+            const threeYearsInDays = 1095;
+
+            let period = Period.create({ name: "Long Term Follow Up" });
+
+            // First event on day 1
+            let eventSchedule1 = utils.createEventScheduleStartingOnADay("Visit 1", 1, 0, 0);
+            utils.createEventAndAddToPeriod(period, "Visit 1", eventSchedule1, "V1");
+
+            // Second event on day 1095 (3 years out)
+            let eventSchedule2 = utils.createEventScheduleStartingOnADay("Visit 2", threeYearsInDays, 0, 0);
+            utils.createEventAndAddToPeriod(period, "Visit 2", eventSchedule2, "V2");
+
+            studyConfigurationUnit.periods.push(period);
+
+            // WHEN the study is simulated and a timeline table is generated
+            let simulator = new Simulator(studyConfigurationUnit);
+            simulator.run();
+            let timeline = simulator.timeline;
+
+            // Generate the table HTML
+            const timelineTableAsHTML = TimelineTableTemplate.getTimelineTableHTML(timeline);
+
+            // Save for debugging
+            utils.saveTimelineTable(timelineTableAsHTML);
+
+            // THEN the timeline table should include both visits
+            expect(timelineTableAsHTML).toContain("Visit 1");
+            expect(timelineTableAsHTML).toContain("Visit 2");
+
+            // Verify the timeline has the correct max day (at least 3 years out)
+            expect(timeline.getMaxDayOnTimeline()).toBeGreaterThanOrEqual(threeYearsInDays);
+
+            // Verify both events are on the timeline
+            const scheduledEvents = timeline.getScheduleEventInstancesOrderByDay();
+            expect(scheduledEvents.length).toBe(2);
+            expect(scheduledEvents[0].getName()).toBe("Visit 1");
+            expect(scheduledEvents[1].getName()).toBe("Visit 2");
+            // The startDay should be at least 1095 (may be 1095 or 1096 depending on study start day offset)
+            expect(scheduledEvents[1].startDay).toBeGreaterThanOrEqual(threeYearsInDays);
+        });
     });
 });
 

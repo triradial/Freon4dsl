@@ -17,7 +17,6 @@
     import PatientsTimelineChartDrawer from "../components/drawers/PatientsTimelineChartDrawer.svelte";
     import StaffAvailabilityDrawer from "../components/drawers/StaffAvailabilityDrawer.svelte";
     import StudyChecklistDrawer from "../components/drawers/StudyChecklistDrawer.svelte";
-    import StudyTimelineChartDrawer from "../components/drawers/StudyTimelineChartDrawer.svelte";
     import StudyTimelineTableDrawer from "../components/drawers/StudyTimelineTableDrawer.svelte";
     import VisitChecklistDrawer from "../components/drawers/VisitChecklistDrawer.svelte";
     import "../init.ts";
@@ -74,7 +73,6 @@
             addDrawer({ key: "favorites", icon: IconHeart, component: FavoritesDrawer, title: "Favorites", description: "Manage your favorite studies, patients, and tasks.", supportsRefresh: true, supportsPrint: false, defaultWidth: 400, });
             addDrawer({ key: "dslErrors", icon: IconTriangleAlert, component: DSLErrorsDrawer, title: "Errors", description: "View the errors in the study design.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "studyTimelineTable", icon: IconTable2, component: StudyTimelineTableDrawer, title: "Study Timeline Table", description: "View the timeline as a table for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 600, });
-            addDrawer({ key: "studyTimelineChart", icon: IconSquareChartGantt, component: StudyTimelineChartDrawer, title: "Study Timeline Chart", description: "View the timeline as a chart for this study.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "patientStudyTimelineChart", icon: IconSquareChartGantt, component: PatientStudyTimelineChartDrawer, title: "Study Timeline Chart - Date Selected", description: "View the study timeline chart for the selected date for this patient.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "visitChecklist", icon: IconClipboardCheck, component: VisitChecklistDrawer, title: "Visit Checklist", description: "View the checklist for visits scheduled for the selected date.", supportsRefresh: true, supportsPrint: false, defaultWidth: 800, });
             addDrawer({ key: "studyChecklist", icon: IconCheckSquare, component: StudyChecklistDrawer, title: "Study Checklist", description: "View the checklist for this study.", supportsRefresh: true, supportsPrint: true, defaultWidth: 800, });   

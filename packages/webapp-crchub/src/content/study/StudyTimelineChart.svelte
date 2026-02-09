@@ -2,6 +2,9 @@
     import ContentLoader from "../../components/drawers/ContentLoader.svelte";
     import { simulationService } from "../../services/simulation/simulation-service.js";
 
+    // Set to true to save chart HTML to file for debugging
+    const SAVE_CHART_TO_FILE = true;
+
     let { studyId } = $props<{ studyId: string }>();
     let isLoading = $state(true);
     let chartHtml = $state<string>("");
@@ -69,8 +72,10 @@
                 error = null;
 
                 // Save the raw chart HTML for debugging (overwrites each time)
-                const filename = `timeline-chart.html`;
-                saveChartToFile(chartHtml, filename);
+                if (SAVE_CHART_TO_FILE) {
+                    const filename = `timeline-chart.html`;
+                    saveChartToFile(chartHtml, filename);
+                }
 
                 const elapsed = performance.now() - startTime;
                 console.log(`[StudyTimelineChart] Chart loaded in ${elapsed.toFixed(2)}ms`);

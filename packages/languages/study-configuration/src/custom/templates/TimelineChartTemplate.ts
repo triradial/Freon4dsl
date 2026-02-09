@@ -83,13 +83,15 @@ export class TimelineChartTemplate {
                                 
                                 // Generate items for each group
                                 return groups.map(groupId => {
-                                    const eventNameWithInstance = eventInstance.getNameWithInstanceNumber(timeline);
+                                  const eventNameWithInstance = eventInstance.getNameWithInstanceNumber(timeline);
+                                  const windowBefore = `Window of ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysBefore?.count} days before ${eventNameWithInstance}`;
+                                  const windowAfter = `Window of ${eventInstance.getScheduledEvent().configuredEvent.schedule.eventWindow?.daysAfter?.count} days after ${eventNameWithInstance}`;
                                     const beforeWindow = eventInstance.anyDaysBefore()
-                                        ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${groupId}", className: "window", title: "Window before ${eventNameWithInstance}", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },`
+                                        ? `{ start: new Date(${eventInstance.startDayOfBeforeWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfBeforeWindowAsDateString(timeline)}), group: "${groupId}", className: "window", title: "${windowBefore}", content: "&nbsp;", id: "before-${eventInstance.getName() + getUniqueNumber()}" },`
                                         : "";
                                     const mainEvent = `{ start: new Date(${eventInstance.getStartDayAsDateString(timeline)}), end: new Date(${eventInstance.getEndOfStartDayAsDateString(timeline)}), group: "${groupId}", className: "scheduled-event", title: "${eventNameWithInstance + ": " + writer.writeToString((eventInstance as ScheduledEventInstance).getScheduledEvent().configuredEvent.schedule.eventStart).replace(/["`]/g, "")}", content: "&nbsp;", id: "${eventInstance.getName() + getUniqueNumber()}" },`;
                                     const afterWindow = eventInstance.anyDaysAfter()
-                                        ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(timeline)}), group: "${groupId}", className: "window", title: "Window after ${eventNameWithInstance}", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },`
+                                        ? `{ start: new Date(${eventInstance.startDayOfAfterWindowAsDateString(timeline)}), end: new Date(${eventInstance.endDayOfAfterWindowAsDateString(timeline)}), group: "${groupId}", className: "window", title: "${windowAfter}", content: "&nbsp;", id: "after-${eventInstance.getName() + getUniqueNumber()}" },`
                                         : "";
                                     return beforeWindow + mainEvent + afterWindow;
                                 }).join("");
@@ -393,6 +395,7 @@ export class TimelineChartTemplate {
       <div id="visualization" style="position: unset !important; min-height: 300px; height: auto"></div>  
       <div class="timeline-instructions">
         <ul style="list-style-type: none;">
+            <li>Timeline is months and days</li>
             <li>Use mouse scroll wheel or touchpad to zoom in/out of the timeline </li>
             <li>When zoomed in, hold mouse pointer down and drag to move forward or backward through the timeline</li>
         </ul>
@@ -474,7 +477,9 @@ export class TimelineChartTemplate {
           }
         }, 500);
 
-        ${isMultiPatient ? `
+        ${
+          isMultiPatient
+            ? `
         // Add click handlers to patient groups to open individual patient timeline
         timeline.on('select', function(properties) {
           if (properties.group) {
@@ -505,7 +510,9 @@ export class TimelineChartTemplate {
             }
           }
         });
-        ` : ''}
+        `
+            : ""
+        }
       </script>
     `;
     }

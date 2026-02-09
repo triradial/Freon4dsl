@@ -13,6 +13,10 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ### To-Do 
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
+- [ ] For the boxes around concepts in the UI:
+  - [ ] If you edit a field in a box with 'X' then tab out of that concept, the box with 'X' remains displayed. 
+  - [ ] Seems to be a difference between behavior for hover and focus, Jos called it out in the meeting today.
+  - [ ] Several times tabbing out into the next field, e.g., 'with no repetitions' and return to show the choices doesn't work. Tab to the next 'with no time of day' and it works. The I couldn't get it to happen again. 
 - [ ] The position of the phases in the timeline chart causes it to be clipped at the bottom. It wasn't originally like this so I'm guessing some of our application styling has drifted into the chart. Maybe pass this off to Jon?
 - [ ] Document and test the steps to bring on a user
 - Not needed for first user:
@@ -48,6 +52,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ### To-Do 
 - [ ] Create a repeatable demo script (whoever is done first will do this)
+- [ ] Show/Hide for Unscheduled Events
 - [ ] review and update tests
 - [ ] Setup tests of incomplete studies and add additional validation checks if/as needed so reliably get charts, etc.
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?

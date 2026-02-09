@@ -77,9 +77,14 @@ export class Timeline extends RtObject {
         const referenceDate = this.getReferenceDate();
         // Create a new date to avoid mutating the reference date
         const endDate = new Date(referenceDate);
-        // Add the max day on timeline (plus 1 to include that day)
-        endDate.setDate(endDate.getDate() + this.getMaxDayOnTimeline() + 1);
-        
+        // Calculate the end date using the same formula as event date calculations:
+        // referenceDate + maxDay + offsetOfFirstEvent + buffer
+        // The offset accounts for events scheduled before day 0 (e.g., "-60 days before")
+        const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
+        const maxDay = this.getMaxDayOnTimeline();
+        // Add 7 days buffer to ensure the last event and any windows after it are visible
+        endDate.setDate(endDate.getDate() + maxDay + dayOffsetOfFirstEventInstance + 7);
+
         const year = endDate.getFullYear();
         const month = endDate.getMonth();
         const day = endDate.getDate();
@@ -383,8 +388,7 @@ export class Timeline extends RtObject {
     }
 
     getMaxDayOnTimeline() {
-        const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
-        return this.currentDay + dayOffsetOfFirstEventInstance;
+        return this.getOffsetOfLastEventInstance();
     }
 
     getMonthName(monthNumber: number): string {

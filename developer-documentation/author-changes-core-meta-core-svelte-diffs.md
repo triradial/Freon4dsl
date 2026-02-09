@@ -1,86 +1,17 @@
-# CRCHub changes to upstream Freon4dsl packages
+# Changes to Freon4dsl
 
-Baseline commit: `b959a781fafc7e6e2b16e8579e218101e3d422c1`
-(mode/whitespace-only changes excluded)
+The following are changes requested for Freon based on the needs of our project.
 
-## Re-applying changes after an upstream merge
+## Summary of Changed files
 
-When merging with the upstream Freon4dsl `development` branch — accepting all
-remote changes for `packages/core`, `packages/core-svelte`, and `packages/meta`
-— use these patch files to re-apply the CRCHub-specific modifications:
-
-| Patch file | Scope |
-|:-----------|:------|
-| `author-changes-core-meta-core-svelte.patch` | All three packages combined |
-| `author-changes-core-svelte.patch` | `packages/core-svelte` only |
-| `author-changes-core.patch` | `packages/core` only |
-| `author-changes-meta.patch` | `packages/meta` only |
-
-### Workflow
-
-```bash
-# 1. Start from the crchub-svelte5 branch
-git checkout crchub-svelte5
-
-# 2. Merge upstream, accepting all remote changes for the three packages
-git merge development
-
-# During merge, accept all "theirs" (upstream) changes for:
-#   packages/core/
-#   packages/core-svelte/
-#   packages/meta/
-
-# 3. After the merge commit, re-apply the CRCHub changes
-#    Option A — all at once:
-git apply developer-documentation/author-changes-core-meta-core-svelte.patch
-
-#    Option B — one package at a time (useful if some patches conflict):
-git apply developer-documentation/author-changes-core.patch
-git apply developer-documentation/author-changes-core-svelte.patch
-git apply developer-documentation/author-changes-meta.patch
-
-# 4. If a patch does not apply cleanly, use --3way for conflict markers:
-git apply --3way developer-documentation/author-changes-core.patch
-
-# 5. Review and commit
-git diff
-git add -A && git commit -m "Re-apply CRCHub changes to upstream packages"
-```
-
-### Comparing instead of applying
-
-To preview what the patch would change without modifying files:
-
-```bash
-# Dry run — reports errors but changes nothing
-git apply --check developer-documentation/author-changes-core-meta-core-svelte.patch
-
-# Show a stat summary of what would change
-git apply --stat developer-documentation/author-changes-core-meta-core-svelte.patch
-```
-
-### Regenerating patches
-
-If additional changes are made to these packages before the next upstream merge,
-regenerate the patches from the baseline:
-
-```bash
-git diff b959a781fafc7e6e2b16e8579e218101e3d422c1..HEAD -- packages/core/ packages/core-svelte/ packages/meta/ \
-  > developer-documentation/author-changes-core-meta-core-svelte.patch
-```
-
----
-
-## Changed files
-
-### packages/core-svelte (Svelte UI components)
+### packages/core-svelte 
 
 | File | What changed |
 |:-----|:-------------|
 | [`LayoutComponent.svelte`](#packagescore-sveltesrclibcomponentslayoutcomponentsvelte) | Fix Svelte 5 `state_unsafe_mutation` error by deferring refresh via `untrack()` / `tick()` |
 | [`ListComponent.svelte`](#packagescore-sveltesrclibcomponentslistcomponentsvelte) | Hide drag handles for specific concept types (Person, Reference, SystemAccess, etc.) |
 
-### packages/core (editor framework)
+### packages/core 
 
 | File | What changed |
 |:-----|:-------------|
@@ -95,7 +26,7 @@ git diff b959a781fafc7e6e2b16e8579e218101e3d422c1..HEAD -- packages/core/ packag
 | [`InMemoryModel.ts`](#packagescoresrcstorageinmemorymodelts) | Add debug tracing to `openModel()` and `saveUnit()`; handle unit-load errors gracefully |
 | [`AstActionExecutor.ts`](#packagescoresrcast-utilsastactionexecutorts) | Fix Ctrl+C/V paste for list items by walking up box tree to find ListBox ancestor |
 
-### packages/meta (code-generation templates)
+### packages/meta
 
 | File | What changed |
 |:-----|:-------------|
@@ -566,47 +497,6 @@ Before:
 After:
 ```ts
 .join("\n")}
-```
-
----
-
-## `packages/meta/src/parsergen/parserTemplates/grammarModel/GrammarModel.ts`
-
-We kept the new regex under the assumption that Freon fixed the issue with spaces in IDs
-
-**Parser grammar fix — allow spaces in identifiers.** Adds a space character to the allowed character set in backtick-delimited identifiers. This means identifiers like `` `My Identifier` `` are now valid in the DSL.
-
-### Change — Space added to identifier character class
-
-Before (simplified — the actual regex is heavily escaped):
-```
-leaf identifier = "`[a-zA-Z0-9-_~!@#$%^&*...?/][a-zA-Z0-9-_~!@#$%^&*...?/]*`"
-```
-
-After — note the space before the closing `]`:
-```
-leaf identifier = "`[a-zA-Z0-9-_~!@#$%^&*...?/ ][a-zA-Z0-9-_~!@#$%^&*...?/ ]*`"
-                                             ^^^                           ^^^
-```
-
----
-
-## `packages/meta/src/utils/file-utils/FileUtil.ts`
-
-We didn't do this one because the file is gone.
-
-**Bug fix — empty folder deletion.** `fs.rmSync(folder)` without `{ recursive: true }` can fail on some platforms/Node versions when removing directories. Adding the flag ensures reliable cleanup.
-
-### Change — Add `recursive` option
-
-Before:
-```ts
-fs.rmSync(folder);
-```
-
-After:
-```ts
-fs.rmSync(folder, { recursive: true });
 ```
 
 ---
