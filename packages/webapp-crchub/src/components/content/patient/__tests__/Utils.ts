@@ -27,6 +27,7 @@ export interface PatientDayEvent {
     id?: string;
     name: string;
     type: 'actual-event' | 'scheduled-event' | 'unscheduled-event';
+    category?: 'initial' | 'scheduled' | 'unscheduled'; // Event origin category
     state: 'on-scheduled-date' | 'in-window' | 'out-of-window';
     status?: 'completed' | 'planned' | 'cancelled' | 'missed';
     isUnscheduledEvent?: boolean;
@@ -157,6 +158,7 @@ export function createScheduledEventDayData(day: number, date: string, eventName
             id: `${eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
             name: eventName,
             type: 'scheduled-event',
+            category: 'scheduled',
             state: state as any,
             status: 'planned',
             scheduledDay: day
@@ -185,6 +187,7 @@ export function createActualEventDayData(
             id: `${eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
             name: eventName,
             type: 'actual-event',
+            category: 'scheduled',
             state: computedState as any,
             status: 'completed',
             actualDay: day,
@@ -229,6 +232,7 @@ export function createCancelledEventDayData(day: number, date: string, eventName
             id: `${eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
             name: eventName,
             type: 'actual-event',
+            category: 'scheduled',
             state: 'on-scheduled-date',
             status: 'cancelled',
             actualDay: day,
@@ -248,6 +252,7 @@ export function createMissedEventDayData(day: number, date: string, eventName: s
             id: `${eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
             name: eventName,
             type: 'actual-event',
+            category: 'scheduled',
             state: 'on-scheduled-date',
             status: 'missed',
             actualDay: day,
@@ -267,6 +272,7 @@ export function createUnscheduledEventDayData(day: number, date: string, eventNa
             id: `${eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
             name: eventName,
             type: 'unscheduled-event',
+            category: 'unscheduled',
             state: 'on-scheduled-date',
             status: 'completed',
             isUnscheduledEvent: true,

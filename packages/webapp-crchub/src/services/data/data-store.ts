@@ -19,15 +19,18 @@ export interface Patient {
 export interface PatientScheduleEvent {
   id: string;
   type: string;
+  category?: 'initial' | 'scheduled' | 'unscheduled'; // Event origin: initial (day 0), scheduled, or unscheduled
   name: string;
   actualDay?: number;
   scheduledDay: number;
+  originalScheduledDay?: number; // Preserved when event is rescheduled
   status?: string;
   state?: string;
   window?: {
     daysBefore: number;
     daysAfter: number;
   };
+  isUnscheduledEvent?: boolean; // Legacy flag for unscheduled events
 }
 
 export interface PatientScheduleDay {

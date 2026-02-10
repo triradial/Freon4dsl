@@ -1,0 +1,42 @@
+---
+description: Do not add styles to Svelte files; use SCSS instead
+globs: **/*.svelte
+alwaysApply: false
+---
+
+# No Styles in Svelte Files
+
+Do **not** add styles to Svelte files. This includes:
+
+- `<style>` blocks (scoped or global)
+- Inline `style` attributes
+
+Put all styles in the project's SCSS files instead (e.g. `packages/webapp-crchub/src/styles/_custom-app.scss`).
+
+## ❌ Avoid
+
+```svelte
+<div class="card" style="padding: 1rem;">...</div>
+
+<style>
+  .card {
+    padding: 1rem;
+  }
+</style>
+```
+
+## ✅ Do
+
+Add styles to the appropriate SCSS file:
+
+```scss
+.card {
+  padding: 1rem;
+}
+```
+
+Then use the class in the Svelte component:
+
+```svelte
+<div class="card">...</div>
+```

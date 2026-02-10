@@ -81,7 +81,7 @@
                 </div>
             {/if}
             <div class="flex flex-col items-center w-full gap-2">
-                <div class="copyright-text">Copyright © 2026 Triradial. All rights reserved.</div>
+                <div class="copyright-text">Copyright © 2026 TriRadial. All rights reserved.</div>
             </div>
         </div>
     </div>

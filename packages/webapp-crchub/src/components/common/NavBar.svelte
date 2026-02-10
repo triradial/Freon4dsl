@@ -168,7 +168,7 @@
                     <button class="px-2 py-1" onclick={signOut} tabindex="0">Sign out</button>
                 </div>
                 <hr class="my-2" /> 
-                <span class="block version-text mt-4">Copyright © 2025 Triradial. All rights reserved.</span>
+                <span class="block version-text mt-4">Copyright © 2026 TriRadial. All rights reserved.</span>
                 <span class="block version-text">CRCHub Version {version.trim()}</span>
 
             {/snippet}
