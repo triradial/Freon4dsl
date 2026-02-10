@@ -32,6 +32,11 @@
   --surface-ground: #DCD5E7;
   --surface-card: #604a83;
 
+  /* #region Text Colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  /* #endregion */
+
   /* #region Breadcrumb */
   --breadcrumb-background: #b8cae5;
   --breadcrumb-link: #2a3852;
@@ -43,6 +48,10 @@
   /* #region Splitter */
   --splitter-handle-bg: #b8b8b8;
   --splitter-handle-hover-bg: #2880d8;
+  /* #endregion */
+
+  /* #region Loading */
+  --loading-text: #000000;
   /* #endregion */
 
   /* #region Drawer */
@@ -77,7 +86,6 @@
   /* #region Name Link */
   --name-link-text: #4C5C96;
   --name-link-text-hover: #3A4A7A;
-  --grid-button-color: #4C5C96;
   /* #endregion */
 
   /* #region Labels */
@@ -85,61 +93,91 @@
   /* #endregion */
 
   /* #region Inputs */
-
+  --input-background: #22272e10;
+  --input-text: #000000;
+  --input-placeholder: #6b7280;
   /* #endregion */
   
   // #region Controls
-  --checkbox-bg: #4C5C96;
+  --checkbox-bg: #8088a6;
+  --checkbox-selected-bg: transparent;
+  --checkbox-bg-checked: #8088a6;
+  --checkbox-color: #000000;
+  // #endregion
+
+  // #region Badge
   --badge-bg: #c3939d;
   --badge-text: #000;
   // #endregion
 
   /* #region Buttons */
-  --primary-button-text: #ffffff;
-  --primary-button-background: var(--primary-600);
-  --primary-button-border: var(--primary-600);
+  --primary-button-text: #000000;
+  --primary-button-background: var(--primary-300);
+  --primary-button-border: var(--primary-300);
 
-  --secondary-button-text: #ffffff;
-  --secondary-button-background: var(--secondary-600);
-  --secondary-button-border: var(--secondary-600);
+  --secondary-button-text: #000000;
+  --secondary-button-background: var(--secondary-300);
+  --secondary-button-border: var(--secondary-300);
 
-  --gray-button-text: #ffffff;
-  --gray-button-background: var(--gray-600);
-  --gray-button-border: var(--gray-600);
+  --gray-button-text: #000000;
+  --gray-button-background: var(--gray-300);
+  --gray-button-border: var(--gray-300);
 
-  --red-button-text: #ffffff;
-  --red-button-background: var(--red-600);
-  --red-button-border: var(--red-600);
+  --red-button-text: #000000;
+  --red-button-background: var(--red-300);
+  --red-button-border: var(--red-300);
 
-  --green-button-text: #ffffff;
-  --green-button-background: var(--green-600);
-  --green-button-border: var(--green-600);
+  --green-button-text: #000000;
+  --green-button-background: var(--green-300);
+  --green-button-border: var(--green-300);
 
-  --primary-inverted-button-text: var(--primary-400);
+  --primary-inverted-button-text: var(--primary-600);
   --primary-inverted-button-background: transparent;
-  --primary-inverted-button-border: var(--primary-400);
+  --primary-inverted-button-border: var(--primary-600);
 
-  --secondary-inverted-button-text: var(--secondary-400);
+  --secondary-inverted-button-text: var(--secondary-600);
   --secondary-inverted-button-background: transparent;
-  --secondary-inverted-button-border: var(--secondary-400);
+  --secondary-inverted-button-border: var(--secondary-600);
 
-  --gray-inverted-button-text: var(--gray-400);
+  --gray-inverted-button-text: var(--gray-600);
   --gray-inverted-button-background: transparent;
-  --gray-inverted-button-border: var(--gray-400);
+  --gray-inverted-button-border: var(--gray-600);
 
-  --red-inverted-button-text: var(--red-400);
+  --red-inverted-button-text: var(--red-600);
   --red-inverted-button-background: transparent;
-  --red-inverted-button-border: var(--red-400);
+  --red-inverted-button-border: var(--red-600);
 
-  --green-inverted-button-text: var(--green-400);
+  --green-inverted-button-text: var(--green-600);
   --green-inverted-button-background: transparent;
-  --green-inverted-button-border: var(--green-400);
+  --green-inverted-button-border: var(--green-600);
+
+  --grid-button-color: #2c3340;
+  --grid-button-hover-background: #00000011;
+  --grid-button-hover-color: #000000;
+  --grid-button-green-color: #019801b0;
+  --grid-button-green-hover-color: #00af00;
   /* #endregion */
+
+  /* #region Labels */
+  --main-label-text: #000000;
+  /* #endregion */
+
+/* #region Events */
+  --event-planned-bg: #778fdf;
+  --event-completed-bg: #74c9b1;
+  --event-cancelled-bg: #b66f91;
+  --event-missed-bg: #b07560;
+  --event-planned-text: #000000;
+  --event-completed-text: #000000;
+  --event-cancelled-text: #000000;
+  --event-missed-text: #000000;
+/* #endregion */
 
   /* #region Calendar */
   --calendar-day-bg: #ffffff;
-  --calendar-day-border: #d1d5db;
+  --calendar-day-border: #bcbdd6;
   --calendar-day-text: #000000;
+  --calendar-day-name-text: #000000;
   --calendar-day-unavailable-bg: #fee2e2;
   --calendar-day-unavailable-border: #fca5a5;
   --calendar-day-unavailable-hover-bg: #fecaca;
@@ -171,6 +209,12 @@
 
   --calendar-weekend-unavailable-bg: #5d646d; 
   --calendar-weekend-unavailable-border: #747a82; 
+
+  // Tooltip colors for dark theme
+  --tooltip-background: #acbed6;
+  --tooltip-text: #000000;
+  --tooltip-border: #acbed6;
+  --tooltip-date: var(--primary-500);
 /* #endregion */
 
 /* #region Day View */
@@ -189,7 +233,7 @@
   --dayview-week-view-bg: #ffffff;
   --dayview-week-nav-button-color: #6b7280;
   --dayview-week-nav-button-hover: #3b82f6;
-  --dayview-day-today-bg: #3b82f6;
+  --dayview-day-today-bg: #767fce;
   --dayview-day-today-text: #ffffff;
   --dayview-day-weekend-bg: #d1d5db;
   --dayview-day-weekend-text: #111827;
@@ -202,6 +246,7 @@
   --dayview-day-selected-border: #3b82f6;
   --dayview-day-selected-shadow: rgba(59, 130, 246, 0.3);
   --dayview-day-hover-shadow: rgba(0, 0, 0, 0.1);
+  --dayview_today-checkmark-bg: #767fce;
   --dayview-patients-count: #3b82f6;
 /* #endregion */
 
@@ -214,10 +259,15 @@
   --checklist-error-bg: #fae4e7;
   --checklist-error-text: #ae2b22;
   --checklist-error-indicator: #c75047;
+
+  --checklist-task-text: #000000;
+  --checklist-task-subtext: #3b3b3b;
+  --checklist-step-text: #000000;
+  --checklist-step-subtext: #3b3b3b;
 /* #endregion */
 
 /* #region Timeline Chart */
-  --timeline-section-title: var(--primary-600);
+  --timeline-section-title: var(--primary-900);
   --timeline-control-label: #525252;
   --timeline-range-label: #525252;
   --timeline-day-header: #525252;
@@ -241,6 +291,8 @@
   --timeline-unscheduled-icon: #e9e9e9;
   --timeline-on-scheduled-date-bg: #14b8a580;
   --timeline-on-scheduled-date-icon: #1a1a1a;
+  --timeline-planned-visit-bg: #3b83f680;
+  --timeline-planned-visit-icon: #1a1a1a;
   --timeline-out-of-window-bg: #d4900080;
   --timeline-out-of-window-icon: #1a1a1a;
   --timeline-in-window-bg: #3b83f680;
@@ -249,8 +301,8 @@
   --timeline-canceled-visit-icon: #1a1a1a;
   --timeline-missed-visit-bg: #ec4899;
   --timeline-missed-visit-icon: #1a1a1a;
-
   --timeline-window-bg: #9292928c;
+  --timeline-window-icon: #1a1a1a;
   
   --timeline-mode-scheduling-bg: #4C5C96;
   --timeline-mode-scheduling-border: #4C5C96;
@@ -261,15 +313,16 @@
   --timeline-mode-unavailable-text: #F8A8A8;
   --timeline-mode-unavailable-hover-bg: #7d2a2a;
 
-  --timeline-mode-toggle-text: #000000;
-  --timeline-mode-toggle-bg: #ffffff;
-  --timeline-mode-toggle-border: #000000;
-  --timeline-mode-toggle-hover-bg: #00000011;
+  --timeline-range-thumb: #4C5C96;
+  --timeline-range-thumb-hover: #435183;
+  --timeline-range-track: #6d6d6d;
 
-  --tooltip-text: #000000;
-  --tooltip-date: var(--primary-500);
+  --popup-day-number-text: #1f2937;
+  --popup-patient-id-text: #374151;
+  --popup-date-text: #4C5C96;
+  --popup-event-name-text: #1f2937;
 
-  // Day cell popup styling (light theme)
+  // Day cell popup styling
   --day-cell-popup-bg: #ffffff;
   --popup-separator-bg: #d1d5db;
   --popup-close-btn-hover-bg: #e5e7eb;
@@ -281,16 +334,17 @@
   --popup-toggle-btn-hover-color: #374151;
   --popup-checkbox-bg: #e5e7eb;
 
-  // Dropdown/menu styling (used by PatientGrid and other components)
+  // Dropdown/menu styling
   --dropdown-bg: #ffffff;
   --dropdown-fg: #1f2937;
   --dropdown-hover: #f3f4f6;
+
   --button-dropdown-bg: #ffffff;
   --button-dropdown-fg: #1f2937;
   --button-dropdown-hover-bg: #f3f4f6;
   --button-dropdown-border: #d1d5db;
   --button-dropdown-hover-border: #9ca3af;
-  // Aliases for PatientGrid component
+
   --button-bg: #ffffff;
   --button-fg: #1f2937;
   --button-hover-bg: #f3f4f6;
@@ -298,14 +352,29 @@
   --button-border: #d1d5db;
   --button-hover-border: #9ca3af;
 
-  // Popup text colors for light theme
-  --popup-day-number-text: #1f2937;
-  --popup-patient-id-text: #374151;
-  --popup-date-text: #4C5C96;
-  --popup-event-name-text: #1f2937;
+  --timeline-mode-toggle-text: #000000;
+  --timeline-mode-toggle-bg: #ffffff;
+  --timeline-mode-toggle-border: #000000;
+  --timeline-mode-toggle-hover-bg: #00000011;
+
+  --popup-header-btn-background: transparent;
+  --popup-header-btn-text: #000000;
+  --popup-header-btn-border: #a0b4d1;
+  --popup-header-btn-hover-background: #608bc8;
+  --popup-header-btn-hover-text: #000000;
+  --popup-header-btn-hover-border: #99a4be;
 
 /* #endregion */
+
+/* #region Event Card */
+  --event-card-text: #000000;
+  --event-card-border: #a0b4d1;
+  --event-type-label-text: #798caf;
+  --event-name-text: #000000;
+/* #endregion */
+
   --content-background: #cfd6e0;
+  --not-applicable-message-text: #000000;
 
   --card-background: #ffffff;
   --card-border-color: #bac4d1;
@@ -320,6 +389,7 @@
   --popup-highlight: #0000002c;
   --popup-text: #000000;
   --popup-text2: #313131;
+
   --background-color: white;
   --background-value1: #333;
   --background-label: #555;
@@ -546,18 +616,6 @@ input:disabled {
 
 .crc-grid a:hover {
   color: var(--text-hover);
-}
-
-.grid-button {
-  color: var(--primary-900);
-  background-color: transparent;
-  border-color: var(--primary-900);
-  transition: color 0.3s ease;
-}
-
-.grid-button:hover {
-  color: var(--white);
-  background-color: var(--primary-900);
 }
 
 .ag-theme-quartz-dark .ag-row-group.ag-row-level-0 {

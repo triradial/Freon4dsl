@@ -323,8 +323,8 @@
     function getDayColorClass(date: Date): string {
         // Check if date is before organization start date - use pink styling
         if (isBeforeOrgStart(date)) return 'day-before-start';
-        // Today uses future color with checkmark icon
-        if (isToday(date)) return 'day-future';
+        // Today uses dedicated today styling (#767fce)
+        if (isToday(date)) return 'day-today';
         if (isWeekend(date)) return 'day-weekend';
         if (isPast(date)) return 'day-past';
         if (isFuture(date)) return 'day-future';

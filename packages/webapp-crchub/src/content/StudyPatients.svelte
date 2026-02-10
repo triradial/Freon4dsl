@@ -1092,10 +1092,36 @@
                     
                     // Process events and collect window days
                     const events = (dbDay.events || []).map((event: any) => {
+                        // Backfill 'category' on events that don't have it yet
+                        if (!event.category) {
+                            if (event.scheduledDay === 0 || (event.originalScheduledDay !== undefined && event.originalScheduledDay === 0)) {
+                                event.category = 'initial';
+                            } else if (event.isUnscheduledEvent || event.type === 'unscheduled-event') {
+                                event.category = 'unscheduled';
+                            } else {
+                                event.category = 'scheduled';
+                            }
+                        }
+                        // Recalculate state from originalScheduledDay + window (fixes stale data)
+                        if (event.status !== 'cancelled' && event.status !== 'missed' &&
+                            event.scheduledDay !== undefined && event.window) {
+                            const origDay = event.originalScheduledDay ?? event.scheduledDay;
+                            const wStart = origDay - (event.window.daysBefore || 0);
+                            const wEnd = origDay + (event.window.daysAfter || 0);
+                            if (event.scheduledDay === origDay) {
+                                event.state = 'on-scheduled-date';
+                            } else if (event.scheduledDay >= wStart && event.scheduledDay <= wEnd) {
+                                event.state = 'in-window';
+                            } else {
+                                event.state = 'out-of-window';
+                            }
+                        }
                         // Add window days for scheduled events
+                        // Window is always based on originalScheduledDay, NOT the current scheduledDay
                         if (event.window && event.scheduledDay !== undefined) {
-                            const windowStart = event.scheduledDay - (event.window.daysBefore || 0);
-                            const windowEnd = event.scheduledDay + (event.window.daysAfter || 0);
+                            const windowBaseDay = event.originalScheduledDay ?? event.scheduledDay;
+                            const windowStart = windowBaseDay - (event.window.daysBefore || 0);
+                            const windowEnd = windowBaseDay + (event.window.daysAfter || 0);
                             for (let wd = windowStart; wd <= windowEnd; wd++) {
                                 if (wd !== event.scheduledDay && wd !== dbDay.day) {
                                     if (!dayWindowsMap.has(wd)) {
@@ -1252,6 +1278,14 @@
                 return 'actual-event';
             }
             return isFromSchedule ? 'scheduled-event' : 'unscheduled-event';
+        };
+        
+        // Helper to determine event category (initial, scheduled, unscheduled)
+        // This is separate from 'type' which tracks completion state (scheduled-event vs actual-event).
+        const getEventCategory = (isFromSchedule: boolean, scheduledDay?: number): string => {
+            if (isFromSchedule && scheduledDay === 0) return 'initial';
+            if (isFromSchedule) return 'scheduled';
+            return 'unscheduled';
         };
         
         // First pass: Collect all scheduled events and patient events by patient
@@ -1436,6 +1470,7 @@
                             dayEvents.get(actualDay)!.push({
                                 id: getNextEventId(eventName),
                                 type: getEventType(status, true),
+                                category: getEventCategory(true, scheduledDayInStudy),
                                 name: eventName,
                                 actualDay: actualDay, // Immutable: only set from source data or popup
                                 scheduledDay: scheduledDayInStudy,
@@ -1466,6 +1501,7 @@
                                     dayEvents.get(actualDay)!.push({
                                         id: getNextEventId(eventName),
                                         type: getEventType(status, true),
+                                        category: getEventCategory(true, scheduledDayInStudy),
                                         name: eventName,
                                         actualDay: actualDay, // Immutable: only set from source data or popup
                                         scheduledDay: scheduledDayInStudy,
@@ -1490,6 +1526,7 @@
                         dayEvents.get(scheduledDayInStudy)!.push({
                             id: eventId,
                             type: 'scheduled-event',
+                            category: getEventCategory(true, scheduledDayInStudy),
                             name: eventName,
                             scheduledDay: scheduledDayInStudy,
                             status: 'pending',
@@ -1532,7 +1569,8 @@
                         
                         const eventObj: any = {
                             id: getNextEventId(event.name),
-                            type: getEventType(status, false), // Not from schedule
+                            type: getEventType(status, false),
+                            category: getEventCategory(false),
                             name: event.name,
                             scheduledDay: eventPatientDay,
                             status,
@@ -1621,6 +1659,37 @@
                 
                 // First, add all database days (these have actual/recorded status)
                 for (const dbDay of (dbSchedule.days || [])) {
+                    // Backfill 'category' on database events that don't have it yet
+                    // (events created before the category field was added)
+                    // Also recalculate 'state' to fix any stale/incorrect values saved previously
+                    for (const event of (dbDay.events || [])) {
+                        if (!event.category) {
+                            if (event.scheduledDay === 0 || (event.originalScheduledDay !== undefined && event.originalScheduledDay === 0)) {
+                                event.category = 'initial';
+                            } else if (event.isUnscheduledEvent || event.type === 'unscheduled-event') {
+                                event.category = 'unscheduled';
+                            } else {
+                                event.category = 'scheduled';
+                            }
+                        }
+                        
+                        // Recalculate state from originalScheduledDay + window (fixes stale data)
+                        // Only for events that have a position state (not cancelled/missed which have their own states)
+                        if (event.status !== 'cancelled' && event.status !== 'missed' &&
+                            event.scheduledDay !== undefined && event.window) {
+                            const origDay = event.originalScheduledDay ?? event.scheduledDay;
+                            const wStart = origDay - (event.window.daysBefore || 0);
+                            const wEnd = origDay + (event.window.daysAfter || 0);
+                            if (event.scheduledDay === origDay) {
+                                event.state = 'on-scheduled-date';
+                            } else if (event.scheduledDay >= wStart && event.scheduledDay <= wEnd) {
+                                event.state = 'in-window';
+                            } else {
+                                event.state = 'out-of-window';
+                            }
+                        }
+                    }
+                    
                     mergedDays.push(dbDay);
                     processedDays.add(dbDay.day);
                     
@@ -1865,8 +1934,8 @@
         const isActual = event.type === 'actual-event';
         const eventType = event.type || 'scheduled-event';
         
-        // Check if event is an unscheduled event (via flag or type)
-        const isUnscheduledEvent = event.isUnscheduledEvent === true || eventType === 'unscheduled-event';
+        // Check if event is an unscheduled event (via category, flag, or type)
+        const isUnscheduledEvent = event.category === 'unscheduled' || event.isUnscheduledEvent === true || eventType === 'unscheduled-event';
         
         // Get state directly from event (already computed in data)
         let state = event.state || 'on-scheduled-date';
@@ -1980,11 +2049,14 @@
         return status;
     }
 
-    // Format date for tooltip display: d-MMM-yyyy
+    // Format date for tooltip display: Ddd, d-MMM-yyyy (e.g. Wed, 4-Mar-2026)
     function formatTooltipDate(dateStr: string): string {
         const [year, month, dayNum] = dateStr.split('-').map(Number);
+        const d = new Date(year, month - 1, dayNum);
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const dayOfWeek = dayNames[d.getDay()];
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return `${dayNum}-${months[month - 1]}-${year}`;
+        return `${dayOfWeek}, ${dayNum}-${months[month - 1]}-${year}`;
     }
 
     // Handle mouse enter for tooltip
@@ -2110,8 +2182,13 @@
         // If patient doesn't have a reference date yet, show initial popup
         if (!hasReferenceDate) return 'initial';
         
-        // If clicked day has events, show event-day popup to edit them
-        if (hasEvents) return 'event-day';
+        // If clicked day has events, check if any are initial events
+        // Initial events use the 'initial' popup type (with pending/terminal phases)
+        if (hasEvents) {
+            const hasInitialEvent = dayData.events.some((e: any) => e.category === 'initial');
+            if (hasInitialEvent) return 'initial';
+            return 'event-day';
+        }
         
         // Patient has started but this day has no events - show no-event popup
         return 'no-event';
@@ -2359,6 +2436,7 @@
             const newEvent: any = {
                 id: `${result.initialEvent.eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
                 type: isCompleted ? 'actual-event' : 'scheduled-event',
+                category: 'initial',
                 name: result.initialEvent.eventName,
                 scheduledDay: dayNumber,
                 status: result.initialEvent.status,
@@ -2382,12 +2460,13 @@
                 const unscheduledNewEvent: any = {
                     id: `${result.unscheduledEvent.eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
                     type: isCompletedUnscheduled ? 'actual-event' : 'unscheduled-event',
+                    category: 'unscheduled',
                     name: result.unscheduledEvent.eventName,
                     scheduledDay: dayNumber,
                     status: result.unscheduledEvent.status,
                     state: 'on-scheduled-date',
                     window: { daysBefore: 0, daysAfter: 0 },
-                    isUnscheduledEvent: true  // Track that this is an unscheduled event for styling
+                    isUnscheduledEvent: true
                 };
                 
                 // For completed events, set actualDay (immutable, set by popup)
@@ -2407,10 +2486,12 @@
                 patientData.days.sort((a: any, b: any) => a.day - b.day);
             }
             
-            // Save and close
+            // Save and close (unless keepOpen is set for inline transitions)
             console.log('[handlePopupApply] Updated patient days:', JSON.stringify(patientData.days, null, 2));
             savePatientScheduleToDatabase(popupPatientId, patientData);
-            popupOpen = false;
+            if (!result.keepOpen) {
+                popupOpen = false;
+            }
             return; // Initial events are handled separately
         }
         
@@ -2599,7 +2680,7 @@
                             ? event.originalScheduledDay 
                             : event.scheduledDay;
                         const isDay0Event = originalDay === 0;
-                        const isUnscheduledEvent = event.isUnscheduledEvent || event.type === 'unscheduled-event';
+                        const isUnscheduledEvent = event.category === 'unscheduled' || event.isUnscheduledEvent || event.type === 'unscheduled-event';
                         
                         // State is always 'on-scheduled-date' for moved events
                         event.state = 'on-scheduled-date';
@@ -2758,12 +2839,13 @@
             const newEvent: any = {
                 id: `${result.unscheduledEvent.eventName.toLowerCase().replace(/\s+/g, '-')}-1`,
                 type: isCompletedUnscheduled ? 'actual-event' : 'unscheduled-event',
+                category: 'unscheduled',
                 name: result.unscheduledEvent.eventName,
                 scheduledDay: dayNumber,
                 status: result.unscheduledEvent.status,
                 state: 'on-scheduled-date',
                 window: { daysBefore: 0, daysAfter: 0 },
-                isUnscheduledEvent: true  // Track that this is an unscheduled event for styling
+                isUnscheduledEvent: true
             };
             
             // For completed events, set actualDay (immutable, set by popup)
@@ -2796,9 +2878,241 @@
         // Save patient schedule to database
         savePatientScheduleToDatabase(popupPatientId, patientData);
         
-        popupOpen = false;
+        // Close popup unless keepOpen flag is set (used for inline transitions)
+        if (!result.keepOpen) {
+            popupOpen = false;
+        }
     }
     
+    // Handle initial event inline actions (dispatched from DayCellPopup after initial Add)
+    // Actions: complete, cancel, missed, move, delete, reset
+    function handleInitialAction(detail: { action: string; eventName: string; moveDate?: string }) {
+        console.log('[handleInitialAction] Action:', detail.action, 'Event:', detail.eventName, 'MoveDate:', detail.moveDate);
+        
+        if (!patientCentricData || !patientCentricData.patients) {
+            console.error('[handleInitialAction] No patient data available');
+            return;
+        }
+        
+        const patientData = (patientCentricData.patients as any[]).find((p: any) => p.patientId === popupPatientId);
+        if (!patientData) {
+            console.error('[handleInitialAction] Patient not found:', popupPatientId);
+            return;
+        }
+        
+        // Find day 0 in patient data
+        const day0Index = patientData.days.findIndex((d: any) => d.day === 0);
+        if (day0Index < 0) {
+            console.error('[handleInitialAction] Day 0 not found in patient data');
+            return;
+        }
+        
+        const day0Data = patientData.days[day0Index];
+        if (!day0Data.events || day0Data.events.length === 0) {
+            console.error('[handleInitialAction] No events on day 0');
+            return;
+        }
+        
+        // Find the initial event by name
+        const eventIndex = day0Data.events.findIndex((e: any) => e.name === detail.eventName);
+        if (eventIndex < 0) {
+            console.error('[handleInitialAction] Event not found:', detail.eventName);
+            return;
+        }
+        
+        const event = day0Data.events[eventIndex];
+        
+        if (detail.action === 'complete') {
+            event.status = 'completed';
+            event.type = 'actual-event';
+            if (event.actualDay === undefined) {
+                event.actualDay = 0;
+            }
+            console.log('[handleInitialAction] Marked complete:', event);
+        } else if (detail.action === 'cancel') {
+            event.status = 'cancelled';
+            event.type = 'actual-event';
+            if (event.actualDay === undefined) {
+                event.actualDay = 0;
+            }
+            console.log('[handleInitialAction] Marked cancelled:', event);
+        } else if (detail.action === 'missed') {
+            event.status = 'missed';
+            event.type = 'actual-event';
+            if (event.actualDay === undefined) {
+                event.actualDay = 0;
+            }
+            console.log('[handleInitialAction] Marked missed:', event);
+        } else if (detail.action === 'reset') {
+            event.status = 'pending';
+            event.type = 'scheduled-event';
+            delete event.actualDay;
+            console.log('[handleInitialAction] Reset to pending:', event);
+        } else if (detail.action === 'delete') {
+            day0Data.events.splice(eventIndex, 1);
+            console.log('[handleInitialAction] Deleted event:', detail.eventName);
+            
+            // If no more events on day 0, clear the entire schedule
+            // All other days are projected from the reference date, so they become invalid
+            if (day0Data.events.length === 0) {
+                patientData.days = [];
+                patientData.referenceDate = null;
+                console.log('[handleInitialAction] Removed all days, cleared reference date');
+            }
+        } else if (detail.action === 'move' && detail.moveDate) {
+            // Moving a day 0 event changes the reference date
+            // Event stays at day 0, all other days recalculate
+            const oldReferenceDate = patientData.referenceDate;
+            patientData.referenceDate = detail.moveDate;
+            day0Data.date = detail.moveDate;
+            event.state = 'on-scheduled-date';
+            console.log('[handleInitialAction] MOVE - Reference date changed from', oldReferenceDate, 'to', detail.moveDate);
+            
+            // Recalculate all other days' dates based on new reference date
+            recalculateScheduleFromDay0(patientData, detail.moveDate);
+        }
+        
+        // Save updated patient data
+        savePatientScheduleToDatabase(popupPatientId, patientData);
+    }
+
+    // Handle scheduled event inline actions (dispatched from DayCellPopup button clicks)
+    // Actions: complete, cancel, missed, reset, move
+    function handleScheduledAction(detail: { action: string; eventId: string; eventName: string; dayNumber: number; moveDate?: string }) {
+        console.log('[handleScheduledAction] Action:', detail.action, 'Event:', detail.eventName, 'Day:', detail.dayNumber, 'MoveDate:', detail.moveDate);
+        
+        if (!patientCentricData || !patientCentricData.patients) {
+            console.error('[handleScheduledAction] No patient data available');
+            return;
+        }
+        
+        const patientData = (patientCentricData.patients as any[]).find((p: any) => p.patientId === popupPatientId);
+        if (!patientData) {
+            console.error('[handleScheduledAction] Patient not found:', popupPatientId);
+            return;
+        }
+        
+        // Find the day in patient data
+        const dayIndex = patientData.days.findIndex((d: any) => d.day === detail.dayNumber);
+        if (dayIndex < 0) {
+            console.error('[handleScheduledAction] Day not found:', detail.dayNumber);
+            return;
+        }
+        
+        const dayData = patientData.days[dayIndex];
+        if (!dayData.events || dayData.events.length === 0) {
+            console.error('[handleScheduledAction] No events on day', detail.dayNumber);
+            return;
+        }
+        
+        // Find the event by id or name
+        const eventIndex = dayData.events.findIndex((e: any) => e.id === detail.eventId || e.name === detail.eventName);
+        if (eventIndex < 0) {
+            console.error('[handleScheduledAction] Event not found:', detail.eventId, detail.eventName);
+            return;
+        }
+        
+        const event = dayData.events[eventIndex];
+        
+        if (detail.action === 'complete') {
+            event.status = 'completed';
+            event.type = 'actual-event';
+            if (event.actualDay === undefined) {
+                event.actualDay = detail.dayNumber;
+            }
+            console.log('[handleScheduledAction] Marked complete:', event);
+        } else if (detail.action === 'cancel') {
+            event.status = 'cancelled';
+            event.type = 'actual-event';
+            if (event.actualDay === undefined) {
+                event.actualDay = detail.dayNumber;
+            }
+            console.log('[handleScheduledAction] Marked cancelled:', event);
+        } else if (detail.action === 'missed') {
+            event.status = 'missed';
+            event.type = 'actual-event';
+            if (event.actualDay === undefined) {
+                event.actualDay = detail.dayNumber;
+            }
+            console.log('[handleScheduledAction] Marked missed:', event);
+        } else if (detail.action === 'reset') {
+            event.status = 'pending';
+            event.type = 'scheduled-event';
+            delete event.actualDay;
+            event.state = 'on-scheduled-date';
+            console.log('[handleScheduledAction] Reset to pending:', event);
+        } else if (detail.action === 'move' && detail.moveDate) {
+            // Calculate the new day number from the move date
+            if (!patientData.referenceDate) {
+                console.error('[handleScheduledAction] No reference date for move');
+                return;
+            }
+            const newDayNumber = getCalendarDayDiff(new Date(detail.moveDate + 'T00:00:00'), patientData.referenceDate);
+            console.log('[handleScheduledAction] Moving event from day', detail.dayNumber, 'to day', newDayNumber);
+            
+            // Remove event from current day
+            dayData.events.splice(eventIndex, 1);
+            
+            // Update the event
+            // Store original scheduled day if not already stored (first move)
+            const originalDay = (event.originalScheduledDay !== undefined && event.originalScheduledDay !== null)
+                ? event.originalScheduledDay
+                : event.scheduledDay;
+            if (event.originalScheduledDay === undefined || event.originalScheduledDay === null) {
+                event.originalScheduledDay = event.scheduledDay;
+            }
+            event.scheduledDay = newDayNumber;
+            
+            // Calculate correct state based on new day relative to original + window
+            const eventWindow = event.window || { daysBefore: 0, daysAfter: 0 };
+            const windowStart = originalDay - (eventWindow.daysBefore || 0);
+            const windowEnd = originalDay + (eventWindow.daysAfter || 0);
+            
+            if (newDayNumber === originalDay) {
+                event.state = 'on-scheduled-date';
+            } else if (newDayNumber >= windowStart && newDayNumber <= windowEnd) {
+                event.state = 'in-window';
+            } else {
+                event.state = 'out-of-window';
+            }
+            console.log('[handleScheduledAction] Calculated state:', event.state,
+                '(newDay:', newDayNumber, 'originalDay:', originalDay,
+                'window:', windowStart, '-', windowEnd, ')');
+            
+            // Find or create the target day
+            let targetDayIndex = patientData.days.findIndex((d: any) => d.day === newDayNumber);
+            let targetDayData: any;
+            
+            if (targetDayIndex >= 0) {
+                targetDayData = patientData.days[targetDayIndex];
+                if (!targetDayData.events) targetDayData.events = [];
+            } else {
+                const targetDate = new Date(patientData.referenceDate + 'T00:00:00');
+                targetDate.setDate(targetDate.getDate() + newDayNumber);
+                const dateStr = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
+                targetDayData = { day: newDayNumber, date: dateStr, events: [] };
+                patientData.days.push(targetDayData);
+                patientData.days.sort((a: any, b: any) => a.day - b.day);
+            }
+            
+            targetDayData.events.push(event);
+            console.log('[handleScheduledAction] Moved event to day', newDayNumber);
+        } else if (detail.action === 'delete') {
+            // Delete the event (for unscheduled and initial events)
+            dayData.events.splice(eventIndex, 1);
+            console.log('[handleScheduledAction] Deleted event:', detail.eventName, 'from day', detail.dayNumber);
+            
+            // If no more events on this day and no windows, remove the day entry
+            if (dayData.events.length === 0 && (!dayData.windows || dayData.windows.length === 0)) {
+                patientData.days.splice(dayIndex, 1);
+                console.log('[handleScheduledAction] Removed empty day', detail.dayNumber);
+            }
+        }
+        
+        // Save updated patient data
+        savePatientScheduleToDatabase(popupPatientId, patientData);
+    }
+
     // Recalculate all days' calendar dates when a Day 0 event is moved
     // When Day 0 is moved to a new date:
     // - The reference date has already been changed (before this function is called)
@@ -3007,6 +3321,7 @@
                     events: day.events.map((event: any) => ({
                         id: event.id,
                         type: event.type,
+                        category: event.category, // Event origin: 'initial', 'scheduled', or 'unscheduled'
                         name: event.name,
                         actualDay: event.actualDay,
                         scheduledDay: event.scheduledDay,
@@ -3548,13 +3863,10 @@
     }
     
     // Derived: Can navigate to previous month?
-    let canNavigatePrevious = $derived.by(() => {
-        if (dateRangeStart === dateRangeEnd) return false;
-        const currentMonthStart = getMonthStartDay(visibleStartDay);
-        const prevMonthStart = getPreviousMonthStartDay(currentMonthStart);
-        // Must be strictly less than current to be a valid previous month
-        return prevMonthStart < currentMonthStart && prevMonthStart >= dateRangeStart;
-    });
+    // Uses simple comparison: if the visible start is beyond the range start, we can go back.
+    // This avoids subtle discrepancies between how dateRangeStart and getAllMonthStarts()
+    // compute day numbers (different dayjs paths can produce off-by-one results).
+    let canNavigatePrevious = $derived(visibleStartDay > dateRangeStart);
     
     // Derived: Can navigate to next month?
     let canNavigateNext = $derived.by(() => {
@@ -4061,6 +4373,8 @@
             on:apply={(e) => handlePopupApply(e.detail)}
             on:cancel={handlePopupCancel}
             on:availabilityChange={(e) => handleAvailabilityChange(e.detail)}
+            on:initialAction={(e) => handleInitialAction(e.detail)}
+            on:scheduledAction={(e) => handleScheduledAction(e.detail)}
         />
 
         {#if showStaffTimeline}

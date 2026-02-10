@@ -386,6 +386,7 @@
     -webkit-appearance: none !important;
     appearance: none !important;
     background-color: var(--checkbox-bg) !important;
+    background-size: .65em .65em !important;
     width: 1rem !important;
     height: 1rem !important;
     border-radius: 0.25rem !important;
@@ -394,6 +395,7 @@
   }
 
   [type='checkbox']:checked {
+    background-color: var(--checkbox-bg-checked) !important;
     border: none !important;
     outline: none !important;
   }
@@ -1304,28 +1306,27 @@
     width: 1.5rem !important;
     margin: 0;
     border: none !important;
-    background: transparent !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: transparent !important;
     color: var(--grid-button-color) !important;
     transition: color 0.15s ease, background-color 0.15s ease;
     border-radius: 50%;
   }
 
   .grid-button.general-button:hover {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    color: #ffffff !important;
+    background-color: var(--grid-button-hover-background) !important;
+    color: var(--grid-button-hover-color) !important;
   }
 
   .grid-button.green-button {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    color: #019801b0 !important;
+    color: var(--grid-button-green-color) !important;
   }
 
   .grid-button.green-button:hover {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    color: #00ff00 !important;
+    background-color:var(--grid-button-hover-background) !important;
+    color: var(--grid-button-green-hover-color) !important;
   }
 
   .grid-button.delete-button:hover {
@@ -3461,7 +3462,7 @@
   .delete-button:hover {
     background-color: var(--color-error-100);
   }
-  /* #endregion Facility */
+  /* #endregion */
 
   /* #region Day View */
   .day-view-container {
@@ -3558,12 +3559,12 @@
   }
 
   .date-label {
-      font-size: 0.875rem;
-      font-weight: 600;
+      font-size: var(--standard-font-size);
+      font-weight: 400;
       color: var(--dayview-date-header-text);
       opacity: 0.8;
       z-index: 3;
-      margin-left: 3rem;
+      // margin-left: 3rem;
   }
 
   .main-content {
@@ -3864,7 +3865,7 @@
       font-size: 0.875rem;
       opacity: 0.7;
   }
-  /* #endregion Day View */
+  /* #endregion */
 
   /* #region Splitter */
   .splitter-container {
@@ -4079,7 +4080,6 @@
   .checklist-content {
     flex: 1;
     overflow-y: auto;
-    padding: 0.5rem;
     min-height: 0;
   }
 
@@ -4088,6 +4088,7 @@
     font-family: var(--font-family-sans);
     line-height: 1.6;
   }
+  /* #endregion */
 
 /* #region Patient Staff Timeline Chart */
 .timeline-chart-wrapper {
@@ -4552,29 +4553,29 @@
             // Completed states - same colors with stripes
             &.completed-on-scheduled {
                 background-color: var(--timeline-on-scheduled-date-bg);
-                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.3) 2px, rgba(255,255,255,0.3) 4px);
+                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.2) 2px, rgba(255,255,255,0.2) 4px);
             }
             
             &.completed-in-window {
                 background-color: var(--timeline-in-window-bg);
-                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.3) 2px, rgba(255,255,255,0.3) 4px);
+                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.2) 2px, rgba(255,255,255,0.2) 4px);
             }
             
             &.completed-out-of-window {
                 background-color: var(--timeline-out-of-window-bg);
-                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.3) 2px, rgba(255,255,255,0.3) 4px);
+                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.2) 2px, rgba(255,255,255,0.2) 4px);
             }
             
             // Canceled - with stripes
             &.canceled {
                 background-color: var(--timeline-canceled-visit-bg);
-                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.3) 2px, rgba(255,255,255,0.3) 4px);
+                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255, 255, 255, 0.2) 2px, rgba(255,255,255,0.2) 4px);
             }
             
             // Missed - with stripes
             &.missed {
                 background-color: var(--timeline-missed-visit-bg);
-                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.3) 2px, rgba(255,255,255,0.3) 4px);
+                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.2) 2px, rgba(255,255,255,0.2) 4px);
             }
             
             // Unscheduled - solid
@@ -4585,7 +4586,7 @@
             // Unscheduled completed - with stripes
             &.unscheduled-completed {
                 background-color: var(--timeline-unscheduled-bg);
-                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.3) 2px, rgba(255,255,255,0.3) 4px);
+                background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.2) 2px, rgba(255,255,255,0.2) 4px);
             }
             
             // Window day
@@ -4661,6 +4662,12 @@
         flex: 1;
         overflow: hidden;
         border-bottom: 1px solid var(--calendar-day-border);
+    }
+
+    .timeline-section.single-patient {
+        min-height: 8rem !important;
+        max-height: 8rem !important;
+        height: 8rem !important;
     }
 
     .timeline-section:last-child {
@@ -4898,8 +4905,8 @@
             width: 100% !important;
             padding: 0.375rem 2rem 0.375rem 0.75rem !important;
             border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2)) !important;
-            background-color: var(--input-background, rgba(255, 255, 255, 0.05)) !important;
-            color: var(--text-color, #fff) !important;
+            background-color: var(--input-background) !important;
+            color: var(--input-text) !important;
             font-size: var(--standard-font-size) !important;
             outline: none !important;
             transition: border-color 0.15s ease !important;
@@ -4912,7 +4919,7 @@
         }
         
         .quick-input-field::placeholder {
-            color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
+            color: var(--input-placeholder) !important;
         }
         
         .clear-search-button {
@@ -5194,8 +5201,8 @@
 
     .month-header {
         padding: 0.25rem 0.5rem;
-        font-weight: 600;
-        font-size: 0.875rem;
+        font-weight: 300; 
+        font-size: var(--large-font-size);
         text-align: center;
         background-color: var(--color-primary-100);
         border-right: 1px solid var(--calendar-day-border);
@@ -5453,12 +5460,8 @@
         }
     }
     
-    // When unavailable is the only thing in the cell (no event, no window),
-    // expand to fill the entire cell (keep same icon size)
-    .timeline-cell.unavailable-only .unavailable-overlay {
-        height: 100%;
-        bottom: 0;
-    }
+    // Availability marking is always in the top portion only, irrespective of
+    // whether the day has an event or not (consistent across Study Patient and Study Patients).
 
     .staff-cell {
         font-size: 0.75rem;
@@ -5515,8 +5518,9 @@
     background-color: var(--day-cell-popup-bg);
     border: none;
     border-radius: 0;
-    min-width: 220px;
-    max-width: 340px;
+    width: 18rem; 
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
     padding: 0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     z-index: 1001;
@@ -5575,11 +5579,39 @@
         }
     }
           
+    .popup-patient-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
     .popup-patient-id {
       font-size: var(--standard-font-size);
       font-weight: 400;
       color: var(--popup-patient-id-text);
       white-space: nowrap;
+    }
+
+    .popup-unscheduled-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.125rem;
+      font-size: var(--standard-font-size);
+      padding: 0.125rem 0.5rem;
+      background: transparent;
+      color: var(--gray-200);
+      border: 1px solid var(--gray-500);
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+
+      &:hover {
+        background: var(--gray-600);
+        color: white;
+      }
     }
     
     // Error message - shown when there's a study design issue
@@ -5903,11 +5935,402 @@
             background-color: #52525b;
         }
     }
+
+    // === Initial Event inline phase styles ===
+
+    // === Initial Event inline phase styles ===
+    // Matches the EventCard component styles exactly for consistency
+
+    // Selection phase: event option checkbox list
+    .popup-selection-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .popup-event-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: var(--standard-font-size);
+        cursor: pointer;
+        color: var(--calendar-day-text);
+
+        input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
+
+        span {
+            flex: 1;
+        }
+    }
+
+    // Add button (selection phase) - matches EventCard .add-btn
+    .popup-add-btn {
+        margin-top: 0.5rem;
+        padding: 0.125rem 0.75rem;
+        font-size: var(--standard-font-size);
+        background: var(--primary-500);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        align-self: flex-start;
+
+        &:hover:not(:disabled) {
+            background: var(--primary-600);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    // Ok/Cancel actions for unscheduled event selector
+    .popup-selection-actions {
+        display: flex;
+        gap: 0.375rem;
+        margin-top: 0.5rem;
+    }
+
+    .popup-selection-ok-btn {
+        padding: 0.125rem 0.75rem;
+        font-size: var(--standard-font-size);
+        background: var(--primary-500);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover:not(:disabled) {
+            background: var(--primary-600);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .popup-selection-cancel-btn {
+        padding: 0.125rem 0.75rem;
+        font-size: var(--standard-font-size);
+        background: var(--gray-600);
+        color: var(--gray-200);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover {
+            background: var(--gray-500);
+            color: white;
+        }
+    }
+
+    // Event info row (pending/terminal phases): name + status badge on same line
+    .popup-event-info-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+    }
+
+    // Status badge - matches EventCard .status-badge
+    .popup-status-badge {
+        font-size: 0.625rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 1rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+
+        &.status-planned {
+            background: var(--event-planned-bg);
+            color: var(--event-planned-text);
+        }
+
+        &.status-completed {
+            background: var(--event-completed-bg);
+            color: var(--event-completed-text);
+        }
+
+        &.status-cancelled {
+            background: var(--event-cancelled-bg);
+            color: var(--event-cancelled-text);
+        }
+
+        &.status-missed {
+            background: var(--event-missed-bg);
+            color: var(--event-missed-text);
+        }
+    }
+
+    // Header button (Delete / Reset) in section-header-row
+    .popup-header-btn {
+        margin-left: auto;
+        padding: 0.125rem 0.5rem;
+        font-size: var(--standard-font-size);
+        font-weight: 500;
+        background-color: var(--popup-header-btn-background);
+        border: 1px solid var(--popup-header-btn-border);
+        border-radius: 4px;
+        color: var(--popup-header-btn-text);
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background-color: var(--popup-header-btn-hover-background);
+            border-color: var(--popup-header-btn-hover-border);
+            color: var(--popup-header-btn-hover-text);
+        }
+    }
+
+    // Action buttons row (pending phase: Completed, Canceled, Missed, Move)
+    // Matches EventCard .action-buttons and .action-btn
+    .popup-action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .popup-action-btn {
+        padding: 0.125rem 0.5rem;
+        font-size: var(--standard-font-size);
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid;
+        transition: all 0.15s ease;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        &.completed {
+            background-color: var(--button-background);
+            border-color: var(--button-border);
+            color: var(--button-text);
+
+            &:hover:not(:disabled) {
+                background: var(--button-hover);
+            }
+        }
+
+        &.canceled {
+            background-color: var(--button-background);
+            border-color: var(--button-border);
+            color: var(--button-text);
+
+            &:hover:not(:disabled) {
+                background: var(--button-hover);
+            }
+        }
+
+        &.missed {
+            background-color: var(--button-background);
+            border-color: var(--button-border);
+            color: var(--button-text);
+
+            &:hover:not(:disabled) {
+                background: var(--button-hover);
+            }
+        }
+
+        &.move {
+            background-color: var(--button-background);
+            border-color: var(--button-border);
+            color: var(--button-text);
+
+            &:hover:not(:disabled) {
+                background: var(--button-hover);
+            }
+        }
+    }
+
+    // Move calendar section (inline calendar in popup)
+    .popup-move-calendar-section {
+        margin-top: 0.5rem;
+    }
+
+    .popup-move-calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.375rem;
+    }
+
+    .popup-move-calendar-nav-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        color: var(--gray-400);
+        cursor: pointer;
+        border-radius: 4px;
+
+        &:hover {
+            color: var(--gray-200);
+            background: rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    .popup-move-calendar-month-year {
+        font-size: var(--standard-font-size);
+        font-weight: 500;
+        color: var(--popup-date-text);
+    }
+
+    .popup-move-calendar-grid {
+        margin-bottom: 0.5rem;
+    }
+
+    .popup-move-calendar-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.125rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .popup-move-calendar-weekday {
+        text-align: center;
+        font-size: 0.6875rem;
+        color: var(--gray-500);
+        padding: 0.125rem;
+    }
+
+    .popup-move-calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.125rem;
+    }
+
+    .popup-move-calendar-day {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        aspect-ratio: 1;
+        font-size: 0.6875rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        background: transparent;
+        color: var(--popup-event-name-text);
+        transition: all 0.1s ease;
+        padding: 0;
+
+        &:hover:not(.empty) {
+            background-color: rgba(99, 102, 241, 0.2);
+        }
+
+        &.today {
+            font-weight: 700;
+            color: var(--primary-500);
+        }
+
+        &.weekend {
+            color: var(--gray-500);
+        }
+
+        // Window range: subtle white transparency background
+        &.in-window {
+            background-color: rgba(255, 255, 255, 0.247);
+        }
+
+        // Current event day on its original scheduled date: green
+        &.event-on-scheduled {
+            background-color: var(--timeline-on-scheduled-date-bg);
+            color: white;
+            font-weight: 600;
+        }
+
+        // Current event day within the window: blue
+        &.event-in-window {
+            background-color: var(--timeline-in-window-bg);
+            color: white;
+            font-weight: 600;
+        }
+
+        // Current event day outside the window: orange
+        &.event-out-of-window {
+            background-color: var(--timeline-out-of-window-bg);
+            color: white;
+            font-weight: 600;
+        }
+
+        // Original scheduled date: green outline
+        &.original-scheduled-day {
+            outline: 2px solid var(--timeline-on-scheduled-date-bg);
+            outline-offset: -2px;
+        }
+
+        // Selected overrides all other styling
+        &.selected {
+            background-color: var(--primary-500);
+            color: white;
+            font-weight: 600;
+        }
+
+        &.empty {
+            cursor: default;
+        }
+    }
+
+    .popup-move-calendar-actions {
+        display: flex;
+        gap: 0.375rem;
+        justify-content: flex-end;
+    }
+
+    .popup-move-calendar-ok-btn {
+        padding: 0.25rem 0.75rem;
+        font-size: var(--standard-font-size);
+        font-weight: 500;
+        background-color: var(--primary-500);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover:not(:disabled) {
+            background-color: var(--primary-600);
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    }
+
+    .popup-move-calendar-cancel-btn {
+        padding: 0.25rem 0.75rem;
+        font-size: var(--standard-font-size);
+        font-weight: 500;
+        background-color: var(--gray-600);
+        color: var(--gray-300);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--gray-500);
+        }
+    }
 }
+/* #endregion */
 
 // ============================================
-// Global DatePicker Popup Styles (rendered in portal)
+// Global DatePicker 
 // ============================================
+  /* #region DatePicker */
 .datepicker-popup {
     background: #27272a;
     border: 1px solid #3f3f46;
@@ -6032,3 +6455,773 @@
 
 /* #endregion */
   /* #endregion */
+
+  /* #region Study Patient */
+    .study-patient-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .splitter-panel {
+        height: 100%;
+    }
+
+    /* Single patient timeline - sized to fit just the single row */
+    .single-patient-timeline {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    
+    .single-patient-timeline .days-container {
+        overflow-x: auto;
+    }
+
+    /* Single patient specific: patient labels column without scroll */
+    .single-patient .patient-labels-column {
+        flex: none;
+    }
+    
+    /* Single patient specific: no scroll wrapper needed */
+    .single-patient .patient-rows-scroll-wrapper {
+        flex: none;
+        overflow: visible;
+    }
+
+    /* Selected cell highlight - use ::before pseudo-element so outline renders above all content.
+       Also lower z-index of unavailable-overlay and event-indicator when selected so the
+       selection ring stays on top. */
+    .timeline-cell.selected {
+        outline: none !important;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid var(--primary-500);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .unavailable-overlay,
+        .event-indicator {
+            z-index: 1;
+        }
+    }
+
+    /* Event Cards Section - fills remaining height */
+    .event-cards-section {
+        margin-top: 1rem;
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Day/Date/Patient Header above cards */
+    .event-cards-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        margin-bottom: 0.75rem;
+        padding: 0 0.25rem;
+    }
+
+    .event-cards-header-top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+    }
+
+    .event-cards-header-info {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+    }
+
+    .event-cards-close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--calendar-day-text);
+        padding: 0.25rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .event-cards-close-btn:hover {
+        color: var(--text-primary);
+    }
+
+    .event-cards-patient-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .event-cards-patient-id {
+        font-size: var(--standard-font-size);
+        color: var(--calendar-day-text);
+    }
+
+    .event-cards-unscheduled-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.125rem;
+        font-size: var(--standard-font-size);
+        padding: 0.125rem 0.5rem;
+        background: transparent;
+        color: var(--gray-200);
+        border: 1px solid var(--gray-500);
+        border-radius: 4px;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background: var(--gray-600);
+            color: white;
+        }
+    }
+
+    .day-number-label {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--calendar-day-text);
+    }
+
+    .date-label {
+        font-size: 1rem;
+        color: var(--primary-500);
+    }
+
+    .event-cards-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        flex: 1;
+        align-content: flex-start;
+    }
+
+    /* ============================================
+       EVENT CARD - Unified card component
+       Used for: Initial, Scheduled, Unscheduled events
+       Modes: selection (checkbox list) or scheduled (full card)
+       ============================================ */
+    
+    .event-card {
+        /* Base card styles */
+        background: transparent;
+        border: 1px solid var(--event-card-border);
+        display: flex;
+        flex-direction: column;
+        width: 20rem;
+        height: 100%;
+
+        /* Card header - fixed height with type label + buttons */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            height: 2.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Card body - contains selection or scheduled content */
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .header-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: var(--surface-300);
+            border: 1px solid var(--surface-400);
+            border-radius: 4px;
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .header-btn:hover {
+            background: var(--surface-400);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--calendar-day-text);
+            padding: 0.25rem;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* Event type label */
+        .event-type-label {
+            font-size: var(--standard-font-size);
+            color: var(--event-type-label-text);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .event-name {
+            font-size: var(--standard-font-size);
+            color: var(--event-name-text);
+            font-weight: 500;
+        }
+
+        /* Selection content - checkbox list for initial/unscheduled */
+        .selection-content {
+            padding: 0.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        /* Scheduled content - full card with name, actions, checklist */
+        .scheduled-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Event info row - name + status */
+        .event-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+        }
+
+        /* Event selection options (for initial/unscheduled) */
+        .event-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: var(--standard-font-size);
+            cursor: pointer;
+            color: var(--calendar-day-text);
+          }
+
+        .event-option input {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Add button (for initial/unscheduled) */
+        .add-btn {
+            margin-top: 0.5rem;
+            padding: 0.125rem 0.75rem;
+            font-size: var(--standard-font-size);
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            align-self: flex-start;
+        }
+
+        .add-btn:hover:not(:disabled) {
+            background: var(--primary-600);
+        }
+
+        .add-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Ok/Cancel actions for selection mode */
+        .selection-actions {
+            display: flex;
+            gap: 0.375rem;
+            margin-top: 0.5rem;
+        }
+
+        .selection-ok-btn {
+            padding: 0.125rem 0.75rem;
+            font-size: var(--standard-font-size);
+            background: var(--primary-500);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+
+            &:hover:not(:disabled) {
+                background: var(--primary-600);
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
+        .selection-cancel-btn {
+            padding: 0.125rem 0.75rem;
+            font-size: var(--standard-font-size);
+            background: var(--gray-600);
+            color: var(--gray-200);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+
+            &:hover {
+                background: var(--gray-500);
+                color: white;
+            }
+        }
+
+        /* Status badge - matches popup styling */
+        .status-badge {
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .status-planned {
+            background: var(--event-planned-bg);
+            color: var(--event-planned-text);
+        }
+
+        .status-completed {
+            background: var(--event-completed-bg);
+            color: var(--event-completed-text);
+        }
+
+        .status-cancelled {
+            background: var(--event-cancelled-bg);
+            color: var(--event-cancelled-text);
+        }
+
+        .status-missed {
+            background: var(--event-missed-bg);
+            color: var(--event-missed-text);
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.75rem 0.75rem;
+            border-bottom: 1px solid var(--event-card-border);
+        }
+
+        .action-btn {
+            padding: 0.125rem 0.5rem;
+            font-size: var(--standard-font-size);
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .action-btn.completed,
+        .action-btn.canceled,
+        .action-btn.missed,
+        .action-btn.move {
+            background-color: var(--button-background);
+            border-color: var(--button-border);
+            color: var(--button-text);
+        }
+
+        .action-btn:hover:not(:disabled) {
+          background-color: var(--button-hover-bg);
+        }
+
+        .action-btn.delete {
+            background: var(--error-500);
+            border-color: var(--error-600);
+            color: white;
+        }
+
+        .action-btn.delete:hover:not(:disabled) {
+            background: var(--error-600);
+        }
+
+        /* Reset button in header (for terminal status events) */
+        .reset-btn {
+            background: var(--surface-300) !important;
+            border-color: var(--surface-400) !important;
+        }
+
+        .reset-btn:hover {
+            background: var(--surface-400) !important;
+        }
+
+        /* Delete button in header (for deletable events) */
+        .delete-btn {
+            background: var(--surface-300) !important;
+            border-color: var(--surface-400) !important;
+        }
+
+        .delete-btn:hover {
+            background: var(--surface-400) !important;
+        }
+
+        /* Move calendar section */
+        .move-calendar-section {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--event-card-border);
+        }
+
+        .move-calendar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .move-calendar-nav-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--calendar-day-text);
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .move-calendar-nav-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .move-calendar-month-year {
+            font-size: var(--standard-font-size);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .move-calendar-grid {
+            margin-bottom: 0.5rem;
+        }
+
+        .move-calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .move-calendar-weekday {
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+            padding: 0.25rem 0;
+        }
+
+        .move-calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            gap: 1px;
+        }
+
+        .move-calendar-day {
+            font-size: 0.75rem;
+            padding: 0.25rem;
+            border: none;
+            background: none;
+            color: var(--calendar-day-text);
+            cursor: pointer;
+            border-radius: 4px;
+            min-height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .move-calendar-day:hover:not(.empty) {
+            background: var(--surface-200);
+        }
+
+        .move-calendar-day.empty {
+            cursor: default;
+        }
+
+        .move-calendar-day.today {
+            font-weight: 700;
+            color: var(--primary-500);
+        }
+
+        .move-calendar-day.weekend {
+            color: var(--text-secondary);
+        }
+
+        // Window range: subtle white transparency background
+        .move-calendar-day.in-window {
+            background-color: rgba(255, 255, 255, 0.247);
+        }
+
+        // Current event day on its original scheduled date: green
+        .move-calendar-day.event-on-scheduled {
+            background-color: var(--timeline-on-scheduled-date-bg);
+            color: white;
+            font-weight: 600;
+        }
+
+        // Current event day within the window: blue
+        .move-calendar-day.event-in-window {
+            background-color: var(--timeline-in-window-bg);
+            color: white;
+            font-weight: 600;
+        }
+
+        // Current event day outside the window: orange
+        .move-calendar-day.event-out-of-window {
+            background-color: var(--timeline-out-of-window-bg);
+            color: white;
+            font-weight: 600;
+        }
+
+        // Original scheduled date: green outline
+        .move-calendar-day.original-scheduled-day {
+            outline: 4px solid var(--timeline-on-scheduled-date-bg);
+            outline-offset: -4px;
+        }
+
+        // Selected overrides all other styling
+        .move-calendar-day.selected {
+            background: var(--primary-500);
+            color: white;
+            font-weight: 600;
+        }
+
+        .move-calendar-day.selected:hover {
+            background: var(--primary-600);
+        }
+
+        .move-calendar-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .move-calendar-ok-btn,
+        .move-calendar-cancel-btn {
+            padding: 0.25rem 0.75rem;
+            font-size: var(--standard-font-size);
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid;
+        }
+
+        .move-calendar-ok-btn {
+            background: var(--primary-500);
+            border-color: var(--primary-600);
+            color: white;
+        }
+
+        .move-calendar-ok-btn:hover:not(:disabled) {
+            background: var(--primary-600);
+        }
+
+        .move-calendar-ok-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .move-calendar-cancel-btn {
+            background: var(--surface-300);
+            border-color: var(--surface-400);
+            color: var(--text-primary);
+        }
+
+        .move-calendar-cancel-btn:hover {
+            background: var(--surface-400);
+        }
+
+        /* Checklist section */
+        .checklist-section {
+            height: calc(100% - 3rem);
+            overflow-y: auto;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .loading-checklist,
+        .empty-checklist {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        .checklist-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .task-item {
+            overflow: hidden;
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+            cursor: pointer;
+        }
+
+        .task-header input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            flex-shrink: 0;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .expand-placeholder {
+            width: 14px;
+            flex-shrink: 0;
+        }
+
+        .task-name {
+            font-size: var(--standard-font-size);
+            font-weight: 500;
+            color: var(--checklist-task-text);
+        }
+
+        .task-description {
+            font-size: var(--small-font-size);
+            color: var(--checklist-task-subtext);
+            padding: 0 0.5rem 0.5rem 2.5rem;
+        }
+
+        .step-item:last-child {
+            border-bottom: none;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.5rem 0.375rem 1.5rem;
+            cursor: pointer;
+        }
+
+        .step-header:hover {
+            background: var(--surface-50);
+        }
+
+        .step-header input[type="checkbox"] {
+            width: 0.875rem;
+            height: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .step-name {
+            font-size: var(--standard-font-size);
+            color: var(--checklist-step-text);
+        }
+
+        .step-description {
+            font-size: var(--small-font-size);
+            color: var(--checklist-step-subtext);
+            padding: 0 0.5rem 0.375rem 3rem;
+        }
+
+        .step-details {
+            padding: 0.5rem 0.5rem 0.5rem 3rem;
+            background: var(--surface-50);
+        }
+
+        .detail-section {
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-size: 0.625rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .detail-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .detail-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.75rem;
+            padding: 0.125rem 0;
+        }
+
+        .bullet {
+            color: var(--primary-500);
+            font-size: 0.5rem;
+        }
+
+        .person-name,
+        .system-name,
+        .reference-name {
+            color: var(--text-primary);
+        }
+
+        .person-role {
+            color: var(--text-secondary);
+            font-size: 0.6875rem;
+        }
+
+        .system-link,
+        .reference-link {
+            color: var(--primary-500);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .system-link:hover,
+        .reference-link:hover {
+            text-decoration: underline;
+        }
+    }
+    /* #endregion */

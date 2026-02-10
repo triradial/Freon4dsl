@@ -62,8 +62,8 @@ export function computeDayRenderingInfo(dayData: PatientDayData | null): DayRend
     const isActual = event.type === 'actual-event';
     const eventType = event.type || 'scheduled-event';
     
-    // Check if event is an unscheduled event (via flag or type)
-    const isUnscheduledEvent = event.isUnscheduledEvent === true || eventType === 'unscheduled-event';
+    // Check if event is an unscheduled event (via category, flag, or type)
+    const isUnscheduledEvent = event.category === 'unscheduled' || event.isUnscheduledEvent === true || eventType === 'unscheduled-event';
     
     // Get state directly from event (already computed in data)
     let state = event.state || 'on-scheduled-date';

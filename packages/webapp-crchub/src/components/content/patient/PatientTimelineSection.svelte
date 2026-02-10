@@ -266,6 +266,7 @@
                             class:unavailable-only={unavailableOnly}
                             role="button"
                             tabindex="0"
+                            onmousedown={(e) => { if (viewMode === 'availability') e.preventDefault(); }}
                             onclick={(e) => onPatientCellClick(e, day, patientId)}
                             onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') onPatientCellClick(e as unknown as MouseEvent, day, patientId); }}
                             onmouseenter={(e) => onPatientCellMouseEnter(e, day, patientId)}

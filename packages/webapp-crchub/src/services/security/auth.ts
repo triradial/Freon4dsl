@@ -10,6 +10,14 @@ export const isAuthenticated = writable<boolean>(initialAuth);
 export const redirectUrl = writable<string>('/');
 export const authToken = writable<string | null>(sessionStorage.getItem('authToken'));
 
+// Initialize user store from storage immediately if authenticated.
+// This ensures userStore is populated before any component renders on page refresh.
+// Without this, child component $effects (e.g. patient page) fire before the layout's
+// onMount, causing getCurrentUserOid() to fail because userStore is still null.
+if (initialAuth) {
+    userStore.initializeFromStorage();
+}
+
 /**
  * Authenticate user with username and password
  * This uses the new authentication flow:

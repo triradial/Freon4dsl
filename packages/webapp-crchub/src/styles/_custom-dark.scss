@@ -32,6 +32,11 @@
   --surface-ground: #DCD5E7;
   --surface-card: hwb(263 29% 49%);
 
+  /* #region Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  /* #endregion */
+
   /* #region Breadcrumb */
   --breadcrumb-background: #323E4D;
   --breadcrumb-link: #92A7CE;
@@ -81,7 +86,6 @@
   /* #region Name Link */
   --name-link-text: #92A7CE;
   --name-link-text-hover: #B8C9E8;
-  --grid-button-color: #92A7CE;
   /* #endregion */
 
   /* #region Labels */
@@ -89,12 +93,15 @@
   /* #endregion */
 
   /* #region Inputs */
-
+  --input-background: #9db5d60e;
+  --input-text: #ffffff;
+  --input-placeholder: #929292;
   /* #endregion */
 
   // #region Checkbox
-  --checkbox-bg: #4C5C96;
+  --checkbox-bg: #ffffff;
   --checkbox-selected-bg: transparent;
+  --checkbox-bg-checked: #4C5C96;
   --checkbox-color: #ffffff;
   // #endregion
 
@@ -143,10 +150,27 @@
   --green-inverted-button-text: var(--green-400);
   --green-inverted-button-background: transparent;
   --green-inverted-button-border: var(--green-400);
+
+  --grid-button-color: #92A7CE;
+  --grid-button-hover-background: #ffffff11;
+  --grid-button-hover-color: #ffffff;
+  --grid-button-green-color: #019801b0;
+  --grid-button-green-hover-color: #00af00;
   /* #endregion */
 
 /* #region Labels */
   --main-label-text: #ffffff;
+/* #endregion */
+
+/* #region Events */
+  --event-planned-bg: #2F57DD;
+  --event-completed-bg: #046C4E;
+  --event-cancelled-bg: #993565;
+  --event-missed-bg: #8E3211;
+  --event-planned-text: #ffffff;
+  --event-completed-text: #ffffff;
+  --event-cancelled-text: #ffffff;
+  --event-missed-text: #ffffff;
 /* #endregion */
 
 /* #region Calendar */
@@ -190,11 +214,12 @@
   --tooltip-background: #2d333b;
   --tooltip-text: #ffffff;
   --tooltip-border: #454d59;
+  --tooltip-date: var(--primary-500);
 /* #endregion */
 
 /* #region Day View */
   --dayview-container-bg: #2e3744;
-  --dayview-date-header-bg-today: #64B5F6;
+  --dayview-date-header-bg-today: #767fce;
   --dayview-date-header-bg-weekend: #a2a6ac;
   --dayview-date-header-bg-past: #5b6066;
   --dayview-date-header-bg-future: #2e3744;
@@ -208,7 +233,7 @@
   --dayview-week-view-bg: #454d59;
   --dayview-week-nav-button-color: #d1d3d5;
   --dayview-week-nav-button-hover: #64B5F6;
-  --dayview-day-today-bg: #64B5F6;
+  --dayview-day-today-bg: #767fce;
   --dayview-day-today-text: #ffffff;
   --dayview-day-weekend-bg: #272f39;
   --dayview-day-weekend-text: #ffffff;
@@ -234,13 +259,18 @@
   --checklist-error-bg: #fae4e7;
   --checklist-error-text: #ae2b22;
   --checklist-error-indicator: #c75047;
+
+  --checklist-task-text: #ffffff;
+  --checklist-task-subtext: #adadad;
+  --checklist-step-text: #ffffff;
+  --checklist-step-subtext: #adadad;
 /* #endregion */
 
 /* #region Timeline Chart */
   --timeline-section-title: var(--primary-600);
   --timeline-control-label: #b1b1b1;
   --timeline-range-label: #b1b1b1;
-  --timeline-day-header: #b8b8b8;
+  --timeline-day-header: #dddddd;
   --timeline-row-label: #b8b8b8;
   --timeline-day-number-weekend: #a0a0a0;
 
@@ -267,9 +297,9 @@
   --timeline-out-of-window-icon: #e9e9e9;
   --timeline-in-window-bg: #3b83f667;
   --timeline-in-window-icon: #e9e9e9;
-  --timeline-canceled-visit-bg: #ef4444;
+  --timeline-canceled-visit-bg: #993565;
   --timeline-canceled-visit-icon: #e9e9e9;
-  --timeline-missed-visit-bg: #ec4899;
+  --timeline-missed-visit-bg: #8E3211;
   --timeline-missed-visit-icon: #e9e9e9;
   --timeline-window-bg: #14b8a513;;
   --timeline-window-icon: #9c9c9c71;
@@ -304,16 +334,17 @@
   --popup-toggle-btn-hover-color: #e4e4e7;
   --popup-checkbox-bg: #3f3f46;
 
-  // Dropdown/menu styling (used by PatientGrid and other components)
+  // Dropdown/menu styling 
   --dropdown-bg: #23272f;
   --dropdown-fg: #ffffff;
   --dropdown-hover: #2a2e38;
+
   --button-dropdown-bg: #2a2e38;
   --button-dropdown-fg: #ffffff;
   --button-dropdown-hover-bg: #3a3f4b;
   --button-dropdown-border: #3a3f4b;
   --button-dropdown-hover-border: #4a4f5b;
-  // Aliases for PatientGrid component
+
   --button-bg: #2a2e38;
   --button-fg: #ffffff;
   --button-hover-bg: #3a3f4b;
@@ -325,10 +356,21 @@
   --timeline-mode-toggle-bg: #50637e7e;
   --timeline-mode-toggle-border: #171a1f;
   --timeline-mode-toggle-hover-bg: #33383e;
+ 
+  --popup-header-btn-background: transparent;
+  --popup-header-btn-text: #ffffff;
+  --popup-header-btn-border: #454d59;
+  --popup-header-btn-hover-background: #304562;
+  --popup-header-btn-hover-text: #ffffff;
+  --popup-header-btn-hover-border: #4a4f5b;
 
-  --tooltip-text: #ffffff;
-  --tooltip-date: var(--primary-500);
+/* #endregion */
 
+/* #region Event Card */
+  --event-card-text: #ffffff;
+  --event-card-border: #454d59;
+  --event-type-label-text: #798caf;
+  --event-name-text: #ffffff;
 /* #endregion */
 
   --content-background: #22272e;
@@ -615,17 +657,10 @@ input:disabled {
   color: var(--text-hover);
 }
 
-.grid-button {
-  color: var(--primary-600);
-  background-color: transparent;
-  border-color: var(--primary-600);
-  transition: color 0.3s ease;
-}
-
-.grid-button:hover {
-  color: var(--white);
-  background-color: var(--primary-600);
-}
+// .grid-button:hover {
+//   color: var(--white);
+//   background-color: var(--primary-600);
+// }
 
 .quick-input-field {
   background-color: var(--input-background);

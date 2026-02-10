@@ -123,6 +123,15 @@
             content_style: isDark
                 ? "body { color: #fff; background: #22272e; }"
                 : "body { color: #000; background: #cfd6e0; }",
+            // Strip images, videos, and other embedded media from pasted HTML
+            // so only formatted text is allowed
+            paste_preprocess: (_plugin, args) => {
+                const div = document.createElement("div");
+                div.innerHTML = args.content;
+                div.querySelectorAll("img, video, audio, canvas, object, embed, picture, source, svg")
+                    .forEach((el) => el.remove());
+                args.content = div.innerHTML;
+            },
             setup: (editor) => {
                 editorInstance = editor;
                 // Key handling for TinyMCE editor
@@ -149,6 +158,12 @@
                         e.stopPropagation();
                         // Let TinyMCE handle Enter normally (adds newline)
                     }
+
+                    // Clipboard shortcuts (Ctrl/Cmd + C, V, X) and Select All (Ctrl/Cmd + A):
+                    // Stop propagation so Freon does not intercept them
+                    if ((e.ctrlKey || e.metaKey) && ["v", "c", "x", "a"].includes(e.key.toLowerCase())) {
+                        e.stopPropagation();
+                    }
                     
                     // Escape: exit editing mode
                     if (e.key === "Escape") {
@@ -160,6 +175,26 @@
                         endEditing();
                     }
                 });
+
+                // Also stop paste/copy/cut event propagation directly,
+                // in case the parent framework listens on these DOM events.
+                // For paste: also block clipboard-only image pastes (e.g. screenshots)
+                // that contain no text/html content at all.
+                editor.on("paste", (e) => {
+                    e.stopPropagation();
+                    const clipboardData = e.clipboardData || (window as any).clipboardData;
+                    if (clipboardData) {
+                        const hasText = clipboardData.types.includes("text/plain") ||
+                                        clipboardData.types.includes("text/html");
+                        const hasFiles = clipboardData.files && clipboardData.files.length > 0;
+                        // If the paste is only image files with no textual content, block it
+                        if (!hasText && hasFiles) {
+                            e.preventDefault();
+                        }
+                    }
+                });
+                editor.on("copy", (e) => { e.stopPropagation(); });
+                editor.on("cut", (e) => { e.stopPropagation(); });
                 editor.on("blur", () => {
                     if (isProgrammaticUpdate) return;
                     const val = editor.getContent();

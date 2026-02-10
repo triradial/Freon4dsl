@@ -2,9 +2,7 @@
     import { createEventDispatcher } from "svelte";
     // @ts-ignore
     import { Plus as IconPlus, X as IconX, Calendar as IconCalendar, ChevronLeft as IconChevronLeft, ChevronRight as IconChevronRight } from '@lucide/svelte';
-    import { DatePicker } from "bits-ui";
-    import type { DateValue } from "@internationalized/date";
-    import { parseDate, CalendarDate } from "@internationalized/date";
+    
 
     // Types for popup data
     export type PopupType = 'initial' | 'event-day' | 'no-event';
@@ -23,6 +21,7 @@
     export interface DayEvent {
         id: string;
         type: string;
+        category?: string; // Event origin: 'initial' | 'scheduled' | 'unscheduled'
         name: string;
         scheduledDay: number;
         originalScheduledDay?: number;
@@ -41,11 +40,7 @@
         events?: DayEvent[];
     }
     
-    // Per-event action state
-    interface EventActionState {
-        action: EventAction;
-        rescheduleDate: string; // YYYY-MM-DD format (used for both reschedule and move actions)
-    }
+    
     
     // Helper to check if an event is a day 0 event
     function isDayZeroEvent(event: DayEvent): boolean {
@@ -62,6 +57,7 @@
     export interface PopupResult {
         patientAvailable: boolean;
         availabilityChanged: boolean;
+        keepOpen?: boolean;
         initialEvent?: {
             enabled: boolean;
             eventName: string;
@@ -112,6 +108,9 @@
         apply: PopupResult;
         cancel: void;
         availabilityChange: { available: boolean };
+        initialAction: { action: string; eventName: string; moveDate?: string };
+        scheduledAction: { action: string; eventId: string; eventName: string; dayNumber: number; moveDate?: string };
+        unscheduledAdd: { eventName: string };
     }>();
 
     // Local state
@@ -121,21 +120,193 @@
     // Initial event state (Popup 1)
     let selectedInitialEvent = $state('');
     let initialEventStatus = $state<EventStatus>('planned');
-    let initialSelectedInitialEvent = $state('');
-    let initialInitialEventStatus = $state<EventStatus>('planned');
     
-    // Per-event action states (Popup 2)
-    let eventActions = $state<Map<string, EventActionState>>(new Map());
-    let initialEventActions = $state<Map<string, EventActionState>>(new Map());
     
     // Unscheduled event state
     let unscheduledEventEnabled = $state(false);
     let selectedUnscheduledEvent = $state('');
     let unscheduledEventStatus = $state<EventStatus>('planned');
-    let initialUnscheduledEventEnabled = $state(false);
-    let initialSelectedUnscheduledEvent = $state('');
-    let initialUnscheduledEventStatus = $state<EventStatus>('planned');
     
+    // Initial event phase tracking (inline state transitions within popup)
+    type InitialEventPhase = 'selection' | 'actionable' | 'move-calendar' | 'resolved';
+    let initialEventPhase = $state<InitialEventPhase>('selection');
+    let checkedInitialEvent = $state('');
+    let initialEventName = $state('');
+    let initialEventTerminalStatus = $state<EventStatus>('planned');
+
+    // Scheduled event phase tracking (per-event, same pattern as initial event)
+    type ScheduledEventPhase = 'actionable' | 'move-calendar' | 'resolved';
+    let scheduledEventPhaseMap = $state<Map<string, { phase: ScheduledEventPhase; terminalStatus?: EventStatus }>>(new Map());
+    // Track which scheduled event is currently in move-calendar mode (only one at a time)
+    let scheduledMoveEventId = $state('');
+    let scheduledMoveEventName = $state('');
+
+    // Unscheduled event checkbox selection
+    let checkedUnscheduledEvent = $state('');
+    // Whether the unscheduled event selector list is visible (toggled by + Unscheduled button)
+    let showUnscheduledSelector = $state(false);
+
+    // Move calendar state (shared between initial and scheduled event move modes)
+    let moveCalendarYear = $state(new Date().getFullYear());
+    let moveCalendarMonth = $state(new Date().getMonth());
+    let selectedMoveDay = $state<number | null>(null);
+    // Track which context is using the move calendar: 'initial' or 'scheduled'
+    let moveCalendarContext = $state<'initial' | 'scheduled'>('initial');
+
+    // Calendar constants
+    const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    // Derived: Calendar days grid (null for empty cells before 1st of month)
+    let calendarDays = $derived.by(() => {
+        const firstDay = new Date(moveCalendarYear, moveCalendarMonth, 1);
+        const lastDay = new Date(moveCalendarYear, moveCalendarMonth + 1, 0);
+        const startDayOfWeek = firstDay.getDay();
+        const daysInMonth = lastDay.getDate();
+        const days: (number | null)[] = [];
+        for (let i = 0; i < startDayOfWeek; i++) {
+            days.push(null);
+        }
+        for (let d = 1; d <= daysInMonth; d++) {
+            days.push(d);
+        }
+        return days;
+    });
+
+    function isCalendarToday(day: number): boolean {
+        const today = new Date();
+        return day === today.getDate() && moveCalendarMonth === today.getMonth() && moveCalendarYear === today.getFullYear();
+    }
+
+    function isCalendarWeekend(day: number): boolean {
+        const d = new Date(moveCalendarYear, moveCalendarMonth, day);
+        const dow = d.getDay();
+        return dow === 0 || dow === 6;
+    }
+
+    // Helper: get the moving event for calendar highlighting
+    function getMovingEvent(): DayEvent | undefined {
+        if (moveCalendarContext === 'scheduled' && scheduledMoveEventId) {
+            return scheduledEvents.find(e => e.id === scheduledMoveEventId);
+        } else if (moveCalendarContext === 'initial') {
+            return dayData?.events?.find((e: any) => e.category === 'initial');
+        }
+        return undefined;
+    }
+
+    // Helper: convert a day number (relative to reference date) to an actual Date
+    function dayNumberToDate(dayNumber: number): Date | null {
+        if (!patientReferenceDate) return null;
+        const [refY, refM, refD] = patientReferenceDate.split('-').map(Number);
+        const refDate = new Date(refY, refM - 1, refD);
+        refDate.setDate(refDate.getDate() + dayNumber);
+        return refDate;
+    }
+
+    // Helper: check if a calendar day matches a specific date
+    function calendarDayMatchesDate(day: number, targetDate: Date): boolean {
+        return day === targetDate.getDate() &&
+               moveCalendarMonth === targetDate.getMonth() &&
+               moveCalendarYear === targetDate.getFullYear();
+    }
+
+    // Check if a calendar day falls within the event's scheduling window
+    // Uses originalScheduledDay (the original position) to calculate the window, NOT scheduledDay (current position)
+    function isCalendarInWindow(day: number): boolean {
+        const movingEvent = getMovingEvent();
+        if (!movingEvent?.window) return false;
+        
+        // Use originalScheduledDay for window calculation, fall back to scheduledDay
+        const baseDay = movingEvent.originalScheduledDay ?? movingEvent.scheduledDay;
+        const scheduledDate = dayNumberToDate(baseDay);
+        if (!scheduledDate) return false;
+        
+        // Calculate window start/end dates
+        const windowStart = new Date(scheduledDate);
+        windowStart.setDate(windowStart.getDate() - movingEvent.window.daysBefore);
+        const windowEnd = new Date(scheduledDate);
+        windowEnd.setDate(windowEnd.getDate() + movingEvent.window.daysAfter);
+        
+        // Check if the calendar day falls within the window
+        const calDate = new Date(moveCalendarYear, moveCalendarMonth, day);
+        return calDate >= windowStart && calDate <= windowEnd;
+    }
+
+    // Check if a calendar day is the event's current actual position (scheduledDay)
+    // This is where the event currently sits — colored by state:
+    //   green = on-scheduled-date, blue = in-window, orange = out-of-window
+    function isCalendarCurrentEventDay(day: number): boolean {
+        const movingEvent = getMovingEvent();
+        if (!movingEvent) return false;
+        
+        const currentDate = dayNumberToDate(movingEvent.scheduledDay);
+        if (!currentDate) return false;
+        
+        return calendarDayMatchesDate(day, currentDate);
+    }
+
+    // Get the state-based class for the current event day
+    function getCalendarEventDayState(): 'on-scheduled-date' | 'in-window' | 'out-of-window' {
+        const movingEvent = getMovingEvent();
+        if (!movingEvent) return 'on-scheduled-date';
+        
+        // Use the event's current state to determine color
+        if (movingEvent.state === 'out-of-window') return 'out-of-window';
+        if (movingEvent.state === 'in-window') return 'in-window';
+        return 'on-scheduled-date';
+    }
+
+    // Check if a calendar day is the original scheduled date (green outline marker)
+    function isCalendarOriginalScheduledDay(day: number): boolean {
+        const movingEvent = getMovingEvent();
+        if (!movingEvent) return false;
+        
+        const baseDay = movingEvent.originalScheduledDay ?? movingEvent.scheduledDay;
+        const originalDate = dayNumberToDate(baseDay);
+        if (!originalDate) return false;
+        
+        return calendarDayMatchesDate(day, originalDate);
+    }
+
+    function navigateCalendarMonth(delta: number) {
+        let newMonth = moveCalendarMonth + delta;
+        let newYear = moveCalendarYear;
+        if (newMonth < 0) {
+            newMonth = 11;
+            newYear--;
+        } else if (newMonth > 11) {
+            newMonth = 0;
+            newYear++;
+        }
+        moveCalendarMonth = newMonth;
+        moveCalendarYear = newYear;
+        selectedMoveDay = null;
+    }
+
+    // Status badge helpers for initial event phase display
+    function getStatusBadgeClass(status: EventStatus): string {
+        switch (status) {
+            case 'completed': return 'status-completed';
+            case 'cancelled': return 'status-cancelled';
+            case 'missed': return 'status-missed';
+            default: return 'status-planned';
+        }
+    }
+
+    function getStatusLabel(status: EventStatus): string {
+        switch (status) {
+            case 'completed': return 'COMPLETED';
+            case 'cancelled': return 'CANCELLED';
+            case 'missed': return 'MISSED';
+            default: return 'PLANNED';
+        }
+    }
+
+    // Internal popup type - locked on init so it doesn't change when the parent
+    // re-derives popupType after data saves (e.g., initial -> event-day after Add)
+    let activePopupType = $state<PopupType>('initial');
+
     // Popup position state
     let popupStyle = $state('');
     let popupRef = $state<HTMLElement | null>(null);
@@ -165,14 +336,7 @@
         popupDateString >= todayDateString
     );
     
-    // Parse today as a CalendarDate for date picker minValue
-    let todayCalendarDate = $derived.by(() => {
-        try {
-            return parseDate(todayDateString);
-        } catch {
-            return undefined;
-        }
-    });
+    
 
     // Helper to get a date string from a day number relative to reference date
     function getDateStringFromDay(dayNumber: number, refDate: string | null): string {
@@ -187,38 +351,11 @@
         return `${ref.getFullYear()}-${String(ref.getMonth() + 1).padStart(2, '0')}-${String(ref.getDate()).padStart(2, '0')}`;
     }
     
-    // Helper to compare event action maps
-    const eventActionsEqual = (a: Map<string, EventActionState>, b: Map<string, EventActionState>): boolean => {
-        if (a.size !== b.size) return false;
-        for (const [key, valueA] of a) {
-            const valueB = b.get(key);
-            if (!valueB) return false;
-            if (valueA.action !== valueB.action) return false;
-            if (valueA.rescheduleDate !== valueB.rescheduleDate) return false;
-        }
-        return true;
-    };
-    
-    // Check if anything has changed
+    // hasChanges is no longer needed for scheduled/unscheduled events (actions are immediate)
+    // Kept only for backward compatibility with any remaining footer logic
     let hasChanges = $derived.by(() => {
-        if (popupType === 'initial') {
-            return true; // Always allow apply for initial events
-        }
-        if (popupType === 'event-day') {
-            const actionsChanged = !eventActionsEqual(eventActions, initialEventActions);
-            const unscheduledChanged = unscheduledEventEnabled !== initialUnscheduledEventEnabled ||
-                                       (unscheduledEventEnabled && (
-                                           selectedUnscheduledEvent !== initialSelectedUnscheduledEvent ||
-                                           unscheduledEventStatus !== initialUnscheduledEventStatus
-                                       ));
-            return actionsChanged || unscheduledChanged;
-        }
-        if (popupType === 'no-event') {
-            return unscheduledEventEnabled !== initialUnscheduledEventEnabled ||
-                   (unscheduledEventEnabled && (
-                       selectedUnscheduledEvent !== initialSelectedUnscheduledEvent ||
-                       unscheduledEventStatus !== initialUnscheduledEventStatus
-                   ));
+        if (activePopupType === 'initial') {
+            return true;
         }
         return false;
     });
@@ -262,6 +399,9 @@
             lastInitDate = currentDateStr;
             lastInitPatientId = currentPatientIdStr;
             
+            // Lock the popup type at init time so it doesn't change mid-interaction
+            activePopupType = popupType;
+            
             // Initialize availability
             const available = dayData?.available !== false;
             patientAvailable = available;
@@ -270,36 +410,51 @@
             // Initialize initial event (popup 1)
             selectedInitialEvent = day0Events.length > 0 ? day0Events[0].name : '';
             initialEventStatus = 'planned';
-            initialSelectedInitialEvent = selectedInitialEvent;
-            initialInitialEventStatus = initialEventStatus;
             
-            // Initialize per-event actions (popup 2)
-            const newEventActions = new Map<string, EventActionState>();
-            const newInitialEventActions = new Map<string, EventActionState>();
-            for (const event of scheduledEvents) {
-                // Use the original scheduled day for the reschedule date default
-                const originalDay = event.originalScheduledDay !== undefined 
-                    ? event.originalScheduledDay 
-                    : event.scheduledDay;
-                const defaultRescheduleDate = getDateStringFromDay(originalDay, patientReferenceDate);
-                
-                const defaultState: EventActionState = {
-                    action: 'do-nothing',
-                    rescheduleDate: defaultRescheduleDate
-                };
-                newEventActions.set(event.id, { ...defaultState });
-                newInitialEventActions.set(event.id, { ...defaultState });
+            // Initialize initial event phase (for inline transitions)
+            // Check if there's already an initial event on this day (re-opening after Add)
+            const existingInitialEvent = dayData?.events?.find((e: any) => e.category === 'initial');
+            if (existingInitialEvent) {
+                // Event already exists - go directly to actionable or resolved phase
+                initialEventName = existingInitialEvent.name;
+                checkedInitialEvent = existingInitialEvent.name;
+                const isTerminal = ['completed', 'cancelled', 'missed'].includes(existingInitialEvent.status);
+                if (isTerminal) {
+                    initialEventPhase = 'resolved';
+                    initialEventTerminalStatus = existingInitialEvent.status;
+                } else {
+                    initialEventPhase = 'actionable';
+                    initialEventTerminalStatus = 'planned';
+                }
+            } else {
+                // No initial event yet - start with selection phase
+                initialEventPhase = 'selection';
+                // Auto-check if there is only one event in the list
+                checkedInitialEvent = day0Events.length === 1 ? day0Events[0].name : '';
+                initialEventName = '';
+                initialEventTerminalStatus = 'planned';
             }
-            eventActions = newEventActions;
-            initialEventActions = newInitialEventActions;
             
-            // Initialize unscheduled event
+            // Initialize scheduled event phases (popup 2) - per-event phase tracking
+            const newPhaseMap = new Map<string, { phase: ScheduledEventPhase; terminalStatus?: EventStatus }>();
+            for (const event of scheduledEvents) {
+                const isTerminal = ['completed', 'cancelled', 'missed'].includes(event.status);
+                if (isTerminal) {
+                    newPhaseMap.set(event.id, { phase: 'resolved', terminalStatus: event.status as EventStatus });
+                } else {
+                    newPhaseMap.set(event.id, { phase: 'actionable' });
+                }
+            }
+            scheduledEventPhaseMap = newPhaseMap;
+            scheduledMoveEventId = '';
+            scheduledMoveEventName = '';
+            
+            // Initialize unscheduled event checkbox selection
+            checkedUnscheduledEvent = '';
+            showUnscheduledSelector = false;
             unscheduledEventEnabled = false;
             selectedUnscheduledEvent = unscheduledEvents.length > 0 ? unscheduledEvents[0].name : '';
             unscheduledEventStatus = 'planned';
-            initialUnscheduledEventEnabled = false;
-            initialSelectedUnscheduledEvent = selectedUnscheduledEvent;
-            initialUnscheduledEventStatus = unscheduledEventStatus;
             
             requestAnimationFrame(() => {
                 updatePopupPosition();
@@ -317,114 +472,25 @@
         }
     });
 
-    // Format date for display: d-MMM-yyyy
+    // Format date for display: Ddd, d-MMM-yyyy (e.g. Wed, 4-Mar-2026)
     function formatDate(d: Date): string {
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const dayOfWeek = dayNames[d.getDay()];
         const day = d.getDate();
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const month = months[d.getMonth()];
         const year = d.getFullYear();
-        return `${day}-${month}-${year}`;
+        return `${dayOfWeek}, ${day}-${month}-${year}`;
     }
 
-    // Get window date range for an event (returns start and end dates as YYYY-MM-DD strings)
-    function getWindowDateRange(event: DayEvent): { scheduledDate: string; windowStart: string; windowEnd: string } | null {
-        if (!patientReferenceDate) return null;
-        
-        const originalDay = event.originalScheduledDay !== undefined 
-            ? event.originalScheduledDay 
-            : event.scheduledDay;
-        const window = event.window || { daysBefore: 0, daysAfter: 0 };
-        
-        const windowStartDay = originalDay - (window.daysBefore || 0);
-        const windowEndDay = originalDay + (window.daysAfter || 0);
-        
-        return {
-            scheduledDate: getDateStringFromDay(originalDay, patientReferenceDate),
-            windowStart: getDateStringFromDay(windowStartDay, patientReferenceDate),
-            windowEnd: getDateStringFromDay(windowEndDay, patientReferenceDate)
-        };
-    }
     
-    // Check if a date is the scheduled date
-    function isScheduledDate(dateValue: DateValue, event: DayEvent): boolean {
-        const range = getWindowDateRange(event);
-        if (!range) return false;
-        const dateStr = `${dateValue.year}-${String(dateValue.month).padStart(2, '0')}-${String(dateValue.day).padStart(2, '0')}`;
-        return dateStr === range.scheduledDate;
-    }
     
-    // Check if a date is within the window (but not the scheduled date itself)
-    function isDateInWindow(dateValue: DateValue, event: DayEvent): boolean {
-        const range = getWindowDateRange(event);
-        if (!range) return false;
-        
-        const dateStr = `${dateValue.year}-${String(dateValue.month).padStart(2, '0')}-${String(dateValue.day).padStart(2, '0')}`;
-        
-        // Not in window if it's the scheduled date (that gets different styling)
-        if (dateStr === range.scheduledDate) return false;
-        
-        // Check if within window range
-        return dateStr >= range.windowStart && dateStr <= range.windowEnd;
-    }
     
-    // Parse a YYYY-MM-DD string to DateValue
-    function parseDateString(dateStr: string): DateValue | undefined {
-        try {
-            return parseDate(dateStr);
-        } catch {
-            return undefined;
-        }
-    }
-    
-    // Track open date pickers by event ID
-    let openDatePickers = $state<Map<string, boolean>>(new Map());
-    
-    function setDatePickerOpen(eventId: string, isOpen: boolean) {
-        openDatePickers.set(eventId, isOpen);
-        openDatePickers = new Map(openDatePickers);
-    }
-    
-    function isDatePickerOpen(eventId: string): boolean {
-        return openDatePickers.get(eventId) || false;
-    }
 
-    // Update event action
-    function updateEventAction(eventId: string, action: EventAction) {
-        const current = eventActions.get(eventId);
-        if (current) {
-            eventActions.set(eventId, {
-                ...current,
-                action
-            });
-            eventActions = new Map(eventActions); // Trigger reactivity
-        }
-    }
     
-    // Update event reschedule date
-    function updateEventRescheduleDate(eventId: string, dateStr: string) {
-        const current = eventActions.get(eventId);
-        if (current) {
-            eventActions.set(eventId, { ...current, rescheduleDate: dateStr });
-            eventActions = new Map(eventActions);
-        }
-    }
 
-    // Toggle unscheduled event section
-    function toggleUnscheduledEvent(event: MouseEvent) {
-        event.stopPropagation();
-        unscheduledEventEnabled = !unscheduledEventEnabled;
-    }
-
-    // Map action to status for the result
-    function actionToStatus(action: EventAction): EventStatus | null {
-        switch (action) {
-            case 'complete': return 'completed';
-            case 'cancel': return 'cancelled';
-            case 'missed': return 'missed';
-            default: return null;
-        }
-    }
-
+    // handleApply is now only used for initial event Add and unscheduled event Add
+    // Scheduled events use immediate scheduledAction dispatch instead
     function handleApply() {
         const availabilityChanged = patientAvailable !== initialPatientAvailable;
         
@@ -433,63 +499,11 @@
             availabilityChanged,
         };
         
-        if (popupType === 'initial') {
+        if (activePopupType === 'initial') {
             result.initialEvent = {
                 enabled: true,
                 eventName: selectedInitialEvent,
                 status: initialEventStatus,
-            };
-            // Also include unscheduled event if enabled
-            if (unscheduledEventEnabled) {
-                result.unscheduledEvent = {
-                    enabled: true,
-                    eventName: selectedUnscheduledEvent,
-                    status: unscheduledEventStatus,
-                };
-            }
-        }
-        
-        if (popupType === 'event-day') {
-            result.scheduledEvents = [];
-            for (const event of scheduledEvents) {
-                const actionState = eventActions.get(event.id);
-                if (actionState) {
-                    const eventResult: PopupResult['scheduledEvents'][0] = {
-                        eventId: event.id,
-                        eventName: event.name,
-                        action: actionState.action,
-                    };
-                    
-                    // Map direct actions to status changes
-                    const newStatus = actionToStatus(actionState.action);
-                    if (newStatus) {
-                        eventResult.newStatus = newStatus;
-                        // Convert action to 'change-status' for handler compatibility
-                        eventResult.action = 'change-status' as EventAction;
-                    }
-                    
-                    // Both 'reschedule' and 'move' actions include the target date
-                    if ((actionState.action === 'reschedule' || actionState.action === 'move') && actionState.rescheduleDate) {
-                        eventResult.rescheduleDate = actionState.rescheduleDate;
-                    }
-                    
-                    result.scheduledEvents.push(eventResult);
-                }
-            }
-            if (unscheduledEventEnabled) {
-                result.unscheduledEvent = {
-                    enabled: true,
-                    eventName: selectedUnscheduledEvent,
-                    status: unscheduledEventStatus,
-                };
-            }
-        }
-        
-        if (popupType === 'no-event' && unscheduledEventEnabled) {
-            result.unscheduledEvent = {
-                enabled: true,
-                eventName: selectedUnscheduledEvent,
-                status: unscheduledEventStatus,
             };
         }
         
@@ -509,6 +523,10 @@
         }
         
         const target = event.target as Node;
+        // If the target was removed from the document (e.g. by a Svelte re-render triggered
+        // by an onclick inside the popup), it was originally inside the popup - don't close
+        if (!document.contains(target)) return;
+        
         if (!popupRef.contains(target)) {
             handleCancel();
         }
@@ -520,42 +538,182 @@
         }
     }
     
-    // Get action options for an event based on its type and status
-    // Rules:
-    // 1. Only planned/pending events can be rescheduled or moved
-    // 2. Day 0 events and unscheduled events use "Move" (no window days created)
-    // 3. Regular scheduled events use "Reschedule" (window days created around original date)
-    // 4. Completed/cancelled/missed events cannot be rescheduled or moved
-    function getActionOptions(event: DayEvent): { value: EventAction; label: string }[] {
-        const options: { value: EventAction; label: string }[] = [
-            { value: 'do-nothing', label: 'Do nothing' },
-            { value: 'complete', label: 'Complete' },
-        ];
+    // === Initial Event phase handlers (inline transitions) ===
+    
+    function handleInitialAdd() {
+        if (!checkedInitialEvent) return;
+        initialEventName = checkedInitialEvent;
+        initialEventPhase = 'actionable';
         
-        // Only add reschedule/move option for planned/pending events
-        if (canBeRescheduledOrMoved(event)) {
-            const isDay0 = isDayZeroEvent(event);
-            const isUnscheduled = event.isUnscheduledEvent || event.type === 'unscheduled-event';
-            
-            if (isDay0 || isUnscheduled) {
-                // Day 0 and unscheduled events use "Move" - no windows created
-                options.push({ value: 'move', label: 'Move' });
-            } else {
-                // Regular scheduled events use "Reschedule" - windows created around original date
-                options.push({ value: 'reschedule', label: 'Reschedule' });
-            }
-        }
-        
-        options.push({ value: 'cancel', label: 'Cancel' });
-        options.push({ value: 'missed', label: 'Missed' });
-        
-        // Add Delete option for unscheduled events that were added
-        if (event.isUnscheduledEvent || event.type === 'unscheduled-event') {
-            options.push({ value: 'delete', label: 'Delete' });
-        }
-        
-        return options;
+        // Dispatch to parent to save (with keepOpen so popup stays open)
+        const result: PopupResult = {
+            patientAvailable: true,
+            availabilityChanged: false,
+            keepOpen: true,
+            initialEvent: {
+                enabled: true,
+                eventName: checkedInitialEvent,
+                status: 'planned' as EventStatus,
+            },
+        };
+        dispatch("apply", result);
     }
+
+    function handleInitialComplete() {
+        initialEventTerminalStatus = 'completed';
+        initialEventPhase = 'resolved';
+        dispatch("initialAction", { action: 'complete', eventName: initialEventName });
+    }
+
+    function handleInitialCancelStatus() {
+        initialEventTerminalStatus = 'cancelled';
+        initialEventPhase = 'resolved';
+        dispatch("initialAction", { action: 'cancel', eventName: initialEventName });
+    }
+
+    function handleInitialMissed() {
+        initialEventTerminalStatus = 'missed';
+        initialEventPhase = 'resolved';
+        dispatch("initialAction", { action: 'missed', eventName: initialEventName });
+    }
+
+    function handleInitialReset() {
+        initialEventPhase = 'actionable';
+        dispatch("initialAction", { action: 'reset', eventName: initialEventName });
+    }
+
+    function handleInitialDelete() {
+        initialEventPhase = 'selection';
+        checkedInitialEvent = '';
+        dispatch("initialAction", { action: 'delete', eventName: initialEventName });
+    }
+
+    function handleInitialMoveStart() {
+        initialEventPhase = 'move-calendar';
+        moveCalendarContext = 'initial';
+        const d = date || new Date();
+        moveCalendarYear = d.getFullYear();
+        moveCalendarMonth = d.getMonth();
+        selectedMoveDay = null;
+        // Reposition popup after calendar renders (content size changes)
+        requestAnimationFrame(() => updatePopupPosition());
+    }
+
+    function handleInitialMoveOk() {
+        if (selectedMoveDay !== null) {
+            const dateStr = `${moveCalendarYear}-${String(moveCalendarMonth + 1).padStart(2, '0')}-${String(selectedMoveDay).padStart(2, '0')}`;
+            dispatch("initialAction", { action: 'move', eventName: initialEventName, moveDate: dateStr });
+        }
+        // Close popup after move
+        dispatch("cancel");
+    }
+
+    function handleInitialMoveCancel() {
+        initialEventPhase = 'actionable';
+        selectedMoveDay = null;
+        // Reposition popup after calendar hides (content size changes)
+        requestAnimationFrame(() => updatePopupPosition());
+    }
+
+    // === Scheduled Event phase handlers (inline transitions, like initial event) ===
+
+    function handleScheduledComplete(eventId: string, eventName: string) {
+        scheduledEventPhaseMap.set(eventId, { phase: 'resolved', terminalStatus: 'completed' });
+        scheduledEventPhaseMap = new Map(scheduledEventPhaseMap);
+        dispatch("scheduledAction", { action: 'complete', eventId, eventName, dayNumber: dayData?.day ?? 0 });
+    }
+
+    function handleScheduledCancelStatus(eventId: string, eventName: string) {
+        scheduledEventPhaseMap.set(eventId, { phase: 'resolved', terminalStatus: 'cancelled' });
+        scheduledEventPhaseMap = new Map(scheduledEventPhaseMap);
+        dispatch("scheduledAction", { action: 'cancel', eventId, eventName, dayNumber: dayData?.day ?? 0 });
+    }
+
+    function handleScheduledMissed(eventId: string, eventName: string) {
+        scheduledEventPhaseMap.set(eventId, { phase: 'resolved', terminalStatus: 'missed' });
+        scheduledEventPhaseMap = new Map(scheduledEventPhaseMap);
+        dispatch("scheduledAction", { action: 'missed', eventId, eventName, dayNumber: dayData?.day ?? 0 });
+    }
+
+    function handleScheduledReset(eventId: string, eventName: string) {
+        scheduledEventPhaseMap.set(eventId, { phase: 'actionable' });
+        scheduledEventPhaseMap = new Map(scheduledEventPhaseMap);
+        dispatch("scheduledAction", { action: 'reset', eventId, eventName, dayNumber: dayData?.day ?? 0 });
+    }
+
+    function handleScheduledMoveStart(eventId: string, eventName: string) {
+        scheduledEventPhaseMap.set(eventId, { phase: 'move-calendar' });
+        scheduledEventPhaseMap = new Map(scheduledEventPhaseMap);
+        scheduledMoveEventId = eventId;
+        scheduledMoveEventName = eventName;
+        moveCalendarContext = 'scheduled';
+        const d = date || new Date();
+        moveCalendarYear = d.getFullYear();
+        moveCalendarMonth = d.getMonth();
+        selectedMoveDay = null;
+        // Reposition popup after calendar renders (content size changes)
+        requestAnimationFrame(() => updatePopupPosition());
+    }
+
+    function handleScheduledMoveOk() {
+        if (selectedMoveDay !== null && scheduledMoveEventId) {
+            const dateStr = `${moveCalendarYear}-${String(moveCalendarMonth + 1).padStart(2, '0')}-${String(selectedMoveDay).padStart(2, '0')}`;
+            dispatch("scheduledAction", { action: 'move', eventId: scheduledMoveEventId, eventName: scheduledMoveEventName, dayNumber: dayData?.day ?? 0, moveDate: dateStr });
+        }
+        // Close popup after move
+        dispatch("cancel");
+    }
+
+    function handleScheduledMoveCancel() {
+        if (scheduledMoveEventId) {
+            scheduledEventPhaseMap.set(scheduledMoveEventId, { phase: 'actionable' });
+            scheduledEventPhaseMap = new Map(scheduledEventPhaseMap);
+        }
+        scheduledMoveEventId = '';
+        scheduledMoveEventName = '';
+        selectedMoveDay = null;
+        // Reposition popup after calendar hides (content size changes)
+        requestAnimationFrame(() => updatePopupPosition());
+    }
+
+    function handleUnscheduledEventDelete(eventId: string, eventName: string) {
+        dispatch("scheduledAction", { action: 'delete', eventId, eventName, dayNumber: dayData?.day ?? 0 });
+        // Close popup after delete
+        dispatch("cancel");
+    }
+
+    // === Unscheduled Event handler (checkbox + Add, like initial event selection) ===
+
+    function handleUnscheduledAdd() {
+        if (!checkedUnscheduledEvent) return;
+        // Dispatch to parent to save the unscheduled event as planned
+        const result: PopupResult = {
+            patientAvailable: true,
+            availabilityChanged: false,
+            unscheduledEvent: {
+                enabled: true,
+                eventName: checkedUnscheduledEvent,
+                status: 'planned' as EventStatus,
+            },
+        };
+        dispatch("apply", result);
+        // Reset state
+        checkedUnscheduledEvent = '';
+        showUnscheduledSelector = false;
+    }
+
+    function handleUnscheduledSelectorCancel() {
+        checkedUnscheduledEvent = '';
+        showUnscheduledSelector = false;
+        requestAnimationFrame(() => updatePopupPosition());
+    }
+
+    function handleUnscheduledSelectorOpen() {
+        showUnscheduledSelector = true;
+        requestAnimationFrame(() => updatePopupPosition());
+    }
+
+    
 </script>
 
 <svelte:window onkeydown={handleKeydown} onclick={handleWindowClick} />
@@ -570,26 +728,29 @@
     >
         <div class="day-cell-popup-content">
             <!-- Header with day number and date -->
-            <!-- Don't show day number for 'initial' popup type (patient has no reference date yet) -->
+            <!-- Don't show day number for 'initial' popup type in selection phase (patient has no reference date yet) -->
+            <!-- DO show day number when re-opening initial popup with existing event (actionable/resolved phase) -->
             <header class="popup-header">
                 <div class="popup-header-info">
-                    {#if dayData?.day !== undefined && popupType !== 'initial'}
+                    {#if dayData?.day !== undefined && (activePopupType !== 'initial' || initialEventPhase !== 'selection')}
                         <span class="popup-day-number">Day {dayData.day}</span>
                     {/if}
                     <span class="popup-date">{formatDate(date)}</span>
                 </div>
-                <button 
-                    type="button" 
-                    class="popup-close-btn"
-                    onclick={handleCancel}
-                    aria-label="Close popup"
-                >
+                <button type="button" class="popup-close-btn" onclick={handleCancel} aria-label="Close popup">
                     <IconX size={16} />
                 </button>
             </header>
             
-            <!-- Patient ID -->
-            <div class="popup-patient-id">{patientId}</div>
+            <!-- Patient ID + Unscheduled button -->
+            <div class="popup-patient-row">
+                <span class="popup-patient-id">{patientId}</span>
+                {#if activePopupType !== 'initial' && unscheduledEvents.length > 0 && canAddUnscheduledEvent}
+                    <button class="popup-unscheduled-btn" onclick={handleUnscheduledSelectorOpen}>
+                        <IconPlus size={16} /> Unscheduled
+                    </button>
+                {/if}
+            </div>
             
             <!-- Model Error Message - shown when there's a study design issue -->
             {#if modelError}
@@ -597,275 +758,308 @@
                     There is a study design issue, so you cannot perform any scheduling actions at this time.
                 </div>
             {:else}
-                <!-- Separator -->
-                <div class="popup-separator"></div>
-                
-                <!-- ==================== POPUP 1: Initial Event ==================== -->
-                {#if popupType === 'initial'}
+               
+                <!-- ==================== POPUP 1: Initial Event (4-phase inline transitions) ==================== -->
+                {#if activePopupType === 'initial'}
+                    <div class="popup-separator"></div>
                     <div class="popup-section">
-                        <div class="section-label">Initial Event</div>
-                        <div class="event-row">
-                            <select 
-                                class="popup-select"
-                                bind:value={selectedInitialEvent}
-                            >
-                                {#each day0Events as event}
-                                    <option value={event.name}>{event.name}</option>
+                        {#if initialEventPhase === 'selection'}
+                            <!-- Phase 1: Selection - checkbox list + Add button -->
+                            <div class="section-label">INITIAL EVENT</div>
+                            <div class="popup-selection-content">
+                                {#each day0Events as eventOption}
+                                    <label class="popup-event-option">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={checkedInitialEvent === eventOption.name}
+                                            onchange={() => { checkedInitialEvent = checkedInitialEvent === eventOption.name ? '' : eventOption.name; }}
+                                        />
+                                        <span>{eventOption.name}</span>
+                                    </label>
                                 {/each}
-                            </select>
-                            
-                            <select 
-                                class="popup-select event-status-select"
-                                bind:value={initialEventStatus}
-                            >
-                                <option value="planned">Planned</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Unscheduled Event section for initial popup - can add unscheduled events when starting patient -->
-                    {#if unscheduledEvents.length > 0}
-                        <!-- Separator -->
-                        <div class="popup-separator"></div>
-                        
-                        <div class="popup-section">
-                            <div class="section-header-row">
-                                <span class="section-label">Unscheduled Event</span>
                                 <button 
-                                    type="button" 
-                                    class="toggle-section-btn"
-                                    onclick={(e) => toggleUnscheduledEvent(e)}
-                                    aria-label={unscheduledEventEnabled ? 'Remove unscheduled event' : 'Add unscheduled event'}
-                                >
-                                    {#if unscheduledEventEnabled}
-                                        <IconX size={16} />
-                                    {:else}
-                                        <IconPlus size={16} />
-                                    {/if}
+                                    class="popup-add-btn" 
+                                    onclick={handleInitialAdd}
+                                    disabled={!checkedInitialEvent}
+                                >Add</button>
+                            </div>
+                        {:else if initialEventPhase === 'actionable'}
+                            <!-- Phase 2: Actionable - event name + status + action buttons -->
+                            <div class="section-header-row">
+                                <span class="section-label">INITIAL EVENT</span>
+                                <button class="popup-header-btn" onclick={handleInitialDelete} title="Delete event">
+                                    Delete
                                 </button>
                             </div>
-                            
-                            {#if unscheduledEventEnabled}
-                                <div class="event-row">
-                                    <select class="popup-select" bind:value={selectedUnscheduledEvent}>
-                                        {#each unscheduledEvents as event}
-                                            <option value={event.name}>{event.name}</option>
-                                        {/each}
-                                    </select>
-                                    
-                                    <select class="popup-select event-status-select" bind:value={unscheduledEventStatus}>
-                                        <option value="planned">Planned</option>
-                                        <option value="completed">Completed</option>
-                                    </select>
-                                </div>
-                            {/if}
-                        </div>
-                    {/if}
-                {/if}
-                
-                <!-- ==================== POPUP 2: Event Day ==================== -->
-                {#if popupType === 'event-day'}
-                    <div class="popup-section">
-                        <div class="section-label">Scheduled Events</div>
-                        
-                        {#each scheduledEvents as event (event.id)}
-                            {@const actionState = eventActions.get(event.id)}
-                            {@const actionOptions = getActionOptions(event)}
-                            <div class="scheduled-event-row">
-                                <span class="popup-event-name">{event.name}</span>
-                                <select 
-                                    class="popup-select action-select"
-                                    value={actionState?.action || 'do-nothing'}
-                                    onchange={(e) => updateEventAction(event.id, e.currentTarget.value as EventAction)}
-                                >
-                                    {#each actionOptions as opt}
-                                        <option value={opt.value}>{opt.label}</option>
-                                    {/each}
-                                </select>
-                                
-                                <div class="action-data">
-                                    {#if actionState?.action === 'reschedule' || actionState?.action === 'move'}
-                                        {@const datePickerValue = parseDateString(actionState.rescheduleDate)}
-                                        {@const datePickerOpen = isDatePickerOpen(event.id)}
-                                        <DatePicker.Root 
-                                            open={datePickerOpen}
-                                            onOpenChange={(isOpen) => setDatePickerOpen(event.id, isOpen)}
-                                            value={datePickerValue}
-                                            minValue={todayCalendarDate}
-                                            onValueChange={(newValue) => {
-                                                if (newValue) {
-                                                    const dateStr = `${newValue.year}-${String(newValue.month).padStart(2, '0')}-${String(newValue.day).padStart(2, '0')}`;
-                                                    updateEventRescheduleDate(event.id, dateStr);
-                                                }
-                                            }}
-                                            weekdayFormat="short"
-                                            fixedWeeks={false}
-                                        >
-                                            <div class="reschedule-datepicker">
-                                                <DatePicker.Input class="popup-date-input">
-                                                    {#snippet children({ segments })}
-                                                        {#each segments as { part, value }, i (part + i)}
-                                                            <span class="date-segment">
-                                                                {#if part === "literal"}
-                                                                    <DatePicker.Segment {part} class="date-literal">{value}</DatePicker.Segment>
-                                                                {:else}
-                                                                    <DatePicker.Segment {part} class="date-part">{value}</DatePicker.Segment>
-                                                                {/if}
-                                                            </span>
-                                                        {/each}
-                                                        <DatePicker.Trigger class="date-trigger">
-                                                            <IconCalendar size={14} />
-                                                        </DatePicker.Trigger>
-                                                    {/snippet}
-                                                </DatePicker.Input>
-                                                <DatePicker.Content sideOffset={6} class="datepicker-popup z-50">
-                                                    <DatePicker.Calendar class="datepicker-calendar">
-                                                        {#snippet children({ months, weekdays })}
-                                                            <DatePicker.Header class="datepicker-header">
-                                                                <DatePicker.PrevButton class="datepicker-nav-btn">
-                                                                    <IconChevronLeft size={16} />
-                                                                </DatePicker.PrevButton>
-                                                                <DatePicker.Heading class="datepicker-heading" />
-                                                                <DatePicker.NextButton class="datepicker-nav-btn">
-                                                                    <IconChevronRight size={16} />
-                                                                </DatePicker.NextButton>
-                                                            </DatePicker.Header>
-                                                            <div class="datepicker-months">
-                                                                {#each months as month (month.value)}
-                                                                    <DatePicker.Grid class="datepicker-grid">
-                                                                        <DatePicker.GridHead>
-                                                                            <DatePicker.GridRow class="datepicker-weekdays">
-                                                                                {#each weekdays as day (day)}
-                                                                                    <DatePicker.HeadCell class="datepicker-weekday">
-                                                                                        {day.slice(0, 2)}
-                                                                                    </DatePicker.HeadCell>
-                                                                                {/each}
-                                                                            </DatePicker.GridRow>
-                                                                        </DatePicker.GridHead>
-                                                                        <DatePicker.GridBody>
-                                                                            {#each month.weeks as weekDates (weekDates)}
-                                                                                <DatePicker.GridRow class="datepicker-week">
-                                                                                    {#each weekDates as dateCell (dateCell)}
-                                                                                        {@const inWindow = isDateInWindow(dateCell, event)}
-                                                                                        {@const isScheduled = isScheduledDate(dateCell, event)}
-                                                                                        <DatePicker.Cell 
-                                                                                            date={dateCell} 
-                                                                                            month={month.value} 
-                                                                                            class="datepicker-cell {isScheduled ? 'scheduled-date' : ''} {inWindow ? 'window-date' : ''}"
-                                                                                        >
-                                                                                            <DatePicker.Day class="datepicker-day">
-                                                                                                {dateCell.day}
-                                                                                            </DatePicker.Day>
-                                                                                        </DatePicker.Cell>
-                                                                                    {/each}
-                                                                                </DatePicker.GridRow>
-                                                                            {/each}
-                                                                        </DatePicker.GridBody>
-                                                                    </DatePicker.Grid>
-                                                                {/each}
-                                                            </div>
-                                                        {/snippet}
-                                                    </DatePicker.Calendar>
-                                                </DatePicker.Content>
-                                            </div>
-                                        </DatePicker.Root>
-                                    {/if}
-                                </div>
+                            <div class="popup-event-info-row">
+                                <span class="popup-event-name">{initialEventName}</span>
+                                <span class="popup-status-badge status-planned">PLANNED</span>
                             </div>
-                        {/each}
-                    </div>
-                    
-                    <!-- Unscheduled Event section - only show if unscheduled events are defined in the model AND day >= 0 -->
-                    {#if unscheduledEvents.length > 0 && canAddUnscheduledEvent}
-                        <!-- Separator -->
-                        <div class="popup-separator"></div>
-                        
-                        <div class="popup-section">
-                            <div class="section-header-row">
-                                <span class="section-label">Unscheduled Event</span>
-                                <button 
-                                    type="button" 
-                                    class="toggle-section-btn"
-                                    onclick={(e) => toggleUnscheduledEvent(e)}
-                                    aria-label={unscheduledEventEnabled ? 'Remove unscheduled event' : 'Add unscheduled event'}
-                                >
-                                    {#if unscheduledEventEnabled}
-                                        <IconX size={16} />
-                                    {:else}
-                                        <IconPlus size={16} />
-                                    {/if}
+                            <div class="popup-action-buttons">
+                                <button class="popup-action-btn completed" onclick={handleInitialComplete}>
+                                    Complete
+                                </button>
+                                <button class="popup-action-btn canceled" onclick={handleInitialCancelStatus}>
+                                    Cancel
+                                </button>
+                                <button class="popup-action-btn missed" onclick={handleInitialMissed}>
+                                    Miss
+                                </button>
+                                <button class="popup-action-btn move" onclick={handleInitialMoveStart}>
+                                    Move
                                 </button>
                             </div>
-                            
-                            {#if unscheduledEventEnabled}
-                                <div class="event-row">
-                                    <select class="popup-select" bind:value={selectedUnscheduledEvent}>
-                                        {#each unscheduledEvents as event}
-                                            <option value={event.name}>{event.name}</option>
-                                        {/each}
-                                    </select>
-                                    
-                                    <select class="popup-select event-status-select" bind:value={unscheduledEventStatus}>
-                                        <option value="planned">Planned</option>
-                                        <option value="completed">Completed</option>
-                                    </select>
+                        {:else if initialEventPhase === 'move-calendar'}
+                            <!-- Phase 3: Move calendar - inline date picker with Ok/Cancel -->
+                            <div class="section-header-row">
+                                <span class="section-label">INITIAL EVENT</span>
+                                <button class="popup-header-btn" onclick={handleInitialDelete} title="Delete event">
+                                    Delete
+                                </button>
+                            </div>
+                            <div class="popup-event-info-row">
+                                <span class="popup-event-name">{initialEventName}</span>
+                                <span class="popup-status-badge status-planned">PLANNED</span>
+                            </div>
+                            <div class="popup-move-calendar-section">
+                                <div class="popup-move-calendar-header">
+                                    <button class="popup-move-calendar-nav-btn" onclick={() => navigateCalendarMonth(-1)} aria-label="Previous month">
+                                        <IconChevronLeft size={16} />
+                                    </button>
+                                    <span class="popup-move-calendar-month-year">{MONTH_NAMES[moveCalendarMonth]} {moveCalendarYear}</span>
+                                    <button class="popup-move-calendar-nav-btn" onclick={() => navigateCalendarMonth(1)} aria-label="Next month">
+                                        <IconChevronRight size={16} />
+                                    </button>
                                 </div>
-                            {/if}
-                        </div>
-                    {/if}
-                {/if}
-                
-                <!-- ==================== POPUP 3: No Event Day ==================== -->
-                <!-- Only show this popup type if there are unscheduled events defined in the model AND day >= 0 -->
-                {#if popupType === 'no-event' && unscheduledEvents.length > 0 && canAddUnscheduledEvent}
-                    <div class="popup-section">
-                        <div class="section-header-row">
-                            <span class="section-label">Unscheduled Event</span>
-                            <button 
-                                type="button" 
-                                class="toggle-section-btn"
-                                onclick={(e) => toggleUnscheduledEvent(e)}
-                                aria-label={unscheduledEventEnabled ? 'Remove unscheduled event' : 'Add unscheduled event'}
-                            >
-                                {#if unscheduledEventEnabled}
-                                    <IconX size={16} />
-                                {:else}
-                                    <IconPlus size={16} />
-                                {/if}
-                            </button>
-                        </div>
-                        
-                        {#if unscheduledEventEnabled}
-                            <div class="event-row">
-                                <select 
-                                    class="popup-select"
-                                    bind:value={selectedUnscheduledEvent}
-                                >
-                                    {#each unscheduledEvents as event}
-                                        <option value={event.name}>{event.name}</option>
-                                    {/each}
-                                </select>
-                                
-                                <select 
-                                    class="popup-select event-status-select"
-                                    bind:value={unscheduledEventStatus}
-                                >
-                                    <option value="planned">Planned</option>
-                                    <option value="completed">Completed</option>
-                                </select>
+                                <div class="popup-move-calendar-grid">
+                                    <div class="popup-move-calendar-weekdays">
+                                        {#each DAY_NAMES as dayName}
+                                            <span class="popup-move-calendar-weekday">{dayName}</span>
+                                        {/each}
+                                    </div>
+                                    <div class="popup-move-calendar-days">
+                                        {#each calendarDays as day}
+                                            {#if day === null}
+                                                <span class="popup-move-calendar-day empty"></span>
+                                            {:else}
+                                                <button 
+                                                    class="popup-move-calendar-day"
+                                                    class:today={isCalendarToday(day)}
+                                                    class:weekend={isCalendarWeekend(day)}
+                                                    class:selected={selectedMoveDay === day}
+                                                    class:in-window={isCalendarInWindow(day)}
+                                                    class:original-scheduled-day={isCalendarOriginalScheduledDay(day)}
+                                                    class:event-on-scheduled={isCalendarCurrentEventDay(day) && getCalendarEventDayState() === 'on-scheduled-date'}
+                                                    class:event-in-window={isCalendarCurrentEventDay(day) && getCalendarEventDayState() === 'in-window'}
+                                                    class:event-out-of-window={isCalendarCurrentEventDay(day) && getCalendarEventDayState() === 'out-of-window'}
+                                                    onclick={() => selectedMoveDay = day}
+                                                >
+                                                    {day}
+                                                </button>
+                                            {/if}
+                                        {/each}
+                                    </div>
+                                </div>
+                                <div class="popup-move-calendar-actions">
+                                    <button class="popup-move-calendar-ok-btn" onclick={handleInitialMoveOk} disabled={selectedMoveDay === null}>Ok</button>
+                                    <button class="popup-move-calendar-cancel-btn" onclick={handleInitialMoveCancel}>Cancel</button>
+                                </div>
+                            </div>
+                        {:else if initialEventPhase === 'resolved'}
+                            <!-- Phase 4: Resolved - event name + status badge + Reset -->
+                            <div class="section-header-row">
+                                <span class="section-label">INITIAL EVENT</span>
+                                <button class="popup-header-btn" onclick={handleInitialReset} title="Reset to pending">
+                                    Reset
+                                </button>
+                            </div>
+                            <div class="popup-event-info-row">
+                                <span class="popup-event-name">{initialEventName}</span>
+                                <span class="popup-status-badge {getStatusBadgeClass(initialEventTerminalStatus)}">{getStatusLabel(initialEventTerminalStatus)}</span>
                             </div>
                         {/if}
                     </div>
                 {/if}
                 
-                <!-- Footer with buttons -->
-                {#if hasChanges}
+                <!-- ==================== POPUP 2: Event Day (per-event phase-based, like initial event) ==================== -->
+                {#if activePopupType === 'event-day'}
                     <div class="popup-separator"></div>
-                    <footer class="popup-footer">
-                        <button class="standard-button primary inverted" onclick={handleApply}>Apply</button>
-                        <button class="standard-button gray inverted" onclick={handleCancel}>Cancel</button>
-                    </footer>
+                    {#each scheduledEvents as event (event.id)}
+                        {@const isEventUnscheduled = event.category === 'unscheduled' || event.isUnscheduledEvent || event.type === 'unscheduled-event'}
+                        {@const eventSectionLabel = isEventUnscheduled ? 'UNSCHEDULED EVENT' : 'SCHEDULED EVENT'}
+                        <div class="popup-section">
+                            {#if scheduledEventPhaseMap.get(event.id)?.phase === 'actionable'}
+                                <!-- Actionable phase: event name + PLANNED badge + action buttons -->
+                                <div class="section-header-row">
+                                    <span class="section-label">{eventSectionLabel}</span>
+                                    {#if isEventUnscheduled}
+                                        <button class="popup-header-btn" onclick={() => handleUnscheduledEventDelete(event.id, event.name)} title="Delete event">
+                                            Delete
+                                        </button>
+                                    {/if}
+                                </div>
+                                <div class="popup-event-info-row">
+                                    <span class="popup-event-name">{event.name}</span>
+                                    <span class="popup-status-badge status-planned">PLANNED</span>
+                                </div>
+                                <div class="popup-action-buttons">
+                                    <button class="popup-action-btn completed" onclick={() => handleScheduledComplete(event.id, event.name)}>
+                                        Complete
+                                    </button>
+                                    <button class="popup-action-btn canceled" onclick={() => handleScheduledCancelStatus(event.id, event.name)}>
+                                        Cancel
+                                    </button>
+                                    <button class="popup-action-btn missed" onclick={() => handleScheduledMissed(event.id, event.name)}>
+                                        Miss
+                                    </button>
+                                    <button class="popup-action-btn move" onclick={() => handleScheduledMoveStart(event.id, event.name)}>
+                                        Move
+                                    </button>
+                                </div>
+                            {:else if scheduledEventPhaseMap.get(event.id)?.phase === 'move-calendar'}
+                                <!-- Move calendar phase: inline date picker with Ok/Cancel -->
+                                <div class="section-header-row">
+                                    <span class="section-label">{eventSectionLabel}</span>
+                                    {#if isEventUnscheduled}
+                                        <button class="popup-header-btn" onclick={() => handleUnscheduledEventDelete(event.id, event.name)} title="Delete event">
+                                            Delete
+                                        </button>
+                                    {/if}
+                                </div>
+                                <div class="popup-event-info-row">
+                                    <span class="popup-event-name">{event.name}</span>
+                                    <span class="popup-status-badge status-planned">PLANNED</span>
+                                </div>
+                                <div class="popup-move-calendar-section">
+                                    <div class="popup-move-calendar-header">
+                                        <button class="popup-move-calendar-nav-btn" onclick={() => navigateCalendarMonth(-1)} aria-label="Previous month">
+                                            <IconChevronLeft size={16} />
+                                        </button>
+                                        <span class="popup-move-calendar-month-year">{MONTH_NAMES[moveCalendarMonth]} {moveCalendarYear}</span>
+                                        <button class="popup-move-calendar-nav-btn" onclick={() => navigateCalendarMonth(1)} aria-label="Next month">
+                                            <IconChevronRight size={16} />
+                                        </button>
+                                    </div>
+                                    <div class="popup-move-calendar-grid">
+                                        <div class="popup-move-calendar-weekdays">
+                                            {#each DAY_NAMES as dayName}
+                                                <span class="popup-move-calendar-weekday">{dayName}</span>
+                                            {/each}
+                                        </div>
+                                        <div class="popup-move-calendar-days">
+                                            {#each calendarDays as day}
+                                                {#if day === null}
+                                                    <span class="popup-move-calendar-day empty"></span>
+                                                {:else}
+                                                    <button 
+                                                        class="popup-move-calendar-day"
+                                                        class:today={isCalendarToday(day)}
+                                                        class:weekend={isCalendarWeekend(day)}
+                                                        class:selected={selectedMoveDay === day}
+                                                        class:in-window={isCalendarInWindow(day)}
+                                                        class:original-scheduled-day={isCalendarOriginalScheduledDay(day)}
+                                                        class:event-on-scheduled={isCalendarCurrentEventDay(day) && getCalendarEventDayState() === 'on-scheduled-date'}
+                                                        class:event-in-window={isCalendarCurrentEventDay(day) && getCalendarEventDayState() === 'in-window'}
+                                                        class:event-out-of-window={isCalendarCurrentEventDay(day) && getCalendarEventDayState() === 'out-of-window'}
+                                                        onclick={() => selectedMoveDay = day}
+                                                    >
+                                                        {day}
+                                                    </button>
+                                                {/if}
+                                            {/each}
+                                        </div>
+                                    </div>
+                                    <div class="popup-move-calendar-actions">
+                                        <button class="popup-move-calendar-ok-btn" onclick={handleScheduledMoveOk} disabled={selectedMoveDay === null}>Ok</button>
+                                        <button class="popup-move-calendar-cancel-btn" onclick={handleScheduledMoveCancel}>Cancel</button>
+                                    </div>
+                                </div>
+                            {:else if scheduledEventPhaseMap.get(event.id)?.phase === 'resolved'}
+                                <!-- Resolved phase: event name + status badge + Reset (+ Delete for unscheduled) -->
+                                <div class="section-header-row">
+                                    <span class="section-label">{eventSectionLabel}</span>
+                                    {#if isEventUnscheduled}
+                                        <button class="popup-header-btn" onclick={() => handleUnscheduledEventDelete(event.id, event.name)} title="Delete event">
+                                            Delete
+                                        </button>
+                                    {/if}
+                                    <button class="popup-header-btn" onclick={() => handleScheduledReset(event.id, event.name)} title="Reset to pending">
+                                        Reset
+                                    </button>
+                                </div>
+                                <div class="popup-event-info-row">
+                                    <span class="popup-event-name">{event.name}</span>
+                                    <span class="popup-status-badge {getStatusBadgeClass(scheduledEventPhaseMap.get(event.id)?.terminalStatus || 'completed')}">{getStatusLabel(scheduledEventPhaseMap.get(event.id)?.terminalStatus || 'completed')}</span>
+                                </div>
+                            {/if}
+                        </div>
+                        {#if scheduledEvents.indexOf(event) < scheduledEvents.length - 1}
+                            <div class="popup-separator"></div>
+                        {/if}
+                    {/each}
+                    
+                    <!-- Unscheduled Event selector (shown when + Unscheduled button is clicked) -->
+                    {#if showUnscheduledSelector && unscheduledEvents.length > 0 && canAddUnscheduledEvent}
+                        <div class="popup-separator"></div>
+                        
+                        <div class="popup-section">
+                            <div class="section-label">UNSCHEDULED EVENT</div>
+                            <div class="popup-selection-content">
+                                {#each unscheduledEvents as eventOption}
+                                    <label class="popup-event-option">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={checkedUnscheduledEvent === eventOption.name}
+                                            onchange={() => { checkedUnscheduledEvent = checkedUnscheduledEvent === eventOption.name ? '' : eventOption.name; }}
+                                        />
+                                        <span>{eventOption.name}</span>
+                                    </label>
+                                {/each}
+                                <div class="popup-selection-actions">
+                                    <button 
+                                        class="popup-selection-ok-btn" 
+                                        onclick={handleUnscheduledAdd}
+                                        disabled={!checkedUnscheduledEvent}
+                                    >Ok</button>
+                                    <button 
+                                        class="popup-selection-cancel-btn"
+                                        onclick={handleUnscheduledSelectorCancel}
+                                    >Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    {/if}
+                {/if}
+                
+                <!-- ==================== POPUP 3: No Event Day (unscheduled selector shown on button click) ==================== -->
+                {#if activePopupType === 'no-event' && showUnscheduledSelector && unscheduledEvents.length > 0 && canAddUnscheduledEvent}
+                    <div class="popup-separator"></div>
+                    <div class="popup-section">
+                        <div class="section-label">UNSCHEDULED EVENT</div>
+                        <div class="popup-selection-content">
+                            {#each unscheduledEvents as eventOption}
+                                <label class="popup-event-option">
+                                    <input 
+                                        type="checkbox" 
+                                        checked={checkedUnscheduledEvent === eventOption.name}
+                                        onchange={() => { checkedUnscheduledEvent = checkedUnscheduledEvent === eventOption.name ? '' : eventOption.name; }}
+                                    />
+                                    <span>{eventOption.name}</span>
+                                </label>
+                            {/each}
+                            <div class="popup-selection-actions">
+                                <button 
+                                    class="popup-selection-ok-btn" 
+                                    onclick={handleUnscheduledAdd}
+                                    disabled={!checkedUnscheduledEvent}
+                                >Ok</button>
+                                <button 
+                                    class="popup-selection-cancel-btn"
+                                    onclick={handleUnscheduledSelectorCancel}
+                                >Cancel</button>
+                            </div>
+                        </div>
+                    </div>
                 {/if}
             {/if}
         </div>
