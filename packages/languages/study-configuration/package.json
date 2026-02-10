@@ -11,7 +11,7 @@
     "test:watch": "vitest -c ./vitest.config.ts",
     "coverage": "vitest run --coverage -c ./vitest.config.ts",
     "clean": "rm -rf node_modules/",
-    "build": "npm run generate && tsc",
+    "build": "npm run generate && tsc && node -e \"require('fs').writeFileSync('.build-complete', Date.now().toString())\"",
     "nogen": "tsc",
     "install-local": "npm install --registry http://localhost:4873",
     "generate": "bash ../../../scripts/freon-samples-dev.sh -v all -d src/defs -o src/freon -c ../custom",

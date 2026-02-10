@@ -12,6 +12,8 @@ StudyConfiguration {
       ${staffing}
     Roles:
       ${roles}
+    Notes:
+      ${description}
     ]
 }
 

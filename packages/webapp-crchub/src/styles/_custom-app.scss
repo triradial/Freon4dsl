@@ -2176,15 +2176,21 @@
   .vis-text, .vis-label, .vis-inner, .vis-item-content {
     font-size: var(--standard-font-size) !important;
   }
-  .vis-labelset .vis-label, .vis-group {
-    height: 2rem !important;
+  /* Removed height constraints to allow vis-timeline stacking to work
+  .vis-labelset .vis-label, .vis-group, .vis-foreground .vis-group {
+    min-height: 2rem !important;
+    height: auto !important;
   }
   .vis-item {
     height: 1.625rem !important;
-    top: 0.125rem !important;
     border-width: 0 !important;
     border-radius: 0 !important;
   }
+  .vis-item .vis-item-content {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+  */
 
   /* #endregion */
 

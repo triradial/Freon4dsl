@@ -63,6 +63,30 @@ class MarkdownBuilder {
         this.sections.push('');
         return this;
     }
+
+    /**
+     * Add a checklist item with a checkbox (GitHub-flavored markdown)
+     * @param text The text for the checklist item
+     * @param checked Whether the checkbox is checked (default: false)
+     * @param indent Indentation level (0 = no indent, 1 = 2 spaces, 2 = 4 spaces, etc.)
+     */
+    addChecklistItem(text: string, checked: boolean = false, indent: number = 0): this {
+        const checkbox = checked ? '[x]' : '[ ]';
+        const indentation = '  '.repeat(indent);
+        this.sections.push(`${indentation}- ${checkbox} ${text}`);
+        return this;
+    }
+
+    /**
+     * Add indented content under a checklist item
+     * @param text The text to add
+     * @param indent Indentation level to match the parent checklist item
+     */
+    addChecklistContent(text: string, indent: number = 1): this {
+        const indentation = '  '.repeat(indent);
+        this.sections.push(`${indentation}${text}`);
+        return this;
+    }
     
     addVisualSeparator(): this {
         this.sections.push('');
@@ -269,6 +293,7 @@ export class StudyChecklistDocumentTemplate {
      * @param builder The markdown builder
      * @param step The step to render
      * @param stepCounter The step index (0-based)
+     * @param headingLevel The heading level to use (default 4)
      */
     private static renderStepAsMarkdown(builder: MarkdownBuilder, step: any, stepCounter: number, headingLevel: number = 4): void {
         // Step heading with spacing and visual indicator
@@ -311,6 +336,7 @@ export class StudyChecklistDocumentTemplate {
      * @param task The task to render (can be Task or TaskReference)
      * @param taskCounter The task index (0-based)
      * @param taskPrefix Optional prefix for the task heading (e.g., emoji)
+     * @param headingLevel The heading level to use (default 3)
      */
     private static renderTaskAsMarkdown(builder: MarkdownBuilder, task: Task | TaskReference, taskCounter: number, taskPrefix: string = "", headingLevel: number = 3): void {
         const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
@@ -382,6 +408,7 @@ export class StudyChecklistDocumentTemplate {
      * @param eventCounter The event index (0-based)
      * @param headingPrefix Optional prefix for the event heading
      * @param taskPrefix Optional prefix for task headings
+     * @param headingLevel Heading level for the event title
      */
     private static renderUnscheduledEventAsMarkdown(builder: MarkdownBuilder, event: UnscheduledEvent, _eventCounter: number, headingPrefix: string = "", taskPrefix: string = "", headingLevel: number = 3): void {
         builder.addHeading(headingLevel, `${headingPrefix}${event.name}`);
@@ -393,6 +420,7 @@ export class StudyChecklistDocumentTemplate {
 
         builder.addParagraph('This is an unscheduled event that is triggered as needed.', true);
 
+        // Render tasks with proper heading level (one level below the event heading)
         event.tasks.forEach((task, taskCounter) => {
             StudyChecklistDocumentTemplate.renderTaskAsMarkdown(builder, task as Task | TaskReference, taskCounter, taskPrefix, headingLevel + 1);
         });
@@ -411,6 +439,12 @@ export class StudyChecklistDocumentTemplate {
         studyConfiguration.periods.forEach((period, periodCounter) => {
             // Add period heading with proper spacing
             builder.addHeading(1, period.name);
+
+            // Add period description if present
+            const periodDesc = period.description?.text ?? period.description?.rawText;
+            if (periodDesc) {
+                builder.addParagraph(periodDesc, true);
+            }
 
             period.events.forEach((event, eventCounter) => {
                 StudyChecklistDocumentTemplate.renderEventAsMarkdown(builder, writer, event, eventCounter);

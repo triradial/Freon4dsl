@@ -77,9 +77,14 @@ export class Timeline extends RtObject {
         const referenceDate = this.getReferenceDate();
         // Create a new date to avoid mutating the reference date
         const endDate = new Date(referenceDate);
-        // Add the max day on timeline (plus 1 to include that day)
-        endDate.setDate(endDate.getDate() + this.getMaxDayOnTimeline() + 1);
-        
+        // Calculate the end date using the same formula as event date calculations:
+        // referenceDate + maxDay + offsetOfFirstEvent + buffer
+        // The offset accounts for events scheduled before day 0 (e.g., "-60 days before")
+        const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
+        const maxDay = this.getMaxDayOnTimeline();
+        // Add 7 days buffer to ensure the last event and any windows after it are visible
+        endDate.setDate(endDate.getDate() + maxDay + dayOffsetOfFirstEventInstance + 7);
+
         const year = endDate.getFullYear();
         const month = endDate.getMonth();
         const day = endDate.getDate();
@@ -383,8 +388,23 @@ export class Timeline extends RtObject {
     }
 
     getMaxDayOnTimeline() {
-        const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
-        return this.currentDay + dayOffsetOfFirstEventInstance;
+        // Get the max start day of events
+        const maxStartDay = this.getOffsetOfLastEventInstance();
+
+        // Also consider the end days of periods and events which may extend beyond their start day
+        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
+        let maxEndDay = maxStartDay;
+
+        for (const day of validDays) {
+            for (const event of day.events ?? []) {
+                // Check if this event has an endDay that extends beyond what we've seen
+                if (event.endDay !== undefined && event.endDay > maxEndDay) {
+                    maxEndDay = event.endDay;
+                }
+            }
+        }
+
+        return maxEndDay;
     }
 
     getMonthName(monthNumber: number): string {
@@ -522,10 +542,11 @@ export class Timeline extends RtObject {
         // If showing for a specific patient or a specific start day then major and minor are actual dates
         let result = undefined;
         
-        // Common options for multi-patient compact view - enable stacking for better visualization
-        const multiPatientOptions = isMultiPatient ? `
+        // Enable stacking to show overlapping windows visually
+        // This makes it clear when event windows overlap with each other
+        const stackingOptions = `
                 stack: true,
-                stackSubgroups: true,` : '';
+                stackSubgroups: true,`;
         
         if (this.organizeByStudyDay) {
             result = `  var options = {
@@ -566,8 +587,9 @@ export class Timeline extends RtObject {
                 margin: {
                     item: {
                         horizontal: 0,
+                        vertical: 5,
                     },
-                },${multiPatientOptions}
+                },${stackingOptions}
             };`;
         } else {
             result = `          var options = {
@@ -606,8 +628,9 @@ export class Timeline extends RtObject {
                 margin: {
                     item: {
                         horizontal: 0,
+                        vertical: 5,
                     },
-                },${multiPatientOptions}
+                },${stackingOptions}
             };
             `;
         }

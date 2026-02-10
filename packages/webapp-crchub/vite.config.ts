@@ -24,7 +24,9 @@ export default defineConfig({
   server: {
     port: 5173,
     watch: {
-      // Ignore study-configuration dist and freon generated files to prevent HMR storm when rebuilding the language
+      // Ignore study-configuration dist and freon generated files to prevent HMR storm when rebuilding the language.
+      // After a full build, the build script writes a .build-complete sentinel file at the
+      // study-configuration root (outside these ignored paths) which triggers one HMR reload.
       ignored: [
         '/Users/mikevogel/projects/Freon4dsl/packages/languages/study-configuration/dist/**',
         '/Users/mikevogel/projects/Freon4dsl/packages/languages/study-configuration/src/freon/**'

@@ -55,6 +55,7 @@
 
         await tick(); // Wait for input to be rendered
         if (inputElement) {
+            updateInputWidth();
             inputElement.focus();
             inputElement.select();
         }
@@ -312,19 +313,54 @@
     const hasValue = $derived(displayValue.trim().length > 0);
     const isValidUrlValue = $derived(hasValue && isValidUrl(displayValue.trim()));
     let isHovering = $state(false);
+
+
+    // Calculate input width based on content using canvas for accurate measurement
+    function updateInputWidth() {
+        if (!inputElement) return;
+
+        const textToMeasure = value || "https://example.com";
+
+        // Use canvas to measure text width accurately
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            // Get the computed font of the input
+            const computedStyle = window.getComputedStyle(inputElement);
+            ctx.font = `${computedStyle.fontWeight} ${computedStyle.fontSize} ${computedStyle.fontFamily}`;
+            const textWidth = ctx.measureText(textToMeasure).width;
+
+            // Add padding for the icon (pr-10 = 2.5rem = 40px) plus input padding
+            const measuredWidth = textWidth + 60;
+            // Ensure minimum width
+            const minWidth = 240;
+            // Max width - use viewport width minus some margin, not container width
+            // This allows the input to expand beyond its container if needed
+            const maxWidth = Math.min(window.innerWidth - 100, 800);
+            const finalWidth = Math.min(Math.max(measuredWidth, minWidth), maxWidth);
+            inputElement.style.width = `${finalWidth}px`;
+        }
+    }
+
+    // Update width when value changes
+    $effect(() => {
+        if (isEditing && value !== undefined) {
+            tick().then(() => updateInputWidth());
+        }
+    });
 </script>
 
 <div bind:this={componentWrapper} class="inline-flex flex-col align-middle w-full">
     {#if isEditing}
         <!-- Edit mode: Show input with clickable icon -->
-        <span class="relative inline-block w-full">
+        <span class="relative inline-block">
             <input
                 bind:this={inputElement}
-                class="text-component-input pr-10 w-full"
+                class="text-component-input pr-10"
                 type="url"
                 placeholder="https://example.com"
                 bind:value={value}
-                oninput={onInputChange}
+                oninput={(e) => { onInputChange(e); updateInputWidth(); }}
                 onkeydown={onKeyDown}
                 onfocusout={onFocusOut}
                 onpaste={(e) => {
@@ -340,6 +376,7 @@
                                 setter.setPropertyValue(stored);
                             }
                         });
+                        updateInputWidth();
                     }, 0);
                 }}
             />
@@ -428,5 +465,4 @@
         <span class="small-label-text mt-1 self-start" style="color:#ef4444">Enter a valid URL (http/https).</span>
     {/if}
 </div>
-
 

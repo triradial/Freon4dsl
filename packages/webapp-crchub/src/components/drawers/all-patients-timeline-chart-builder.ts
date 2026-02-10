@@ -8,6 +8,14 @@ import type { StudyConfiguration } from "@freon4dsl/study-configuration";
 import { getTimelineAsOfADate } from "@freon4dsl/study-configuration";
 import type { Patient } from "../../../services/data/data-store.js";
 
+/** Staff member for timeline: id, name, initials, unavailable dates (YYYY-MM-DD). */
+export interface StaffMemberForTimeline {
+    id: string;
+    name: string;
+    initials: string;
+    unavailableDates: string[];
+}
+
 export interface VisTimelineItem {
     start: string; // "year, month, day, h, m, s" for new Date(...)
     end: string;
@@ -76,10 +84,12 @@ function getChartReferenceDate(patients: Patient[]): Date {
 /**
  * Build All Patients timeline chart HTML (script + container) from DB schedules and study config.
  * Uses same simulated study schedule (no re-simulation); overlays patient events from DB.
+ * Optionally adds a Staff section below patients (separator, label, one row per staff with initials and unavailable blocks).
  */
 export function buildAllPatientsTimelineChartHtml(
     patients: Patient[],
-    studyConfig: StudyConfiguration
+    studyConfig: StudyConfiguration,
+    staff: StaffMemberForTimeline[] = []
 ): string {
     if (patients.length === 0) {
         return `<div class="limited-width-container"><div class='text-yellow-500'>No patients found for this study</div></div>`;
@@ -121,7 +131,9 @@ export function buildAllPatientsTimelineChartHtml(
     }
 
     const groups: VisTimelineGroup[] = [
-        { id: "Phase", content: "<b>Phase</b>", className: "phase" }
+        { id: "Phase", content: "<b>Phase</b>", className: "phase" },
+        { id: "Phase-patient-gap", content: "", className: "phase-patient-gap" },
+        { id: "Patients-label", content: "<b>Patients</b>", className: "patients-label" }
     ];
     for (const p of patients) {
         const label = p.initials || p.patientNumber || p.id;
@@ -131,6 +143,28 @@ export function buildAllPatientsTimelineChartHtml(
             className: "patient",
             style: "cursor: pointer;"
         });
+    }
+    // Visual separator and Staff section
+    if (staff.length > 0) {
+        groups.push({
+            id: "Staff-separator",
+            content: "",
+            className: "staff-separator"
+        });
+        groups.push({
+            id: "Staff-label",
+            content: "<b>Staff</b>",
+            className: "staff-label"
+        });
+        for (const s of staff) {
+            const label = s.initials || s.name || s.id;
+            groups.push({
+                id: `Staff-${s.id}`,
+                content: `<b>${escapeJsString(label)}</b>`,
+                className: "staff",
+                style: "cursor: default;"
+            });
+        }
     }
 
     const items: VisTimelineItem[] = [];
@@ -296,6 +330,27 @@ export function buildAllPatientsTimelineChartHtml(
         }
     }
 
+    // Staff: not-available blocks only (same time axis as chart)
+    for (const s of staff) {
+        const groupId = `Staff-${s.id}`;
+        for (const dateStr of s.unavailableDates) {
+            const parts = dateStr.split("-").map(Number);
+            if (parts.length >= 3) {
+                const startDate = new Date(parts[0], (parts[1] ?? 1) - 1, parts[2], 0, 0, 0);
+                const endDate = new Date(parts[0], (parts[1] ?? 1) - 1, parts[2], 23, 59, 59);
+                items.push({
+                    start: dateToVisString(startDate, false),
+                    end: dateToVisString(endDate, true),
+                    group: groupId,
+                    className: "not-available",
+                    title: `Not available - ${s.name}`,
+                    content: "&nbsp;",
+                    id: nextId()
+                });
+            }
+        }
+    }
+
     // Build script: groups and items as vis.DataSet, then options and timeline
     const groupsScript = `var groups = new vis.DataSet(${JSON.stringify(groups)});`;
     const itemsScript = "var items = new vis.DataSet([\n" + items.map((it) => {
@@ -343,10 +398,12 @@ export function buildAllPatientsTimelineChartHtml(
   }
 `;
 
+    const hasStaff = staff.length > 0;
+    const chartHeight = hasStaff ? 700 : 600;
     const css = `
     .all-patients-timeline-chart { font-family: arial, sans-serif; font-size: 11pt; margin: 20px; }
     .all-patients-timeline-chart h1 { margin-top: 0; }
-    #all-patients-visualization { box-sizing: border-box; width: 100%; height: 600px; position: relative; border: 1px solid #ccc; margin-bottom: 20px; }
+    #all-patients-visualization { box-sizing: border-box; width: 100%; height: ${chartHeight}px; position: relative; border: 1px solid #ccc; margin-bottom: 20px; }
     .vis-item.screening-phase { background-color: #005e4c; color: white; }
     .vis-item.treatment-phase { background-color: #600078; color: white; }
     .vis-item.window { background-color: #c3c3be; opacity: 0.6; }
@@ -357,6 +414,12 @@ export function buildAllPatientsTimelineChartHtml(
     .vis-item.not-available { background-color: #b0395f; }
     .vis-timeline .vis-item { box-sizing: border-box; height: 30px !important; line-height: 30px !important; }
     .vis-timeline .vis-item-content { display: flex; align-items: center; justify-content: center; height: 100%; }
+    .vis-timeline .vis-labelset .vis-label.phase-patient-gap { min-height: 18px; background: transparent !important; color: transparent; }
+    .vis-timeline .vis-labelset .vis-label.patients-label { font-weight: bold; color: #0d3d56 !important; background: #c5e1ed !important; }
+    .vis-timeline .vis-labelset .vis-label.patient { color: #1a1a1a !important; background: #f5fafc !important; }
+    .vis-timeline .vis-labelset .vis-label.staff-separator { min-height: 20px; background: #5a6c7d !important; color: transparent; border-top: 3px solid #2c3e50; }
+    .vis-timeline .vis-labelset .vis-label.staff-label { font-weight: bold; color: #1a1a1a !important; background: #9cb4c4 !important; border-bottom: 1px solid #5a6c7d; }
+    .vis-timeline .vis-labelset .vis-label.staff { color: #1a1a1a !important; background: #d4e0e8 !important; }
     .all-patients-timeline-legend { margin: 20px 0; padding: 15px; background-color: #f5f5f5; border-left: 4px solid #485bc7; }
     .all-patients-timeline-legend h3 { margin-top: 0; color: #485bc7; }
     .all-patients-timeline-legend ul { margin: 0; padding-left: 20px; }
@@ -366,8 +429,6 @@ export function buildAllPatientsTimelineChartHtml(
     return `
 <div class="limited-width-container all-patients-timeline-chart">
   <style>${css}</style>
-  <h1>All Patients Timeline</h1>
-  <p>Phases, scheduled events, windows, and patient events (on-scheduled-date, in-window, out-of-window, not-available). Scroll to zoom, drag to pan.</p>
   <div id="all-patients-visualization"></div>
   <div class="all-patients-timeline-legend">
     <h3>Legend</h3>
@@ -378,7 +439,8 @@ export function buildAllPatientsTimelineChartHtml(
       <li><strong>✓ On date</strong> (black): Patient visit on scheduled date.</li>
       <li><strong>✓ In window</strong> (striped): Patient visit within window.</li>
       <li><strong>✗ Out of window</strong> (amber striped): Visit outside window.</li>
-      <li><strong>Not available</strong> (red): Unavailable day.</li>
+      <li><strong>Not available</strong> (red): Unavailable day (patients and staff).</li>
+      <li><strong>Staff</strong>: Section below patients shows staff by initials; red blocks = unavailable.</li>
     </ul>
   </div>
   <script type="text/javascript">

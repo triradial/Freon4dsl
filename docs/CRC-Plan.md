@@ -5,7 +5,10 @@ The following are the roughly priority ordered required updates before we can ha
 Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## TBD
-- [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. The the only choice for '+ SystemAccesses' is a SystemAccess concept. I see the drop down when I click it rather than it just being created. I added a discussion on it to Freon. Is this something we'll fix ourselves?
+- [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. Turns out it works with a return but not if you click on it. Should work with just click. Jos will look into fixing it.
+- [ ] js-vis chart:
+  - [ ] If the size of the js-vis chart it too big it overflows into the legend area. Can this be fixed?
+  - [ ] Needed to make a lot of CSS changes to get stacking of boxes on study chart. Need to discuss how we handle overlaps, e.g., windows frequently overlap. 
 - [ ] Copy and paste of language concepts only works on list elements. So you can't copy a schedule or checklist separately. Do we want to do something to support this vs. just copying the event? Need to discuss with Jos whether concepts should be selectable and then can be copied like in MPS. 
 
 
@@ -13,11 +16,16 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ### To-Do 
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
+- [ ] I updated the tinyMCE config to allow links in the description but they don't open from the editor. They do open from the checklist. Is this what we want?
+- [ ] Add an Event and it does not show in the drop-down for the 'When'. Close and re-open the study and it shows. 
+- [ ] In patient chart:
+  - [ ] If a visit/event and a window overlap how should it be shown, e.g., two icons in same box. Same qustion for visit/window overlapping patient unavailable. In some places you should two icons but not for all cases. 
+- [ ] For the boxes around concepts in the UI:
+  - [ ] If you edit a field in a box with 'X' then tab out of that concept, the box with 'X' remains displayed. 
+  - [ ] Seems to be a difference between behavior for hover and focus, Jos called it out in the meeting today.
+  - [ ] Several times tabbing out into the next field, e.g., 'with no repetitions' and return to show the choices doesn't work. Tab to the next 'with no time of day' and it works. The I couldn't get it to happen again. 
+- [ ] The position of the phases in the timeline chart causes it to be clipped at the bottom. It wasn't originally like this so I'm guessing some of our application styling has drifted into the chart. Maybe pass this off to Jon?
 - [ ] Document and test the steps to bring on a user
-- [ ] Create a repeatable demo script (whoever is done first will do this)
-- [ ] Fix ReferenceComponent:
-  - [ ] To display like SelectableListItemComponent
-  - [ ] Fix Jump to reference button to work again
 - Not needed for first user:
   - [ ] Add a way to search the content of the study design better than just cntl-f in the browser?
   - [ ] Make staff shared/optionally-shared across studies (not essential for first user)
@@ -50,19 +58,28 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Mike
 
 ### To-Do 
-- [ ] Add back pdf/print behavior to checklist (discuss with Graham, e.g., where does button go)
-- [ ] Create complex and realistic examples of checklists
-- [ ] Rebuild some or all of the studies to test behavior and useability
-- [ ] Make tasks be clickable checkboxes
+- [ ] Create a repeatable demo script (whoever is done first will do this)
+- [ ] Show/Hide for Unscheduled Events
+- [ ] review and update tests
 - [ ] Setup tests of incomplete studies and add additional validation checks if/as needed so reliably get charts, etc.
-- [ ] Determine whether optional from Freon is needed and where 
-- [ ] Remove choice of the visit you are on when 'start when' is a reference. Needs custom scope added. 
 - [ ] Not needed for first user but really need to know how well AI can generate a study DSL from a protocol document. Try with JSL protocol reader?
 
+
 ### In-Progress
+- [ ] Rebuild some or all of the studies to test behavior and useability
+- [ ] Create complex and realistic examples of checklists
 
 
 ### Done
+- [x] Remove choice of the visit you are on when 'start when' is a reference. Needs custom scope added. 
+- [x] Determine whether optional from Freon is needed and where: Does not seem to be needed in current UI
+- [x] Make tasks be clickable checkboxes in a Word document
+- [x] fix checklist hide/show for unscheduled event at study level
+- [x] Fix ReferenceComponent:
+  - [x] To display like SelectableListItemComponent
+  - [x] Fix Jump to reference button to work again
+- [x] Add back pdf/print behavior to checklist
+- [x] - Get control-x, control-c, control-v working
 - [x] Test, update, and add buttons for things like duplicate and smart duplicate, 
 - [x] Make sure data entry of shared-tasks, shared-steps still work. Make sure they display in checklist like a non shared task 
 - [x] Unscheduled and other special events
@@ -82,15 +99,38 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## Jon
 - [ ] Add single event patient checklist to be displayed from the patient page and selected date. Use latest version of template somehow merged with template the Jon created.
-- [ ] Add choice of template studies when creating a study
 
 ### To-Do 
 - [ ]
 
 ### In-Progress
+- [ ] Add choice of template studies when creating a study
 - [ ] Add multi-patient full schedule chart as an alternative view
 - [ ] add back view of availability to chart
 
 ### Done
 - [x] Copy a study feature
 - [x] Review new UI implementation done by Graham...
+
+
+
+## Other Old Notes:
+
+- [ ] Ignore not-available-dates before first visit
+- [ ] Demo:
+  - [ ] CRA Visit as a kind of event
+  - [ ] Add a payment milestone to study and charts somehow
+- [ ] Need a better way to allow something at study-start with a displacement time that doesn’t require to know what the ‘<choose>’ does and still reads well when you’ve added a displacement.  Does the trigger of = "plus or minus day/week/month/..." accomplish - [x] this?
+- [ ] eventState of a EventReference is required. Either find a way to show it as an error or auto create it as ‘completed’
+- [ ] Clean up wording of Repeats. Make ‘max’ be either ‘max’ or ‘exactly’ or some other way of expressing it.
+- [ ] Change wording of window so at-most reads better and it’s clear it’s an outer vs. the inner window. Get words from graham, e.g., compliant. Maybe have a way to hide the outer window.
+- [ ] Consider a +/- time so only need one number to enter
+- [ ] Mixing up ‘completed’ vs. ‘each completed’ is a good demo scenario.
+- [ ] Default Name of Period should not be ‘Period’. Maybe ‘Unnamed’ so clear that it isn’t named and easy to delete the word.
+- [ ] Try CRC on phone
+- [ ] Should we record who saw patient
+- [ ] Delete key in a number field deletes the concept instead of the digit unless you double click mouse to select the thing to be deleted Appears to be fixed
+- [ ] Use the brackets view to show parens for an expression to highlight how the tree is interpreted. Related is the optional projection option in an editor: https://www.freon4dsl.dev/030_Developing_a_Language/020_Definition_Level/010_Editor_Definition/020_Projections see Optional Projections examples:
+  [?Helper functions:
+            ${helpers vertical}]
+

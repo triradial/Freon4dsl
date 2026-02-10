@@ -2,6 +2,8 @@
     import { untrack } from "svelte";
     import { getStatusColor } from "../../services/utils.js";
     import { dataStore, type Study } from "../../services/data/data-store.js";
+    import type { StudyTemplate } from "../../services/data/study-templates.js";
+    import { Combobox } from "@skeletonlabs/skeleton-svelte";
     // @ts-ignore
     import { Save as IconSave, X as IconX, Asterisk as IconAsterisk } from '@lucide/svelte';
 
@@ -19,6 +21,15 @@
     let siteNumber = $state('');
     let siteId = $state<string | undefined>(undefined);
     let rows: number = 6;
+
+    // Copy mode: template list and selected template (for Combobox)
+    const copyTemplates = $derived((study as any)?.templates as StudyTemplate[] | undefined);
+    const hasTemplateChoice = $derived(action === "copy" && Array.isArray(copyTemplates) && copyTemplates.length > 0);
+    let selectedTemplate = $state<StudyTemplate | null>(null);
+    const templateComboboxData = $derived(
+        (copyTemplates ?? []).map((t) => ({ label: t.label, value: t.id }))
+    );
+    const selectedTemplateId = $derived(selectedTemplate?.id ?? "");
 
     let nameValidationTimeout: ReturnType<typeof setTimeout> | null = null;
     let nameValidationId = 0;
@@ -47,7 +58,19 @@
             const currentSiteNumber = untrack(() => siteNumber);
             siteNumber = (study as any)?.siteNumber || currentSiteNumber || "";
         }
+        if (action === "copy" && (study as any)?.selectedTemplate) {
+            selectedTemplate = (study as any).selectedTemplate;
+        }
     });
+
+    function onTemplateValueChange(details: { value: string | string[] }) {
+        const value = Array.isArray(details.value) ? details.value[0] : details.value;
+        const template = (copyTemplates ?? []).find((t) => t.id === value);
+        if (template) {
+            selectedTemplate = template;
+            (mutatedStudy as any).sourceStudyId = template.sourceStudyId || (mutatedStudy as any)?.sourceStudyId || "";
+        }
+    }
 
     // Track initialization
     let initialized = false;
@@ -130,8 +153,9 @@
         if (Object.values(errorState).every((error) => error === "")) {
             console.log("[StudyMutation] calling onsave prop", mutatedStudy);
             if (action === "add" || action === "copy") {
-                // For add action, include the site number
-                onsave?.({ ...mutatedStudy, siteNumber, sourceStudyId: (study as any)?.sourceStudyId } as any);
+                // For copy, use current sourceStudyId from mutation (may have been changed via template Combobox)
+                const sourceStudyId = (mutatedStudy as any)?.sourceStudyId ?? (study as any)?.sourceStudyId;
+                onsave?.({ ...mutatedStudy, siteNumber, sourceStudyId } as any);
             } else {
                 // For edit action, save the study and update the site number
                 onsave?.(mutatedStudy);
@@ -218,6 +242,20 @@
 
 <div class="mutation-area max-w-sm">
     <div class="flex flex-col gap-4">
+        {#if hasTemplateChoice}
+            <div>
+                <div class="small-label-text">Template</div>
+                <Combobox
+                    data={templateComboboxData}
+                    value={selectedTemplateId ? [selectedTemplateId] : []}
+                    onValueChange={onTemplateValueChange}
+                    label=""
+                    labelBase="!p-0"
+                    contentMaxHeight="max-h-[240px]"
+                    width="w-full"
+                />
+            </div>
+        {/if}
         <div>
             <div class="small-label-text">Study Name{#if errors.name}<span class="error-indicator"><IconAsterisk size="12" color="red" /></span>{/if}</div>        
             <input class="input-field {getErrorState('name')}" type="text" bind:value={mutatedStudy.name} oninput={handleInput("name")} title={getErrorTooltip('name')} />

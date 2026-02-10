@@ -1,97 +1,32 @@
-# CRCHub changes to upstream Freon4dsl packages
+# Changes to Freon4dsl
 
-Baseline commit: `b959a781fafc7e6e2b16e8579e218101e3d422c1`
-(mode/whitespace-only changes excluded)
+The following are changes requested for Freon based on the needs of our project.
 
-## Re-applying changes after an upstream merge
+## Summary of Changed files
 
-When merging with the upstream Freon4dsl `development` branch — accepting all
-remote changes for `packages/core`, `packages/core-svelte`, and `packages/meta`
-— use these patch files to re-apply the CRCHub-specific modifications:
-
-| Patch file | Scope |
-|:-----------|:------|
-| `author-changes-core-meta-core-svelte.patch` | All three packages combined |
-| `author-changes-core-svelte.patch` | `packages/core-svelte` only |
-| `author-changes-core.patch` | `packages/core` only |
-| `author-changes-meta.patch` | `packages/meta` only |
-
-### Workflow
-
-```bash
-# 1. Start from the crchub-svelte5 branch
-git checkout crchub-svelte5
-
-# 2. Merge upstream, accepting all remote changes for the three packages
-git merge development
-
-# During merge, accept all "theirs" (upstream) changes for:
-#   packages/core/
-#   packages/core-svelte/
-#   packages/meta/
-
-# 3. After the merge commit, re-apply the CRCHub changes
-#    Option A — all at once:
-git apply developer-documentation/author-changes-core-meta-core-svelte.patch
-
-#    Option B — one package at a time (useful if some patches conflict):
-git apply developer-documentation/author-changes-core.patch
-git apply developer-documentation/author-changes-core-svelte.patch
-git apply developer-documentation/author-changes-meta.patch
-
-# 4. If a patch does not apply cleanly, use --3way for conflict markers:
-git apply --3way developer-documentation/author-changes-core.patch
-
-# 5. Review and commit
-git diff
-git add -A && git commit -m "Re-apply CRCHub changes to upstream packages"
-```
-
-### Comparing instead of applying
-
-To preview what the patch would change without modifying files:
-
-```bash
-# Dry run — reports errors but changes nothing
-git apply --check developer-documentation/author-changes-core-meta-core-svelte.patch
-
-# Show a stat summary of what would change
-git apply --stat developer-documentation/author-changes-core-meta-core-svelte.patch
-```
-
-### Regenerating patches
-
-If additional changes are made to these packages before the next upstream merge,
-regenerate the patches from the baseline:
-
-```bash
-git diff b959a781fafc7e6e2b16e8579e218101e3d422c1..HEAD -- packages/core/ packages/core-svelte/ packages/meta/ \
-  > developer-documentation/author-changes-core-meta-core-svelte.patch
-```
-
----
-
-## Changed files
-
-### packages/core-svelte (Svelte UI components)
+### packages/core-svelte 
 
 | File | What changed |
 |:-----|:-------------|
 | [`LayoutComponent.svelte`](#packagescore-sveltesrclibcomponentslayoutcomponentsvelte) | Fix Svelte 5 `state_unsafe_mutation` error by deferring refresh via `untrack()` / `tick()` |
 | [`ListComponent.svelte`](#packagescore-sveltesrclibcomponentslistcomponentsvelte) | Hide drag handles for specific concept types (Person, Reference, SystemAccess, etc.) |
 
-### packages/core (editor framework)
+### packages/core 
 
 | File | What changed |
 |:-----|:-------------|
 | [`Box.ts`](#packagescoresrceditorboxesboxts) | Add `hideDragHandle` boolean property to the base `Box` class |
+| [`ListBox.ts`](#packagescoresrceditorboxeslistboxts) | Add `canDragAndDrop` boolean property to control per-list drag-and-drop reordering |
 | [`AbstractPropertyWrapperBox.ts`](#packagescoresrceditorboxesexternalboxesabstractpropertywrapperboxts) | Add `firstLeaf` / `lastLeaf` overrides so external components can receive keyboard focus |
 | [`StringReplacerBox.ts`](#packagescoresrceditorboxesexternalboxesstringreplacerboxts) | Throw an error (instead of silently logging) on property-type mismatch |
+| [`FreEditor.ts`](#packagescoresrceditorfreeditorTs) | Clear error decorator state on projection/root element changes to prevent stale box errors |
+| [`FreErrorDecorator.ts`](#packagescoresrceditorfreerrordecoratorts) | Complete rewrite with performance optimizations: caching, batched updates, early-exit, orphaned-box safety |
 | [`FreProjectionHandler.ts`](#packagescoresrceditorprojectionsfreprojectionhandlerts) | Guard against missing constructor in `getKnownTableProjectionsFor()` |
 | [`FreLogger.ts`](#packagescoresrcloggingfreloggerts) | Fix crash when `tagOrTags` is not a string and not an array (use `Array.isArray` check) |
 | [`InMemoryModel.ts`](#packagescoresrcstorageinmemorymodelts) | Add debug tracing to `openModel()` and `saveUnit()`; handle unit-load errors gracefully |
+| [`AstActionExecutor.ts`](#packagescoresrcast-utilsastactionexecutorts) | Fix Ctrl+C/V paste for list items by walking up box tree to find ListBox ancestor |
 
-### packages/meta (code-generation templates)
+### packages/meta
 
 | File | What changed |
 |:-----|:-------------|
@@ -566,41 +501,217 @@ After:
 
 ---
 
-## `packages/meta/src/parsergen/parserTemplates/grammarModel/GrammarModel.ts`
+## `packages/core/src/editor/boxes/ListBox.ts`
 
-We kept the new regex under the assumption that Freon fixed the issue with spaces in IDs
+**New property.** Adds `canDragAndDrop` to the `ListBox` class so that individual lists can disable drag-and-drop reordering. When `false`, drag handles are hidden and items cannot be reordered by dragging. Defaults to `true`. Can be set via initializer in `.edit` definitions using `canDragAndDrop="false"`.
 
-**Parser grammar fix — allow spaces in identifiers.** Adds a space character to the allowed character set in backtick-delimited identifiers. This means identifiers like `` `My Identifier` `` are now valid in the DSL.
+### Change — New property added to the class
 
-### Change — Space added to identifier character class
-
-Before (simplified — the actual regex is heavily escaped):
-```
-leaf identifier = "`[a-zA-Z0-9-_~!@#$%^&*...?/][a-zA-Z0-9-_~!@#$%^&*...?/]*`"
-```
-
-After — note the space before the closing `]`:
-```
-leaf identifier = "`[a-zA-Z0-9-_~!@#$%^&*...?/ ][a-zA-Z0-9-_~!@#$%^&*...?/ ]*`"
-                                             ^^^                           ^^^
+```ts
+export abstract class ListBox extends LayoutBox {
+    readonly kind: string = "ListBox";
+    conceptName: string = "unknown-type";
+    // Controls whether drag-and-drop reordering is enabled for this list.   <-- NEW
+    // When false, drag handles are hidden and items cannot be reordered.     <-- NEW
+    // Defaults to true. Can be set to false via initializer: { canDragAndDrop: false }
+    canDragAndDrop: boolean = true;                                           // <-- NEW
 ```
 
 ---
 
-## `packages/meta/src/utils/file-utils/FileUtil.ts`
+## `packages/core/src/editor/FreEditor.ts`
 
-We didn't do this one because the file is gone.
+**Error decorator lifecycle management.** Two changes ensure the error decorator's cached state is cleared at the right times, preventing stale box references from causing errors when switching between studies or when projections are recalculated.
 
-**Bug fix — empty folder deletion.** `fs.rmSync(folder)` without `{ recursive: true }` can fail on some platforms/Node versions when removing directories. Adding the flag ensures reliable cleanup.
+### Change 1 — Clear error cache when projection recalculates
 
-### Change — Add `recursive` option
+In the `auto` autorun (triggered when `rootElement` or `forceRecalculateProjection` changes), the error decorator cache is cleared after the new root box is computed, since boxes may have changed.
 
 Before:
 ```ts
-fs.rmSync(folder);
+auto = () => {
+    // ...
+    if (notNullOrUndefined(this.rootElement)) {
+        this._rootBox = this.projection.getBox(this.rootElement);
+        this.rootBoxChanged();
+    }
+};
 ```
 
 After:
 ```ts
-fs.rmSync(folder, { recursive: true });
+auto = () => {
+    // ...
+    if (notNullOrUndefined(this.rootElement)) {
+        this._rootBox = this.projection.getBox(this.rootElement);
+        this.rootBoxChanged();
+        // Clear error decorator cache when projection changes since boxes may have changed
+        this._errorDecorator.clearCache();
+    }
+};
 ```
+
+### Change 2 — Clear all error state when switching root element
+
+In the `rootElement` setter, all error decorator state (cache, previous errors, erroneous boxes) is cleared when switching to a different root element. This prevents stale box references from the old root from causing errors.
+
+Before:
+```ts
+set rootElement(node: FreNode) {
+    this._rootElement = node;
+    if (notNullOrUndefined(node)) {
+        this.selectFirstEditableChildBox(node);
+    }
+}
+```
+
+After:
+```ts
+set rootElement(node: FreNode) {
+    // Clear error decorator state when switching to a new root element
+    // This prevents stale box references from causing errors
+    if (this._rootElement !== node) {
+        this._errorDecorator.clearAll();
+    }
+    this._rootElement = node;
+    if (notNullOrUndefined(node)) {
+        this.selectFirstEditableChildBox(node);
+    }
+}
+```
+
+---
+
+## `packages/core/src/editor/FreErrorDecorator.ts`
+
+**Performance rewrite.** The entire `FreErrorDecorator` class was rewritten to solve performance issues observed when the validator runs frequently. The upstream version triggered individual `isDirty()` / `refreshComponent()` calls for every error box, causing excessive re-renders and layout thrashing. The new version introduces five optimizations.
+
+### New helper functions
+
+```ts
+/**
+ * Creates a unique key for an error to enable fast comparison
+ */
+function errorKey(err: FreError): string {
+    if (Array.isArray(err.reportedOn)) {
+        return err.reportedOn.map(n => n?.freId?.() ?? 'null').join(',') + '|' + (err.propertyName ?? '') + '|' + err.message;
+    }
+    return (err.reportedOn?.freId?.() ?? 'null') + '|' + (err.propertyName ?? '') + '|' + err.message;
+}
+
+/**
+ * Checks if two error lists are equivalent (same errors, possibly different order)
+ */
+function errorsAreEqual(a: FreError[], b: FreError[]): boolean {
+    if (a.length !== b.length) return false;
+    if (a.length === 0) return true;
+    const aKeys = new Set(a.map(errorKey));
+    return b.every(err => aKeys.has(errorKey(err)));
+}
+```
+
+### New instance fields
+
+```ts
+// Cache of node ID to box mapping for faster lookups
+private boxCache: Map<string, Box> = new Map();
+// Track boxes that currently have errors set (for efficient clearing)
+private currentErrorBoxes: Set<Box> = new Set();
+```
+
+### New public methods — `clearCache()` and `clearAll()`
+
+Called from `FreEditor` when projections change or when switching root elements:
+
+```ts
+clearCache(): void {
+    this.boxCache.clear();
+}
+
+clearAll(): void {
+    this.boxCache.clear();
+    this.previousList = [];
+    this.erroneousBoxes = [];
+    this.currentErrorBoxes.clear();
+}
+```
+
+### `setErrors()` — rewritten with five optimizations
+
+1. **Early exit** — if the new error list is equivalent to the previous one (via `errorsAreEqual`), skip all work.
+2. **Diff-based clearing** — only clear boxes that are NOT in the new error set, avoiding unnecessary clear+set cycles.
+3. **Cached box lookups** — `findBoxForNodeCached()` caches node-to-box mappings in `boxCache`, verifying cache validity via `isBoxInTree()`.
+4. **Silent state mutations** — `setErrorOnBoxSilent()` and `clearErrorOnBoxSilent()` manipulate internal `_hasError` / `_errorMessages` directly without triggering `isDirty()` per-box.
+5. **Batched refresh** — a single `refreshComponent()` call per affected box after all mutations are complete, with `isBoxInTree()` safety checks to handle orphaned boxes during study switching. Gutter gathering is deferred via `requestAnimationFrame`.
+
+### `gatherMessagesForGutter()` — optimized
+
+Caches rectangle values in a `Map` before sorting and grouping, avoiding repeated `getClientRectangle()` calls that cause layout thrashing. Uses the silent internal property access pattern (`(box as any)._errorMessages`) consistent with the rest of the class.
+
+### Performance logging
+
+Warns to console if `setErrors` takes more than 50ms:
+
+```ts
+const elapsed = performance.now() - startTime;
+if (elapsed > 50) {
+    console.warn(`FreErrorDecorator.setErrors took ${elapsed.toFixed(2)}ms for ${errors.length} errors`);
+}
+```
+
+---
+
+## `packages/core/src/ast-utils/AstActionExecutor.ts`
+
+**Ctrl+C/V paste fix for list items.** The `paste()` method previously only checked the **immediate parent** of the selected box for a `ListBox`. When focus was on a box nested deeper inside a list item (e.g., inside a layout box within a list item), the paste would fail with "Cannot paste here". Now it walks up the entire box tree to find the nearest `ListBox` ancestor.
+
+### Change 1 — New private method `findListBoxAncestor()`
+
+```ts
+private findListBoxAncestor(box: Box): Box | null {
+    let current: Box | null = box.parent;
+    while (current) {
+        if (isListBox(current)) {
+            return current;
+        }
+        current = current.parent;
+    }
+    return null;
+}
+```
+
+### Change 2 — `paste()` method updated
+
+Before — only checked `selectedBox.parent`:
+```ts
+} else {
+    if (isListBox(currentSelection.parent)) {
+        // ... paste into list
+    } else {
+        // "Cannot paste here"
+    }
+}
+```
+
+After — walks up the tree:
+```ts
+} else {
+    // Walk up the box tree to find a ListBox ancestor
+    const listBox = this.findListBoxAncestor(currentSelection);
+    if (listBox) {
+        if (FreLanguage.getInstance().metaConformsToType(tobepasted, element.freLanguageConcept())) {
+            this.pasteInElement(
+                element.freOwnerDescriptor().owner,
+                listBox.propertyName,
+                element.freOwnerDescriptor().propertyIndex + 1,
+            );
+        } else {
+            // "Cannot paste" — type mismatch
+        }
+    } else {
+        // "Cannot paste" — no list ancestor found
+    }
+}
+```
+
+This enables Ctrl+C / Ctrl+V to work for copying and pasting Events, Tasks, Steps, and other list items when focus is anywhere within a list item, not just when the immediate parent is the list itself. Type conformance checking is preserved — you can only paste an element into a list that accepts its type (subtypes are allowed).

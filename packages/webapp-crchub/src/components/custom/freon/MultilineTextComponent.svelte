@@ -29,11 +29,11 @@
     let isProgrammaticUpdate = false;
 
     let conf = {
-        plugins: "lists searchreplace",
+        plugins: "lists searchreplace link",
         // Use array format for multiple toolbar rows
         toolbar: [
             "undo redo | bold italic underline | fontfamily fontsize",
-            "forecolor backcolor | alignleft aligncenter alignright | bullist numlist outdent indent | searchreplace"
+            "forecolor backcolor | alignleft aligncenter alignright | bullist numlist outdent indent | link | searchreplace"
         ],
         toolbar_mode: "wrap",
         skin: "oxide-dark",

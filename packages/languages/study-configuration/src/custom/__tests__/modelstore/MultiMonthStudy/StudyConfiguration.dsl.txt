@@ -2,7 +2,7 @@ Periods:
   Period: `Screening`
 
   Description: " "
-  Events:
+  Scheduled Events:
     Event: `Screen`
     This is a `site visit` that is also referred to as ""
 
@@ -37,6 +37,8 @@ with a window of 0 day(s) before and 0 day(s) after
 
     Tasks:
 
+  Unscheduled Events:
+
 Tasks:
 
 System Accesses:
@@ -44,3 +46,5 @@ System Accesses:
 Staffing:
 
 Roles:
+
+Notes:

@@ -118,12 +118,11 @@
 
     onDestroy(() => {
         var activeDrawer = getActiveDrawer();
-        if (activeDrawer === "studyTimelineTable" || activeDrawer === "studyTimelineChart" || activeDrawer === "dslErrors" || activeDrawer === "patientTimelineChart") {
+        if (activeDrawer === "studyTimelineTable" || activeDrawer === "dslErrors" || activeDrawer === "patientTimelineChart") {
             setActiveDrawer(null);
         }
         setDrawerVisibility("dslErrors", false);
         setDrawerVisibility("studyTimelineTable", false);
-        setDrawerVisibility("studyTimelineChart", false);
         setDrawerVisibility("patientTimelineChart", false);
     });
 </script>

@@ -73,22 +73,27 @@ main {
 }
 
 .text-component-width {
+  /* Use visibility:hidden instead of left:-9999px for reliable width calculation */
   position: absolute;
-  left: -9999px;
+  visibility: hidden;
+  white-space: pre; /* Preserve spaces for accurate measurement */
   display: inline-block;
-  margin: 0px 8px 0px 2px;
-  padding: 2px 4px 0px 2px;
+  margin: 0px 1px 0px 2px;
+  /* Match padding of .text-component-input for accurate width calculation */
+  padding: 0.125rem 0.15rem 0 0.2rem;
   border: none;
   box-sizing: border-box;
   font-family: var(--font-family-sans);
   font-size: var(--standard-font-size);
   font-weight: normal;
   font-style: normal;
+  line-height: 20px; /* Match input line-height */
 }
 
 .text-component-input-wrapper {
   margin-left: 0.125rem;
   margin-right: 0.125rem;
+  position: relative; /* Required for absolutely positioned width-measuring span */
 }
 
 .text-component-input {

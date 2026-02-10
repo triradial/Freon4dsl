@@ -89,8 +89,10 @@ export class Simulator {
             log(s);
         });
         this.sim.addEntity(Scheduler, "Scheduler", this);
-        // Run the simulation for the appropriate number of days
-        let results = this.sim.simulate(500);
+        // Run the simulation with a generous time limit
+        // The simulation will naturally complete when all events are scheduled
+        // 3650 days (10 years) provides ample room for long clinical trials
+        let results = this.sim.simulate(3650);
         return results;
     }
 }

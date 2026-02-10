@@ -24,12 +24,12 @@ global {
 
 StudyConfiguration {
     [
-    Study Notes: ${description}
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
     ${unscheduledEvents wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Unscheduled Events"}
     ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
     ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
     ${roles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"}
+    ${description wrap=ListGroupComponent cssClass="type1" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Study Notes"}
     ]
 }
 
@@ -60,19 +60,19 @@ Event {
 
 UnscheduledEvent {
     [
-        [fragment unscheduledEventDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
-    ]
-    fragment unscheduledEventDetails [
+        [fragment unscheduledEventNoDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="false" selectable="false" label="Event"]
+    ] trigger = "Unscheduled Event"
+    fragment unscheduledEventNoDetails [
         ${name}
         This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
         ${description}
-        ${tasks wrap=ListGroupComponent cssClass="type3" canAdd="true" canDelete="true" canExpand="true" isExpanded="false" selectable="false" label="Checklist"}
     ]
 }
+
 Task {
     [
-        [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]
-    ] trigger = "Checklist Task"
+        [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canShare="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]
+    ] trigger = "Task in this Checklist"
     fragment taskDetails [
         ${name} 
         ${description}
@@ -82,7 +82,7 @@ Task {
 TaskReference {
     [
         [fragment taskReferenceDetails wrap =  ReferenceComponent cssClass="type3" canDelete="true" canExpand="false" isExpanded="false" selectable="true" label="Task"]
-    ] trigger = "Task Reference"
+    ] trigger = "Reference to Shared Task"
     fragment taskReferenceDetails [
         ${task}
     ]
@@ -100,7 +100,7 @@ Step {
 
 SystemAccess {
     [
-        [fragment systemAccessDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true" hideDragHandle="true"]
+        [fragment systemAccessDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true" canShare="true" hideDragHandle="true"]
     ]
     trigger = "System Access"
     fragment systemAccessDetails [
