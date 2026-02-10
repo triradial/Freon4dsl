@@ -2,16 +2,20 @@ name: Build/Deploy Server
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - development
-
+    inputs:
+      environment:
+        description: 'Target environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - Development
+          
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 20.x ]
+        node-version: [ 22.x ]
 
     steps:
       - name: Checkout
@@ -30,9 +34,8 @@ jobs:
         run: npm run build
         working-directory: .
         env:
-          DEBUG: "*" 
+          DEBUG: "*"
 
-      # Add this preparation step
       - name: Prepare server deployment
         run: |
           # Create deployment directory
@@ -52,7 +55,7 @@ jobs:
           # Create a temporary local package directory
           mkdir -p server-app/local-packages
           cp -r packages/core/dist server-app/local-packages/core
-          cp -r packages/samples/StudyConfiguration/dist server-app/local-packages/study-configuration
+          cp -r packages/languages/study-configuration/dist server-app/local-packages/study-configuration
           
           # Install production dependencies
           cd server-app
@@ -68,7 +71,7 @@ jobs:
           
           # Install local workspace dependencies
           npm install --omit=dev ../packages/core
-          npm install --omit=dev ../packages/samples/StudyConfiguration
+          npm install --omit=dev ../packages/languages/study-configuration
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -76,49 +79,50 @@ jobs:
           name: node-app
           path: server-app
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   environment:
-  #     name: 'Development'
-  #     url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: ${{ github.event.inputs.environment || 'Development' }}
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-  #   steps:
-  #     - name: Login to Azure
-  #       uses: azure/login@v2
-  #       with:
-  #         creds: '{"clientId":"${{ secrets.AZUREAPPSERVICE_CLIENTID }}","clientSecret":"${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}","subscriptionId":"${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}","tenantId":"${{ secrets.AZUREAPPSERVICE_TENANTID }}"}'
-  
-  #     - uses: actions/download-artifact@v4
-  #       with:
-  #         name: node-app
-  #         path: server-app
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ secrets.AZUREAPPSERVICE_CLIENTID }}","clientSecret":"${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}","subscriptionId":"${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}","tenantId":"${{ secrets.AZUREAPPSERVICE_TENANTID }}"}'
 
-  #     - name: Verify deployment files
-  #       run: |
-  #         echo "Checking deployment structure..."
-  #         test -d server-app/node_modules || (echo "node_modules missing" && exit 1)
-  #         test -f server-app/package.json || (echo "package.json missing" && exit 1)
-  #         test -f server-app/dist/server/server-starter.js || (echo "server-starter.js missing" && exit 1)
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: node-app
+          path: server-app
+
+      - name: Verify deployment files
+        run: |
+          echo "Checking deployment structure..."
+          test -d server-app/node_modules || (echo "node_modules missing" && exit 1)
+          test -f server-app/package.json || (echo "package.json missing" && exit 1)
+          test -f server-app/dist/server/server-starter.js || (echo "server-starter.js missing" && exit 1)
           
-  #         echo "Checking dependencies..."
-  #         test -d server-app/node_modules/@freon4dsl/core || (echo "@freon4dsl/core missing" && exit 1)
-  #         test -d server-app/node_modules/@freon4dsl/samples-study-configuration || (echo "@freon4dsl/samples-study-configuration missing" && exit 1)
+          echo "Checking dependencies..."
+          test -d server-app/node_modules/@freon4dsl/core || (echo "@freon4dsl/core missing" && exit 1)
+          test -d server-app/node_modules/@freon4dsl/study-configuration || (echo "@freon4dsl/study-configuration missing" && exit 1)
           
-  #         echo "All required files and dependencies present"
+          echo "All required files and dependencies present"
 
-  #     - name: Deploy to Azure Web App
-  #       uses: azure/webapps-deploy@v3
-  #       id: deploy-to-webapp
-  #       with:
-  #         app-name: 'crchub-server'
-  #         package: server-app
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
+        with:
+          app-name: ${{ vars.AZURE_SERVER_NAME }}
+          package: server-app
 
-  #     - name: Configure App Settings
-  #       uses: azure/CLI@v1
-  #       with:
-  #         inlineScript: |
-  #           az webapp config appsettings set --name crchub-server \
-  #                                            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-  #                                            --settings AZURE_ENVIRONMENT=development \
-  #                                                      PORT=8080
+      - name: Configure App Settings
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az webapp config appsettings set --name ${{ vars.AZURE_SERVER_NAME }} \
+                                             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+                                             --settings AZURE_ENVIRONMENT=${{ vars.AZURE_ENVIRONMENT }} \
+                                                       PORT=8080
