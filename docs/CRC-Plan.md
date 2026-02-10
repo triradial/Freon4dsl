@@ -5,7 +5,10 @@ The following are the roughly priority ordered required updates before we can ha
 Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## TBD
-- [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. The the only choice for '+ SystemAccesses' is a SystemAccess concept. I see the drop down when I click it rather than it just being created. I added a discussion on it to Freon. Is this something we'll fix ourselves?
+- [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. Turns out it works with a return but not if you click on it. Should work with just click. Jos will look into fixing it.
+- [ ] js-vis chart:
+  - [ ] If the size of the js-vis chart it too big it overflows into the legend area. Can this be fixed?
+  - [ ] Needed to make a lot of CSS changes to get stacking of boxes on study chart. Need to discuss how we handle overlaps, e.g., windows frequently overlap. 
 - [ ] Copy and paste of language concepts only works on list elements. So you can't copy a schedule or checklist separately. Do we want to do something to support this vs. just copying the event? Need to discuss with Jos whether concepts should be selectable and then can be copied like in MPS. 
 
 
@@ -13,6 +16,10 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ### To-Do 
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
+- [ ] I updated the tinyMCE config to allow links in the description but they don't open from the editor. They do open from the checklist. Is this what we want?
+- [ ] Add an Event and it does not show in the drop-down for the 'When'. Close and re-open the study and it shows. 
+- [ ] In patient chart:
+  - [ ] If a visit/event and a window overlap how should it be shown, e.g., two icons in same box. Same qustion for visit/window overlapping patient unavailable. In some places you should two icons but not for all cases. 
 - [ ] For the boxes around concepts in the UI:
   - [ ] If you edit a field in a box with 'X' then tab out of that concept, the box with 'X' remains displayed. 
   - [ ] Seems to be a difference between behavior for hover and focus, Jos called it out in the meeting today.

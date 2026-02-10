@@ -388,7 +388,23 @@ export class Timeline extends RtObject {
     }
 
     getMaxDayOnTimeline() {
-        return this.getOffsetOfLastEventInstance();
+        // Get the max start day of events
+        const maxStartDay = this.getOffsetOfLastEventInstance();
+
+        // Also consider the end days of periods and events which may extend beyond their start day
+        const validDays = this.days.filter((d): d is TimelineDay => d != null && typeof (d as TimelineDay).day === "number");
+        let maxEndDay = maxStartDay;
+
+        for (const day of validDays) {
+            for (const event of day.events ?? []) {
+                // Check if this event has an endDay that extends beyond what we've seen
+                if (event.endDay !== undefined && event.endDay > maxEndDay) {
+                    maxEndDay = event.endDay;
+                }
+            }
+        }
+
+        return maxEndDay;
     }
 
     getMonthName(monthNumber: number): string {

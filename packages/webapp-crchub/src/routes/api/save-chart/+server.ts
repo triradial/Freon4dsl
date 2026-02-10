@@ -1,11 +1,18 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+// Get the project root by navigating up from this file's location
+// This file is at: packages/webapp-crchub/src/routes/api/save-chart/+server.ts
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const projectRoot = join(__dirname, '..', '..', '..', '..', '..', '..');
 
 /**
- * POST endpoint to save chart HTML to /tmp folder.
+ * POST endpoint to save chart HTML to project tmp folder for debugging.
  * Expects JSON body with: { html: string, filename: string }
+ * Files are saved to {projectRoot}/tmp/{filename}
  */
 export const POST: RequestHandler = async ({ request }) => {
     try {
@@ -17,8 +24,8 @@ export const POST: RequestHandler = async ({ request }) => {
 
         // Sanitize filename to prevent path traversal
         const sanitizedFilename = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
-        // Save to repo root for easy access during debugging
-        const filepath = join('/Users/mikevogel/projects/Freon4dsl', sanitizedFilename);
+        // Save to project tmp folder (relative to project root)
+        const filepath = join(projectRoot, 'tmp', sanitizedFilename);
 
         await writeFile(filepath, html, 'utf-8');
 
