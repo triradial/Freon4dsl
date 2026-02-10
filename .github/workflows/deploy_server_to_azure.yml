@@ -55,7 +55,7 @@ jobs:
           # Create a temporary local package directory
           mkdir -p server-app/local-packages
           cp -r packages/core/dist server-app/local-packages/core
-          cp -r packages/samples/StudyConfiguration/dist server-app/local-packages/study-configuration
+          cp -r packages/languages/study-configuration/dist server-app/local-packages/study-configuration
           
           # Install production dependencies
           cd server-app
@@ -71,7 +71,7 @@ jobs:
           
           # Install local workspace dependencies
           npm install --omit=dev ../packages/core
-          npm install --omit=dev ../packages/samples/StudyConfiguration
+          npm install --omit=dev ../packages/languages/study-configuration
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -107,7 +107,7 @@ jobs:
           
           echo "Checking dependencies..."
           test -d server-app/node_modules/@freon4dsl/core || (echo "@freon4dsl/core missing" && exit 1)
-          test -d server-app/node_modules/@freon4dsl/samples-study-configuration || (echo "@freon4dsl/samples-study-configuration missing" && exit 1)
+          test -d server-app/node_modules/@freon4dsl/study-configuration || (echo "@freon4dsl/study-configuration missing" && exit 1)
           
           echo "All required files and dependencies present"
 

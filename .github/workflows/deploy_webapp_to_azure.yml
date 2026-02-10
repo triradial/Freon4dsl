@@ -65,7 +65,7 @@ jobs:
           cp -r packages/core/dist webapp-app/local-packages/core
           cp -r packages/core-svelte/dist webapp-app/local-packages/core-svelte
           cp -r packages/webapp-lib/dist webapp-app/local-packages/webapp-lib
-          cp -r packages/samples/StudyConfiguration/dist webapp-app/local-packages/study-configuration
+          cp -r packages/languages/study-configuration/dist webapp-app/local-packages/study-configuration
          
           # Copy built webapp files
           cp -r packages/webapp-crchub/public webapp-app/
