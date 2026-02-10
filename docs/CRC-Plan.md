@@ -6,6 +6,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## TBD
 - [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. Turns out it works with a return but not if you click on it. Should work with just click. Jos will look into fixing it.
+- [ ] Should Shared-References be added and does it break studies in DB?
 - [ ] js-vis chart:
   - [ ] If the size of the js-vis chart it too big it overflows into the legend area. Can this be fixed?
   - [ ] Needed to make a lot of CSS changes to get stacking of boxes on study chart. Need to discuss how we handle overlaps, e.g., windows frequently overlap. 
@@ -67,8 +68,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 
 ### In-Progress
-- [ ] Rebuild some or all of the studies to test behavior and useability
-- [ ] Create complex and realistic examples of checklists
+- [ ] Rebuild some or all of the studies to test behavior and useability including creating realistic examples of checklists. 
 
 
 ### Done
