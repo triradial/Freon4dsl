@@ -9,9 +9,6 @@ on:
         type: choice
         options:
           - Development
-  push:
-    branches:
-      - development
 
 jobs:
   build:
