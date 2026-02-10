@@ -9,6 +9,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 - [ ] js-vis chart:
   - [ ] If the size of the js-vis chart it too big it overflows into the legend area. Can this be fixed?
   - [ ] Needed to make a lot of CSS changes to get stacking of boxes on study chart. Need to discuss how we handle overlaps, e.g., windows frequently overlap. 
+- [ ] Review the way CSS was added inline for the checklist HTML page and decide if it needs to be integrated with the light/dark CSS for the app.
 - [ ] Copy and paste of language concepts only works on list elements. So you can't copy a schedule or checklist separately. Do we want to do something to support this vs. just copying the event? Need to discuss with Jos whether concepts should be selectable and then can be copied like in MPS. 
 
 

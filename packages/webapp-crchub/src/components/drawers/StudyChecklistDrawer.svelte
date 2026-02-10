@@ -297,23 +297,8 @@
                     }
                 });
             });
-            
+
             bodyHtml = tempDiv.innerHTML;
-
-            // Generate TOC HTML from the captured headings
-            let tocHtml = '<h2>Table of Contents</h2><ul class="toc-list">';
-            toc.forEach(item => {
-                tocHtml += `<li style="margin-left: ${(item.level - 1) * 20}px;"><a href="#${item.id}">${item.text}</a></li>`;
-            });
-            tocHtml += "</ul>";
-
-            // Replace the <!--TOC--> marker with the generated TOC, or prepend if no marker found
-      //      if (bodyHtml.includes('<!--TOC-->')) {
-         //       checklistHtml = bodyHtml.replace('<!--TOC-->', tocHtml);
-       //     } else {
-       //         checklistHtml = tocHtml + bodyHtml;
-     //       }
-
             checklistHtml = bodyHtml;
 
         } catch (err: unknown) {
@@ -352,7 +337,7 @@
         font-size: var(--standard-font-size);
         color: var(--checklist-text);
     }
-    
+
     /* .study-checklist-content h1,
     .study-checklist-content h2,
     .study-checklist-content h3,

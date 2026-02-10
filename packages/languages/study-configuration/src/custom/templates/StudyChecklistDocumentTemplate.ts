@@ -262,7 +262,7 @@ export class StudyChecklistDocumentTemplate {
 
     static getSystemsAsMarkdown(systems) {
         if (!systems || systems.length === 0) return '';
-        
+
         const lines: string[] = [];
         systems.forEach(system => {
             const s = (system as any).system?.referred ?? (system as any).referred ?? system;
@@ -286,6 +286,85 @@ export class StudyChecklistDocumentTemplate {
             }
         });
         return lines.length ? `${lines.join('\n')}\n` : '';
+    }
+
+    /**
+     * Render systems as sub-headings (for study-level systems section)
+     * @param builder The markdown builder
+     * @param systems The systems array to render
+     * @param headingLevel The heading level to use for each system (default 2)
+     */
+    private static renderSystemsAsHeadings(builder: MarkdownBuilder, systems: any[], headingLevel: number = 2): void {
+        if (!systems || systems.length === 0) return;
+
+        systems.forEach(system => {
+            const s = (system as any).system?.referred ?? (system as any).referred ?? system;
+            const name = s?.name ?? 'Unnamed System';
+            const accessedAt = s?.accessedAt;
+            const accessedUrl = typeof accessedAt === 'string' ? accessedAt : accessedAt?.url ?? '';
+            const accessedPhone = typeof accessedAt === 'string' ? '' : (accessedAt?.phoneNumber ?? '');
+            const desc = typeof s?.description === 'string' ? s.description : (s?.description?.text ?? s?.description?.rawText ?? '');
+
+            // Add system name as heading
+            builder.addHeading(headingLevel, name);
+
+            // Add URL if present
+            if (accessedUrl) {
+                builder.addParagraph(`URL: [${accessedUrl}](${accessedUrl})`, true);
+            }
+
+            // Add phone number if present
+            if (accessedPhone) {
+                builder.addParagraph(`Phone: ${StudyChecklistDocumentTemplate.formatPhoneNumber(accessedPhone)}`, true);
+            }
+
+            // Add description if present
+            if (desc) {
+                builder.addParagraph(desc, true);
+            }
+        });
+    }
+
+    /**
+     * Render people/staffing as sub-headings (for study-level staffing section)
+     * @param builder The markdown builder
+     * @param people The people array to render
+     * @param headingLevel The heading level to use for each person (default 2)
+     */
+    private static renderPeopleAsHeadings(builder: MarkdownBuilder, people: any[], headingLevel: number = 2): void {
+        if (!people || people.length === 0) return;
+
+        people.forEach(person => {
+            const actualPerson = (person as any).person?.referred ?? (person as any).referred ?? person;
+            if (!actualPerson) return;
+
+            const personName = actualPerson.name ?? 'Unnamed Person';
+            const role = actualPerson.role;
+            const roleName = role?.referred?.name ?? role?.name ?? '';
+            const email = actualPerson.email ?? '';
+            const phone = actualPerson.phoneNumber ?? '';
+            const descSource = actualPerson.description;
+            const desc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
+
+            // Add person name as heading (with role if present)
+            const headingText = roleName ? `${personName} (${roleName})` : personName;
+            builder.addHeading(headingLevel, headingText);
+
+            // Add email if present
+            if (email) {
+                builder.addParagraph(`Email: ${email}`, true);
+            }
+
+            // Add phone number if present
+            if (phone) {
+                builder.addParagraph(`Phone: ${StudyChecklistDocumentTemplate.formatPhoneNumber(phone)}`, true);
+            }
+
+            // Add description if present
+            if (desc) {
+                builder.addParagraph(desc, true);
+            }
+        });
     }
 
     /**
@@ -620,6 +699,20 @@ export class StudyChecklistDocumentTemplate {
             studyConfiguration.unscheduledEvents.forEach((event, eventCounter) => {
                 StudyChecklistDocumentTemplate.renderUnscheduledEventAsMarkdown(builder, event, eventCounter, "", "", 2);
             });
+        }
+
+        // Add study-level systems section
+        if (studyConfiguration.systemAccesses?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Systems");
+            StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 2);
+        }
+
+        // Add study-level staffing section
+        if (studyConfiguration.staffing?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Staffing");
+            StudyChecklistDocumentTemplate.renderPeopleAsHeadings(builder, studyConfiguration.staffing, 2);
         }
 
         let markdown = builder.build();

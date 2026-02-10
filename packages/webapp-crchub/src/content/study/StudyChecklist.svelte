@@ -36,6 +36,89 @@
         }
     });
 
+    /**
+     * Transform the markdown-generated TOC into a collapsible structure
+     * using <details>/<summary> elements
+     */
+    function transformTocToCollapsible(toc: { level: number; text: string; id: string }[]): string {
+        if (toc.length === 0) return '';
+
+        interface TocNode {
+            item: { level: number; text: string; id: string };
+            children: TocNode[];
+        }
+
+        // Build a tree structure from the flat TOC list
+        const root: TocNode[] = [];
+        const stack: { node: TocNode; level: number }[] = [];
+
+        for (const item of toc) {
+            const newNode: TocNode = { item, children: [] };
+
+            // Pop items from stack that are at same or deeper level
+            while (stack.length > 0 && stack[stack.length - 1].level >= item.level) {
+                stack.pop();
+            }
+
+            if (stack.length === 0) {
+                // This is a top-level item
+                root.push(newNode);
+            } else {
+                // Add as child of the last item in stack
+                stack[stack.length - 1].node.children.push(newNode);
+            }
+
+            stack.push({ node: newNode, level: item.level });
+        }
+
+        // Render the tree as HTML with collapsible sections
+        function renderNode(node: TocNode, isTopLevel: boolean): string {
+            const { item, children } = node;
+            const hasChildren = children.length > 0;
+
+            if (isTopLevel) {
+                // Top-level items are always rendered as collapsible sections
+                if (hasChildren) {
+                    const childrenHtml = children.map(child => renderNode(child, false)).join('');
+                    return `
+                        <details class="toc-section">
+                            <summary class="toc-summary">
+                                <a href="#${item.id}" class="toc-link">${item.text}</a>
+                            </summary>
+                            <ul class="toc-children">
+                                ${childrenHtml}
+                            </ul>
+                        </details>`;
+                } else {
+                    // Top-level item without children: still render as a section link (not collapsible)
+                    return `
+                        <div class="toc-section-leaf">
+                            <a href="#${item.id}" class="toc-link toc-section-link">${item.text}</a>
+                        </div>`;
+                }
+            } else if (hasChildren) {
+                // Non-top-level item with children: nested details
+                const childrenHtml = children.map(child => renderNode(child, false)).join('');
+                return `
+                    <li class="toc-item">
+                        <details class="toc-subsection">
+                            <summary class="toc-subsummary">
+                                <a href="#${item.id}" class="toc-link">${item.text}</a>
+                            </summary>
+                            <ul class="toc-children">
+                                ${childrenHtml}
+                            </ul>
+                        </details>
+                    </li>`;
+            } else {
+                // Leaf item: simple list item
+                return `<li class="toc-item"><a href="#${item.id}" class="toc-link">${item.text}</a></li>`;
+            }
+        }
+
+        return root.map(node => renderNode(node, true)).join('');
+    }
+
     async function loadChecklist(forceRefresh: boolean = false) {
         const startTime = performance.now();
         console.log(`[StudyChecklist] Loading checklist for ${studyId}, forceRefresh=${forceRefresh}`);
@@ -74,7 +157,10 @@
                         const text = tokens[i + 1].content;
                         const level = parseInt(token.tag.slice(1));
                         const id = generateId(text);
-                        toc.push({ level, text, id });
+                        // Skip "Table of Contents" heading - it shouldn't be in the TOC itself
+                        if (text !== 'Table of Contents') {
+                            toc.push({ level, text, id });
+                        }
                         i++; // skip inline content token
                     }
                 }
@@ -123,6 +209,33 @@
                         }
                     });
                 });
+
+                // Transform the markdown-generated TOC into a collapsible version
+                // The markdown TOC is an h2 "Table of Contents" followed by an ordered or unordered list
+                const allH2s = tempDiv.querySelectorAll('h2');
+                for (const h2 of allH2s) {
+                    if (h2.textContent?.trim() === 'Table of Contents') {
+                        const nextSibling = h2.nextElementSibling;
+                        if (nextSibling && (nextSibling.tagName === 'OL' || nextSibling.tagName === 'UL')) {
+                            // Transform the flat list into a collapsible structure
+                            const collapsibleToc = transformTocToCollapsible(toc);
+
+                            // Create a container for the collapsible TOC
+                            const tocContainer = document.createElement('div');
+                            tocContainer.className = 'toc-container';
+                            tocContainer.innerHTML = `
+                                <h2 class="toc-title">Table of Contents</h2>
+                                <nav class="toc-nav">${collapsibleToc}</nav>
+                            `;
+
+                            // Replace the old h2 and list with the new collapsible TOC
+                            h2.parentNode?.insertBefore(tocContainer, h2);
+                            nextSibling.remove();
+                            h2.remove();
+                        }
+                        break;
+                    }
+                }
 
                 bodyHtml = tempDiv.innerHTML;
 
@@ -491,5 +604,146 @@
     .study-checklist-content :global(li p) {
         font-size: var(--standard-font-size);
         color: var(--checklist-text);
+    }
+
+    /* Collapsible TOC Styles */
+    .study-checklist-content :global(.toc-container) {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: var(--white-5t);
+        border-radius: 0.5rem;
+        border: 1px solid var(--white-10t);
+    }
+
+    .study-checklist-content :global(.toc-title) {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        color: var(--text-primary-500);
+    }
+
+    .study-checklist-content :global(.toc-nav) {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .study-checklist-content :global(.toc-section) {
+        border: none;
+        margin-bottom: 0.25rem;
+    }
+
+    .study-checklist-content :global(.toc-section-leaf) {
+        padding: 0.5rem 0.75rem;
+        /* Add left padding to align with collapsible sections (accounts for the arrow space) */
+        padding-left: calc(0.75rem + 0.65rem + 0.5rem); /* base padding + arrow size + gap */
+        background-color: var(--white-10t);
+        border-radius: 0.375rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .study-checklist-content :global(.toc-section-link) {
+        font-weight: 600;
+    }
+
+    .study-checklist-content :global(.toc-summary) {
+        cursor: pointer;
+        padding: 0.5rem 0.75rem;
+        background-color: var(--white-10t);
+        border-radius: 0.375rem;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        transition: background-color 0.15s ease;
+    }
+
+    .study-checklist-content :global(.toc-summary:hover) {
+        background-color: var(--white-15t);
+    }
+
+    .study-checklist-content :global(.toc-summary::-webkit-details-marker) {
+        display: none;
+    }
+
+    .study-checklist-content :global(.toc-summary::before) {
+        content: '▶';
+        font-size: 0.65rem;
+        transition: transform 0.2s ease;
+        color: var(--text-primary-400);
+    }
+
+    .study-checklist-content :global(details[open] > .toc-summary::before) {
+        transform: rotate(90deg);
+    }
+
+    .study-checklist-content :global(.toc-subsection) {
+        border: none;
+        margin: 0;
+    }
+
+    .study-checklist-content :global(.toc-subsummary) {
+        cursor: pointer;
+        padding: 0.25rem 0;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: color 0.15s ease;
+    }
+
+    .study-checklist-content :global(.toc-subsummary::-webkit-details-marker) {
+        display: none;
+    }
+
+    .study-checklist-content :global(.toc-subsummary::before) {
+        content: '▶';
+        font-size: 0.5rem;
+        transition: transform 0.2s ease;
+        color: var(--text-primary-400);
+    }
+
+    .study-checklist-content :global(details[open] > .toc-subsummary::before) {
+        transform: rotate(90deg);
+    }
+
+    .study-checklist-content :global(.toc-children) {
+        list-style: none;
+        padding-left: 1.25rem;
+        margin: 0.25rem 0 0.5rem 0;
+    }
+
+    .study-checklist-content :global(.toc-item) {
+        padding: 0.25rem 0;
+        margin: 0;
+    }
+
+    .study-checklist-content :global(.toc-link) {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.15s ease;
+    }
+
+    .study-checklist-content :global(.toc-link:hover) {
+        color: var(--text-hover);
+        text-decoration: underline;
+    }
+
+    .study-checklist-content :global(.toc-summary .toc-link) {
+        color: var(--text-primary-500);
+    }
+
+    .study-checklist-content :global(.toc-summary .toc-link:hover) {
+        color: var(--primary-color);
+    }
+
+    /* Override for leaf sections (top-level items without children) to match summary link color */
+    .study-checklist-content :global(.toc-section-leaf .toc-link) {
+        color: var(--text-primary-500);
+    }
+
+    .study-checklist-content :global(.toc-section-leaf .toc-link:hover) {
+        color: var(--primary-color);
     }
 </style>
