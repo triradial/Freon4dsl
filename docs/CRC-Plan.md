@@ -5,19 +5,14 @@ The following are the roughly priority ordered required updates before we can ha
 Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ## TBD
-- [ ] I believe we discussed with Jos in the past that Freon would auto create the single concept when you hit the '+ concept'. It doesn't work. Turns out it works with a return but not if you click on it. Should work with just click. Jos will look into fixing it.
-- [ ] Should Shared-References be added and does it break studies in DB?
-- [ ] js-vis chart:
-  - [ ] If the size of the js-vis chart it too big it overflows into the legend area. Can this be fixed?
-  - [ ] Needed to make a lot of CSS changes to get stacking of boxes on study chart. Need to discuss how we handle overlaps, e.g., windows frequently overlap. 
 - [ ] Review the way CSS was added inline for the checklist HTML page and decide if it needs to be integrated with the light/dark CSS for the app.
-- [ ] Copy and paste of language concepts only works on list elements. So you can't copy a schedule or checklist separately. Do we want to do something to support this vs. just copying the event? Need to discuss with Jos whether concepts should be selectable and then can be copied like in MPS. 
 
 
 ## Graham
 
 ### To-Do 
 - [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
+- [ ] Add toolbar to all the tabs, except Errors. Add legend icon for all charts, e.g., study-level chart needs legend and for it to be removed from the chart area.
 - [ ] I updated the tinyMCE config to allow links in the description but they don't open from the editor. They do open from the checklist. Is this what we want?
 - [ ] Add an Event and it does not show in the drop-down for the 'When'. Close and re-open the study and it shows. 
 - [ ] In patient chart:

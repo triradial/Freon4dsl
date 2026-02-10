@@ -1,11 +1,12 @@
 import * as path from "path";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, afterEach, describe, expect, it } from "vitest";
 import { StudyConfigurationModelEnvironment } from "../../freon/config/StudyConfigurationModelEnvironment.js";
 import { StudyConfiguration, StudyConfigurationModel } from "../../freon/language/index.js";
 import { Sim } from "../simjs/sim.js";
 import { StudyChecklistDocumentTemplate } from "../templates/StudyChecklistDocumentTemplate.js";
 import { resetTimelineScriptTemplate, TimelineChartTemplate } from "../templates/TimelineChartTemplate.js";
 import { Simulator } from "../timeline/Simulator.js";
+import { Timeline } from "../timeline/Timeline.js";
 import * as utils from "./Utils";
 
 describe("Generating Documents", () => {
@@ -15,13 +16,24 @@ describe("Generating Documents", () => {
     var studyConfigurationModel: StudyConfigurationModel;
     const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
 
+    // Store the original getToday method so we can restore it after tests
+    const originalGetToday = Timeline.getToday;
+
     beforeEach(() => {
+        // Set a fixed reference date for tests to ensure consistent results
+        Timeline.getToday = () => new Date(2024, 0, 1);
+
         new Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
         // const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
         studyConfigurationModel = studyConfigurationModelEnvironment.newModel(modelName) as StudyConfigurationModel;
         studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
         simulator = new Simulator(studyConfigurationUnit);
         resetTimelineScriptTemplate();
+    });
+
+    afterEach(() => {
+        // Restore the original getToday method
+        Timeline.getToday = originalGetToday;
     });
 
     describe("Generation of Study Checklists Document", () => {

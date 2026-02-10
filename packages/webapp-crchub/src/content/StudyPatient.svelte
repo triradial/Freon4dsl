@@ -1207,12 +1207,39 @@
         setDrawerVisibility("help", true);
         setDrawerVisibility("visitChecklist", true);
         if (patient && studyId) {
-            setDrawerProps("visitChecklist", { patientId: patientId, studyId: studyId, selectedDate: new Date() });
+            // Get patient reference date for the drawer
+            let patientRefDate: Date | undefined = undefined;
+            if (patientScheduleFromDB?.referenceDate) {
+                const [year, month, day] = patientScheduleFromDB.referenceDate.split('-').map(Number);
+                patientRefDate = new Date(year, month - 1, day, 0, 0, 0);
+            }
+            setDrawerProps("visitChecklist", { patientId: patientId, studyId: studyId, selectedDate: new Date(), patientReferenceDate: patientRefDate });
         }
     });
 
     onDestroy(() => {
         setDrawerVisibility("visitChecklist", false);
+    });
+
+    // Update visitChecklist drawer props when selectedDay changes
+    $effect(() => {
+        if (selectedDay !== null && studyId) {
+            const date = getDateFromDay(selectedDay);
+            const hasEvents = selectedEvents && selectedEvents.length > 0;
+            // Get patient reference date (same logic as getFallbackReferenceDate)
+            let patientRefDate: Date | undefined = undefined;
+            if (patientScheduleFromDB?.referenceDate) {
+                const [year, month, day] = patientScheduleFromDB.referenceDate.split('-').map(Number);
+                patientRefDate = new Date(year, month - 1, day, 0, 0, 0);
+            }
+            setDrawerProps("visitChecklist", {
+                patientId: patientId,
+                studyId: studyId,
+                selectedDate: date,
+                hasEvents: hasEvents,
+                patientReferenceDate: patientRefDate
+            });
+        }
     });
 </script>
 

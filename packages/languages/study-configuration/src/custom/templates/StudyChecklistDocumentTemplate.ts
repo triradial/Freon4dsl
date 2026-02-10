@@ -1,6 +1,6 @@
-import { Timeline } from "../timeline/Timeline.js";
 import { Period, Person, StudyConfiguration, Task, TaskReference, UnscheduledEvent } from "../../freon/language/index.js";
 import { StudyConfigurationModelModelUnitWriter } from "../../freon/writer/StudyConfigurationModelModelUnitWriter.js";
+import { Timeline } from "../timeline/Timeline.js";
 
 class MarkdownBuilder {
     private sections: string[] = [];
@@ -65,15 +65,15 @@ class MarkdownBuilder {
     }
 
     /**
-     * Add a checklist item with a checkbox (GitHub-flavored markdown)
+     * Add a checklist item with an HTML checkbox
      * @param text The text for the checklist item
      * @param checked Whether the checkbox is checked (default: false)
-     * @param indent Indentation level (0 = no indent, 1 = 2 spaces, 2 = 4 spaces, etc.)
+     * @param indent Indentation level (0 = task, 1 = step)
      */
     addChecklistItem(text: string, checked: boolean = false, indent: number = 0): this {
-        const checkbox = checked ? '[x]' : '[ ]';
-        const indentation = '  '.repeat(indent);
-        this.sections.push(`${indentation}- ${checkbox} ${text}`);
+        const checkedAttr = checked ? ' checked' : '';
+        const indentClass = indent > 0 ? ' checklist-step' : ' checklist-task';
+        this.sections.push(`<div class="checklist-item${indentClass}"><label><input type="checkbox"${checkedAttr}> ${text}</label></div>`);
         return this;
     }
 
@@ -83,8 +83,8 @@ class MarkdownBuilder {
      * @param indent Indentation level to match the parent checklist item
      */
     addChecklistContent(text: string, indent: number = 1): this {
-        const indentation = '  '.repeat(indent);
-        this.sections.push(`${indentation}${text}`);
+        const indentClass = indent > 1 ? 'checklist-step-content' : 'checklist-task-content';
+        this.sections.push(`<div class="${indentClass}">${text}</div>`);
         return this;
     }
     
@@ -368,7 +368,41 @@ export class StudyChecklistDocumentTemplate {
     }
 
     /**
-     * Helper method to render a step as markdown
+     * Render references as sub-headings (for study-level references section)
+     * @param builder The markdown builder
+     * @param references The references array to render
+     * @param headingLevel The heading level to use for each reference (default 2)
+     */
+    private static renderReferencesAsHeadings(builder: MarkdownBuilder, references: any[], headingLevel: number = 2): void {
+        if (!references || references.length === 0) return;
+
+        references.forEach(reference => {
+            // Handle both direct Reference and SharedReference (which has a reference to Reference)
+            const ref = (reference as any).referenceName?.referred ?? (reference as any).reference?.referred ?? (reference as any).referred ?? reference;
+            if (!ref) return;
+
+            const name = ref?.name ?? 'Unnamed Reference';
+            const link = ref?.link ?? '';
+            const descSource = ref?.description;
+            const desc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
+
+            // Add reference name as heading
+            builder.addHeading(headingLevel, name);
+
+            // Add link if present
+            if (link) {
+                builder.addParagraph(`Link: [${link}](${link})`, true);
+            }
+
+            // Add description if present
+            if (desc) {
+                builder.addParagraph(desc, true);
+            }
+        });
+    }
+
+    /**
+     * Helper method to render a step as markdown (heading-based, for Study Checklist)
      * @param builder The markdown builder
      * @param step The step to render
      * @param stepCounter The step index (0-based)
@@ -410,7 +444,23 @@ export class StudyChecklistDocumentTemplate {
     }
 
     /**
-     * Helper method to render a task as markdown
+     * Helper method to render a step as markdown with checkbox (for Visit Checklist)
+     * @param builder The markdown builder
+     * @param step The step to render
+     * @param stepCounter The step index (0-based)
+     */
+    private static renderStepAsCheckbox(builder: MarkdownBuilder, step: any, stepCounter: number): void {
+        // Step as checkbox item (indented under task)
+        builder.addChecklistItem(`Step ${stepCounter + 1}: ${step.name}`, false, 1);
+
+        const stepDesc = step.description?.text ?? step.description?.rawText;
+        if (stepDesc) {
+            builder.addChecklistContent(stepDesc, 2);
+        }
+    }
+
+    /**
+     * Helper method to render a task as markdown (heading-based, for Study Checklist)
      * @param builder The markdown builder
      * @param task The task to render (can be Task or TaskReference)
      * @param taskCounter The task index (0-based)
@@ -431,6 +481,30 @@ export class StudyChecklistDocumentTemplate {
         t.steps.forEach((step, stepCounter) => {
             StudyChecklistDocumentTemplate.renderStepAsMarkdown(builder, step, stepCounter, headingLevel + 1);
         });
+    }
+
+    /**
+     * Helper method to render a task as markdown with checkbox (for Visit Checklist)
+     * @param builder The markdown builder
+     * @param task The task to render (can be Task or TaskReference)
+     */
+    private static renderTaskAsCheckbox(builder: MarkdownBuilder, task: Task | TaskReference): void {
+        const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
+
+        // Task as checkbox item
+        builder.addChecklistItem(`Task: ${t.name}`, false, 0);
+
+        const taskDesc = t.description?.text ?? t.description?.rawText;
+        if (taskDesc) {
+            builder.addChecklistContent(taskDesc, 1);
+        }
+
+        t.steps.forEach((step, stepCounter) => {
+            StudyChecklistDocumentTemplate.renderStepAsCheckbox(builder, step, stepCounter);
+        });
+
+        // Add empty line after task for visual separation
+        builder.addEmptyLine();
     }
 
     /**
@@ -476,6 +550,44 @@ export class StudyChecklistDocumentTemplate {
 
         event.tasks.forEach((task, taskCounter) => {
             StudyChecklistDocumentTemplate.renderTaskAsMarkdown(builder, task, taskCounter, taskPrefix);
+        });
+    }
+
+    /**
+     * Helper method to render an event as markdown with checkboxes for tasks/steps (for Visit Checklist)
+     * @param builder The markdown builder
+     * @param writer The model writer
+     * @param event The event to render
+     */
+    private static renderEventWithCheckboxes(builder: MarkdownBuilder, writer: StudyConfigurationModelModelUnitWriter, event: any): void {
+        // Event heading (keep as heading, not checkbox)
+        builder.addHeading(2, event.name);
+
+        const eventDesc = event.description?.text ?? event.description?.rawText;
+        if (eventDesc) {
+            builder.addParagraph(eventDesc, true);
+        }
+
+        const schedulingInfo = [
+            `This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}`,
+            `with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}`
+        ];
+
+        const eventRepeat = event.schedule.eventRepeat
+            ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
+            : "";
+        const timeOfDay = event.schedule.eventTimeOfDay
+            ? "limited to " + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
+            : "";
+
+        if (eventRepeat) schedulingInfo.push(eventRepeat);
+        if (timeOfDay) schedulingInfo.push(timeOfDay);
+
+        builder.addParagraph(schedulingInfo.join(' '), true);
+
+        // Render tasks with checkboxes
+        event.tasks.forEach((task: Task | TaskReference) => {
+            StudyChecklistDocumentTemplate.renderTaskAsCheckbox(builder, task);
         });
     }
 
@@ -614,7 +726,8 @@ export class StudyChecklistDocumentTemplate {
      * Get visits/events for a specific date as markdown.
      * This creates a checklist for just the events scheduled for that date.
      * Uses the main template rendering logic to eliminate duplication.
-     * 
+     * Includes shared systems and references from the study configuration.
+     *
      * @param timeline The timeline to search
      * @param targetDate The date to get visits for
      * @param studyConfiguration The study configuration (needed for event details)
@@ -623,14 +736,14 @@ export class StudyChecklistDocumentTemplate {
     static getVisitForDateAsMarkdown(timeline: Timeline, targetDate: Date, studyConfiguration: StudyConfiguration): string {
         const builder = new MarkdownBuilder();
         const writer = new StudyConfigurationModelModelUnitWriter();
-        
+
         // Normalize target date to midnight for comparison
         const normalizedTargetDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0);
-        
+
         // Find the day number that corresponds to this date
         // We need to search through all days in the timeline to find the one matching the target date
         let targetDay: number | undefined = undefined;
-        
+
         // Search through all days in the timeline to find the one matching the target date
         for (const timelineDay of timeline.getDays()) {
             const eventInstances = timelineDay.getEventInstances();
@@ -645,37 +758,58 @@ export class StudyChecklistDocumentTemplate {
                 }
             }
         }
-        
+
         if (targetDay === undefined) {
             builder.addHeading(1, `No visits scheduled for ${normalizedTargetDate.toLocaleDateString()}`);
             return builder.build();
         }
-        
+
         // Get all event instances for this day
         const eventInstances = timeline.getScheduledEventInstancessForDay(targetDay);
-        
+
         if (eventInstances.length === 0) {
             builder.addHeading(1, `No visits scheduled for ${normalizedTargetDate.toLocaleDateString()}`);
             return builder.build();
         }
-        
+
         // Add date heading
-        builder.addHeading(1, `Checklist for ${normalizedTargetDate.toLocaleDateString()}`);
+        builder.addHeading(1, `Visit Checklist for ${normalizedTargetDate.toLocaleDateString()}`);
         builder.addEmptyLine();
-        
-        // Format each event instance using the main template rendering logic
+
+        // Format each event instance with checkboxes for tasks/steps
         eventInstances.forEach((eventInstance, index) => {
             const event = eventInstance.getScheduledEvent().configuredEvent;
-            
-            // Use the main template method to render the event (with emoji prefixes for visit checklist)
-            StudyChecklistDocumentTemplate.renderEventAsMarkdown(builder, writer, event, index, "📋 ", "✅ ");
-            
+
+            // Use the checkbox version for visit checklist
+            StudyChecklistDocumentTemplate.renderEventWithCheckboxes(builder, writer, event);
+
             // Add separator between events (except after the last one)
             if (index < eventInstances.length - 1) {
                 builder.addSectionBreak();
             }
         });
-        
+
+        // Add study-level shared systems section (same as getStudyChecklistAsMarkdown)
+        if (studyConfiguration.systemAccesses?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Systems");
+            StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 2);
+        }
+
+        // Add study-level shared references section (same as getStudyChecklistAsMarkdown)
+        if (studyConfiguration.sharedReferences?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "References");
+            StudyChecklistDocumentTemplate.renderReferencesAsHeadings(builder, studyConfiguration.sharedReferences, 2);
+        }
+
+        // Add study-level staffing section (same as getStudyChecklistAsMarkdown)
+        if (studyConfiguration.staffing?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Staffing");
+            StudyChecklistDocumentTemplate.renderPeopleAsHeadings(builder, studyConfiguration.staffing, 2);
+        }
+
         return builder.build();
     }
 
@@ -706,6 +840,13 @@ export class StudyChecklistDocumentTemplate {
             builder.addSectionBreak();
             builder.addHeading(1, "Systems");
             StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 2);
+        }
+
+        // Add study-level references section
+        if (studyConfiguration.sharedReferences?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "References");
+            StudyChecklistDocumentTemplate.renderReferencesAsHeadings(builder, studyConfiguration.sharedReferences, 2);
         }
 
         // Add study-level staffing section

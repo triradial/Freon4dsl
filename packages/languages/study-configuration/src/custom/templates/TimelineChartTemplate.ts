@@ -475,6 +475,10 @@ export class TimelineChartTemplate {
             styleEl.textContent = cssRules.join('\\n');
             document.head.appendChild(styleEl);
           }
+
+          // Force a redraw to ensure all axis labels are rendered
+          // vis-timeline uses lazy rendering and may not render all labels initially
+          timeline.redraw();
         }, 500);
 
         ${

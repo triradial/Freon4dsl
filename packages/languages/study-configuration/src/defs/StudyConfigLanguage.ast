@@ -23,6 +23,7 @@ modelunit StudyConfiguration {
     unscheduledEvents: UnscheduledEvent[];
     tasks: SharedTask[];
     systemAccesses: SystemAccess[];
+    sharedReferences: Reference[];
     staffing: Person[];
     roles: StaffRole[];
     description: Description;
@@ -70,16 +71,12 @@ abstract concept EventTask base AbstractTask {
 concept Task base EventTask {
     name: identifier;
     description: Description;
-    numberedSteps: boolean;
-    showDetails: boolean;
     steps: Step[];
 }
 
 concept SharedTask base AbstractTask{
     name: identifier;
     description: Description;
-    numberedSteps: boolean;
-    showDetails: boolean;
     steps: Step[];
 }
 
@@ -96,18 +93,6 @@ concept Step {
     systems: AbstractSystemAccess[];
 }
 
-interface WorkflowDecision {
-}
-
-concept WorkflowDescription implements WorkflowDecision  {
-    text: Description;
-}
-
-concept WorkflowBranch implements WorkflowDecision {
-    branch: ScheduleExpression;
-}
-
-// TODO: Customize the validator to allow these strings to be empty.
 concept Description {
     text?: string = " ";
     rawText?: string = " ";
@@ -121,8 +106,6 @@ concept SystemAccess base AbstractSystemAccess {
     description: Description;
     isShared: boolean = false;
     accessedAt: AccessedAt;
-    //functionName?: string;
-    // robotMappings?: RobotMapping;
 }
 
 concept SystemAccessReference base AbstractSystemAccess {
@@ -159,10 +142,17 @@ concept Person base AbstractPerson {
     reference role: StaffRole;
 }
 
-concept Reference {
-    name: string;
+abstract concept AbstractReference {
+}
+
+concept Reference base AbstractReference {
+    name: identifier;
     link?: string;
     description: Description;
+}
+
+concept SharedReference base AbstractReference {
+    reference referenceName: Reference;
 }
 
 concept RobotMapping {

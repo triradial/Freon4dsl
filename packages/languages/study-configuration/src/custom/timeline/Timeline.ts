@@ -19,7 +19,17 @@ export class Timeline extends RtObject {
 
     // timeline options
     organizeByStudyDay = true; // Organize the timeline by study day vs a specific reference date
-    referenceDate = new Date(2024, 0, 1); // The reference date for the timeline. Used when organizeByStudyDay is true
+    referenceDate = Timeline.getToday(); // The reference date for the timeline. Used when organizeByStudyDay is true
+
+    /**
+     * Get today's date at midnight (start of day).
+     * This is a static method to allow tests to override it.
+     */
+    static getToday(): Date {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today;
+    }
     completedEventLogging = false;
 
     // timeline data
@@ -536,18 +546,46 @@ export class Timeline extends RtObject {
         return this.days.some((day) => day.events.some((event) => event instanceof StaffAvailabilityEventInstance));
     }
 
+    /**
+     * Get the initial visible window end date.
+     * For long timelines, show only the first 6 months initially to avoid rendering issues.
+     * Users can scroll/zoom to see the rest.
+     */
+    getInitialWindowEnd(): string {
+        const totalDays = this.getMaxDayOnTimeline() + this.getOffsetOfFirstEventInstance();
+        const referenceDate = this.getReferenceDate();
+        const endDate = new Date(referenceDate);
+
+        // For timelines longer than 6 months, only show first 6 months initially
+        // This keeps the initial render under vis-timeline's grid line limits
+        if (totalDays > 180) {
+            endDate.setDate(endDate.getDate() + 180);
+        } else {
+            // Short timeline - show the whole thing
+            const dayOffsetOfFirstEventInstance = this.getOffsetOfFirstEventInstance();
+            const maxDay = this.getMaxDayOnTimeline();
+            endDate.setDate(endDate.getDate() + maxDay + dayOffsetOfFirstEventInstance + 7);
+        }
+
+        const year = endDate.getFullYear();
+        const month = endDate.getMonth();
+        const day = endDate.getDate();
+
+        return `new Date(${year}, ${month}, ${day})`;
+    }
+
     getOptions(timeline: Timeline, isMultiPatient: boolean = false): string {
         // result differs by whether to show actual dates or week numbers for the major and minor labels.
         // If showing a study level chart then OrganizeByStudyDay should be true and major and minor are not actual dates
         // If showing for a specific patient or a specific start day then major and minor are actual dates
         let result = undefined;
-        
+
         // Enable stacking to show overlapping windows visually
         // This makes it clear when event windows overlap with each other
         const stackingOptions = `
                 stack: true,
                 stackSubgroups: true,`;
-        
+
         if (this.organizeByStudyDay) {
             result = `  var options = {
                 showCurrentTime: false,
@@ -569,7 +607,7 @@ export class Timeline extends RtObject {
                         minute:     '',
                         hour:       '',
                         weekday:    '',
-                        day:        'w',
+                        day:        'MMM YYYY',
                         week:       '',
                         month:      '',
                         year:       ''
@@ -580,7 +618,7 @@ export class Timeline extends RtObject {
                 showMajorLabels: true,
                 orientation: 'both',
                 start: ${timeline.getReferenceDateAsDateString()},
-                end: ${timeline.getEndOfTimeline()},
+                end: ${timeline.getInitialWindowEnd()},
                 min: ${timeline.getReferenceDateAsDateString()},
                 max: ${timeline.getEndOfTimeline()},
                 zoomFriction:30,
@@ -612,7 +650,7 @@ export class Timeline extends RtObject {
                         minute:     'ddd D MMMM',
                         hour:       'ddd D MMMM',
                         weekday:    'MMMM YYYY',
-                        day:        'MMMM YYYY',
+                        day:        'MMM YYYY',
                         week:       'MMMM YYYY',
                         month:      'YYYY',
                         year:       ''
@@ -622,7 +660,7 @@ export class Timeline extends RtObject {
                 showMajorLabels: true,
                 orientation: 'both',
                 start: ${timeline.getReferenceDateAsDateString()},
-                end: ${timeline.getEndOfTimeline()},
+                end: ${timeline.getInitialWindowEnd()},
                 min: ${timeline.getReferenceDateAsDateString()},
                 max: ${timeline.getEndOfTimeline()},
                 margin: {

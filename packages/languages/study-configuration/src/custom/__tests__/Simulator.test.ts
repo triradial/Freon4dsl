@@ -40,13 +40,25 @@ describe("Study Simulation", () => {
     var studyConfigurationModel: StudyConfigurationModel;
     const modelName = "TestStudyModel"; // The name used for all the tests that don't load their own already named model. No semantic meaning.
 
+    // Store the original getToday method so we can restore it after tests
+    const originalGetToday = Timeline.getToday;
+
     beforeEach(() => {
+        // Set a fixed reference date for tests to ensure consistent results
+        // This matches the dates in the expected timeline data files
+        Timeline.getToday = () => new Date(2024, 0, 1);
+
         new Sim(); // For some reason, need to do this for Sim to be properly loaded and available in the Scheduler class used by the Simulator.
         // const studyConfigurationModelEnvironment = StudyConfigurationModelEnvironment.getInstance();
         studyConfigurationModel = studyConfigurationModelEnvironment.newModel(modelName) as StudyConfigurationModel;
         studyConfigurationUnit = studyConfigurationModel.newUnit("StudyConfiguration") as StudyConfiguration;
         simulator = new Simulator(studyConfigurationUnit);
         resetTimelineScriptTemplate();
+    });
+
+    afterEach(() => {
+        // Restore the original getToday method
+        Timeline.getToday = originalGetToday;
     });
 
     describe("Simulate Trial Events to Generate the Timeline in the same period", () => {
@@ -318,46 +330,50 @@ describe("Study Simulation", () => {
 
             let expectedTimelineVisualizationHTML = ` // create visualization
           var container = document.getElementById('visualization');
-          var options = {
-            showCurrentTime: false,
-            format: {
-                minorLabels: {
-                    millisecond:'',
-                    second:     '',
-                    minute:     '',
-                    hour:       '',
-                    weekday:    '',
-                    day:        'DDD',
-                    week:       '',
-                    month:      '',
-                    year:       ''
-                },
-                majorLabels: {
+            var options = {
+                showCurrentTime: false,
+                format: {
+                    minorLabels: {
                         millisecond:'',
                         second:     '',
                         minute:     '',
                         hour:       '',
                         weekday:    '',
-                        day:        'w',
+                        day:        'DDD',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    },
+                    majorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'MMM YYYY',
                         week:       '',
                         month:      '',
                         year:       ''
                     }
-            },
-            timeAxis: {scale: 'day', step: 1},
-            showMajorLabels: true,
-            orientation: 'both',
-            start: new Date(2024, 0, 1),
-            end: new Date(2024, 0, 9),
-            min: new Date(2024, 0, 1),
-            max: new Date(2024, 0, 9),
-            zoomFriction:30,
-            margin: {
-                item: {
-                    horizontal: 0,
+
                 },
-            },
-          };
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: true,
+                orientation: 'both',
+                start: new Date(2024, 0, 1),
+                end: new Date(2024, 0, 15),
+                min: new Date(2024, 0, 1),
+                max: new Date(2024, 0, 15),
+                zoomFriction:30,
+                margin: {
+                    item: {
+                        horizontal: 0,
+                        vertical: 5,
+                    },
+                },
+                stack: true,
+                stackSubgroups: true,
+            };
         `;
             // GIVEN a study configuration with one period and two events
             studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "Visit 1", 0, "Visit 2", 7);
@@ -467,48 +483,51 @@ describe("Study Simulation", () => {
             const expectedTimelineDataAsScript = loadExpectedTimelineData("TwoVisitsPatientCompleted");
 
             let expectedTimelineVisualizationHTML = ` // create visualization
-              var container = document.getElementById('visualization');
-                  var options = {
-                                showCurrentTime: false,
-                                format: {
-                                    minorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'DDD',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    },
-                                    majorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'w',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    }
-                
-                                },
-                                timeAxis: {scale: 'day', step: 1},
-                                showMajorLabels: true,
-                                orientation: 'both',
-                                start: new Date(2024, 0, 1),
-                                end: new Date(2024, 0, 9),
-                                min: new Date(2024, 0, 1),
-                                max: new Date(2024, 0, 9),
-                                zoomFriction:30,
-                                margin: {
-                                    item: {
-                                        horizontal: 0,
-                                    },
-                                },
-                            };
+          var container = document.getElementById('visualization');
+            var options = {
+                showCurrentTime: false,
+                format: {
+                    minorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'DDD',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    },
+                    majorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'MMM YYYY',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    }
+
+                },
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: true,
+                orientation: 'both',
+                start: new Date(2024, 0, 1),
+                end: new Date(2024, 0, 15),
+                min: new Date(2024, 0, 1),
+                max: new Date(2024, 0, 15),
+                zoomFriction:30,
+                margin: {
+                    item: {
+                        horizontal: 0,
+                        vertical: 5,
+                    },
+                },
+                stack: true,
+                stackSubgroups: true,
+            };
         `;
             // GIVEN a study configuration with one period and two events
             studyConfigurationUnit = utils.addAPeriodWithEventOnDayAndEventUsingStudyStart(studyConfigurationUnit, "Screening", "Visit 1", 0, "Visit 2", 7);
@@ -530,48 +549,51 @@ describe("Study Simulation", () => {
             const expectedTimelineDataAsScript = loadExpectedTimelineData("ThreeVisitsPatientCompleted");
 
             let expectedTimelineVisualizationHTML = ` // create visualization
-              var container = document.getElementById('visualization');
-                  var options = {
-                                showCurrentTime: false,
-                                format: {
-                                    minorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'DDD',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    },
-                                    majorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'w',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    }
-                
-                                },
-                                timeAxis: {scale: 'day', step: 1},
-                                showMajorLabels: true,
-                                orientation: 'both',
-                                start: new Date(2024, 0, 1),
-                                end: new Date(2024, 0, 7),
-                                min: new Date(2024, 0, 1),
-                                max: new Date(2024, 0, 7),
-                                zoomFriction:30,
-                                margin: {
-                                    item: {
-                                        horizontal: 0,
-                                    },
-                                },
-                            };
+          var container = document.getElementById('visualization');
+            var options = {
+                showCurrentTime: false,
+                format: {
+                    minorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'DDD',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    },
+                    majorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'MMM YYYY',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    }
+
+                },
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: true,
+                orientation: 'both',
+                start: new Date(2024, 0, 1),
+                end: new Date(2024, 0, 16),
+                min: new Date(2024, 0, 1),
+                max: new Date(2024, 0, 16),
+                zoomFriction:30,
+                margin: {
+                    item: {
+                        horizontal: 0,
+                        vertical: 5,
+                    },
+                },
+                stack: true,
+                stackSubgroups: true,
+            };
         `;
             // GIVEN a study configuration with one period and two events
             studyConfigurationUnit = utils.addAPeriodWithEventBeforeStudyStart(studyConfigurationUnit, "Screening", "Visit 2", "Visit 1", 3);
@@ -589,47 +611,51 @@ describe("Study Simulation", () => {
         it("generates a chart for a visit on day 1 that patient completed", () => {
             const expectedTimelineDataAsScript = loadExpectedTimelineData("VisitDay1PatientCompleted");
             const expectedTimelineVisualizationHTML = `// create visualization
-                var container = document.getElementById('visualization');
-                var options = {
-                    showCurrentTime: false,
-                    format: {
-                        minorLabels: {
-                            millisecond:'',
-                            second:     '',
-                            minute:     '',
-                            hour:       '',
-                            weekday:    '',
-                            day:        'DDD',
-                            week:       '',
-                            month:      '',
-                            year:       ''
-                        },
+          var container = document.getElementById('visualization');
+            var options = {
+                showCurrentTime: false,
+                format: {
+                    minorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'DDD',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    },
                     majorLabels: {
-                            millisecond:'',
-                            second:     '',
-                            minute:     '',
-                            hour:       '',
-                            weekday:    '',
-                            day:        'w',
-                            week:       '',
-                            month:      '',
-                            year:       ''
-                        }
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'MMM YYYY',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    }
+
+                },
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: true,
+                orientation: 'both',
+                start: new Date(2024, 0, 1),
+                end: new Date(2024, 0, 8),
+                min: new Date(2024, 0, 1),
+                max: new Date(2024, 0, 8),
+                zoomFriction:30,
+                margin: {
+                    item: {
+                        horizontal: 0,
+                        vertical: 5,
                     },
-                    timeAxis: {scale: 'day', step: 1},
-                    showMajorLabels: true,
-                    orientation: 'both',
-                    start: new Date(2024,0,1),
-                    end: new Date(2024, 0, 2),
-                    min: new Date(2024, 0, 1),
-                    max: new Date(2024, 0, 2),
-                    zoomFriction:30,
-                    margin: {
-                        item: {
-                            horizontal: 0,
-                        },
-                    },
-                };`;
+                },
+                stack: true,
+                stackSubgroups: true,
+            };`;
             // GIVEN a study configuration with one period and one event and a patient that completed the event
             const eventName = "Visit 1";
             let eventSchedule = utils.createEventScheduleStartingOnADay(eventName, 0, 0);
@@ -816,47 +842,51 @@ describe("Study Simulation", () => {
         it("generates a chart for a visit on day 1 showing staff level", () => {
             const expectedTimelineDataAsScript = loadExpectedTimelineData("VisitDay1StaffLevel");
             const expectedTimelineVisualizationHTML = `// create visualization
-                var container = document.getElementById('visualization');
-                    var options = {
-                                showCurrentTime: false,
-                                format: {
-                                    minorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'DDD',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    },
-                                majorLabels: {
-                                        millisecond:'',
-                                        second:     '',
-                                        minute:     '',
-                                        hour:       '',
-                                        weekday:    '',
-                                        day:        'w',
-                                        week:       '',
-                                        month:      '',
-                                        year:       ''
-                                    }
-                                },
-                                timeAxis: {scale: 'day', step: 1},
-                                showMajorLabels: true,
-                                orientation: 'both',
-                                start: new Date(2024, 0, 1),
-                                end: new Date(2024, 0, 2),
-                                min: new Date(2024, 0, 1),
-                                max: new Date(2024, 0, 2),
-                                zoomFriction:30,
-                                margin: {
-                                    item: {
-                                        horizontal: 0,
-                                    },
-                                },
-                            };
+          var container = document.getElementById('visualization');
+            var options = {
+                showCurrentTime: false,
+                format: {
+                    minorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'DDD',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    },
+                    majorLabels: {
+                        millisecond:'',
+                        second:     '',
+                        minute:     '',
+                        hour:       '',
+                        weekday:    '',
+                        day:        'MMM YYYY',
+                        week:       '',
+                        month:      '',
+                        year:       ''
+                    }
+
+                },
+                timeAxis: {scale: 'day', step: 1},
+                showMajorLabels: true,
+                orientation: 'both',
+                start: new Date(2024, 0, 1),
+                end: new Date(2024, 0, 8),
+                min: new Date(2024, 0, 1),
+                max: new Date(2024, 0, 8),
+                zoomFriction:30,
+                margin: {
+                    item: {
+                        horizontal: 0,
+                        vertical: 5,
+                    },
+                },
+                stack: true,
+                stackSubgroups: true,
+            };
             `;
             // GIVEN a study configuration with one period and one event and a patient that completed the event
             const eventName = "Visit 1";

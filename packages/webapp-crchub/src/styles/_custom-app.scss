@@ -6,6 +6,7 @@
     --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
     --standard-font-size: 0.75rem;
     --small-font-size: 0.625rem;
+    --x-small-font-size: 0.5rem;
     --large-font-size: 0.875rem;
     --xlarge-font-size: 1rem;
     /* #endregion */
@@ -3996,7 +3997,7 @@
       color: var(--checklist-h3);
     }
 
-    p { 
+    p {
       font-size: var(--standard-font-size);
       margin-bottom: 1rem;
       margin-left: 1rem;

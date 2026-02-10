@@ -70,17 +70,17 @@ describe("getVisitChecklistAsMarkdown", () => {
             // THEN both visits should be included in the markdown
             expect(markdown).toContain("Visit 1");
             expect(markdown).toContain("Visit 2");
-            
-            // Verify the checklist heading is present
-            expect(markdown).toContain("Checklist for");
-            
-            // Verify both events have their markdown sections (they should have emoji prefixes)
-            expect(markdown).toContain("📋 Visit 1");
-            expect(markdown).toContain("📋 Visit 2");
-            
+
+            // Verify the checklist heading is present with heading number
+            expect(markdown).toContain("1: Checklist for");
+
+            // Verify both events have their markdown sections with heading numbers (h2 level = 1.x)
+            expect(markdown).toContain("1.1: Visit 1");
+            expect(markdown).toContain("1.2: Visit 2");
+
             // Verify there's a separator between the two events (the method adds section breaks between events)
-            const visit1Index = markdown.indexOf("📋 Visit 1");
-            const visit2Index = markdown.indexOf("📋 Visit 2");
+            const visit1Index = markdown.indexOf("1.1: Visit 1");
+            const visit2Index = markdown.indexOf("1.2: Visit 2");
             expect(visit1Index).toBeGreaterThanOrEqual(0);
             expect(visit2Index).toBeGreaterThan(visit1Index);
         });

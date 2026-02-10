@@ -1,20 +1,20 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import type { GridApi, GridOptions } from "ag-grid-community";
     import { createGrid } from "ag-grid-community";
-    import type { GridOptions, GridApi } from "ag-grid-community";
     import "ag-grid-enterprise";
-    import { theme } from "../../../services/stores/theme-store.js";
-    import { staffAvailabilityStore } from "../../../services/stores/staff-availability-store.js";
+    import { onMount } from "svelte";
     import { dataStore } from "../../../services/data/data-store.js";
-    // ModelManager no longer needed - using dataStore for patient schedules
+    import { staffAvailabilityStore } from "../../../services/stores/staff-availability-store.js";
+    import { theme } from "../../../services/stores/theme-store.js";
+// ModelManager no longer needed - using dataStore for patient schedules
     // PatientInfo no longer needed - using patient schedules from database
-    import type { StaffAvailability } from "../../../services/data/availability-service.js";
-    import { convertToModel } from "../../../services/data/availability-interpreter.js";
     import { env } from "../../../config/env.js";
+    import { convertToModel } from "../../../services/data/availability-interpreter.js";
+    import type { StaffAvailability } from "../../../services/data/availability-service.js";
     import { navigateTo } from "../../../services/routing/route-action.js";
     import { dayViewCache } from "../../../services/stores/day-view-cache.js";
-    // @ts-ignore
-    import { ChevronLeft as IconChevronLeft, ChevronRight as IconChevronRight, Check as IconCheck, ArrowRightFromLine as IconArrowRightFromLine, ArrowLeftFromLine as IconArrowLeftFromLine } from '@lucide/svelte';
+// @ts-ignore
+    import { Check as IconCheck, ChevronLeft as IconChevronLeft, ChevronRight as IconChevronRight } from '@lucide/svelte';
 
     let selectedDate = $state(new Date());
     let today = new Date();
@@ -1166,9 +1166,9 @@
                     },
                     { 
                         field: "patientCount", 
-                        headerName: "Patient Number", 
+                        headerName: "Number Patients", 
                         flex: 1, 
-                        minWidth: 100,
+                        minWidth: 100, 
                         cellRenderer: createPatientCountCellRenderer
                     }
                 ],

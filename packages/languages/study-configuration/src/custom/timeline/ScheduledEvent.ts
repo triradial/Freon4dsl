@@ -212,7 +212,7 @@ export class ScheduledEvent {
     }
 
     numberOfRepeats(timeline: Timeline): number {
-        let n = 1;
+        let n = 0;
         if (this.isRepeatingEvent) {
             let eventRepeat = this.configuredEvent.schedule.eventRepeat;
             if (eventRepeat instanceof RepeatCondition) {

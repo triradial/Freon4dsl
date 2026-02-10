@@ -87,11 +87,6 @@ SystemAccess {
     ]
 }
 
-        // [? Robot Mappings:
-        //     ${robotMappings}
-        // ]
-
-
 SystemAccessReference {
     [
         SystemAccessReference:${system}
@@ -140,32 +135,6 @@ StaffRole {
         Role:${name} 
         ${description}
     ]
-}
-
-WorkflowDescription {
-    [
-    Description: ${text}
-    ]
-    
-}
-
-WorkflowBranch {
-    [ Branch: ${branch}  ]
-}
-
-RobotMapping {
-    [
-        From this Page: ${sourcePage}
-        To this Page    :   ${targetPage}        
-        ${sourceToTargetMappings}
-    ]
-
-}
-
-SourceToTargetMapping {
-    [
-        Source Field: ${sourceField}  Target Field: ${targetField}
-    ] 
 }
 
 Description {

@@ -257,19 +257,27 @@ export function getTimelineChartHtml(timeline: Timeline): RtString {
  * @param studyConfigurationUnit The study configuration
  * @param targetDate The date to get visits for
  * @param referenceDate Optional reference date for timeline generation (defaults to targetDate)
+ * @param showHeadingNumbers Whether to add hierarchical heading numbers (default: true)
  * @returns Markdown string with the visit checklist for that date
  */
 export function getVisitChecklistAsMarkdown(
     studyConfigurationUnit: StudyConfiguration,
     targetDate: Date,
-    referenceDate?: Date
+    referenceDate?: Date,
+    showHeadingNumbers: boolean = false
 ): string {
     // Get timeline for the reference date (or use the target date as reference if not provided)
     const refDate = referenceDate || targetDate;
     const timeline = getTimelineAsOfADate(studyConfigurationUnit, refDate);
-    
+
     // Get the visit checklist for the target date
-    const markdown = StudyChecklistDocumentTemplate.getVisitForDateAsMarkdown(timeline, targetDate, studyConfigurationUnit);
+    let markdown = StudyChecklistDocumentTemplate.getVisitForDateAsMarkdown(timeline, targetDate, studyConfigurationUnit);
+
+    // Apply heading numbers if requested (same as getStudyChecklistAsMarkdown)
+    if (showHeadingNumbers) {
+        markdown = StudyChecklistDocumentTemplate.addHeadingNumbers(markdown);
+    }
+
     return markdown;
 }
 

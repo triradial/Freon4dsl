@@ -22,18 +22,18 @@ global {
     }
 }
 
+//boolean [YES | NO] // are the strings used to display a boolean value
+
 StudyConfiguration {
     [
     ${periods wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Periods"}
     ${unscheduledEvents wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Study Unscheduled Events"}
-    ${systemAccesses wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="System Accesses"}
-    ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staffing"}
+    ${staffing wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Staff"}
     ${roles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"}
     ${description wrap=ListGroupComponent cssClass="type1" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Study Notes"}
+    ${sharedReferences wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Shared References"}
     ]
 }
-
-//boolean [YES | NO] // are the strings used to display a boolean value
 
 Period {
     [ 
@@ -102,20 +102,17 @@ SystemAccess {
     [
         [fragment systemAccessDetails wrap = SelectableListItemComponent cssClass="type3" canDelete="true" canShare="true" hideDragHandle="true"]
     ]
-    trigger = "System Access"
+    trigger = "System"
     fragment systemAccessDetails [
         System: ${name} ${accessedAt replace=CustomActionsComponent placeholder="accessed at"}
         ${description}
     ]
 }
 
-//        ${robotMappings wrap=ListGroupComponent cssClass="type3" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Robot Mappings"}
-
-
 SystemAccessReference {
     [
         [fragment systemAccessReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="System" hideDragHandle="true"]
-    ] trigger = "Shared System Access"
+    ] trigger = "Shared System"
     fragment systemAccessReferenceDetails [
         ${system}
     ]
@@ -133,24 +130,6 @@ AccessedAPhoneNumber {
     ] trigger = "Phone Number"
 }
 
-// Person {
-//     [
-//         [fragment personDetails wrap = ItemGroupComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="true" isExpanded="true" selectable="true" label="Person"]
-//     ] trigger = "Person"
-//     fragment personDetails [
-//         ${name}
-//         In role: ${role replace=CustomSelectComponent placeholder="role"} at ${email replace=EmailInputComponent} or ${phoneNumber replace=PhoneInputComponent}
-//         Notes: ${description}
-//     ]
-// }
-
-// Person {
-//     [
-//         ${name} in role: ${role replace=CustomSelectComponent placeholder="role"} 
-//         at ${email replace=EmailInputComponent} or ${phoneNumber replace=PhoneInputComponent} ${description}
-//     ] trigger = "Person"
-// }
-
 Person {
     [
         [fragment personDetails wrap = SelectableListItemComponent cssClass="type4" canDelete="true" showDeleteOnHover="true" hideDragHandle="true"]
@@ -162,13 +141,6 @@ Person {
         ${description}
     ]
 }
-
-
-// Person { table [
-//     NameX          | Role          | Email          | Phone          | Description
-//     ${name}          |  ${role}          |  ${email}          |  ${phoneNumber}          |  ${description}
-// ] trigger = "Person"
-// }
 
 PersonReference {
     [
@@ -190,6 +162,16 @@ Reference {
     ]
 }
 
+SharedReference {
+    [
+        [fragment sharedReferenceDetails wrap = ReferenceComponent cssClass="type3" canDelete="true" canAdd="false" canExpand="false" isExpanded="false" selectable="true" label="System" hideDragHandle="true"]
+    ] trigger = "Shared Reference"
+    fragment sharedReferenceDetails [
+        ${referenceName}
+    ]
+}
+
+
 StaffRole {
     [
         [fragment roleDetails wrap = SelectableListItemComponent cssClass="type4" canDelete="true" showDeleteOnHover="true" hideDragHandle="true"]
@@ -199,32 +181,6 @@ StaffRole {
         ${name}
         ${description}
     ]
-}
-
-WorkflowDescription {
-    [
-    Description: ${text}
-    ]
-    trigger = "description"
-}
-
-WorkflowBranch {
-    [ Branch: ${branch}  ]
-}
-
-RobotMapping {
-    [
-        From this Page: ${sourcePage replace=UrlInputComponent}
-        To this Page    :   ${targetPage replace=UrlInputComponent}        
-        ${sourceToTargetMappings wrap=ListGroupComponent cssClass="type3" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Map These fields"}
-    ]
-
-}
-
-SourceToTargetMapping {
-    [
-        Source Field: ${sourceField}  Target Field: ${targetField}
-    ] trigger = "Source to Target"
 }
 
 Description {
