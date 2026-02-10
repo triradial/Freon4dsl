@@ -109,5 +109,5 @@ packages/server/modelstore/x/StudyConfigurationPublic.json
 packages/webapp-crchub/static/styles/bundle-dark.css
 packages/webapp-crchub/static/styles/bundle-light.css
 
-# Generated timeline files
-tmp/timeline.html
+# Temporary files folder
+tmp/
