@@ -13,6 +13,6 @@ export { TimelineChartTemplate } from "./custom/templates/TimelineChartTemplate.
 export { TimelineTableTemplate } from "./custom/templates/TimelineTableTemplate.js";
 export { Simulator } from "./custom/timeline/Simulator.js";
 export { Timeline } from "./custom/timeline/Timeline.js";
-export { copyPatientHistoryWithFilledDates, determineReferenceDate, findAndCopyPatientHistory, findAppropriateVisitDate, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getChecklistAsMarkdown, getTimelineAsOfADate, getTimelineChart, getTimelineChartHtml, getTimelineTable, getVisitChecklistAsMarkdown, studyTimelineChart } from "./custom/timeline/TimelineUtils.js";
+export { copyPatientHistoryWithFilledDates, determineReferenceDate, findAndCopyPatientHistory, findAppropriateVisitDate, findFirstPatientHistoryWithVisits, findPatientHistoryByPatientNumber, getChecklistAsMarkdown, getTimelineAsOfADate, getTimelineChart, getTimelineChartHtml, getTimelineTable, getVisitChecklistAsMarkdown, getVisitChecklistAsMarkdownForPdf, studyTimelineChart } from "./custom/timeline/TimelineUtils.js";
 export { StudyConfigurationModelModelUnitWriter } from "./freon/writer/StudyConfigurationModelModelUnitWriter.js";
 

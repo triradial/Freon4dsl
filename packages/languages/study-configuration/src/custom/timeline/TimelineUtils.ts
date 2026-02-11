@@ -281,3 +281,34 @@ export function getVisitChecklistAsMarkdown(
     return markdown;
 }
 
+/**
+ * Get visit/event checklist for a specific date as markdown for PDF/Word generation.
+ * Uses heading-based rendering (same as Study Checklist) instead of HTML checkboxes.
+ *
+ * @param studyConfigurationUnit The study configuration
+ * @param targetDate The date to get visits for
+ * @param referenceDate The reference date for the timeline (e.g., patient enrollment date)
+ * @param showHeadingNumbers Whether to add hierarchical heading numbers (default: true)
+ * @returns Markdown string with the visit checklist for that date (heading-based format)
+ */
+export function getVisitChecklistAsMarkdownForPdf(
+    studyConfigurationUnit: StudyConfiguration,
+    targetDate: Date,
+    referenceDate?: Date,
+    showHeadingNumbers: boolean = false
+): string {
+    // Get timeline for the reference date (or use the target date as reference if not provided)
+    const refDate = referenceDate || targetDate;
+    const timeline = getTimelineAsOfADate(studyConfigurationUnit, refDate);
+
+    // Get the visit checklist for the target date using heading-based format
+    let markdown = StudyChecklistDocumentTemplate.getVisitForDateAsMarkdownForPdf(timeline, targetDate, studyConfigurationUnit);
+
+    // Apply heading numbers if requested (same as getStudyChecklistAsMarkdown)
+    if (showHeadingNumbers) {
+        markdown = StudyChecklistDocumentTemplate.addHeadingNumbers(markdown);
+    }
+
+    return markdown;
+}
+

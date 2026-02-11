@@ -16,6 +16,7 @@ global {
         CustomNumericComponent,
         CustomSelectComponent,
         CustomActionsComponent,
+        CustomRefActionsComponent,
         CustomTimePickerComponent,
         TimePickerComponent,
         SelectableListItemComponent
@@ -32,6 +33,7 @@ StudyConfiguration {
     ${roles wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="false" selectable="false" label="Roles"}
     ${description wrap=ListGroupComponent cssClass="type1" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Study Notes"}
     ${sharedReferences wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Shared References"}
+    ${arms wrap=ListGroupComponent cssClass="type1" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Arms"}
     ]
 }
 
@@ -55,6 +57,7 @@ Event {
        ${name}
        This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
        ${description}
+       and is part of ${arm replace=CustomRefActionsComponent placeholder="every"} Arm
     ]
 }
 
@@ -65,6 +68,16 @@ UnscheduledEvent {
     fragment unscheduledEventNoDetails [
         ${name}
         This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
+        ${description}
+    ]
+}
+
+Arm {
+    [
+        [fragment armDetails wrap = ItemGroupComponent cssClass="type2" canDelete="true" canDuplicate="true" canExpand="true" isExpanded="true" selectable="false" label="Arm"]
+    ]
+    fragment armDetails [
+        ${name}
         ${description}
     ]
 }

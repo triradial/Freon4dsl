@@ -3,7 +3,7 @@
     import { simulationService } from "../../services/simulation/simulation-service.js";
 
     // Set to true to save chart HTML to file for debugging
-    const SAVE_CHART_TO_FILE = true;
+    const SAVE_CHART_TO_FILE = false;
 
     let { studyId } = $props<{ studyId: string }>();
     let isLoading = $state(true);
