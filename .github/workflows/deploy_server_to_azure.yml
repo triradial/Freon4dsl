@@ -49,7 +49,6 @@ jobs:
             require("fs").writeFileSync("./server-app/package.json", JSON.stringify(pkg, null, 2));
           '
           
-          # Rest of your existing preparation steps...
           cp package-lock.json server-app/
           
           # Create a temporary local package directory
@@ -61,13 +60,9 @@ jobs:
           cd server-app
           npm install --omit=dev
           
-          # Copy server dist files
-          mkdir -p dist/server
-          mkdir -p dist/config
-          mkdir -p dist/storage
-          cp -r ../packages/server-crchub/dist/server/* dist/server/
-          cp -r ../packages/server-crchub/dist/config/* dist/config/
-          cp -r ../packages/server-crchub/dist/storage/* dist/storage/
+          # Copy all server dist files
+          mkdir -p dist
+          cp -r ../packages/server-crchub/dist/* dist/
           
           # Install local workspace dependencies
           npm install --omit=dev ../packages/core

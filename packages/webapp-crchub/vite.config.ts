@@ -47,13 +47,6 @@ export default defineConfig({
   },
   build: {
     sourcemap: false, // Disable source maps in production build
-    rollupOptions: {
-      external: [
-        'lodash',
-        'mobx',
-        'tslib'
-      ]
-    }
   },
   optimizeDeps: {
     exclude: ['@freon4dsl/core']
