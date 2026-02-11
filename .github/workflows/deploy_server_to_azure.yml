@@ -49,9 +49,6 @@ jobs:
             require("fs").writeFileSync("./server-app/package.json", JSON.stringify(pkg, null, 2));
           '
           
-          # Rest of your existing preparation steps...
-          cp package-lock.json server-app/
-          
           # Create a temporary local package directory
           mkdir -p server-app/local-packages
           cp -r packages/core/dist server-app/local-packages/core

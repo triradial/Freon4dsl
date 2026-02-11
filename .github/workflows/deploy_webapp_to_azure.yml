@@ -52,9 +52,6 @@ jobs:
             require("fs").writeFileSync("./webapp-app/package.json", JSON.stringify(pkg, null, 2));
           '
 
-          # Rest of your existing preparation steps...
-          cp package-lock.json webapp-app/
-
           # Copy dependencies
           mkdir -p webapp-app/local-packages
           cp -r packages/core/dist webapp-app/local-packages/core
