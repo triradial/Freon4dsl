@@ -8,7 +8,6 @@ Event {
         ${name}
         ${description}
         This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event type"} that is also referred to as ${alternativeName}
-        and is part of ${arm replace=CustomRefActionsComponent placeholder="every"} Arm 
         ${schedule wrap=ListGroupComponent cssClass="type3" canExpand="true" isExpanded="false" selectable="false" label="Schedule"}
     ]
 }

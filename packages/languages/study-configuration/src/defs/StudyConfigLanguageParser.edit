@@ -22,7 +22,8 @@ StudyConfiguration {
 Period {
     [ 
         Period:${name}
-        ${description}
+        Description: ${description}
+        Arm: ${arm}
         Scheduled Events:
           ${events}
         Unscheduled Events:
@@ -34,7 +35,7 @@ Event {
     [ 
         Event:${name}
         This is a ${typeOfEvent} [? that is also referred to as ${alternativeName} ]
-        ${description}
+        Description: ${description}
         Schedule:
           ${schedule}
         Tasks:
@@ -45,7 +46,7 @@ Event {
 SharedTask {
     [
         Shared Task:${name}
-        ${description}
+        Description: ${description}
         Steps:
           ${steps}
     ]
@@ -54,7 +55,7 @@ SharedTask {
 Task {
     [
         Task:${name}
-        ${description}
+        Description: ${description}
         Steps:
           ${steps}
     ]

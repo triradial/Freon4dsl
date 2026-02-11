@@ -12,6 +12,7 @@
     import type { FreComponentProps } from "@freon4dsl/core-svelte";
     import { componentId } from "@freon4dsl/core-svelte";
     import { onMount, tick } from "svelte";
+    import SelectableWrapperComponent from "./SelectableWrapperComponent.svelte";
 
     // Set to true to enable debug logging
     let loggingEnabled = false;
@@ -399,17 +400,19 @@
     {id}
 >
     {#if hasValue && !isEditing}
-        <!-- View mode: Show reference name -->
-        <span
-            class="custom-select-text cursor-pointer"
-            tabindex="0"
-            role="textbox"
-            onmousedown={onMouseDown}
-            onkeydown={onSpanKeyDown}
-            title="Click to change reference"
-        >
-            {displayName}
-        </span>
+        <!-- View mode: Show reference name with selectable wrapper for delete functionality -->
+        <SelectableWrapperComponent {box} {editor} onDelete={clearReference}>
+            <span
+                class="custom-select-text cursor-pointer"
+                tabindex="0"
+                role="textbox"
+                onmousedown={onMouseDown}
+                onkeydown={onSpanKeyDown}
+                title="Click to change reference"
+            >
+                {displayName}
+            </span>
+        </SelectableWrapperComponent>
     {:else if isEditing}
         <!-- Edit mode: Show input with dropdown -->
         <div class="text-dropdown-component-text-wrapper" style="position: relative; display: inline-block;">

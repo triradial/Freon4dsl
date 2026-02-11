@@ -33,9 +33,9 @@ modelunit StudyConfiguration {
 concept Period {
     name: identifier;
     description: Description;
+    reference arm?: Arm;
     events: Event[];
     unscheduledEvents: UnscheduledEvent[];
-
 }
 
 limited TypeOfEvent {
@@ -50,7 +50,6 @@ concept Arm {
 concept Event {
     name: identifier;
     alternativeName: string; // Optional, see validator where errors about it are removed.
-    reference arm?: Arm;
     typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;

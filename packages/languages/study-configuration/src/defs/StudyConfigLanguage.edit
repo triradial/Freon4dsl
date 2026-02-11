@@ -44,6 +44,7 @@ Period {
     fragment periodDetails [
         ${name}
         ${description}
+        Is for patients in ${arm replace=CustomRefActionsComponent placeholder="every"} Arm of the study
         ${events wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Scheduled Events"}
         ${unscheduledEvents wrap=ListGroupComponent cssClass="type2" canAdd="true" canExpand="true" isExpanded="true" selectable="false" label="Unscheduled Events"}
     ]   
@@ -55,9 +56,8 @@ Event {
     ]
     fragment noEventDetails [
        ${name}
-       This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
        ${description}
-       and is part of ${arm replace=CustomRefActionsComponent placeholder="every"} Arm
+       This is a ${typeOfEvent replace=CustomSelectComponent placeholder="event"} that is also referred to as ${alternativeName}
     ]
 }
 
