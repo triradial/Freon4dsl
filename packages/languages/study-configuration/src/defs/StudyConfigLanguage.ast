@@ -26,6 +26,7 @@ modelunit StudyConfiguration {
     sharedReferences: Reference[];
     staffing: Person[];
     roles: StaffRole[];
+    arms: Arm[];
     description: Description;
 }
 
@@ -41,9 +42,15 @@ limited TypeOfEvent {
     site = { name:"site visit"} preparation = { name:"preparation"} video = { name:"video session"} phone = { name:"phone call"} other = { name:"non-standard"}
 }
 
+concept Arm {
+    name: identifier;
+    description: Description;
+}
+
 concept Event {
     name: identifier;
     alternativeName: string; // Optional, see validator where errors about it are removed.
+    reference arm?: Arm;
     typeOfEvent:TypeOfEvent = TypeOfEvent:site;
     showSequenced: boolean;
     eventNumber: number;

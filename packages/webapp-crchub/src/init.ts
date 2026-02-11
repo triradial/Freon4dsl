@@ -19,6 +19,7 @@ import SingleLineItemComponent from "./components/custom/SingleLineItemComponent
 import UrlInputComponent from "./components/custom/UrlInputComponent.svelte";
 
 import CustomActionsComponent from "./components/custom/freon/CustomActionsComponent.svelte";
+import CustomRefActionsComponent from "./components/custom/freon/CustomRefActionsComponent.svelte";
 import CustomNumericComponent from "./components/custom/freon/CustomNumericComponent.svelte";
 import CustomSelectComponent from "./components/custom/freon/CustomSelectComponent.svelte";
 import CustomTimePickerComponent from "./components/custom/freon/CustomTimePickerComponent.svelte";
@@ -97,6 +98,7 @@ setCustomComponents([
     { component: CustomNumericComponent, knownAs: "CustomNumericComponent" },
     { component: CustomSelectComponent, knownAs: "CustomSelectComponent" },
     { component: CustomActionsComponent, knownAs: "CustomActionsComponent" },
+    { component: CustomRefActionsComponent, knownAs: "CustomRefActionsComponent" },
     { component: SelectableListItemComponent, knownAs: "SelectableListItemComponent" },
     { component: SelectableWrapperComponent, knownAs: "SelectableWrapperComponent" },
 ])

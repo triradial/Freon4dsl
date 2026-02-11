@@ -155,6 +155,41 @@ export async function generateWordChecklist(
                     spacing: { before: 150, after: 50 },
                     indent: { left: convertInchesToTwip(0.5) }
                 }));
+            } else if (htmlContent.includes('checklist-step') && htmlContent.includes('checklist-item')) {
+                // Handle step checkbox: <div class="checklist-item checklist-step"><label><input type="checkbox"> Step 1: name</label></div>
+                // Check this BEFORE checklist-task since step items also have checklist-item class
+                const textMatch = htmlContent.match(/<input[^>]*>\s*(.+?)\s*<\/label>/is);
+                if (textMatch) {
+                    const stepText = textMatch[1].trim();
+                    children.push(createStepCheckbox(stepText));
+                }
+            } else if (htmlContent.includes('checklist-task') && htmlContent.includes('checklist-item')) {
+                // Handle task checkbox: <div class="checklist-item checklist-task"><label><input type="checkbox"> Task: name</label></div>
+                const textMatch = htmlContent.match(/<input[^>]*>\s*(.+?)\s*<\/label>/is);
+                if (textMatch) {
+                    const taskText = textMatch[1].trim();
+                    children.push(createTaskCheckbox(taskText));
+                }
+            } else if (htmlContent.includes('checklist-task-content')) {
+                // Handle task content: <div class="checklist-task-content">description</div>
+                const textMatch = htmlContent.match(/<div[^>]*>(.+?)<\/div>/is);
+                if (textMatch) {
+                    children.push(new Paragraph({
+                        children: [new TextRun({ text: textMatch[1].trim(), size: 22 })],
+                        indent: { left: convertInchesToTwip(0.5) },
+                        spacing: { after: 50 }
+                    }));
+                }
+            } else if (htmlContent.includes('checklist-step-content')) {
+                // Handle step content: <div class="checklist-step-content">description</div>
+                const textMatch = htmlContent.match(/<div[^>]*>(.+?)<\/div>/is);
+                if (textMatch) {
+                    children.push(new Paragraph({
+                        children: [new TextRun({ text: textMatch[1].trim(), size: 22 })],
+                        indent: { left: convertInchesToTwip(1.0) },
+                        spacing: { after: 50 }
+                    }));
+                }
             } else {
                 // Handle regular HTML paragraphs and other content
                 // Extract text from HTML tags (handles <p>text</p>, <div>text</div>, etc.)

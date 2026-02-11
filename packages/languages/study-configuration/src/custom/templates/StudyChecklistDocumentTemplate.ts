@@ -813,6 +813,95 @@ export class StudyChecklistDocumentTemplate {
         return builder.build();
     }
 
+    /**
+     * Get visits/events for a specific date as markdown for PDF/Word generation.
+     * This uses heading-based rendering (same as Study Checklist) instead of HTML checkboxes.
+     * Reuses the same rendering methods as getStudyChecklistAsMarkdown for consistency.
+     *
+     * @param timeline The timeline to search
+     * @param targetDate The date to get visits for
+     * @param studyConfiguration The study configuration (needed for event details)
+     * @returns Markdown string with the visit checklist for that date (heading-based format)
+     */
+    static getVisitForDateAsMarkdownForPdf(timeline: Timeline, targetDate: Date, studyConfiguration: StudyConfiguration): string {
+        const builder = new MarkdownBuilder();
+        const writer = new StudyConfigurationModelModelUnitWriter();
+
+        // Normalize target date to midnight for comparison
+        const normalizedTargetDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0);
+
+        // Find the day number that corresponds to this date
+        let targetDay: number | undefined = undefined;
+
+        // Search through all days in the timeline to find the one matching the target date
+        for (const timelineDay of timeline.getDays()) {
+            const eventInstances = timelineDay.getEventInstances();
+            if (eventInstances.length > 0) {
+                const dayDate = eventInstances[0].getStartDayAsDate(timeline);
+                if (dayDate) {
+                    const normalizedDayDate = new Date(dayDate.getFullYear(), dayDate.getMonth(), dayDate.getDate(), 0, 0, 0);
+                    if (normalizedDayDate.getTime() === normalizedTargetDate.getTime()) {
+                        targetDay = timelineDay.day;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (targetDay === undefined) {
+            builder.addHeading(1, `No visits scheduled for ${normalizedTargetDate.toLocaleDateString()}`);
+            return builder.build();
+        }
+
+        // Get all event instances for this day
+        const eventInstances = timeline.getScheduledEventInstancessForDay(targetDay);
+
+        if (eventInstances.length === 0) {
+            builder.addHeading(1, `No visits scheduled for ${normalizedTargetDate.toLocaleDateString()}`);
+            return builder.build();
+        }
+
+        // Add date heading
+        builder.addHeading(1, `Visit Checklist for ${normalizedTargetDate.toLocaleDateString()}`);
+        builder.addEmptyLine();
+
+        // Format each event instance using heading-based rendering (same as Study Checklist)
+        eventInstances.forEach((eventInstance, index) => {
+            const event = eventInstance.getScheduledEvent().configuredEvent;
+
+            // Use the heading-based version (same as Study Checklist) for PDF/Word generation
+            StudyChecklistDocumentTemplate.renderEventAsMarkdown(builder, writer, event, index);
+
+            // Add separator between events (except after the last one)
+            if (index < eventInstances.length - 1) {
+                builder.addSectionBreak();
+            }
+        });
+
+        // Add study-level shared systems section (same as getStudyChecklistAsMarkdown)
+        if (studyConfiguration.systemAccesses?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Systems");
+            StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 2);
+        }
+
+        // Add study-level shared references section (same as getStudyChecklistAsMarkdown)
+        if (studyConfiguration.sharedReferences?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "References");
+            StudyChecklistDocumentTemplate.renderReferencesAsHeadings(builder, studyConfiguration.sharedReferences, 2);
+        }
+
+        // Add study-level staffing section (same as getStudyChecklistAsMarkdown)
+        if (studyConfiguration.staffing?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Staffing");
+            StudyChecklistDocumentTemplate.renderPeopleAsHeadings(builder, studyConfiguration.staffing, 2);
+        }
+
+        return builder.build();
+    }
+
     static getStudyChecklistAsMarkdown(studyConfiguration: StudyConfiguration, timeline: Timeline, showHeadingNumbers: boolean = false): string {
         const builder = new MarkdownBuilder();
         
