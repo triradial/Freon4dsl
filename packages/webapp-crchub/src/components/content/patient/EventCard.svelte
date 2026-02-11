@@ -3,7 +3,8 @@
     // @ts-ignore
     import { X as IconX, Printer as IconPrinter, ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, ChevronLeft as IconChevronLeft, ExternalLink as IconExternalLink } from '@lucide/svelte';
     import { ModelManager } from "../../../services/dsl/model-manager.js";
-    import { type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { getEventChecklistAsMarkdownByName, type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import MarkdownIt from "markdown-it";
 
     // Types
     export type EventType = 'initial' | 'scheduled' | 'unscheduled';
@@ -24,41 +25,6 @@
         originalScheduledDay?: number;
         isUnscheduledEvent?: boolean;
         window?: { daysBefore: number; daysAfter: number };
-    }
-
-    interface Task {
-        name: string;
-        description?: string;
-        checked: boolean;
-        steps: Step[];
-    }
-
-    interface Step {
-        name: string;
-        description?: string;
-        checked: boolean;
-        people: Person[];
-        systems: System[];
-        references: Reference[];
-    }
-
-    interface Person {
-        name: string;
-        email?: string;
-        phone?: string;
-        role?: string;
-    }
-
-    interface System {
-        name: string;
-        description?: string;
-        url?: string;
-    }
-
-    interface Reference {
-        name: string;
-        link?: string;
-        description?: string;
     }
 
     // Props
@@ -103,10 +69,9 @@
     }>();
 
     // Checklist data (for scheduled mode)
-    let tasks = $state<Task[]>([]);
+    const md = new MarkdownIt({ html: true });
+    let checklistHtml = $state<string>("");
     let isLoadingChecklist = $state(true);
-    let expandedTasks = $state<Set<string>>(new Set());
-    let expandedSteps = $state<Set<string>>(new Set());
 
     // Move calendar state
     let showMoveCalendar = $state(false);
@@ -124,8 +89,8 @@
         }
     });
 
-    // Derived: Has checklist (only in scheduled mode with tasks)
-    let hasChecklist = $derived(mode === 'scheduled' && tasks.length > 0);
+    // Derived: Has checklist (only in scheduled mode with content)
+    let hasChecklist = $derived(mode === 'scheduled' && checklistHtml.length > 0);
 
     // Derived: Can delete (only INITIAL and UNSCHEDULED when pending)
     let canDelete = $derived.by(() => {
@@ -293,13 +258,13 @@
         selectedMoveDay = null;
     }
 
-    // Load checklist data
+    // Load checklist data using markdown-based approach (same as VisitChecklistDrawer)
     async function loadChecklist() {
         console.log('[EventCard] loadChecklist() called — mode:', mode, 'event:', event?.id, event?.name, 'studyId:', studyId);
-        
+
         if (mode !== 'scheduled' || !event || !studyId) {
             console.log('[EventCard] loadChecklist() skipped — mode:', mode, 'hasEvent:', !!event, 'studyId:', studyId);
-            tasks = [];
+            checklistHtml = "";
             isLoadingChecklist = false;
             return;
         }
@@ -308,147 +273,45 @@
         try {
             const modelManager = ModelManager.getInstance();
             const studyConfig = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
-            
+
             if (!studyConfig) {
                 console.warn('[EventCard] No study configuration found for studyId:', studyId);
-                tasks = [];
+                checklistHtml = "";
                 return;
             }
 
-            console.log('[EventCard] Study config loaded, searching for event name:', event.name);
-            console.log('[EventCard] Periods:', studyConfig.periods?.length, 'Study-level unscheduled:', studyConfig.unscheduledEvents?.length);
+            // Generate markdown for the specific event by name
+            const markdown = getEventChecklistAsMarkdownByName(studyConfig, event.name);
+            console.log('[EventCard] Generated markdown for event:', event.name, 'length:', markdown.length);
 
-            const loadedTasks: Task[] = [];
-            let foundIn = '';
-            
-            // Search in periods for the event
-            for (const period of studyConfig.periods || []) {
-                for (const configEvent of period.events || []) {
-                    if (configEvent.name === event.name) {
-                        foundIn = `period "${period.name}" scheduled events`;
-                        for (const task of configEvent.tasks || []) {
-                            loadedTasks.push(extractTask(task));
-                        }
-                        break;
-                    }
+            // Render markdown to HTML
+            let bodyHtml = md.render(markdown);
+
+            // Post-process HTML (add CSS classes to tables, external links)
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = bodyHtml;
+
+            const tables = tempDiv.querySelectorAll('table');
+            tables.forEach(table => table.classList.add('table_component'));
+
+            const links = tempDiv.querySelectorAll('a[href]');
+            links.forEach(link => {
+                const href = link.getAttribute('href')?.trim() ?? "";
+                if (href.startsWith("http://") || href.startsWith("https://")) {
+                    link.setAttribute("target", "_blank");
+                    link.setAttribute("rel", "noopener noreferrer");
                 }
-                
-                for (const unscheduledEvent of period.unscheduledEvents || []) {
-                    if (unscheduledEvent.name === event.name) {
-                        foundIn = `period "${period.name}" unscheduled events`;
-                        for (const task of unscheduledEvent.tasks || []) {
-                            loadedTasks.push(extractTask(task));
-                        }
-                        break;
-                    }
-                }
-            }
-            
-            // Check study-level unscheduled events
-            if (loadedTasks.length === 0) {
-                for (const unscheduledEvent of studyConfig.unscheduledEvents || []) {
-                    if (unscheduledEvent.name === event.name) {
-                        foundIn = 'study-level unscheduled events';
-                        for (const task of unscheduledEvent.tasks || []) {
-                            loadedTasks.push(extractTask(task));
-                        }
-                        break;
-                    }
-                }
-            }
-            
-            console.log('[EventCard] loadChecklist() result — event:', event.name, 'foundIn:', foundIn || 'NOT FOUND', 'tasks:', loadedTasks.length, loadedTasks.map(t => t.name));
-            
-            tasks = loadedTasks;
-            
-            // Expand all tasks and steps by default
-            expandedTasks = new Set(loadedTasks.map((_, i) => `task-${i}`));
-            const stepIds: string[] = [];
-            loadedTasks.forEach((task, taskIndex) => {
-                task.steps.forEach((step, stepIndex) => {
-                    if (step.people.length > 0 || step.systems.length > 0 || step.references.length > 0) {
-                        stepIds.push(`task-${taskIndex}-step-${stepIndex}`);
-                    }
-                });
             });
-            expandedSteps = new Set(stepIds);
-            
+
+            checklistHtml = tempDiv.innerHTML;
+            console.log('[EventCard] Generated HTML length:', checklistHtml.length);
+
         } catch (err) {
             console.error('[EventCard] Error loading checklist:', err);
-            tasks = [];
+            checklistHtml = "";
         } finally {
             isLoadingChecklist = false;
         }
-    }
-
-    function extractTask(task: any): Task {
-        const taskData: Task = {
-            name: task.name || 'Unnamed Task',
-            description: task.description?.content || '',
-            checked: false,
-            steps: []
-        };
-        
-        const taskSteps = task.steps || [];
-        for (const step of taskSteps) {
-            const stepData: Step = {
-                name: step.name || 'Unnamed Step',
-                description: step.description?.content || '',
-                checked: false,
-                people: [],
-                systems: [],
-                references: []
-            };
-            
-            for (const person of step.people || []) {
-                stepData.people.push({
-                    name: person.name || 'Unknown',
-                    email: person.email || '',
-                    phone: person.phoneNumber || '',
-                    role: person.role?.name || ''
-                });
-            }
-            
-            for (const system of step.systems || []) {
-                stepData.systems.push({
-                    name: system.name || 'Unknown',
-                    description: system.description?.content || '',
-                    url: system.accessedAt || ''
-                });
-            }
-            
-            for (const ref of step.references || []) {
-                stepData.references.push({
-                    name: ref.name || 'Unknown',
-                    link: ref.link || '',
-                    description: ref.description?.content || ''
-                });
-            }
-            
-            taskData.steps.push(stepData);
-        }
-        
-        return taskData;
-    }
-
-    function toggleTask(taskId: string) {
-        const newExpanded = new Set(expandedTasks);
-        if (newExpanded.has(taskId)) {
-            newExpanded.delete(taskId);
-        } else {
-            newExpanded.add(taskId);
-        }
-        expandedTasks = newExpanded;
-    }
-
-    function toggleStep(stepId: string) {
-        const newExpanded = new Set(expandedSteps);
-        if (newExpanded.has(stepId)) {
-            newExpanded.delete(stepId);
-        } else {
-            newExpanded.add(stepId);
-        }
-        expandedSteps = newExpanded;
     }
 
     function handleComplete() {
@@ -496,8 +359,8 @@
     }
 
     function handlePrint() {
-        if (!event) return;
-        
+        if (!event || !checklistHtml) return;
+
         const printContent = document.createElement('div');
         printContent.innerHTML = `
             <style>
@@ -509,13 +372,13 @@
                 .print-header { margin-bottom: 1rem; }
                 .print-header h1 { font-size: 1.5rem; margin: 0; }
                 .print-header p { margin: 0.25rem 0; color: #666; }
-                .print-task { margin: 1rem 0; }
-                .print-task h3 { margin: 0.5rem 0; }
-                .print-step { margin-left: 1.5rem; }
-                .print-step h4 { margin: 0.25rem 0; }
-                .print-meta { margin-left: 2.5rem; font-size: 0.875rem; color: #666; }
-                .print-meta h5 { margin: 0.25rem 0; font-weight: 600; }
-                .print-meta ul { margin: 0.25rem 0; padding-left: 1.5rem; }
+                .study-checklist-content h1 { font-size: 1.75rem; font-weight: 600; margin-top: 0; margin-bottom: 1rem; }
+                .study-checklist-content h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+                .study-checklist-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+                .study-checklist-content h4 { font-size: 1.1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
+                .study-checklist-content ul, .study-checklist-content ol { padding-left: 1.5rem; }
+                .study-checklist-content .checklist-item { display: flex; align-items: flex-start; margin-bottom: 0.5rem; }
+                .study-checklist-content .checklist-item input[type="checkbox"] { margin-right: 0.5rem; margin-top: 0.25rem; }
             </style>
             <div class="print-content">
                 <div class="print-header">
@@ -523,39 +386,12 @@
                     <p>Patient: ${patientId} | Day ${dayNumber} | ${date.toLocaleDateString()}</p>
                     <p>Period: ${periodName} | Status: ${statusLabel}</p>
                 </div>
-                ${tasks.map((task, ti) => `
-                    <div class="print-task">
-                        <h3>☐ Task ${ti + 1}: ${task.name}</h3>
-                        ${task.description ? `<p>${task.description}</p>` : ''}
-                        ${task.steps.map((step, si) => `
-                            <div class="print-step">
-                                <h4>☐ Step ${si + 1}: ${step.name}</h4>
-                                ${step.description ? `<p>${step.description}</p>` : ''}
-                                ${step.people.length > 0 ? `
-                                    <div class="print-meta">
-                                        <h5>PEOPLE</h5>
-                                        <ul>${step.people.map(p => `<li>${p.name}${p.role ? ` (${p.role})` : ''}</li>`).join('')}</ul>
-                                    </div>
-                                ` : ''}
-                                ${step.systems.length > 0 ? `
-                                    <div class="print-meta">
-                                        <h5>SYSTEMS USED</h5>
-                                        <ul>${step.systems.map(s => `<li>${s.name}</li>`).join('')}</ul>
-                                    </div>
-                                ` : ''}
-                                ${step.references.length > 0 ? `
-                                    <div class="print-meta">
-                                        <h5>REFERENCES</h5>
-                                        <ul>${step.references.map(r => `<li>${r.name}${r.link ? ` (${r.link})` : ''}</li>`).join('')}</ul>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                `).join('')}
+                <div class="study-checklist-content">
+                    ${checklistHtml}
+                </div>
             </div>
         `;
-        
+
         const printWindow = window.open('', '_blank');
         if (printWindow) {
             printWindow.document.write(printContent.innerHTML);
@@ -577,10 +413,10 @@
             lastLoadedEventKey = currentKey;
             loadChecklist();
         } else if (mode !== 'scheduled' || !currentKey) {
-            // Not in scheduled mode or no event — clear tasks
-            if (tasks.length > 0) {
-                console.log('[EventCard] Clearing tasks (mode:', mode, ', currentKey:', currentKey, ')');
-                tasks = [];
+            // Not in scheduled mode or no event — clear checklist
+            if (checklistHtml.length > 0) {
+                console.log('[EventCard] Clearing checklist (mode:', mode, ', currentKey:', currentKey, ')');
+                checklistHtml = "";
             }
             isLoadingChecklist = false;
             lastLoadedEventKey = null;
@@ -722,123 +558,11 @@
                     <div class="checklist-section">
                         {#if isLoadingChecklist}
                             <div class="loading-checklist">Loading checklist...</div>
-                        {:else if tasks.length === 0}
+                        {:else if !checklistHtml}
                             <div class="empty-checklist">No tasks defined for this event.</div>
                         {:else}
-                            <div class="checklist-content">
-                                {#each tasks as task, taskIndex}
-                                    {@const taskId = `task-${taskIndex}`}
-                                    {@const isTaskExpanded = expandedTasks.has(taskId)}
-                                    <div class="task-item">
-                                        <div class="task-header" onclick={() => toggleTask(taskId)}>
-                                            <input type="checkbox" bind:checked={task.checked} onclick={(e) => e.stopPropagation()} />
-                                            <button class="expand-btn">
-                                                {#if isTaskExpanded}
-                                                    <IconChevronDown size={14} />
-                                                {:else}
-                                                    <IconChevronRight size={14} />
-                                                {/if}
-                                            </button>
-                                            <span class="task-name">Task {taskIndex + 1}: {task.name}</span>
-                                        </div>
-                                        {#if task.description}
-                                            <div class="task-description">{task.description}</div>
-                                        {/if}
-                                        
-                                        {#if isTaskExpanded && task.steps.length > 0}
-                                            <div class="steps-list">
-                                                {#each task.steps as step, stepIndex}
-                                                    {@const stepId = `${taskId}-step-${stepIndex}`}
-                                                    {@const isStepExpanded = expandedSteps.has(stepId)}
-                                                    {@const hasDetails = step.people.length > 0 || step.systems.length > 0 || step.references.length > 0}
-                                                    <div class="step-item">
-                                                        <div class="step-header" onclick={() => hasDetails && toggleStep(stepId)}>
-                                                            <input type="checkbox" bind:checked={step.checked} onclick={(e) => e.stopPropagation()} />
-                                                            {#if hasDetails}
-                                                                <button class="expand-btn">
-                                                                    {#if isStepExpanded}
-                                                                        <IconChevronDown size={12} />
-                                                                    {:else}
-                                                                        <IconChevronRight size={12} />
-                                                                    {/if}
-                                                                </button>
-                                                            {:else}
-                                                                <span class="expand-placeholder"></span>
-                                                            {/if}
-                                                            <span class="step-name">Step {stepIndex + 1}: {step.name}</span>
-                                                        </div>
-                                                        {#if step.description}
-                                                            <div class="step-description">{step.description}</div>
-                                                        {/if}
-                                                        
-                                                        {#if isStepExpanded}
-                                                            <div class="step-details">
-                                                                {#if step.people.length > 0}
-                                                                    <div class="detail-section">
-                                                                        <span class="detail-label">PEOPLE</span>
-                                                                        <ul class="detail-list">
-                                                                            {#each step.people as person}
-                                                                                <li class="person-item">
-                                                                                    <span class="bullet">●</span>
-                                                                                    <span class="person-name">{person.name}</span>
-                                                                                    {#if person.role}
-                                                                                        <span class="person-role">({person.role})</span>
-                                                                                    {/if}
-                                                                                </li>
-                                                                            {/each}
-                                                                        </ul>
-                                                                    </div>
-                                                                {/if}
-                                                                
-                                                                {#if step.systems.length > 0}
-                                                                    <div class="detail-section">
-                                                                        <span class="detail-label">SYSTEMS USED</span>
-                                                                        <ul class="detail-list">
-                                                                            {#each step.systems as system}
-                                                                                <li class="system-item">
-                                                                                    <span class="bullet">●</span>
-                                                                                    {#if system.url}
-                                                                                        <a href={system.url} target="_blank" rel="noopener noreferrer" class="system-link">
-                                                                                            {system.name}
-                                                                                            <IconExternalLink size={10} />
-                                                                                        </a>
-                                                                                    {:else}
-                                                                                        <span class="system-name">{system.name}</span>
-                                                                                    {/if}
-                                                                                </li>
-                                                                            {/each}
-                                                                        </ul>
-                                                                    </div>
-                                                                {/if}
-                                                                
-                                                                {#if step.references.length > 0}
-                                                                    <div class="detail-section">
-                                                                        <span class="detail-label">REFERENCES</span>
-                                                                        <ul class="detail-list">
-                                                                            {#each step.references as ref}
-                                                                                <li class="reference-item">
-                                                                                    <span class="bullet">●</span>
-                                                                                    {#if ref.link}
-                                                                                        <a href={ref.link} target="_blank" rel="noopener noreferrer" class="reference-link">
-                                                                                            {ref.name}
-                                                                                            <IconExternalLink size={10} />
-                                                                                        </a>
-                                                                                    {:else}
-                                                                                        <span class="reference-name">{ref.name}</span>
-                                                                                    {/if}
-                                                                                </li>
-                                                                            {/each}
-                                                                        </ul>
-                                                                    </div>
-                                                                {/if}
-                                                            </div>
-                                                        {/if}
-                                                    </div>
-                                                {/each}
-                                            </div>
-                                        {/if}
-                                    </div>
-                                {/each}
+                            <div class="study-checklist-content">
+                                {@html checklistHtml}
                             </div>
                         {/if}
                     </div>

@@ -21,6 +21,18 @@
     let canDuplicate = $derived(box?.findParam("canDuplicate") === "true");
     let canShare = $derived(box?.findParam("canShare") === "true");
     let canExpandParam = $derived(box?.findParam("canExpand") === "true");
+    /** When set to a StudyConfiguration flag name (e.g. 'showSteps'), component renders only when that flag is true. */
+    let showWhen = $derived(box?.findParam("showWhen") || "");
+
+    // Visibility by study configuration: if showWhen is set, show only when that flag is true
+    let visibleByStudyConfig = $derived(() => {
+        if (!showWhen || !box?.node) return true;
+        const studyConfig = ownerOfType(box.node, "StudyConfiguration") as StudyConfiguration | null;
+        if (!studyConfig) return true;
+        const value = (studyConfig as unknown as Record<string, unknown>)[showWhen];
+        return value === true;
+    });
+
     // Store the language-defined default so we can restore it later
     let defaultIsExpanded = $derived(box?.findParam("isExpanded") === "true");
     let isExpanded = $state(false);
@@ -284,6 +296,7 @@
 
 </script>
 
+{#if visibleByStudyConfig()}
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div id="{id}" class="item-group {cssClass}">
     {#if canExpand()}
@@ -325,3 +338,4 @@
         <RenderComponent box={child} editor={editor} />
     {/each}
 </div>
+{/if}

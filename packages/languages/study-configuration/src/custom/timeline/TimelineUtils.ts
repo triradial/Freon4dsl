@@ -312,3 +312,19 @@ export function getVisitChecklistAsMarkdownForPdf(
     return markdown;
 }
 
+/**
+ * Get checklist for a specific event by name as markdown.
+ * This is useful when you already know the event (e.g., from an EventCard) and don't need
+ * to search by date on the timeline.
+ *
+ * @param studyConfigurationUnit The study configuration
+ * @param eventName The name of the event to get the checklist for
+ * @returns Markdown string with the event checklist, or empty string if event not found
+ */
+export function getEventChecklistAsMarkdownByName(
+    studyConfigurationUnit: StudyConfiguration,
+    eventName: string
+): string {
+    return StudyChecklistDocumentTemplate.getEventChecklistByName(studyConfigurationUnit, eventName);
+}
+

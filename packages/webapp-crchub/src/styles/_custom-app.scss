@@ -6620,7 +6620,10 @@
         border: 1px solid var(--event-card-border);
         display: flex;
         flex-direction: column;
-        width: 20rem;
+        /* Dynamic width: grow to fill available space, but respect min/max */
+        flex: 1 1 20rem;
+        min-width: 18rem;
+        max-width: 100%;
         height: 100%;
 
         /* Card header - fixed height with type label + buttons */
@@ -7077,6 +7080,114 @@
             display: flex;
             flex-direction: column;
             gap: 0.125rem;
+        }
+
+        /* Markdown-based checklist content (same as VisitChecklistDrawer) */
+        .study-checklist-content {
+            padding: 0.25rem;
+
+            h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-top: 0;
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.25em;
+                border-bottom: 1px solid var(--borderColor-muted, currentColor);
+            }
+            h2 {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-top: 1rem;
+                margin-bottom: 0.5rem;
+                padding-bottom: 0.25em;
+                border-bottom: 1px solid var(--borderColor-muted, currentColor);
+            }
+            h3 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-top: 0.75rem;
+                margin-bottom: 0.375rem;
+            }
+            h4 {
+                font-size: 1rem;
+                font-weight: 600;
+                margin-top: 0.5rem;
+                margin-bottom: 0.25rem;
+            }
+            h5 {
+                font-size: 0.9rem;
+                font-weight: 600;
+                margin-top: 0.375rem;
+                margin-bottom: 0.25rem;
+            }
+            h6 {
+                font-size: 0.85rem;
+                font-weight: 600;
+                margin-top: 0.25rem;
+                margin-bottom: 0.25rem;
+                color: var(--fgColor-muted, inherit);
+            }
+            p {
+                margin-top: 0;
+                margin-bottom: 0.5rem;
+            }
+            ul, ol {
+                margin-top: 0;
+                margin-bottom: 0.5rem;
+                padding-left: 1.25rem;
+            }
+            li, li p {
+                font-size: var(--standard-font-size);
+                color: var(--checklist-text);
+            }
+
+            /* Checklist item styles */
+            .checklist-item {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 0.375rem;
+            }
+            .checklist-item label {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.375rem;
+                cursor: pointer;
+            }
+            .checklist-item input[type="checkbox"] {
+                margin-top: 0.2rem;
+                width: 1rem;
+                height: 1rem;
+                cursor: pointer;
+                accent-color: var(--primary-color);
+            }
+            .checklist-task {
+                font-size: 1rem;
+                font-weight: 600;
+                margin-top: 0.75rem;
+            }
+            .checklist-step {
+                font-size: 0.9rem;
+                margin-left: 1.25rem;
+            }
+            .checklist-task-content {
+                margin-left: 1.4rem;
+                margin-bottom: 0.375rem;
+                color: var(--checklist-text);
+            }
+            .checklist-step-content {
+                margin-left: 2.65rem;
+                margin-bottom: 0.2rem;
+                font-size: 0.85rem;
+                color: var(--checklist-text);
+            }
+            .checklist-group-label {
+                font-size: 0.65rem;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin: 0.5rem 0 0.25rem 1.5rem;
+            }
         }
 
         .task-item {

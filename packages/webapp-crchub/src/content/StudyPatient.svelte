@@ -664,32 +664,37 @@
         for (const dbDay of schedule.days) {
             const dayDate = dbDay.date || dayjs(patientRefDateStr).add(dbDay.day, 'day').format('YYYY-MM-DD');
             const events = (dbDay.events || []).map((event: any) => {
-                // Backfill 'category' on events that don't have it yet
-                // (events created before the category field was added)
-                if (!event.category) {
+                // Always create a new plain object to avoid working with Svelte proxies
+                // This prevents state_unsafe_mutation errors and ensures proper reactivity
+                let category = event.category;
+                if (!category) {
+                    // Backfill 'category' on events that don't have it yet
+                    // (events created before the category field was added)
                     if (event.scheduledDay === 0 || (event.originalScheduledDay !== undefined && event.originalScheduledDay === 0)) {
-                        event.category = 'initial';
+                        category = 'initial';
                     } else if (event.isUnscheduledEvent || event.type === 'unscheduled-event') {
-                        event.category = 'unscheduled';
+                        category = 'unscheduled';
                     } else {
-                        event.category = 'scheduled';
+                        category = 'scheduled';
                     }
                 }
+                // Create new plain object with all properties
+                const processedEvent = { ...event, category };
                 // Only add window days for PENDING events (matches StudyPatients: future events only)
                 // Window is always based on originalScheduledDay, NOT the current scheduledDay
-                const isCompleted = event?.status === 'completed' || event?.status === 'cancelled' || event?.status === 'missed';
-                if (!isCompleted && event.window && event.scheduledDay !== undefined) {
-                    const baseDay = event.originalScheduledDay ?? event.scheduledDay;
-                    const windowStart = baseDay - (event.window.daysBefore || 0);
-                    const windowEnd = baseDay + (event.window.daysAfter || 0);
+                const isCompleted = processedEvent?.status === 'completed' || processedEvent?.status === 'cancelled' || processedEvent?.status === 'missed';
+                if (!isCompleted && processedEvent.window && processedEvent.scheduledDay !== undefined) {
+                    const baseDay = processedEvent.originalScheduledDay ?? processedEvent.scheduledDay;
+                    const windowStart = baseDay - (processedEvent.window.daysBefore || 0);
+                    const windowEnd = baseDay + (processedEvent.window.daysAfter || 0);
                     for (let wd = windowStart; wd <= windowEnd; wd++) {
-                        if (wd !== event.scheduledDay && wd !== dbDay.day && wd >= today) {
+                        if (wd !== processedEvent.scheduledDay && wd !== dbDay.day && wd >= today) {
                             if (!dayWindowsMap.has(wd)) dayWindowsMap.set(wd, []);
-                            dayWindowsMap.get(wd)!.push({ eventId: event.id, eventName: event.name });
+                            dayWindowsMap.get(wd)!.push({ eventId: processedEvent.id, eventName: processedEvent.name });
                         }
                     }
                 }
-                return event;
+                return processedEvent;
             });
             days.push({ day: dbDay.day, date: dayDate, events });
         }
@@ -1205,7 +1210,8 @@
         // Set up drawer visibility
         setAllDrawersVisibility(false);
         setDrawerVisibility("help", true);
-        setDrawerVisibility("visitChecklist", true);
+        // Visit checklist is now shown in EventCard, so don't show the drawer
+        setDrawerVisibility("visitChecklist", false);
         if (patient && studyId) {
             // Get patient reference date for the drawer
             let patientRefDate: Date | undefined = undefined;

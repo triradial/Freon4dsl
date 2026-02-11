@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { AST, FreLanguage, FreLogger, PartWrapperBox, type FreNode } from "@freon4dsl/core";
+    import { AST, FreLanguage, FreLogger, ownerOfType, PartWrapperBox, type FreNode } from "@freon4dsl/core";
     import { componentId, RenderComponent, type FreComponentProps } from "@freon4dsl/core-svelte";
+    import type { StudyConfiguration } from "@freon4dsl/study-configuration";
     import { onDestroy, onMount } from "svelte";
     import { expandCollapseStore } from "../../services/stores/expand-collapse-store.js";
     import { showPasteDuplicatesReport, showPasteError } from "../../services/stores/paste-duplicates-store.js";
@@ -17,6 +18,17 @@
     let canAdd = $derived(box?.findParam("canAdd") === "true");
     let canCRUD = $derived(box?.findParam("canCRUD") === "true");
     let canExpand = $derived(box?.findParam("canExpand") === "true");
+    /** When set to a StudyConfiguration flag name (e.g. 'showSteps'), component renders only when that flag is true. */
+    let showWhen = $derived(box?.findParam("showWhen") || "");
+
+    // Visibility by study configuration: if showWhen is set, show only when that flag is true
+    let visibleByStudyConfig = $derived(() => {
+        if (!showWhen || !box?.node) return true;
+        const studyConfig = ownerOfType(box.node, "StudyConfiguration") as StudyConfiguration | null;
+        if (!studyConfig) return true;
+        const value = (studyConfig as unknown as Record<string, unknown>)[showWhen];
+        return value === true;
+    });
     // Store the language-defined default so we can restore it later
     let defaultIsExpanded = $derived(box?.findParam("isExpanded") === "true");
     let isExpanded = $state(false);
@@ -281,6 +293,7 @@
 
 </script>
 
+{#if visibleByStudyConfig()}
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div id="{id}" class="list-group {cssClass}">
     {#if canExpand}
@@ -314,3 +327,4 @@
 <div class="list-group-content {cssClass}" bind:this={contentElement} style:display={contentDisplay}>
     <RenderComponent box={box.childBox} {editor} {cssClass} />
 </div>
+{/if}

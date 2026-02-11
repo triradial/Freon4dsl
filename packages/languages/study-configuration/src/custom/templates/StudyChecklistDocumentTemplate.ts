@@ -457,6 +457,32 @@ export class StudyChecklistDocumentTemplate {
         if (stepDesc) {
             builder.addChecklistContent(stepDesc, 2);
         }
+
+        // Include people, systems, and references (same as renderStepAsMarkdown)
+        if (step.people?.length > 0) {
+            builder.addRaw('<p class="checklist-group-label">PEOPLE</p>');
+            builder.addEmptyLine();
+            const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdown(step.people);
+            if (peopleMarkdown) {
+                builder.addRaw(peopleMarkdown);
+            }
+        }
+        if (step.systems?.length > 0) {
+            builder.addRaw('<p class="checklist-group-label">SYSTEMS</p>');
+            builder.addEmptyLine();
+            const systemsMarkdown = StudyChecklistDocumentTemplate.getSystemsAsMarkdown(step.systems);
+            if (systemsMarkdown) {
+                builder.addRaw(systemsMarkdown);
+            }
+        }
+        if (step.references?.length > 0) {
+            builder.addRaw('<p class="checklist-group-label">REFERENCES</p>');
+            builder.addEmptyLine();
+            const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdown(step.references);
+            if (referencesMarkdown) {
+                builder.addRaw(referencesMarkdown);
+            }
+        }
     }
 
     /**
@@ -958,5 +984,103 @@ export class StudyChecklistDocumentTemplate {
         }
 
         return markdown;
+    }
+
+    /**
+     * Get checklist for a specific event by name as markdown.
+     * Searches through periods and study-level unscheduled events to find the event.
+     * Includes study-level systems, references, and staffing sections.
+     *
+     * @param studyConfiguration The study configuration
+     * @param eventName The name of the event to get the checklist for
+     * @returns Markdown string with the event checklist, or empty string if event not found
+     */
+    static getEventChecklistByName(studyConfiguration: StudyConfiguration, eventName: string): string {
+        const builder = new MarkdownBuilder();
+        const writer = new StudyConfigurationModelModelUnitWriter();
+        let eventFound = false;
+
+        // Search in periods for the event
+        for (const period of studyConfiguration.periods || []) {
+            if (eventFound) break;
+
+            // Check scheduled events
+            for (const event of period.events || []) {
+                if (event.name === eventName) {
+                    StudyChecklistDocumentTemplate.renderEventWithCheckboxes(builder, writer, event);
+                    eventFound = true;
+                    break;
+                }
+            }
+
+            if (eventFound) break;
+
+            // Check period-level unscheduled events
+            for (const event of period.unscheduledEvents || []) {
+                if (event.name === eventName) {
+                    // Render unscheduled event with checkboxes (same format)
+                    builder.addHeading(2, event.name);
+                    const eventDesc = event.description?.text ?? event.description?.rawText;
+                    if (eventDesc) {
+                        builder.addParagraph(eventDesc);
+                    }
+                    builder.addParagraph('This is an unscheduled event that is triggered as needed.', true);
+                    // Render tasks with checkboxes
+                    for (const task of event.tasks || []) {
+                        StudyChecklistDocumentTemplate.renderTaskAsCheckbox(builder, task as Task | TaskReference);
+                    }
+                    eventFound = true;
+                    break;
+                }
+            }
+        }
+
+        // Check study-level unscheduled events if not found yet
+        if (!eventFound) {
+            for (const event of studyConfiguration.unscheduledEvents || []) {
+                if (event.name === eventName) {
+                    builder.addHeading(2, event.name);
+                    const eventDesc = event.description?.text ?? event.description?.rawText;
+                    if (eventDesc) {
+                        builder.addParagraph(eventDesc);
+                    }
+                    builder.addParagraph('This is an unscheduled event that is triggered as needed.', true);
+                    // Render tasks with checkboxes
+                    for (const task of event.tasks || []) {
+                        StudyChecklistDocumentTemplate.renderTaskAsCheckbox(builder, task as Task | TaskReference);
+                    }
+                    eventFound = true;
+                    break;
+                }
+            }
+        }
+
+        // Event not found
+        if (!eventFound) {
+            return "";
+        }
+
+        // Add study-level shared systems section
+        if (studyConfiguration.systemAccesses?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Systems");
+            StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 2);
+        }
+
+        // Add study-level shared references section
+        if (studyConfiguration.sharedReferences?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "References");
+            StudyChecklistDocumentTemplate.renderReferencesAsHeadings(builder, studyConfiguration.sharedReferences, 2);
+        }
+
+        // Add study-level staffing section
+        if (studyConfiguration.staffing?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Staffing");
+            StudyChecklistDocumentTemplate.renderPeopleAsHeadings(builder, studyConfiguration.staffing, 2);
+        }
+
+        return builder.build();
     }
 }
