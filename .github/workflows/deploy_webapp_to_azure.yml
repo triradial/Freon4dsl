@@ -35,7 +35,7 @@ jobs:
         working-directory: .
         env:
           DEBUG: "*"
-          AZURE_ENVIRONMENT: ${{ github.event.inputs.environment || 'development' }}
+          VITE_AZURE_ENVIRONMENT: ${{ github.event.inputs.environment || 'development' }}
 
       - name: Prepare webapp deployment
         run: |

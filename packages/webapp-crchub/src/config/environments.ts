@@ -11,7 +11,7 @@ export const environments: Record<Environment, EnvironmentConfig> = {
         serverTimeout: 2000
     },
     development: {
-        serverUrl: 'https://crchub-server.azurewebsites.net',
+        serverUrl: 'https://crchub-server-d.azurewebsites.net',
         serverTimeout: 5000
     },
     staging: {
