@@ -42,24 +42,19 @@ jobs:
           # Create deployment directory
           mkdir -p webapp-app
           
-          # Copy package.json and modify for production
+          # Copy SvelteKit build output (adapter-node produces build/ with index.js server)
+          cp -r packages/webapp-crchub/build webapp-app/
+          
+          # Create minimal package.json for production
           cp packages/webapp-crchub/package.json webapp-app/
           node -e '
             const pkg = require("./webapp-app/package.json");
-            pkg.scripts.start = "node node_modules/sirv-cli/bin.js public --port 8080 --single --host 0.0.0.0";
-            // Only keep sirv-cli for production - Vite already bundled everything else into public/
-            pkg.dependencies = { "sirv-cli": pkg.dependencies["sirv-cli"] };
+            pkg.scripts.start = "node build/index.js";
+            pkg.dependencies = {};
             pkg.devDependencies = {};
             delete pkg.engines;
             require("fs").writeFileSync("./webapp-app/package.json", JSON.stringify(pkg, null, 2));
           '
-         
-          # Copy built webapp files
-          cp -r packages/webapp-crchub/public webapp-app/
-
-          # Install production dependencies (only sirv-cli)
-          cd webapp-app
-          npm install --omit=dev
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -88,9 +83,9 @@ jobs:
       - name: Verify deployment files
         run: |
           echo "Checking deployment structure..."
-          test -d webapp-app/node_modules || (echo "node_modules missing" && exit 1)
           test -f webapp-app/package.json || (echo "package.json missing" && exit 1)
-          test -d webapp-app/public || (echo "public directory missing" && exit 1)
+          test -f webapp-app/build/index.js || (echo "build/index.js missing" && exit 1)
+          test -d webapp-app/build/client || (echo "build/client directory missing" && exit 1)
           
           echo "All required files present"
 
