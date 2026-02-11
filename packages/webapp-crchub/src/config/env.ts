@@ -1,7 +1,8 @@
 import { type Environment, environments } from './environments.js';
 
 // Get environment from Azure App Service or default to 'local'
-const currentEnv = (import.meta.env.VITE_AZURE_ENVIRONMENT || 'local') as Environment;
+// Normalize to lowercase since workflow inputs may use capitalized values (e.g. "Development")
+const currentEnv = ((import.meta.env.VITE_AZURE_ENVIRONMENT || 'local') as string).toLowerCase() as Environment;
 
 if (!Object.keys(environments).includes(currentEnv)) {
     throw new Error(`Invalid environment: ${currentEnv}`);

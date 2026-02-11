@@ -8,6 +8,7 @@ import { schemaMismatchTracker } from "./schema-mismatch-tracker.js";
 import { setUserMessage } from "./usermessage-store.js";
 import { WebappConfigurator } from "./webapp-configurator.js";
 import { perfLogger } from "../performance-logger.js";
+import { env } from "../../config/env.js";
 
 const LOGGER = new FreLogger("EditorState").mute();
 
@@ -510,7 +511,7 @@ export class ModelManager {
         
         try {
             // Try direct fetch to bypass any potential issues with ServerCommunication
-            const serverUrl = 'http://localhost:8080';
+            const serverUrl = env.serverUrl;
             const url = `${serverUrl}/saveModelUnit?model=${encodeURIComponent(this.currentModel.name)}&unit=${encodeURIComponent(unit.name)}`;
             
             // Serialize the unit using the Freon serializer
