@@ -47,28 +47,17 @@ jobs:
           node -e '
             const pkg = require("./webapp-app/package.json");
             pkg.scripts.start = "node node_modules/sirv-cli/bin.js public --port 8080 --single --host 0.0.0.0";
-            // Rewrite workspace dependencies to local file references
-            const workspaceDeps = {
-              "@freon4dsl/core": "file:../packages/core",
-              "@freon4dsl/core-svelte": "file:../packages/core-svelte",
-              "@freon4dsl/study-configuration": "file:../packages/languages/study-configuration"
-            };
-            for (const [name, path] of Object.entries(workspaceDeps)) {
-              if (pkg.dependencies[name]) pkg.dependencies[name] = path;
-            }
+            // Only keep sirv-cli for production - Vite already bundled everything else into public/
+            pkg.dependencies = { "sirv-cli": pkg.dependencies["sirv-cli"] };
+            pkg.devDependencies = {};
+            delete pkg.engines;
             require("fs").writeFileSync("./webapp-app/package.json", JSON.stringify(pkg, null, 2));
           '
-
-          # Copy dependencies
-          mkdir -p webapp-app/local-packages
-          cp -r packages/core/dist webapp-app/local-packages/core
-          cp -r packages/core-svelte/dist webapp-app/local-packages/core-svelte
-          cp -r packages/languages/study-configuration/dist webapp-app/local-packages/study-configuration
          
           # Copy built webapp files
           cp -r packages/webapp-crchub/public webapp-app/
 
-          # Install production dependencies
+          # Install production dependencies (only sirv-cli)
           cd webapp-app
           npm install --omit=dev
 
