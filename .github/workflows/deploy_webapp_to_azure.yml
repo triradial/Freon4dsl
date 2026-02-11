@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 20.x ]
+        node-version: [ 22.x ]
 
     steps:
       - name: Checkout
@@ -35,12 +35,7 @@ jobs:
         working-directory: .
         env:
           DEBUG: "*"
-
-      - name: Build webapp
-        run: |
-          echo "Building webapp..."
-          cd packages/webapp-crchub
-          AZURE_ENVIRONMENT=${{ github.event.inputs.environment || 'development' }} npm run build-app
+          AZURE_ENVIRONMENT: ${{ github.event.inputs.environment || 'development' }}
 
       - name: Prepare webapp deployment
         run: |
