@@ -47,8 +47,15 @@ jobs:
           node -e '
             const pkg = require("./webapp-app/package.json");
             pkg.scripts.start = "node node_modules/sirv-cli/bin.js public --port 8080 --single --host 0.0.0.0";
-            const { dependencies } = pkg;
-            pkg.dependencies = dependencies;
+            // Rewrite workspace dependencies to local file references
+            const workspaceDeps = {
+              "@freon4dsl/core": "file:../packages/core",
+              "@freon4dsl/core-svelte": "file:../packages/core-svelte",
+              "@freon4dsl/study-configuration": "file:../packages/languages/study-configuration"
+            };
+            for (const [name, path] of Object.entries(workspaceDeps)) {
+              if (pkg.dependencies[name]) pkg.dependencies[name] = path;
+            }
             require("fs").writeFileSync("./webapp-app/package.json", JSON.stringify(pkg, null, 2));
           '
 
