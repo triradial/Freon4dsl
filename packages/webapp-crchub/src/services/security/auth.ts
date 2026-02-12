@@ -19,13 +19,13 @@ if (initialAuth) {
 }
 
 /**
- * Authenticate user with username and password
- * This uses the new authentication flow:
- * 1. Server validates username in Azure AD
- * 2. Server gets OID from Azure AD
- * 3. Server checks database with OID and password
- * 4. Server checks active flag
- * 5. Server returns fake JWT token
+ * Authenticate user with username and password.
+ * The server uses the ROPC (Resource Owner Password Credentials) flow:
+ * 1. Server looks up user in local database by email
+ * 2. Server checks active flag
+ * 3. Server verifies credentials against Azure AD via ROPC
+ * 4. Server stores OID from Entra if not already in the database
+ * 5. Server returns JWT token
  */
 export async function authenticate(username: string, password: string): Promise<{ success: boolean; errorMessage?: string }> {
     try {

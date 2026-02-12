@@ -15,9 +15,9 @@ const router = new Router();
 
 const rateLimiter = RateLimit.middleware({
     interval: { min: 15 }, // 15 minutes
-    max: 5, // 5 requests per interval
+    max: 100, // 5 requests per interval
     message: 'Too many login attempts, please try again later',
-    prefixKey: 'login' // to separate login attempts from other rate limits
+    prefixKey: 'login'
 });
 
 const signInSchema = z.object({

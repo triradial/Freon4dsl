@@ -7,13 +7,13 @@ const moduleName = '[auth-handler]';
 export class AuthHandler {
 
     /**
-     * Sign in endpoint - authenticates user with username and password
-     * Uses new authentication flow:
-     * 1. Validates username in Azure AD
-     * 2. Gets OID from Azure AD
-     * 3. Checks database with OID and password
-     * 4. Checks active flag
-     * 5. Returns fake JWT token
+     * Sign in endpoint — authenticates user with username and password.
+     * Uses ROPC (Resource Owner Password Credentials) flow:
+     * 1. Looks up user in local database by email
+     * 2. Checks active flag
+     * 3. Verifies credentials against Azure AD via ROPC
+     * 4. Stores OID from Entra if not already in the database
+     * 5. Returns JWT token
      */
     public static async signIn(username: string, password: string, ctx: IRouterContext) {
         try {
@@ -72,8 +72,10 @@ export class AuthHandler {
     }
 
     /**
-     * Get Azure AD user information by username (email)
-     * This endpoint is used for validating users during authentication
+     * Get Azure AD user information by username (email).
+     * Used by the admin UI to look up a user in Entra and retrieve their
+     * display name and OID for storage in the local database.
+     * Requires User.Read.All application permission.
      */
     public static async getADUserByUsername(username: string, ctx: IRouterContext) {
         const action = moduleName + ' getADUserByUsername';
@@ -105,7 +107,9 @@ export class AuthHandler {
     }
 
     /**
-     * Get Azure AD user information by OID
+     * Get Azure AD user information by OID.
+     * Used by the admin UI to look up user details from Entra.
+     * Requires User.Read.All application permission.
      */
     public static async getADUserByOID(oid: string, ctx: IRouterContext) {
         const action = moduleName + ' getADUserByOID';
