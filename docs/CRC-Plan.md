@@ -11,7 +11,6 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Graham
 
 ### To-Do 
-- [ ] Get internal error when open study from home page
 - [ ] Chart on patient page sometimes doesn't render, e.g., first patient for Arcadia study only shows first month or two.
 - [ ] Create a database backup / snapshot and restore process that we can use to reset after demos. We'll need a standard set of studies setup and the process should allow us to take a new snapshot to use going forward or to have multiple snapshots for different kinds of demos. 
 - [ ] Review and clean-up Mike's hack at checklists on the patient page. 
@@ -61,6 +60,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 
 ### In-Progress
+- [ ] Move to separate CRC project. 
 - [ ] Rebuild some or all of the studies to test behavior and useability including creating realistic examples of checklists. 
 
 
