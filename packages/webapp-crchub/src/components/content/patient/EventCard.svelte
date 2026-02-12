@@ -3,14 +3,10 @@
     // @ts-ignore
     import { X as IconX, ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, ChevronLeft as IconChevronLeft, ExternalLink as IconExternalLink, FileText as IconPdf, FileSpreadsheet as IconWord } from '@lucide/svelte';
     import { ModelManager } from "../../../services/dsl/model-manager.js";
-    import { getEventChecklistAsMarkdownByName, getEventChecklistAsMarkdownByNameForPdf, type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { getEventChecklistAsMarkdownByName, getEventChecklistAsMarkdownByNameForPdf, getEventChecklistAsMarkdownByNameForWord, type StudyConfiguration } from "@freon4dsl/study-configuration";
     import { dataStore } from "../../../services/data/data-store.js";
-    import { generateWordChecklist } from "../../../services/document/word-checklist-generator.js";
     import MarkdownIt from "markdown-it";
-    import pdfMake from "pdfmake/build/pdfmake.js";
-    import pdfFonts from "pdfmake/build/vfs_fonts.js";
-
-    pdfMake.vfs = pdfFonts as any;
+    import { env } from "../../../config/env.js";
 
     // Types
     export type EventType = 'initial' | 'scheduled' | 'unscheduled';
@@ -384,6 +380,24 @@
         }
     }
 
+    /**
+     * Get markdown content formatted for Word document (with checkbox syntax)
+     */
+    async function getMarkdownForWord(): Promise<string | null> {
+        if (!event || !studyId) return null;
+
+        try {
+            const modelManager = ModelManager.getInstance();
+            const studyConfig = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+            if (!studyConfig) return null;
+
+            return getEventChecklistAsMarkdownByNameForWord(studyConfig, event.name);
+        } catch (err) {
+            console.error('[EventCard] Error getting markdown for Word:', err);
+            return null;
+        }
+    }
+
     async function openPdf() {
         if (!event || !checklistHtml) return;
 
@@ -400,63 +414,36 @@
             const study = await dataStore.getStudy(studyId);
             const studyName = study?.name ?? "Study";
 
-            // Parse markdown to create PDF content
-            const lines = markdown.split('\n');
-            const pdfContent: any[] = [];
+            // Convert markdown to HTML for the server endpoint
+            const htmlContent = md.render(markdown);
+            const title = `${studyName} - ${event.name}`;
+            const headerText = `${title} | Patient: ${patientId} | Day ${dayNumber} | ${date.toLocaleDateString()}`;
 
-            // Add header
-            pdfContent.push({
-                text: `${studyName} - ${event.name}`,
-                style: 'header',
-                margin: [0, 0, 0, 5]
+            // Call server endpoint to generate PDF with Puppeteer
+            const response = await fetch(`${env.serverUrl}/generatePdf`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    html: htmlContent,
+                    title: title,
+                    includeToc: true,
+                    headerText: headerText,
+                    footerText: ''
+                })
             });
-            pdfContent.push({
-                text: `Patient: ${patientId} | Day ${dayNumber} | ${date.toLocaleDateString()}`,
-                style: 'subheader',
-                margin: [0, 0, 0, 10]
-            });
 
-            // Parse markdown lines
-            for (const line of lines) {
-                if (!line.trim()) continue;
-
-                if (line.startsWith('# ')) {
-                    pdfContent.push({ text: line.substring(2), style: 'h1', margin: [0, 15, 0, 5] });
-                } else if (line.startsWith('## ')) {
-                    pdfContent.push({ text: line.substring(3), style: 'h2', margin: [0, 12, 0, 4] });
-                } else if (line.startsWith('### ')) {
-                    pdfContent.push({ text: line.substring(4), style: 'h3', margin: [0, 10, 0, 3] });
-                } else if (line.startsWith('#### ')) {
-                    pdfContent.push({ text: line.substring(5), style: 'h4', margin: [0, 8, 0, 2] });
-                } else if (line.startsWith('- ')) {
-                    pdfContent.push({ text: `• ${line.substring(2)}`, margin: [10, 2, 0, 2] });
-                } else if (line.startsWith('---')) {
-                    pdfContent.push({ canvas: [{ type: 'line', x1: 0, y1: 5, x2: 515, y2: 5, lineWidth: 0.5, lineColor: '#cccccc' }], margin: [0, 10, 0, 10] });
-                } else if (!line.startsWith('<')) {
-                    pdfContent.push({ text: line, margin: [0, 2, 0, 2] });
-                }
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                throw new Error(errorData.error || `Server error: ${response.status}`);
             }
 
-            const docDefinition = {
-                content: pdfContent,
-                styles: {
-                    header: { fontSize: 18, bold: true },
-                    subheader: { fontSize: 10, color: '#666666' },
-                    h1: { fontSize: 16, bold: true },
-                    h2: { fontSize: 14, bold: true },
-                    h3: { fontSize: 12, bold: true },
-                    h4: { fontSize: 11, bold: true }
-                },
-                defaultStyle: {
-                    fontSize: 10,
-                    lineHeight: 1.15
-                }
-            };
+            // Get the PDF blob and open it
+            const pdfBlob = await response.blob();
+            const url = URL.createObjectURL(pdfBlob);
+            window.open(url);
 
-            pdfMake.createPdf(docDefinition).getBlob((blob: Blob) => {
-                const url = URL.createObjectURL(blob);
-                window.open(url);
-            });
         } catch (err) {
             console.error('[EventCard] Error generating PDF:', err);
         } finally {
@@ -470,7 +457,8 @@
         isGeneratingWord = true;
 
         try {
-            const markdown = await getMarkdownForPdf();
+            // Get markdown formatted for Word (with checkbox syntax)
+            const markdown = await getMarkdownForWord();
             if (!markdown) {
                 console.error('[EventCard] Unable to generate checklist content for Word document.');
                 isGeneratingWord = false;
@@ -481,14 +469,30 @@
             const studyName = study?.name ?? "Study";
             const dateStr = date.toLocaleDateString().replace(/\//g, '-');
 
-            // Generate Word document from markdown
-            const blob = await generateWordChecklist(
-                markdown,
-                `${studyName} - ${event.name} - ${dateStr}`
-            );
+            const title = `${studyName} - ${event.name}`;
+            const headerText = `Patient: ${patientId} | Day ${dayNumber} | ${date.toLocaleDateString()}`;
 
-            // Download the file
-            const url = URL.createObjectURL(blob);
+            // Call server endpoint to generate Word document with markdown
+            const response = await fetch(`${env.serverUrl}/generateWord`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    markdown: markdown,
+                    title: title,
+                    headerText: headerText
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                throw new Error(errorData.error || `Server error: ${response.status}`);
+            }
+
+            // Get the Word document blob and download it
+            const wordBlob = await response.blob();
+            const url = URL.createObjectURL(wordBlob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `${studyName}-${event.name}-${dateStr}.docx`;
