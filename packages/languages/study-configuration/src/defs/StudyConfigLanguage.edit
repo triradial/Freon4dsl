@@ -82,24 +82,13 @@ Arm {
     ]
 }
 
-// Task {
-//     [
-//         [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canShare="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]
-//     ] trigger = "Task in this Checklist"
-//     fragment taskDetails [
-//         ${name} 
-//         ${description}
-//     ] 
-// }
-
 Task {
     [
-        [fragment taskDetailsWithSteps wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canShare="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]
-    ]
-    fragment taskDetailsWithSteps [
+        [fragment taskDetails wrap = ItemGroupComponent cssClass="type4" canDelete="true" canDuplicate="true" canShare="true" canAdd="false" canExpand="true" isExpanded="false" selectable="false" label="Task"]
+    ] trigger = "Task in this Checklist"
+    fragment taskDetails [
         ${name} 
         ${description}
-        ${steps wrap=ListGroupComponent cssClass="type4" canAdd="true" canDelete="true" canExpand="true" isExpanded="true" selectable="false" showWhen="showSteps" label="Steps"}
     ] 
 }
 

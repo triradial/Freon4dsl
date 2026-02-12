@@ -132,6 +132,33 @@ export class StudyChecklistDocumentTemplate {
         return html.replace(/\r?\n/g, '\n  ');
     }
 
+    /**
+     * Strip HTML tags from a string, preserving text content.
+     * Used for PDF/Word generation where HTML formatting is not supported.
+     */
+    private static stripHtml(html: string): string {
+        if (!html) return '';
+        return html
+            // Replace common HTML entities
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/&rsquo;/g, "'")
+            .replace(/&lsquo;/g, "'")
+            .replace(/&rdquo;/g, '"')
+            .replace(/&ldquo;/g, '"')
+            .replace(/&mdash;/g, '—')
+            .replace(/&ndash;/g, '–')
+            // Remove HTML tags
+            .replace(/<[^>]*>/g, '')
+            // Clean up extra whitespace
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
     private static formatPhoneNumber(raw: string): string {
         const digits = raw.replace(/\D/g, '');
         if (digits.length === 10) {
@@ -402,6 +429,115 @@ export class StudyChecklistDocumentTemplate {
     }
 
     /**
+     * Get references as plain markdown for PDF (no HTML elements)
+     * @param references The references array to render
+     * @returns Plain markdown string
+     */
+    private static getReferencesAsMarkdownForPdf(references: any[]): string {
+        if (!references || references.length === 0) return '';
+
+        const lines: string[] = [];
+        references.forEach(reference => {
+            const name = reference.name ?? '';
+            const link = typeof reference.link === 'string' ? reference.link : '';
+            const rawDesc = typeof reference.description === 'string'
+                ? reference.description
+                : (reference.description?.text ?? reference.description?.rawText ?? '');
+            // Strip HTML from description for PDF
+            const desc = StudyChecklistDocumentTemplate.stripHtml(rawDesc);
+            const linkPart = link ? ` ([${link}](${link}))` : '';
+            const title = name ? `**${name}**${linkPart}` : linkPart.replace(/^ \(/, '(');
+            if (title) {
+                lines.push(`- ${title}`);
+                if (desc) {
+                    // Use plain indented text instead of HTML div
+                    lines.push(`  ${desc}`);
+                }
+            }
+        });
+        return lines.length ? `${lines.join('\n')}\n` : '';
+    }
+
+    /**
+     * Get people as plain markdown for PDF (no HTML elements)
+     * @param people The people array to render
+     * @returns Plain markdown string
+     */
+    private static getPeopleAsMarkdownForPdf(people: any[]): string {
+        if (!people || people.length === 0) return '';
+
+        const lines: string[] = [];
+        people.forEach((person) => {
+            const actualPerson: Person | undefined = (person as any).person?.referred ?? (person as any).referred ?? person;
+            if (!actualPerson) return;
+
+            const personName = actualPerson.name ?? '';
+            const role = actualPerson.role;
+            const roleName = role?.referred?.name ?? role?.name ?? '';
+            const email = actualPerson.email ?? '';
+            const phone = actualPerson.phoneNumber ?? '';
+            const descSource = actualPerson.description;
+            const rawDesc: string = typeof descSource === 'string' ? descSource : (descSource?.text ?? descSource?.rawText ?? '');
+            // Strip HTML from description for PDF
+            const desc = StudyChecklistDocumentTemplate.stripHtml(rawDesc);
+
+            if (personName) {
+                const roleSuffix = roleName ? ` (${roleName})` : '';
+                lines.push(`- **${personName}**${roleSuffix}`);
+            }
+            // Add email and phone as plain indented text
+            if (email) {
+                lines.push(`  Email: ${email}`);
+            }
+            if (phone) {
+                lines.push(`  Phone: ${StudyChecklistDocumentTemplate.formatPhoneNumber(phone)}`);
+            }
+            if (desc) {
+                lines.push(`  ${desc}`);
+            }
+        });
+        return lines.length ? `${lines.join('\n')}\n` : '';
+    }
+
+    /**
+     * Get systems as plain markdown for PDF (no HTML elements)
+     * @param systems The systems array to render
+     * @returns Plain markdown string
+     */
+    private static getSystemsAsMarkdownForPdf(systems: any[]): string {
+        if (!systems || systems.length === 0) return '';
+
+        const lines: string[] = [];
+        systems.forEach(system => {
+            const s = (system as any).system?.referred ?? (system as any).referred ?? system;
+            const name = s?.name ?? '';
+            const accessedAt = s?.accessedAt;
+            const accessedUrl = typeof accessedAt === 'string' ? accessedAt : accessedAt?.url ?? '';
+            const accessedPhone = typeof accessedAt === 'string' ? '' : (accessedAt?.phoneNumber ?? '');
+            const rawDesc = typeof s?.description === 'string' ? s.description : (s?.description?.text ?? s?.description?.rawText ?? '');
+            // Strip HTML from description for PDF
+            const desc = StudyChecklistDocumentTemplate.stripHtml(rawDesc);
+            const urlPart = accessedUrl ? `[${accessedUrl}](${accessedUrl})` : '';
+            const phonePart = accessedPhone ? `${StudyChecklistDocumentTemplate.formatPhoneNumber(accessedPhone)}` : '';
+
+            if (name) {
+                lines.push(`- **${name}**`);
+            }
+            // Add URL and phone as plain indented text
+            if (urlPart) {
+                lines.push(`  URL: ${urlPart}`);
+            }
+            if (phonePart) {
+                lines.push(`  Phone: ${phonePart}`);
+            }
+            if (desc) {
+                lines.push(`  ${desc}`);
+            }
+        });
+        return lines.length ? `${lines.join('\n')}\n` : '';
+    }
+
+    /**
      * Helper method to render a step as markdown (heading-based, for Study Checklist)
      * @param builder The markdown builder
      * @param step The step to render
@@ -437,6 +573,50 @@ export class StudyChecklistDocumentTemplate {
             builder.addRaw('<p class="checklist-group-label">SYSTEMS</p>');
             builder.addEmptyLine();
             const systemsMarkdown = StudyChecklistDocumentTemplate.getSystemsAsMarkdown(step.systems);
+            if (systemsMarkdown) {
+                builder.addRaw(systemsMarkdown);
+            }
+        }
+    }
+
+    /**
+     * Helper method to render a step as plain markdown for PDF (no HTML elements)
+     * @param builder The markdown builder
+     * @param step The step to render
+     * @param stepCounter The step index (0-based)
+     * @param headingLevel The heading level to use (default 4)
+     */
+    private static renderStepAsMarkdownForPdf(builder: MarkdownBuilder, step: any, stepCounter: number, headingLevel: number = 4): void {
+        // Step heading with spacing and visual indicator
+        builder.addHeading(headingLevel, `Step ${stepCounter + 1}: ${step.name}`);
+        const rawStepDesc = step.description?.text ?? step.description?.rawText;
+        // Strip HTML from description for PDF
+        const stepDesc = StudyChecklistDocumentTemplate.stripHtml(rawStepDesc);
+        if (stepDesc) {
+            builder.addParagraph(stepDesc, true);
+        }
+
+        if (step.references?.length > 0) {
+            builder.addParagraph('**REFERENCES**', false);
+            builder.addEmptyLine();
+            const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdownForPdf(step.references);
+            if (referencesMarkdown) {
+                builder.addRaw(referencesMarkdown);
+            }
+        }
+
+        if (step.people?.length > 0) {
+            builder.addParagraph('**PEOPLE**', false);
+            builder.addEmptyLine();
+            const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdownForPdf(step.people);
+            if (peopleMarkdown) {
+                builder.addRaw(peopleMarkdown);
+            }
+        }
+        if (step.systems?.length > 0) {
+            builder.addParagraph('**SYSTEMS**', false);
+            builder.addEmptyLine();
+            const systemsMarkdown = StudyChecklistDocumentTemplate.getSystemsAsMarkdownForPdf(step.systems);
             if (systemsMarkdown) {
                 builder.addRaw(systemsMarkdown);
             }
@@ -510,6 +690,32 @@ export class StudyChecklistDocumentTemplate {
     }
 
     /**
+     * Helper method to render a task as plain markdown for PDF (no HTML elements)
+     * @param builder The markdown builder
+     * @param task The task to render (can be Task or TaskReference)
+     * @param taskCounter The task index (0-based)
+     * @param taskPrefix Optional prefix for the task heading (e.g., emoji)
+     * @param headingLevel The heading level to use (default 3)
+     */
+    private static renderTaskAsMarkdownForPdf(builder: MarkdownBuilder, task: Task | TaskReference, taskCounter: number, taskPrefix: string = "", headingLevel: number = 3): void {
+        const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
+
+        // Task heading with spacing and visual indicator
+        builder.addHeading(headingLevel, `${taskPrefix}Task: ${t.name}`);
+
+        const rawTaskDesc = t.description?.text ?? t.description?.rawText;
+        // Strip HTML from description for PDF
+        const taskDesc = StudyChecklistDocumentTemplate.stripHtml(rawTaskDesc);
+        if (taskDesc) {
+            builder.addParagraph(taskDesc, true);
+        }
+
+        t.steps.forEach((step, stepCounter) => {
+            StudyChecklistDocumentTemplate.renderStepAsMarkdownForPdf(builder, step, stepCounter, headingLevel + 1);
+        });
+    }
+
+    /**
      * Helper method to render a task as markdown with checkbox (for Visit Checklist)
      * @param builder The markdown builder
      * @param task The task to render (can be Task or TaskReference)
@@ -576,6 +782,75 @@ export class StudyChecklistDocumentTemplate {
 
         event.tasks.forEach((task, taskCounter) => {
             StudyChecklistDocumentTemplate.renderTaskAsMarkdown(builder, task, taskCounter, taskPrefix);
+        });
+    }
+
+    /**
+     * Helper method to render an event as plain markdown for PDF (no HTML elements)
+     * @param builder The markdown builder
+     * @param writer The model writer
+     * @param event The event to render
+     * @param eventCounter The event index (0-based)
+     * @param headingPrefix Optional prefix for the event heading (e.g., emoji)
+     * @param taskPrefix Optional prefix for task headings (e.g., emoji)
+     */
+    private static renderEventAsMarkdownForPdf(builder: MarkdownBuilder, writer: StudyConfigurationModelModelUnitWriter, event: any, eventCounter: number, headingPrefix: string = "", taskPrefix: string = ""): void {
+        const timeOfDay = event.schedule.eventTimeOfDay
+            ? "limited to " + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
+            : "";
+        const eventRepeat = event.schedule.eventRepeat
+            ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
+            : "";
+
+        // Event heading with spacing and visual indicator
+        builder.addHeading(2, `${headingPrefix}${event.name}`);
+
+        const rawEventDesc = event.description?.text ?? event.description?.rawText;
+        // Strip HTML from description for PDF
+        const eventDesc = StudyChecklistDocumentTemplate.stripHtml(rawEventDesc);
+        if (eventDesc) {
+            builder.addParagraph(eventDesc, true);
+        }
+
+        const schedulingInfo = [
+            `This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}`,
+            `with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}`
+        ];
+
+        if (eventRepeat) schedulingInfo.push(eventRepeat);
+        if (timeOfDay) schedulingInfo.push(timeOfDay);
+
+        builder.addParagraph(schedulingInfo.join(' '), true);
+
+        event.tasks.forEach((task, taskCounter) => {
+            StudyChecklistDocumentTemplate.renderTaskAsMarkdownForPdf(builder, task, taskCounter, taskPrefix);
+        });
+    }
+
+    /**
+     * Helper method to render an unscheduled event as plain markdown for PDF (no HTML elements)
+     * @param builder The markdown builder
+     * @param event The unscheduled event to render
+     * @param eventCounter The event index (0-based)
+     * @param headingPrefix Optional prefix for the event heading
+     * @param taskPrefix Optional prefix for task headings
+     * @param headingLevel Heading level for the event title
+     */
+    private static renderUnscheduledEventAsMarkdownForPdf(builder: MarkdownBuilder, event: UnscheduledEvent, _eventCounter: number, headingPrefix: string = "", taskPrefix: string = "", headingLevel: number = 3): void {
+        builder.addHeading(headingLevel, `${headingPrefix}${event.name}`);
+
+        const rawEventDesc = event.description?.text ?? event.description?.rawText;
+        // Strip HTML from description for PDF
+        const eventDesc = StudyChecklistDocumentTemplate.stripHtml(rawEventDesc);
+        if (eventDesc) {
+            builder.addParagraph(eventDesc, true);
+        }
+
+        builder.addParagraph('This is an unscheduled event that is triggered as needed.', true);
+
+        // Render tasks with PDF-specific method (no HTML)
+        event.tasks.forEach((task, taskCounter) => {
+            StudyChecklistDocumentTemplate.renderTaskAsMarkdownForPdf(builder, task as Task | TaskReference, taskCounter, taskPrefix, headingLevel + 1);
         });
     }
 
@@ -1075,6 +1350,88 @@ export class StudyChecklistDocumentTemplate {
         }
 
         // Add study-level staffing section
+        if (studyConfiguration.staffing?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Staffing");
+            StudyChecklistDocumentTemplate.renderPeopleAsHeadings(builder, studyConfiguration.staffing, 2);
+        }
+
+        return builder.build();
+    }
+
+    /**
+     * Get checklist for a specific event by name as markdown for PDF/Word generation.
+     * Uses heading-based rendering instead of HTML checkboxes for better document compatibility.
+     * Searches through periods and study-level unscheduled events to find the event.
+     * Includes study-level systems, references, and staffing sections.
+     *
+     * @param studyConfiguration The study configuration
+     * @param eventName The name of the event to get the checklist for
+     * @returns Markdown string with the event checklist (heading-based format), or empty string if event not found
+     */
+    static getEventChecklistByNameForPdf(studyConfiguration: StudyConfiguration, eventName: string): string {
+        const builder = new MarkdownBuilder();
+        const writer = new StudyConfigurationModelModelUnitWriter();
+        let eventFound = false;
+
+        // Search in periods for the event
+        for (const period of studyConfiguration.periods || []) {
+            if (eventFound) break;
+
+            // Check scheduled events
+            for (const event of period.events || []) {
+                if (event.name === eventName) {
+                    // Use PDF-specific rendering (no HTML elements)
+                    StudyChecklistDocumentTemplate.renderEventAsMarkdownForPdf(builder, writer, event, 0);
+                    eventFound = true;
+                    break;
+                }
+            }
+
+            if (eventFound) break;
+
+            // Check period-level unscheduled events
+            for (const event of period.unscheduledEvents || []) {
+                if (event.name === eventName) {
+                    // Use PDF-specific rendering for unscheduled events (no HTML elements)
+                    StudyChecklistDocumentTemplate.renderUnscheduledEventAsMarkdownForPdf(builder, event, 0, "", "", 2);
+                    eventFound = true;
+                    break;
+                }
+            }
+        }
+
+        // Check study-level unscheduled events if not found yet
+        if (!eventFound) {
+            for (const event of studyConfiguration.unscheduledEvents || []) {
+                if (event.name === eventName) {
+                    StudyChecklistDocumentTemplate.renderUnscheduledEventAsMarkdownForPdf(builder, event, 0, "", "", 2);
+                    eventFound = true;
+                    break;
+                }
+            }
+        }
+
+        // Event not found
+        if (!eventFound) {
+            return "";
+        }
+
+        // Add study-level shared systems section (uses heading-based rendering which is already PDF-safe)
+        if (studyConfiguration.systemAccesses?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "Systems");
+            StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 2);
+        }
+
+        // Add study-level shared references section (uses heading-based rendering which is already PDF-safe)
+        if (studyConfiguration.sharedReferences?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(1, "References");
+            StudyChecklistDocumentTemplate.renderReferencesAsHeadings(builder, studyConfiguration.sharedReferences, 2);
+        }
+
+        // Add study-level staffing section (uses heading-based rendering which is already PDF-safe)
         if (studyConfiguration.staffing?.length > 0) {
             builder.addSectionBreak();
             builder.addHeading(1, "Staffing");

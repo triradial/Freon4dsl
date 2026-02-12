@@ -1,10 +1,16 @@
 <script lang="ts">
     import { onMount } from "svelte";
     // @ts-ignore
-    import { X as IconX, Printer as IconPrinter, ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, ChevronLeft as IconChevronLeft, ExternalLink as IconExternalLink } from '@lucide/svelte';
+    import { X as IconX, ChevronDown as IconChevronDown, ChevronRight as IconChevronRight, ChevronLeft as IconChevronLeft, ExternalLink as IconExternalLink, FileText as IconPdf, FileSpreadsheet as IconWord } from '@lucide/svelte';
     import { ModelManager } from "../../../services/dsl/model-manager.js";
-    import { getEventChecklistAsMarkdownByName, type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { getEventChecklistAsMarkdownByName, getEventChecklistAsMarkdownByNameForPdf, type StudyConfiguration } from "@freon4dsl/study-configuration";
+    import { dataStore } from "../../../services/data/data-store.js";
+    import { generateWordChecklist } from "../../../services/document/word-checklist-generator.js";
     import MarkdownIt from "markdown-it";
+    import pdfMake from "pdfmake/build/pdfmake.js";
+    import pdfFonts from "pdfmake/build/vfs_fonts.js";
+
+    pdfMake.vfs = pdfFonts as any;
 
     // Types
     export type EventType = 'initial' | 'scheduled' | 'unscheduled';
@@ -72,6 +78,8 @@
     const md = new MarkdownIt({ html: true });
     let checklistHtml = $state<string>("");
     let isLoadingChecklist = $state(true);
+    let isGeneratingPdf = $state(false);
+    let isGeneratingWord = $state(false);
 
     // Move calendar state
     let showMoveCalendar = $state(false);
@@ -358,45 +366,141 @@
         }
     }
 
-    function handlePrint() {
+    /**
+     * Generate markdown for PDF/Word using the heading-based format.
+     */
+    async function getMarkdownForPdf(): Promise<string | null> {
+        if (!event || !studyId) return null;
+
+        try {
+            const modelManager = ModelManager.getInstance();
+            const studyConfig = await modelManager.getModelUnitWithoutOpening(studyId, "StudyConfiguration") as StudyConfiguration;
+            if (!studyConfig) return null;
+
+            return getEventChecklistAsMarkdownByNameForPdf(studyConfig, event.name);
+        } catch (err) {
+            console.error('[EventCard] Error getting markdown for PDF:', err);
+            return null;
+        }
+    }
+
+    async function openPdf() {
         if (!event || !checklistHtml) return;
 
-        const printContent = document.createElement('div');
-        printContent.innerHTML = `
-            <style>
-                @media print {
-                    body * { visibility: hidden; }
-                    .print-content, .print-content * { visibility: visible; }
-                    .print-content { position: absolute; left: 0; top: 0; width: 100%; }
-                }
-                .print-header { margin-bottom: 1rem; }
-                .print-header h1 { font-size: 1.5rem; margin: 0; }
-                .print-header p { margin: 0.25rem 0; color: #666; }
-                .study-checklist-content h1 { font-size: 1.75rem; font-weight: 600; margin-top: 0; margin-bottom: 1rem; }
-                .study-checklist-content h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-                .study-checklist-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
-                .study-checklist-content h4 { font-size: 1.1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
-                .study-checklist-content ul, .study-checklist-content ol { padding-left: 1.5rem; }
-                .study-checklist-content .checklist-item { display: flex; align-items: flex-start; margin-bottom: 0.5rem; }
-                .study-checklist-content .checklist-item input[type="checkbox"] { margin-right: 0.5rem; margin-top: 0.25rem; }
-            </style>
-            <div class="print-content">
-                <div class="print-header">
-                    <h1>${event.name}</h1>
-                    <p>Patient: ${patientId} | Day ${dayNumber} | ${date.toLocaleDateString()}</p>
-                    <p>Period: ${periodName} | Status: ${statusLabel}</p>
-                </div>
-                <div class="study-checklist-content">
-                    ${checklistHtml}
-                </div>
-            </div>
-        `;
+        isGeneratingPdf = true;
 
-        const printWindow = window.open('', '_blank');
-        if (printWindow) {
-            printWindow.document.write(printContent.innerHTML);
-            printWindow.document.close();
-            printWindow.print();
+        try {
+            const markdown = await getMarkdownForPdf();
+            if (!markdown) {
+                console.error('[EventCard] Unable to generate checklist content for PDF.');
+                isGeneratingPdf = false;
+                return;
+            }
+
+            const study = await dataStore.getStudy(studyId);
+            const studyName = study?.name ?? "Study";
+
+            // Parse markdown to create PDF content
+            const lines = markdown.split('\n');
+            const pdfContent: any[] = [];
+
+            // Add header
+            pdfContent.push({
+                text: `${studyName} - ${event.name}`,
+                style: 'header',
+                margin: [0, 0, 0, 5]
+            });
+            pdfContent.push({
+                text: `Patient: ${patientId} | Day ${dayNumber} | ${date.toLocaleDateString()}`,
+                style: 'subheader',
+                margin: [0, 0, 0, 10]
+            });
+
+            // Parse markdown lines
+            for (const line of lines) {
+                if (!line.trim()) continue;
+
+                if (line.startsWith('# ')) {
+                    pdfContent.push({ text: line.substring(2), style: 'h1', margin: [0, 15, 0, 5] });
+                } else if (line.startsWith('## ')) {
+                    pdfContent.push({ text: line.substring(3), style: 'h2', margin: [0, 12, 0, 4] });
+                } else if (line.startsWith('### ')) {
+                    pdfContent.push({ text: line.substring(4), style: 'h3', margin: [0, 10, 0, 3] });
+                } else if (line.startsWith('#### ')) {
+                    pdfContent.push({ text: line.substring(5), style: 'h4', margin: [0, 8, 0, 2] });
+                } else if (line.startsWith('- ')) {
+                    pdfContent.push({ text: `• ${line.substring(2)}`, margin: [10, 2, 0, 2] });
+                } else if (line.startsWith('---')) {
+                    pdfContent.push({ canvas: [{ type: 'line', x1: 0, y1: 5, x2: 515, y2: 5, lineWidth: 0.5, lineColor: '#cccccc' }], margin: [0, 10, 0, 10] });
+                } else if (!line.startsWith('<')) {
+                    pdfContent.push({ text: line, margin: [0, 2, 0, 2] });
+                }
+            }
+
+            const docDefinition = {
+                content: pdfContent,
+                styles: {
+                    header: { fontSize: 18, bold: true },
+                    subheader: { fontSize: 10, color: '#666666' },
+                    h1: { fontSize: 16, bold: true },
+                    h2: { fontSize: 14, bold: true },
+                    h3: { fontSize: 12, bold: true },
+                    h4: { fontSize: 11, bold: true }
+                },
+                defaultStyle: {
+                    fontSize: 10,
+                    lineHeight: 1.15
+                }
+            };
+
+            pdfMake.createPdf(docDefinition).getBlob((blob: Blob) => {
+                const url = URL.createObjectURL(blob);
+                window.open(url);
+            });
+        } catch (err) {
+            console.error('[EventCard] Error generating PDF:', err);
+        } finally {
+            isGeneratingPdf = false;
+        }
+    }
+
+    async function openWord() {
+        if (!event || !checklistHtml) return;
+
+        isGeneratingWord = true;
+
+        try {
+            const markdown = await getMarkdownForPdf();
+            if (!markdown) {
+                console.error('[EventCard] Unable to generate checklist content for Word document.');
+                isGeneratingWord = false;
+                return;
+            }
+
+            const study = await dataStore.getStudy(studyId);
+            const studyName = study?.name ?? "Study";
+            const dateStr = date.toLocaleDateString().replace(/\//g, '-');
+
+            // Generate Word document from markdown
+            const blob = await generateWordChecklist(
+                markdown,
+                `${studyName} - ${event.name} - ${dateStr}`
+            );
+
+            // Download the file
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${studyName}-${event.name}-${dateStr}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+        } catch (err) {
+            console.error('[EventCard] Error generating Word document:', err);
+        } finally {
+            isGeneratingWord = false;
         }
     }
 
@@ -436,9 +540,23 @@
                     </button>
                 {:else if isPending}
                     {#if hasChecklist}
-                        <button class="header-btn" onclick={handlePrint} title="Print checklist">
-                            <IconPrinter size={16} />
-                            <span>Print</span>
+                        <button
+                            class="header-btn"
+                            onclick={openPdf}
+                            disabled={isGeneratingPdf}
+                            title={isGeneratingPdf ? "Generating PDF..." : "Open checklist as PDF"}
+                        >
+                            <IconPdf size={16} />
+                            <span>{isGeneratingPdf ? '...' : 'PDF'}</span>
+                        </button>
+                        <button
+                            class="header-btn"
+                            onclick={openWord}
+                            disabled={isGeneratingWord}
+                            title={isGeneratingWord ? "Generating Word document..." : "Download checklist as Word document"}
+                        >
+                            <IconWord size={16} />
+                            <span>{isGeneratingWord ? '...' : 'Word'}</span>
                         </button>
                     {/if}
                     {#if canDelete}

@@ -1210,8 +1210,8 @@
         // Set up drawer visibility
         setAllDrawersVisibility(false);
         setDrawerVisibility("help", true);
-        // Visit checklist is now shown in EventCard, so don't show the drawer
-        setDrawerVisibility("visitChecklist", false);
+        // Enable visit checklist drawer for testing PDF generation
+        setDrawerVisibility("visitChecklist", true);
         if (patient && studyId) {
             // Get patient reference date for the drawer
             let patientRefDate: Date | undefined = undefined;

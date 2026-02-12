@@ -394,6 +394,11 @@ main {
 /* #endregion */
 
 /* #region List Group Component */
+/* Hide entire list group (including Freon list and drag handles) when showWhen flag is false */
+.list-group-by-config--hidden {
+  display: none !important;
+}
+
 .list-group:empty:before {
   content: attr(data-placeholdertext) !important;
   margin: 0 !important;
