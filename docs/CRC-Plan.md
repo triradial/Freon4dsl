@@ -11,18 +11,11 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ## Graham
 
 ### To-Do 
-- [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
-- [ ] Add toolbar to all the tabs, except Errors. Add legend icon for all charts, e.g., study-level chart needs legend and for it to be removed from the chart area.
-- [ ] I updated the tinyMCE config to allow links in the description but they don't open from the editor. They do open from the checklist. Is this what we want?
-- [ ] Add an Event and it does not show in the drop-down for the 'When'. Close and re-open the study and it shows. 
-- [ ] In patient chart:
-  - [ ] If a visit/event and a window overlap how should it be shown, e.g., two icons in same box. Same qustion for visit/window overlapping patient unavailable. In some places you should two icons but not for all cases. 
-- [ ] For the boxes around concepts in the UI:
-  - [ ] If you edit a field in a box with 'X' then tab out of that concept, the box with 'X' remains displayed. 
-  - [ ] Seems to be a difference between behavior for hover and focus, Jos called it out in the meeting today.
-  - [ ] Several times tabbing out into the next field, e.g., 'with no repetitions' and return to show the choices doesn't work. Tab to the next 'with no time of day' and it works. The I couldn't get it to happen again. 
-- [ ] The position of the phases in the timeline chart causes it to be clipped at the bottom. It wasn't originally like this so I'm guessing some of our application styling has drifted into the chart. Maybe pass this off to Jon?
-- [ ] Document and test the steps to bring on a user
+- [ ] Get internal error when open study from home page
+- [ ] Chart on patient page sometimes doesn't render, e.g., first patient for Arcadia study only shows first month or two.
+- [ ] Create a database backup / snapshot and restore process that we can use to reset after demos. We'll need a standard set of studies setup and the process should allow us to take a new snapshot to use going forward or to have multiple snapshots for different kinds of demos. 
+- [ ] Review and clean-up Mike's hack at checklists on the patient page. 
+- [ ] Review and revise Home page as needed to take better advantage of all the new features. 
 - Not needed for first user:
   - [ ] Add a way to search the content of the study design better than just cntl-f in the browser?
   - [ ] Make staff shared/optionally-shared across studies (not essential for first user)
@@ -35,10 +28,12 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 ### In-Progress
 - [ ] Deploy to Azure
 - [ ] Create a dev/test instance on Azure
-- [ ] Add patient page with visits / checklist, add note taking place
-  - [ ] Add existing single patient full schedule chart to a draw / panel in the new UI
+- [ ] Document and test the steps to bring on a user
+- [ ] Improve light-mode, e.g., add more contrast so things like patient date slider is visible. 
 
 ### Done
+- [x] Add patient page with visits / checklist
+  - [x] Add existing single patient full schedule chart to a draw / panel in the new UI
 - [x] HTML editor: return and tab need to not jump out of editor
 - [x] Improve validation error messages
 - [x] Show Patients page when no patients to allow getting started on study
@@ -56,6 +51,9 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 ### To-Do 
 - [ ] Create a repeatable demo script (whoever is done first will do this)
+- [ ] In patient chart:
+  - [ ] If a visit/event and a window overlap how should it be shown, e.g., two icons in same box. Same question for visit/window overlapping patient unavailable. In some places you should two icons but not for all cases. 
+- [ ] Is it a freon problem that when Add an Event and it does not show in the drop-down for the 'When'. Close and re-open the study and it shows. 
 - [ ] Show/Hide for Unscheduled Events
 - [ ] review and update tests
 - [ ] Setup tests of incomplete studies and add additional validation checks if/as needed so reliably get charts, etc.
@@ -67,6 +65,7 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 
 ### Done
+- [x] The position of the phases in the timeline chart causes it to be clipped at the bottom. It wasn't originally like this so I'm guessing some of our application styling has drifted into the chart. Maybe pass this off to Jon?
 - [x] Remove choice of the visit you are on when 'start when' is a reference. Needs custom scope added. 
 - [x] Determine whether optional from Freon is needed and where: Does not seem to be needed in current UI
 - [x] Make tasks be clickable checkboxes in a Word document
@@ -94,10 +93,11 @@ Maintained in project GitHub repo at: [docs/CRC-Plan.md](./CRC-Plan.md)
 
 
 ## Jon
-- [ ] Add single event patient checklist to be displayed from the patient page and selected date. Use latest version of template somehow merged with template the Jon created.
 
 ### To-Do 
-- [ ]
+- [ ] Add toolbar to all the tabs, except Errors. Add legend icon for all charts, e.g., study-level chart needs legend and for it to be removed from the chart area.
+- [ ] Add a way to take notes to the patient page 
+- [ ] Add template management subsystem
 
 ### In-Progress
 - [ ] Add choice of template studies when creating a study

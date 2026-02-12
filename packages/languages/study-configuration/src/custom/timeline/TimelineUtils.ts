@@ -343,3 +343,18 @@ export function getEventChecklistAsMarkdownByNameForPdf(
     return StudyChecklistDocumentTemplate.getEventChecklistByNameForPdf(studyConfigurationUnit, eventName);
 }
 
+/**
+ * Get checklist for a specific event by name as markdown for Word document generation.
+ * Uses markdown checkbox syntax (- [ ]) that can be converted to Word checkboxes.
+ *
+ * @param studyConfigurationUnit The study configuration
+ * @param eventName The name of the event to get the checklist for
+ * @returns Markdown string with checkbox syntax, or empty string if event not found
+ */
+export function getEventChecklistAsMarkdownByNameForWord(
+    studyConfigurationUnit: StudyConfiguration,
+    eventName: string
+): string {
+    return StudyChecklistDocumentTemplate.getEventChecklistByNameForWord(studyConfigurationUnit, eventName);
+}
+

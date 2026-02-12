@@ -4,6 +4,8 @@ import { RateLimit } from 'koa2-ratelimit';
 import { ModelHandler } from "./model-handler.js";
 import { DataHandler } from "./data-handler.js";
 import { AuthHandler } from "./auth-handler.js";
+import { handleGeneratePdf } from "./pdf-handler.js";
+import { handleGenerateWord } from "./word-handler.js";
 import { consoleLogInfo, consoleLogError } from "./logging.js";
 import * as modelDiagnosticService from '../service/model-diagnostic-service.js';
 
@@ -914,6 +916,22 @@ router.get("/diagnostics/model-sync/summary", async (ctx: Router.IRouterContext)
         ctx.status = 500;
         ctx.response.body = { error: "Error getting summary", details: String(e) };
     }
+});
+
+/* ------------------------------------------------------------ */
+// PDF Generation
+/* ------------------------------------------------------------ */
+router.post("/generatePdf", async (ctx: Router.IRouterContext) => {
+    consoleLogInfo(moduleName, 'generatePdf request');
+    await handleGeneratePdf(ctx);
+});
+
+/* ------------------------------------------------------------ */
+// Word Document Generation
+/* ------------------------------------------------------------ */
+router.post("/generateWord", async (ctx: Router.IRouterContext) => {
+    consoleLogInfo(moduleName, 'generateWord request');
+    await handleGenerateWord(ctx);
 });
 
 export default router;

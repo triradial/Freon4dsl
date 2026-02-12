@@ -87,6 +87,49 @@ class MarkdownBuilder {
         this.sections.push(`<div class="${indentClass}">${text}</div>`);
         return this;
     }
+
+    /**
+     * Add a markdown checkbox item (for Word document generation)
+     * Uses standard markdown checkbox syntax: - [ ] or - [x]
+     * @param text The text for the checkbox item
+     * @param checked Whether the checkbox is checked (default: false)
+     * @param indent Indentation level (0 = no indent, 1 = one level, etc.)
+     */
+    addMarkdownCheckbox(text: string, checked: boolean = false, indent: number = 0): this {
+        const checkbox = checked ? '[x]' : '[ ]';
+        const indentStr = '  '.repeat(indent);
+        this.sections.push(`${indentStr}- ${checkbox} ${text}`);
+        return this;
+    }
+
+    /**
+     * Add indented plain text content (for Word document generation)
+     * @param text The text to add
+     * @param indent Indentation level
+     */
+    addIndentedText(text: string, indent: number = 1): this {
+        if (text?.trim()) {
+            const indentStr = '  '.repeat(indent);
+            this.sections.push(`${indentStr}${text}`);
+        }
+        return this;
+    }
+
+    /**
+     * Add an HTML block with markers for Word processing.
+     * The content will be wrapped with <!--HTML_START--> and <!--HTML_END--> markers
+     * so it can be parsed and converted to proper Word formatting.
+     * @param html The HTML content to add
+     * @param indent Indentation level (used for context in Word processing)
+     */
+    addHtmlBlock(html: string, indent: number = 0): this {
+        if (html?.trim()) {
+            this.sections.push(`<!--HTML_START:${indent}-->`);
+            this.sections.push(html);
+            this.sections.push(`<!--HTML_END-->`);
+        }
+        return this;
+    }
     
     addVisualSeparator(): this {
         this.sections.push('');
@@ -321,7 +364,7 @@ export class StudyChecklistDocumentTemplate {
      * @param systems The systems array to render
      * @param headingLevel The heading level to use for each system (default 2)
      */
-    private static renderSystemsAsHeadings(builder: MarkdownBuilder, systems: any[], headingLevel: number = 2): void {
+    private static renderSystemsAsHeadings(builder: MarkdownBuilder, systems: any[], headingLevel: number = 2, useHtmlBlock: boolean = false): void {
         if (!systems || systems.length === 0) return;
 
         systems.forEach(system => {
@@ -346,8 +389,12 @@ export class StudyChecklistDocumentTemplate {
             }
 
             // Add description if present
-            if (desc) {
-                builder.addParagraph(desc, true);
+            if (desc?.trim()) {
+                if (useHtmlBlock) {
+                    builder.addHtmlBlock(desc, 0);
+                } else {
+                    builder.addParagraph(desc, true);
+                }
             }
         });
     }
@@ -357,8 +404,9 @@ export class StudyChecklistDocumentTemplate {
      * @param builder The markdown builder
      * @param people The people array to render
      * @param headingLevel The heading level to use for each person (default 2)
+     * @param useHtmlBlock If true, use addHtmlBlock for descriptions (for Word); otherwise use addParagraph
      */
-    private static renderPeopleAsHeadings(builder: MarkdownBuilder, people: any[], headingLevel: number = 2): void {
+    private static renderPeopleAsHeadings(builder: MarkdownBuilder, people: any[], headingLevel: number = 2, useHtmlBlock: boolean = false): void {
         if (!people || people.length === 0) return;
 
         people.forEach(person => {
@@ -388,8 +436,12 @@ export class StudyChecklistDocumentTemplate {
             }
 
             // Add description if present
-            if (desc) {
-                builder.addParagraph(desc, true);
+            if (desc?.trim()) {
+                if (useHtmlBlock) {
+                    builder.addHtmlBlock(desc, 0);
+                } else {
+                    builder.addParagraph(desc, true);
+                }
             }
         });
     }
@@ -399,8 +451,9 @@ export class StudyChecklistDocumentTemplate {
      * @param builder The markdown builder
      * @param references The references array to render
      * @param headingLevel The heading level to use for each reference (default 2)
+     * @param useHtmlBlock If true, use addHtmlBlock for descriptions (for Word); otherwise use addParagraph
      */
-    private static renderReferencesAsHeadings(builder: MarkdownBuilder, references: any[], headingLevel: number = 2): void {
+    private static renderReferencesAsHeadings(builder: MarkdownBuilder, references: any[], headingLevel: number = 2, useHtmlBlock: boolean = false): void {
         if (!references || references.length === 0) return;
 
         references.forEach(reference => {
@@ -422,8 +475,12 @@ export class StudyChecklistDocumentTemplate {
             }
 
             // Add description if present
-            if (desc) {
-                builder.addParagraph(desc, true);
+            if (desc?.trim()) {
+                if (useHtmlBlock) {
+                    builder.addHtmlBlock(desc, 0);
+                } else {
+                    builder.addParagraph(desc, true);
+                }
             }
         });
     }
@@ -1418,24 +1475,243 @@ export class StudyChecklistDocumentTemplate {
         }
 
         // Add study-level shared systems section (uses heading-based rendering which is already PDF-safe)
+        // Use h2 to match event heading level for consistent TOC alignment
         if (studyConfiguration.systemAccesses?.length > 0) {
             builder.addSectionBreak();
-            builder.addHeading(1, "Systems");
-            StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 2);
+            builder.addHeading(2, "Systems");
+            StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 3);
         }
 
         // Add study-level shared references section (uses heading-based rendering which is already PDF-safe)
+        // Use h2 to match event heading level for consistent TOC alignment
         if (studyConfiguration.sharedReferences?.length > 0) {
             builder.addSectionBreak();
-            builder.addHeading(1, "References");
-            StudyChecklistDocumentTemplate.renderReferencesAsHeadings(builder, studyConfiguration.sharedReferences, 2);
+            builder.addHeading(2, "References");
+            StudyChecklistDocumentTemplate.renderReferencesAsHeadings(builder, studyConfiguration.sharedReferences, 3);
         }
 
         // Add study-level staffing section (uses heading-based rendering which is already PDF-safe)
+        // Use h2 to match event heading level for consistent TOC alignment
         if (studyConfiguration.staffing?.length > 0) {
             builder.addSectionBreak();
-            builder.addHeading(1, "Staffing");
-            StudyChecklistDocumentTemplate.renderPeopleAsHeadings(builder, studyConfiguration.staffing, 2);
+            builder.addHeading(2, "Staffing");
+            StudyChecklistDocumentTemplate.renderPeopleAsHeadings(builder, studyConfiguration.staffing, 3);
+        }
+
+        return builder.build();
+    }
+
+    /**
+     * Helper method to render a step with markdown checkbox (for Word document generation)
+     * @param builder The markdown builder
+     * @param step The step to render
+     * @param stepCounter The step index (0-based)
+     */
+    private static renderStepForWord(builder: MarkdownBuilder, step: any, stepCounter: number): void {
+        // Step as markdown checkbox (indented under task)
+        builder.addMarkdownCheckbox(`Step ${stepCounter + 1}: ${step.name}`, false, 1);
+
+        const rawStepDesc = step.description?.text ?? step.description?.rawText;
+        if (rawStepDesc?.trim()) {
+            // Use HTML block for rich content, indent level 2 (under step)
+            builder.addHtmlBlock(rawStepDesc, 2);
+        }
+
+        // Include references
+        if (step.references?.length > 0) {
+            builder.addIndentedText('**REFERENCES**', 2);
+            const referencesMarkdown = StudyChecklistDocumentTemplate.getReferencesAsMarkdownForPdf(step.references);
+            if (referencesMarkdown) {
+                // Indent each line
+                referencesMarkdown.split('\n').forEach(line => {
+                    if (line.trim()) builder.addIndentedText(line, 2);
+                });
+            }
+        }
+
+        // Include people
+        if (step.people?.length > 0) {
+            builder.addIndentedText('**PEOPLE**', 2);
+            const peopleMarkdown = StudyChecklistDocumentTemplate.getPeopleAsMarkdownForPdf(step.people);
+            if (peopleMarkdown) {
+                peopleMarkdown.split('\n').forEach(line => {
+                    if (line.trim()) builder.addIndentedText(line, 2);
+                });
+            }
+        }
+
+        // Include systems
+        if (step.systems?.length > 0) {
+            builder.addIndentedText('**SYSTEMS**', 2);
+            const systemsMarkdown = StudyChecklistDocumentTemplate.getSystemsAsMarkdownForPdf(step.systems);
+            if (systemsMarkdown) {
+                systemsMarkdown.split('\n').forEach(line => {
+                    if (line.trim()) builder.addIndentedText(line, 2);
+                });
+            }
+        }
+    }
+
+    /**
+     * Helper method to render a task with markdown checkbox (for Word document generation)
+     * @param builder The markdown builder
+     * @param task The task to render (can be Task or TaskReference)
+     */
+    private static renderTaskForWord(builder: MarkdownBuilder, task: Task | TaskReference): void {
+        const t = task instanceof TaskReference ? ((task as TaskReference).task.referred as Task) : (task as Task);
+
+        // Task as markdown checkbox
+        builder.addMarkdownCheckbox(`Task: ${t.name}`, false, 0);
+
+        const rawTaskDesc = t.description?.text ?? t.description?.rawText;
+        if (rawTaskDesc?.trim()) {
+            // Use HTML block for rich content, indent level 1 (under task)
+            builder.addHtmlBlock(rawTaskDesc, 1);
+        }
+
+        // Render steps
+        t.steps.forEach((step, stepCounter) => {
+            StudyChecklistDocumentTemplate.renderStepForWord(builder, step, stepCounter);
+        });
+    }
+
+    /**
+     * Helper method to render an event with markdown checkboxes (for Word document generation)
+     * @param builder The markdown builder
+     * @param writer The model writer
+     * @param event The event to render
+     */
+    private static renderEventForWord(builder: MarkdownBuilder, writer: StudyConfigurationModelModelUnitWriter, event: any): void {
+        const timeOfDay = event.schedule.eventTimeOfDay
+            ? "limited to " + writer.writeToString(event.schedule.eventTimeOfDay).replace(/"/g, "")
+            : "";
+        const eventRepeat = event.schedule.eventRepeat
+            ? "and then repeats " + writer.writeToString(event.schedule.eventRepeat).replace(/"/g, "")
+            : "";
+
+        // Event heading
+        builder.addHeading(2, event.name);
+
+        const rawEventDesc = event.description?.text ?? event.description?.rawText;
+        if (rawEventDesc?.trim()) {
+            // Use HTML block for rich content, indent level 0 (event level)
+            builder.addHtmlBlock(rawEventDesc, 0);
+        }
+
+        const schedulingInfo = [
+            `This event is first scheduled ${writer.writeToString(event.schedule.eventStart).replace(/"/g, "")}`,
+            `with a window of ${writer.writeToString(event.schedule.eventWindow).replace(/[\r\n]+/g, " ")}`
+        ];
+
+        if (eventRepeat) schedulingInfo.push(eventRepeat);
+        if (timeOfDay) schedulingInfo.push(timeOfDay);
+
+        builder.addParagraph(schedulingInfo.join(' '), true);
+
+        // Render tasks with markdown checkboxes
+        event.tasks.forEach((task: Task | TaskReference) => {
+            StudyChecklistDocumentTemplate.renderTaskForWord(builder, task);
+        });
+    }
+
+    /**
+     * Helper method to render an unscheduled event with markdown checkboxes (for Word document generation)
+     * @param builder The markdown builder
+     * @param event The unscheduled event to render
+     */
+    private static renderUnscheduledEventForWord(builder: MarkdownBuilder, event: UnscheduledEvent): void {
+        builder.addHeading(2, event.name);
+
+        const rawEventDesc = event.description?.text ?? event.description?.rawText;
+        if (rawEventDesc?.trim()) {
+            // Use HTML block for rich content, indent level 0 (event level)
+            builder.addHtmlBlock(rawEventDesc, 0);
+        }
+
+        builder.addParagraph('This is an unscheduled event that is triggered as needed.', true);
+
+        // Render tasks with markdown checkboxes
+        event.tasks.forEach((task) => {
+            StudyChecklistDocumentTemplate.renderTaskForWord(builder, task as Task | TaskReference);
+        });
+    }
+
+    /**
+     * Get checklist for a specific event by name as markdown for Word document generation.
+     * Uses markdown checkbox syntax (- [ ]) for tasks and steps that can be converted
+     * to actual Word checkboxes by the docx library.
+     * Searches through periods and study-level unscheduled events to find the event.
+     * Includes study-level systems, references, and staffing sections.
+     *
+     * @param studyConfiguration The study configuration
+     * @param eventName The name of the event to get the checklist for
+     * @returns Markdown string with checkbox syntax, or empty string if event not found
+     */
+    static getEventChecklistByNameForWord(studyConfiguration: StudyConfiguration, eventName: string): string {
+        const builder = new MarkdownBuilder();
+        const writer = new StudyConfigurationModelModelUnitWriter();
+        let eventFound = false;
+
+        // Search in periods for the event
+        for (const period of studyConfiguration.periods || []) {
+            if (eventFound) break;
+
+            // Check scheduled events
+            for (const event of period.events || []) {
+                if (event.name === eventName) {
+                    StudyChecklistDocumentTemplate.renderEventForWord(builder, writer, event);
+                    eventFound = true;
+                    break;
+                }
+            }
+
+            if (eventFound) break;
+
+            // Check period-level unscheduled events
+            for (const event of period.unscheduledEvents || []) {
+                if (event.name === eventName) {
+                    StudyChecklistDocumentTemplate.renderUnscheduledEventForWord(builder, event);
+                    eventFound = true;
+                    break;
+                }
+            }
+        }
+
+        // Check study-level unscheduled events if not found yet
+        if (!eventFound) {
+            for (const event of studyConfiguration.unscheduledEvents || []) {
+                if (event.name === eventName) {
+                    StudyChecklistDocumentTemplate.renderUnscheduledEventForWord(builder, event);
+                    eventFound = true;
+                    break;
+                }
+            }
+        }
+
+        // Event not found
+        if (!eventFound) {
+            return "";
+        }
+
+        // Add study-level shared systems section (useHtmlBlock=true for Word)
+        if (studyConfiguration.systemAccesses?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(2, "Systems");
+            StudyChecklistDocumentTemplate.renderSystemsAsHeadings(builder, studyConfiguration.systemAccesses, 3, true);
+        }
+
+        // Add study-level shared references section (useHtmlBlock=true for Word)
+        if (studyConfiguration.sharedReferences?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(2, "References");
+            StudyChecklistDocumentTemplate.renderReferencesAsHeadings(builder, studyConfiguration.sharedReferences, 3, true);
+        }
+
+        // Add study-level staffing section (useHtmlBlock=true for Word)
+        if (studyConfiguration.staffing?.length > 0) {
+            builder.addSectionBreak();
+            builder.addHeading(2, "Staffing");
+            StudyChecklistDocumentTemplate.renderPeopleAsHeadings(builder, studyConfiguration.staffing, 3, true);
         }
 
         return builder.build();
