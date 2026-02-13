@@ -8,6 +8,7 @@ import { handleGeneratePdf } from "./pdf-handler.js";
 import { handleGenerateWord } from "./word-handler.js";
 import { consoleLogInfo, consoleLogError } from "./logging.js";
 import * as modelDiagnosticService from '../service/model-diagnostic-service.js';
+import { serverVersion, versionString } from '../config/version.js';
 
 import { z } from 'zod';
 
@@ -31,11 +32,14 @@ const signInSchema = z.object({
 // General requests
 /* ------------------------------------------------------------ */
 router.get('/', async (ctx: Router.IRouterContext) => {
-    ctx.body = 'CRCHub Server';
+    ctx.body = versionString;
 });
 
 router.get('/health', async (ctx: Router.IRouterContext) => {
-    ctx.body = { status: 'ok' };
+    ctx.body = {
+        status: 'ok',
+        ...serverVersion,
+    };
 });
 
 /* ------------------------------------------------------------ */

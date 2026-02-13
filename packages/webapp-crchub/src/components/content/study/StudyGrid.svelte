@@ -7,7 +7,6 @@
     import { mount, unmount } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
-    import "ag-grid-enterprise";
     import { navigateTo } from "../../../services/routing/route-action.js";
     import { theme } from "../../../services/stores/theme-store.js";
     import GridHeader from "../../common/GridHeader.svelte";
@@ -43,7 +42,6 @@
     
     // Reactive variable to track if there's saved state
     let hasSavedState = $state(false);
-    let hasCustomGrouping = $state(false);
     let selectedView = $state("default");
 
     // Stores the column configuration that represents the default view
@@ -202,7 +200,7 @@
         }
 
         // Determine if current state equals default (for safety)
-        const isDefault = columnState.every(col => !col.rowGroup && !col.hide && !col.pinned && !col.sort);
+        const isDefault = columnState.every(col => !col.hide && !col.pinned && !col.sort);
         if (isDefault && selectedView === "default") {
             hasUnsavedChanges = false;
             referenceViewState = defaultColumnState;
@@ -212,25 +210,10 @@
         hasUnsavedChanges = true;
     }
 
-    // Check if current grouping matches any predefined view
+    // Check if current view matches any predefined view
     function isPredefinedView(columnState) {
-        // Only 'default' is considered predefined now (no grouping)
-        const hasGrouping = columnState.some(col => col.rowGroup);
-        return !hasGrouping;
-    }
-
-    // Get grouping configuration for a view
-    function getGroupingForView(viewValue) {
-        switch (viewValue) {
-            case "phase":
-                return ["phase"];
-            case "status":
-                return ["status"];
-            case "therapeuticArea":
-                return ["therapeuticArea"];
-            default:
-                return [];
-        }
+        // Only 'default' is considered predefined now
+        return true;
     }
 
     // Apply a predefined view
@@ -255,8 +238,6 @@
         isApplyingView = true;
         const resetState = gridApi.getColumnState().map(col => ({
             colId: col.colId,
-            rowGroup: false,
-            rowGroupIndex: null,
             sort: null,
             sortIndex: null,
             hide: false,
@@ -409,109 +390,76 @@
             },
             {
                 field: "phase",
-                enableRowGroup: true,
                 resizable: false,
+                filter: "agTextColumnFilter",
             },
             {
                 field: "status",
-                enableRowGroup: true,
-                filter: "agSetColumnFilter",
-                filterParams: {
-                    excelMode: "mac",
-                },
+                filter: "agTextColumnFilter",
             },
             {
                 field: "therapeuticArea",
                 headerName: "Therapeutic Area",
-                enableRowGroup: true,
-                filter: "agSetColumnFilter",
-                filterParams: {
-                    excelMode: "mac",
-                },
+                filter: "agTextColumnFilter",
             },
             {
                 field: "siteNumber",
                 headerName: "Site #",
-                enableRowGroup: true,
-                filter: "agSetColumnFilter",
-                filterParams: {
-                    excelMode: "mac",
-                },
+                filter: "agTextColumnFilter",
                 width: 100,
             },
             {
                 field: "organizationName",
                 headerName: "Organization",
                 hide: !adminMode,
-                enableRowGroup: true,
-                filter: "agSetColumnFilter",
-                filterParams: {
-                    excelMode: "mac",
-                },
+                filter: "agTextColumnFilter",
             }
         ];
 
         // Check if we have a saved view preference
         const savedView = localStorage.getItem(STUDIES_VIEW_KEY);
         if (savedView && savedView !== "default") {
-            // Apply predefined view
-            const groupingFields = getGroupingForView(savedView);
-            groupingFields.forEach((field, index) => {
-                const baseCol = baseColumnDefs.find(col => col.field === field);
-                if (baseCol) {
-                    (baseCol as any).rowGroup = true;
-                    (baseCol as any).rowGroupIndex = index;
-                }
-            });
             selectedView = savedView;
-            referenceViewState = gridApi.getColumnState(); // Initialize referenceViewState for saved views
-        } else {
-            // Apply saved custom state if no predefined view
-            try {
-                const savedState = localStorage.getItem(STUDIES_COLUMN_STATE_KEY);
-                if (savedState) {
-                    const columnState = JSON.parse(savedState);
-                    console.log("[StudyGrid] Applying saved state to column definitions:", columnState);
-                    
-                    // Apply saved properties to matching columns
-                    columnState.forEach((savedCol: any) => {
-                        const baseCol = baseColumnDefs.find(col => col.field === savedCol.colId);
-                        if (baseCol) {
-                            // Apply row grouping
-                            if (savedCol.rowGroup) {
-                                (baseCol as any).rowGroup = true;
-                                if (typeof savedCol.rowGroupIndex === 'number') {
-                                    (baseCol as any).rowGroupIndex = savedCol.rowGroupIndex;
-                                }
-                            }
-                            // Apply column visibility
-                            if (savedCol.hide) {
-                                (baseCol as any).hide = true;
-                            }
-                            // Apply column width
-                            if (savedCol.width) {
-                                (baseCol as any).width = savedCol.width;
-                            }
-                            // Apply column pinning
-                            if (savedCol.pinned) {
-                                (baseCol as any).pinned = savedCol.pinned;
-                            }
-                            // Apply sorting
-                            if (savedCol.sort) {
-                                (baseCol as any).sort = savedCol.sort;
-                                if (typeof savedCol.sortIndex === 'number') {
-                                    (baseCol as any).sortIndex = savedCol.sortIndex;
-                                }
+        }
+        
+        // Apply saved custom state if available
+        try {
+            const savedState = localStorage.getItem(STUDIES_COLUMN_STATE_KEY);
+            if (savedState) {
+                const columnState = JSON.parse(savedState);
+                console.log("[StudyGrid] Applying saved state to column definitions:", columnState);
+                
+                // Apply saved properties to matching columns
+                columnState.forEach((savedCol: any) => {
+                    const baseCol = baseColumnDefs.find(col => col.field === savedCol.colId);
+                    if (baseCol) {
+                        // Apply column visibility
+                        if (savedCol.hide) {
+                            (baseCol as any).hide = true;
+                        }
+                        // Apply column width
+                        if (savedCol.width) {
+                            (baseCol as any).width = savedCol.width;
+                        }
+                        // Apply column pinning
+                        if (savedCol.pinned) {
+                            (baseCol as any).pinned = savedCol.pinned;
+                        }
+                        // Apply sorting
+                        if (savedCol.sort) {
+                            (baseCol as any).sort = savedCol.sort;
+                            if (typeof savedCol.sortIndex === 'number') {
+                                (baseCol as any).sortIndex = savedCol.sortIndex;
                             }
                         }
-                    });
-                    
-                    hasSavedState = true;
-                    referenceViewState = columnState; // Initialize referenceViewState for saved custom state
-                }
-            } catch (error) {
-                console.warn("[StudyGrid] Failed to apply saved state to column definitions:", error);
+                    }
+                });
+                
+                hasSavedState = true;
+                referenceViewState = columnState;
             }
+        } catch (error) {
+            console.warn("[StudyGrid] Failed to apply saved state to column definitions:", error);
         }
 
         return baseColumnDefs;
@@ -549,27 +497,6 @@
                 type: "fitCellContents",
             },
             columnDefs: getColumnDefs(),
-            groupDisplayType: "groupRows",
-            rowGroupPanelShow: "always",
-            sideBar: {
-                toolPanels: [
-                    {
-                        id: 'columns',
-                        labelDefault: 'Columns',
-                        labelKey: 'columns',
-                        iconKey: 'columns',
-                        toolPanel: 'agColumnsToolPanel',
-                        toolPanelParams: {
-                            suppressPivotMode: true,
-                            suppressRowGroups: true,
-                            suppressValues: true,
-                            suppressPivots: true
-                        }
-                    }
-                ],
-                defaultToolPanel: 'columns',
-                hiddenByDefault: true
-            },
             pagination: true,
             paginationPageSize: 20,
             paginationPageSizeSelector: [10, 20, 50, 100],
@@ -587,12 +514,6 @@
                 }
             },
             // Save column state when columns change
-            onColumnRowGroupChanged: () => {
-                saveColumnState();
-            },
-            onColumnPivotChanged: () => {
-                saveColumnState();
-            },
             onColumnVisible: () => {
                 saveColumnState();
             },
@@ -834,7 +755,7 @@
         for (const colA of a) {
             const colB = mapB.get(colA.colId);
             if (!colB) return false;
-            const props = ["rowGroup", "rowGroupIndex", "sort", "sortIndex", "hide", "pinned"];
+            const props = ["sort", "sortIndex", "hide", "pinned"];
             for (const p of props) {
                 if ((colA as any)[p] !== (colB as any)[p]) return false;
             }

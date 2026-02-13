@@ -9,6 +9,7 @@ import cors from 'koa2-cors';
 import router from './routes.js';
 import bodyParser from 'koa-bodyparser';
 import { type Environment, environments } from '../config/environments.js';
+import { versionString } from '../config/version.js';
 import { testConnection } from '../service/db-connection.js';
 import { consoleLogInfo, consoleLogSuccess, consoleLogError, consoleLogWarning, consoleLogRaw } from './logging.js';
 
@@ -20,6 +21,7 @@ const currentEnv = (process.env.AZURE_ENVIRONMENT || 'local') as Environment;
 const env = environments[currentEnv];
 const execAsync = promisify(exec);
 
+consoleLogSuccess(moduleName, versionString);
 consoleLogSuccess(moduleName, 'Server Environment configured');
 consoleLogRaw(JSON.stringify({
     AZURE_ENVIRONMENT: process.env.AZURE_ENVIRONMENT,

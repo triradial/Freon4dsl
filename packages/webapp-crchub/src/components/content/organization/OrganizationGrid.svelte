@@ -4,7 +4,6 @@
     import { onMount, onDestroy } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
-    import "ag-grid-enterprise";
     import { theme } from "../../../services/stores/theme-store.js";
     import DeleteObjectDialog from "../../dialogs/DeleteObjectDialog.svelte";
     import { userStore } from "../../../services/stores/users-store.js";
@@ -244,9 +243,6 @@
                 resizable: true,
                 floatingFilter: false
             },
-            enableRangeSelection: true,
-            enableCharts: true,
-            rowGroupPanelShow: "always",
             pagination: true,
             paginationPageSize: 20,
             paginationPageSizeSelector: [10, 20, 50, 100],

@@ -24,9 +24,11 @@
     let { editor, box, isEditing = $bindable(false) }: FreComponentProps<any> & { isEditing?: boolean } = $props();
 
     // Validate that we received a RefReplacerBox
-    if (!isRefReplacerBox(box)) {
-        console.error('CustomRefActionsComponent: Expected RefReplacerBox but got', box?.kind);
-    }
+    $effect(() => {
+        if (!isRefReplacerBox(box)) {
+            console.error('CustomRefActionsComponent: Expected RefReplacerBox but got', box?.kind);
+        }
+    });
 
     // State
     let text = $state('');
@@ -35,10 +37,10 @@
     let propertyValueVersion = $state(0);
 
     // DOM references
-    let componentWrapper: HTMLElement | null = null;
-    let inputElement: HTMLInputElement | null = null;
-    let widthSpan: HTMLSpanElement | null = null;
-    let dropdownElement: HTMLElement | null = null;
+    let componentWrapper: HTMLElement | null = $state(null);
+    let inputElement: HTMLInputElement | null = $state(null);
+    let widthSpan: HTMLSpanElement | null = $state(null);
+    let dropdownElement: HTMLElement | null = $state(null);
 
     // Component ID
     const id = $derived(box ? componentId(box) : 'custom-ref-actions-unknown');
@@ -459,6 +461,13 @@
                                     e.preventDefault();
                                     e.stopPropagation();
                                     selectReference(option);
+                                }}
+                                onkeydown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        selectReference(option);
+                                    }
                                 }}
                                 tabindex="0"
                             >
