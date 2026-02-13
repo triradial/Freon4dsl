@@ -1612,7 +1612,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0.5rem 1rem 1rem;
+    padding: 0.25rem 0.5rem 0.25rem 1rem;
     width: 100%;
   }
 
@@ -1662,7 +1662,7 @@
   }
 
   .drawer-content-area {
-    height: 100%;
+    height: calc(100% - 2.25rem);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -1678,9 +1678,7 @@
   }
 
   .help-drawer {
-    background-color: white !important;
-    padding: 2rem;
-    margin: 1rem !important;
+    background-color: var(--help-drawer-background) !important;
   }
 
   .drawer-error {
