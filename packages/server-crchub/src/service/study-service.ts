@@ -47,13 +47,16 @@ async function getUserOrgId(oid: string): Promise<string> {
 export async function getStudies(oid: string, all: boolean = false): Promise<Study[]> {
     const pool = getDbPool();
     
-    // Get user's facility org_id
+    // Get user's facility org_id via org_persons (the canonical org membership path)
+    // IMPORTANT: Must use org_persons, NOT site_persons → site, to be consistent with
+    // createStudyWithSite which creates sites using org_id from org_persons.
+    // Using site_persons would only find the org for sites the user was explicitly added to,
+    // which could miss studies if the user wasn't added to site_persons for every site.
     const orgResult = await pool.query(
         `SELECT DISTINCT o.org_id 
          FROM person p
-         JOIN site_persons sp ON p.person_id = sp.person_id
-         JOIN site s ON sp.site_id = s.site_id
-         JOIN organization o ON s.org_id = o.org_id
+         JOIN org_persons op ON p.person_id = op.person_id
+         JOIN organization o ON op.org_id = o.org_id
          WHERE p.oid = $1
          LIMIT 1`,
         [oid]
@@ -222,12 +225,12 @@ export async function getStudies(oid: string, all: boolean = false): Promise<Stu
 export async function getStudy(oid: string, studyId: string): Promise<Study | null> {
     const pool = getDbPool();
 
+    // Use org_persons (canonical org membership) to resolve user's org_id
     const orgResult = await pool.query(
         `SELECT DISTINCT o.org_id 
          FROM person p
-         JOIN site_persons sp ON p.person_id = sp.person_id
-         JOIN site s ON sp.site_id = s.site_id
-         JOIN organization o ON s.org_id = o.org_id
+         JOIN org_persons op ON p.person_id = op.person_id
+         JOIN organization o ON op.org_id = o.org_id
          WHERE p.oid = $1
          LIMIT 1`,
         [oid]

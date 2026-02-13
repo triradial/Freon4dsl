@@ -28,14 +28,14 @@ export async function getUsers(): Promise<User[]> {
 
     // Get facility for each user
     const users = await Promise.all(result.rows.map(async (row) => {
-        // Get user's facility from site_persons
+        // Get user's facility from org_persons (canonical org membership path)
         const facilityResult = await pool.query(
             `SELECT DISTINCT o.name as facility
              FROM person p
-             JOIN site_persons sp ON p.person_id = sp.person_id
-             JOIN site s ON sp.site_id = s.site_id
-             JOIN organization o ON s.org_id = o.org_id
+             JOIN org_persons op ON p.person_id = op.person_id
+             JOIN organization o ON op.org_id = o.org_id
              WHERE p.oid = $1
+             ORDER BY o.name
              LIMIT 1`,
             [row.oid]
         );

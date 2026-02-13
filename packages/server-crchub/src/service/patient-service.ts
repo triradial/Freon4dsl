@@ -19,13 +19,13 @@ export interface Patient {
 export async function getPatients(oid: string): Promise<Patient[]> {
     const pool = getDbPool();
     
-    // Get user's facility org_id
+    // Get user's facility org_id via org_persons (canonical org membership path)
+    // Must be consistent with createStudyWithSite which uses org_persons
     const orgResult = await pool.query(
         `SELECT DISTINCT o.org_id 
          FROM person p
-         JOIN site_persons sp ON p.person_id = sp.person_id
-         JOIN site s ON sp.site_id = s.site_id
-         JOIN organization o ON s.org_id = o.org_id
+         JOIN org_persons op ON p.person_id = op.person_id
+         JOIN organization o ON op.org_id = o.org_id
          WHERE p.oid = $1
          LIMIT 1`,
         [oid]
@@ -216,13 +216,12 @@ export async function createPatient(oid: string, patientData: Omit<Patient, 'id'
 
     // If no site exists, create one
     if (!siteId) {
-        // Get user's org_id to create site
+        // Get user's org_id via org_persons (canonical org membership path)
         const userOrgResult = await pool.query(
             `SELECT DISTINCT o.org_id 
              FROM person p
-             JOIN site_persons sp ON p.person_id = sp.person_id
-             JOIN site s ON sp.site_id = s.site_id
-             JOIN organization o ON s.org_id = o.org_id
+             JOIN org_persons op ON p.person_id = op.person_id
+             JOIN organization o ON op.org_id = o.org_id
              WHERE p.oid = $1
              LIMIT 1`,
             [oid]
@@ -557,13 +556,12 @@ export async function deletePatient(oid: string, patientId: string): Promise<boo
         return false;
     }
     
-    // Try to get user's facility org_id
+    // Get user's facility org_id via org_persons (canonical org membership path)
     const orgResult = await pool.query(
         `SELECT DISTINCT o.org_id 
          FROM person p
-         JOIN site_persons sp ON p.person_id = sp.person_id
-         JOIN site s ON sp.site_id = s.site_id
-         JOIN organization o ON s.org_id = o.org_id
+         JOIN org_persons op ON p.person_id = op.person_id
+         JOIN organization o ON op.org_id = o.org_id
          WHERE p.oid = $1
          LIMIT 1`,
         [oid]
