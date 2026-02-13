@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { GridApi, GridOptions } from "ag-grid-community";
     import { createGrid } from "ag-grid-community";
-    import "ag-grid-enterprise";
     import { onMount } from "svelte";
     import { dataStore } from "../../../services/data/data-store.js";
     import { staffAvailabilityStore } from "../../../services/stores/staff-availability-store.js";

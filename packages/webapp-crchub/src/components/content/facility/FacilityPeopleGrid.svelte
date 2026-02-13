@@ -3,7 +3,6 @@
     import { onMount, onDestroy } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
-    import "ag-grid-enterprise";
     import { theme } from "../../../services/stores/theme-store.js";
     import { userStore } from "../../../services/stores/users-store.js";
     // @ts-ignore

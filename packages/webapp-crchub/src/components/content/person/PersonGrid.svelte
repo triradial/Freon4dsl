@@ -4,7 +4,6 @@
     import { onMount, onDestroy } from "svelte";
     import { createGrid } from "ag-grid-community";
     import type { GridOptions, GridApi } from "ag-grid-community";
-    import "ag-grid-enterprise";
     import { theme } from "../../../services/stores/theme-store.js";
     import DeleteObjectDialog from "../../dialogs/DeleteObjectDialog.svelte";
     import { userStore } from "../../../services/stores/users-store.js";
@@ -254,15 +253,12 @@
                 },
                 {
                     headerName: "Status",
-                    filter: "agSetColumnFilter",
+                    filter: "agTextColumnFilter",
                     flex: 1,
                     minWidth: 150,
                     suppressSizeToFit: false,
                     valueGetter: (params: any) => {
                         return getPersonStatus(params.data || {});
-                    },
-                    filterParams: {
-                        values: ["Active", "Indeterminate", "Inactive", "Reference Only"]
                     }
                 },
                 {
@@ -283,9 +279,6 @@
                 resizable: true,
                 floatingFilter: false
             },
-            cellSelection: true,
-            enableCharts: true,
-            rowGroupPanelShow: "always",
             pagination: true,
             paginationPageSize: 20,
             paginationPageSizeSelector: [10, 20, 50, 100],

@@ -111,7 +111,6 @@
     "@tiptap/pm": "^2.7.2",
     "@tiptap/starter-kit": "^2.7.2",
     "ag-grid-community": "^32.2.0",
-    "ag-grid-enterprise": "^32.2.0",
     "bits-ui": "^2.8.10",
     "dayjs": "^1.11.19",
     "dotenv": "^16.4.5",
