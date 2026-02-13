@@ -60,15 +60,22 @@ LOGGER.log('--- START ---');
 const serverUrl = env.serverUrl;
 const url = new URL(serverUrl);
 const serverIp = `${url.protocol}//${url.hostname}`;
-const serverPort = url.port;
+const serverPort = url.port; // Empty string for URLs using standard ports (443/80)
 
 // Configure the server connection settings
 const serverComm = ServerCommunication.getInstance();
 LOGGER.log('ServerCommunication instance created');
-serverComm.SERVER_URL = serverUrl;
 serverComm.SERVER_IP = serverIp;
-serverComm.nodePort = parseInt(serverPort); 
-LOGGER.log(`Server settings configured: ${JSON.stringify({ url: serverUrl, timeout: env.serverTimeout })}`);
+if (serverPort) {
+    // Only set the port when the URL has an explicit port (e.g. localhost:8080).
+    // Deployed URLs (e.g. https://crchub-server-d.azurewebsites.net) use standard
+    // ports and url.port returns "", which would cause parseInt("") = NaN.
+    serverComm.nodePort = parseInt(serverPort);
+} else {
+    // Clear the default port so the URL is constructed without :port
+    serverComm.nodePort = null;
+}
+LOGGER.log(`Server settings configured: ${JSON.stringify({ url: serverComm.SERVER_URL, timeout: env.serverTimeout })}`);
 
 // Configure the editor environment
 LOGGER.log('Creating editor environment');
