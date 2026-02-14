@@ -107,55 +107,22 @@ export class InMemoryModel {
    * * @param name
    */
   async openModel(name: string): Promise<FreModel | InMemoryError> {
-    console.log(`[InMemoryModel] openModel: name=${name}`);
     LOGGER.log("openModel(" + name + ")");
     AST.change(() => {
       this.model = this.languageEnvironment.newModel(name);
     });
-
-    console.log(`[InMemoryModel] Loading unit list for model: ${name}`);
     const response = await this.server.loadUnitList(name);
     if (response.errors.length > 0) {
-      console.error(
-        `[InMemoryModel] Error loading unit list:`,
-        response.errors[0],
-      );
       this.onInMemoryError(response.errors[0]);
       return new InMemoryError(response.errors[0]);
     }
-
-    console.log(
-      `[InMemoryModel] Unit list loaded, found ${response.result.length} units:`,
-      response.result.map((u) => u.name),
-    );
-
     for (const unitId of response.result) {
-      console.log(`[InMemoryModel] Loading model unit: ${unitId.name}`);
       LOGGER.log("openModel: load model-unit: " + unitId.name);
       const unit = await this.server.loadModelUnit(this.model.name, unitId);
-
-      if (unit.errors.length > 0) {
-        console.error(
-          `[InMemoryModel] Error loading unit ${unitId.name}:`,
-          unit.errors,
-        );
-      } else if (unit.result) {
-        console.log(
-          `[InMemoryModel] Unit ${unitId.name} loaded successfully, adding to model`,
-        );
-        AST.change(() => {
-          this.model.addUnit(unit.result as FreModelUnit);
-        });
-      } else {
-        console.warn(
-          `[InMemoryModel] Unit ${unitId.name} loaded but result is null/undefined`,
-        );
-      }
+      AST.change(() => {
+        this.model.addUnit(unit.result as FreModelUnit);
+      });
     }
-
-    console.log(
-      `[InMemoryModel] openModel complete, model has ${this.model.getUnits().length} units`,
-    );
     FreUndoManager.getInstance().cleanAllStacks();
     return this.model;
   }
@@ -359,11 +326,7 @@ export class InMemoryModel {
    */
   async saveUnit(unit: FreModelUnit): Promise<void | InMemoryError> {
     LOGGER.log(`saveModelUnit`);
-    const unitInDirty = this.dirtyUnits.has(unit);
-    console.log(`[InMemoryModel] saveUnit called for "${unit?.name}", isDirty=${unitInDirty}`);
-
-    if (unitInDirty) {
-      console.log(`[InMemoryModel] saveUnit - calling server.saveModelUnit for "${unit.name}"`);
+    if (this.dirtyUnits.has(unit)) {
       const serverResponse = await this.server.saveModelUnit(
         this.model.name,
         {
@@ -374,15 +337,11 @@ export class InMemoryModel {
         unit,
       );
       if (serverResponse.errors.length === 0) {
-        console.log(`[InMemoryModel] saveUnit - server save successful for "${unit.name}"`);
         this.dirtyUnits.delete(unit);
       } else {
-        console.error(`[InMemoryModel] saveUnit - server save failed for "${unit.name}"`);
         this.onInMemoryError(serverResponse.errors[0]);
         return new InMemoryError(`${serverResponse.errors[0]})`);
       }
-    } else {
-      console.log(`[InMemoryModel] saveUnit - skipping save for "${unit?.name}" (not dirty)`);
     }
   }
 

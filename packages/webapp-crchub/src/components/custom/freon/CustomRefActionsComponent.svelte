@@ -111,8 +111,12 @@
 
     // Match count for indicator
     let matchCount = $derived(text.trim() ? filteredOptions.length : 0);
-    let hasSingleMatch = $derived(matchCount === 1);
+    let hasSingleMatch = $derived(matchCount === 1 && text.trim().length > 0);
+    let hasMultipleMatches = $derived(matchCount > 1 && text.trim().length > 0);
     let hasNoMatches = $derived(matchCount === 0 && text.trim().length > 0);
+
+    // Set of matching option IDs for highlighting
+    let matchingOptionIds = $derived(new Set(filteredOptions.map(opt => opt.id)));
 
     // Select a reference
     function selectReference(option: typeof referenceOptions[0]) {
@@ -209,8 +213,11 @@
 
     // Handle keydown on input
     function onKeyDown(event: KeyboardEvent) {
+        // Allow Tab to leave (will end editing via onFocusOut)
         if (event.key === 'Tab') {
-            checkAndSelect();
+            checkAndSelect(); // Check for exact match before leaving
+            // Don't call endEditing() here - let the browser move focus naturally,
+            // and onFocusOut will handle ending editing
             return;
         }
 
@@ -233,18 +240,26 @@
             event.stopPropagation();
 
             if (!dropdownOpen) dropdownOpen = true;
-            if (filteredOptions.length === 0) return;
+            if (referenceOptions.length === 0) return;
 
+            // Navigate through all options (not just filtered)
             if (event.key === 'ArrowDown') {
-                selectedIndex = selectedIndex < filteredOptions.length - 1 ? selectedIndex + 1 : 0;
+                selectedIndex = selectedIndex < referenceOptions.length - 1 ? selectedIndex + 1 : 0;
             } else {
-                selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : filteredOptions.length - 1;
+                selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : referenceOptions.length - 1;
             }
 
             // Update text to show selected item
-            if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) {
-                text = filteredOptions[selectedIndex].label;
-                tick().then(() => setInputWidth());
+            if (selectedIndex >= 0 && selectedIndex < referenceOptions.length) {
+                text = referenceOptions[selectedIndex].label;
+                tick().then(() => {
+                    setInputWidth();
+                    // Scroll the selected item into view
+                    const itemElement = document.querySelector(`[data-item-index="${selectedIndex}"]`) as HTMLElement;
+                    if (itemElement) {
+                        itemElement.scrollIntoView({ block: 'nearest' });
+                    }
+                });
             }
             return;
         }
@@ -263,9 +278,9 @@
 
     // Check for match and select
     function checkAndSelect() {
-        // If user has selected with arrow keys
-        if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) {
-            selectReference(filteredOptions[selectedIndex]);
+        // If user has selected with arrow keys (using referenceOptions now)
+        if (selectedIndex >= 0 && selectedIndex < referenceOptions.length) {
+            selectReference(referenceOptions[selectedIndex]);
             return;
         }
 
@@ -445,22 +460,31 @@
                     role="listbox"
                 >
                     <ul style="list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto;">
-                        {#each filteredOptions as option, index (option.id)}
-                            {@const isSelected = selectedIndex === index}
-                            {@const isMatch = text.trim() && option.label.toLowerCase().startsWith(text.toLowerCase().trim())}
+                        {#each referenceOptions as option, index (option.id)}
+                            {@const isMatch = text.trim() === '' || option.label.toLowerCase().startsWith(text.toLowerCase().trim())}
+                            {@const isHighlighted = isMatch && text.trim().length > 0}
+                            {@const isSelected = selectedIndex === index && isMatch && !isHighlighted}
+                            {@const matchClass = isHighlighted ? (hasSingleMatch ? 'matched' : hasMultipleMatches ? 'matched-multiple' : '') : ''}
                             <li
                                 data-item-index={index}
                                 role="option"
-                                aria-selected={isSelected ? 'true' : 'false'}
-                                class="custom-select-item {isSelected ? 'selected' : ''} {isMatch && hasSingleMatch ? 'matched' : ''}"
+                                aria-selected={isHighlighted || isSelected ? 'true' : 'false'}
+                                class="custom-select-item {matchClass} {isSelected ? 'selected' : ''}"
                                 onmousedown={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
+                                    // Prevent input from losing focus when clicking dropdown items
+                                    const target = e.target as HTMLElement;
+                                    if (target.tagName === 'LI' || target.closest('li') === e.currentTarget) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }
                                 }}
                                 onclick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    selectReference(option);
+                                    const target = e.target as HTMLElement;
+                                    if (target.tagName === 'LI' || target.closest('li') === e.currentTarget) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        selectReference(option);
+                                    }
                                 }}
                                 onkeydown={(e) => {
                                     if (e.key === 'Enter' || e.key === ' ') {
@@ -469,17 +493,25 @@
                                         selectReference(option);
                                     }
                                 }}
+                                onmouseenter={() => {
+                                    // On mouse enter, update selection to match hover
+                                    if (isMatch) {
+                                        selectedIndex = index;
+                                        text = option.label;
+                                        tick().then(() => setInputWidth());
+                                    }
+                                }}
                                 tabindex="0"
                             >
                                 <span class="prefix">{option.label}</span>
-                                {#if isMatch && hasSingleMatch}
+                                {#if isHighlighted}
                                     <span class="match-indicator">✓</span>
                                 {/if}
                             </li>
                         {/each}
                     </ul>
                     {#if text.trim().length > 0}
-                        <div class="custom-select-match-count {hasNoMatches ? 'no-match' : hasSingleMatch ? 'single-match' : 'multiple-match'}">
+                        <div class="custom-select-match-count {hasNoMatches ? 'no-match' : hasSingleMatch ? 'single-match' : hasMultipleMatches ? 'multiple-match' : ''}">
                             {#if hasNoMatches}
                                 No matches
                             {:else}

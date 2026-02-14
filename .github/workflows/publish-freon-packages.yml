@@ -1,0 +1,101 @@
+name: Publish Freon Packages
+
+# Triggered when you create a version tag like v2.1.0
+on:
+  push:
+    tags:
+      - 'v*'
+  # Also allow manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 2.1.0)'
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required to create releases
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build all packages
+        run: npm run build
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "tag=v${{ inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            # Extract version from tag (remove 'v' prefix)
+            TAG="${GITHUB_REF#refs/tags/}"
+            VERSION="${TAG#v}"
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "tag=$TAG" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pack core package
+        working-directory: packages/core
+        run: |
+          npm pack
+          mv *.tgz ../../freon4dsl-core-${{ steps.version.outputs.version }}.tgz
+
+      - name: Pack core-svelte package
+        working-directory: packages/core-svelte
+        run: |
+          npm pack
+          mv *.tgz ../../freon4dsl-core-svelte-${{ steps.version.outputs.version }}.tgz
+
+      - name: Pack meta package
+        working-directory: packages/meta
+        run: |
+          npm pack
+          mv *.tgz ../../freon4dsl-meta-${{ steps.version.outputs.version }}.tgz
+
+      - name: List packages
+        run: ls -la *.tgz
+
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Freon Packages ${{ steps.version.outputs.tag }}
+          body: |
+            ## Freon DSL Packages
+
+            Pre-built packages for use in CRC-Hub:
+
+            - `freon4dsl-core-${{ steps.version.outputs.version }}.tgz`
+            - `freon4dsl-core-svelte-${{ steps.version.outputs.version }}.tgz`
+            - `freon4dsl-meta-${{ steps.version.outputs.version }}.tgz`
+
+            ### Usage in package.json
+
+            ```json
+            "dependencies": {
+              "@freon4dsl/core": "https://github.com/triradial/Freon4dsl-CRC-Hub/releases/download/${{ steps.version.outputs.tag }}/freon4dsl-core-${{ steps.version.outputs.version }}.tgz",
+              "@freon4dsl/core-svelte": "https://github.com/triradial/Freon4dsl-CRC-Hub/releases/download/${{ steps.version.outputs.tag }}/freon4dsl-core-svelte-${{ steps.version.outputs.version }}.tgz",
+              "@freon4dsl/meta": "https://github.com/triradial/Freon4dsl-CRC-Hub/releases/download/${{ steps.version.outputs.tag }}/freon4dsl-meta-${{ steps.version.outputs.version }}.tgz"
+            }
+            ```
+          files: |
+            freon4dsl-core-${{ steps.version.outputs.version }}.tgz
+            freon4dsl-core-svelte-${{ steps.version.outputs.version }}.tgz
+            freon4dsl-meta-${{ steps.version.outputs.version }}.tgz
+          draft: false
+          prerelease: false
+          generate_release_notes: true

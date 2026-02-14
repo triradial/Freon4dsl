@@ -25,6 +25,7 @@ The following are changes requested for Freon based on the needs of our project.
 | [`FreLogger.ts`](#packagescoresrcloggingfreloggerts) | Fix crash when `tagOrTags` is not a string and not an array (use `Array.isArray` check) |
 | [`InMemoryModel.ts`](#packagescoresrcstorageinmemorymodelts) | Add debug tracing to `openModel()` and `saveUnit()`; handle unit-load errors gracefully |
 | [`AstActionExecutor.ts`](#packagescoresrcast-utilsastactionexecutorts) | Fix Ctrl+C/V paste for list items by walking up box tree to find ListBox ancestor |
+| [`ServerCommunication.ts`](#packagescoresrcstorageserverservercommunicationts) | Refactor to build server URL dynamically; handle standard ports (443/80) for deployed environments |
 
 ### packages/meta
 
@@ -715,3 +716,442 @@ After — walks up the tree:
 ```
 
 This enables Ctrl+C / Ctrl+V to work for copying and pasting Events, Tasks, Steps, and other list items when focus is anywhere within a list item, not just when the immediate parent is the list itself. Type conformance checking is preserved — you can only paste an element into a list that accepts its type (subtypes are allowed).
+
+---
+
+## `packages/core/src/storage/server/ServerCommunication.ts`
+
+**Deployment compatibility fix.** Refactors the `ServerCommunication` class to build the server URL dynamically based on IP and port settings. Critically, when the port is not set, `NaN`, or otherwise invalid, the URL is constructed without an explicit port. This is essential for deployed environments (e.g., Azure App Service) where URLs use standard ports (443 for HTTPS, 80 for HTTP) and should not include an explicit port number.
+
+### Change 1 — Add `buildServerUrl()` private method
+
+New method that handles URL construction logic:
+
+```ts
+/**
+ * Builds the server URL from the IP and port.
+ * If the port is not set, NaN, or otherwise invalid, the URL is constructed without a port.
+ * This is important for deployed environments (e.g. Azure) where the URL uses standard
+ * ports (443 for HTTPS, 80 for HTTP) and should not include an explicit port.
+ */
+private buildServerUrl(): string {
+    if (this._nodePort !== null && this._nodePort !== undefined && !isNaN(this._nodePort)) {
+        return `${this._SERVER_IP}:${this._nodePort}/`;
+    }
+    return `${this._SERVER_IP}/`;
+}
+```
+
+### Change 2 — Update `nodePort` setter to rebuild URL
+
+Before:
+```ts
+set nodePort(value: any) {
+    this._nodePort = value;
+}
+```
+
+After:
+```ts
+set nodePort(value: any) {
+    this._nodePort = value;
+    this.SERVER_URL = this.buildServerUrl();
+}
+```
+
+### Change 3 — Update `SERVER_IP` setter to rebuild URL
+
+Before:
+```ts
+set SERVER_IP(value: string) {
+    this._SERVER_IP = value;
+}
+```
+
+After:
+```ts
+set SERVER_IP(value: string) {
+    this._SERVER_IP = value;
+    this.SERVER_URL = this.buildServerUrl();
+}
+```
+
+### Change 4 — Add getters for properties
+
+Added explicit getters for `nodePort`, `SERVER_URL`, and `SERVER_IP` to encapsulate the private fields:
+
+```ts
+get nodePort(): any {
+    return this._nodePort;
+}
+
+get SERVER_URL(): string {
+    return this._SERVER_URL;
+}
+
+set SERVER_URL(value: string) {
+    this._SERVER_URL = value;
+}
+
+get SERVER_IP(): string {
+    return this._SERVER_IP;
+}
+```
+
+This change ensures that when the webapp is deployed to a production environment using HTTPS on port 443, the server URL is correctly formed as `https://example.com/` rather than `https://example.com:NaN/` or `https://example.com:443/`.
+
+---
+
+# Upstream Patches and Pull Requests
+
+This section describes which changes can be contributed back to the upstream Freon project and how to create the patches/PRs.
+
+## Overview
+
+The changes documented above fall into three categories:
+
+1. **Patch-Ready** — Bug fixes and improvements that benefit all Freon users
+2. **Needs Modification** — Changes that need CRC-Hub-specific code removed before patching
+3. **Project-Specific** — Changes that only make sense for CRC-Hub and should not be upstreamed
+
+## Recommended PR Organization
+
+To maximize acceptance probability, organize patches into focused, single-purpose PRs:
+
+| PR | Title | Files | Priority |
+|:---|:------|:------|:---------|
+| PR 1 | Bug Fixes | FreProjectionHandler.ts, FreLogger.ts, AstActionExecutor.ts, StringReplacerBox.ts, AbstractPropertyWrapperBox.ts, FileUtil.ts, ServerCommunication.ts | High |
+| PR 2 | Svelte 5 Compatibility | LayoutComponent.svelte | High |
+| PR 3 | Drag Handle Control | Box.ts, ListBox.ts, ListComponent.svelte | Medium |
+| PR 4 | Error Decorator Performance | FreErrorDecorator.ts, FreEditor.ts | Medium |
+| PR 5 | External Components for Limited Concepts | ExternalBoxesHelper.ts, ItemBoxHelper.ts | Medium |
+| PR 6 | TypeScript/Meta Fixes | InterpreterBaseTemplate.ts | Low |
+
+---
+
+## PR 1: Bug Fixes
+
+**Description:** Collection of defensive programming improvements and crash fixes.
+
+### Changes to Include
+
+#### 1. FreProjectionHandler.ts — Null-safety fix
+The `getKnownTableProjectionsFor()` method crashes when a concept name is not in the map.
+
+```diff
+ getKnownTableProjectionsFor(conceptName: string): string[] {
+-    const providerConstructor = this.conceptNameToProviderConstructor.get(conceptName)(this);
+-    if (!!providerConstructor) {
++    const constructorFunction = this.conceptNameToProviderConstructor.get(conceptName);
++    if (!constructorFunction) {
++        return [];
++    }
++    const providerConstructor = constructorFunction(this);
++    if (!!providerConstructor) {
+         return providerConstructor.knownTableProjections;
+     } ...
+```
+
+#### 2. FreLogger.ts — Runtime crash fix
+The `tagOrTags` parameter crashes when it's not a string and not an array.
+
+```diff
+-const tags: string[] = typeof tagOrTags === "string" ? [tagOrTags] : (tagOrTags as string[]);
++const tags: string[] = typeof tagOrTags === "string" ? [tagOrTags] : (Array.isArray(tagOrTags) ? tagOrTags : []);
+```
+
+#### 3. AstActionExecutor.ts — Ctrl+C/V paste fix
+Paste fails when focus is on a nested box inside a list item. Add `findListBoxAncestor()` and update `paste()` to walk up the tree.
+
+#### 4. StringReplacerBox.ts — Fail loud instead of silent
+Replace `console.log` with `throw new Error` on property type mismatch.
+
+#### 5. AbstractPropertyWrapperBox.ts — Keyboard navigation fix
+Add `firstLeaf` and `lastLeaf` getters so external components receive keyboard focus.
+
+#### 6. FileUtil.ts — Empty folder deletion
+Pass `{ recursive: true }` to `fs.rmSync()`.
+
+#### 7. ServerCommunication.ts — Dynamic URL building for deployed environments
+Refactor to build server URL dynamically. When port is `NaN`, `null`, or `undefined`, construct URL without explicit port. This fixes deployed environments using standard ports (443/80).
+
+### How to Create This PR
+
+```bash
+# 1. Fork freon4dsl/Freon4dsl on GitHub if not already done
+# 2. Clone your fork
+git clone https://github.com/YOUR_USERNAME/Freon4dsl.git freon-upstream
+cd freon-upstream
+
+# 3. Create a feature branch
+git checkout -b fix/defensive-programming-improvements
+
+# 4. Apply changes to each file (copy the specific changes from your local fork)
+
+# 5. Commit with a descriptive message
+git commit -m "fix: add defensive null checks and crash fixes
+
+- FreProjectionHandler: guard against missing constructor in getKnownTableProjectionsFor()
+- FreLogger: use Array.isArray check for tagOrTags parameter
+- AstActionExecutor: walk up box tree to find ListBox ancestor for paste
+- StringReplacerBox: throw error instead of console.log on type mismatch
+- AbstractPropertyWrapperBox: add firstLeaf/lastLeaf for keyboard focus
+- FileUtil: add recursive option to fs.rmSync()"
+
+# 6. Push and create PR
+git push origin fix/defensive-programming-improvements
+```
+
+---
+
+## PR 2: Svelte 5 Compatibility
+
+**Description:** Fix `state_unsafe_mutation` error when using Freon with Svelte 5.
+
+### Changes to Include
+
+#### LayoutComponent.svelte
+
+1. Add `import { untrack, tick } from 'svelte';`
+2. Add `type` keyword to type-only imports
+3. Wrap `refresh()` call in `untrack()` inside `$effect`
+4. Split `refresh()` into `refreshInternal()` (synchronous) and `refresh()` (deferred via `tick()`)
+
+### How to Create This PR
+
+```bash
+git checkout -b fix/svelte5-state-unsafe-mutation
+
+# Apply the changes to LayoutComponent.svelte
+
+git commit -m "fix: resolve Svelte 5 state_unsafe_mutation error in LayoutComponent
+
+Split refresh() into an internal function (called with untrack() inside effects)
+and a public function (deferred via tick()) to prevent state_unsafe_mutation
+errors during reactive cycles.
+
+Also adds 'type' keyword to type-only imports per Svelte 5 convention."
+
+git push origin fix/svelte5-state-unsafe-mutation
+```
+
+---
+
+## PR 3: Drag Handle Control
+
+**Description:** Allow boxes and lists to opt out of showing drag handles.
+
+### Changes to Include
+
+#### Box.ts
+Add `hideDragHandle: boolean = false` property.
+
+#### ListBox.ts
+Add `canDragAndDrop: boolean = true` property.
+
+#### ListComponent.svelte — NEEDS MODIFICATION
+The current implementation has CRC-Hub-specific concept names hardcoded:
+
+```ts
+// REMOVE THIS - it's project-specific
+const HIDE_DRAG_HANDLE_CONCEPTS = new Set([
+    'Reference',
+    'Person',
+    'PersonReference',
+    'SystemAccess',
+    'SystemAccessReference'
+]);
+```
+
+**For upstream PR, simplify to:**
+
+```ts
+function shouldHideDragHandle(b: Box): boolean {
+    // Check box property
+    if (b.hideDragHandle) return true;
+
+    // Check external box param
+    if ('findParam' in b && typeof (b as any).findParam === 'function') {
+        if ((b as any).findParam("hideDragHandle") === "true") return true;
+    }
+    return false;
+}
+```
+
+### How to Create This PR
+
+```bash
+git checkout -b feat/drag-handle-control
+
+# Apply changes, but REMOVE the hardcoded concept names
+
+git commit -m "feat: add hideDragHandle property for boxes and canDragAndDrop for lists
+
+- Box.ts: add hideDragHandle boolean property
+- ListBox.ts: add canDragAndDrop boolean property
+- ListComponent.svelte: check hideDragHandle before rendering drag handle
+
+This allows individual boxes to opt out of showing a drag handle in lists,
+and allows entire lists to disable drag-and-drop reordering."
+
+git push origin feat/drag-handle-control
+```
+
+---
+
+## PR 4: Error Decorator Performance
+
+**Description:** Performance optimizations for the error decorator.
+
+### Changes to Include
+
+#### FreErrorDecorator.ts
+Complete rewrite with:
+- Early exit if errors unchanged
+- Diff-based clearing (only clear boxes not in new error set)
+- Cached box lookups with validity checking
+- Silent state mutations (avoid per-box isDirty)
+- Batched refresh calls
+- Performance logging (warn if >50ms)
+
+#### FreEditor.ts
+- Call `clearCache()` in the projection autorun
+- Call `clearAll()` in the `rootElement` setter when switching roots
+
+### How to Create This PR
+
+```bash
+git checkout -b perf/error-decorator-optimizations
+
+# Apply the complete FreErrorDecorator rewrite
+# Apply the FreEditor changes
+
+git commit -m "perf: optimize FreErrorDecorator for frequent validator runs
+
+- Add early exit when error list is unchanged
+- Use diff-based clearing to avoid clear+set cycles
+- Cache node-to-box mappings with validity checking
+- Use silent state mutations to avoid per-box isDirty calls
+- Batch refresh calls after all mutations
+- Add performance logging for slow setErrors calls
+- Clear decorator state appropriately in FreEditor
+
+This significantly reduces re-renders and layout thrashing when
+the validator runs frequently."
+
+git push origin perf/error-decorator-optimizations
+```
+
+---
+
+## PR 5: External Components for Limited Concepts
+
+**Description:** Allow external Svelte components to replace limited-concept boxes.
+
+### Changes to Include
+
+#### ExternalBoxesHelper.ts
+Change `replaceSingleByExternal()` from `private` to `public`.
+
+#### ItemBoxHelper.ts
+Add checks in list and single-element branches to use external component when `externalInfo.replaceBy` is specified for a `FreMetaLimitedConcept`.
+
+### How to Create This PR
+
+```bash
+git checkout -b feat/external-components-limited-concepts
+
+# Apply the changes
+
+git commit -m "feat: allow external components to replace limited concept boxes
+
+- ExternalBoxesHelper: make replaceSingleByExternal() public
+- ItemBoxHelper: check for externalInfo.replaceBy on limited concepts
+
+This enables custom Svelte components to replace the built-in dropdown
+boxes for limited concepts (enums), allowing richer UI representations."
+
+git push origin feat/external-components-limited-concepts
+```
+
+---
+
+## PR 6: TypeScript/Meta Fixes
+
+**Description:** Minor TypeScript strictness fixes in generated code.
+
+### Changes to Include
+
+#### InterpreterBaseTemplate.ts
+1. Add `EvaluateFunction` to the import statement in generated code
+2. Add `as EvaluateFunction` type cast to `registerFunction` calls
+3. Remove stray `// DONE` comment
+
+### How to Create This PR
+
+```bash
+git checkout -b fix/interpreter-typescript-strictness
+
+# Apply the changes
+
+git commit -m "fix: add EvaluateFunction type cast in generated interpreter code
+
+Fixes TypeScript strictness errors when using the generated interpreter
+with strict type checking enabled."
+
+git push origin fix/interpreter-typescript-strictness
+```
+
+---
+
+## Changes NOT to Upstream
+
+The following changes are project-specific and should **not** be submitted to upstream Freon:
+
+### InMemoryModel.ts — Debug logging
+The extensive `console.log` / `console.error` / `console.warn` statements were added for debugging a specific loading issue. This should remain in your fork or be converted to use `FreLogger` with appropriate log levels if upstreaming.
+
+### GrammarModel.ts — Spaces in backtick identifiers
+This change allows spaces inside backtick-delimited identifiers. The upstream project may not want this behavior. If you do want to upstream it, check with maintainers first as it changes parser behavior.
+
+### ListComponent.svelte (partial) — Hardcoded concept names
+The `HIDE_DRAG_HANDLE_CONCEPTS` set with specific concept names (`Person`, `Reference`, etc.) is CRC-Hub-specific. If upstreaming PR 3, remove this and only include the generic `hideDragHandle` property check.
+
+---
+
+## General PR Guidelines
+
+1. **One concern per PR** — Don't mix bug fixes with features
+2. **Include tests if possible** — Check if the upstream repo has tests for the affected code
+3. **Follow existing code style** — Match formatting, naming conventions, etc.
+4. **Write clear commit messages** — Explain what and why, not how
+5. **Reference issues if they exist** — Link to any related GitHub issues
+6. **Be responsive** — Address review feedback promptly
+
+## Submitting to Upstream
+
+1. Fork `freon4dsl/Freon4dsl` on GitHub
+2. Clone your fork locally
+3. Create a feature branch from `development` (check their default branch)
+4. Apply your changes
+5. Run the test suite: `npm test`
+6. Build the project: `npm run build`
+7. Push to your fork
+8. Create a Pull Request to `freon4dsl/Freon4dsl`
+9. Fill out any PR template they provide
+10. Wait for review and respond to feedback
+
+## Tracking Upstream
+
+After submitting PRs, track their status:
+
+| PR | Status | Merged Version | Notes |
+|:---|:-------|:---------------|:------|
+| PR 1: Bug Fixes | Pending | - | |
+| PR 2: Svelte 5 | Pending | - | |
+| PR 3: Drag Handle | Pending | - | |
+| PR 4: Error Decorator | Pending | - | |
+| PR 5: External Limited | Pending | - | |
+| PR 6: TypeScript | Pending | - | |
+
+Update this table as PRs are submitted and reviewed. Once a PR is merged, update your fork from upstream to get the official version of your changes.
