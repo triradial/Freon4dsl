@@ -59,7 +59,7 @@ export class VerticalListBox extends ListBox {
         role: string,
         propertyName: string,
         children?: Box[],
-        initializer?: Partial<HorizontalListBox>,
+        initializer?: Partial<VerticalListBox>,
     ) {
         super(node, role, propertyName, children, initializer);
         this.direction = ListDirection.VERTICAL;
