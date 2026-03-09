@@ -70,9 +70,12 @@
         refresh('Refresh limited radio box changed ' + box?.id);
     });
 
+    let isReadOnly = $derived(!!editor.readOnly);
+
     const onChange = (event: Event & {
         currentTarget: EventTarget & HTMLInputElement;
     }) => {
+        if (isReadOnly) return;
         if (notNullOrUndefined(event.target)) {
             LOGGER.log(
               'LimitedRadioComponent.onChange for box ' +
@@ -135,6 +138,7 @@
                   onchange={onChange}
                   onkeydown={onKeyDown}
                   bind:this={allElements[i]}
+                  disabled={isReadOnly}
                 />
                 {nn}
             </label>

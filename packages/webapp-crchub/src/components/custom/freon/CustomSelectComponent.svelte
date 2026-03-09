@@ -32,6 +32,9 @@
     }
 
     let { editor, box, isEditing = $bindable(false) }: FreComponentProps<any> & { isEditing?: boolean } = $props();
+
+    /** When true, no mutations (selection changes) are allowed. Prevents change-then-revert cycles when app has no edit lock. */
+    let isReadOnly = $derived(!!editor?.readOnly);
     
     // Get the actual SelectBox - either directly or create it from PartReplacerBox/RefReplacerBox
     let selectBox = $state<SelectBox | null>(null);
@@ -513,8 +516,8 @@
         // Clear selected index when typing (no keyboard highlight during typing)
         selectedIndex = -1;
         
-        // If current selection doesn't match the new text filter, clear it
-        if (selectedOption && text.trim()) {
+        // If current selection doesn't match the new text filter, clear it (only when editable)
+        if (!isReadOnly && selectedOption && text.trim()) {
             const searchText = text.toLowerCase();
             const selectedItem = listboxData.find(item => item.value === selectedOption.id);
             if (selectedItem && !selectedItem.label.toLowerCase().startsWith(searchText)) {
@@ -550,8 +553,9 @@
         }
     });
     
-    // Clear selection if it doesn't match current text filter
+    // Clear selection if it doesn't match current text filter (skip when read-only to avoid mutations)
     $effect(() => {
+        if (isReadOnly) return;
         if (selectedOption && text.trim() && selectBox && listboxData.length > 0) {
             const searchText = text.toLowerCase();
             const selectedItem = listboxData.find(item => item.value === selectedOption.id);
@@ -572,6 +576,11 @@
     // Handle selection from listbox item
     function selectItem(item: typeof listboxData[0]) {
         logInfo('🔵 CustomSelectComponent: selectItem called', { item: item?.label, hasSelectBox: !!selectBox, itemOption: item?.option });
+        if (isReadOnly) {
+            dropdownOpen = false;
+            endEditing();
+            return;
+        }
         if (item && selectBox) {
             const result = selectBox.executeOption(editor, item.option);
             logInfo('🔵 CustomSelectComponent: executeOption result', result);
@@ -602,6 +611,11 @@
     // Handle typing full name - check if it matches exactly, or if there's only one match
     function checkExactMatch() {
         if (!selectBox) return;
+        if (isReadOnly) {
+            dropdownOpen = false;
+            endEditing();
+            return;
+        }
         
         // If text is empty, ensure selection is null and exit
         if (!text.trim()) {
@@ -674,6 +688,7 @@
     
     // Start editing - show input and dropdown
     async function startEditing() {
+        if (isReadOnly) return;
         isEditing = true;
         dropdownOpen = true;
         await tick();
@@ -818,7 +833,7 @@
                 if (newIndex >= 0 && newIndex < listboxData.length) {
                     const selectedItem = listboxData[newIndex];
                     
-                    if (selectBox && selectedItem) {
+                    if (!isReadOnly && selectBox && selectedItem) {
                         selectBox.executeOption(editor, selectedItem.option);
                         selectionVersion++;
                         text = selectedItem.label;
@@ -1061,8 +1076,8 @@
                                         }
                                     }}
                                     onmouseenter={() => {
-                                        // On mouse enter, update selection to match hover
-                                        if (isMatch && selectBox) {
+                                        // On mouse enter, update selection to match hover (only when editable)
+                                        if (!isReadOnly && isMatch && selectBox) {
                                             selectBox.executeOption(editor, item.option);
                                             selectionVersion++;
                                             text = item.label;

@@ -39,10 +39,11 @@
 
     type BoxType = 'action' | 'select' | 'text';
 
-    // Props
+    // Props (readOnly from MainComponentProps; when passed from RenderComponent/TextDropdownComponent, used for view-only)
     let {
         editor,
         box,
+        readOnly: readOnlyProp,
         partOfDropdown,
         isEditing = $bindable(),
         text = $bindable(),
@@ -62,6 +63,9 @@
         : 'text-component-placeholder');
     // indication how is this text component is used, determines styling
     let boxType: BoxType = $state('text');
+
+    /** When true, no edits are allowed (lockdown/view-only). From prop or editor.readOnly. */
+    let isReadOnly = $derived((readOnlyProp !== undefined && readOnlyProp !== null) ? !!readOnlyProp : !!editor?.readOnly);
 
     // Variables to alter the state of the component, the prop 'isEditing' is one of these.
     // indicates whether we are just starting to edit, so we need to set the cursor in the <input>
@@ -86,6 +90,23 @@
                       ? 'select'
                       : 'text'
                 : 'text';
+        }
+    });
+
+    // Dev-only: log readOnly so we can verify in CRC-Hub (filter console by "[Freon readOnly]")
+    $effect(() => {
+        if ((import.meta as { env?: { DEV?: boolean } }).env?.DEV && notNullOrUndefined(box)) {
+            const fromProp = readOnlyProp;
+            const fromEditor = editor?.readOnly;
+            const effective = isReadOnly;
+            console.log(
+                '[Freon readOnly] TextComponent (TextBox):',
+                'boxId=', box?.id,
+                'readOnlyProp=', fromProp,
+                'editor.readOnly=', fromEditor,
+                'effective isReadOnly=', effective,
+                effective ? '→ blocking editing (no focus-to-edit, input readonly, no setText/delete)' : '→ allowing editing'
+            );
         }
     });
 
@@ -216,6 +237,7 @@
      * It stores the caret position(s) to be used to set the selection of the <input>.
      */
     async function startEditing(from: string) {
+        if (isReadOnly) return;
         LOGGER.log(`startEditing for ${box?.id}`);
         // If called from the editor, there is no need to change the selection
         // because the editor already has the corresponding box as selected box.
@@ -269,8 +291,11 @@
             // a 'left' click
             event.preventDefault();
             event.stopPropagation();
-            // Because we do not propagate the event, we need to hide any context menu 'manually'.
             contextMenu.instance?.hide();
+            if (isReadOnly) {
+                editor.selectElementForBox(box);
+                return;
+            }
             startEditing('UI');
             if (partOfDropdown) {
                 // Tell the TextDropdown that the edit has started.
@@ -308,14 +333,14 @@
         if (isEditing) {
             isEditing = false;
 
-            if (!partOfDropdown) {
+            if (!partOfDropdown && !isReadOnly) {
                 // store the current value in the textbox, or delete the box, if appropriate
                 LOGGER.log(`   save text using box.setText(${text})`);
                 if (text !== box.getText()) {
                     LOGGER.log(`   text is new value`);
                     box.setText(text);
                 }
-            } else {
+            } else if (partOfDropdown) {
                 toParent('endEditing');
             }
         }
@@ -494,7 +519,7 @@
         LOGGER.log(`onInput for ${box?.id}`);
         setInputWidth();
         LOGGER.log(`onInput text is ${text}  value '${inputElement.value}'`);
-        if (inputElement.value === '') {
+        if (!isReadOnly && inputElement.value === '') {
             editor.deleteTextBox(box, box.deleteWhenEmpty);
         }
         if (partOfDropdown) {
@@ -513,6 +538,7 @@
         LOGGER.log('TextComponent onPaste')
         e.stopPropagation();
         e.preventDefault(); // avoid the browser inserting styled HTML
+        if (isReadOnly) return;
 
         // 1) Best path: use the event's clipboardData (widest compatibility)
         let pastedText = e.clipboardData?.getData('text/plain') ?? '';
@@ -574,6 +600,10 @@
     async function onCut(e: ClipboardEvent) {
         LOGGER.log('TextComponent onCut');
         e.stopPropagation();
+        if (isReadOnly) {
+            e.preventDefault();
+            return;
+        }
 
         const selected = getSelectedText();
         if (!selected) {
@@ -715,21 +745,20 @@
                     oncut={onCut}
                     draggable="true"
                     ondragstart={onDragStart}
+                    readonly={isReadOnly}
                     {placeholder}
                 />
                 <span class="text-component-width" bind:this={widthSpan}></span>
             </span>
         {:else}
-            <!-- contenteditable must be true, otherwise there is no cursor position in the span after a click,
-                 But ... this is only a problem when this component is inside a draggable element (like List or table)
-            -->
+            <!-- When readOnly, contenteditable=false to prevent edits; otherwise true for cursor/selection in span -->
             <span
                 class="{box?.cssClass} text-box-{boxType} text-component-text {errorCls}"
                 onmousedown={onMousedown}
                 onfocusin={onFocusIn}
                 {tabindex}
                 bind:this={spanElement}
-                contenteditable="true"
+                contenteditable={isReadOnly ? "false" : "true"}
                 spellcheck="false"
                 id="{id}-span"
                 role="textbox"

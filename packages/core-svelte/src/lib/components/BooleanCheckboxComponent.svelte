@@ -14,6 +14,7 @@
     const LOGGER = CHECKBOX_LOGGER;
 
     let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'checkbox-for-unknown-box');
+    let isReadOnly = $derived(!!editor.readOnly);
     let inputElement: HTMLInputElement;
     let value = $state(false);
     let indeterminate = $state(false);
@@ -57,6 +58,7 @@
      */
     const onClick= (event: Event) => {
         event.stopPropagation();
+        if (isReadOnly) return;
         LOGGER.log(
             `ONCLICK IN  box for '${box.propertyName}' value: ${box.getBoolean()} indeterminate: ${indeterminate} isOptional: ${isOptional}`
         );
@@ -96,5 +98,6 @@
         bind:this={inputElement}
         checked={value}
         tabindex="0"
+        disabled={isReadOnly}
     >
 <!--</span>-->

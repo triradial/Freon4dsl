@@ -57,9 +57,13 @@
     // this speeds up the check whether an element may be dropped here
     let myMetaType: DragAndDropType;
     
+    /** When true, no mutations (add/remove/reorder) are allowed. */
+    let isReadOnly = $derived(!!editor.readOnly);
+
     // Helper function to check if drag handle should be hidden for a specific box item.
     // This respects the list-level canDragAndDrop setting and the individual box's hideDragHandle property.
     function shouldHideDragHandle(b: Box): boolean {
+        if (isReadOnly) return true;
         // Check if the list has drag-and-drop disabled entirely
         if (!box.canDragAndDrop) {
             return true;
@@ -93,6 +97,7 @@
     });
 
     const drop = (event: DragEvent, targetIndex: number) => {
+        if (isReadOnly) return;
         const data: ListElementInfo | null = draggedElem.value;
         event.stopPropagation();
 
@@ -126,6 +131,10 @@
     };
 
     const dragstart = (event: DragEvent, listId: string, listIndex: number) => {
+        if (isReadOnly) {
+            event.preventDefault();
+            return;
+        }
         LOGGER.log('Drag Start ' + box.id + ' index: ' + listIndex);
         event.stopPropagation();
         // close any context menu
@@ -251,7 +260,10 @@
 
     const refresh = (why?: string): void => {
         LOGGER.log('REFRESH ListComponent( ' + why + ') ' + box?.node?.freLanguageConcept());
-        shownElements = [...box.children];
+        // When readonly, hide the add placeholder (action box) so items cannot be added
+        shownElements = isReadOnly
+            ? box.children.filter((b: Box) => !isActionBox(b))
+            : [...box.children];
         id = notNullOrUndefined(box) ? componentId(box) : 'list-for-unknown-box';
         isHorizontal = notNullOrUndefined(box)
             ? box.getDirection() === ListDirection.HORIZONTAL
@@ -260,8 +272,9 @@
 
     const onKeyDown = (event: KeyboardEvent, index: number) => {
         if (event.key === ENTER) {
+            event.stopPropagation();
+            if (isReadOnly) return;
             // Create a new list element after the node at index
-            event.stopPropagation()
             const action: FreCreatePartAction = new FreCreatePartAction({
                 trigger: { meta: MetaKey.None, key: ENTER, code: ENTER },
                 activeInBoxRoles: [box.role, "action-" + box.role + "-textbox"],

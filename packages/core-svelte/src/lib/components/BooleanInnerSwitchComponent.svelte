@@ -41,6 +41,7 @@
         box.refreshComponent = refresh;
     });
     function handleClick(event: MouseEvent) {
+        if (editor.readOnly) return;
         const target: HTMLButtonElement = event.target as HTMLButtonElement;
         if (notNullOrUndefined(target)) {
             value = target.getAttribute('aria-checked') !== 'true';
@@ -61,6 +62,7 @@
         aria-checked={value}
         aria-labelledby={`switch-${id}`}
         onclick={handleClick}
+        disabled={editor.readOnly}
     >
         <span class="inner-switch-component-label">{box.labels.yes}</span>
         <span class="inner-switch-component-label">{box.labels.no}</span>

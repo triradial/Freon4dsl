@@ -126,7 +126,8 @@
     const onKeydown = (event: KeyboardEvent) => {
         LOGGER.log("GridCellComponent onKeyDown");
         if (event.key === ENTER) {
-            event.stopPropagation()
+            event.stopPropagation();
+            if (editor.readOnly) return;
             LOGGER.log("Keyboard shortcut in GridCell ===============");
             // Create a new list element after the pone at index
             FreUtils.CHECK(isTableRowBox(box.parent));
@@ -162,6 +163,10 @@
     };
 
     const dragstart = (event: DragEvent) => {
+        if (editor.readOnly) {
+            event.preventDefault();
+            return;
+        }
         console.log(`dragStart ${box.node.freId()} ${box.node.freLanguageConcept()} ${box.node.freOwner()?.freLanguageConcept()}`);
         event.stopPropagation();
         // close any context menu

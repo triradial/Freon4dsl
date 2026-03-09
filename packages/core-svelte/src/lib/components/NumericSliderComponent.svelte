@@ -30,6 +30,7 @@
     let trackWrapper: HTMLSpanElement;
 
     const onChange = (event: Event) => {
+        if (editor.readOnly) return;
         LOGGER.log(
           'NumericSliderComponent.onChange for box ' + box.role + ', value:' + inputElement?.value
         );
@@ -127,6 +128,7 @@
       step={step}
       type="range"
       onchange={onChange}
+      disabled={editor.readOnly}
     />
 		<span aria-hidden="true" bind:this={tooltip} class="numeric-slider-tooltip">{value}</span>
 	</span>

@@ -51,6 +51,7 @@
     });
 
     function handleClick(event: MouseEvent) {
+        if (editor.readOnly) return;
         const target = event.target as HTMLButtonElement;
         value = target.getAttribute('aria-checked') !== 'true';
         box.setBoolean(value);
@@ -72,6 +73,7 @@
         aria-checked={value}
         aria-labelledby={`switch-${id}`}
         onclick={handleClick}
+        disabled={editor.readOnly}
     >
     </button>
 </span>

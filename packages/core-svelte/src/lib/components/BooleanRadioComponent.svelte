@@ -67,9 +67,12 @@
         isOptional = FreLanguage.getInstance().classifierProperty(box.node.freLanguageConcept(), box.propertyName)?.isOptional || false
     });
 
+    let isReadOnly = $derived(!!editor.readOnly);
+
     const onChange = (event: Event & {
         currentTarget: EventTarget & HTMLInputElement;
     }) => {
+        if (isReadOnly) return;
         if (notNullOrUndefined(event.target)) {
             LOGGER.log(
                 'BooleanRadioComponent.onChange for box ' +
@@ -140,6 +143,7 @@
                 onchange={onChange}
                 onkeydown={onKeyDown}
                 bind:this={trueElement}
+                disabled={isReadOnly}
             />
             {box.labels.yes}
         </label>
@@ -160,6 +164,7 @@
                 onchange={onChange}
                 onkeydown={onKeyDown}
                 bind:this={falseElement}
+                disabled={isReadOnly}
             />
             {box.labels.no}
         </label>
@@ -181,6 +186,7 @@
                     onchange={onChange}
                     onkeydown={onKeyDown}
                     bind:this={undefinedElement}
+                    disabled={isReadOnly}
                 />
                 {box.labels.unknown}
             </label>

@@ -68,7 +68,7 @@
 
     const LOGGER = RENDER_LOGGER;
 
-    let { editor, box }: FreComponentProps<Box> = $props();
+    let { editor, box, readOnly }: FreComponentProps<Box> = $props();
 
     let id = $derived(notNullOrUndefined(box) ? `render-${componentId(box)}` : 'render-for-unknown-box');
     let element: HTMLElement | undefined = $state(undefined);
@@ -159,7 +159,7 @@
      Their children are, and each child gets its own surrounding RenderComponent.
 -->
 {#if isElementBox(box)}
-    <ElementComponent {box} {editor} />
+    <ElementComponent {box} {editor} readOnly={readOnly ?? editor?.readOnly} />
 {:else}
     {#if errMess.length > 0 && notNullOrUndefined(element)}
         <ErrorMarker {box} {editor} />
@@ -218,7 +218,7 @@
         {:else if isTableBox(box)}
             <TableComponent {box} {editor} />
         {:else if isTextBox(box)}
-            <TextComponent {box} {editor} errorCls={errorCls} partOfDropdown={false} text="" isEditing={false} toParent={() => {} } />
+            <TextComponent {box} {editor} readOnly={readOnly ?? editor?.readOnly} errorCls={errorCls} partOfDropdown={false} text="" isEditing={false} toParent={() => {} } />
         {:else if isMultiLineTextBox(box)}
             <MultiLineTextComponent {box} {editor} />
         {:else if isActionBox(box) || isSelectBox(box) || isReferenceBox(box)}

@@ -13,6 +13,9 @@
     
     const { editor, box }: FreComponentProps<PartWrapperBox> = $props();
 
+    /** When true, no mutations (add/paste) are allowed. Prevents change-then-revert when app has no edit lock. */
+    let isReadOnly = $derived(!!editor?.readOnly);
+
     // Props - use $derived to properly react to box changes
     let cssClass = $derived(box?.findParam("cssClass") || "");
     let canAdd = $derived(box?.findParam("canAdd") === "true");
@@ -129,6 +132,7 @@
     };
 
     const addItem = (event?: MouseEvent | KeyboardEvent) => {
+        if (isReadOnly) return;
         if (event) {
             event.stopPropagation();
             event.preventDefault();
@@ -179,6 +183,7 @@
     });
 
     const pasteItems = async (event?: MouseEvent | KeyboardEvent) => {
+        if (isReadOnly) return;
         if (event) {
             event.stopPropagation();
             event.preventDefault();
@@ -307,13 +312,13 @@
     {:else}
         <span class="w-5"></span>   
     {/if}
-    <span class="list-group-label">{label} {#if canAdd}({itemCount()}){/if}</span>
-    {#if canAdd}
+    <span class="list-group-label">{label} {#if canAdd && !isReadOnly}({itemCount()}){/if}</span>
+    {#if canAdd && !isReadOnly}
         <button class="circle-button action-button" onclick={addItem} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addItem(e))} title="Add" tabindex="0">
             <IconPlus size={14} />
         </button>
     {/if}
-    {#if canPasteMultiple}
+    {#if canPasteMultiple && !isReadOnly}
         <button class="circle-button action-button" onclick={pasteItems} onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), pasteItems(e))} title="Paste multiple items from clipboard (one per line)" tabindex="0">
             <IconClipboardPaste size={14} />
         </button>

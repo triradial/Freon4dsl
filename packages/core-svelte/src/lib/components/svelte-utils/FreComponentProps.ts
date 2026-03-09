@@ -7,6 +7,8 @@ import type { TableDetails } from './TableDetails.js';
  */
 export interface MainComponentProps {
     editor: FreEditor;
+    /** When true, mutations are disabled (view-only). Can be set via editor.readOnly instead. */
+    readOnly?: boolean;
 }
 
 /**
@@ -35,6 +37,8 @@ export interface TableCellProps<T extends Box> extends FreComponentProps<T> {
  * Properties for a TextComponent
  */
 export interface TextComponentProps<T extends Box> extends FreComponentProps<T> {
+    // Optional CSS class for error state when provided by parent (e.g. RenderComponent)
+    errorCls?: string;
     // Indication whether this component is currently being edited by the user, needs to be exported for binding in TextDropdownComponent
     isEditing: boolean;
     // Indication whether this text component is part of an TextDropdownComponent

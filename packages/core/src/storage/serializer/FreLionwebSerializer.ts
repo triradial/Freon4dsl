@@ -221,7 +221,7 @@ export class FreLionwebSerializer implements FreSerializer {
             }
             FreUtils.CHECK(!property.isList, "Lionweb does not support list properties: " + property.name);
             if (property.propertyKind !== "primitive") {
-                console.error("Primitive value found for non primitive property: " + property.name)
+                // console.error("Primitive value found for non primitive property: " + property.name)
                 // continue
             }
             // console.log(`DESER prop '${property.name}': '${property.type}' value '${jsonProperty.value}'`)

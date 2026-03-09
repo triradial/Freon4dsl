@@ -51,6 +51,7 @@
     });
     
     let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'textdropdown-with-unknown-box');
+    let isReadOnly = $derived(!!editor.readOnly);
     let isEditing: boolean = $state(false); // becomes true when the text field gets focus
     let dropdownShown: boolean = $state(false); // when true the dropdown element is shown
     let text: string = $state(''); // the text in the text field
@@ -93,6 +94,7 @@
     };
 
     function setTextLocalAndInBox(text: string) {
+        if (isReadOnly) return;
         box.textHelper.setText(text);
         setText(text);
     }
@@ -151,6 +153,7 @@
             `textUpdate: (${filteredOptions.length}, ${filteredOptions[0]?.label}, ${filteredOptions[0]?.label?.length}`
         );
         if (
+            !isReadOnly &&
             filteredOptions.length === 1 &&
             MatchUtil.isPrefixOf(text, filteredOptions[0].label) &&
             filteredOptions[0].label.length === details.caret
@@ -158,7 +161,7 @@
             storeOrExecute(filteredOptions[0]);
             return;
         }
-        if (isActionBox(box)) {
+        if (!isReadOnly && isActionBox(box)) {
             // Try to match a regular expression, and execute the action that is associated with it
             const result = box.tryToMatchRegExpAndExecuteAction(text, editor);
             if (result === BehaviorExecutionResult.EXECUTED) {
@@ -417,6 +420,7 @@
      * @param selected
      */
     function storeOrExecute(selected: SelectOption) {
+        if (isReadOnly) return;
         LOGGER.log(`storeOrExecute for option box(${box.id}):` + selected.label + ' ' + box.kind + ' ' + box.role);
         isEditing = false;
         hideDropdown();
@@ -541,6 +545,7 @@
         <TextComponent
             {editor}
             box={textBox}
+            readOnly={isReadOnly}
             partOfDropdown={true}
             bind:isEditing
             bind:text

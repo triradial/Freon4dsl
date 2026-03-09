@@ -40,7 +40,10 @@
         return currentNames.includes(nn);
     }
 
+    let isReadOnly = $derived(!!editor.readOnly);
+
     function changed(name: string) {
+        if (isReadOnly) return;
         // console.log("changed name: " + name)
         if (isChecked(name)) {
             currentNames.splice(currentNames.indexOf(name), 1);
@@ -178,6 +181,7 @@
                   onclick={onClick}
                   onkeydown={onKeyDown}
                   bind:this={allElements[i]}
+                  disabled={isReadOnly}
                 >
                 {nn}
             </label>

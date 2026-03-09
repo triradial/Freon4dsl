@@ -92,7 +92,7 @@
         // todo this does not work anymore because the key down is handled by the box inside the table cell, remove it?
         LOGGER.log('GridCellComponent onKeyDown');
         // const freKey = toFreKey(event);
-        if (isMetaKey(event) || event.key === ENTER) {
+        if ((isMetaKey(event) || event.key === ENTER) && !editor.readOnly) {
             LOGGER.log('Keyboard shortcut in GridCell ===============');
             const index = box.propertyIndex;
             executeCustomKeyboardShortCut(event, index, box, editor);

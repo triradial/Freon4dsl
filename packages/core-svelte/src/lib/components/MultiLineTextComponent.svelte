@@ -10,7 +10,10 @@
     const LOGGER = MULTILINETEXT_LOGGER;
 
     // Props
-    let { box }: FreComponentProps<MultiLineTextBox> = $props();
+    let { box, editor }: FreComponentProps<MultiLineTextBox> = $props();
+
+    /** When true, no edits are allowed (lockdown/view-only). */
+    let isReadOnly = $derived(!!editor?.readOnly);
 
     // Local variables
     let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'text-with-unknown-box');
@@ -46,10 +49,10 @@
      */
     const onFocusOut = () => {
         LOGGER.log('onFocusOut ' + id);
-        if (text !== box.getText()) {
+        if (!isReadOnly && text !== box.getText()) {
             LOGGER.log(`   text is new value`);
             box.setText(text);
-        } else {
+        } else if (!isReadOnly) {
             LOGGER.log('Text is unchanged: ' + text);
         }
     };
@@ -77,6 +80,7 @@
     spellcheck="false"
     tabindex="0"
     bind:this={textArea}
+    readonly={isReadOnly}
     {placeholder}
     bind:value={text}
 ></textarea>

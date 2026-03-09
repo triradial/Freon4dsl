@@ -29,6 +29,7 @@
         box.refreshComponent = refresh;
     });
     const onClick = (event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) => {
+        if (editor.readOnly) return;
         LOGGER.log('execute action');
         box.executeAction(editor);
         event.stopPropagation();
@@ -41,6 +42,7 @@
     {id}
     onclick={onClick}
     bind:this={thisButton}
+    disabled={editor.readOnly}
 >
     <span>{box.text}</span>
 </button>

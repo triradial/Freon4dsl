@@ -49,6 +49,7 @@
      * @param items
      */
     export async function show(event: MouseEvent, index: number, items: MenuItem[]) {
+        if (editor.readOnly) return;
         LOGGER.log('CONTEXTMENU show for index ' + index);
         _items = items;
         elementIndex = index;
@@ -125,6 +126,10 @@ editor: ${rect.x} ${rect.y} ${rect.height} ${rect.width}`);
     function onClick(event: MouseEvent, item: MenuItem, itemIndex: number): boolean {
         LOGGER.log('CONTEXTMENU onClick');
         submenuOpen = false;
+        if (editor.readOnly) {
+            hide();
+            return false;
+        }
         if (item.hasSubItems()) {
             submenuItems = item.subItems;
             openSub(itemIndex);
