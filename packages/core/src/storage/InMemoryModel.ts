@@ -6,9 +6,9 @@ import {
     type FrePartListDelta,
     type FrePrimDelta,
     type FrePrimListDelta,
-    FreUndoManager,
     ReferenceUpdateManager,
 } from "../change-manager/index.js"
+import { FreUndoManager } from "../change-manager/FreUndoManager.js"
 import { FREON } from "../environment/index.js"
 import type { FreEnvironment } from "../environment/index.js"
 import { FreLogger } from "../logging/index.js"
@@ -16,7 +16,7 @@ import { isNullOrUndefined, notNullOrUndefined } from "../util/index.js"
 import { FreErrorSeverity } from "../validator/index.js"
 import type { FreUnitIdentifier, IServerCommunication } from "./server/index.js"
 
-export type ModelChangedCallbackFunction = (m: InMemoryModel) => void
+type InMemoryModelChangedCallback = (m: InMemoryModel) => void
 
 export class InMemoryError {
     message: string
@@ -403,8 +403,8 @@ export class InMemoryModel {
   /**
    * Callbacks to inform listeners that the current model/current unit has changed.
    */
-  private currentModelListeners: ModelChangedCallbackFunction[] = [];
-  addCurrentModelListener(l: ModelChangedCallbackFunction): void {
+  private currentModelListeners: InMemoryModelChangedCallback[] = [];
+  addCurrentModelListener(l: InMemoryModelChangedCallback): void {
     this.currentModelListeners.push(l);
   }
   currentModelChanged(): void {

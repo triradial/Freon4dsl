@@ -347,22 +347,6 @@ export class FreLanguage {
         }
     }
 
-    public getReferencePropertyValue(element: FreNode, prop: FreLanguageProperty): FreNodeReference<any>[] {
-        if (prop.propertyKind !== "reference") {
-            console.error(`FreLanguage.getReferencePropertyValue: property ${prop.name} is a ${prop.propertyKind}, should be a reference`)
-        }
-        if (prop.isList) {
-            return element[prop.name];
-        } else {
-            const value = element[prop.name];
-            if (!!value) {
-                return [value];
-            } else {
-                return [];
-            }
-        }
-    }
-
     /**
      * Return all named concept in the language.
      */
