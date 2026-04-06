@@ -1,8 +1,7 @@
 import { autorun, makeObservable, observable, runInAction } from "mobx"
 import type { FreModel, FreModelUnit } from "../ast/index.js"
 import {
-    AST,
-    FreChangeManager,
+    AstObserver,
     type FrePartDelta,
     type FrePartListDelta,
     type FrePrimDelta,
@@ -10,6 +9,7 @@ import {
     FreUndoManager,
     ReferenceUpdateManager,
 } from "../change-manager/index.js"
+import { FREON } from "../environment/index.js"
 import type { FreEnvironment } from "../environment/index.js"
 import { FreLogger } from "../logging/index.js"
 import { isNullOrUndefined, notNullOrUndefined } from "../util/index.js"
@@ -54,10 +54,10 @@ export class InMemoryModel {
         this.currentModelChanged();
       }
     });
-    FreChangeManager.getInstance().subscribeToPart(this.partChanged);
-    FreChangeManager.getInstance().subscribeToPrimitive(this.primChanged);
-    FreChangeManager.getInstance().subscribeToList(this.listChanged);
-    FreChangeManager.getInstance().subscribeToListElement(
+    AstObserver.getInstance().subscribeToPart(this.partChanged);
+    AstObserver.getInstance().subscribeToPrimitive(this.primChanged);
+    AstObserver.getInstance().subscribeToList(this.listChanged);
+    AstObserver.getInstance().subscribeToListElement(
       this.listElementChanged,
     );
   }
@@ -108,7 +108,7 @@ export class InMemoryModel {
    */
   async openModel(name: string): Promise<FreModel | InMemoryError> {
     LOGGER.log("openModel(" + name + ")");
-    AST.change(() => {
+    FREON.astChanger.change(() => {
       this.model = this.languageEnvironment.newModel(name);
     });
     const response = await this.server.loadUnitList(name);
@@ -119,7 +119,7 @@ export class InMemoryModel {
     for (const unitId of response.result) {
       LOGGER.log("openModel: load model-unit: " + unitId.name);
       const unit = await this.server.loadModelUnit(this.model.name, unitId);
-      AST.change(() => {
+      FREON.astChanger.change(() => {
         this.model.addUnit(unit.result as FreModelUnit);
       });
     }
@@ -207,7 +207,7 @@ export class InMemoryModel {
       this.onInMemoryError(response.errors[0]);
       return new InMemoryError(response.errors[0]);
     }
-    AST.change(() => {
+    FREON.astChanger.change(() => {
       this.model.removeUnit(unit);
     });
   }
@@ -225,7 +225,7 @@ export class InMemoryModel {
       return new InMemoryError(response.errors[0]);
     }
     const unit: FreModelUnit = this.getUnitById(unitId);
-    AST.change(() => {
+    FREON.astChanger.change(() => {
       this.model.removeUnit(unit);
     });
   }
@@ -277,7 +277,7 @@ export class InMemoryModel {
    */
   async addUnit(unit: FreModelUnit): Promise<void> {
     LOGGER.log(`addUnit ${unit?.name}`);
-    AST.change(() => {
+    FREON.astChanger.change(() => {
       this.model.addUnit(unit);
     });
     await this.saveUnit(unit);
