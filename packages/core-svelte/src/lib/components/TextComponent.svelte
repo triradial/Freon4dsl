@@ -5,7 +5,8 @@
 <script lang="ts">
     import { TEXT_LOGGER } from './ComponentLoggers.js';
     import { flushSync, onMount, tick } from 'svelte';
-    import { componentId, replaceHTML } from './svelte-utils/index.js';
+    import { componentId, replaceHTML, TextComponentHelper } from './svelte-utils/index.js';
+    import type { TextComponentProps } from './svelte-utils/FreComponentProps.js';
     import {
         ActionBox,
         ALT,
@@ -20,7 +21,7 @@
         ENTER,
         ESCAPE,
         FreCaret,
-        FreCaretPosition,
+        FreCaretPosition, FreLanguage,
         isActionBox,
         isNullOrUndefined,
         isSelectBox, notNullOrUndefined,
@@ -28,22 +29,20 @@
         SHIFT,
         TAB,
         TextBox, UndefinedRectangle
-    } from '@freon4dsl/core';
-    import { TextComponentHelper } from './svelte-utils/TextComponentHelper.js';
+    } from "@freon4dsl/core"
     import ErrorTooltip from './ErrorTooltip.svelte';
     import ErrorMarker from './ErrorMarker.svelte';
-    import type { TextComponentProps } from './svelte-utils/FreComponentProps.js';
     import { contextMenu, shouldBeHandledByBrowser } from './stores/AllStores.svelte';
 
     const LOGGER = TEXT_LOGGER;
 
     type BoxType = 'action' | 'select' | 'text';
 
-    // Props (readOnly from MainComponentProps; when passed from RenderComponent/TextDropdownComponent, used for view-only)
+    // Props
     let {
         editor,
         box,
-        readOnly: readOnlyProp,
+        readonly,
         partOfDropdown,
         isEditing = $bindable(),
         text = $bindable(),
@@ -51,67 +50,39 @@
     }: TextComponentProps<TextBox> = $props();
 
     // Variables dependent upon the box, the prop 'text' is one of these.
-    // an id for the html element
-    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'text-with-unknown-box');
+    // an id for the HTML element
+    // svelte-ignore
+    let id: string = $derived(notNullOrUndefined(box) ? componentId(box) : 'text-with-unknown-box');
     // the placeholder when value of text component is not present
-    let placeholder: string = $state('');
+    let placeholder: string = $derived(notNullOrUndefined(box) ? box.placeHolder : '<..>');
     // variable to remember the text that was in the box previously
-    let originalText: string = $state('');
+    let originalText: string = $derived(notNullOrUndefined(box) ? box.getText() : '');
     // variable for styling
-    let placeHolderStyle = $derived(partOfDropdown
+    let placeHolderStyle: string = $derived(partOfDropdown
         ? 'text-component-action-placeholder'
         : 'text-component-placeholder');
     // indication how is this text component is used, determines styling
-    let boxType: BoxType = $state('text');
+    let boxType: BoxType = $derived(
+        notNullOrUndefined(box?.parent)
+            ? isActionBox(box?.parent)
+                ? 'action'
+                : isSelectBox(box?.parent)
+                  ? 'select'
+                  : 'text'
+            : 'text'
+    );
+    let cssClass: string | undefined = $state(box?.cssClass)
 
-    /** When true, no edits are allowed (lockdown/view-only). From prop or editor.readOnly. */
-    let isReadOnly = $derived((readOnlyProp !== undefined && readOnlyProp !== null) ? !!readOnlyProp : !!editor?.readOnly);
-
-    // Variables to alter the state of the component, the prop 'isEditing' is one of these.
-    // indicates whether we are just starting to edit, so we need to set the cursor in the <input>
-    let editStart = $state(false);
-    // indicates whether the user can use the TAB key to enter this component
+    // Indicates whether the user can use the TAB key to enter this component.
     // Tab skips spaces before and after operators, which have specific roles.
-    let tabindex = $derived(notNullOrUndefined(box?.role)
+    let tabindex: number = $derived(notNullOrUndefined(box?.role)
         ? box.role.startsWith('action-binary') || box.role.startsWith('action-exp')
             ? -1
             : 0
         : 0);
 
-    // Initialize values from box
-    $effect(() => {
-        if (notNullOrUndefined(box)) {
-            placeholder = box.placeHolder;
-            originalText = box.getText();
-            boxType = notNullOrUndefined(box?.parent)
-                ? isActionBox(box?.parent)
-                    ? 'action'
-                    : isSelectBox(box?.parent)
-                      ? 'select'
-                      : 'text'
-                : 'text';
-        }
-    });
-
-    // Dev-only: log readOnly so we can verify in CRC-Hub (filter console by "[Freon readOnly]")
-    $effect(() => {
-        if ((import.meta as { env?: { DEV?: boolean } }).env?.DEV && notNullOrUndefined(box)) {
-            const fromProp = readOnlyProp;
-            const fromEditor = editor?.readOnly;
-            const effective = isReadOnly;
-            console.log(
-                '[Freon readOnly] TextComponent (TextBox):',
-                'boxId=', box?.id,
-                'readOnlyProp=', fromProp,
-                'editor.readOnly=', fromEditor,
-                'effective isReadOnly=', effective,
-                effective ? '→ blocking editing (no focus-to-edit, input readonly, no setText/delete)' : '→ allowing editing'
-            );
-        }
-    });
-
     // Variables for showing errors
-    let errorCls: string = $state(''); // css class name for when the node is erroneous
+    let errorCls: string = $state(''); // CSS class name for when the node is erroneous
     let errMess: string[] = $state([]); // error message to be shown when element is hovered
     let hasErr: boolean = $state(false); // indicates whether this box has errors
 
@@ -121,20 +92,17 @@
     let widthSpan: HTMLSpanElement = $state()!; // the width of the <span> element, used to set the width of the <input> element
 
     // We create an extra object that handles a number of the more complex functions for this component
-    let myHelper: TextComponentHelper;
-    $effect(() => {
-        myHelper = new TextComponentHelper(
-            box,
-            () => {
-                return text;
-            },
-            () => {
-                return originalText !== text;
-            },
-            endEditing,
-            toParent
-        );
-    });
+    let myHelper: TextComponentHelper = $derived(new TextComponentHelper(
+        box,
+        () => {
+            return text;
+        },
+        () => {
+            return originalText !== text;
+        },
+        endEditing,
+        toParent
+    ));
 
     /* ========	The following functions are called from @freon4dsl/core =========== */
 
@@ -168,6 +136,7 @@
                 errMess = [];
                 hasErr = false;
             }
+            cssClass = box?.cssClass
         }
     };
 
@@ -185,7 +154,7 @@
      */
     // todo why is this function async?
     export async function setFocus(): Promise<void> {
-        LOGGER.log(`setFocus for ${box?.id} ${isEditing} && ${inputElement}`);
+        console.log(`setFocus for ${box?.id} ${isEditing} && ${inputElement}`);
         if (isEditing && notNullOrUndefined(inputElement)) {
             inputElement.focus();
             inputElement.select(); // selects all the text in the <input> element.
@@ -201,21 +170,26 @@
      * @param freCaret
      */
     const calculateCaret = (freCaret: FreCaret) => {
-        LOGGER.log(`${id}: setCaret ${freCaret.position} [${freCaret.from}, ${freCaret.to}]`);
+        console.log(`${id}: setCaret ${freCaret.position} [${freCaret.from}, ${freCaret.to}]`);
         // No need to flush any pending updates, method is being called from the box.
         switch (freCaret.position) {
             case FreCaretPosition.RIGHT_MOST: // type nr 2
                 myHelper.from = myHelper.to = text.length;
                 break;
             case FreCaretPosition.LEFT_MOST: // type nr 1
+                myHelper.from = 0;
+                myHelper.to = 0;
+                break;
             case FreCaretPosition.UNSPECIFIED: // type nr 0
-                myHelper.from = myHelper.to = 0;
+                myHelper.from = 0;
+                myHelper.to = text.length;
                 break;
             case FreCaretPosition.INDEX: // type nr 3
                 myHelper.setFromAndTo(freCaret.from, freCaret.to);
                 break;
             default:
-                myHelper.from = myHelper.to = 0;
+                myHelper.from = 0;
+                myHelper.to = text.length;
                 break;
         }
     };
@@ -237,7 +211,6 @@
      * It stores the caret position(s) to be used to set the selection of the <input>.
      */
     async function startEditing(from: string) {
-        if (isReadOnly) return;
         LOGGER.log(`startEditing for ${box?.id}`);
         // If called from the editor, there is no need to change the selection
         // because the editor already has the corresponding box as selected box.
@@ -261,7 +234,6 @@
         }
         // set the local variables
         isEditing = true;
-        editStart = true;
         originalText = text;
         await tick(); 
         // wait till the <input> is rendered 
@@ -291,11 +263,8 @@
             // a 'left' click
             event.preventDefault();
             event.stopPropagation();
+            // Because we do not propagate the event, we need to hide any context menu 'manually'.
             contextMenu.instance?.hide();
-            if (isReadOnly) {
-                editor.selectElementForBox(box);
-                return;
-            }
             startEditing('UI');
             if (partOfDropdown) {
                 // Tell the TextDropdown that the edit has started.
@@ -333,14 +302,20 @@
         if (isEditing) {
             isEditing = false;
 
-            if (!partOfDropdown && !isReadOnly) {
-                // store the current value in the textbox, or delete the box, if appropriate
-                LOGGER.log(`   save text using box.setText(${text})`);
-                if (text !== box.getText()) {
-                    LOGGER.log(`   text is new value`);
-                    box.setText(text);
+            if (!partOfDropdown) {
+                let textToStore: string | undefined = text;
+                /* When the value of an optional property of type string is the empty string, we store it as 'undefined'. */
+                const propDef = FreLanguage.getInstance().classifierProperty(box.node.freLanguageConcept(), box.propertyName);
+                if (propDef && propDef.propertyKind === "primitive" && propDef.type === "string" && propDef.isOptional && text === "") {
+                    textToStore = undefined;
                 }
-            } else if (partOfDropdown) {
+                // store the current value in the textbox, or delete the box, if appropriate
+                LOGGER.log(`   save text using box.setText(${textToStore})`);
+                if (textToStore !== box.getText()) {
+                    LOGGER.log(`   text is new value`);
+                    box.setText(textToStore);
+                }
+            } else {
                 toParent('endEditing');
             }
         }
@@ -404,6 +379,7 @@
 					break;
 				}
 				case DELETE: {
+                    console.log('TextComponent delete')
 					myHelper.handleDelete(event, editor);
 					break;
 				}
@@ -519,7 +495,7 @@
         LOGGER.log(`onInput for ${box?.id}`);
         setInputWidth();
         LOGGER.log(`onInput text is ${text}  value '${inputElement.value}'`);
-        if (!isReadOnly && inputElement.value === '') {
+        if (inputElement.value === '') {
             editor.deleteTextBox(box, box.deleteWhenEmpty);
         }
         if (partOfDropdown) {
@@ -538,7 +514,6 @@
         LOGGER.log('TextComponent onPaste')
         e.stopPropagation();
         e.preventDefault(); // avoid the browser inserting styled HTML
-        if (isReadOnly) return;
 
         // 1) Best path: use the event's clipboardData (widest compatibility)
         let pastedText = e.clipboardData?.getData('text/plain') ?? '';
@@ -600,10 +575,6 @@
     async function onCut(e: ClipboardEvent) {
         LOGGER.log('TextComponent onCut');
         e.stopPropagation();
-        if (isReadOnly) {
-            e.preventDefault();
-            return;
-        }
 
         const selected = getSelectedText();
         if (!selected) {
@@ -679,7 +650,7 @@
         const before = text.slice(0, myHelper.from);
         const after  = text.slice(myHelper.to);
         text = before + insert + after;
-        LOGGER.log( `inserAtSelection: ${before} ${insert} ${after}`)
+        LOGGER.log( `insertAtSelection: ${before} ${insert} ${after}`)
         flushSync(); // flush any pending updates.
 
         // Collapse caret to end of inserted text
@@ -723,11 +694,28 @@
 
 </script>
 
-{#if errMess.length > 0 && box.isFirstInLine}
-    <ErrorMarker {editor} {box} />
-{/if}
-<ErrorTooltip {editor} {box} {hasErr} parentTop={0} parentLeft={0}>
-    <span {id} role="none" bind:this={surroundingElement} class="text-component">
+{#if readonly}
+    <span {id} role="none" class="{cssClass} text-component readonly">
+            <span
+                class="text-box-{boxType} text-component-text {errorCls} readonly"
+                {tabindex}
+                bind:this={spanElement}
+                id="{id}-span"
+                role="textbox"
+            >
+                {#if !!text && text.length > 0}
+                    <span class="{errorCls} readonly">{text}</span>
+                {:else}
+                    <span class="{placeHolderStyle} {errorCls} readonly">{placeholder}</span>
+                {/if}
+            </span>
+    </span>
+{:else}
+    {#if errMess.length > 0 && box.isFirstInLine}
+        <ErrorMarker {editor} {readonly} {box} />
+    {/if}
+    <ErrorTooltip {editor} {readonly} {box} {hasErr} parentTop={0} parentLeft={0}>
+    <span {id} role="none" bind:this={surroundingElement} class="{cssClass} text-component">
         {#if isEditing}
             <span class="text-component-input-wrapper">
                 <input
@@ -745,20 +733,21 @@
                     oncut={onCut}
                     draggable="true"
                     ondragstart={onDragStart}
-                    readonly={isReadOnly}
                     {placeholder}
                 />
                 <span class="text-component-width" bind:this={widthSpan}></span>
             </span>
         {:else}
-            <!-- When readOnly, contenteditable=false to prevent edits; otherwise true for cursor/selection in span -->
+            <!-- contenteditable must be true, otherwise there is no cursor position in the span after a click,
+                 But ... this is only a problem when this component is inside a draggable element (like List or table)
+            -->
             <span
-                class="{box?.cssClass} text-box-{boxType} text-component-text {errorCls}"
+                class="text-box-{boxType} text-component-text {errorCls}"
                 onmousedown={onMousedown}
                 onfocusin={onFocusIn}
                 {tabindex}
                 bind:this={spanElement}
-                contenteditable={isReadOnly ? "false" : "true"}
+                contenteditable="true"
                 spellcheck="false"
                 id="{id}-span"
                 role="textbox"
@@ -771,4 +760,5 @@
             </span>
         {/if}
     </span>
-</ErrorTooltip>
+    </ErrorTooltip>
+{/if}

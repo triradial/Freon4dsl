@@ -128,14 +128,13 @@ export class ItemBoxHelper {
             if (optionalLiteral === "") {
                 return result;
             }
-            const condition: string = property.isList
-                ? `() => (!!${elementVarName}.${optionalPropertyName}) && (${elementVarName}.${optionalPropertyName}).length !== 0`
-                : `() => (!!${elementVarName}.${optionalPropertyName})`;
-            result = `BoxFactory.optional(${elementVarName}, "optional-${optionalPropertyName}", ${condition},
+            const initializer: string = property.isPrimitive
+                ? `{ propertyName: "${optionalPropertyName}" }`
+                : `{ propertyName: "${optionalPropertyName}", conceptOfProperty: "${property.type.name}" }`;
+            result = `BoxFactory.optional(${elementVarName}, "optional-${optionalPropertyName}", "${optionalPropertyName}",
                 ${result},
-                false, 
-                BoxFactory.action(this._node, "optional-${optionalPropertyName}", "${optionalLiteral}")
-            )`;
+                ${initializer}
+            )`
             return result;
         } else {
             LOG2USER.error("INTERNAL ERROR: no property found in optional projection.");
@@ -184,19 +183,13 @@ export class ItemBoxHelper {
     ): string {
         let result: string = "";
         if (property.type instanceof FreMetaLimitedConcept) {
-            if (!!item.externalInfo && !!item.externalInfo.replaceBy && item.externalInfo.replaceBy.length > 0) {
-                // Use external component to replace the limited concept box
-                result += this._myExternalHelper.replaceSingleByExternal(item, property, elementVarName);
-            } else {
-                // Use standard limited concept box
-                result += this._myLimitedHelper.generateLimited(
-                    property,
-                    elementVarName,
-                    language,
-                    item.listInfo,
-                    item.displayType,
-                );
-            }
+            result += this._myLimitedHelper.generateLimited(
+                property,
+                elementVarName,
+                language,
+                item.listInfo,
+                item.displayType,
+            );
         } else if (property.isList) {
             let innerResult: string = "";
             if (!!item.listInfo && item.listInfo.isTable) {
@@ -206,8 +199,7 @@ export class ItemBoxHelper {
                     language,
                     item.listInfo,
                     property,
-                    elementVarName,
-                    item
+                    elementVarName
                 );
             } else if (!!item.listInfo) {
                 // if there is information on how to project the property as a list, make it a list
@@ -215,8 +207,7 @@ export class ItemBoxHelper {
                     language,
                     item.listInfo,
                     property,
-                    elementVarName,
-                    item
+                    elementVarName
                 );
             }
             if (!!item.externalInfo) {
@@ -283,17 +274,13 @@ export class ItemBoxHelper {
             }
         } else {
             // single element
-            if (property.type instanceof FreMetaLimitedConcept && !!item.externalInfo && !!item.externalInfo.replaceBy && item.externalInfo.replaceBy.length > 0) {
-                // Use external component to replace the limited concept box directly
-                result += this._myExternalHelper.replaceSingleByExternal(item, property, elementVarName);
+            this._myTemplate.imports.core.add("BoxUtil");
+            let innerResult: string = `BoxUtil.getBoxOrAction(${elementVarName}, "${property.name}", "${property.type.name}", this.mainHandler) `;
+            if (!!item.externalInfo) {
+                // there is information on how to project the property as an external component, wrap the result in an ExternalBox
+                result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
             } else {
-                this._myTemplate.imports.core.add("BoxUtil");
-                let innerResult: string = `BoxUtil.getBoxOrAction(${elementVarName}, "${property.name}", "${property.type.name}", this.mainHandler) `;
-                if (item.externalInfo) {
-                    result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
-                } else {
-                    result += innerResult;
-                }
+                result += innerResult;
             }
         }
         return result;

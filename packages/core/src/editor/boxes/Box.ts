@@ -1,12 +1,12 @@
 import type { FreNode } from "../../ast/index.js";
-import { FreLogger } from "../../logging/index.js";
 import {
+    notNullOrUndefined,
+    FreUtils,
     FRE_BINARY_EXPRESSION_LEFT,
     FRE_BINARY_EXPRESSION_RIGHT,
-    FreUtils,
-    isExpressionPreOrPost, isNullOrUndefined,
-    notNullOrUndefined
-} from "../../util/index.js";
+    isExpressionPreOrPost, isNullOrUndefined
+} from "../../util/index.js"
+import { FreLogger } from "../../logging/index.js";
 import type { ClientRectangle } from "../ClientRectangleTypes.js";
 import { UndefinedRectangle } from "../ClientRectangleTypes.js";
 
@@ -17,6 +17,14 @@ const LOGGER = new FreLogger("Box");
  * The root of the Box class hierarchy, contains all generic properties and a number of navigation/search functions.
  */
 export abstract class Box {
+    get cssClass(): string {
+        return this._cssClass
+    }
+
+    set cssClass(value: string) {
+        this._cssClass = value
+        this.isDirty()
+    }
     $id: string;
     kind: string = "";
     role: string = "";
@@ -27,7 +35,7 @@ export abstract class Box {
     // The index within the property, if appropriate
     propertyIndex: number;
     // Custom CSS class that will be added to the component rendering this box
-    cssClass: string = "";
+    private _cssClass: string = "";
     // Custom CSS Style class that will be added as inline style to the component rendering this box
     cssStyle: string = "";
     // Can this box be selected in the editor?
@@ -110,7 +118,7 @@ export abstract class Box {
 
     i: number = 0
     protected constructor(node: FreNode, role: string) {
-        FreUtils.CHECK(!!node, "Element cannot be empty in Box constructor");
+        FreUtils.CHECK(!!node, "'node' cannot be empty in Box constructor");
         this.node = node;
         this.role = role;
         this.$id = FreUtils.BOX_ID(); // uuid.v4();

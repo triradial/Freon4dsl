@@ -1,5 +1,5 @@
 import { action, makeObservable } from "mobx";
-import { AST } from "../change-manager/index.js";
+import { FREON } from "../environment/index.js"
 import { FreUtils, isNullOrUndefined } from "./internal.js";
 import type { Box, FreEditor } from "../editor/index.js";
 import type { FreBinaryExpression, FreNode, FreExpressionNode } from "../ast/index.js";
@@ -118,47 +118,51 @@ class BTree {
     }
 
     insertBinaryExpression(newBinExp: FreBinaryExpression, box: Box, editor: FreEditor): Selected | null {
-        FreUtils.CHECK(AST.isInChange, "Method `insertBinaryExpression` should be called inside AST.change()")
+        FreUtils.CHECK(FREON.astChanger.isInChange, "Method `insertBinaryExpression` should be called inside FREON.astChanger.change()")
         LOGGER.log("insertBinaryExpression for " + box.node);
-        let selectedElement: Selected | null = null;
+        let selectedElement: Selected | null;
         FreUtils.CHECK(
             isFreExpression(box.node),
             "insertBinaryExpression: current element should be a FreExpressionNode, but it isn't",
         );
         const exp = box.node as FreExpressionNode;
         switch (box.role) {
-            case LEFT_MOST:
-                selectedElement = { element: newBinExp, boxRoleToSelect: FRE_BINARY_EXPRESSION_LEFT };
-                FreUtils.replaceExpression(exp, newBinExp, editor);
-                newBinExp.freSetRight(exp);
-                this.balanceTree(newBinExp, editor);
-                break;
-            case RIGHT_MOST:
-                selectedElement = { element: newBinExp, boxRoleToSelect: FRE_BINARY_EXPRESSION_RIGHT };
-                FreUtils.replaceExpression(exp, newBinExp, editor);
-                newBinExp.freSetLeft(exp);
-                this.balanceTree(newBinExp, editor);
-                break;
-            case BEFORE_BINARY_OPERATOR:
-                FreUtils.CHECK(isFreBinaryExpression(exp), "Operator action only allowed in binary operator");
-                selectedElement = { element: newBinExp, boxRoleToSelect: FRE_BINARY_EXPRESSION_RIGHT };
-                const left = (exp as FreBinaryExpression).freLeft();
-                (exp as FreBinaryExpression).freSetLeft(newBinExp);
+            case LEFT_MOST: {
+                selectedElement = { element: newBinExp, boxRoleToSelect: FRE_BINARY_EXPRESSION_LEFT }
+                FreUtils.replaceExpression(exp, newBinExp, editor)
+                newBinExp.freSetRight(exp)
+                this.balanceTree(newBinExp, editor)
+                break
+            }
+            case RIGHT_MOST: {
+                selectedElement = { element: newBinExp, boxRoleToSelect: FRE_BINARY_EXPRESSION_RIGHT }
+                FreUtils.replaceExpression(exp, newBinExp, editor)
+                newBinExp.freSetLeft(exp)
+                this.balanceTree(newBinExp, editor)
+                break
+            }
+            case BEFORE_BINARY_OPERATOR: {
+                FreUtils.CHECK(isFreBinaryExpression(exp), "Operator action only allowed in binary operator")
+                selectedElement = { element: newBinExp, boxRoleToSelect: FRE_BINARY_EXPRESSION_RIGHT }
+                const left = (exp as FreBinaryExpression).freLeft()
+                ;(exp as FreBinaryExpression).freSetLeft(newBinExp)
                 // FreUtils.replaceExpression(left as FreExpressionNode, newBinExp, editor);
-                newBinExp.freSetLeft(left);
-                this.balanceTree(newBinExp, editor);
-                break;
-            case AFTER_BINARY_OPERATOR:
-                FreUtils.CHECK(isFreBinaryExpression(exp), "Operator action only allowed in binary operator");
-                selectedElement = { element: newBinExp, boxRoleToSelect: FRE_BINARY_EXPRESSION_LEFT };
-                const right = (exp as FreBinaryExpression).freRight();
-                (exp as FreBinaryExpression).freSetRight(newBinExp);
+                newBinExp.freSetLeft(left)
+                this.balanceTree(newBinExp, editor)
+                break
+            }
+            case AFTER_BINARY_OPERATOR: {
+                FreUtils.CHECK(isFreBinaryExpression(exp), "Operator action only allowed in binary operator")
+                selectedElement = { element: newBinExp, boxRoleToSelect: FRE_BINARY_EXPRESSION_LEFT }
+                const right = (exp as FreBinaryExpression).freRight()
+                ;(exp as FreBinaryExpression).freSetRight(newBinExp)
                 // FreUtils.replaceExpression(right, newBinExp, editor);
-                newBinExp.freSetRight(right);
-                this.balanceTree(newBinExp, editor);
-                break;
+                newBinExp.freSetRight(right)
+                this.balanceTree(newBinExp, editor)
+                break
+            }
             default:
-                throw Error("Cannot insert binary expression");
+                throw Error("Cannot insert binary expression")
         }
         return selectedElement;
     }
@@ -168,7 +172,7 @@ class BTree {
      * Works when `exp` has just been added to the tree.
      */
     balanceTree(binaryExp: FreBinaryExpression, editor: FreEditor) {
-        FreUtils.CHECK(AST.isInChange, "Method `insertBinaryExpression` should be called inside AstChange()")
+        FreUtils.CHECK(FREON.astChanger.isInChange, "Method `insertBinaryExpression` should be called inside AstChange()")
         const ownerDescriptor = binaryExp.freOwnerDescriptor();
         const left = binaryExp.freLeft();
         if (isFreBinaryExpression(left)) {

@@ -1,8 +1,15 @@
 import { autorun } from "mobx";
 import type { FreNode } from "../../ast/index.js";
+<<<<<<<< HEAD:packages/core/src/editor/boxes/OptionalOLDBox.ts
 import { Box, type ActionBox, BoxFactory, type BoolFunctie } from "./internal.js"
 
 // todo remove this class when all tests on OptionalBox have been executed
+========
+import { FreUtils } from "../../util/index.js";
+import { Box } from "./internal.js";
+
+export type BoolFunctie = () => boolean;
+>>>>>>>> upstream/development:packages/core/src/editor/boxes/OldOptionalBox.ts
 
 /**
  * OptionalBox holds the content from a projection that is optional. This content is always present in the
@@ -13,8 +20,13 @@ import { Box, type ActionBox, BoxFactory, type BoolFunctie } from "./internal.js
  * there may not be actual content within the FreNode model. The latter is set by the custom action, that is coupled
  * to this OptionalBox, which is triggered by the user.
  */
+<<<<<<<< HEAD:packages/core/src/editor/boxes/OptionalOLDBox.ts
 export class OptionalOLDBox extends Box {
     readonly kind = "OptionalBoxOLD";
+========
+export class OldOptionalBox extends Box {
+    readonly kind = "OldOptionalBox";
+>>>>>>>> upstream/development:packages/core/src/editor/boxes/OldOptionalBox.ts
 
     content: Box = null;
     placeholder: ActionBox = null;
@@ -35,7 +47,12 @@ export class OptionalOLDBox extends Box {
         condition: BoolFunctie,
         box: Box,
         mustShow: boolean,
+<<<<<<<< HEAD:packages/core/src/editor/boxes/OptionalOLDBox.ts
         actionText: string,
+========
+        placeholder: Box,
+        initializer?: Partial<OldOptionalBox>,
+>>>>>>>> upstream/development:packages/core/src/editor/boxes/OldOptionalBox.ts
     ) {
         super(node, role);
         this.content = box;
@@ -53,10 +70,14 @@ export class OptionalOLDBox extends Box {
     }
 
     /**
-     * Ensure a refresh is triggered if the condition for showing this optional bix has changed.
+     * Ensure a refresh is triggered if the condition for showing this optional box has changed.
      */
     conditionChanged = () => {
+<<<<<<<< HEAD:packages/core/src/editor/boxes/OptionalOLDBox.ts
         // console.log("AUTORUN showByCondition");
+========
+        console.log("AUTORUN showByCondition, this.mustShow: " + this.mustShow);
+>>>>>>>> upstream/development:packages/core/src/editor/boxes/OldOptionalBox.ts
         this.condition();
         this.isDirty();
     };
@@ -97,6 +118,11 @@ export class OptionalOLDBox extends Box {
     }
 }
 
+<<<<<<<< HEAD:packages/core/src/editor/boxes/OptionalOLDBox.ts
 export function isOLDOptionalBox(b: Box): b is OptionalOLDBox {
     return b?.kind === "OptionalBoxOLD"; // b instanceof OptionalBox;
+========
+export function isOldOptionalBox(b: Box): b is OldOptionalBox {
+    return b?.kind === "OldOptionalBox"; // b instanceof OptionalBox;
+>>>>>>>> upstream/development:packages/core/src/editor/boxes/OldOptionalBox.ts
 }

@@ -6,7 +6,11 @@
     "target": "ESNext", /* Specify ECMAScript target version for Svelte 5/Vite. */
     /* "module": "commonjs" must correspond with "type": "commonjs" in package.json */
     /* "module": "es*" must correspond with "type": "module" in package.json */
+<<<<<<<< HEAD:tsconfig.json
     "module": "NodeNext", /* Use NodeNext for ESM compatibility. */
+========
+    "module": "nodenext",                           /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
+>>>>>>>> upstream/development:packages/samples/OptionalBoxTest/tsconfig.json
     // "lib": [],                                   /* Specify library files to be included in the compilation. */
     "allowJs": true, /* Allow javascript files to be compiled. */
     // "checkJs": true,                             /* Report errors in .js files. */
@@ -25,6 +29,7 @@
     // "downlevelIteration": true,                  /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
     // "isolatedModules": true,                     /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
     /* Strict Type-Checking Options */
+<<<<<<<< HEAD:tsconfig.json
     // "strict": true,                              /* Enable all strict type-checking options. */
     // "noImplicitAny": true,                       /* Raise error on expressions and declarations with an implied 'any' type. */
     // "strictNullChecks": true,                    /* Enable strict null checks. */
@@ -33,6 +38,17 @@
     // "strictPropertyInitialization": true,        /* Enable strict checking of property initialization in classes. */
     // "noImplicitThis": true,                      /* Raise error on 'this' expressions with an implied 'any' type. */
     // "alwaysStrict": true,                        /* Parse in strict mode and emit "use strict" for each source file. */
+========
+     "strict": true,                              /* Enable all strict type-checking options. */
+//     "noImplicitAny": true,                       /* Raise error on expressions and declarations with an implied 'any' type. */
+//     "strictNullChecks": true,                    /* Enable strict null checks. */
+//     "strictFunctionTypes": true,                 /* Enable strict checking of function types. */
+//     "strictBindCallApply": true,                 /* Enable strict 'bind', 'call', and 'apply' methods on functions. */
+//     "strictPropertyInitialization": true,        /* Enable strict checking of property initialization in classes. */
+//     "noImplicitThis": true,                      /* Raise error on 'this' expressions with an implied 'any' type. */
+//     "alwaysStrict": true,                        /* Parse in strict mode and emit "use strict" for each source file. */
+
+>>>>>>>> upstream/development:packages/samples/OptionalBoxTest/tsconfig.json
     /* Additional Checks */
     // "noUnusedLocals": true,                      /* Report errors on unused locals. */
     // "noUnusedParameters": true,                  /* Report errors on unused parameters. */
@@ -42,7 +58,11 @@
     // "noImplicitOverride": true,                  /* Ensure overriding members in derived classes are marked with an 'override' modifier. */
     // "noPropertyAccessFromIndexSignature": true,  /* Require undeclared properties from index signatures to use element accesses. */
     /* Module Resolution Options */
+<<<<<<<< HEAD:tsconfig.json
     "moduleResolution": "nodenext", /* Use nodenext for ESM compatibility. */
+========
+    "moduleResolution": "nodenext",                  /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+>>>>>>>> upstream/development:packages/samples/OptionalBoxTest/tsconfig.json
     // "baseUrl": "./",                             /* Base directory to resolve non-absolute module names. */
     // "paths": {},                                 /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                              /* List of root folders whose combined content represents the structure of the project at runtime. */

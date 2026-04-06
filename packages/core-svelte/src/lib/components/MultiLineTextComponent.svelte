@@ -10,13 +10,10 @@
     const LOGGER = MULTILINETEXT_LOGGER;
 
     // Props
-    let { box, editor }: FreComponentProps<MultiLineTextBox> = $props();
-
-    /** When true, no edits are allowed (lockdown/view-only). */
-    let isReadOnly = $derived(!!editor?.readOnly);
+    let { box, readonly }: FreComponentProps<MultiLineTextBox> = $props();
 
     // Local variables
-    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'text-with-unknown-box');
+    let id: string = $derived(notNullOrUndefined(box) ? componentId(box) : 'text-with-unknown-box'); // an id for the HTML element
     let textArea: HTMLTextAreaElement; // the text area element on the screen
     let placeholder: string = $state('<enter>'); // the placeholder when value of text component is not present
     let text: string = $state('');
@@ -49,10 +46,10 @@
      */
     const onFocusOut = () => {
         LOGGER.log('onFocusOut ' + id);
-        if (!isReadOnly && text !== box.getText()) {
+        if (text !== box.getText()) {
             LOGGER.log(`   text is new value`);
             box.setText(text);
-        } else if (!isReadOnly) {
+        } else {
             LOGGER.log('Text is unchanged: ' + text);
         }
     };
@@ -74,14 +71,15 @@
 <span>
 <textarea
     class="{box.cssClass} multilinetext-box multiline-text-component"
+    class:readonly={readonly}
     {id}
-    onfocusout={onFocusOut}
-    onkeydown={onKeyDown}
+    onfocusout={readonly ? undefined : onFocusOut}
+    onkeydown={readonly ? undefined : onKeyDown}
     spellcheck="false"
-    tabindex="0"
+    tabindex={readonly ? -1 : 0}
     bind:this={textArea}
-    readonly={isReadOnly}
     {placeholder}
     bind:value={text}
+    disabled={readonly}
 ></textarea>
 </span>

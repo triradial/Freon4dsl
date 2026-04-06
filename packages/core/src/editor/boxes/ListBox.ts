@@ -1,7 +1,8 @@
-import { Box } from "./Box.js";
+import type { Box } from "./Box.js";
 import type { FreNode } from "../../ast/index.js";
 import { FreLanguage } from "../../language/index.js";
-import { getContextMenuOptions, MenuItem, MenuOptionsType } from "../util/index.js";
+import type { MenuItem, MenuOptionsType } from "../util/index.js";
+import { getContextMenuOptions } from "../util/index.js";
 import { LayoutBox, ListDirection } from "./LayoutBox.js";
 
 // import { FreLogger } from "../../logging";
@@ -15,7 +16,7 @@ export abstract class ListBox extends LayoutBox {
     readonly kind: string = "ListBox";
     conceptName: string = "unknown-type"; // the name of the type of the elements in the list
     // Controls whether drag-and-drop reordering is enabled for this list.
-    // When false, drag handles are hidden and items cannot be reordered by dragging.
+    // When false, drag handles are hidden and items cannot be reordered.
     // Defaults to true. Can be set to false via initializer: { canDragAndDrop: false }
     canDragAndDrop: boolean = true;
 
@@ -40,13 +41,13 @@ export class HorizontalListBox extends ListBox {
     readonly kind: string = "HorizontalListBox";
 
     constructor(
-        element: FreNode,
+        node: FreNode,
         role: string,
         propertyName: string,
         children?: (Box | null)[],
         initializer?: Partial<HorizontalListBox>,
     ) {
-        super(element, role, propertyName, children, initializer);
+        super(node, role, propertyName, children, initializer);
         this.direction = ListDirection.HORIZONTAL;
     }
 }
@@ -59,7 +60,7 @@ export class VerticalListBox extends ListBox {
         role: string,
         propertyName: string,
         children?: Box[],
-        initializer?: Partial<VerticalListBox>,
+        initializer?: Partial<HorizontalListBox>,
     ) {
         super(node, role, propertyName, children, initializer);
         this.direction = ListDirection.VERTICAL;

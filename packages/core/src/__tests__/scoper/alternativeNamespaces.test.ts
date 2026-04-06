@@ -9,14 +9,14 @@
  * We regulate the actual replacement with a set of boolean properties in this class,
  * e.g. useReference, which is used in test "A_2_2 with [NodeY, UnitB], and B_2 as replacement NS".
  */
-import { beforeEach, describe, test, expect } from 'vitest';
-import { ScoperModel } from './scoper-model/ScoperModel.js';
+import { beforeEach, describe, test, expect } from "vitest";
+import { type ScoperModel } from "./scoper-model/ScoperModel.js"
 import { ModelCreator } from './ModelCreator.js';
-import { initializeLanguage, NodeX, NodeY, UnitA, UnitB } from './scoper-model/index.js';
+import { initializeLanguage, type NodeX, type NodeY, type UnitA, type UnitB } from "./scoper-model/index.js"
 import { FreCompositeScoper, } from '../../scoper/index.js';
-import { FreNamedNode } from '../../ast/index.js';
+import { type FreNamedNode } from "../../ast/index.js"
 import { FreLanguage } from '../../language/index.js';
-import { FreLanguageEnvironment } from '../../environment/index.js';
+import { CoreConfig, FreLanguageEnvironment } from "../../environment/index.js"
 import { ReplacementNamespaceScoper } from './scoper-model/ReplacementNamespaceScoper.js';
 
 // !!!!!!!!!!!!!!!!!! model name may not be in fqn. This name is not visible in the model itself!!!!!!!!!!!!!!!!!!
@@ -51,6 +51,7 @@ describe("FreNamespace visibleNames with replacements, but without additions, ",
 	let concept_B_4: NodeX;
 	let concept_B_4_3: NodeX;
 
+    CoreConfig.initialize(null, null)
 	initializeLanguage();
 	const scoper: ReplacementNamespaceScoper = new ReplacementNamespaceScoper();
 	const mainScoper: FreCompositeScoper = new FreCompositeScoper();

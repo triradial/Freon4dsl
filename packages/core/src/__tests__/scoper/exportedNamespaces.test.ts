@@ -12,13 +12,13 @@
  * All imports of UnitA instances are not re-recursive, but the imports of UnitB instances are!
  */
 import { beforeEach, describe, test, expect } from 'vitest';
-import { ScoperModel } from './scoper-model/ScoperModel.js';
+import { type ScoperModel } from "./scoper-model/ScoperModel.js"
 import { ModelCreator } from './ModelCreator.js';
-import { initializeLanguage, NodeX, NodeY, UnitA, UnitB } from './scoper-model/index.js';
+import { initializeLanguage, type NodeX, type NodeY, type UnitA, type UnitB } from "./scoper-model/index.js"
 import { FreCompositeScoper, } from '../../scoper/index.js';
-import { FreNamedNode } from '../../ast/index.js';
+import { type FreNamedNode } from "../../ast/index.js"
 import { FreLanguage } from '../../language/index.js';
-import { FreLanguageEnvironment } from '../../environment/index.js';
+import { CoreConfig, FreLanguageEnvironment, FREON } from "../../environment/index.js"
 import { ExportedNamespacesScoper } from './scoper-model/ExportedNamespacesScoper.js';
 
 function printNames(set: FreNamedNode[]) {
@@ -51,6 +51,8 @@ describe("FreNamespace visibleNames with replacements, but without additions, ",
 	let concept_B_2: NodeX;
 	let concept_B_2_1: NodeX;
 
+    CoreConfig.initialize(null, null)
+    console.error("FREON " + FREON)
 	initializeLanguage();
 	const scoper: ExportedNamespacesScoper = new ExportedNamespacesScoper();
 	const mainScoper: FreCompositeScoper = new FreCompositeScoper();

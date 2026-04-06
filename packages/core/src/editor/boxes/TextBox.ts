@@ -1,5 +1,5 @@
 import { autorun } from 'mobx';
-import { AST } from '../../change-manager/index.js';
+import { FREON } from "../../environment/index.js"
 import { FreUtils } from '../../util/index.js';
 import { FreCaret, FreCaretPosition } from '../util/index.js';
 import type { FreNode } from '../../ast/index.js';
@@ -35,15 +35,15 @@ export class TextBox extends Box {
     placeHolder: string = "";
     caretPosition: number = -1;
     $_getText: () => string;
-    $setText: (newValue: string) => void;
+    $setText: (newValue: string) => void; // todo should this signature be "newValue: string | undefined"???
 
     /**
      * Run the setText() as defined by the user of this box inside a mobx action.
      * @param newValue
      */
-    setText(newValue: string): void {
+    setText(newValue: string | undefined): void {
         LOGGER.log("setText to " + newValue);
-        AST.changeNamed("TextBox.setText", () => {
+        FREON.astChanger.changeNamed("TextBox.setText", () => {
             this.$setText(newValue);
         })
         this.isDirty();

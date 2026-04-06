@@ -1,4 +1,5 @@
-import { AST } from "../../change-manager/index.js";
+import { autorun } from "mobx"
+import { FREON } from "../../environment/index.js"
 import { Box } from "./internal.js";
 import type { FreNode } from "../../ast/index.js";
 import { FreLogger } from "../../logging/index.js";
@@ -28,10 +29,9 @@ export class BooleanControlBox extends Box {
      */
     setBoolean(newValue: boolean | undefined): void {
         LOGGER.log(`setBoolean to '${newValue}' isUndefined: ${newValue === undefined}  typeof: ${typeof newValue}` );
-        AST.changeNamed("BooleanControlBox.setBoolean", () => {
+        FREON.astChanger.changeNamed("BooleanControlBox.setBoolean", () => {
             this.$setBoolean(newValue);
         })
-        this.isDirty();
     }
 
     getBoolean(): boolean | undefined {
@@ -49,6 +49,10 @@ export class BooleanControlBox extends Box {
         FreUtils.initializeObject(this, initializer);
         this.$getBoolean = getBoolean;
         this.$setBoolean = setBoolean;
+        autorun( () => {
+            this.getBoolean()
+            this.isDirty()
+        })
     }
 }
 

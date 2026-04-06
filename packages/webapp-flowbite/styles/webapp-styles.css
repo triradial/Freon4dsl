@@ -1,0 +1,21 @@
+/* Import the standard tailwind styles */
+@import 'tailwindcss';
+
+/* Import all styles from core-svelte */
+@import '../../../node_modules/@freon4dsl/core-svelte/src/lib/styles/freon.css';
+@import '../../../node_modules/@freon4dsl/core-svelte/src/lib/styles/freon-light.css';
+@import '../../../node_modules/@freon4dsl/core-svelte/src/lib/styles/freon-tw-dark.css';
+@import '../../../node_modules/@freon4dsl/core-svelte/src/lib/styles/freon-color-definitions.css';
+
+/* Import all styles from the webapp library */
+@import '../../../node_modules/@freon4dsl/weblib-flowbite/dist/styles/lib-styles.css';
+
+/* Import local styles and overrides */
+@import './theme-colors-override.css';
+@import './externals-styles.css';
+
+/* Application typography */
+:root {
+    --freon-font-size: 0.875rem; /* normally this would be 14px */
+    --standard-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}

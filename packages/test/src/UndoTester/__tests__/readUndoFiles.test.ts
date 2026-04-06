@@ -1,0 +1,178 @@
+import { UndoModel, UndoPart, UndoUnit } from "../freon/language/index.js";
+import { UndoModelEnvironment } from "../freon/config/UndoModelEnvironment.js";
+import { FileHandler } from "../../utils/FileHandler.js";
+import { FREON, CoreConfig } from "@freon4dsl/core"
+import { describe, it, expect } from "vitest";
+
+const handler = new FileHandler();
+CoreConfig.initialize(UndoModelEnvironment.getInstance(), null)
+const reader = FREON.environment.reader;
+
+function readUnitInTransaction(filePath: string) {
+    FREON.astChanger.cleanUndoRedo();
+    let unit1
+    const model: UndoModel = new UndoModel();
+    const langSpec: string = handler.stringFromFile(filePath);
+    // console.log(langSpec);
+    unit1 = reader.readFromString(langSpec, "UndoUnit", model) as UndoUnit;
+    return unit1;
+}
+
+describe("Testing Undo Manager", () => {
+    // FreonConfiguration.initialize(UndoModelEnvironment.getInstance(), null)
+
+    it("change, undo, redo, undo on prim", () => {
+        const filePath = "src/UndoTester/__inputs__/first.und";
+        const unit1 = readUnitInTransaction(filePath);
+        FREON.astChanger.setCurrentUnit(unit1)
+        expect(unit1).not.toBeNull();
+        expect(unit1.prim).toBe("myText");
+
+        // change the value of 'prim'
+        FREON.astChanger.change( () => {
+            unit1.prim = "nieuwe_waarde";
+        })
+        expect(unit1.prim).toBe("nieuwe_waarde");
+
+        // undo the change
+        FREON.astChanger.undo(unit1);
+        expect(unit1.prim).toBe("myText");
+
+        // redo the change
+        FREON.astChanger.redo(unit1);
+        expect(unit1.prim).toBe("nieuwe_waarde");
+    });
+
+    it("change, undo, redo, undo on part", () => {
+        const filePath = "src/UndoTester/__inputs__/second.und";
+        const unit1 = readUnitInTransaction(filePath);
+        FREON.astChanger.setCurrentUnit(unit1)
+        expect(unit1).not.toBeNull();
+
+        // change the value of 'part'
+        const oldPartId = unit1.part.freId(); // remember the id of the old value
+        let otherPart
+        FREON.astChanger.change( () => {
+            otherPart = UndoPart.create({ name: "part42" });
+            unit1.part = otherPart;
+        })
+        expect(unit1.part).toBe(otherPart);
+
+        // undo the change
+        FREON.astChanger.undo(unit1);
+        expect(unit1.part.freId()).toBe(oldPartId);
+
+        // redo the change
+        FREON.astChanger.redo(unit1);
+        expect(unit1.part).toBe(otherPart);
+    });
+
+    it("change, undo, redo, undo on an element in a list of primitives", () => {
+        const filePath = "src/UndoTester/__inputs__/first.und";
+        const unit1 = readUnitInTransaction(filePath);
+        FREON.astChanger.setCurrentUnit(unit1)
+        expect(unit1).not.toBeNull();
+        expect(unit1.numlist.length).toBeGreaterThan(0);
+
+        // change the value of 'numlist'
+        const oldValue = unit1.numlist[0];
+        FREON.astChanger.change( () => {
+            unit1.numlist[0] = 24;
+        })
+        expect(unit1.numlist[0]).toBe(24);
+
+        // undo the change
+        FREON.astChanger.undo(unit1);
+        expect(unit1.numlist[0]).toBe(oldValue);
+
+        // redo the change
+        FREON.astChanger.redo(unit1);
+        expect(unit1.numlist[0]).toBe(24);
+    });
+
+    it("change, undo, redo, undo on multiple elements in a list of primitives", () => {
+        const filePath = "src/UndoTester/__inputs__/second.und";
+        const unit1 = readUnitInTransaction(filePath);
+        FREON.astChanger.setCurrentUnit(unit1)
+        expect(unit1).not.toBeNull();
+
+        expect(unit1.numlist.length).toBeGreaterThan(0);
+        // change the value of 'numlist'
+        const oldValue1 = unit1.numlist[0];
+        const oldValue2 = unit1.numlist[1];
+        const oldValue3 = unit1.numlist[2];
+        expect(unit1.numlist.length).toBe(3);
+        FREON.astChanger.change( () => {
+            unit1.numlist.splice(1, 2);
+        })
+        expect(unit1.numlist.length).toBe(1);
+
+        // undo the change
+        FREON.astChanger.undo(unit1);
+        expect(unit1.numlist.length).toBe(3);
+        expect(unit1.numlist[0]).toBe(oldValue1);
+        expect(unit1.numlist[1]).toBe(oldValue2);
+        expect(unit1.numlist[2]).toBe(oldValue3);
+
+        // redo the change
+        FREON.astChanger.redo(unit1);
+        expect(unit1.numlist.length).toBe(1);
+    });
+
+    it("change, undo, redo, undo on an element in a list of parts", () => {
+        const filePath = "src/UndoTester/__inputs__/third.und";
+        const unit1 = readUnitInTransaction(filePath);
+        FREON.astChanger.setCurrentUnit(unit1)
+        expect(unit1).not.toBeNull();
+        expect(unit1.partlist.length).toBe(5);
+
+        // change the value of 'partlist'
+        const oldValue = unit1.partlist[2];
+        const newValue = new UndoPart("part90");
+        FREON.astChanger.change( () => {
+            unit1.partlist[2] = newValue;
+        })
+        expect(unit1.partlist[2]).toBe(newValue);
+
+        // undo the change
+        FREON.astChanger.undo(unit1);
+        expect(unit1.partlist[2]).toBe(oldValue);
+
+        // redo the change
+        FREON.astChanger.redo(unit1);
+        expect(unit1.partlist[2]).toBe(newValue);
+    });
+
+    it("change, undo, redo, undo on multiple elements in a list of parts", () => {
+        const filePath = "src/UndoTester/__inputs__/third.und";
+        const unit1 = readUnitInTransaction(filePath);
+        FREON.astChanger.setCurrentUnit(unit1)
+        expect(unit1).not.toBeNull();
+        expect(unit1.partlist.length).toBeGreaterThan(0);
+
+        // change the value of 'partlist'
+        // console.log(unit1.partlist.map(p => p.name));
+        expect(unit1.partlist.length).toBe(5);
+        expect(unit1.freOwner()).not.toBeNull();
+        expect(unit1.freOwner()).not.toBeUndefined();
+        const oldValue1 = unit1.partlist[0];
+        const oldValue2 = unit1.partlist[1];
+        const oldValue3 = unit1.partlist[2];
+        FREON.astChanger.change( () => {
+            unit1.partlist.splice(1, 2);
+        })
+        expect(unit1.partlist.length).toBe(3);
+
+        // undo the change
+        // console.log("length of undo stack: " + undoStack.length + " => [[" + undoStack.map(d => d.toString()).join(", ") + "]]");
+        FREON.astChanger.undo(unit1);
+        expect(unit1.partlist.length).toBe(5);
+        expect(unit1.partlist[0]).toBe(oldValue1);
+        expect(unit1.partlist[1]).toBe(oldValue2);
+        expect(unit1.partlist[2]).toBe(oldValue3);
+
+        // redo the change
+        FREON.astChanger.redo(unit1);
+        expect(unit1.partlist.length).toBe(3);
+    });
+});

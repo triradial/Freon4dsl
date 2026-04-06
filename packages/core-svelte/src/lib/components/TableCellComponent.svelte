@@ -22,7 +22,7 @@
         TableRowBox,
         FreCreatePartAction,
         MetaKey,
-        AST,
+        FREON,
         type TableBox,
         isTableBox,
         isElementBox,
@@ -50,6 +50,7 @@
     let {
         editor,
         box,
+        readonly,
         parentComponentId,
         parentOrientation,
         ondropOnCell
@@ -59,7 +60,7 @@
 
     // local variables
     const LOGGER = TABLECELL_LOGGER;
-    let id = $derived(notNullOrUndefined(box)
+    let id: string = $derived(notNullOrUndefined(box)
         ? `cell-${componentId(box)}`
         : 'table-cell-for-unknown-box');
 
@@ -92,7 +93,7 @@
     /**
      * This function sets the focus on this element programmatically.
      * It is called from the box. Note that because focus can be set,
-     * the html needs to have its tabindex set, and its needs to be bound
+     * the HTML needs to have its tabindex set, and its needs to be bound
      * to a variable.
      */
     async function setFocus(): Promise<void> {
@@ -104,7 +105,7 @@
     });
 
     // Note that this component is never part of a RenderComponent, therefore we must handle being selected here
-    let selectedCls: string = $state(''); // css class name for when the node is selected
+    let selectedCls: string = $state(''); // CSS class name for when the node is selected
 
     $effect(() => {
         // runs after the initial onMount
@@ -126,8 +127,7 @@
     const onKeydown = (event: KeyboardEvent) => {
         LOGGER.log("GridCellComponent onKeyDown");
         if (event.key === ENTER) {
-            event.stopPropagation();
-            if (editor.readOnly) return;
+            event.stopPropagation()
             LOGGER.log("Keyboard shortcut in GridCell ===============");
             // Create a new list element after the pone at index
             FreUtils.CHECK(isTableRowBox(box.parent));
@@ -146,7 +146,7 @@
             })
             let execresult: () => void;
             const selectedIndex = (tableBox.hasHeaders ? row -1 : row)
-            AST.changeNamed("ListComponent.Enter", () => {
+            FREON.astChanger.changeNamed("ListComponent.Enter", () => {
                 execresult = action.execute(tableBox, { meta: MetaKey.None, key: ENTER, code: ENTER }, editor, selectedIndex)
             })
             // @ts-ignore
@@ -163,10 +163,6 @@
     };
 
     const dragstart = (event: DragEvent) => {
-        if (editor.readOnly) {
-            event.preventDefault();
-            return;
-        }
         console.log(`dragStart ${box.node.freId()} ${box.node.freLanguageConcept()} ${box.node.freOwner()?.freLanguageConcept()}`);
         event.stopPropagation();
         // close any context menu
@@ -255,33 +251,48 @@
     }
 </script>
 
-<!-- on:blur is needed for on:mouseout -->
-<!-- Apparently, we cannot combine multiple inline style directives, as in -->
-<!--  style="grid-row: '{row}' grid-column: '{column}' {cssStyle}"-->
-<span
-    {id}
-    role="cell"
-    class="table-cell-component {orientation} {isHeader} {cssClass} {selectedCls} {box.cssClass}"
-    style:grid-row={row}
-    style:grid-column={column}
-    style={cssStyle}
-    onkeydown={onKeydown}
-    ondrop={(event) => drop(event)}
-    ondragenter={(event) => dragenter(event)}
-    ondragover={(event) => {
+{#if readonly}
+        <span
+            {id}
+            role="cell"
+            class="table-cell-component {orientation} {isHeader} {cssClass} {selectedCls} {box.cssClass} readonly"
+            style:grid-row={row}
+            style:grid-column={column}
+            style={cssStyle}
+            bind:this={htmlElement}
+            tabindex={-1}
+        >
+            <RenderComponent box={childBox} {editor} {readonly} />
+    </span>
+{:else}
+    <!-- on:blur is needed for on:mouseout -->
+    <!-- Apparently, we cannot combine multiple inline style directives, as in -->
+    <!--  style="grid-row: '{row}' grid-column: '{column}' {cssStyle}"-->
+    <span
+        {id}
+        role="cell"
+        class="table-cell-component {orientation} {isHeader} {cssClass} {selectedCls} {box.cssClass}"
+        style:grid-row={row}
+        style:grid-column={column}
+        style={cssStyle}
+        onkeydown={onKeydown}
+        ondrop={(event) => drop(event)}
+        ondragenter={(event) => dragenter(event)}
+        ondragover={(event) => {
                 event.preventDefault();
             }}
-    onmouseout={(event) => mouseout(event)}
-    onblur={() => {}}
-    oncontextmenu={(event) => showContextMenu(event)}
-    bind:this={htmlElement}
-    tabindex={-1}
->
+        onmouseout={(event) => mouseout(event)}
+        onblur={() => {}}
+        oncontextmenu={(event) => showContextMenu(event)}
+        bind:this={htmlElement}
+        tabindex={-1}
+    >
     {#if isHeader.length === 0 && box.isFirstInElementBox()}
                 <span class="drag-handle"
                       draggable="true"
                       ondragstart={(event) => dragstart(event)}
                       role="listitem"><DragHandle/></span>
     {/if}
-    <RenderComponent box={childBox} {editor} />
+        <RenderComponent box={childBox} {editor} {readonly} />
 </span>
+{/if}
