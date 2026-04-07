@@ -6,9 +6,9 @@ import {
     type FrePartListDelta,
     type FrePrimDelta,
     type FrePrimListDelta,
+    FreUndoManager,
     ReferenceUpdateManager,
 } from "../change-manager/index.js"
-import { FreUndoManager } from "../change-manager/FreUndoManager.js"
 import { FREON } from "../environment/index.js"
 import type { FreEnvironment } from "../environment/index.js"
 import { FreLogger } from "../logging/index.js"
