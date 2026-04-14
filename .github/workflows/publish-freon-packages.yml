@@ -31,8 +31,11 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build all packages
-        run: npm run build
+      - name: Build core, meta, core-svelte
+        run: |
+          npm run build --workspace=@freon4dsl/core
+          npm run build --workspace=@freon4dsl/meta
+          npm run build --workspace=@freon4dsl/core-svelte
 
       - name: Determine version
         id: version
