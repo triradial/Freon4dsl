@@ -18,7 +18,7 @@
         notNullOrUndefined,
         isTableRowBox,
         isElementBox,
-        AstActionExecutor,
+        AstActions,
         type FreNode, type ClientRectangle, UndefinedRectangle, FreEditorUtil, isNullOrUndefined
     } from '@freon4dsl/core';
     import RenderComponent from './RenderComponent.svelte';
@@ -37,15 +37,12 @@
 
     let LOGGER = FREON_LOGGER;
 
-    let { editor, readOnly: readOnlyProp }: MainComponentProps = $props();
-
-    /** True when editor is in read-only (lockdown) mode; mutations are disabled. */
-    let isReadOnly = $derived(readOnlyProp === true || editor.readOnly === true);
+    let { editor }: MainComponentProps = $props();
 
     let freonRootElement: HTMLDivElement | undefined = $state(undefined); // The current main element of this component.
     let rootBox: Box = $state(dummyBox);
     let id: string = $derived(
-        // an id for the html element showing the rootBox
+        // an id for the HTML element showing the rootBox
         rootBox && rootBox !== dummyBox ? componentId(rootBox) : 'freon-component-with-unknown-box'
     );
 
@@ -78,9 +75,9 @@
                         stopEvent(event);
                         break;
                     case 'z': // ctrl-z => UNDO
-                        if (!isReadOnly && !shouldBeHandledByBrowser.value) {
+                        if (!shouldBeHandledByBrowser.value) {
                             LOGGER.log('Ctrl-z: UNDO');
-                            const delta = AstActionExecutor.getInstance(editor).undo();
+                            const delta = AstActions.getInstance(editor).undo();
                             LOGGER.log(`FreonComponent undu '${delta?.toString()} || ${editor.isBoxInTree(editor.selectedBox)}'`)
                             if (delta !== undefined && !editor.isBoxInTree(editor.selectedBox)) {
                                 FreEditorUtil.selectAfterUndo(editor, delta)
@@ -91,9 +88,9 @@
                         }
                         break;
                     case 'y': // ctrl-y => REDO
-                        if (!isReadOnly && !shouldBeHandledByBrowser.value) {
+                        if (!shouldBeHandledByBrowser.value) {
                             LOGGER.log('Ctrl-y: REDO');
-                            const delta = AstActionExecutor.getInstance(editor).redo();
+                            const delta = AstActions.getInstance(editor).redo();
                             LOGGER.log(`FreonComponent undo '${delta?.toString()} || ${editor.isBoxInTree(editor.selectedBox)}'`)
                             if (delta !== undefined && !editor.isBoxInTree(editor.selectedBox)) {
                                 FreEditorUtil.selectAfterUndo(editor, delta)
@@ -103,23 +100,23 @@
                         }
                         break;
                     case 'x': // ctrl-x => CUT
-                        if (!isReadOnly && !shouldBeHandledByBrowser.value) {
+                        if (!shouldBeHandledByBrowser.value) {
                             LOGGER.log('Ctrl-x: CUT');
-                            AstActionExecutor.getInstance(editor).cut();
+                            AstActions.getInstance(editor).cut();
                             stopEvent(event);
                         }
                         break;
-                    case 'c': // ctrl-c => COPY (allowed in read-only for view-only copy)
+                    case 'c': // ctrl-c => COPY
                         if (!shouldBeHandledByBrowser.value) {
                             LOGGER.log('Ctrl-c: COPY');
-                            AstActionExecutor.getInstance(editor).copy();
+                            AstActions.getInstance(editor).copy();
                             stopEvent(event);
                         }
                         break;
                     case 'v': // ctrl-v => PASTE
-                        if (!isReadOnly && !shouldBeHandledByBrowser.value) {
+                        if (!shouldBeHandledByBrowser.value) {
                             LOGGER.log('Ctrl-v: PASTE');
-                            AstActionExecutor.getInstance(editor).paste();
+                            AstActions.getInstance(editor).paste();
                             stopEvent(event);
                         } else {
                             LOGGER.log('Ctrl-v: Handled by browser');
@@ -138,8 +135,8 @@
             } else {
                 switch (event.key) {
                     case 'z': // ctrl-alt-z => REDO
-                        if (!isReadOnly && !shouldBeHandledByBrowser.value) {
-                            AstActionExecutor.getInstance(editor).redo();
+                        if (!shouldBeHandledByBrowser.value) {
+                            AstActions.getInstance(editor).redo();
                             stopEvent(event);
                         }
                         break;
@@ -150,8 +147,8 @@
             if (event.shiftKey) {
                 switch (event.key) {
                     case BACKSPACE: // alt-shift-backspace => REDO
-                        if (!isReadOnly && !shouldBeHandledByBrowser.value) {
-                            AstActionExecutor.getInstance(editor).redo();
+                        if (!shouldBeHandledByBrowser.value) {
+                            AstActions.getInstance(editor).redo();
                             stopEvent(event);
                         }
                         break;
@@ -160,8 +157,8 @@
                 // NO shift
                 switch (event.key) {
                     case BACKSPACE: // alt-backspace => UNDO
-                        if (!isReadOnly && !shouldBeHandledByBrowser.value) {
-                            AstActionExecutor.getInstance(editor).undo();
+                        if (!shouldBeHandledByBrowser.value) {
+                            AstActions.getInstance(editor).undo();
                             stopEvent(event);
                         }
                         break;
@@ -192,9 +189,8 @@
                     break;
                 case DELETE:
                 case BACKSPACE:
-                    if (!isReadOnly) {
-                        editor.deleteBox(editor.selectedBox);
-                    }
+                    console.log('FreonComponent delete/backspace, selectedBox type: ' + editor.selectedBox.kind)
+                    editor.deleteBox(editor.selectedBox);
                     stopEvent(event);
                     break;
                 case TAB:
@@ -270,18 +266,6 @@
         return freonRootElement?.getBoundingClientRect() || UndefinedRectangle
     }
 
-    const visibleRectangle = async (): Promise<DOMRectReadOnly | null> => {
-        LOGGER.log(`FreonComponent visibleRect`)
-        const rect = await getVisibleRect(freonRootElement);
-        if (rect) {
-            LOGGER.log("visible size: " + rect.width + ", " + rect.height);
-            return rect;
-        } else {
-            LOGGER.log("freonRootElement was null, skipping");
-            return null;
-        }
-    }
-
     $effect(() => {
         editor.refreshComponentSelection = refreshSelection;
         editor.refreshComponentRootBox = refreshRootBox;
@@ -336,16 +320,6 @@
     refreshRootBox('Initialize FreonComponent');
     refreshSelection('Initialize FreonComponent');
 
-    // Dev-only: log readOnly so we can verify in CRC-Hub (filter console by "[Freon readOnly]")
-    $effect(() => {
-        if ((import.meta as { env?: { DEV?: boolean } }).env?.DEV) {
-            const prop = readOnlyProp;
-            const fromEditor = editor?.readOnly;
-            const effective = isReadOnly;
-            console.log('[Freon readOnly] FreonComponent: readOnlyProp=', prop, 'editor.readOnly=', fromEditor, 'effective isReadOnly=', effective);
-        }
-    });
-
     // Make sure the right functions are available for the Dropdown component to be able to scroll if needed.
     const paneApi: PaneLike = { getVisibleRect, getScrollContainer };
     providePaneContext(paneApi);
@@ -362,7 +336,7 @@
 >
     <div class="gutter"></div>
     <div class="editor-component">
-        <RenderComponent {editor} box={rootBox} readOnly={isReadOnly} />
+        <RenderComponent {editor} readonly={editor.readOnly} box={rootBox} />
     </div>
 </div>
 <!-- Here the only instance of ContextMenu is defined -->

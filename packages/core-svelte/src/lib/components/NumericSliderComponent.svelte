@@ -8,29 +8,21 @@
     const LOGGER = NUMERICSLIDER_LOGGER;
 
     // Props
-    let { editor, box }: FreComponentProps<NumberControlBox> = $props();
+    let { editor, box, readonly }: FreComponentProps<NumberControlBox> = $props();
 
     // Variables set from the box.
     // box.displayInfo is completely set, it is done in NumberControlBox constructor
-    let id = $derived(box?.id);
-    let value: number = $state(0);
-    let min: number = $state(0);
-    let max: number = $state(100);
-    let step: number = $state(1);
+    let id: string = $derived(box.id);
+    let value: number = $derived(box.getNumber());
+    let min: number = $derived(box.displayInfo!.min)!;
+    let max: number = $derived(box.displayInfo!.max)!;
+    let step: number = $derived(box.displayInfo!.step)!;
 
     let inputElement: HTMLInputElement;
-
-    $effect(() => {
-        value = box?.getNumber();
-        min = box?.displayInfo?.min ?? 0;
-        max = box?.displayInfo?.max ?? 100;
-        step = box?.displayInfo?.step ?? 1;
-    });
     let tooltip: HTMLSpanElement;
     let trackWrapper: HTMLSpanElement;
 
     const onChange = (event: Event) => {
-        if (editor.readOnly) return;
         LOGGER.log(
           'NumericSliderComponent.onChange for box ' + box.role + ', value:' + inputElement?.value
         );
@@ -45,7 +37,7 @@
     /**
      * This function sets the focus on this element programmatically.
      * It is called from the box. Note that because focus can be set,
-     * the html needs to have its tabindex set, and its needs to be bound
+     * the HTML needs to have its tabindex set, and its needs to be bound
      * to a variable.
      */
     async function setFocus(): Promise<void> {
@@ -53,8 +45,8 @@
     }
 
     const refresh = (why?: string): void => {
-        LOGGER.log('REFRESH NumberControlBox: ' + why);
-        value = box.getNumber();
+        LOGGER.log('REFRESH NumberControlBox: ' + why + ` box value ${box.getNumber()}` );
+        value = box.getNumber()
     };
 
     onMount(() => {
@@ -109,26 +101,46 @@
     });
 </script>
 
-<span
-  bind:this={trackWrapper}
-  class="numeric-slider-component {box.cssClass}"
-  draggable={true}
-  {id}
-  ondragstart={dragStart}
-  role="slider"
-  aria-valuenow={value}
-  tabindex={0}
->
-		<input
-      bind:this={inputElement}
-      bind:value
-      class="numeric-slider-input"
-      max={max}
-      min={min}
-      step={step}
-      type="range"
-      onchange={onChange}
-      disabled={editor.readOnly}
-    />
-		<span aria-hidden="true" bind:this={tooltip} class="numeric-slider-tooltip">{value}</span>
-	</span>
+{#if readonly}
+	<span
+		class="numeric-slider-component {box.cssClass} readonly"
+		{id}
+		role="slider"
+		aria-valuenow={value}
+		tabindex={0}
+	>
+			<input
+				value={value}
+				class="numeric-slider-input readonly"
+				max={max}
+				min={min}
+				step={step}
+				disabled
+				type="range"
+			/>
+			<span aria-hidden="true" class="numeric-slider-tooltip readonly">{value}</span>
+		</span>
+{:else}
+	<span
+		bind:this={trackWrapper}
+		class="numeric-slider-component {box.cssClass}"
+		draggable={true}
+		{id}
+		ondragstart={dragStart}
+		role="slider"
+		aria-valuenow={value}
+		tabindex={0}
+	>
+			<input
+				bind:this={inputElement}
+				bind:value
+				class="numeric-slider-input"
+				max={max}
+				min={min}
+				step={step}
+				type="range"
+				onchange={onChange}
+			/>
+			<span aria-hidden="true" bind:this={tooltip} class="numeric-slider-tooltip">{value}</span>
+		</span>
+{/if}

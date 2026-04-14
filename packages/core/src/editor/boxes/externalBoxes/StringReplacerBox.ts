@@ -1,7 +1,7 @@
-import type { FreNode } from "../../../ast/index.js";
-import { AST } from "../../../change-manager/index.js";
-import { FreUtils } from "../../../util/index.js";
+import { FREON } from "../../../environment/index.js"
 import type { Box } from "../Box.js";
+import type { FreNode } from "../../../ast/index.js";
+import { FreUtils } from "../../../util/index.js";
 import { AbstractExternalPropertyBox } from "./AbstractExternalPropertyBox.js";
 
 /**
@@ -31,16 +31,16 @@ export class StringReplacerBox extends AbstractExternalPropertyBox {
 
     setPropertyValue(newValue: string | boolean | number) {
         if (typeof newValue === "string" && this.getPropertyType() === "string") {
-            AST.change(() => {
+            FREON.astChanger.change(() => {
                 this.node[this.propertyName] = newValue;
             });
         } else {
             throw new Error(
-              "StringReplacerBox.setPropertyValue: type mismatch — property type is '" +
-                this.getPropertyType() +
-                "' but value type is '" +
-                typeof newValue +
-                "'. Check that the box is bound to a string property (e.g. correct node and propertyName).",
+                "StringReplacerBox.setPropertyValue: type mismatch — property type is '" +
+                    this.getPropertyType() +
+                    "' but value type is '" +
+                    typeof newValue +
+                    "'. Check that the box is bound to a string property (e.g. correct node and propertyName).",
             );
         }
     }

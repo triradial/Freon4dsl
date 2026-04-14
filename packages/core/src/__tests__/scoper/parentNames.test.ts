@@ -5,11 +5,12 @@
  * taking into account only the hierarchical namespace relationships.
  */
 import { beforeEach, describe, test, expect } from 'vitest';
-import { ScoperModel } from './scoper-model/ScoperModel.js';
+import { CoreConfig } from "../../environment/index.js"
+import { type ScoperModel } from './scoper-model/ScoperModel.js';
 import { ModelCreator } from './ModelCreator.js';
-import { initializeLanguage, NodeX, NodeY, UnitA, UnitB } from './scoper-model/index.js';
-import { FreCompositeScoper, FreScoper } from '../../scoper/index.js';
-import { FreNamedNode } from '../../ast/index.js';
+import { initializeLanguage, type NodeX, type NodeY, type UnitA, type UnitB } from "./scoper-model/index.js"
+import { FreCompositeScoper, type FreScoper } from "../../scoper/index.js"
+import { type FreNamedNode } from "../../ast/index.js"
 import { FreLanguage } from '../../language/index.js';
 import { ScoperModelScoper } from './scoper-model/ScoperModelScoper.js';
 
@@ -43,6 +44,7 @@ describe("FreNamespace visibleNames without replacement or additions", () => {
 	let concept_B_4: NodeX;
 	let concept_B_4_3: NodeX;
 
+    CoreConfig.initialize(null, null)
 	initializeLanguage();
 	const scoper: FreScoper = new ScoperModelScoper();
 	const mainScoper: FreCompositeScoper = new FreCompositeScoper();

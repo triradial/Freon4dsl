@@ -77,10 +77,10 @@ export class InterpreterBaseTemplate {
             const interpreter = new ${interpreter}(main);
 
             ${interpreterDef.conceptsToEvaluate
-              .map((c) => {
-                return `main.registerFunction("${Names.classifier(c)}", interpreter.eval${Names.classifier(c)} as EvaluateFunction);`;
-              })
-              .join("\n")}
+                .map((c) => {
+                    return `main.registerFunction("${Names.classifier(c)}", interpreter.eval${Names.classifier(c)} as EvaluateFunction);`;
+                })
+                .join("\n")}
 
         }`;
     }

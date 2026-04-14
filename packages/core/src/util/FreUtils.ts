@@ -1,7 +1,7 @@
-import { AST } from "../change-manager/index.js";
 import type { FreEditor } from "../editor/index.js";
 import type { FreOwnerDescriptor, FreNode, FreExpressionNode } from "../ast/index.js";
 import { isFreExpression } from "../ast-utils/index.js";
+import { FREON } from "../environment/index.js"
 import type { IdProvider } from "./IdProvider.js";
 import { SimpleIdProvider } from "./SimpleIdProvider.js";
 
@@ -15,7 +15,6 @@ import { SimpleIdProvider } from "./SimpleIdProvider.js";
 
 export class FreUtils {
     // Default generators initialized below the class declaration
-    static nodeIdProvider: IdProvider = new SimpleIdProvider("ID-");
     static boxIdProvider: IdProvider;
 
     /**
@@ -23,14 +22,13 @@ export class FreUtils {
      * Use only in tests to ensure the IDs there always start at 0.
      */
     static resetId(): void {
-        this.nodeIdProvider = new SimpleIdProvider("ID-");
         this.boxIdProvider = new SimpleIdProvider("BOX-");
     }
     /**
      * Returns a new unique ID for a {@link FreNode} by delegating to {@link nodeIdProvider}.
      */
     static ID(): string {
-        return this.nodeIdProvider.newId();
+        return FREON.idProvider.newId();
     }
     /**
      * Returns a new unique ID for a {@link Box} by delegating to {@link boxIdProvider}
@@ -46,7 +44,7 @@ export class FreUtils {
         }
         Object.keys(source).forEach((key) => {
             if (source.hasOwnProperty(key)) {
-                (target as any)[key] = (source as any)[key];
+                (target)[key] = (source)[key];
             }
         });
     }
@@ -58,7 +56,7 @@ export class FreUtils {
     }
 
     static setContainer(exp: FreNode, freOwnerDescriptor: FreOwnerDescriptor | null, editor: FreEditor): void {
-        AST.change( () => {
+        FREON.astChanger.change( () => {
             if ( notNullOrUndefined(freOwnerDescriptor)) {
                 if (freOwnerDescriptor.propertyIndex === undefined) {
                     freOwnerDescriptor.owner[freOwnerDescriptor.propertyName] = exp;
@@ -80,7 +78,7 @@ export class FreUtils {
             isFreExpression(newExpression),
             "replaceExpression: new element should be a FreExpressionNode, but it isn't",
         );
-        AST.change( () => {
+        FREON.astChanger.change( () => {
             FreUtils.setContainer(newExpression, oldExpression.freOwnerDescriptor(), editor);
         })
     }
@@ -107,7 +105,7 @@ export function isEmpty(str: string | null | undefined): str is null | undefined
 }
 
 export function startWithUpperCase(word: string): string {
-    if (!!word) {
+    if (notNullOrUndefined(word)) {
         return word[0].toUpperCase() + word.substring(1);
     }
     return "";

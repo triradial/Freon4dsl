@@ -7,12 +7,10 @@
      * row or column, respectively.
      * This component supports drag and drop.
      */
-    import { flip } from 'svelte/animate';
     import {
         type Box,
         dropListElement,
         isActionBox,
-        isExternalBox,
         isNullOrUndefined,
         FreLanguage,
         type ListBox,
@@ -27,7 +25,7 @@
         FreLogger,
         FreCreatePartAction,
         MetaKey,
-        AST,
+        FREON,
         ENTER, notNullOrUndefined
     } from '@freon4dsl/core';
     import RenderComponent from './RenderComponent.svelte';
@@ -44,11 +42,11 @@
     import DragHandle from "./images/DragHandle.svelte";
 
     // Props
-    let { editor, box }: FreComponentProps<ListBox> = $props();
+    let { editor, box, readonly }: FreComponentProps<ListBox> = $props();
 
     // Local state variables
     let LOGGER: FreLogger = LIST_LOGGER;
-    let id: string = $state(''); // an id for the html element showing the list
+    let id: string = $state(''); // an id for the HTML element showing the list
     let htmlElement: HTMLSpanElement;
     let isHorizontal: boolean = $state(true); // indicates whether the list should be shown horizontally or vertically
     let shownElements: Box[] = $state([]); // the parts of the list that are being shown
@@ -56,31 +54,6 @@
     // determine the type of the elements in the list
     // this speeds up the check whether an element may be dropped here
     let myMetaType: DragAndDropType;
-    
-    /** When true, no mutations (add/remove/reorder) are allowed. */
-    let isReadOnly = $derived(!!editor.readOnly);
-
-    // Helper function to check if drag handle should be hidden for a specific box item.
-    // This respects the list-level canDragAndDrop setting and the individual box's hideDragHandle property.
-    function shouldHideDragHandle(b: Box): boolean {
-        if (isReadOnly) return true;
-        // Check if the list has drag-and-drop disabled entirely
-        if (!box.canDragAndDrop) {
-            return true;
-        }
-        // Check the individual box's hideDragHandle property
-        if (b.hideDragHandle) {
-            return true;
-        }
-        // Check if the box has findParam method (external box) and hideDragHandle param is set
-        if ('findParam' in b && typeof (b as any).findParam === 'function') {
-            const hideDragParam = (b as any).findParam("hideDragHandle");
-            if (hideDragParam === "true") {
-                return true;
-            }
-        }
-        return false;
-    }
     
     $effect(() => {
         // console.log(`EFFECT ${box.conceptName} : ${box.node.freLanguageConcept()}`)
@@ -97,7 +70,6 @@
     });
 
     const drop = (event: DragEvent, targetIndex: number) => {
-        if (isReadOnly) return;
         const data: ListElementInfo | null = draggedElem.value;
         event.stopPropagation();
 
@@ -131,10 +103,6 @@
     };
 
     const dragstart = (event: DragEvent, listId: string, listIndex: number) => {
-        if (isReadOnly) {
-            event.preventDefault();
-            return;
-        }
         LOGGER.log('Drag Start ' + box.id + ' index: ' + listIndex);
         event.stopPropagation();
         // close any context menu
@@ -144,47 +112,6 @@
         if (notNullOrUndefined(event.dataTransfer)) {
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.dropEffect = 'move';
-            
-            // Create a custom drag image that shows the item's type and name
-            const draggedBox = shownElements[listIndex];
-            const node = draggedBox?.node;
-            if (notNullOrUndefined(node)) {
-                const conceptName = node.freLanguageConcept();
-                // Try to get the name property if it exists (for FreNamedNode)
-                const itemName = (node as any).name;
-                
-                // Build the label text
-                const labelText = itemName ? `${conceptName}: ${itemName}` : conceptName;
-                
-                // Create a temporary element to use as the drag image
-                const dragPreview = document.createElement('div');
-                dragPreview.style.position = 'fixed';
-                dragPreview.style.top = '-500px';
-                dragPreview.style.left = '0px';
-                dragPreview.style.padding = '6px 12px 6px 20px';
-                dragPreview.style.background = '#2a2a3e';
-                dragPreview.style.color = '#ffffff';
-                dragPreview.style.border = '1px solid #4a4a6a';
-                dragPreview.style.borderRadius = '4px';
-                dragPreview.style.fontSize = '13px';
-                dragPreview.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-                dragPreview.style.whiteSpace = 'nowrap';
-                dragPreview.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.4)';
-                dragPreview.style.zIndex = '99999';
-                dragPreview.textContent = labelText;
-                
-                document.body.appendChild(dragPreview);
-                
-                // Set the custom drag image (cursor at left edge so text isn't obscured)
-                event.dataTransfer.setDragImage(dragPreview, 0, 12);
-                
-                // Remove the temporary element after the browser captures it
-                requestAnimationFrame(() => {
-                    if (dragPreview.parentNode) {
-                        document.body.removeChild(dragPreview);
-                    }
-                });
-            }
         }
 
         // See https://stackoverflow.com/questions/11927309/html5-dnd-datatransfer-setdata-or-getdata-not-working-in-every-browser-except-fi,
@@ -260,21 +187,32 @@
 
     const refresh = (why?: string): void => {
         LOGGER.log('REFRESH ListComponent( ' + why + ') ' + box?.node?.freLanguageConcept());
-        // When readonly, hide the add placeholder (action box) so items cannot be added
-        shownElements = isReadOnly
-            ? box.children.filter((b: Box) => !isActionBox(b))
-            : [...box.children];
+        shownElements = [...box.children];
         id = notNullOrUndefined(box) ? componentId(box) : 'list-for-unknown-box';
         isHorizontal = notNullOrUndefined(box)
             ? box.getDirection() === ListDirection.HORIZONTAL
             : false;
     };
 
+    /**
+     * Determines whether the drag handle should be hidden for a given box.
+     * Checks the box's hideDragHandle property and external box params.
+     */
+    function shouldHideDragHandle(b: Box): boolean {
+        // Check box property
+        if (b.hideDragHandle) return true;
+
+        // Check external box param
+        if ('findParam' in b && typeof (b as any).findParam === 'function') {
+            if ((b as any).findParam("hideDragHandle") === "true") return true;
+        }
+        return false;
+    }
+
     const onKeyDown = (event: KeyboardEvent, index: number) => {
         if (event.key === ENTER) {
-            event.stopPropagation();
-            if (isReadOnly) return;
             // Create a new list element after the node at index
+            event.stopPropagation()
             const action: FreCreatePartAction = new FreCreatePartAction({
                 trigger: { meta: MetaKey.None, key: ENTER, code: ENTER },
                 activeInBoxRoles: [box.role, "action-" + box.role + "-textbox"],
@@ -283,7 +221,7 @@
                 boxRoleToSelect: undefined,
             })
             let execresult: () => void;
-            AST.changeNamed("ListComponent.Enter", () => {
+            FREON.astChanger.changeNamed("ListComponent.Enter", () => {
                 execresult = action.execute(box, { meta: MetaKey.None, key: ENTER, code: ENTER }, editor, index + 1)
             })
             // @ts-ignore
@@ -294,14 +232,33 @@
     }
 </script>
 
-<!-- onblur is needed for onmouseout -->
-<span
-    class="{isHorizontal ? 'list-component-horizontal' : 'list-component-vertical'} {box.cssClass}"
-    {id}
-    bind:this={htmlElement}
-    style:grid-template-columns="auto"
-    style:grid-template-rows="auto"
->
+{#if readonly}
+    <span
+        class="{isHorizontal ? 'list-component-horizontal' : 'list-component-vertical'} {box.cssClass} readonly"
+        {id}
+        style:grid-template-columns="auto"
+        style:grid-template-rows="auto"
+    >
+        {#each shownElements as box, index (box.id)}
+            <span
+                class="list-item readonly"
+                style:grid-column={!isHorizontal ? 1 : index + 1}
+                style:grid-row={isHorizontal ? 1 : index + 1}
+                role="none"
+            >
+                <RenderComponent {box} {editor} {readonly} />
+            </span>
+        {/each}
+    </span>
+{:else}
+    <!-- onblur is needed for onmouseout -->
+    <span
+        class="{isHorizontal ? 'list-component-horizontal' : 'list-component-vertical'} {box.cssClass}"
+        {id}
+        bind:this={htmlElement}
+        style:grid-template-columns="auto"
+        style:grid-template-rows="auto"
+    >
     {#each shownElements as box, index (box.id)}
         <span
             class="list-item"
@@ -329,7 +286,8 @@
                   ondragstart={(event) => dragstart(event, id, index)}
                   role="listitem"><DragHandle/></span>
             {/if}
-            <RenderComponent {box} {editor} />
+            <RenderComponent {box} {editor} {readonly} />
         </span>
     {/each}
 </span>
+{/if}

@@ -1,7 +1,0 @@
----
-description: 
-globs: 
-alwaysApply: true
----
-Always check the implications of adding things to packages, as this is a monorepo project.
-

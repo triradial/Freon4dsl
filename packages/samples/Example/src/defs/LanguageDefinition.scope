@@ -1,0 +1,19 @@
+scoper for language Example
+
+// isNamespace { Entity,Model }
+
+// isNamespace { Entity, Model }
+
+// 2 isNamespace { Method, Entity }
+
+isNamespace { Method, Entity, SumExpression, AppliedFeature }
+
+Entity {
+    imports { self.baseEntity; }
+}
+
+AppliedFeature {
+	alternatives { owner().type(); }
+}
+
+

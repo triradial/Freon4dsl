@@ -15,15 +15,11 @@
     const LOGGER = INNERSWITCH_LOGGER;
 
     // Props
-    let { editor, box }: FreComponentProps<BooleanControlBox> = $props();
+    let { editor, box, readonly }: FreComponentProps<BooleanControlBox> = $props();
 
-    let value = $state(false);
-    let id = $derived(box?.id);
+    let value = $derived(box.getBoolean());
+    let id: string = $derived(box.id);
     let switchElement: HTMLButtonElement;
-
-    $effect(() => {
-        value = box?.getBoolean();
-    });
 
     async function setFocus(): Promise<void> {
         switchElement.focus();
@@ -41,7 +37,6 @@
         box.refreshComponent = refresh;
     });
     function handleClick(event: MouseEvent) {
-        if (editor.readOnly) return;
         const target: HTMLButtonElement = event.target as HTMLButtonElement;
         if (notNullOrUndefined(target)) {
             value = target.getAttribute('aria-checked') !== 'true';
@@ -54,7 +49,7 @@
     }
 </script>
 
-<span class="inner-switch-component {box.cssClass}">
+<span class="inner-switch-component {box.cssClass}" class:readonly={readonly}>
     <button
         {id}
         bind:this={switchElement}
@@ -62,9 +57,9 @@
         aria-checked={value}
         aria-labelledby={`switch-${id}`}
         onclick={handleClick}
-        disabled={editor.readOnly}
+        disabled={readonly}
     >
-        <span class="inner-switch-component-label">{box.labels.yes}</span>
-        <span class="inner-switch-component-label">{box.labels.no}</span>
+        <span class="inner-switch-component-label" class:readonly={readonly}>{box.labels.yes}</span>
+        <span class="inner-switch-component-label" class:readonly={readonly}>{box.labels.no}</span>
     </button>
 </span>

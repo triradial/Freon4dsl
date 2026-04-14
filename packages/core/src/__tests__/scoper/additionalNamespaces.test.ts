@@ -6,15 +6,14 @@
  * additional namespaces.
  */
 import { beforeEach, describe, test, expect } from 'vitest';
-import { ScoperModel } from './scoper-model/ScoperModel.js';
+import { type ScoperModel } from "./scoper-model/ScoperModel.js"
 import { ModelCreator } from './ModelCreator.js';
-import { initializeLanguage, NodeX, NodeY, UnitA, UnitB } from './scoper-model/index.js';
-import { FreCompositeScoper, FreScoper, } from '../../scoper/index.js';
-import { FreNamedNode, FreNodeReference } from '../../ast/index.js';
+import { initializeLanguage, type NodeX, type NodeY, type UnitA, type UnitB } from "./scoper-model/index.js"
+import { FreCompositeScoper, type FreScoper } from "../../scoper/index.js"
+import { type FreNamedNode, FreNodeReference } from "../../ast/index.js"
 import { FreLanguage } from '../../language/index.js';
 import { AdditionalNamespacesScoper } from './scoper-model/AdditionalNamespacesScoper.js';
-import { AST } from '../../change-manager/index.js';
-import { FreLanguageEnvironment } from '../../environment/index.js';
+import { CoreConfig, FreLanguageEnvironment, FREON } from "../../environment/index.js"
 
 // !!!!!!!!!!!!!!!!!! model name may not be in fqn. This name is not visible in the model itself!!!!!!!!!!!!!!!!!!
 
@@ -48,6 +47,7 @@ describe("FreNamespace visibleNames with additions, but without replacements", (
 	let concept_B_4: NodeX;
 	let concept_B_4_3: NodeX;
 
+    CoreConfig.initialize(null, null)
 	initializeLanguage();
 	const scoper: FreScoper = new AdditionalNamespacesScoper();
 	const mainScoper: FreCompositeScoper = new FreCompositeScoper();
@@ -116,7 +116,7 @@ describe("FreNamespace visibleNames with additions, but without replacements", (
 		// test namespace for 'unitA1'
 		if (!!unitA1) {
 			// add reference to B2 to unitA1, otherwise additional namespace will not be found
-			AST.change(() => {
+			FREON.astChanger.change(() => {
 				unitA1.myRef.push(FreNodeReference.create<NodeX>(['B_2'], 'NodeX'));
 			})
 			setNamespaces(['NodeX', 'UnitA']);
@@ -140,7 +140,7 @@ describe("FreNamespace visibleNames with additions, but without replacements", (
 		// test namespace for 'unitA1'
 		if (!!unitA1) {
 			// add reference to B2 to unitA1, otherwise additional namespace will not be found
-			AST.change(() => {
+			FREON.astChanger.change(() => {
 				unitA1.myRef.push(FreNodeReference.create<NodeX>(['B_2_1'], 'NodeX'));
 				unitA1.myRef.push(FreNodeReference.create<NodeX>(['B_2'], 'NodeX'));
 			})
@@ -167,7 +167,7 @@ describe("FreNamespace visibleNames with additions, but without replacements", (
 		// test namespace for 'unitA1'
 		if (!!unitA1) {
 			// add reference to B2 to unitA1, otherwise additional namespace will not be found
-			AST.change(() => {
+			FREON.astChanger.change(() => {
 				unitA1.myRef.push(FreNodeReference.create<NodeX>(['B_2'], 'NodeX'));
 				unitA1.myRef.push(FreNodeReference.create<UnitB>(['UnitB1'], 'UnitB'));
 				unitA1.myRef.push(FreNodeReference.create<NodeX>(['B_2_1'], 'NodeX'));
@@ -195,7 +195,7 @@ describe("FreNamespace visibleNames with additions, but without replacements", (
 		// test namespace for 'unitA1'
 		if (!!unitA1) {
 			// add reference to B2 to unitA1, otherwise additional namespace will not be found
-			AST.change(() => {
+			FREON.astChanger.change(() => {
 				unitA1.myRef.push(FreNodeReference.create<NodeX>(['UnitB1','B_2', 'B_2_1'], 'NodeX'));
 			})
 			setNamespaces(['NodeX', 'UnitA', 'UnitB']);
@@ -226,7 +226,7 @@ describe("FreNamespace visibleNames with additions, but without replacements", (
 		if (!!unitA1) {
 			// add reference to B2 to unitA1, otherwise additional namespace will not be found
 			// NB this reference will not be found!
-			AST.change(() => {
+			FREON.astChanger.change(() => {
 				unitA1.myRef.push(FreNodeReference.create<NodeX>(['B_2', 'B_2_1'], 'NodeX'));
 			})
 			setNamespaces(['NodeX', 'UnitA', 'UnitB']);

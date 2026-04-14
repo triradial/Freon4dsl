@@ -16,20 +16,16 @@
     const LOGGER = SWITCH_LOGGER;
 
     // Props
-    let { editor, box }: FreComponentProps<BooleanControlBox> = $props();
+    let { editor, box, readonly }: FreComponentProps<BooleanControlBox> = $props();
 
-    let id = $derived(notNullOrUndefined(box) ? componentId(box) : 'switch-for-unknown-box');
-    let value = $state(false);
+    let id: string = $derived(notNullOrUndefined(box) ? componentId(box) : 'switch-for-unknown-box');
+    let value = $derived(box.getBoolean());
     let switchElement: HTMLButtonElement;
-
-    $effect(() => {
-        value = box?.getBoolean();
-    });
 
     /**
      * This function sets the focus on this element programmatically.
      * It is called from the box. Note that because focus can be set,
-     * the html needs to have its tabindex set, and its needs to be bound
+     * the HTML needs to have its tabindex set, and its needs to be bound
      * to a variable.
      */
     async function setFocus(): Promise<void> {
@@ -51,7 +47,6 @@
     });
 
     function handleClick(event: MouseEvent) {
-        if (editor.readOnly) return;
         const target = event.target as HTMLButtonElement;
         value = target.getAttribute('aria-checked') !== 'true';
         box.setBoolean(value);
@@ -65,7 +60,7 @@
     }
 </script>
 
-<span class="switch-component {box.cssClass}">
+<span class="switch-component {box.cssClass}" class:readonly={readonly}>
     <button
         {id}
         bind:this={switchElement}
@@ -73,7 +68,7 @@
         aria-checked={value}
         aria-labelledby={`switch-${id}`}
         onclick={handleClick}
-        disabled={editor.readOnly}
+        disabled={readonly}
     >
     </button>
 </span>

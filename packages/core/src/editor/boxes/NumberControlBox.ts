@@ -1,4 +1,5 @@
-import { AST } from "../../change-manager/index.js";
+import { autorun } from "mobx"
+import { FREON } from "../../environment/index.js"
 import { FreLogger } from "../../logging/index.js";
 import type { FreNode } from "../../ast/index.js";
 import { FreUtils, isNullOrUndefined } from "../../util/index.js";
@@ -31,14 +32,14 @@ export class NumberControlBox extends Box {
      */
     setNumber(newValue: number): void {
         LOGGER.log("setNumber to " + newValue);
-        AST.changeNamed("NumberControlBox.setNumber", () => {
+        FREON.astChanger.changeNamed("NumberControlBox.setNumber", () => {
             this.$setNumber(newValue);
         })
         if (this.showAs === NumberDisplay.SLIDER && newValue > this.displayInfo.max) {
             this.displayInfo.max = newValue;
             console.log("NumberBox: value greater than max");
         }
-        this.isDirty();
+        // this.isDirty();
     }
 
     getNumber(): number {
@@ -59,6 +60,10 @@ export class NumberControlBox extends Box {
         if (this.showAs === NumberDisplay.SLIDER) {
             this.completeDisplayInfo(getNumber());
         }
+        autorun(() => {
+            this.getNumber()
+            this.isDirty()
+        })
     }
 
     /**

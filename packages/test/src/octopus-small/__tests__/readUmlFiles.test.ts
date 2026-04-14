@@ -1,0 +1,37 @@
+import { FreModelSerializer, FREON, CoreConfig  } from "@freon4dsl/core"
+import { FileHandler } from "../../utils/FileHandler.js";
+import { OctopusModelEnvironment } from "../freon/config/OctopusModelEnvironment.js";
+import { compareReadAndWrittenUnits } from "../../utils/HelperFunctions.js";
+import { OctopusModel } from "../freon/language/index.js";
+import { describe, expect, test } from "vitest";
+
+CoreConfig.initialize(OctopusModelEnvironment.getInstance(), null)
+const writer = FREON.environment.writer;
+const reader = FREON.environment.reader;
+
+// const serial: FreLionwebSerializer = new FreLionwebSerializer();
+const serial: FreModelSerializer = new FreModelSerializer();
+const handler: FileHandler = new FileHandler();
+
+describe("Testing Parser", () => {
+    // TODO use snapshots
+    test("book unparsed and parsed again", () => {
+        const model = new OctopusModel();
+        compareReadAndWrittenUnits(reader, writer, model, "src/octopus-small/__inputs__/Book.uml2", "UmlPart");
+    });
+
+    test("orders model unparsed and parsed again", () => {
+        const model = new OctopusModel();
+        compareReadAndWrittenUnits(reader, writer, model, "src/octopus-small/__inputs__/orders.uml2", "UmlPart");
+    });
+
+    test("catalog model unparsed and parsed again", () => {
+        const model = new OctopusModel();
+        compareReadAndWrittenUnits(reader, writer, model, "src/octopus-small/__inputs__/catalog.uml2", "UmlPart");
+    });
+
+    test("trainWagon model unparsed and parsed again", () => {
+        const model = new OctopusModel();
+        compareReadAndWrittenUnits(reader, writer, model, "src/octopus-small/__inputs__/trainWagon.uml2", "UmlPart");
+    });
+});
