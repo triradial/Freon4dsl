@@ -1,0 +1,7 @@
+scoper for language Testproject
+
+isNamespace { AA, BB }
+
+BB {
+    imports { self.supers;}
+}

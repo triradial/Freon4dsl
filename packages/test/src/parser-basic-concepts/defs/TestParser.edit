@@ -1,0 +1,34 @@
+editor default
+
+//NumberLiteralEx {
+//        [${self.value}]
+//}
+//
+//StringLiteralEx {
+//        [
+//        '${self.value}'
+//        ]
+//    trigger = "'"
+//}
+//
+//BooleanLiteralEx {
+//    [ ${self.value} ]
+//    trigger = "boolean"
+//}
+
+PlusEx {
+    symbol = "+"
+}
+
+MultiplyEx {
+    symbol = "*"
+}
+
+
+AndEx {
+    symbol = "and"
+}
+
+DivideEx {
+    symbol = "/"
+}

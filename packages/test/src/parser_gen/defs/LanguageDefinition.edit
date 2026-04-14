@@ -1,0 +1,92 @@
+editor default
+
+DemoAttribute {
+    [ ${self.name} : ${self.declaredType} = ${self.somePrimAttr}]
+}
+
+DemoEntity  {
+[
+${self.name} base ${self.baseEntity vertical separator [, ]}
+    start
+        ${self.attributes vertical separator [, ]}
+    end
+]
+}
+
+DemoNumberLiteralExpression {
+        [${self.value}]
+}
+
+DemoStringLiteralExpression {
+        [
+        '${self.value}'
+        ]
+    trigger = "'"
+}
+
+DemoIfExpression {
+        [
+        if (${self.condition}) then
+                  ${self.whenTrue}
+        else
+           ${self.whenFalse}
+        endif
+        ]
+    trigger = "if"
+    symbol = "if"
+}
+
+//DemoIfExpression {
+//        [
+//        (${ self.condition } ? ${ self.whenTrue } : ${self.whenFalse} )
+//        ]
+//    trigger = "if"
+//    symbol = "if"
+//}
+
+DemoPlusExpression {
+    symbol = "+"
+}
+
+DemoMultiplyExpression {
+    symbol = "*"
+}
+
+DemoDivideExpression {
+    symbol = "/"
+}
+DemoLessThenExpression {
+    symbol = "<"
+}
+DemoOrExpression {
+    symbol = "or"
+}
+
+//DemoEntity {
+//    trigger = "entity"
+//}
+
+//DemoFunctionCallExpression {
+//        [
+//        ${self.name} (  )
+//        ]
+//    trigger = "function2"
+//}
+
+DemoFunctionCallExpression {
+        [
+        CALL ${self.functionDefinition} (  )
+        ]
+    trigger = "function"
+}
+
+DemoUnit {
+        [
+        unit ${self.name} {
+        main: ${self.main}
+        unit wide functions:
+            ${self.functions horizontal }
+        }
+        ]
+}
+

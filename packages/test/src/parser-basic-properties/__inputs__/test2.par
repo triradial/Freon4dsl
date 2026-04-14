@@ -1,0 +1,160 @@
+PartsTest `myName` {
+	directParts WithDirectParts {{
+                  	part PartConcept {
+                            	content "stringLiteral"
+                            	optContent 10
+                            	visibility `+`
+                            	}
+                  	partList
+                        PartConcept {
+                            content "otherString"
+                            // optContent empty
+                            visibility `#` },
+                        PartConcept {
+                            content "stringLiteralXXX"
+                            optContent 123
+                            visibility `-` },
+                        PartConcept {
+                            content "stringLiteralYYY"
+                            // optContent empty
+                            visibility `+` }
+    }}
+    partsOfParts
+        WithSubSubParts {
+        	part SubConcept {
+                    	normalSub WithDirectParts {{
+                    	                  	part PartConcept {
+                                                    	content "stringLiteral"
+                                                    	optContent 10
+                                                    	visibility `+`
+                                                    	}
+                                          	partList
+                        }}
+                    	// optionalSub not present
+                    	listSub
+                            WithDirectParts {{
+                                part PartConcept {
+                                            content "stringLiteralFGT"
+                                            optContent 10
+                                            visibility `+`
+                                            }
+                                partList
+                                    PartConcept {
+                                        content "otherStringZZZ"
+                                        // optContent empty
+                                        visibility `#` }
+                            }}
+                            WithDirectParts {{
+                                part PartConcept {
+                                            content "stringLiteralZZZ"
+                                            optContent 1045
+                                            visibility `-`
+                                            }
+                                partList
+                                    PartConcept {
+                                        content "otherString"
+                                        // optContent empty
+                                        visibility `#`
+                                        }
+                            }}            
+                    	// optListSub not present
+        	    }
+        	// optPart not present
+        	partList
+                SubConcept {
+                    normalSub WithDirectParts {{
+                                    part PartConcept {
+                                                content "stringLiteral"
+                                                optContent 10
+                                                visibility `+`
+                                                }
+                                    partList
+                                        PartConcept {
+                                            content "otherString"
+                                            // optContent empty
+                                            visibility `#`
+                                        },
+                                        PartConcept {
+                                            content "stringLiteralXXX"
+                                            optContent 123
+                                            visibility `-`
+                                        },
+                                        PartConcept {
+                                            content "stringLiteralYYY"
+                                            // optContent empty
+                                            visibility `+`
+                                        }
+                    }}
+                    optionalSub WithDirectParts {{
+                                    part PartConcept {
+                                                content "stringLiteral"
+                                                optContent 10
+                                                visibility `+`
+                                    }
+                                    partList
+                                        PartConcept {
+                                            content "otherString"
+                                            // optContent empty
+                                            visibility `#`
+                                        },
+                                        PartConcept {
+                                            content "stringLiteralXXX"
+                                            optContent 123
+                                            visibility `-`
+                                        },
+                                        PartConcept {
+                                            content "stringLiteralYYY"
+                                            // optContent empty
+                                            visibility `+`
+                                        }
+                    }}
+                    listSub
+                    WithDirectParts {{
+                        part PartConcept {
+                            content "stringLiteral"
+                            optContent 10
+                            visibility `+`
+                        }
+                        partList
+                    // optListSub not present
+                    }}
+                }
+                SubConcept {
+                    normalSub WithDirectParts {{
+                        part PartConcept {
+                            content "stringLiteral"
+                            optContent 10
+                            visibility `+`
+                            }
+                        partList
+                    }}
+                    optionalSub WithDirectParts {{
+                        part PartConcept {
+                            content "stringLiteral"
+                            optContent 10
+                            visibility `#`
+                            }
+                        partList
+                    }}
+                    listSub
+                        WithDirectParts {{
+                            part PartConcept {
+                                content "stringLiteral"
+                                optContent 10
+                                visibility `+`
+                                }
+                            partList
+                        }}
+                    optListSub
+                        WithDirectParts {{
+                            part PartConcept {
+                                content "stringLit"
+                                optContent 1440
+                                visibility `+`
+                                }
+                            partList
+                        }}
+                }
+            optList
+        }
+}

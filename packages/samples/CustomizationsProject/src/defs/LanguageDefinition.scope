@@ -1,0 +1,17 @@
+scoper for language Entity
+
+isNamespace { EntityModelUnit, Entity, EntityFunction, AppliedFeature }
+
+Entity {
+    imports { self.baseEntity;}
+}
+
+/*
+Type {
+    imports { self.baseInterface}
+}
+*/
+
+AppliedFeature {
+	alternatives { owner().type();}
+}

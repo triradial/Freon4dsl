@@ -1,0 +1,9 @@
+scoper for language Example
+
+isNamespace { Rules }
+
+Rules {
+    imports { self.forEntity; }
+}
+
+

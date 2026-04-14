@@ -1,0 +1,7 @@
+scoper for language Education
+
+isNamespace { Page, Step }
+
+Step {
+    imports { self.fromPage; }
+}

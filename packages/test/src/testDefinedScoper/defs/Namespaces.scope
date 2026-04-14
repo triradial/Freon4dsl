@@ -1,0 +1,4 @@
+scoper for language ScoperTest
+
+// the model is also a namespace
+isNamespace { INamespace, NamespaceConcept }

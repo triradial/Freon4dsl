@@ -1,0 +1,15 @@
+scoper for language InsuranceModel
+
+isNamespace { InsuranceProduct, BaseProduct, CalcFunction, Entity, AttributeRef }
+
+InsuranceProduct {
+    imports {self.basedOn;}
+}
+
+AttributeRef {
+	alternatives { owner().type(); }
+}
+
+Entity {
+    imports {self.baseEntity;}
+}
