@@ -183,13 +183,30 @@ export class ItemBoxHelper {
     ): string {
         let result: string = "";
         if (property.type instanceof FreMetaLimitedConcept) {
-            result += this._myLimitedHelper.generateLimited(
+            // Same as non-limited references: honor wrap=/replace= via replacer/wrapper boxes instead of
+            // always emitting BoxUtil.limitedBox / limitedListBox only.
+            let innerResult: string = this._myLimitedHelper.generateLimited(
                 property,
                 elementVarName,
                 language,
                 item.listInfo,
                 item.displayType,
             );
+            if (!!item.externalInfo) {
+                if (property.isList) {
+                    result += this._myExternalHelper.generateListAsExternal(
+                        item,
+                        property,
+                        elementVarName,
+                        innerResult,
+                        language,
+                    );
+                } else {
+                    result += this._myExternalHelper.generateSingleAsExternal(item, property, elementVarName, innerResult);
+                }
+            } else {
+                result += innerResult;
+            }
         } else if (property.isList) {
             let innerResult: string = "";
             if (!!item.listInfo && item.listInfo.isTable) {
