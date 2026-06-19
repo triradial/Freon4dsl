@@ -158,9 +158,17 @@ export class UtilLimitedHelpers {
                     }));
             },
             () => {
-                // console.log("==> get selected option for property " + propertyName + " of " + element["name"] + " is " + property.name )
-                if (!!property) {
-                    return { id: property.name, label: property.name };
+                // Read the property live (inside the getter) so MobX tracks it and
+                // the select re-renders when the value changes. Capturing it in an
+                // outer local (see above) yields a stale display when the box is
+                // cached and reused (e.g. a limited box nested in an expression box).
+                let current = node[propertyName];
+                if (index !== null && index !== undefined && index >= 0) {
+                    current = current?.[index];
+                }
+                // console.log("==> get selected option for property " + propertyName + " of " + element["name"] + " is " + current?.name )
+                if (!!current) {
+                    return { id: current.name, label: current.name };
                 } else {
                     return null;
                 }
