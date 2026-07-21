@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Generated Tailwind output (built from styles/webapp-styles.css via `npm run styles`)
+public/site.css
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
