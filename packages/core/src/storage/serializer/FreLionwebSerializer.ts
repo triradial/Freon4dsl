@@ -156,7 +156,11 @@ export class FreLionwebSerializer implements FreSerializer {
                     reference.referredId,
                     reference.typeName,
                 );
-                // freonRef.referred = resolvedReference.freNode;
+                // Prefer LionWeb target id over resolveInfo (name): names may collide
+                // (e.g. path-local Events under different schedule branches).
+                if (notNullOrUndefined(resolvedReference?.freNode)) {
+                    freonRef.referred = resolvedReference.freNode as FreNamedNode;
+                }
                 if (reference.isList) {
                     parsedNode.freNode[reference.featureName].push(freonRef);
                 } else {

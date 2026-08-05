@@ -6,6 +6,9 @@ import { FREON } from "../environment/index.js"
 import { FreLogger } from "../logging/index.js";
 import { MobxModelElementImpl } from "./decorators/index.js";
 import type { FreParseLocation } from '../reader/index.js';
+import { findNode } from "../ast-utils/FindNodes.js";
+import { model, modelUnit } from "../ast-utils/AstUtil.js";
+import type { FreNode } from "./FreNode.js";
 
 const LOGGER = new FreLogger("FreNodeReference").mute();
 /**
@@ -119,15 +122,33 @@ export class FreNodeReference<T extends FreNamedNode> extends MobxModelElementIm
         )
         if (notNullOrUndefined(this._FRE_referred)) {
             return this._FRE_referred
-        } else {
-            return FREON.environment.scoper.resolvePathName(this) as T
         }
+        // Prefer LionWeb target id when present — pathname/name can collide across scopes.
+        const referredId = this.lionWeb?.reference
+        if (notNullOrUndefined(referredId) && referredId.length > 0) {
+            const owner = this.freOwnerDescriptor()?.owner as FreNode | undefined
+            if (notNullOrUndefined(owner)) {
+                const root: FreNode | null = model(owner) ?? modelUnit(owner)
+                if (notNullOrUndefined(root)) {
+                    const found = findNode(referredId, root)
+                    if (notNullOrUndefined(found)) {
+                        return found as T
+                    }
+                }
+            }
+        }
+        return FREON.environment.scoper.resolvePathName(this) as T
     }
 
     set referred(referredElement) {
         if (notNullOrUndefined(referredElement)) {
-            // this._FRE_pathname.push(referredElement.name);
             this._FRE_pathname = qualifiedName(referredElement)
+            this.lionWeb = {
+                reference: referredElement.freId(),
+                resolveInfo: referredElement.name ?? null,
+            }
+        } else {
+            this.lionWeb = null
         }
         this._FRE_referred = referredElement
     }
@@ -142,6 +163,12 @@ export class FreNodeReference<T extends FreNamedNode> extends MobxModelElementIm
     public rebindTo(referredElement: T, pathname: string[]): void {
         this._FRE_pathname = pathname
         this._FRE_referred = referredElement
+        if (notNullOrUndefined(referredElement)) {
+            this.lionWeb = {
+                reference: referredElement.freId(),
+                resolveInfo: referredElement.name ?? pathname[pathname.length - 1] ?? null,
+            }
+        }
     }
 
     /**

@@ -83,4 +83,26 @@ describe("Update references when name changes", () => {
         expect(ref.pathname).toEqual(["zz"]);
         expect(ref.referred).toBe(named);
     })
+
+    test(" referred resolves by lionWeb.reference id when names collide", () => {
+        const model: CalculatorModel = ModelCreator.createModelWithClashingNames();
+        const field1 = model.calc[0].inputFields[0];
+        const field2 = model.calc[1].inputFields[0];
+        expect(field1.name).toBe("x");
+        expect(field2.name).toBe("x");
+        expect(field1.freId()).not.toBe(field2.freId());
+
+        // outputFields[1] references field2 (same display name as field1)
+        const ref = (model.calc[1].outputFields[1].expression as InputFieldReference).field;
+        expect(ref.referred).toBe(field2);
+
+        // Simulate post-load: cache cleared, pathname is ambiguous name, id points at field2
+        FREON.astChanger.change(() => {
+            ;(ref as unknown as { _FRE_referred: unknown })._FRE_referred = null
+            ref.lionWeb = { reference: field2.freId(), resolveInfo: "x" }
+        })
+        expect(ref.pathname).toEqual(["x"])
+        expect(ref.referred).toBe(field2)
+        expect(ref.referred).not.toBe(field1)
+    })
 })
