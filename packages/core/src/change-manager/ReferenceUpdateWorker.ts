@@ -1,4 +1,4 @@
-import { type FreNode } from "../ast/index.js";
+import { type FreNamedNode, type FreNode } from "../ast/index.js";
 import type { AstWorker } from "../ast-utils/index.js";
 import { FreLanguage, type FreLanguageProperty } from "../language/index.js";
 import { FreLogger } from "../logging/index.js";
@@ -30,9 +30,14 @@ export class ReferenceUpdateWorker implements AstWorker {
             for(const ref of childValue) {
                 const foundIndex = ref.pathname.indexOf(this.delta.oldValue as string)
                 if (foundIndex > -1 && ref.referred === this.delta.owner) {
-                    let newPathName = ref.pathname;
+                    // Do not assign `pathname` alone: its setter clears `_FRE_referred`, so on the
+                    // next rename `ref.referred === delta.owner` often fails (resolve-by-pathname
+                    // races with the still-old committed name). Rebind via the live target instead.
+                    // Also do not assign `referred` alone: setPrimitive fires before the new name
+                    // is written, so qualifiedName would still see the old name.
+                    const newPathName = ref.pathname;
                     newPathName[foundIndex] = this.delta.newValue as string;
-                    ref.pathname = newPathName;
+                    ref.rebindTo(this.delta.owner as FreNamedNode, newPathName);
                     LOGGER.log(`    updated reference in the node ${node.freId()} to the ${newPathName}`)
                 }
             }

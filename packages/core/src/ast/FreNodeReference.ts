@@ -133,6 +133,18 @@ export class FreNodeReference<T extends FreNamedNode> extends MobxModelElementIm
     }
 
     /**
+     * Points this reference at `referredElement` with an explicit pathname.
+     * Unlike assigning `pathname` (which clears `_FRE_referred`) or `referred`
+     * (which rebuilds pathname via `qualifiedName`), this keeps both in sync.
+     * Needed when the target's name is not yet committed — e.g. during
+     * `AstObserver.setPrimitive`, which fires before the new name is written.
+     */
+    public rebindTo(referredElement: T, pathname: string[]): void {
+        this._FRE_pathname = pathname
+        this._FRE_referred = referredElement
+    }
+
+    /**
      * Returns true if this reference has the same name as 'toBeMatched'.
      * @param toBeMatched
      */
