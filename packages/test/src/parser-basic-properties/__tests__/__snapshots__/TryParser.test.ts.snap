@@ -40,7 +40,10 @@ LimitedTest {
         "$typename": "OtherLimited",
         "_FRE_name": "FIRST",
       },
-      "lionWeb": null,
+      "lionWeb": {
+        "reference": "LIMITED-OtherLimited-ID-0",
+        "resolveInfo": "FIRST",
+      },
       "parseLocation": FreParseLocation {
         "column": 6,
         "filename": "",
@@ -64,7 +67,10 @@ LimitedTest {
           "$typename": "OtherLimited",
           "_FRE_name": "SECOND",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-OtherLimited-ID-1",
+          "resolveInfo": "SECOND",
+        },
         "parseLocation": FreParseLocation {
           "column": 6,
           "filename": "",
@@ -87,7 +93,10 @@ LimitedTest {
           "$typename": "OtherLimited",
           "_FRE_name": "FIRST",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-OtherLimited-ID-0",
+          "resolveInfo": "FIRST",
+        },
         "parseLocation": FreParseLocation {
           "column": 16,
           "filename": "",
@@ -110,7 +119,10 @@ LimitedTest {
           "$typename": "OtherLimited",
           "_FRE_name": "FIRST",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-OtherLimited-ID-0",
+          "resolveInfo": "FIRST",
+        },
         "parseLocation": FreParseLocation {
           "column": 25,
           "filename": "",
@@ -133,7 +145,10 @@ LimitedTest {
           "$typename": "OtherLimited",
           "_FRE_name": "SECOND",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-OtherLimited-ID-1",
+          "resolveInfo": "SECOND",
+        },
         "parseLocation": FreParseLocation {
           "column": 34,
           "filename": "",
@@ -156,7 +171,10 @@ LimitedTest {
           "$typename": "OtherLimited",
           "_FRE_name": "SECOND",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-OtherLimited-ID-1",
+          "resolveInfo": "SECOND",
+        },
         "parseLocation": FreParseLocation {
           "column": 44,
           "filename": "",
@@ -181,7 +199,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "+",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-0",
+          "resolveInfo": "+",
+        },
         "parseLocation": FreParseLocation {
           "column": 9,
           "filename": "",
@@ -204,7 +225,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "+",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-0",
+          "resolveInfo": "+",
+        },
         "parseLocation": FreParseLocation {
           "column": 15,
           "filename": "",
@@ -227,7 +251,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "+",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-0",
+          "resolveInfo": "+",
+        },
         "parseLocation": FreParseLocation {
           "column": 21,
           "filename": "",
@@ -252,7 +279,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "-",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-1",
+          "resolveInfo": "-",
+        },
         "parseLocation": FreParseLocation {
           "column": 16,
           "filename": "",
@@ -275,7 +305,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "+",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-0",
+          "resolveInfo": "+",
+        },
         "parseLocation": FreParseLocation {
           "column": 9,
           "filename": "",
@@ -298,7 +331,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "-",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-1",
+          "resolveInfo": "-",
+        },
         "parseLocation": FreParseLocation {
           "column": 9,
           "filename": "",
@@ -322,7 +358,10 @@ LimitedTest {
         "$typename": "VisibilityKind",
         "_FRE_name": "-",
       },
-      "lionWeb": null,
+      "lionWeb": {
+        "reference": "LIMITED-VisibilityKind-ID-1",
+        "resolveInfo": "-",
+      },
       "parseLocation": FreParseLocation {
         "column": 16,
         "filename": "",
@@ -345,7 +384,10 @@ LimitedTest {
         "$typename": "VisibilityKind",
         "_FRE_name": "+",
       },
-      "lionWeb": null,
+      "lionWeb": {
+        "reference": "LIMITED-VisibilityKind-ID-0",
+        "resolveInfo": "+",
+      },
       "parseLocation": FreParseLocation {
         "column": 9,
         "filename": "",
@@ -381,7 +423,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "#",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-2",
+          "resolveInfo": "#",
+        },
         "parseLocation": FreParseLocation {
           "column": 9,
           "filename": "",
@@ -404,7 +449,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "#",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-2",
+          "resolveInfo": "#",
+        },
         "parseLocation": FreParseLocation {
           "column": 15,
           "filename": "",
@@ -427,7 +475,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "#",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-2",
+          "resolveInfo": "#",
+        },
         "parseLocation": FreParseLocation {
           "column": 21,
           "filename": "",
@@ -452,7 +503,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "-",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-1",
+          "resolveInfo": "-",
+        },
         "parseLocation": FreParseLocation {
           "column": 16,
           "filename": "",
@@ -475,7 +529,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "-",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-1",
+          "resolveInfo": "-",
+        },
         "parseLocation": FreParseLocation {
           "column": 21,
           "filename": "",
@@ -498,7 +555,10 @@ LimitedTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "-",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-1",
+          "resolveInfo": "-",
+        },
         "parseLocation": FreParseLocation {
           "column": 26,
           "filename": "",
@@ -522,7 +582,10 @@ LimitedTest {
         "$typename": "VisibilityKind",
         "_FRE_name": "-",
       },
-      "lionWeb": null,
+      "lionWeb": {
+        "reference": "LIMITED-VisibilityKind-ID-1",
+        "resolveInfo": "-",
+      },
       "parseLocation": FreParseLocation {
         "column": 16,
         "filename": "",
@@ -545,7 +608,10 @@ LimitedTest {
         "$typename": "VisibilityKind",
         "_FRE_name": "+",
       },
-      "lionWeb": null,
+      "lionWeb": {
+        "reference": "LIMITED-VisibilityKind-ID-0",
+        "resolveInfo": "+",
+      },
       "parseLocation": FreParseLocation {
         "column": 9,
         "filename": "",
@@ -1050,7 +1116,10 @@ PartsTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "+",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-0",
+          "resolveInfo": "+",
+        },
         "parseLocation": FreParseLocation {
           "column": 41,
           "filename": "",
@@ -1088,7 +1157,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "#",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-2",
+            "resolveInfo": "#",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -1125,7 +1197,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "-",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-1",
+            "resolveInfo": "-",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -1162,7 +1237,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "+",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-0",
+            "resolveInfo": "+",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -1244,7 +1322,10 @@ PartsTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "+",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-0",
+          "resolveInfo": "+",
+        },
         "parseLocation": FreParseLocation {
           "column": 41,
           "filename": "",
@@ -1282,7 +1363,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "#",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-2",
+            "resolveInfo": "#",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -1319,7 +1403,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "-",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-1",
+            "resolveInfo": "-",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -1356,7 +1443,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "+",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-0",
+            "resolveInfo": "+",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -1424,7 +1514,10 @@ PartsTest {
                 "$typename": "VisibilityKind",
                 "_FRE_name": "+",
               },
-              "lionWeb": null,
+              "lionWeb": {
+                "reference": "LIMITED-VisibilityKind-ID-0",
+                "resolveInfo": "+",
+              },
               "parseLocation": FreParseLocation {
                 "column": 56,
                 "filename": "",
@@ -1462,7 +1555,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "#",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-2",
+                  "resolveInfo": "#",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 52,
                   "filename": "",
@@ -1514,7 +1610,10 @@ PartsTest {
                 "$typename": "VisibilityKind",
                 "_FRE_name": "-",
               },
-              "lionWeb": null,
+              "lionWeb": {
+                "reference": "LIMITED-VisibilityKind-ID-1",
+                "resolveInfo": "-",
+              },
               "parseLocation": FreParseLocation {
                 "column": 56,
                 "filename": "",
@@ -1552,7 +1651,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "#",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-2",
+                  "resolveInfo": "#",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 52,
                   "filename": "",
@@ -1605,7 +1707,10 @@ PartsTest {
               "$typename": "VisibilityKind",
               "_FRE_name": "+",
             },
-            "lionWeb": null,
+            "lionWeb": {
+              "reference": "LIMITED-VisibilityKind-ID-0",
+              "resolveInfo": "+",
+            },
             "parseLocation": FreParseLocation {
               "column": 65,
               "filename": "",
@@ -1673,7 +1778,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "+",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-0",
+                  "resolveInfo": "+",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 40,
                   "filename": "",
@@ -1726,7 +1834,10 @@ PartsTest {
                 "$typename": "VisibilityKind",
                 "_FRE_name": "+",
               },
-              "lionWeb": null,
+              "lionWeb": {
+                "reference": "LIMITED-VisibilityKind-ID-0",
+                "resolveInfo": "+",
+              },
               "parseLocation": FreParseLocation {
                 "column": 60,
                 "filename": "",
@@ -1764,7 +1875,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "#",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-2",
+                  "resolveInfo": "#",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 56,
                   "filename": "",
@@ -1801,7 +1915,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "-",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-1",
+                  "resolveInfo": "-",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 56,
                   "filename": "",
@@ -1838,7 +1955,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "+",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-0",
+                  "resolveInfo": "+",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 56,
                   "filename": "",
@@ -1891,7 +2011,10 @@ PartsTest {
                 "$typename": "VisibilityKind",
                 "_FRE_name": "+",
               },
-              "lionWeb": null,
+              "lionWeb": {
+                "reference": "LIMITED-VisibilityKind-ID-0",
+                "resolveInfo": "+",
+              },
               "parseLocation": FreParseLocation {
                 "column": 60,
                 "filename": "",
@@ -1929,7 +2052,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "#",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-2",
+                  "resolveInfo": "#",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 56,
                   "filename": "",
@@ -1966,7 +2092,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "-",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-1",
+                  "resolveInfo": "-",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 56,
                   "filename": "",
@@ -2003,7 +2132,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "+",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-0",
+                  "resolveInfo": "+",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 56,
                   "filename": "",
@@ -2068,7 +2200,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "+",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-0",
+                  "resolveInfo": "+",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 44,
                   "filename": "",
@@ -2121,7 +2256,10 @@ PartsTest {
                 "$typename": "VisibilityKind",
                 "_FRE_name": "+",
               },
-              "lionWeb": null,
+              "lionWeb": {
+                "reference": "LIMITED-VisibilityKind-ID-0",
+                "resolveInfo": "+",
+              },
               "parseLocation": FreParseLocation {
                 "column": 40,
                 "filename": "",
@@ -2174,7 +2312,10 @@ PartsTest {
                   "$typename": "VisibilityKind",
                   "_FRE_name": "+",
                 },
-                "lionWeb": null,
+                "lionWeb": {
+                  "reference": "LIMITED-VisibilityKind-ID-0",
+                  "resolveInfo": "+",
+                },
                 "parseLocation": FreParseLocation {
                   "column": 44,
                   "filename": "",
@@ -2227,7 +2368,10 @@ PartsTest {
                 "$typename": "VisibilityKind",
                 "_FRE_name": "#",
               },
-              "lionWeb": null,
+              "lionWeb": {
+                "reference": "LIMITED-VisibilityKind-ID-2",
+                "resolveInfo": "#",
+              },
               "parseLocation": FreParseLocation {
                 "column": 40,
                 "filename": "",
@@ -2319,7 +2463,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "+",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-0",
+            "resolveInfo": "+",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -2356,7 +2503,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "+",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-0",
+            "resolveInfo": "+",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -2394,7 +2544,10 @@ PartsTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "+",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-0",
+          "resolveInfo": "+",
+        },
         "parseLocation": FreParseLocation {
           "column": 40,
           "filename": "",
@@ -2431,7 +2584,10 @@ PartsTest {
           "$typename": "VisibilityKind",
           "_FRE_name": "+",
         },
-        "lionWeb": null,
+        "lionWeb": {
+          "reference": "LIMITED-VisibilityKind-ID-0",
+          "resolveInfo": "+",
+        },
         "parseLocation": FreParseLocation {
           "column": 41,
           "filename": "",
@@ -2469,7 +2625,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "#",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-2",
+            "resolveInfo": "#",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -2506,7 +2665,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "-",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-1",
+            "resolveInfo": "-",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",
@@ -2543,7 +2705,10 @@ PartsTest {
             "$typename": "VisibilityKind",
             "_FRE_name": "+",
           },
-          "lionWeb": null,
+          "lionWeb": {
+            "reference": "LIMITED-VisibilityKind-ID-0",
+            "resolveInfo": "+",
+          },
           "parseLocation": FreParseLocation {
             "column": 40,
             "filename": "",

@@ -862,7 +862,10 @@ PartsInitiatorTest {
         "$typename": "NonOptionalLimited",
         "_FRE_name": "SECOND",
       },
-      "lionWeb": null,
+      "lionWeb": {
+        "reference": "LIMITED-NonOptionalLimited-ID-1",
+        "resolveInfo": "SECOND",
+      },
       "parseLocation": FreParseLocation {
         "column": 16,
         "filename": "",
