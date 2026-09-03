@@ -1,4 +1,5 @@
 export * from "./FreModelSerializer.js"
 export * from "./FreLionWebSerializer.js"
 export * from "./FreLionWebDeserializer.js"
+export * from "./FreLionwebCompatSerializer.js"
 export * from "./FreSerialization.js"

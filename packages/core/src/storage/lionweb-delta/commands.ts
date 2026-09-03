@@ -14,7 +14,7 @@ import type {
     LionWebId,
     LionWebJsonProperty,
 } from "@lionweb/server-delta-shared"
-import { DeltaProtocolVersion, LanguageVersion } from "../utils"
+import { DeltaProtocolVersion, LanguageVersion } from "../utils/index.js"
 
 let queryId = 1
 // let commandId = 1
