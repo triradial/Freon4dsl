@@ -6,10 +6,10 @@ import { FreLogger, NumberControlBox } from "@freon4dsl/core"
  */
 export function configureLoggers() {
     // // Activate the following loggers
-    // FreLogger.unmute("FreLionwebSerializer")
-    FreLogger.unmute("CheckBoxComponent")
-    FreLogger.unmute("NumericSliderComponent")
-    FreLogger.unmute("NumberControlBox")
+    // FreLogger.unmute("FreLionWebSerializer")
+    // FreLogger.unmute("CheckBoxComponent")
+    // FreLogger.unmute("NumericSliderComponent")
+    // FreLogger.unmute("NumberControlBox")
     // FreLogger.unmute("TextComponent")
     // FreLogger.unmute("FreonComponent")
     // FreLogger.unmute("FreEditor")
